@@ -4,6 +4,7 @@ import pytest
 
 from causal_spacetime_lab.metrics import (
     estimate_tau_from_interval_count,
+    minkowski_spacelike_distance_1p1,
     minkowski_tau_1p1,
 )
 
@@ -28,4 +29,15 @@ def test_interval_count_estimator_returns_expected_value() -> None:
         eta_d=0.5,
         d=2,
     ) == pytest.approx(2.0)
+
+
+def test_minkowski_spacelike_distance_returns_correct_value() -> None:
+    assert minkowski_spacelike_distance_1p1((0.0, 0.0), (3.0, 5.0)) == pytest.approx(
+        4.0
+    )
+
+
+def test_minkowski_spacelike_distance_raises_for_non_spacelike_events() -> None:
+    with pytest.raises(ValueError, match="not spacelike-separated"):
+        minkowski_spacelike_distance_1p1((0.0, 0.0), (1.0, 1.0))
 

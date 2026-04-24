@@ -31,6 +31,27 @@ def minkowski_tau_1p1(
     return math.sqrt(max(interval_squared, 0.0))
 
 
+def minkowski_spacelike_distance_1p1(
+    p: ArrayLike,
+    q: ArrayLike,
+    *,
+    atol: float = 1e-12,
+) -> float:
+    """Return invariant 1+1D spatial distance for spacelike-separated events."""
+
+    p_event = np.asarray(p, dtype=float)
+    q_event = np.asarray(q, dtype=float)
+    if p_event.shape != (2,) or q_event.shape != (2,):
+        raise ValueError("p and q must each have shape (2,), representing (t, x)")
+
+    dt = float(q_event[0] - p_event[0])
+    dx = float(q_event[1] - p_event[1])
+    distance_squared = dx * dx - dt * dt
+    if distance_squared <= atol:
+        raise ValueError("events are not spacelike-separated")
+    return math.sqrt(distance_squared)
+
+
 def causal_diamond_volume_1p1(T: float) -> float:
     """Return the 1+1D continuum volume of a causal diamond of duration ``T``."""
 
@@ -62,4 +83,3 @@ def estimate_tau_from_interval_count(
 
     volume = float(count) / rho
     return (volume / eta_d) ** (1.0 / float(d))
-

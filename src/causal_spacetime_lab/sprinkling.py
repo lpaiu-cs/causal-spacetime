@@ -36,3 +36,21 @@ def sprinkle_1p1_causal_diamond(
     x = 0.5 * (u - v)
     return np.column_stack((t, x)).astype(np.float64, copy=False)
 
+
+def sprinkle_1p1_forward_cone(
+    n: int,
+    T: float,
+    seed: int | np.random.Generator | None = None,
+) -> NDArray[np.float64]:
+    """Sample events uniformly in ``0 <= t <= T`` and ``abs(x) <= t``."""
+
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    if T <= 0:
+        raise ValueError("T must be positive")
+
+    rng = seed if isinstance(seed, np.random.Generator) else np.random.default_rng(seed)
+    t = T * np.sqrt(rng.uniform(0.0, 1.0, size=n))
+    x = rng.uniform(-t, t)
+    return np.column_stack((t, x)).astype(np.float64, copy=False)
+
