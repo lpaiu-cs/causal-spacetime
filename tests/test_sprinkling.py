@@ -6,6 +6,7 @@ import pytest
 from causal_spacetime_lab.sprinkling import (
     sprinkle_1p1_causal_diamond,
     sprinkle_1p1_forward_cone,
+    sprinkle_minkowski_causal_diamond,
 )
 
 
@@ -38,3 +39,17 @@ def test_sprinkled_events_satisfy_forward_cone_condition() -> None:
     assert np.all(t <= T)
     assert np.all(np.abs(x) <= t + 1e-12)
 
+
+def test_generalized_sprinkling_shape_and_diamond_condition() -> None:
+    T = 2.0
+    events = sprinkle_minkowski_causal_diamond(
+        500,
+        spacetime_dim=4,
+        T=T,
+        seed=23,
+    )
+
+    assert events.shape == (500, 4)
+    t = events[:, 0]
+    spatial_norm = np.linalg.norm(events[:, 1:], axis=1)
+    assert np.all(spatial_norm <= T / 2.0 - np.abs(t) + 1e-12)

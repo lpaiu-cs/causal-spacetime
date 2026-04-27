@@ -103,3 +103,55 @@ def longest_chain_length(
                 best_ending_at[successor] = next_length
 
     return int(best_ending_at[end_index])
+
+
+def longest_chain_indices(
+    C: ArrayLike,
+    start: int,
+    end: int,
+    event_times: ArrayLike | None = None,
+) -> NDArray[np.int_]:
+    """Return one longest causal chain from ``start`` to ``end``.
+
+    The returned chain includes both endpoints. If no chain exists, an empty
+    array is returned.
+    """
+
+    causal_matrix = _as_square_bool_matrix(C)
+    n = causal_matrix.shape[0]
+    if n == 0:
+        return np.empty(0, dtype=int)
+
+    start_index = _validate_index(start, n, "start")
+    end_index = _validate_index(end, n, "end")
+    if start_index == end_index:
+        return np.asarray([start_index], dtype=int)
+
+    order = _order_from_times(event_times, causal_matrix)
+    best_ending_at = np.zeros(n, dtype=int)
+    predecessor = np.full(n, -1, dtype=int)
+    best_ending_at[start_index] = 1
+
+    for node in order:
+        if best_ending_at[node] == 0:
+            continue
+        next_length = best_ending_at[node] + 1
+        for successor in np.flatnonzero(causal_matrix[node]):
+            if next_length > best_ending_at[successor]:
+                best_ending_at[successor] = next_length
+                predecessor[successor] = node
+
+    if best_ending_at[end_index] == 0:
+        return np.empty(0, dtype=int)
+
+    chain: list[int] = []
+    node = end_index
+    while node != -1:
+        chain.append(int(node))
+        if node == start_index:
+            break
+        node = int(predecessor[node])
+
+    if chain[-1] != start_index:
+        return np.empty(0, dtype=int)
+    return np.asarray(chain[::-1], dtype=int)

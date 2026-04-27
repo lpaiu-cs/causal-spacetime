@@ -8,9 +8,33 @@ from numpy.typing import ArrayLike, NDArray
 
 def _as_event_array(events: ArrayLike) -> NDArray[np.float64]:
     array = np.asarray(events, dtype=float)
-    if array.ndim != 2 or array.shape[1] != 2:
-        raise ValueError("events must have shape (n, 2), with columns (t, x)")
+    if array.ndim != 2 or array.shape[1] < 2:
+        raise ValueError("events must have shape (n, D), D >= 2")
     return array
+
+
+def causal_matrix_minkowski(
+    events: ArrayLike,
+    *,
+    atol: float = 1e-12,
+) -> NDArray[np.bool_]:
+    """Return the Minkowski causal precedence matrix for events ``(t, x...)``.
+
+    ``C[i, j]`` is true iff event ``i`` causally precedes event ``j``:
+
+    ``dt > 0`` and ``dt^2 >= ||dx_vec||^2``.
+    """
+
+    event_array = _as_event_array(events)
+    t = event_array[:, 0]
+
+    dt = t[None, :] - t[:, None]
+    spatial_distance_squared = np.zeros_like(dt)
+    for axis in range(1, event_array.shape[1]):
+        dx = event_array[None, :, axis] - event_array[:, None, axis]
+        spatial_distance_squared += dx * dx
+    interval_squared = dt * dt - spatial_distance_squared
+    return (dt > 0.0) & (interval_squared >= -atol)
 
 
 def causal_matrix_1p1(
@@ -18,19 +42,9 @@ def causal_matrix_1p1(
     *,
     atol: float = 1e-12,
 ) -> NDArray[np.bool_]:
-    """Return the 1+1D causal precedence matrix for events ``(t, x)``.
+    """Return the 1+1D causal precedence matrix for events ``(t, x)``."""
 
-    ``C[i, j]`` is true iff event ``i`` causally precedes event ``j``:
-
-    ``dt > 0`` and ``dt^2 >= dx^2``.
-    """
-
-    event_array = _as_event_array(events)
-    t = event_array[:, 0]
-    x = event_array[:, 1]
-
-    dt = t[None, :] - t[:, None]
-    dx = x[None, :] - x[:, None]
-    interval_squared = dt * dt - dx * dx
-    return (dt > 0.0) & (interval_squared >= -atol)
-
+    event_array = np.asarray(events, dtype=float)
+    if event_array.ndim != 2 or event_array.shape[1] != 2:
+        raise ValueError("events must have shape (n, 2), with columns (t, x)")
+    return causal_matrix_minkowski(event_array, atol=atol)
