@@ -13,6 +13,10 @@ A2. Local finiteness gives discrete interval cardinalities.
 
 A3. Counting measure supplies volume-like information.
 
+A3a. Metric-scale reconstruction depends on a supplied measure, density, or
+equivalent volume structure; causal order alone leaves conformal scale
+underdetermined.
+
 A4. Observer chains allow operational time and space decomposition.
 
 A4a. Signed spatial coordinates require orientation or reference structure
@@ -32,6 +36,10 @@ compatibility or equivalent structure is required.
 C1. Causal order determines conformal structure in suitable continuum limits.
 
 C2. Causal order plus counting measure reconstructs volume-scaled geometry.
+
+C2a. Positive conformal rescalings should preserve causal order while changing
+physical volume and clock scale, so conformal factors require additional
+measure information.
 
 C3. Timelike duration is recoverable from chain and interval structure under
 appropriate density assumptions.

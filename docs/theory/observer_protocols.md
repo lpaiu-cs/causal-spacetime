@@ -100,3 +100,7 @@ Milestone 8 applies the observer-chain radar protocol to a uniformly
 accelerated Rindler observer in flat spacetime. Missing `tau_minus` or
 `tau_plus` is treated as observer-protocol reconstruction inaccessibility, with
 finite chain coverage reported separately from ideal wedge accessibility.
+
+Milestone 9 clarifies that observer protocols do not remove conformal
+ambiguity by themselves. Clock rates and volume scale depend on supplied
+measure or conformal-factor information.

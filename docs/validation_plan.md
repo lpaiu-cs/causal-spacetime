@@ -206,3 +206,26 @@ resolution increases.
 
 This is a controlled flat-spacetime horizon analogue, not a black hole
 simulation and not a proof that causal order alone derives horizons.
+
+## Milestone 9: Conformal Ambiguity
+
+The conformal ambiguity experiment validates an important limitation. Positive
+conformal rescaling preserves causal order, so causal-order statistics such as
+relation fraction and Myrheim-Meyer dimension do not fix metric scale or
+physical volume.
+
+The constant-scale check uses the same causal matrix while changing:
+
+```text
+proper time by a factor alpha
+volume by a factor alpha^2
+```
+
+The weighted conformal volume experiment then supplies local `Omega^2` measure
+weights and compares weighted interval-volume estimates with unweighted
+coordinate-volume estimates. This tests measure-dependent reconstruction in a
+controlled 1+1D conformal toy model.
+
+The validation should be read as a limitation statement: causal order determines
+light-cone/conformal structure, while density or volume measure is additional
+metric-scale structure.

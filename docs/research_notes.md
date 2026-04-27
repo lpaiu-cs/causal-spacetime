@@ -267,6 +267,38 @@ not mistaken for the true Rindler horizon boundary.
 This is a controlled flat-spacetime horizon analogue. It is not a black hole
 simulation and does not prove spacetime emergence.
 
+## Milestone 9: Conformal Ambiguity And Measure Dependence
+
+Milestone 9 demonstrates a limitation of causal order. For any positive
+conformal factor `Omega(t, x)`, the metric
+
+```text
+ds_Omega^2 = Omega(t, x)^2 * (dt^2 - dx^2)
+```
+
+has the same null cones and the same causal order as the flat metric. The
+physical volume element and clock rates change:
+
+```text
+dV_Omega = Omega^2 dt dx
+d tau_Omega = Omega dt
+```
+
+The constant-scale experiment shows that relation fraction and Myrheim-Meyer
+dimension remain unchanged while proper time and volume change under the same
+causal matrix. The weighted-volume experiment then supplies `Omega^2` as
+additional measure information and checks whether weighted interval counts
+recover conformal physical volume better than unweighted coordinate counts.
+
+This supports the reconstruction program by clarifying its assumptions:
+
+```text
+causal/accessibility order -> conformal/light-cone structure
+causal/accessibility order + measure/density -> volume-scaled reconstruction
+```
+
+It does not derive the conformal factor from causal order.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

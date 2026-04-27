@@ -52,3 +52,7 @@ in a known flat spacetime.
 
 It does not prove spacetime emergence. It does not prove black hole physics. It
 does not show that causal order alone derives horizons.
+
+Milestone 9 separately addresses conformal ambiguity. The Rindler causal wedge
+is a light-cone accessibility statement; physical volume and clock scale still
+depend on measure or conformal-factor information.

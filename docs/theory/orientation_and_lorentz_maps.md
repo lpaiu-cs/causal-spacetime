@@ -78,3 +78,7 @@ additional protocol structure.
 Milestone 8 does not extend the Lorentz-map fitting layer. Instead, it uses a
 single accelerated observer protocol to study reconstruction-inaccessibility at
 a Rindler horizon analogue in flat spacetime.
+
+Milestone 9 addresses a different ambiguity: even when causal order and
+observer protocols are fixed, positive conformal rescaling can change physical
+clock scale and volume unless measure information is supplied.

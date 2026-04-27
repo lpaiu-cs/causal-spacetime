@@ -75,3 +75,7 @@ Milestone 8 studies a different consistency layer: horizon-limited
 reconstruction for one accelerated observer protocol. It uses Rindler
 accessibility as a controlled flat-spacetime analogue rather than adding curved
 spacetime dynamics.
+
+Milestone 9 adds a limitation that applies to any atlas layer: transition maps
+and causal order do not by themselves fix conformal volume scale. A measure or
+density field remains additional structure.

@@ -7,6 +7,7 @@ The project explicitly rejects these weak or misleading claims:
 - "finite signal speed alone gives relativity",
 - "the simulations prove spacetime is information",
 - "causal order alone gives absolute metric scale",
+- "causal order alone gives physical volume or the conformal factor",
 - "causal order alone gives a manifold or a unique observer atlas",
 - "causal order alone gives signed spatial coordinates or affine translations",
 - "we simulated a black hole",

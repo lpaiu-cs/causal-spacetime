@@ -21,7 +21,9 @@ repository. Open proof obligations include:
 - atlas compatibility conditions, including overlap, transition-map
   composition, and invariant agreement in continuum limits,
 - a precise theory of observer-dependent reconstruction-inaccessibility
-  boundaries and their relation to horizons in non-flat settings.
+  boundaries and their relation to horizons in non-flat settings,
+- an account of how conformal scale, volume measure, or density is supplied,
+  inferred, or constrained in any proposed physical theory.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

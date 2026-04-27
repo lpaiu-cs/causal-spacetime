@@ -111,6 +111,36 @@ from exp17_inertial_vs_rindler_accessibility import (
 from exp17_inertial_vs_rindler_accessibility import (
     write_outputs as write_exp17_outputs,
 )
+from exp18_conformal_order_ambiguity import (
+    ExperimentConfig as Exp18Config,
+)
+from exp18_conformal_order_ambiguity import (
+    run_experiment as run_exp18,
+)
+from exp18_conformal_order_ambiguity import (
+    save_plot as save_exp18_plot,
+)
+from exp18_conformal_order_ambiguity import (
+    write_outputs as write_exp18_outputs,
+)
+from exp19_weighted_conformal_volume_reconstruction import (
+    ExperimentConfig as Exp19Config,
+)
+from exp19_weighted_conformal_volume_reconstruction import (
+    run_experiment as run_exp19,
+)
+from exp19_weighted_conformal_volume_reconstruction import (
+    save_figures as save_exp19_figures,
+)
+from exp19_weighted_conformal_volume_reconstruction import (
+    write_outputs as write_exp19_outputs,
+)
+from exp20_conformal_volume_exact_sanity import (
+    run_experiment as run_exp20,
+)
+from exp20_conformal_volume_exact_sanity import (
+    write_outputs as write_exp20_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -356,6 +386,42 @@ def run_inertial_vs_rindler_accessibility() -> None:
     print(f"exp17 wrote {data_path} and {figure_path}")
 
 
+def run_conformal_order_ambiguity() -> None:
+    config = Exp18Config(output_dir=Path("outputs"))
+    rows = run_exp18(config)
+    summary_path = write_exp18_outputs(rows, config.output_dir)
+    figure_path = save_exp18_plot(rows, config.output_dir)
+    print(f"exp18 wrote {summary_path} and {figure_path}")
+
+
+def run_weighted_conformal_volume_reconstruction() -> None:
+    config = Exp19Config(
+        T=2.0,
+        n_values=(600,),
+        repetitions=2,
+        pairs_per_repetition=100,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    pair_rows, summary_rows = run_exp19(config)
+    pair_path, summary_path = write_exp19_outputs(
+        pair_rows,
+        summary_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp19_figures(pair_rows, summary_rows, config.output_dir)
+    print(
+        "exp19 wrote "
+        f"{pair_path}, {summary_path}, and {len(figure_paths)} figures"
+    )
+
+
+def run_conformal_volume_exact_sanity() -> None:
+    rows = run_exp20()
+    output_path = write_exp20_outputs(rows)
+    print(f"exp20 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -371,6 +437,9 @@ def main() -> None:
     run_exact_poincare_map_sanity()
     run_rindler_horizon_reconstruction()
     run_inertial_vs_rindler_accessibility()
+    run_conformal_order_ambiguity()
+    run_weighted_conformal_volume_reconstruction()
+    run_conformal_volume_exact_sanity()
 
 
 if __name__ == "__main__":

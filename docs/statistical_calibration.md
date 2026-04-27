@@ -126,3 +126,11 @@ error sources are observer clock resolution, finite chain duration, and the
 observer-dependent Rindler wedge, rather than interval-count sampling noise.
 The experiment therefore reports confusion rates and radar-coordinate errors
 relative to finite-chain coverage.
+
+## Relation To Conformal Measure Dependence
+
+Milestone 9 separates counting noise from measure ambiguity. Uniform coordinate
+sprinkling plus unweighted counts estimates coordinate volume. Conformal
+physical volume requires additional `Omega^2` weights or an equivalent density
+field. The weighted estimator can reduce bias when the supplied measure matches
+the validation profile, but the measure is not inferred from causal order.

@@ -15,6 +15,7 @@ primitive information-accessibility
   -> coordinate maps between observer protocols
   -> overlapping chart atlases
   -> horizon-limited reconstruction
+  -> measure-dependent metric-scale reconstruction
 ```
 
 The simulations reproduce and stress-test pieces of this program in known
@@ -47,6 +48,11 @@ Milestone 8 adds a Rindler horizon analogue in flat spacetime. A supplied
 accelerated observer chain and clock labels define a two-way radar protocol.
 The experiment tests whether reconstruction-inaccessibility tracks finite-chain
 coverage and the observer-dependent Rindler wedge.
+
+Milestone 9 adds an explicit conformal ambiguity test. Positive conformal
+rescaling preserves causal order while changing physical volume and clock
+scale. Weighted reconstruction uses supplied measure information to estimate
+conformal physical volume.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

@@ -64,6 +64,27 @@ V_hat = count / rho
 Density is additional scale information. It is not determined by causal order
 alone in the current simulations.
 
+## Conformal Ambiguity
+
+Positive conformal rescaling preserves causal order:
+
+```text
+ds_Omega^2 = Omega(t, x)^2 ds^2
+```
+
+with `Omega > 0`. The light cones are unchanged, but physical volume and
+proper-time scale generally change. This is why causal order by itself
+determines conformal/light-cone structure rather than the full metric scale.
+
+In 1+1D conformal validation models:
+
+```text
+dV_Omega = Omega^2 dt dx
+d tau_Omega = Omega dt
+```
+
+The conformal factor or equivalent measure is additional structure.
+
 ## Observer Chain
 
 An observer chain is an ordered subset of events interpreted as an observer's

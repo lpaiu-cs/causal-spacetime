@@ -34,6 +34,8 @@ for 1+1D special-relativistic and causal-set reconstruction experiments:
   affine Lorentz/Poincare transition maps,
 - test Rindler horizon reconstruction-inaccessibility as a controlled
   flat-spacetime horizon analogue,
+- demonstrate conformal ambiguity and measure-dependent reconstruction in
+  controlled 1+1D conformal toy models,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -188,6 +190,25 @@ It writes:
 - `outputs/figures/rindler_false_positive_negative_vs_ticks.png`
 - `outputs/figures/inertial_vs_rindler_accessibility.png`
 
+Milestone 9 adds conformal ambiguity and measure-dependent reconstruction:
+
+```bash
+python experiments/exp18_conformal_order_ambiguity.py
+python experiments/exp19_weighted_conformal_volume_reconstruction.py
+python experiments/exp20_conformal_volume_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/conformal_order_ambiguity_summary.csv`
+- `outputs/data/weighted_conformal_volume_pairs.csv`
+- `outputs/data/weighted_conformal_volume_summary.csv`
+- `outputs/data/conformal_volume_exact_sanity.csv`
+- `outputs/figures/conformal_order_ambiguity_scales.png`
+- `outputs/figures/weighted_conformal_volume_scatter.png`
+- `outputs/figures/weighted_conformal_volume_rmse_vs_N.png`
+- `outputs/figures/weighted_conformal_volume_bias_by_profile.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -259,7 +280,8 @@ primitive causal/information-accessibility structure
   + observer protocol
   + orientation/reference protocol
   -> operational time, distance, dimension, coordinate transformations,
-     atlas consistency diagnostics, and horizon-limited reconstruction
+     atlas consistency diagnostics, horizon-limited reconstruction,
+     and measure-dependent metric-scale reconstruction
 ```
 
 The longest chain is also reported as a causal-order observable with a simple
@@ -299,3 +321,7 @@ Milestone 8 uses a Rindler observer in flat 1+1D Minkowski spacetime to test
 reconstruction-inaccessibility. It distinguishes ideal Rindler wedge
 accessibility from finite-chain coverage. This is a controlled horizon analogue,
 not a black hole simulation or a derivation of horizons from causal order alone.
+Milestone 9 makes the conformal ambiguity explicit. Positive conformal
+rescalings preserve causal order while changing physical volume and clock
+scale. Weighted conformal volume reconstruction uses supplied measure weights;
+the conformal factor is not derived from causal order alone.
