@@ -43,6 +43,11 @@ repository. Open proof obligations include:
   stable spatial distance orders,
 - convergence criteria for radar-time bins as finite observer tick resolution
   increases,
+- conditions under which cross-slice identification rules are supplied,
+  calibrated, or dynamically constrained,
+- criteria for when transport-relative same-position, same-direction,
+  velocity, constant velocity, and spatial-evolution statements are stable,
+- stability bounds for noisy or incomplete anchor and persistence structure,
 - a clear separation between primitive order structures and effective metric
   representation-layer objects such as metric tensors and curvature values.
 

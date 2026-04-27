@@ -134,3 +134,9 @@ Milestone 14 adds a simultaneity protocol to this observer layer. Radar-time
 ranks and bins are reconstructed from tick brackets, then spatial
 distance-order comparisons are restricted to same-slice pairs. This keeps
 spatial order observer-relative and slice-protocol dependent.
+
+Milestone 15 adds cross-slice identification protocols. Observer chains and
+same-slice distance order do not define same position, same direction, or
+velocity across slices. Anchors, persistent objects, or calibration rules are
+additional observer-protocol structure that can make such statements
+transport-relative.

@@ -85,3 +85,8 @@ Milestone 14 adds radar-time slice selection for observer-relative spatial
 order. In horizon-limited settings, the same distinction would matter: first
 identify which events are accessible, then define observer-relative slices
 inside the accessible region before making spatial comparisons.
+
+Milestone 15 adds a separate cross-slice identification issue. Even inside an
+accessible Rindler region, same-position, same-direction, velocity, and spatial
+evolution statements require transport, anchors, persistence, calibration, or
+dynamics. Horizon accessibility does not by itself supply those structures.

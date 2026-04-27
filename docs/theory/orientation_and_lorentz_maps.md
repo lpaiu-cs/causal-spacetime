@@ -111,3 +111,8 @@ Milestone 14 restricts observer-derived spatial comparisons to same radar-time
 slices. The oriented coordinates still provide a validation and constraint
 source, but spatial order is no longer treated as a comparison across arbitrary
 time-separated accessible events.
+
+Milestone 15 separates orientation from transport. A signed coordinate within a
+slice does not by itself identify signed coordinates across slices. Cross-slice
+same-direction or velocity statements require additional transport, anchors,
+persistence, calibration, or dynamics.

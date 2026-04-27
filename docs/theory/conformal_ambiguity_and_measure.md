@@ -110,3 +110,7 @@ Milestone 14 adds another separation: spatial distance order requires an
 observer-relative slice-selection protocol. This is independent of conformal
 scale; even a clean same-slice order does not determine physical volume or
 clock scale without measure information.
+
+Milestone 15 adds cross-slice transport as a further representation-layer
+input. Transport, anchors, and persistence do not remove conformal ambiguity by
+themselves; they define protocol-relative identifications across slices.

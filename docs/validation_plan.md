@@ -349,3 +349,13 @@ slice-width sensitivity
 This keeps spatial distance explicitly observer-relative and slice-protocol
 dependent. It does not claim that spatial distance is observer-independent or
 that causal order alone determines metric geometry.
+
+## Milestone 15: Cross-Slice Identification And Transport
+
+Milestone 15 validates the statement that cross-slice predicates are undefined
+without additional identification structure. The experiments check that
+same-slice constraints decompose into slice-local components, that slice-local
+embeddings can be validated independently, that random per-slice gauges
+preserve same-slice order while changing cross-slice judgments, that supplied
+anchors constrain transport, and that noisy transport destabilizes derived
+spatial-evolution statements.

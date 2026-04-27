@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 11-14 make the theory-facing framing explicitly order-first:
+Milestones 11-15 make the theory-facing framing explicitly order-first:
 
 ```text
 causal order -> primitive temporal order
@@ -62,6 +62,8 @@ reconstruction experiments:
   for effective metric representations,
 - test simultaneity-sliced observer-relative distance order using radar-time
   bins derived from causal order and observer tick order,
+- test protocol-dependent cross-slice identification, transport, anchors, and
+  persistence as representation-layer structure,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -370,6 +372,42 @@ It writes:
 - `outputs/figures/slice_width_pair_count.png`
 - `outputs/figures/slice_width_distance_order_error.png`
 
+Milestone 15 adds protocol-dependent cross-slice identification, transport,
+anchor, and persistence diagnostics:
+
+```bash
+python experiments/exp46_cross_slice_predicate_undefined.py
+python experiments/exp47_sliced_constraint_graph_decomposition.py
+python experiments/exp48_slice_local_embedding_validation.py
+python experiments/exp49_slice_gauge_dependence.py
+python experiments/exp50_anchor_constrained_transport.py
+python experiments/exp51_persistence_dependent_velocity.py
+python experiments/exp52_noisy_transport_sensitivity.py
+python experiments/exp53_cross_slice_transport_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/cross_slice_predicate_undefined.csv`
+- `outputs/data/sliced_constraint_graph_decomposition.csv`
+- `outputs/data/slice_local_embedding_validation.csv`
+- `outputs/data/slice_gauge_dependence.csv`
+- `outputs/data/anchor_constrained_transport.csv`
+- `outputs/data/persistence_dependent_velocity.csv`
+- `outputs/data/noisy_transport_sensitivity.csv`
+- `outputs/data/cross_slice_transport_exact_sanity.csv`
+- `outputs/figures/sliced_constraint_components_vs_bin_width.png`
+- `outputs/figures/sliced_constraint_largest_component_vs_bin_width.png`
+- `outputs/figures/slice_local_order_error_vs_ticks.png`
+- `outputs/figures/slice_local_rmse_vs_ticks.png`
+- `outputs/figures/slice_gauge_same_slice_vs_global_error.png`
+- `outputs/figures/slice_gauge_cross_slice_judgments.png`
+- `outputs/figures/anchor_transport_global_rmse.png`
+- `outputs/figures/anchor_transport_distance_order_error.png`
+- `outputs/figures/persistence_velocity_by_transport.png`
+- `outputs/figures/noisy_transport_global_rmse.png`
+- `outputs/figures/noisy_transport_velocity_instability.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -520,3 +558,11 @@ observer tick order. Spatial distance-order comparisons are then restricted to
 observer-relative radar-time bins. This avoids treating all accessible events
 as if they belonged to one spatial slice and keeps spatial distance explicitly
 observer-relative and slice-protocol dependent.
+Milestone 15 adds the cross-slice identification layer. Without a transport,
+anchor, persistence, or calibration rule, same-position, same-direction,
+velocity, constant-velocity, and spatial-evolution questions are undefined
+rather than false. When a transport rule is supplied, those become
+transport-relative statements. Anchor and persistence experiments show how
+additional protocol structure can constrain the per-slice translation,
+reflection, orientation, and scale freedoms, while noisy transport degrades the
+derived cross-slice quantities.

@@ -22,6 +22,7 @@ primitive information-accessibility
   -> ordinal embedding and effective metric representation diagnostics
   -> held-out validation, null-model baselines, and representation stability
   -> simultaneity-sliced observer-relative distance order
+  -> protocol-dependent cross-slice identification and transport
 ```
 
 The simulations reproduce and stress-test pieces of this program in known
@@ -93,6 +94,13 @@ bins from observer tick brackets and restricts spatial distance-order
 comparisons to same-slice pairs. This makes the slice-selection protocol
 explicit rather than comparing all accessible events as if they shared one
 spatial simultaneity slice.
+
+Milestone 15 adds cross-slice identification as a separate protocol layer.
+Same-slice distance order does not define same-position, same-direction,
+velocity, constant velocity, or spatial evolution across observer-time slices.
+Those statements are undefined without transport, anchors, object persistence,
+or calibration. When such structure is supplied, the resulting statements are
+transport-relative rather than absolute.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

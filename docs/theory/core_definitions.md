@@ -277,3 +277,25 @@ radar_time_rank = predecessor_tick_position + successor_tick_position
 
 Radar-time bins define same-slice target sets. Spatial comparisons are then
 made only among pairs whose endpoints lie in the same nonnegative slice.
+
+## Cross-Slice Identification
+
+Cross-slice identification is additional structure that relates spatial
+representations in different observer-time slices. It may be supplied by a
+transport rule, anchors, persistent object identities, calibration processes, or
+dynamics. Without it, same-position, same-direction, velocity, and
+spatial-evolution predicates are undefined.
+
+## Transport Rule
+
+A transport rule is a protocol-dependent map between slice-local spatial
+representations. In the Milestone 15 diagnostics this is modeled by per-slice
+affine/reflection transformations. The rule is not absolute and is not derived
+from causal order alone.
+
+## Anchor-Constrained Transport
+
+Anchor-constrained transport uses supplied persistent anchor correspondences to
+restrict per-slice translation, reflection, orientation, and scale freedoms.
+Anchor positions are protocol structure for controlled validation, not
+primitive consequences of same-slice distance order.

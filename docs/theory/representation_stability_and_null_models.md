@@ -94,3 +94,9 @@ in all-event observer-derived constraints was partly due to mixing events from
 different observer-time slices. Null-model comparisons remain important: a
 sliced observer-derived order should still be compared against shuffled and
 random constraints before treating it as a useful representation source.
+
+Milestone 15 adds another source of representation stability to test:
+cross-slice transport. Null and gauge baselines now include independent
+per-slice affine/reflection changes that preserve same-slice order but alter
+cross-slice judgments. Anchor-constrained transport is a supplied protocol, not
+a null-model-free derivation.

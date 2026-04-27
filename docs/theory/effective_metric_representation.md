@@ -111,3 +111,9 @@ distance comparisons should be made within an observer-selected radar-time
 slice. This avoids treating time-separated events as if their pair separations
 were purely spatial. Same-slice distance order is still weaker than metric
 distance and remains dependent on the observer and slice protocol.
+
+Milestone 15 clarifies why a single global coordinate across time is an
+additional representation choice. Slice-local embeddings can preserve
+same-slice distance order while independent per-slice gauges change global
+alignment, same-position judgments, and velocity estimates. Transport and
+anchors are therefore part of the effective representation layer.

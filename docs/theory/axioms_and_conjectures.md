@@ -93,6 +93,14 @@ slice-selection protocol. Radar-time bins derived from causal order and
 observer tick order provide one controlled finite protocol for same-slice
 spatial comparisons.
 
+C5j. Cross-slice predicates such as same-position, same-direction, velocity,
+constant velocity, and spatial evolution are undefined without a transport,
+anchor, persistence, calibration, or dynamics rule.
+
+C5k. Given a supplied transport or anchor protocol, cross-slice predicates
+become protocol-relative and should be tested for stability under finite
+sampling and noisy transport information.
+
 C5a. Given a suitable observer chain with clock labels, radar time and radar
 distance can be approximated from causal accessibility relations, with
 resolution controlled by clock tick density and accessibility coverage.

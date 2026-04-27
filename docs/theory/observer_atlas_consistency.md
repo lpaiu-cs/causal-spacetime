@@ -109,3 +109,8 @@ Milestone 14 emphasizes that spatial distance order inside each chart requires
 a slice-selection rule. Atlas consistency is stronger than same-slice order,
 but the same conceptual separation applies: observer protocol, simultaneity
 protocol, and metric transition maps are distinct representation layers.
+
+Milestone 15 adds transport as another atlas-level assumption. Comparing
+spatial structures across chart time slices requires cross-slice
+identification. Different transport choices can preserve slice-local order
+while changing global alignment and velocity judgments.

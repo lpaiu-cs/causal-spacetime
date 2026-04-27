@@ -66,3 +66,11 @@ representation.
 The milestone does not prove spacetime emergence, derive space, make spatial
 distance observer-independent, or show that causal order alone gives metric
 geometry.
+
+## Cross-Slice Limitation
+
+Milestone 15 adds the next separation. Same-slice distance order is not a
+global spatial coordinate through time. Without a transport, anchor,
+persistence, or calibration rule, cross-slice predicates such as same position,
+same direction, velocity, constant velocity, and spatial evolution are
+undefined. With a chosen rule, they become transport-relative statements.

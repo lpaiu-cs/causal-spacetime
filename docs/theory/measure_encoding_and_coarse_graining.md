@@ -92,3 +92,8 @@ Milestone 14 adds simultaneity-sliced distance order. It addresses which
 comparisons should count as spatial for a chosen observer protocol, while
 measure encoding addresses how counting statistics and density represent
 volume scale. Both are additional structure beyond causal order alone.
+
+Milestone 15 adds transport and persistence to the representation layer. These
+structures identify positions, directions, or objects across slices; they are
+separate from counting measure and must be supplied, calibrated, or constrained
+by dynamics.

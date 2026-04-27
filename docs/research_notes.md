@@ -414,6 +414,19 @@ This avoids mixing events from different observer times when constructing
 spatial distance-order constraints. Hidden coordinates are used only for
 validation, not for choosing slices or generating observer-derived constraints.
 
+## Milestone 15: Cross-Slice Identification And Transport
+
+Milestone 15 separates slice-local spatial order from cross-slice predicates.
+Without transport, anchors, persistence, calibration, or dynamics, statements
+about same position, same direction, velocity, constant velocity, or spatial
+evolution are undefined. With a chosen protocol, those statements become
+transport-relative.
+
+Anchor and persistence experiments test how supplied structure constrains
+independent per-slice translation, reflection, orientation, and scale freedom.
+Noisy-transport diagnostics show that derived cross-slice quantities degrade
+when the supplied protocol is uncertain.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

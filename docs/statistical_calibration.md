@@ -196,3 +196,11 @@ comparisons; wide bins increase pair counts but may mix observer-time slices.
 The relevant uncertainties are finite tick resolution, finite event sampling,
 and the chosen bin width. These are representation diagnostics, not evidence
 that spatial distance is observer-independent or primitive.
+
+## Relation To Cross-Slice Transport
+
+Milestone 15 adds a transport-error layer. Cross-slice quantities are not
+defined by same-slice order alone; they require supplied transport, anchors,
+persistence, calibration, or dynamics. Noisy anchor and transport diagnostics
+therefore belong to the representation layer, not to bare causal-order
+statistics.

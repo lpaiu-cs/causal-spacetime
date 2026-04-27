@@ -399,6 +399,87 @@ from exp45_spatial_slice_exact_sanity import (
 from exp45_spatial_slice_exact_sanity import (
     write_outputs as write_exp45_outputs,
 )
+from exp46_cross_slice_predicate_undefined import (
+    run_experiment as run_exp46,
+)
+from exp46_cross_slice_predicate_undefined import (
+    write_outputs as write_exp46_outputs,
+)
+from exp47_sliced_constraint_graph_decomposition import (
+    ExperimentConfig as Exp47Config,
+)
+from exp47_sliced_constraint_graph_decomposition import (
+    run_experiment as run_exp47,
+)
+from exp47_sliced_constraint_graph_decomposition import (
+    save_figures as save_exp47_figures,
+)
+from exp47_sliced_constraint_graph_decomposition import (
+    write_outputs as write_exp47_outputs,
+)
+from exp48_slice_local_embedding_validation import (
+    ExperimentConfig as Exp48Config,
+)
+from exp48_slice_local_embedding_validation import (
+    run_experiment as run_exp48,
+)
+from exp48_slice_local_embedding_validation import (
+    save_figures as save_exp48_figures,
+)
+from exp48_slice_local_embedding_validation import (
+    write_outputs as write_exp48_outputs,
+)
+from exp49_slice_gauge_dependence import (
+    ExperimentConfig as Exp49Config,
+)
+from exp49_slice_gauge_dependence import (
+    run_experiment as run_exp49,
+)
+from exp49_slice_gauge_dependence import (
+    save_figures as save_exp49_figures,
+)
+from exp49_slice_gauge_dependence import (
+    write_outputs as write_exp49_outputs,
+)
+from exp50_anchor_constrained_transport import (
+    ExperimentConfig as Exp50Config,
+)
+from exp50_anchor_constrained_transport import (
+    run_experiment as run_exp50,
+)
+from exp50_anchor_constrained_transport import (
+    save_figures as save_exp50_figures,
+)
+from exp50_anchor_constrained_transport import (
+    write_outputs as write_exp50_outputs,
+)
+from exp51_persistence_dependent_velocity import (
+    run_experiment as run_exp51,
+)
+from exp51_persistence_dependent_velocity import (
+    save_figure as save_exp51_figure,
+)
+from exp51_persistence_dependent_velocity import (
+    write_outputs as write_exp51_outputs,
+)
+from exp52_noisy_transport_sensitivity import (
+    ExperimentConfig as Exp52Config,
+)
+from exp52_noisy_transport_sensitivity import (
+    run_experiment as run_exp52,
+)
+from exp52_noisy_transport_sensitivity import (
+    save_figures as save_exp52_figures,
+)
+from exp52_noisy_transport_sensitivity import (
+    write_outputs as write_exp52_outputs,
+)
+from exp53_cross_slice_transport_exact_sanity import (
+    run_experiment as run_exp53,
+)
+from exp53_cross_slice_transport_exact_sanity import (
+    write_outputs as write_exp53_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1041,6 +1122,122 @@ def run_spatial_slice_exact_sanity() -> None:
     print(f"exp45 wrote {output_path}")
 
 
+def run_cross_slice_predicate_undefined() -> None:
+    rows = run_exp46()
+    output_path = write_exp46_outputs(
+        rows,
+        Path("outputs/data/cross_slice_predicate_undefined.csv"),
+    )
+    print(f"exp46 wrote {output_path}")
+
+
+def run_sliced_constraint_graph_decomposition() -> None:
+    config = Exp47Config(
+        T=2.0,
+        n_events=300,
+        tick_count=64,
+        bin_width_values=(2, 4),
+        constraint_count=1000,
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp47(config)
+    data_path = write_exp47_outputs(rows, config.output_dir)
+    figure_paths = save_exp47_figures(rows, config.output_dir)
+    print(f"exp47 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_slice_local_embedding_validation() -> None:
+    config = Exp48Config(
+        T=2.0,
+        n_values=(300,),
+        tick_values=(64,),
+        bin_width_values=(2,),
+        constraint_count=1000,
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        steps=300,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp48(config)
+    data_path = write_exp48_outputs(rows, config.output_dir)
+    figure_paths = save_exp48_figures(rows, config.output_dir)
+    print(f"exp48 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_slice_gauge_dependence() -> None:
+    config = Exp49Config(
+        T=2.0,
+        n_events=400,
+        tick_count=64,
+        bin_width=4,
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp49(config)
+    data_path = write_exp49_outputs(rows, config.output_dir)
+    figure_paths = save_exp49_figures(rows, config.output_dir)
+    print(f"exp49 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_anchor_constrained_transport() -> None:
+    config = Exp50Config(
+        T=2.0,
+        n_events=400,
+        tick_count=64,
+        bin_width=4,
+        constraint_count=1000,
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        steps=300,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp50(config)
+    data_path = write_exp50_outputs(rows, config.output_dir)
+    figure_paths = save_exp50_figures(rows, config.output_dir)
+    print(f"exp50 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_persistence_dependent_velocity() -> None:
+    rows = run_exp51()
+    data_path = write_exp51_outputs(rows, Path("outputs"))
+    figure_path = save_exp51_figure(rows, Path("outputs"))
+    print(f"exp51 wrote {data_path} and {figure_path}")
+
+
+def run_noisy_transport_sensitivity() -> None:
+    config = Exp52Config(
+        T=2.0,
+        n_events=400,
+        tick_count=64,
+        bin_width=4,
+        anchor_positions=(-0.35, 0.0, 0.35),
+        noise_levels=(0.0, 0.05),
+        repetitions=2,
+        seed=0,
+        beacon_separation=0.15,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp52(config)
+    data_path = write_exp52_outputs(rows, config.output_dir)
+    figure_paths = save_exp52_figures(rows, config.output_dir)
+    print(f"exp52 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_cross_slice_transport_exact_sanity() -> None:
+    rows = run_exp53()
+    output_path = write_exp53_outputs(rows)
+    print(f"exp53 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -1084,6 +1281,14 @@ def main() -> None:
     run_sliced_observer_order_null_baseline()
     run_slice_width_sensitivity()
     run_spatial_slice_exact_sanity()
+    run_cross_slice_predicate_undefined()
+    run_sliced_constraint_graph_decomposition()
+    run_slice_local_embedding_validation()
+    run_slice_gauge_dependence()
+    run_anchor_constrained_transport()
+    run_persistence_dependent_velocity()
+    run_noisy_transport_sensitivity()
+    run_cross_slice_transport_exact_sanity()
 
 
 if __name__ == "__main__":

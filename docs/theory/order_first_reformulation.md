@@ -167,3 +167,8 @@ Milestone 14 adds the missing slice-selection layer for spatial order.
 Observer-relative distance order is evaluated within radar-time bins derived
 from causal order and observer tick order. This keeps spatial comparison
 relative to both an observer protocol and a simultaneity protocol.
+
+Milestone 15 adds the cross-slice identification layer. Same-slice order alone
+does not define same position, same direction, velocity, constant velocity, or
+spatial evolution. These become transport-relative statements only after a
+transport, anchor, persistence, calibration, or dynamics protocol is supplied.
