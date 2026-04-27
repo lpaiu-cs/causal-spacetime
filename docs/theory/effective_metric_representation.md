@@ -87,3 +87,27 @@ when metric geometry can act as a low-complexity compression of order data.
 They do not show that distance order alone gives full metric geometry, derive
 meters, prove spacetime emergence, or imply that all order structures are
 embeddable.
+
+## Held-Out And Null-Model Stability
+
+Milestone 13 adds the next diagnostic layer. A finite ordinal embedding is more
+informative when it:
+
+- preserves held-out order constraints not used during fitting,
+- outperforms shuffled-side and random null constraints,
+- remains stable across independent subsets of the same structured constraints,
+- degrades in controlled ways under flipped or noisy comparisons,
+- shows clearer low-dimensional compression for structured order than for null
+  order.
+
+These tests guard against reading too much into optimizer training loss. They
+still remain finite diagnostics, not proofs that metric geometry is fundamental
+or that all observer-relative distance orders are embeddable.
+
+## Simultaneity-Sliced Order
+
+Milestone 14 adds a domain restriction for observer-derived spatial order:
+distance comparisons should be made within an observer-selected radar-time
+slice. This avoids treating time-separated events as if their pair separations
+were purely spatial. Same-slice distance order is still weaker than metric
+distance and remains dependent on the observer and slice protocol.

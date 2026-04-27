@@ -81,3 +81,14 @@ Milestone 12 studies a different representability condition: whether
 distance-order constraints can be compressed into low-dimensional coordinates.
 Measure stability and ordinal embeddability are complementary requirements for
 an effective metric representation.
+
+Milestone 13 adds stability and null-model checks for that embeddability layer.
+Held-out validation and subset stability help distinguish structured
+low-dimensional order data from optimizer fits to shuffled, random, or noisy
+constraints. These tests complement, but do not replace, measure and density
+assumptions.
+
+Milestone 14 adds simultaneity-sliced distance order. It addresses which
+comparisons should count as spatial for a chosen observer protocol, while
+measure encoding addresses how counting statistics and density represent
+volume scale. Both are additional structure beyond causal order alone.

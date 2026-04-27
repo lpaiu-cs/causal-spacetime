@@ -20,6 +20,8 @@ primitive information-accessibility
   -> measure-dependent metric-scale reconstruction
   -> measure encoding and coarse-graining stability checks
   -> ordinal embedding and effective metric representation diagnostics
+  -> held-out validation, null-model baselines, and representation stability
+  -> simultaneity-sliced observer-relative distance order
 ```
 
 The simulations reproduce and stress-test pieces of this program in known
@@ -80,6 +82,17 @@ constraints can be compressed into a low-dimensional coordinate representation,
 how candidate dimension changes ordinal stress, how noise and incompleteness
 degrade that representation, and whether observer-derived distance order
 supports an effective spatial embedding.
+
+Milestone 13 asks whether these fitted representations are stable and
+nontrivial. It compares structured constraints against shuffled, random, and
+noisy baselines; evaluates held-out order constraints; and checks whether
+independent constraint subsets lead to similar embeddings.
+
+Milestone 14 refines the observer-derived spatial layer. It derives radar-time
+bins from observer tick brackets and restricts spatial distance-order
+comparisons to same-slice pairs. This makes the slice-selection protocol
+explicit rather than comparing all accessible events as if they shared one
+spatial simultaneity slice.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

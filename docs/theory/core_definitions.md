@@ -242,3 +242,38 @@ A reconstruction map is a procedure:
 Examples include proper-time estimates, dimension estimates, radar coordinates,
 oriented coordinates, coordinate maps between observer protocols, and
 exploratory spatial-distance proxies.
+
+## Held-Out Order Validation
+
+Held-out order validation splits finite order constraints into constraints used
+for fitting and constraints used only for evaluation. It asks whether an
+effective metric representation generalizes beyond the comparisons seen by the
+optimizer.
+
+## Null-Model Baseline
+
+A null-model baseline is a deliberately unphysical comparison set such as
+shuffled-side constraints or random quadruplets. Null models test whether
+apparent embedding success reflects structured order data or merely optimizer
+flexibility.
+
+## Embedding Stability
+
+Embedding stability asks whether independent subsets of the same structured
+order data lead to similar low-dimensional representations. The diagnostics in
+this repository use Procrustes-aligned RMSE and distance-order disagreement
+between fitted embeddings. These are finite diagnostics, not representation
+theorems.
+
+## Simultaneity-Sliced Distance Order
+
+Simultaneity-sliced distance order is an observer-relative spatial order
+restricted to events selected by a slice protocol. In Milestone 14, the slice
+protocol is built from radar tick brackets:
+
+```text
+radar_time_rank = predecessor_tick_position + successor_tick_position
+```
+
+Radar-time bins define same-slice target sets. Spatial comparisons are then
+made only among pairs whose endpoints lie in the same nonnegative slice.

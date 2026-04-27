@@ -35,6 +35,14 @@ repository. Open proof obligations include:
   representation exists,
 - convergence and identifiability conditions for ordinal embeddings from
   incomplete or noisy distance-order constraints,
+- generalization and stability criteria showing when fitted representations
+  preserve held-out order constraints better than null-model baselines,
+- principled null models for distinguishing structured order data from
+  optimizer artifacts,
+- conditions under which observer-relative slice-selection protocols produce
+  stable spatial distance orders,
+- convergence criteria for radar-time bins as finite observer tick resolution
+  increases,
 - a clear separation between primitive order structures and effective metric
   representation-layer objects such as metric tensors and curvature values.
 

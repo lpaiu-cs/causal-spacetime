@@ -291,6 +291,114 @@ from exp35_ordinal_embedding_exact_sanity import (
 from exp35_ordinal_embedding_exact_sanity import (
     write_outputs as write_exp35_outputs,
 )
+from exp36_heldout_ordinal_embedding_validation import (
+    ExperimentConfig as Exp36Config,
+)
+from exp36_heldout_ordinal_embedding_validation import (
+    run_experiment as run_exp36,
+)
+from exp36_heldout_ordinal_embedding_validation import (
+    save_figures as save_exp36_figures,
+)
+from exp36_heldout_ordinal_embedding_validation import (
+    write_outputs as write_exp36_outputs,
+)
+from exp37_embedding_stability_under_subsampling import (
+    ExperimentConfig as Exp37Config,
+)
+from exp37_embedding_stability_under_subsampling import (
+    run_experiment as run_exp37,
+)
+from exp37_embedding_stability_under_subsampling import (
+    save_figures as save_exp37_figures,
+)
+from exp37_embedding_stability_under_subsampling import (
+    write_outputs as write_exp37_outputs,
+)
+from exp38_observer_order_null_baseline import (
+    ExperimentConfig as Exp38Config,
+)
+from exp38_observer_order_null_baseline import (
+    run_experiment as run_exp38,
+)
+from exp38_observer_order_null_baseline import (
+    save_figures as save_exp38_figures,
+)
+from exp38_observer_order_null_baseline import (
+    write_outputs as write_exp38_outputs,
+)
+from exp39_effective_metric_complexity_curve import (
+    ExperimentConfig as Exp39Config,
+)
+from exp39_effective_metric_complexity_curve import (
+    run_experiment as run_exp39,
+)
+from exp39_effective_metric_complexity_curve import (
+    save_figures as save_exp39_figures,
+)
+from exp39_effective_metric_complexity_curve import (
+    write_outputs as write_exp39_outputs,
+)
+from exp40_representation_stability_exact_sanity import (
+    run_experiment as run_exp40,
+)
+from exp40_representation_stability_exact_sanity import (
+    write_outputs as write_exp40_outputs,
+)
+from exp41_radar_time_order_from_brackets import (
+    ExperimentConfig as Exp41Config,
+)
+from exp41_radar_time_order_from_brackets import (
+    run_experiment as run_exp41,
+)
+from exp41_radar_time_order_from_brackets import (
+    save_figure as save_exp41_figure,
+)
+from exp41_radar_time_order_from_brackets import (
+    write_outputs as write_exp41_outputs,
+)
+from exp42_same_slice_distance_order_preservation import (
+    ExperimentConfig as Exp42Config,
+)
+from exp42_same_slice_distance_order_preservation import (
+    run_experiment as run_exp42,
+)
+from exp42_same_slice_distance_order_preservation import (
+    save_figures as save_exp42_figures,
+)
+from exp42_same_slice_distance_order_preservation import (
+    write_outputs as write_exp42_outputs,
+)
+from exp43_sliced_observer_order_null_baseline import (
+    ExperimentConfig as Exp43Config,
+)
+from exp43_sliced_observer_order_null_baseline import (
+    run_experiment as run_exp43,
+)
+from exp43_sliced_observer_order_null_baseline import (
+    save_figures as save_exp43_figures,
+)
+from exp43_sliced_observer_order_null_baseline import (
+    write_outputs as write_exp43_outputs,
+)
+from exp44_slice_width_sensitivity import (
+    ExperimentConfig as Exp44Config,
+)
+from exp44_slice_width_sensitivity import (
+    run_experiment as run_exp44,
+)
+from exp44_slice_width_sensitivity import (
+    save_figures as save_exp44_figures,
+)
+from exp44_slice_width_sensitivity import (
+    write_outputs as write_exp44_outputs,
+)
+from exp45_spatial_slice_exact_sanity import (
+    run_experiment as run_exp45,
+)
+from exp45_spatial_slice_exact_sanity import (
+    write_outputs as write_exp45_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -778,6 +886,161 @@ def run_ordinal_embedding_exact_sanity() -> None:
     print(f"exp35 wrote {output_path}")
 
 
+def run_heldout_ordinal_embedding_validation() -> None:
+    config = Exp36Config(
+        true_dim=2,
+        n_points_values=(30,),
+        constraint_counts=(1000,),
+        repetitions=2,
+        seed=0,
+        steps=400,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp36(config)
+    data_path = write_exp36_outputs(rows, config.output_dir)
+    figure_paths = save_exp36_figures(rows, config.output_dir)
+    print(f"exp36 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_embedding_stability_under_subsampling() -> None:
+    config = Exp37Config(
+        true_dim=2,
+        n_points=40,
+        total_constraints=3000,
+        subset_sizes=(500, 1000),
+        num_subsets=3,
+        repetitions=2,
+        seed=0,
+        steps=400,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp37(config)
+    data_path = write_exp37_outputs(rows, config.output_dir)
+    figure_paths = save_exp37_figures(rows, config.output_dir)
+    print(f"exp37 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_observer_order_null_baseline() -> None:
+    config = Exp38Config(
+        T=2.0,
+        n_events=250,
+        tick_values=(32, 64),
+        constraint_counts=(1000,),
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        steps=400,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp38(config)
+    data_path = write_exp38_outputs(rows, config.output_dir)
+    figure_paths = save_exp38_figures(rows, config.output_dir)
+    print(f"exp38 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_effective_metric_complexity_curve() -> None:
+    config = Exp39Config(
+        true_dim=2,
+        candidate_dims=(1, 2, 3),
+        n_points=30,
+        num_constraints=1500,
+        repetitions=2,
+        seed=0,
+        steps=400,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp39(config)
+    data_path = write_exp39_outputs(rows, config.output_dir)
+    figure_paths = save_exp39_figures(rows, config.output_dir)
+    print(f"exp39 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_representation_stability_exact_sanity() -> None:
+    rows = run_exp40()
+    output_path = write_exp40_outputs(rows)
+    print(f"exp40 wrote {output_path}")
+
+
+def run_radar_time_order_from_brackets() -> None:
+    config = Exp41Config(
+        T=2.0,
+        n_values=(300,),
+        tick_values=(16, 32),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp41(config)
+    data_path = write_exp41_outputs(rows, config.output_dir)
+    figure_path = save_exp41_figure(rows, config.output_dir)
+    print(f"exp41 wrote {data_path} and {figure_path}")
+
+
+def run_same_slice_distance_order_preservation() -> None:
+    config = Exp42Config(
+        T=2.0,
+        n_values=(300,),
+        tick_values=(32, 64),
+        bin_width_values=(2,),
+        repetitions=2,
+        seed=0,
+        beacon_separation=0.15,
+        max_pairs_per_slice=100,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp42(config)
+    data_path = write_exp42_outputs(rows, config.output_dir)
+    figure_paths = save_exp42_figures(rows, config.output_dir)
+    print(f"exp42 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_sliced_observer_order_null_baseline() -> None:
+    config = Exp43Config(
+        T=2.0,
+        n_events=300,
+        tick_values=(32, 64),
+        bin_width_values=(2,),
+        constraint_counts=(500,),
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        steps=400,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp43(config)
+    data_path = write_exp43_outputs(rows, config.output_dir)
+    figure_paths = save_exp43_figures(rows, config.output_dir)
+    print(f"exp43 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_slice_width_sensitivity() -> None:
+    config = Exp44Config(
+        T=2.0,
+        n_events=400,
+        tick_count=64,
+        bin_width_values=(1, 2, 4),
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp44(config)
+    data_path = write_exp44_outputs(rows, config.output_dir)
+    figure_paths = save_exp44_figures(rows, config.output_dir)
+    print(f"exp44 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_spatial_slice_exact_sanity() -> None:
+    rows = run_exp45()
+    output_path = write_exp45_outputs(rows)
+    print(f"exp45 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -811,6 +1074,16 @@ def main() -> None:
     run_noisy_incomplete_order_embedding()
     run_observer_distance_order_embedding()
     run_ordinal_embedding_exact_sanity()
+    run_heldout_ordinal_embedding_validation()
+    run_embedding_stability_under_subsampling()
+    run_observer_order_null_baseline()
+    run_effective_metric_complexity_curve()
+    run_representation_stability_exact_sanity()
+    run_radar_time_order_from_brackets()
+    run_same_slice_distance_order_preservation()
+    run_sliced_observer_order_null_baseline()
+    run_slice_width_sensitivity()
+    run_spatial_slice_exact_sanity()
 
 
 if __name__ == "__main__":

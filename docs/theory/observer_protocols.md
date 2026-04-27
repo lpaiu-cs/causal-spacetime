@@ -123,3 +123,14 @@ Milestone 12 then asks whether observer-relative distance-order data can be
 embedded into a low-dimensional effective metric representation. The observer
 protocol supplies the order data; the embedding is a diagnostic compression of
 that data, not a primitive spatial substrate.
+
+Milestone 13 compares observer-derived distance-order constraints against
+shuffled and random null baselines. The goal is to check whether the supplied
+observer protocol produces structured order data that generalizes and supports
+a stable representation better than null-model order. Hidden coordinates remain
+validation data, not reconstruction input.
+
+Milestone 14 adds a simultaneity protocol to this observer layer. Radar-time
+ranks and bins are reconstructed from tick brackets, then spatial
+distance-order comparisons are restricted to same-slice pairs. This keeps
+spatial order observer-relative and slice-protocol dependent.

@@ -307,3 +307,45 @@ The hidden coordinates are used only to generate controlled constraints or to
 validate fitted embeddings. Ordinal embedding is treated as a finite diagnostic
 for representability, not a proof that all distance orders are metric or that
 metric geometry is fundamental.
+
+## Milestone 13: Held-Out Validation And Null Baselines
+
+Milestone 13 adds stronger baselines for the ordinal embedding layer. The core
+validation question is whether structured order data supports a stable
+low-complexity representation better than shuffled, random, noisy, or
+inconsistent constraints.
+
+The validation separates:
+
+```text
+training constraint satisfaction
+held-out order generalization
+stability across independent constraint subsets
+observer-derived order quality relative to null baselines
+complexity curves across candidate embedding dimension
+```
+
+Structured constraints should generally show lower held-out violation, better
+subset stability, and cleaner low-dimensional compression than null-model
+constraints. These are finite diagnostics for effective metric representation,
+not physical proof that distance order alone determines geometry.
+
+## Milestone 14: Simultaneity-Sliced Spatial Order
+
+Milestone 14 tests whether observer-derived spatial distance order improves
+when comparisons are restricted to observer-selected radar-time slices. The
+slice labels are reconstructed from causal order and observer tick order using
+radar tick brackets; hidden coordinates are used only for validation.
+
+The validation separates:
+
+```text
+radar-time order recovery from tick brackets
+same-slice distance-order preservation
+sliced observer-derived order versus null baselines
+slice-width sensitivity
+```
+
+This keeps spatial distance explicitly observer-relative and slice-protocol
+dependent. It does not claim that spatial distance is observer-independent or
+that causal order alone determines metric geometry.

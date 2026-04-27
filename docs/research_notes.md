@@ -386,6 +386,34 @@ those constraints support a 1D effective spatial representation. This remains a
 finite diagnostic; it does not prove that distance order alone gives full
 metric geometry.
 
+## Milestone 13: Representation Stability And Null Models
+
+Milestone 13 adds held-out order validation, shuffled and random null-model
+baselines, controlled noisy constraints, and subset-stability diagnostics. A
+metric representation is treated as useful only if it generalizes to held-out
+order constraints and is reasonably stable across independent subsets of the
+same structured order data.
+
+The null models are baselines, not physical alternatives. They test whether the
+ordinal embedding optimizer can partially fit constraints that do not encode a
+consistent geometric order. Structured geometric and observer-derived order
+data should outperform shuffled or random constraints on held-out validation if
+they support a low-complexity effective metric representation.
+
+These checks strengthen the finite diagnostic standard. They do not prove
+spacetime emergence, derive meters, or make metric geometry fundamental.
+
+## Milestone 14: Simultaneity-Sliced Distance Order
+
+Milestone 14 refines observer-relative spatial order by adding an explicit
+slice-selection protocol. Radar tick brackets define an order-level radar-time
+rank, and radar-time bins define same-slice target sets. Spatial distance-order
+comparisons are then made only within those observer-derived slices.
+
+This avoids mixing events from different observer times when constructing
+spatial distance-order constraints. Hidden coordinates are used only for
+validation, not for choosing slices or generating observer-derived constraints.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

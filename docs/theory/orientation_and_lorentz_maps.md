@@ -101,3 +101,13 @@ Milestone 12 goes one step further by fitting a 1D ordinal embedding from
 observer-derived distance-order constraints. This tests whether the oriented
 protocol's order data supports an effective spatial representation, while
 keeping the protocol and calibration assumptions explicit.
+
+Milestone 13 adds held-out validation and null-model baselines for that
+observer-derived order data. The test is whether the oriented protocol's order
+constraints generalize and outperform shuffled or random constraints, not
+whether causal order alone has produced signed space.
+
+Milestone 14 restricts observer-derived spatial comparisons to same radar-time
+slices. The oriented coordinates still provide a validation and constraint
+source, but spatial order is no longer treated as a comparison across arbitrary
+time-separated accessible events.

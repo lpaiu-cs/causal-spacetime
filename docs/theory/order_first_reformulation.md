@@ -155,3 +155,15 @@ fails under insufficient constraints, wrong dimension, or noisy comparisons.
 This strengthens the order-first framing: metric geometry is useful when it is
 a stable low-complexity representation of order data, not because it is assumed
 as the primitive substrate.
+
+Milestone 13 adds held-out validation and null-model baselines. It asks whether
+structured order constraints generalize better than shuffled or random
+constraints, whether fitted embeddings are stable across independent subsets,
+and whether observer-derived order behaves more like structured geometric data
+than like null order. This further separates useful effective representation
+from optimizer artifacts.
+
+Milestone 14 adds the missing slice-selection layer for spatial order.
+Observer-relative distance order is evaluated within radar-time bins derived
+from causal order and observer tick order. This keeps spatial comparison
+relative to both an observer protocol and a simultaneity protocol.

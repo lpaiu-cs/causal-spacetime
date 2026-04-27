@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 11-12 make the theory-facing framing explicitly order-first:
+Milestones 11-14 make the theory-facing framing explicitly order-first:
 
 ```text
 causal order -> primitive temporal order
@@ -58,6 +58,10 @@ reconstruction experiments:
   representability conditions,
 - test ordinal embedding as a finite diagnostic for when observer-relative
   distance order admits a low-dimensional effective metric representation,
+- test held-out order validation, null-model baselines, and subset stability
+  for effective metric representations,
+- test simultaneity-sliced observer-relative distance order using radar-time
+  bins derived from causal order and observer tick order,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -310,6 +314,62 @@ It writes:
 - `outputs/figures/observer_distance_order_embedding_violation_vs_ticks.png`
 - `outputs/figures/observer_distance_order_embedding_rmse_vs_ticks.png`
 
+Milestone 13 adds held-out validation, null-model baselines, and representation
+stability diagnostics:
+
+```bash
+python experiments/exp36_heldout_ordinal_embedding_validation.py
+python experiments/exp37_embedding_stability_under_subsampling.py
+python experiments/exp38_observer_order_null_baseline.py
+python experiments/exp39_effective_metric_complexity_curve.py
+python experiments/exp40_representation_stability_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/heldout_ordinal_embedding_validation.csv`
+- `outputs/data/embedding_stability_under_subsampling.csv`
+- `outputs/data/observer_order_null_baseline.csv`
+- `outputs/data/effective_metric_complexity_curve.csv`
+- `outputs/data/representation_stability_exact_sanity.csv`
+- `outputs/figures/heldout_violation_by_model.png`
+- `outputs/figures/heldout_generalization_gap.png`
+- `outputs/figures/embedding_procrustes_stability_vs_constraints.png`
+- `outputs/figures/embedding_order_stability_vs_constraints.png`
+- `outputs/figures/observer_order_vs_null_test_violation.png`
+- `outputs/figures/observer_order_vs_null_alignment_rmse.png`
+- `outputs/figures/observer_order_vs_null_distance_order_error.png`
+- `outputs/figures/effective_metric_complexity_curve.png`
+- `outputs/figures/effective_metric_penalized_score.png`
+
+Milestone 14 adds simultaneity-sliced observer-relative distance-order
+diagnostics:
+
+```bash
+python experiments/exp41_radar_time_order_from_brackets.py
+python experiments/exp42_same_slice_distance_order_preservation.py
+python experiments/exp43_sliced_observer_order_null_baseline.py
+python experiments/exp44_slice_width_sensitivity.py
+python experiments/exp45_spatial_slice_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/radar_time_order_from_brackets.csv`
+- `outputs/data/same_slice_distance_order_preservation.csv`
+- `outputs/data/sliced_observer_order_null_baseline.csv`
+- `outputs/data/slice_width_sensitivity.csv`
+- `outputs/data/spatial_slice_exact_sanity.csv`
+- `outputs/figures/radar_time_order_inversion_vs_ticks.png`
+- `outputs/figures/same_slice_distance_order_inversion_vs_ticks.png`
+- `outputs/figures/same_slice_vs_all_pairs_inversion.png`
+- `outputs/figures/same_slice_pair_count_vs_bin_width.png`
+- `outputs/figures/sliced_observer_vs_null_test_violation.png`
+- `outputs/figures/sliced_observer_vs_null_alignment_rmse.png`
+- `outputs/figures/sliced_observer_vs_null_distance_order_error.png`
+- `outputs/figures/slice_width_pair_count.png`
+- `outputs/figures/slice_width_distance_order_error.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -447,3 +507,16 @@ dimension affects ordinal stress, how noise and incomplete comparisons degrade
 the representation, and whether observer-derived distance order supports an
 effective 1D spatial embedding. These are finite diagnostics, not
 representation theorems or proofs of spacetime emergence.
+Milestone 13 adds held-out validation and null-model baselines. It asks whether
+structured geometric or observer-derived order constraints generalize better
+than shuffled or random constraints, whether independent subsets yield stable
+embeddings, and whether low-dimensional complexity curves distinguish
+structured order from null order. These checks support the interpretation of
+metric geometry as a stable effective representation only when order data has
+consistent low-dimensional regularity.
+Milestone 14 refines the spatial layer by requiring same-slice comparison.
+Radar-time ranks are reconstructed from tick brackets using causal order and
+observer tick order. Spatial distance-order comparisons are then restricted to
+observer-relative radar-time bins. This avoids treating all accessible events
+as if they belonged to one spatial slice and keeps spatial distance explicitly
+observer-relative and slice-protocol dependent.

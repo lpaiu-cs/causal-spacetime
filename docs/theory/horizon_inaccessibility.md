@@ -74,3 +74,14 @@ values.
 Milestone 12 focuses on embeddability of distance-order data rather than
 horizon accessibility. Both remain representation-layer diagnostics in
 controlled models, not derivations of metric geometry as fundamental.
+
+Milestone 13 adds held-out and null-model validation for effective metric
+representations. It is orthogonal to the Rindler horizon experiment: horizon
+accessibility tests observer-dependent causal access, while representation
+stability tests whether distance-order data supports a robust low-dimensional
+metric compression.
+
+Milestone 14 adds radar-time slice selection for observer-relative spatial
+order. In horizon-limited settings, the same distinction would matter: first
+identify which events are accessible, then define observer-relative slices
+inside the accessible region before making spatial comparisons.

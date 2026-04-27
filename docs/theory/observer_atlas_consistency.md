@@ -99,3 +99,13 @@ Milestone 12 implements ordinal embedding diagnostics for that
 representability question. A successful single embedding is still weaker than a
 Lorentzian atlas, because an atlas also requires calibrated overlap maps and
 composition consistency.
+
+Milestone 13 adds stability checks for the embedding layer: held-out
+constraints, null-model baselines, and independent subset comparisons. These
+diagnostics help identify whether a chart-like metric representation is a
+stable compression of structured order data rather than an optimizer artifact.
+
+Milestone 14 emphasizes that spatial distance order inside each chart requires
+a slice-selection rule. Atlas consistency is stronger than same-slice order,
+but the same conceptual separation applies: observer protocol, simultaneity
+protocol, and metric transition maps are distinct representation layers.

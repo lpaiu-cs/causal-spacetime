@@ -99,3 +99,14 @@ causal/accessibility order + measure/density -> volume-scaled reconstruction
 
 It is a controlled conformal toy model, not a general-relativistic dynamics
 simulation and not proof of spacetime emergence.
+
+Milestone 13 adds held-out validation and null-model baselines to the ordinal
+embedding layer. This matters here because a low-dimensional representation
+should generalize beyond fitted comparisons and outperform shuffled or random
+constraints before it is treated as useful. It still does not infer a conformal
+factor from causal order alone.
+
+Milestone 14 adds another separation: spatial distance order requires an
+observer-relative slice-selection protocol. This is independent of conformal
+scale; even a clean same-slice order does not determine physical volume or
+clock scale without measure information.

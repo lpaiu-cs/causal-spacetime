@@ -83,6 +83,16 @@ C5g. Rich, mutually consistent observer-relative distance-order data may admit
 low-dimensional ordinal embeddings that serve as effective metric
 representations, but noisy or inconsistent order data may not.
 
+C5h. Structured geometric or observer-derived order constraints should
+outperform shuffled, random, or inconsistent null-model constraints under
+held-out validation and subset-stability diagnostics if they support a useful
+effective metric representation.
+
+C5i. Observer-relative spatial distance order should be defined only after a
+slice-selection protocol. Radar-time bins derived from causal order and
+observer tick order provide one controlled finite protocol for same-slice
+spatial comparisons.
+
 C5a. Given a suitable observer chain with clock labels, radar time and radar
 distance can be approximated from causal accessibility relations, with
 resolution controlled by clock tick density and accessibility coverage.

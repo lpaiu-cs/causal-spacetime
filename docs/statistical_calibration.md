@@ -171,3 +171,28 @@ coordinate representation satisfies sampled distance-order comparisons. These
 are not Poisson interval-count errors, but they play a similar diagnostic role:
 they separate finite sampling, incomplete comparisons, noisy constraints, and
 representability limits from stronger metric claims.
+
+## Relation To Held-Out And Null-Model Validation
+
+Milestone 13 adds generalization and baseline diagnostics for ordinal
+embedding. Training violation alone can be misleading because a finite optimizer
+may partially fit random or inconsistent constraints. Held-out order validation
+checks whether fitted coordinates satisfy independent constraints from the same
+order source.
+
+Null models such as shuffled-side constraints, fully random quadruplets, and
+controlled flips estimate how much apparent success can come from optimizer
+flexibility rather than structured order data. Subset-stability diagnostics ask
+whether independent constraint samples lead to similar embeddings. These are
+finite validation tools, not proofs of metric emergence.
+
+## Relation To Simultaneity-Sliced Distance Order
+
+Milestone 14 adds a slice-selection error layer. Spatial distance-order
+comparisons are evaluated within radar-time bins derived from observer tick
+brackets. Narrow bins can reduce time mixing but may produce too few pair
+comparisons; wide bins increase pair counts but may mix observer-time slices.
+
+The relevant uncertainties are finite tick resolution, finite event sampling,
+and the chosen bin width. These are representation diagnostics, not evidence
+that spatial distance is observer-independent or primitive.
