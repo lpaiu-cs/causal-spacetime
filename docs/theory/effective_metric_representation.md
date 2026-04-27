@@ -117,3 +117,13 @@ additional representation choice. Slice-local embeddings can preserve
 same-slice distance order while independent per-slice gauges change global
 alignment, same-position judgments, and velocity estimates. Transport and
 anchors are therefore part of the effective representation layer.
+
+Milestone 16 adds a metric-free relational diagnostic. Ordinal shape histories
+can remain invariant under slice gauges even when coordinate velocities change.
+A metric representation is still required for quantitative dynamics, but some
+weaker relational evolution can be expressed at the order level.
+
+Milestone 17 studies whether persistent labels are available, partial, or
+inferred. Identity matching is another representation-layer hypothesis. A
+low-dimensional metric representation of a relational history is meaningful
+only relative to the persistence assumptions used to assemble that history.

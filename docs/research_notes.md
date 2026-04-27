@@ -427,6 +427,31 @@ independent per-slice translation, reflection, orientation, and scale freedom.
 Noisy-transport diagnostics show that derived cross-slice quantities degrade
 when the supplied protocol is uncertain.
 
+## Milestone 16: Relational Spatial Evolution
+
+Milestone 16 asks which cross-slice statements can be made without
+same-position transport. With supplied persistent object labels and
+slice-local distance order, pair-distance order histories define ordinal shape
+signatures across slices. Changes in those signatures are relational spatial
+evolution: persistence-dependent but transport-independent.
+
+This does not make persistence primitive, and it does not define velocity or
+metric dynamics. It identifies weaker transport-gauge content that survives
+independent per-slice affine/reflection transformations.
+
+## Milestone 17: Persistence Ambiguity And Identity Matching
+
+Milestone 17 studies object persistence itself. Without supplied persistence,
+cross-slice object identity and pair-distance order histories are undefined.
+If a matching criterion is used, the resulting relational history is defined
+only relative to that persistence hypothesis.
+
+The experiments enumerate finite identity matchings, show that symmetric
+configurations can have multiple equally good matchings, test when
+relational-continuity matching recovers hidden validation labels, and check how
+partial labels restrict ambiguity. Crossing histories are included as failure
+cases. These diagnostics do not derive object identity from causal order.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

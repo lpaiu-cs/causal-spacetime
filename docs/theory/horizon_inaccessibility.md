@@ -90,3 +90,12 @@ Milestone 15 adds a separate cross-slice identification issue. Even inside an
 accessible Rindler region, same-position, same-direction, velocity, and spatial
 evolution statements require transport, anchors, persistence, calibration, or
 dynamics. Horizon accessibility does not by itself supply those structures.
+
+Milestone 16's relational histories could be applied inside an accessible
+region if persistent object labels and slice-local distance order are supplied.
+This would remain a relational diagnostic, not a horizon dynamics model.
+
+Milestone 17 clarifies that those labels are another layer. Horizon
+accessibility, slice-local distance order, and persistence matching are
+separate questions. A Rindler accessibility boundary does not by itself define
+object identity across slices.

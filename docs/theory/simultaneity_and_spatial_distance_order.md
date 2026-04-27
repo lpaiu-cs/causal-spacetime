@@ -74,3 +74,13 @@ global spatial coordinate through time. Without a transport, anchor,
 persistence, or calibration rule, cross-slice predicates such as same position,
 same direction, velocity, constant velocity, and spatial evolution are
 undefined. With a chosen rule, they become transport-relative statements.
+
+Milestone 16 shows that persistence plus same-slice distance order can still
+define weaker relational histories. The comparison is not "same position across
+slices"; it is whether persistent object-pair distance-order relations change
+from one slice to another.
+
+Milestone 17 asks what happens when persistence is not supplied. Same-slice
+distance order can constrain identity matchings, but it does not determine
+them uniquely in general. Relational histories built from inferred identities
+are persistence-hypothesis dependent.

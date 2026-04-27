@@ -172,3 +172,13 @@ Milestone 15 adds the cross-slice identification layer. Same-slice order alone
 does not define same position, same direction, velocity, constant velocity, or
 spatial evolution. These become transport-relative statements only after a
 transport, anchor, persistence, calibration, or dynamics protocol is supplied.
+
+Milestone 16 identifies relational cross-slice content that does not require
+same-position transport. Supplied object persistence plus slice-local
+pair-distance order defines ordinal shape histories. These histories can
+change across slices, but they remain weaker than velocity or metric dynamics.
+
+Milestone 17 adds the identity layer. Object persistence is not primitive in
+the simulations unless explicitly supplied. If labels are inferred by
+relational continuity or constrained by partial labels, the resulting
+relational history is defined relative to that persistence hypothesis.

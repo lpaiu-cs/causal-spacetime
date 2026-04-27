@@ -116,3 +116,11 @@ Milestone 15 separates orientation from transport. A signed coordinate within a
 slice does not by itself identify signed coordinates across slices. Cross-slice
 same-direction or velocity statements require additional transport, anchors,
 persistence, calibration, or dynamics.
+
+Milestone 16 uses orientation only as one way to obtain slice-local positions
+for validation and constraint construction. Relational pair-distance order
+histories do not require a global oriented coordinate transported through time.
+
+Milestone 17 adds that even relational histories require persistent object
+identity. Identity matching can be ranked by relational continuity, but an
+oriented chart does not make the selected matching absolute or unique.

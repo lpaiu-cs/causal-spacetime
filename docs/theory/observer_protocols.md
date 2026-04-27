@@ -140,3 +140,13 @@ same-slice distance order do not define same position, same direction, or
 velocity across slices. Anchors, persistent objects, or calibration rules are
 additional observer-protocol structure that can make such statements
 transport-relative.
+
+Milestone 16 distinguishes persistence from transport. Persistent object labels
+plus observer-derived same-slice distance order can support pair-distance
+order histories. Transport is still required for same-position and velocity
+predicates.
+
+Milestone 17 distinguishes supplied persistence from inferred identity
+matching. Observer protocols and same-slice order can contribute to a matching
+criterion, but object identity remains supplied or hypothesis-dependent rather
+than derived from causal order alone.

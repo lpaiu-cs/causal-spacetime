@@ -204,3 +204,18 @@ defined by same-slice order alone; they require supplied transport, anchors,
 persistence, calibration, or dynamics. Noisy anchor and transport diagnostics
 therefore belong to the representation layer, not to bare causal-order
 statistics.
+
+## Relation To Relational Shape Histories
+
+Milestone 16 adds an ordinal relational layer. Pair-distance order histories
+can be compared without metric calibration, but only after persistence labels
+are supplied. Statistical uncertainty now includes finite slice populations,
+ties in distance order, incomplete persistent-object observations, and noise in
+slice-local order reconstruction.
+
+Milestone 17 adds a persistence-matching layer. Matching costs, ambiguity gaps,
+track consistency errors, and validation accuracy quantify how strongly
+slice-local relational order constrains identity hypotheses. These are
+hypothesis diagnostics, not estimates of true identity from causal order alone.
+Partial labels act as additional information and should reduce ambiguity;
+symmetric and crossing cases are expected to expose non-identifiability.

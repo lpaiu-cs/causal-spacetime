@@ -359,3 +359,25 @@ embeddings can be validated independently, that random per-slice gauges
 preserve same-slice order while changing cross-slice judgments, that supplied
 anchors constrain transport, and that noisy transport destabilizes derived
 spatial-evolution statements.
+
+## Milestone 16: Relational Spatial Evolution
+
+Milestone 16 validates transport-gauge relational statements. The experiments
+check the predicate-definability table, synthetic pair-distance order histories,
+gauge invariance under independent per-slice affine/reflection transformations,
+observer-derived slice histories for supplied persistent objects, and the
+contrast between relational invariants and transport-dependent velocities.
+
+## Milestone 17: Persistence Ambiguity And Identity Matching
+
+Milestone 17 validates the next layer: object persistence. The tests verify
+that object identity and pair-distance histories are reported as undefined
+without persistence. The experiments compare identity-matching hypotheses in
+symmetric, small-motion, partial-label, crossing, and deliberately alternative
+histories. Hidden labels are used only for controlled validation of matching
+accuracy and track consistency.
+
+Expected behavior is conservative: asymmetric low-motion histories may be
+matched by relational continuity, while symmetric or crossing cases can remain
+ambiguous or fail. Partial labels should reduce ambiguity because they are
+additional supplied structure.

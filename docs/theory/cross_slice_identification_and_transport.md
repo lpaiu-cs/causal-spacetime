@@ -66,3 +66,16 @@ These diagnostics do not prove spacetime emergence, derive object identity, or
 make velocity primitive. They show where cross-slice statements enter the
 representation layer and how their conclusions depend on additional protocol,
 anchor, persistence, or calibration structure.
+
+## Relation To Relational Invariants
+
+Milestone 16 adds a weaker class of cross-slice statements. If object
+persistence is supplied, pair-distance order histories can be compared across
+slices without same-position transport. These histories are transport-gauge
+invariant under per-slice affine/reflection transformations, but they still do
+not define velocity or absolute position.
+
+Milestone 17 makes the persistence assumption explicit. Object persistence is
+not derived from causal order alone here. When labels are absent, identity
+matching is a supplied or inferred hypothesis; symmetric, noisy, or crossing
+histories can leave multiple compatible matchings.

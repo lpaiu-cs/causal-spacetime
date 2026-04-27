@@ -114,3 +114,12 @@ Milestone 15 adds transport as another atlas-level assumption. Comparing
 spatial structures across chart time slices requires cross-slice
 identification. Different transport choices can preserve slice-local order
 while changing global alignment and velocity judgments.
+
+Milestone 16 identifies atlas-independent relational content inside a supplied
+persistent-object history. Pair-distance order histories are weaker than chart
+transition maps, but they can test transport-gauge invariant relational change.
+
+Milestone 17 makes the supplied-history assumption explicit. If object labels
+are absent, atlas-independent relational histories require a persistence
+hypothesis. Symmetry or crossing can leave several matchings compatible with
+the same slice-local order data.

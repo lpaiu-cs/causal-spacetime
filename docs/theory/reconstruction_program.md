@@ -23,6 +23,8 @@ primitive information-accessibility
   -> held-out validation, null-model baselines, and representation stability
   -> simultaneity-sliced observer-relative distance order
   -> protocol-dependent cross-slice identification and transport
+  -> transport-gauge relational spatial evolution from persistent objects
+  -> persistence hypotheses and identity-matching ambiguity diagnostics
 ```
 
 The simulations reproduce and stress-test pieces of this program in known
@@ -101,6 +103,18 @@ velocity, constant velocity, or spatial evolution across observer-time slices.
 Those statements are undefined without transport, anchors, object persistence,
 or calibration. When such structure is supplied, the resulting statements are
 transport-relative rather than absolute.
+
+Milestone 16 identifies weaker relational statements that can be made without
+same-position transport. Supplied persistent object labels plus slice-local
+distance order define pair-distance order histories and ordinal shape-change
+diagnostics. These are persistence-dependent but transport-independent; they do
+not define velocity or metric dynamics.
+
+Milestone 17 makes persistence itself a separate layer. Without supplied object
+identity, pair-distance histories are undefined. Finite identity matching can
+rank persistence hypotheses by relational continuity, and partial labels can
+restrict the admissible matchings, but ambiguous or crossing configurations
+show that object identity is not derived from causal order alone.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

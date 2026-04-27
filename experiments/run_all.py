@@ -480,6 +480,138 @@ from exp53_cross_slice_transport_exact_sanity import (
 from exp53_cross_slice_transport_exact_sanity import (
     write_outputs as write_exp53_outputs,
 )
+from exp54_predicate_definability_table import (
+    run_experiment as run_exp54,
+)
+from exp54_predicate_definability_table import (
+    write_outputs as write_exp54_outputs,
+)
+from exp55_relational_shape_history_without_transport import (
+    ExperimentConfig as Exp55Config,
+)
+from exp55_relational_shape_history_without_transport import (
+    run_experiment as run_exp55,
+)
+from exp55_relational_shape_history_without_transport import (
+    save_figure as save_exp55_figure,
+)
+from exp55_relational_shape_history_without_transport import (
+    write_outputs as write_exp55_outputs,
+)
+from exp56_relational_history_gauge_invariance import (
+    ExperimentConfig as Exp56Config,
+)
+from exp56_relational_history_gauge_invariance import (
+    run_experiment as run_exp56,
+)
+from exp56_relational_history_gauge_invariance import (
+    save_figure as save_exp56_figure,
+)
+from exp56_relational_history_gauge_invariance import (
+    write_outputs as write_exp56_outputs,
+)
+from exp57_observer_slice_relational_evolution import (
+    ExperimentConfig as Exp57Config,
+)
+from exp57_observer_slice_relational_evolution import (
+    run_experiment as run_exp57,
+)
+from exp57_observer_slice_relational_evolution import (
+    save_figure as save_exp57_figure,
+)
+from exp57_observer_slice_relational_evolution import (
+    write_outputs as write_exp57_outputs,
+)
+from exp58_relational_invariants_vs_velocity import (
+    ExperimentConfig as Exp58Config,
+)
+from exp58_relational_invariants_vs_velocity import (
+    run_experiment as run_exp58,
+)
+from exp58_relational_invariants_vs_velocity import (
+    save_figure as save_exp58_figure,
+)
+from exp58_relational_invariants_vs_velocity import (
+    write_outputs as write_exp58_outputs,
+)
+from exp59_relational_evolution_exact_sanity import (
+    run_experiment as run_exp59,
+)
+from exp59_relational_evolution_exact_sanity import (
+    write_outputs as write_exp59_outputs,
+)
+from exp60_persistence_predicate_undefined import (
+    run_experiment as run_exp60,
+)
+from exp60_persistence_predicate_undefined import (
+    write_outputs as write_exp60_outputs,
+)
+from exp61_symmetric_persistence_ambiguity import (
+    ExperimentConfig as Exp61Config,
+)
+from exp61_symmetric_persistence_ambiguity import (
+    run_experiment as run_exp61,
+)
+from exp61_symmetric_persistence_ambiguity import (
+    save_figure as save_exp61_figure,
+)
+from exp61_symmetric_persistence_ambiguity import (
+    write_outputs as write_exp61_outputs,
+)
+from exp62_relational_persistence_matching_recovery import (
+    ExperimentConfig as Exp62Config,
+)
+from exp62_relational_persistence_matching_recovery import (
+    run_experiment as run_exp62,
+)
+from exp62_relational_persistence_matching_recovery import (
+    save_figures as save_exp62_figures,
+)
+from exp62_relational_persistence_matching_recovery import (
+    write_outputs as write_exp62_outputs,
+)
+from exp63_partial_label_constrained_persistence import (
+    ExperimentConfig as Exp63Config,
+)
+from exp63_partial_label_constrained_persistence import (
+    run_experiment as run_exp63,
+)
+from exp63_partial_label_constrained_persistence import (
+    save_figures as save_exp63_figures,
+)
+from exp63_partial_label_constrained_persistence import (
+    write_outputs as write_exp63_outputs,
+)
+from exp64_crossing_persistence_failure import (
+    ExperimentConfig as Exp64Config,
+)
+from exp64_crossing_persistence_failure import (
+    run_experiment as run_exp64,
+)
+from exp64_crossing_persistence_failure import (
+    save_figure as save_exp64_figure,
+)
+from exp64_crossing_persistence_failure import (
+    write_outputs as write_exp64_outputs,
+)
+from exp65_persistence_hypothesis_dependence import (
+    ExperimentConfig as Exp65Config,
+)
+from exp65_persistence_hypothesis_dependence import (
+    run_experiment as run_exp65,
+)
+from exp65_persistence_hypothesis_dependence import (
+    save_figure as save_exp65_figure,
+)
+from exp65_persistence_hypothesis_dependence import (
+    write_outputs as write_exp65_outputs,
+)
+from exp66_persistence_matching_exact_sanity import (
+    run_experiment as run_exp66,
+)
+from exp66_persistence_matching_exact_sanity import (
+    write_outputs as write_exp66_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1238,6 +1370,160 @@ def run_cross_slice_transport_exact_sanity() -> None:
     print(f"exp53 wrote {output_path}")
 
 
+def run_predicate_definability_table() -> None:
+    rows = run_exp54()
+    output_path = write_exp54_outputs(rows, Path("outputs"))
+    print(f"exp54 wrote {output_path}")
+
+
+def run_relational_shape_history_without_transport() -> None:
+    config = Exp55Config(
+        slice_count=12,
+        object_count=5,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp55(config)
+    data_path = write_exp55_outputs(rows, config.output_dir)
+    figure_path = save_exp55_figure(rows, config.output_dir)
+    print(f"exp55 wrote {data_path} and {figure_path}")
+
+
+def run_relational_history_gauge_invariance() -> None:
+    config = Exp56Config(
+        slice_count=8,
+        object_count=5,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp56(config)
+    data_path = write_exp56_outputs(rows, config.output_dir)
+    figure_path = save_exp56_figure(rows, config.output_dir)
+    print(f"exp56 wrote {data_path} and {figure_path}")
+
+
+def run_observer_slice_relational_evolution() -> None:
+    config = Exp57Config(
+        T=2.0,
+        slice_count=8,
+        object_count=5,
+        tick_count=64,
+        bin_width=4,
+        beacon_separation=0.15,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp57(config)
+    data_path = write_exp57_outputs(rows, config.output_dir)
+    figure_path = save_exp57_figure(rows, config.output_dir)
+    print(f"exp57 wrote {data_path} and {figure_path}")
+
+
+def run_relational_invariants_vs_velocity() -> None:
+    config = Exp58Config(
+        slice_count=12,
+        object_count=5,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp58(config)
+    data_path = write_exp58_outputs(rows, config.output_dir)
+    figure_path = save_exp58_figure(rows, config.output_dir)
+    print(f"exp58 wrote {data_path} and {figure_path}")
+
+
+def run_relational_evolution_exact_sanity() -> None:
+    rows = run_exp59()
+    output_path = write_exp59_outputs(rows)
+    print(f"exp59 wrote {output_path}")
+
+
+def run_persistence_predicate_undefined() -> None:
+    rows = run_exp60()
+    output_path = write_exp60_outputs(rows, Path("outputs"))
+    print(f"exp60 wrote {output_path}")
+
+
+def run_symmetric_persistence_ambiguity() -> None:
+    config = Exp61Config(
+        slice_count=3,
+        object_counts=(4,),
+        spacing=1.0,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp61(config)
+    data_path = write_exp61_outputs(rows, config.output_dir)
+    figure_path = save_exp61_figure(rows, config.output_dir)
+    print(f"exp61 wrote {data_path} and {figure_path}")
+
+
+def run_relational_persistence_matching_recovery() -> None:
+    config = Exp62Config(
+        slice_count=5,
+        object_counts=(4,),
+        motion_scales=(0.05, 0.10),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp62(config)
+    data_path = write_exp62_outputs(rows, config.output_dir)
+    figure_paths = save_exp62_figures(rows, config.output_dir)
+    print(f"exp62 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_partial_label_constrained_persistence() -> None:
+    config = Exp63Config(
+        slice_count=5,
+        object_count=5,
+        known_fractions=(0.0, 0.5),
+        motion_scale=0.10,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp63(config)
+    data_path = write_exp63_outputs(rows, config.output_dir)
+    figure_paths = save_exp63_figures(rows, config.output_dir)
+    print(f"exp63 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_crossing_persistence_failure() -> None:
+    config = Exp64Config(
+        slice_count=6,
+        object_count=5,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp64(config)
+    data_path = write_exp64_outputs(rows, config.output_dir)
+    figure_path = save_exp64_figure(rows, config.output_dir)
+    print(f"exp64 wrote {data_path} and {figure_path}")
+
+
+def run_persistence_hypothesis_dependence() -> None:
+    config = Exp65Config(
+        slice_count=6,
+        object_count=5,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp65(config)
+    data_path = write_exp65_outputs(rows, config.output_dir)
+    figure_path = save_exp65_figure(rows, config.output_dir)
+    print(f"exp65 wrote {data_path} and {figure_path}")
+
+
+def run_persistence_matching_exact_sanity() -> None:
+    rows = run_exp66()
+    output_path = write_exp66_outputs(rows)
+    print(f"exp66 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -1289,6 +1575,19 @@ def main() -> None:
     run_persistence_dependent_velocity()
     run_noisy_transport_sensitivity()
     run_cross_slice_transport_exact_sanity()
+    run_predicate_definability_table()
+    run_relational_shape_history_without_transport()
+    run_relational_history_gauge_invariance()
+    run_observer_slice_relational_evolution()
+    run_relational_invariants_vs_velocity()
+    run_relational_evolution_exact_sanity()
+    run_persistence_predicate_undefined()
+    run_symmetric_persistence_ambiguity()
+    run_relational_persistence_matching_recovery()
+    run_partial_label_constrained_persistence()
+    run_crossing_persistence_failure()
+    run_persistence_hypothesis_dependence()
+    run_persistence_matching_exact_sanity()
 
 
 if __name__ == "__main__":

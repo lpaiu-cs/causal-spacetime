@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 11-15 make the theory-facing framing explicitly order-first:
+Milestones 11-17 make the theory-facing framing explicitly order-first:
 
 ```text
 causal order -> primitive temporal order
@@ -64,6 +64,10 @@ reconstruction experiments:
   bins derived from causal order and observer tick order,
 - test protocol-dependent cross-slice identification, transport, anchors, and
   persistence as representation-layer structure,
+- test transport-gauge relational spatial evolution from persistence plus
+  slice-local pair-distance order histories,
+- test persistence ambiguity, identity matching, partial-label constraints, and
+  hypothesis-dependent relational histories,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -408,6 +412,60 @@ It writes:
 - `outputs/figures/noisy_transport_global_rmse.png`
 - `outputs/figures/noisy_transport_velocity_instability.png`
 
+Milestone 16 adds transport-gauge relational spatial-evolution diagnostics:
+
+```bash
+python experiments/exp54_predicate_definability_table.py
+python experiments/exp55_relational_shape_history_without_transport.py
+python experiments/exp56_relational_history_gauge_invariance.py
+python experiments/exp57_observer_slice_relational_evolution.py
+python experiments/exp58_relational_invariants_vs_velocity.py
+python experiments/exp59_relational_evolution_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/predicate_definability_table.csv`
+- `outputs/data/relational_shape_history_without_transport.csv`
+- `outputs/data/relational_history_gauge_invariance.csv`
+- `outputs/data/observer_slice_relational_evolution.csv`
+- `outputs/data/relational_invariants_vs_velocity.csv`
+- `outputs/data/relational_evolution_exact_sanity.csv`
+- `outputs/figures/relational_shape_change_rates.png`
+- `outputs/figures/relational_history_gauge_invariance.png`
+- `outputs/figures/observer_slice_relational_evolution_error.png`
+- `outputs/figures/relational_change_vs_velocity_transport.png`
+
+Milestone 17 adds persistence ambiguity, identity matching, and
+relational-history hypothesis diagnostics:
+
+```bash
+python experiments/exp60_persistence_predicate_undefined.py
+python experiments/exp61_symmetric_persistence_ambiguity.py
+python experiments/exp62_relational_persistence_matching_recovery.py
+python experiments/exp63_partial_label_constrained_persistence.py
+python experiments/exp64_crossing_persistence_failure.py
+python experiments/exp65_persistence_hypothesis_dependence.py
+python experiments/exp66_persistence_matching_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/persistence_predicate_undefined.csv`
+- `outputs/data/symmetric_persistence_ambiguity.csv`
+- `outputs/data/relational_persistence_matching_recovery.csv`
+- `outputs/data/partial_label_constrained_persistence.csv`
+- `outputs/data/crossing_persistence_failure.csv`
+- `outputs/data/persistence_hypothesis_dependence.csv`
+- `outputs/data/persistence_matching_exact_sanity.csv`
+- `outputs/figures/symmetric_persistence_ambiguity_gap.png`
+- `outputs/figures/persistence_matching_accuracy_vs_motion.png`
+- `outputs/figures/persistence_matching_ambiguity_gap_vs_motion.png`
+- `outputs/figures/partial_label_matching_accuracy.png`
+- `outputs/figures/partial_label_ambiguity_gap.png`
+- `outputs/figures/crossing_persistence_track_error.png`
+- `outputs/figures/persistence_hypothesis_change_rates.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -566,3 +624,15 @@ transport-relative statements. Anchor and persistence experiments show how
 additional protocol structure can constrain the per-slice translation,
 reflection, orientation, and scale freedoms, while noisy transport degrades the
 derived cross-slice quantities.
+Milestone 16 identifies weaker transport-gauge relational content. With
+supplied persistence labels, pair-distance order histories can record ordinal
+shape changes across slices without identifying absolute same positions. These
+relational invariants remain weaker than velocity, metric dynamics, or
+quantitative spatial evolution, all of which still require transport and
+calibration.
+Milestone 17 makes persistence itself explicit. Without supplied object labels
+or a persistence hypothesis, cross-slice object identity and pair-distance
+order histories are undefined. Relational-continuity matching, partial labels,
+and anchors can restrict identity hypotheses, but they do not derive object
+identity from causal order alone. Different compatible persistence hypotheses
+can produce different relational-evolution claims.

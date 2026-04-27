@@ -48,6 +48,15 @@ repository. Open proof obligations include:
 - criteria for when transport-relative same-position, same-direction,
   velocity, constant velocity, and spatial-evolution statements are stable,
 - stability bounds for noisy or incomplete anchor and persistence structure,
+- a theory of object persistence or identity rather than supplied labels,
+- identifiability conditions for persistence matching from slice-local
+  relational order, including symmetric and crossing failure cases,
+- rules for how partial labels, anchors, or dynamics constrain persistence
+  hypotheses without treating the selected matching as absolute identity,
+- conditions under which relational pair-distance order histories converge to
+  useful continuum relational observables,
+- a precise relation between relational shape evolution and calibrated metric
+  dynamics,
 - a clear separation between primitive order structures and effective metric
   representation-layer objects such as metric tensors and curvature values.
 

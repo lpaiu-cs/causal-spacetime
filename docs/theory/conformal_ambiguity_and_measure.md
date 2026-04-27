@@ -114,3 +114,12 @@ clock scale without measure information.
 Milestone 15 adds cross-slice transport as a further representation-layer
 input. Transport, anchors, and persistence do not remove conformal ambiguity by
 themselves; they define protocol-relative identifications across slices.
+
+Milestone 16 adds pair-distance order histories, which are ordinal and
+therefore insensitive to positive monotone transforms of slice-local distance
+values. This does not fix conformal scale or physical volume.
+
+Milestone 17 adds that those ordinal histories still require persistence.
+Identity matching is independent of conformal scale, but it is not supplied by
+causal order alone. Different persistence hypotheses can change relational
+history without resolving measure ambiguity.

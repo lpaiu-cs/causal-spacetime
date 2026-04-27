@@ -299,3 +299,43 @@ Anchor-constrained transport uses supplied persistent anchor correspondences to
 restrict per-slice translation, reflection, orientation, and scale freedoms.
 Anchor positions are protocol structure for controlled validation, not
 primitive consequences of same-slice distance order.
+
+## Pair-Distance Order History
+
+A pair-distance order history records, for persistent object labels, the
+slice-local ordering of distances among object pairs. It requires persistence
+and slice-local distance order, but not same-position transport.
+
+## Persistence Hypothesis
+
+A persistence hypothesis identifies objects across slices, either because
+labels are supplied or because a matching criterion is chosen. It is additional
+structure. Without supplied or inferred persistence, cross-slice object
+identity and pair-distance order histories are undefined.
+
+## Identity Matching
+
+Identity matching is a finite hypothesis-selection procedure that maps object
+indices in one slice to object indices in another. In Milestone 17, candidate
+permutations are ranked by relational-continuity cost. A best-ranked matching
+is not claimed to be the true identity relation; hidden labels are used only for
+controlled validation.
+
+## Matching Ambiguity
+
+Matching ambiguity occurs when multiple persistence hypotheses have similar or
+identical cost. Symmetric, noisy, or crossing configurations can make the
+ambiguity gap small. Partial-label constraints or anchors can restrict the
+matching set, but they are supplied structure.
+
+## Ordinal Shape Signature
+
+An ordinal shape signature is the ordered pattern of pair distances within one
+slice. It is invariant under translation, reflection, positive scale, and
+positive monotone transforms of the slice-local distance values.
+
+## Relational Spatial Evolution
+
+Relational spatial evolution is change in ordinal shape signatures across
+slices. It is weaker than coordinate velocity or metric dynamics and does not
+identify absolute position across time.

@@ -101,6 +101,21 @@ C5k. Given a supplied transport or anchor protocol, cross-slice predicates
 become protocol-relative and should be tested for stability under finite
 sampling and noisy transport information.
 
+C5l. Given supplied persistent object labels, pair-distance order histories
+can define transport-gauge relational spatial evolution without identifying
+same positions across slices.
+
+C5m. Relational shape changes should remain invariant under independent
+per-slice affine/reflection gauges, while coordinate velocity should not.
+
+C5n. Without supplied persistence labels, anchors, dynamics, or a chosen
+matching criterion, cross-slice object identity and pair-distance order
+histories are undefined.
+
+C5o. Relational-continuity matching can constrain persistence hypotheses in
+asymmetric low-motion cases, but symmetric, noisy, or crossing configurations
+may admit multiple equally compatible matchings.
+
 C5a. Given a suitable observer chain with clock labels, radar time and radar
 distance can be approximated from causal accessibility relations, with
 resolution controlled by clock tick density and accessibility coverage.

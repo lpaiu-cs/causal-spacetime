@@ -100,3 +100,14 @@ cross-slice transport. Null and gauge baselines now include independent
 per-slice affine/reflection changes that preserve same-slice order but alter
 cross-slice judgments. Anchor-constrained transport is a supplied protocol, not
 a null-model-free derivation.
+
+Milestone 16 introduces transport-gauge invariance as a baseline for
+relational histories. Pair-distance order histories should be stable under
+allowed per-slice gauges, while transport-dependent quantities such as velocity
+should change. This separates relational order content from coordinate
+representation artifacts.
+
+Milestone 17 adds persistence ambiguity to the baseline story. A relational
+history can be stable under transport gauges only after object identity is
+supplied or hypothesized. Null or ambiguous identity matchings are therefore
+another baseline against which relational-evolution claims must be checked.

@@ -97,3 +97,12 @@ Milestone 15 adds transport and persistence to the representation layer. These
 structures identify positions, directions, or objects across slices; they are
 separate from counting measure and must be supplied, calibrated, or constrained
 by dynamics.
+
+Milestone 16 shows that some relational evolution can be tracked without
+metric measure, but only ordinally. Quantitative dynamics and scale-dependent
+change still require calibration, density, or other metric-scale structure.
+
+Milestone 17 adds persistence matching as a separate non-measure assumption.
+Counting statistics can encode measure shape, but they do not identify objects
+across slices. Relational histories assembled from inferred identities are
+hypothesis-dependent.
