@@ -237,6 +237,60 @@ from exp30_ordinal_exact_sanity import (
 from exp30_ordinal_exact_sanity import (
     write_outputs as write_exp30_outputs,
 )
+from exp31_ordinal_embedding_recovery import (
+    ExperimentConfig as Exp31Config,
+)
+from exp31_ordinal_embedding_recovery import (
+    run_experiment as run_exp31,
+)
+from exp31_ordinal_embedding_recovery import (
+    save_figures as save_exp31_figures,
+)
+from exp31_ordinal_embedding_recovery import (
+    write_outputs as write_exp31_outputs,
+)
+from exp32_ordinal_dimension_selection import (
+    ExperimentConfig as Exp32Config,
+)
+from exp32_ordinal_dimension_selection import (
+    run_experiment as run_exp32,
+)
+from exp32_ordinal_dimension_selection import (
+    save_figures as save_exp32_figures,
+)
+from exp32_ordinal_dimension_selection import (
+    write_outputs as write_exp32_outputs,
+)
+from exp33_noisy_incomplete_order_embedding import (
+    ExperimentConfig as Exp33Config,
+)
+from exp33_noisy_incomplete_order_embedding import (
+    run_experiment as run_exp33,
+)
+from exp33_noisy_incomplete_order_embedding import (
+    save_figures as save_exp33_figures,
+)
+from exp33_noisy_incomplete_order_embedding import (
+    write_outputs as write_exp33_outputs,
+)
+from exp34_observer_distance_order_embedding import (
+    ExperimentConfig as Exp34Config,
+)
+from exp34_observer_distance_order_embedding import (
+    run_experiment as run_exp34,
+)
+from exp34_observer_distance_order_embedding import (
+    save_figures as save_exp34_figures,
+)
+from exp34_observer_distance_order_embedding import (
+    write_outputs as write_exp34_outputs,
+)
+from exp35_ordinal_embedding_exact_sanity import (
+    run_experiment as run_exp35,
+)
+from exp35_ordinal_embedding_exact_sanity import (
+    write_outputs as write_exp35_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -646,6 +700,84 @@ def run_ordinal_exact_sanity() -> None:
     print(f"exp30 wrote {output_path}")
 
 
+def run_ordinal_embedding_recovery() -> None:
+    config = Exp31Config(
+        true_dims=(1,),
+        n_points_values=(20,),
+        constraint_counts=(1000,),
+        repetitions=2,
+        seed=0,
+        steps=600,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp31(config)
+    data_path = write_exp31_outputs(rows, config.output_dir)
+    figure_paths = save_exp31_figures(rows, config.output_dir)
+    print(f"exp31 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_ordinal_dimension_selection() -> None:
+    config = Exp32Config(
+        true_dims=(1, 2),
+        candidate_dims=(1, 2, 3),
+        n_points=25,
+        num_constraints=1500,
+        repetitions=2,
+        seed=0,
+        steps=600,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp32(config)
+    data_path = write_exp32_outputs(rows, config.output_dir)
+    figure_paths = save_exp32_figures(rows, config.output_dir)
+    print(f"exp32 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_noisy_incomplete_order_embedding() -> None:
+    config = Exp33Config(
+        true_dim=2,
+        n_points=40,
+        constraint_counts=(1000,),
+        flip_probabilities=(0.0, 0.05),
+        repetitions=2,
+        seed=0,
+        steps=600,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp33(config)
+    data_path = write_exp33_outputs(rows, config.output_dir)
+    figure_paths = save_exp33_figures(rows, config.output_dir)
+    print(f"exp33 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_observer_distance_order_embedding() -> None:
+    config = Exp34Config(
+        T=2.0,
+        n_events=250,
+        tick_values=(32, 64),
+        constraint_counts=(1000,),
+        repetitions=2,
+        beacon_separation=0.15,
+        seed=0,
+        steps=600,
+        restarts=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp34(config)
+    data_path = write_exp34_outputs(rows, config.output_dir)
+    figure_paths = save_exp34_figures(rows, config.output_dir)
+    print(f"exp34 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_ordinal_embedding_exact_sanity() -> None:
+    rows = run_exp35()
+    output_path = write_exp35_outputs(rows)
+    print(f"exp35 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -674,6 +806,11 @@ def main() -> None:
     run_oriented_chart_distance_order_preservation()
     run_metric_representability_diagnostics()
     run_ordinal_exact_sanity()
+    run_ordinal_embedding_recovery()
+    run_ordinal_dimension_selection()
+    run_noisy_incomplete_order_embedding()
+    run_observer_distance_order_embedding()
+    run_ordinal_embedding_exact_sanity()
 
 
 if __name__ == "__main__":

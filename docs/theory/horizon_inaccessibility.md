@@ -70,3 +70,7 @@ density, not the ideal causal wedge.
 Milestone 11 keeps the same distinction: accessibility order can be studied
 before assigning metric distances, ratios, or curvature-like representation
 values.
+
+Milestone 12 focuses on embeddability of distance-order data rather than
+horizon accessibility. Both remain representation-layer diagnostics in
+controlled models, not derivations of metric geometry as fundamental.

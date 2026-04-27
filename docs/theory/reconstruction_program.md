@@ -19,6 +19,7 @@ primitive information-accessibility
   -> horizon-limited reconstruction
   -> measure-dependent metric-scale reconstruction
   -> measure encoding and coarse-graining stability checks
+  -> ordinal embedding and effective metric representation diagnostics
 ```
 
 The simulations reproduce and stress-test pieces of this program in known
@@ -73,6 +74,12 @@ Milestone 11 adds ordinal diagnostics. Radar-return order and oriented chart
 distance-order preservation test order-level reconstruction, while scale,
 calibration, and representability experiments show why metric quantities and
 ratios require stronger conditions than bare order preservation.
+
+Milestone 12 adds finite ordinal embedding. It asks when distance-order
+constraints can be compressed into a low-dimensional coordinate representation,
+how candidate dimension changes ordinal stress, how noise and incompleteness
+degrade that representation, and whether observer-derived distance order
+supports an effective spatial embedding.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

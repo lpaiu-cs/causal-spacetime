@@ -162,3 +162,12 @@ Finite tick resolution can preserve coarse order only up to ties. Calibration
 and repeated processes are needed before order data supports stable ratios or
 metric units. These diagnostics complement, rather than replace, the sampling
 noise models used for interval-count reconstruction.
+
+## Relation To Ordinal Embedding
+
+Milestone 12 introduces another finite-error layer: ordinal embedding stress.
+Constraint violation rate and hinge loss quantify how well a low-dimensional
+coordinate representation satisfies sampled distance-order comparisons. These
+are not Poisson interval-count errors, but they play a similar diagnostic role:
+they separate finite sampling, incomplete comparisons, noisy constraints, and
+representability limits from stronger metric claims.

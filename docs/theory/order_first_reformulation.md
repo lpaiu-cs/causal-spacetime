@@ -147,3 +147,11 @@ that representation is under physical-volume sprinkling and thinning.
 
 Milestone 11 adds explicit ordinal diagnostics so that future work can separate
 order preservation from metric-value accuracy.
+
+Milestone 12 adds ordinal embedding as a finite diagnostic for effective metric
+representation. It asks whether a rich set of distance-order comparisons can be
+compressed into a low-dimensional coordinate system, and how that compression
+fails under insufficient constraints, wrong dimension, or noisy comparisons.
+This strengthens the order-first framing: metric geometry is useful when it is
+a stable low-complexity representation of order data, not because it is assumed
+as the primitive substrate.

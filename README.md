@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestone 11 makes the theory-facing framing explicitly order-first:
+Milestones 11-12 make the theory-facing framing explicitly order-first:
 
 ```text
 causal order -> primitive temporal order
@@ -56,6 +56,8 @@ reconstruction experiments:
 - test order-first diagnostics for radar-return distance order, monotone
   invariance, calibration-driven ratio stability, and finite metric
   representability conditions,
+- test ordinal embedding as a finite diagnostic for when observer-relative
+  distance order admits a low-dimensional effective metric representation,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -281,6 +283,33 @@ It writes:
 - `outputs/figures/ratio_stability_from_calibration.png`
 - `outputs/figures/oriented_chart_distance_order_inversion_vs_ticks.png`
 
+Milestone 12 adds ordinal embedding and effective metric representation
+diagnostics:
+
+```bash
+python experiments/exp31_ordinal_embedding_recovery.py
+python experiments/exp32_ordinal_dimension_selection.py
+python experiments/exp33_noisy_incomplete_order_embedding.py
+python experiments/exp34_observer_distance_order_embedding.py
+python experiments/exp35_ordinal_embedding_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/ordinal_embedding_recovery.csv`
+- `outputs/data/ordinal_dimension_selection.csv`
+- `outputs/data/noisy_incomplete_order_embedding.csv`
+- `outputs/data/observer_distance_order_embedding.csv`
+- `outputs/data/ordinal_embedding_exact_sanity.csv`
+- `outputs/figures/ordinal_embedding_violation_vs_constraints.png`
+- `outputs/figures/ordinal_embedding_rmse_vs_constraints.png`
+- `outputs/figures/ordinal_dimension_stress_curve.png`
+- `outputs/figures/ordinal_dimension_violation_curve.png`
+- `outputs/figures/noisy_order_embedding_violation.png`
+- `outputs/figures/noisy_order_embedding_rmse.png`
+- `outputs/figures/observer_distance_order_embedding_violation_vs_ticks.png`
+- `outputs/figures/observer_distance_order_embedding_rmse_vs_ticks.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -411,3 +440,10 @@ observer-relative distance order. Positive monotone transformations can preserve
 order while changing ratios, so ratio stability requires calibration,
 concatenation, repeated processes, or dynamics. Not every distance order admits
 a useful low-dimensional metric representation.
+Milestone 12 tests this representability question directly with ordinal
+embedding. The experiments ask whether low-dimensional coordinates can act as a
+low-complexity compression of distance-order constraints, how candidate
+dimension affects ordinal stress, how noise and incomplete comparisons degrade
+the representation, and whether observer-derived distance order supports an
+effective 1D spatial embedding. These are finite diagnostics, not
+representation theorems or proofs of spacetime emergence.

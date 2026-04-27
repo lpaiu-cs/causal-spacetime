@@ -82,6 +82,11 @@ objects. Positive monotone transformations can preserve order while changing
 ratio structure, so metric scale and ratio stability require additional
 calibration or dynamics.
 
+Milestone 12 uses ordinal embedding to test another representation condition:
+even after order data is supplied, a low-dimensional metric representation must
+earn its usefulness by satisfying many distance-order comparisons with low
+loss. This does not remove conformal or measure ambiguity.
+
 ## Interpretation
 
 This milestone strengthens the reconstruction program by making a limitation

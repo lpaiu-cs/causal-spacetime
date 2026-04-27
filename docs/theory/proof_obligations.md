@@ -33,6 +33,8 @@ repository. Open proof obligations include:
 - metric-representability conditions for observer-relative distance orders,
   including when a useful low-dimensional Lorentzian or Euclidean
   representation exists,
+- convergence and identifiability conditions for ordinal embeddings from
+  incomplete or noisy distance-order constraints,
 - a clear separation between primitive order structures and effective metric
   representation-layer objects such as metric tensors and curvature values.
 

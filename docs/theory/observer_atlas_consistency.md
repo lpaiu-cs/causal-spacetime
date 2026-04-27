@@ -94,3 +94,8 @@ additional inputs to the reconstruction protocol.
 Milestone 11 adds explicit representability diagnostics. These emphasize that
 not every distance order or chart overlap can be assumed to admit a useful
 metric representation.
+
+Milestone 12 implements ordinal embedding diagnostics for that
+representability question. A successful single embedding is still weaker than a
+Lorentzian atlas, because an atlas also requires calibrated overlap maps and
+composition consistency.

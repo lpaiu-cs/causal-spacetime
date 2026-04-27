@@ -160,6 +160,19 @@ structures. It is appropriate when causal order, observer-relative distance
 order, measure information, and transition maps satisfy suitable consistency
 and representability conditions.
 
+## Ordinal Embedding
+
+Ordinal embedding is a finite diagnostic that attempts to find coordinates
+whose distances satisfy comparisons such as:
+
+```text
+d(i,j) < d(k,l)
+```
+
+In this project, ordinal embedding is used to test whether observer-relative
+distance order admits a low-dimensional effective metric representation. It is
+not a proof that the order structure uniquely determines a metric.
+
 ## Orientation Reference
 
 An orientation reference is additional observer-protocol structure used to

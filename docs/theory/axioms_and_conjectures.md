@@ -79,6 +79,10 @@ C5f. Ratio stability should arise only after calibration, concatenation,
 repeated processes, or dynamics restrict the admissible order-preserving
 representations.
 
+C5g. Rich, mutually consistent observer-relative distance-order data may admit
+low-dimensional ordinal embeddings that serve as effective metric
+representations, but noisy or inconsistent order data may not.
+
 C5a. Given a suitable observer chain with clock labels, radar time and radar
 distance can be approximated from causal accessibility relations, with
 resolution controlled by clock tick density and accessibility coverage.

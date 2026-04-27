@@ -286,3 +286,24 @@ The metric-representability diagnostics show that a distance order or candidate
 distance matrix is not automatically a useful metric geometry. Cycles,
 triangle-inequality failures, and embedding diagnostics are separate
 representability checks.
+
+## Milestone 12: Ordinal Embedding Validation
+
+Milestone 12 tests effective metric representation directly. It samples
+quadruplet distance-order constraints and fits low-dimensional coordinates
+using a simple finite ordinal-embedding optimizer.
+
+The validation separates several questions:
+
+```text
+Does the embedding satisfy the sampled order constraints?
+Does increasing constraints improve a consistent representation?
+Does ordinal stress drop at or above an effective dimension?
+How much do noisy or incomplete comparisons degrade the representation?
+Can observer-derived distance order support a 1D effective spatial chart?
+```
+
+The hidden coordinates are used only to generate controlled constraints or to
+validate fitted embeddings. Ordinal embedding is treated as a finite diagnostic
+for representability, not a proof that all distance orders are metric or that
+metric geometry is fundamental.

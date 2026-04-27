@@ -96,3 +96,8 @@ protocols when reconstructing signed coordinates.
 Milestone 11 adds a distance-order preservation diagnostic for oriented charts.
 This is weaker than metric RMSE and more directly tests whether the
 observer-relative order structure survives finite tick resolution.
+
+Milestone 12 goes one step further by fitting a 1D ordinal embedding from
+observer-derived distance-order constraints. This tests whether the oriented
+protocol's order data supports an effective spatial representation, while
+keeping the protocol and calibration assumptions explicit.

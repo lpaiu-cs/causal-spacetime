@@ -76,3 +76,8 @@ relativity.
 The order-first program therefore treats measure encoding as one condition
 under which an effective metric representation may be useful. It does not imply
 that event distribution alone determines an absolute metric scale.
+
+Milestone 12 studies a different representability condition: whether
+distance-order constraints can be compressed into low-dimensional coordinates.
+Measure stability and ordinal embeddability are complementary requirements for
+an effective metric representation.

@@ -361,6 +361,31 @@ The new ordinal experiments check:
 These checks do not show that distance order alone gives metric geometry. They
 separate order preservation from metric-value accuracy.
 
+## Milestone 12: Ordinal Embedding And Effective Metric Representation
+
+Milestone 12 asks when distance-order constraints admit a useful
+low-dimensional metric representation. The controlled ordinal embedding
+experiments use constraints of the form:
+
+```text
+d(i,j) < d(k,l)
+```
+
+and fit low-dimensional coordinates by minimizing a finite quadruplet hinge
+loss. The fitted coordinates are evaluated by violation rate, order-preservation
+loss, and Procrustes-aligned RMSE against hidden validation coordinates.
+
+This milestone treats metric geometry as a low-complexity compression of rich
+order data. More constraints should generally improve a consistent embedding,
+candidate dimensions below the effective dimension should show higher ordinal
+stress, and noisy flipped comparisons should create irreducible violations.
+
+The observer-derived experiment uses oriented radar reconstruction to generate
+distance-order constraints from a supplied observer protocol, then asks whether
+those constraints support a 1D effective spatial representation. This remains a
+finite diagnostic; it does not prove that distance order alone gives full
+metric geometry.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

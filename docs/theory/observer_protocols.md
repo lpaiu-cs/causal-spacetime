@@ -118,3 +118,8 @@ scale and appropriate rescaling under thinning.
 Milestone 11 adds radar-return order diagnostics that use only causal order and
 observer tick order. Numeric clock labels are not needed for that ordinal
 comparison, but metric distances and ratios still require calibration.
+
+Milestone 12 then asks whether observer-relative distance-order data can be
+embedded into a low-dimensional effective metric representation. The observer
+protocol supplies the order data; the embedding is a diagnostic compression of
+that data, not a primitive spatial substrate.
