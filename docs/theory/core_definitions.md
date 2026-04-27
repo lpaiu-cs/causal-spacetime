@@ -74,6 +74,42 @@ In discrete radar reconstruction, the observer chain is supplied with strictly
 increasing clock labels. These labels are protocol structure, not information
 derived from causal order alone.
 
+## Orientation Reference
+
+An orientation reference is additional observer-protocol structure used to
+distinguish mirrored spatial positions. In the current 1+1D implementation, it
+is represented by a synchronized comoving beacon chain at a known rest-frame
+separation from the primary observer chain.
+
+The beacon separation is supplied protocol data. It is not recovered from
+causal order alone.
+
+## Observer Atlas
+
+An observer atlas is a collection of observer protocols whose reconstructed
+charts overlap on some events. Atlas validation asks whether transition maps on
+overlaps are mutually consistent.
+
+In Milestone 7, the controlled transition maps are affine Lorentz/Poincare maps
+between oriented inertial charts:
+
+```text
+chart_B ~= L(beta_AB) chart_A + translation_AB
+```
+
+Observer origins and translations are supplied or fitted protocol-level
+structure, not quantities derived from causal order alone.
+
+## Reconstruction-Inaccessibility Boundary
+
+A reconstruction-inaccessibility boundary is a boundary beyond which a supplied
+observer protocol cannot assign the relevant operational coordinates. In
+Milestone 8, two-way radar accessibility requires both `tau_minus` and
+`tau_plus` from the observer chain.
+
+The Rindler horizon in flat 1+1D Minkowski spacetime is used as a controlled
+horizon analogue. It is not a black hole model.
+
 ## Null Accessibility
 
 Null accessibility describes boundary accessibility relations analogous to
@@ -100,8 +136,10 @@ target.
 A reconstruction map is a procedure:
 
 ```text
-(E, ≺, counting measure, observer protocol) -> reconstructed quantities
+(E, ≺, counting measure, observer protocol, orientation reference)
+  -> reconstructed quantities
 ```
 
 Examples include proper-time estimates, dimension estimates, radar coordinates,
-and exploratory spatial-distance proxies.
+oriented coordinates, coordinate maps between observer protocols, and
+exploratory spatial-distance proxies.

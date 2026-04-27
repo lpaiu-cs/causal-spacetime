@@ -99,3 +99,30 @@ The dimension experiment is theory-facing because it treats dimension as an
 order-statistical observable. It remains a controlled validation inside known
 flat causal intervals, not a proof that physical spacetime dimension has been
 derived from information alone.
+
+## Relation To Oriented Radar
+
+Milestone 6 adds a different validation target: orientation and coordinate-map
+compatibility. The statistical-calibration experiments focus on interval counts
+and finite-sampling noise, while oriented radar focuses on finite observer-clock
+resolution and accessibility coverage.
+
+The signed-coordinate reconstruction uses a supplied beacon chain and known
+beacon separation. Those protocol choices are additional structure, just as
+event density is additional scale information in interval-count reconstruction.
+
+## Relation To Atlas Consistency
+
+Milestone 7 uses different diagnostics again: affine transition-map residuals,
+relative-beta errors, invariant interval disagreement, accessible overlap, and
+loop consistency. These are not Poisson interval-count errors. They are
+finite-protocol-resolution and overlap diagnostics for reconstructed observer
+charts.
+
+## Relation To Rindler Horizon Validation
+
+Milestone 8 is primarily an accessibility and finite-coverage validation. Its
+error sources are observer clock resolution, finite chain duration, and the
+observer-dependent Rindler wedge, rather than interval-count sampling noise.
+The experiment therefore reports confusion rates and radar-coordinate errors
+relative to finite-chain coverage.

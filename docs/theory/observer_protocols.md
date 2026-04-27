@@ -9,6 +9,9 @@ observer-dependent spatial decomposition.
 For radar reconstruction, the observer chain and its clock labels are additional
 protocol structure.
 
+A single observer chain gives an unsigned distance. It does not define a
+left-right orientation or a signed spatial coordinate.
+
 ## Observer Chain
 
 An observer chain is a totally ordered sequence of events:
@@ -57,6 +60,19 @@ with natural units `c = 1`.
 This is an operational spatial decomposition relative to an observer protocol.
 It is not a claim that causal order alone gives spatial distance.
 
+## Orientation Reference
+
+An oriented observer protocol can add a synchronized comoving beacon chain at a
+known rest-frame separation `a`. Radar distances to the primary chain and beacon
+chain can then define a signed coordinate:
+
+```text
+x_hat = (R0^2 - Ra^2 + a^2) / (2a)
+```
+
+The beacon separation is additional reference structure. Without it, the
+single-observer reflection degeneracy remains.
+
 ## Validation Scope
 
 Milestone 5 validates observer-chain radar reconstruction in known 1+1D
@@ -72,3 +88,15 @@ observer chain + causal accessibility -> operational radar decomposition
 
 It does not prove spacetime emergence.
 
+Milestone 6 extends this validation to two-chain radar reconstruction and
+Lorentz-map recovery between oriented inertial protocols.
+
+Milestone 7 uses multiple oriented protocols as an observer atlas. Atlas
+validation asks whether reconstructed chart overlaps admit affine
+Lorentz/Poincare transition maps, agree on invariant intervals, and compose
+consistently around simple loops.
+
+Milestone 8 applies the observer-chain radar protocol to a uniformly
+accelerated Rindler observer in flat spacetime. Missing `tau_minus` or
+`tau_plus` is treated as observer-protocol reconstruction inaccessibility, with
+finite chain coverage reported separately from ideal wedge accessibility.

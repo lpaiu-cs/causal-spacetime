@@ -14,8 +14,14 @@ repository. Open proof obligations include:
 - quantum compatibility,
 - empirical distinguishability from existing theories,
 - stability under coarse graining and finite sampling,
-- observer-protocol consistency across overlapping reconstructions.
+- observer-protocol consistency across overlapping reconstructions,
+- uniqueness and calibration conditions for orientation/reference protocols,
+- compatibility conditions under which maps between reconstructed observer
+  coordinates are Lorentzian in appropriate limits,
+- atlas compatibility conditions, including overlap, transition-map
+  composition, and invariant agreement in continuum limits,
+- a precise theory of observer-dependent reconstruction-inaccessibility
+  boundaries and their relation to horizons in non-flat settings.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.
-

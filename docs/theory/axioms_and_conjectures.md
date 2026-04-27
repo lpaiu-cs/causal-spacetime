@@ -15,6 +15,12 @@ A3. Counting measure supplies volume-like information.
 
 A4. Observer chains allow operational time and space decomposition.
 
+A4a. Signed spatial coordinates require orientation or reference structure
+beyond a single observer chain.
+
+A4b. Coordinate atlases require overlap and transition-map consistency between
+multiple observer protocols.
+
 A5. Lorentzian continuum behavior is a limiting property, not assumed at finite
 `N`.
 
@@ -40,8 +46,23 @@ C5a. Given a suitable observer chain with clock labels, radar time and radar
 distance can be approximated from causal accessibility relations, with
 resolution controlled by clock tick density and accessibility coverage.
 
+C5b. Given a suitable two-chain oriented observer protocol with supplied beacon
+separation, signed 1+1D coordinates can be approximated from causal
+accessibility relations and clock labels.
+
+C5c. Coordinate maps between compatible oriented inertial protocols should
+approach Lorentz maps in suitable flat continuum limits.
+
+C5d. Multiple compatible oriented protocols should form transition maps with
+approximately consistent composition on chart overlaps in suitable flat
+continuum limits.
+
 C6. Horizons correspond to reconstruction-inaccessibility boundaries for
 restricted observers.
+
+C6a. In controlled flat-spacetime analogues, two-way radar accessibility for an
+accelerated observer should identify the appropriate Rindler wedge up to finite
+observer-chain coverage and clock-resolution effects.
 
 These conjectures are targets for mathematical analysis and controlled
 simulation. They are not presented as proven by this repository.

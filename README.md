@@ -27,6 +27,13 @@ for 1+1D special-relativistic and causal-set reconstruction experiments:
   Alexandrov intervals,
 - reconstruct observer-chain radar coordinates from causal order plus supplied
   observer clock labels,
+- reconstruct signed 1+1D radar coordinates when a second synchronized beacon
+  chain supplies orientation reference structure,
+- test Lorentz-map recovery between two oriented inertial observer protocols,
+- test observer-atlas consistency across overlapping reconstructed charts with
+  affine Lorentz/Poincare transition maps,
+- test Rindler horizon reconstruction-inaccessibility as a controlled
+  flat-spacetime horizon analogue,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -122,6 +129,65 @@ It writes:
 - `outputs/figures/discrete_radar_error_vs_ticks.png`
 - `outputs/figures/discrete_radar_accessible_fraction.png`
 
+Milestone 6 adds oriented two-chain radar reconstruction and Lorentz-map
+recovery:
+
+```bash
+python experiments/exp12_single_observer_reflection_degeneracy.py
+python experiments/exp13_oriented_radar_lorentz_map_recovery.py
+```
+
+It writes:
+
+- `outputs/data/single_observer_reflection_degeneracy.csv`
+- `outputs/figures/single_observer_reflection_degeneracy.png`
+- `outputs/data/oriented_radar_lorentz_events.csv`
+- `outputs/data/oriented_radar_lorentz_summary.csv`
+- `outputs/figures/oriented_radar_lab_position_scatter.png`
+- `outputs/figures/oriented_radar_moving_position_scatter.png`
+- `outputs/figures/oriented_radar_lorentz_residual_vs_ticks.png`
+- `outputs/figures/oriented_radar_beta_fit_vs_ticks.png`
+- `outputs/figures/oriented_radar_accessible_fraction.png`
+
+Milestone 7 adds observer-atlas consistency:
+
+```bash
+python experiments/exp14_observer_atlas_consistency.py
+python experiments/exp15_exact_poincare_map_sanity.py
+```
+
+It writes:
+
+- `outputs/data/observer_atlas_chart_events.csv`
+- `outputs/data/observer_atlas_transition_summary.csv`
+- `outputs/data/observer_atlas_loop_summary.csv`
+- `outputs/data/exact_poincare_map_sanity.csv`
+- `outputs/figures/observer_atlas_transition_beta_error_vs_ticks.png`
+- `outputs/figures/observer_atlas_transition_rmse_vs_ticks.png`
+- `outputs/figures/observer_atlas_invariant_disagreement_vs_ticks.png`
+- `outputs/figures/observer_atlas_overlap_fraction_vs_ticks.png`
+- `outputs/figures/observer_atlas_loop_consistency_vs_ticks.png`
+
+Milestone 8 adds Rindler horizon reconstruction-inaccessibility:
+
+```bash
+python experiments/exp16_rindler_horizon_reconstruction.py
+python experiments/exp17_inertial_vs_rindler_accessibility.py
+```
+
+It writes:
+
+- `outputs/data/rindler_horizon_reconstruction_events.csv`
+- `outputs/data/rindler_horizon_reconstruction_summary.csv`
+- `outputs/data/inertial_vs_rindler_accessibility.csv`
+- `outputs/figures/rindler_accessibility_map.png`
+- `outputs/figures/rindler_accessible_fraction_vs_ticks.png`
+- `outputs/figures/rindler_radar_time_scatter.png`
+- `outputs/figures/rindler_radar_distance_scatter.png`
+- `outputs/figures/rindler_error_vs_ticks.png`
+- `outputs/figures/rindler_false_positive_negative_vs_ticks.png`
+- `outputs/figures/inertial_vs_rindler_accessibility.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -191,7 +257,9 @@ mathematical reconstruction program:
 primitive causal/information-accessibility structure
   + counting measure / event density
   + observer protocol
-  -> operational time, distance, dimension, and spacetime-like geometry
+  + orientation/reference protocol
+  -> operational time, distance, dimension, coordinate transformations,
+     atlas consistency diagnostics, and horizon-limited reconstruction
 ```
 
 The longest chain is also reported as a causal-order observable with a simple
@@ -218,3 +286,16 @@ spacetime has been derived.
 Observer-chain radar reconstruction uses a supplied observer protocol and clock
 labels. It tests operational spatial decomposition from causal accessibility,
 but it does not show that causal order alone gives radar distance.
+Milestone 6 makes the reflection degeneracy explicit: a single observer gives
+unsigned distance only. Signed coordinates require a supplied orientation
+reference such as a synchronized beacon chain with known separation. Lorentz-map
+recovery is therefore a controlled validation between observer protocols, not a
+derivation of Lorentz transformations from causal order alone.
+Milestone 7 extends this to a small observer atlas. It fits affine
+Lorentz/Poincare transition maps on chart overlaps and checks invariant
+interval agreement and loop consistency. Observer origins, clocks, beacon
+separations, and orientation references remain supplied protocol structure.
+Milestone 8 uses a Rindler observer in flat 1+1D Minkowski spacetime to test
+reconstruction-inaccessibility. It distinguishes ideal Rindler wedge
+accessibility from finite-chain coverage. This is a controlled horizon analogue,
+not a black hole simulation or a derivation of horizons from causal order alone.

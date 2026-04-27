@@ -193,6 +193,80 @@ observer values `t` and `abs(x)`. This supports the observer-dependent spatial
 decomposition layer of the reconstruction program, while keeping the observer
 chain and clock labels explicit as additional protocol structure.
 
+## Milestone 6: Oriented Radar And Lorentz-Map Recovery
+
+Milestone 6 makes explicit that one observer chain reconstructs an unsigned
+radar distance. For a stationary chain at `x = 0`, the events `(t, x)` and
+`(t, -x)` have the same radar time and radar distance, so a single chain cannot
+recover a signed spatial coordinate.
+
+The oriented protocol supplies a second synchronized comoving beacon chain at
+rest-frame separation `a`. Radar distances to the primary chain and beacon
+chain are combined as:
+
+```text
+x_hat = (R0^2 - Ra^2 + a^2) / (2a)
+```
+
+The beacon separation and synchronization are additional protocol structure.
+They are not derived from causal order alone.
+
+The Lorentz-map experiment builds two oriented protocols for the same causal
+set: a stationary lab protocol and a moving inertial protocol. Each protocol
+uses causal-order-based radar ticks and supplied clock labels. Hidden
+coordinates are used only to validate the reconstructed coordinates and the
+fitted boost parameter. The validation question is whether the compatibility
+map between the two reconstructed coordinate decompositions approaches the
+known Lorentz map as clock tick density increases.
+
+## Milestone 7: Observer Atlas Consistency
+
+Milestone 7 moves from isolated oriented protocols to a small atlas of
+overlapping reconstructed charts. Each chart is built from the same causal
+matrix plus supplied protocol chains, clock labels, beacon separation, and
+observer origin data.
+
+For chart pairs, the experiment fits an affine Lorentz/Poincare transition map:
+
+```text
+chart_B ~= L(beta_AB) chart_A + translation_AB
+```
+
+It compares the fitted relative beta to the value expected from the controlled
+hidden protocol construction. It also checks whether the two charts assign
+approximately the same Minkowski interval squared `dt^2 - dx^2` to sampled
+pairs of shared events.
+
+For the chart loop `A -> B -> C`, the experiment composes fitted maps and
+compares that composed result with the direct fitted map `A -> C`. This is an
+atlas-consistency diagnostic in known 1+1D Minkowski intervals. It does not
+show that causal order alone gives a manifold, a unique atlas, signed space, or
+affine translations.
+
+## Milestone 8: Rindler Horizon And Reconstruction Inaccessibility
+
+Milestone 8 adds a uniformly accelerated Rindler observer in flat 1+1D
+Minkowski spacetime. The observer chain and proper-time labels are supplied
+protocol structure. The reconstruction uses only the causal matrix, observer
+indices, and clock labels to determine whether each support event has both
+radar ticks.
+
+The validation compares three notions:
+
+```text
+1. analytic infinite-wedge accessibility,
+2. finite-chain coverage accessibility,
+3. reconstructed two-way radar accessibility.
+```
+
+Events inside the ideal Rindler wedge may still be inaccessible for a finite
+observer chain if their analytic `tau_minus` or `tau_plus` falls outside the
+simulated clock range. This is reported separately so finite chain duration is
+not mistaken for the true Rindler horizon boundary.
+
+This is a controlled flat-spacetime horizon analogue. It is not a black hole
+simulation and does not prove spacetime emergence.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

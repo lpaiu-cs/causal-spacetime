@@ -8,6 +8,7 @@ import exp02_lorentz_length_contraction as exp02
 import exp03_causalset_timelike_reconstruction as exp03
 import exp05_finite_speed_lattice_counterexample as exp05
 import exp06_spacelike_distance_reconstruction as exp06
+import exp12_single_observer_reflection_degeneracy as exp12
 from exp07_timelike_pair_reconstruction_convergence import (
     ExperimentConfig,
 )
@@ -55,6 +56,60 @@ from exp11_discrete_observer_radar_reconstruction import (
 )
 from exp11_discrete_observer_radar_reconstruction import (
     write_outputs as write_exp11_outputs,
+)
+from exp13_oriented_radar_lorentz_map_recovery import (
+    ExperimentConfig as Exp13Config,
+)
+from exp13_oriented_radar_lorentz_map_recovery import (
+    run_experiment as run_exp13,
+)
+from exp13_oriented_radar_lorentz_map_recovery import (
+    save_figures as save_exp13_figures,
+)
+from exp13_oriented_radar_lorentz_map_recovery import (
+    write_outputs as write_exp13_outputs,
+)
+from exp14_observer_atlas_consistency import (
+    ExperimentConfig as Exp14Config,
+)
+from exp14_observer_atlas_consistency import (
+    run_experiment as run_exp14,
+)
+from exp14_observer_atlas_consistency import (
+    save_figures as save_exp14_figures,
+)
+from exp14_observer_atlas_consistency import (
+    write_outputs as write_exp14_outputs,
+)
+from exp15_exact_poincare_map_sanity import (
+    run_experiment as run_exp15,
+)
+from exp15_exact_poincare_map_sanity import (
+    write_outputs as write_exp15_outputs,
+)
+from exp16_rindler_horizon_reconstruction import (
+    ExperimentConfig as Exp16Config,
+)
+from exp16_rindler_horizon_reconstruction import (
+    run_experiment as run_exp16,
+)
+from exp16_rindler_horizon_reconstruction import (
+    save_figures as save_exp16_figures,
+)
+from exp16_rindler_horizon_reconstruction import (
+    write_outputs as write_exp16_outputs,
+)
+from exp17_inertial_vs_rindler_accessibility import (
+    ExperimentConfig as Exp17Config,
+)
+from exp17_inertial_vs_rindler_accessibility import (
+    run_experiment as run_exp17,
+)
+from exp17_inertial_vs_rindler_accessibility import (
+    save_plot as save_exp17_plot,
+)
+from exp17_inertial_vs_rindler_accessibility import (
+    write_outputs as write_exp17_outputs,
 )
 
 
@@ -188,6 +243,119 @@ def run_discrete_observer_radar_reconstruction() -> None:
     )
 
 
+def run_single_observer_reflection_degeneracy() -> None:
+    rows = exp12.run_experiment()
+    summary_path = exp12.write_summary(rows)
+    figure_path = exp12.save_plot(rows)
+    print(f"exp12 wrote {summary_path} and {figure_path}")
+
+
+def run_oriented_radar_lorentz_map_recovery() -> None:
+    config = Exp13Config(
+        T=2.0,
+        n_values=(300,),
+        tick_values=(32, 64),
+        beta_values=(0.3,),
+        beacon_separation=0.15,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    event_rows, summary_rows = run_exp13(config)
+    event_path, summary_path = write_exp13_outputs(
+        event_rows,
+        summary_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp13_figures(event_rows, summary_rows, config.output_dir)
+    print(
+        "exp13 wrote "
+        f"{event_path}, {summary_path}, and {len(figure_paths)} figures"
+    )
+
+
+def run_observer_atlas_consistency() -> None:
+    config = Exp14Config(
+        T=2.0,
+        n_values=(300,),
+        tick_values=(32, 64),
+        repetitions=2,
+        seed=0,
+        beacon_separation=0.15,
+        output_dir=Path("outputs"),
+        num_invariant_pairs=200,
+    )
+    chart_rows, transition_rows, loop_rows = run_exp14(config)
+    chart_path, transition_path, loop_path = write_exp14_outputs(
+        chart_rows,
+        transition_rows,
+        loop_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp14_figures(
+        transition_rows,
+        loop_rows,
+        config.output_dir,
+    )
+    print(
+        "exp14 wrote "
+        f"{chart_path}, {transition_path}, {loop_path}, and "
+        f"{len(figure_paths)} figures"
+    )
+
+
+def run_exact_poincare_map_sanity() -> None:
+    rows = run_exp15()
+    output_path = write_exp15_outputs(rows)
+    print(f"exp15 wrote {output_path}")
+
+
+def run_rindler_horizon_reconstruction() -> None:
+    config = Exp16Config(
+        T=4.0,
+        acceleration_values=(2.0,),
+        n_values=(600,),
+        tick_values=(32, 64),
+        repetitions=2,
+        seed=0,
+        direction=1,
+        output_dir=Path("outputs"),
+    )
+    event_rows, summary_rows = run_exp16(config)
+    event_path, summary_path = write_exp16_outputs(
+        event_rows,
+        summary_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp16_figures(event_rows, summary_rows, config)
+    print(
+        "exp16 wrote "
+        f"{event_path}, {summary_path}, and {len(figure_paths)} figures"
+    )
+
+
+def run_inertial_vs_rindler_accessibility() -> None:
+    config = Exp17Config(
+        T=4.0,
+        n_events=400,
+        tick_count=64,
+        acceleration=2.0,
+        seed=0,
+        direction=1,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp17(config)
+    data_path = write_exp17_outputs(
+        rows,
+        config.output_dir / "data" / "inertial_vs_rindler_accessibility.csv",
+    )
+    figure_path = save_exp17_plot(
+        rows,
+        config.output_dir / "figures" / "inertial_vs_rindler_accessibility.png",
+    )
+    print(f"exp17 wrote {data_path} and {figure_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -197,6 +365,12 @@ def main() -> None:
     run_probe_pair_statistical_calibration()
     run_dimension_reconstruction()
     run_discrete_observer_radar_reconstruction()
+    run_single_observer_reflection_degeneracy()
+    run_oriented_radar_lorentz_map_recovery()
+    run_observer_atlas_consistency()
+    run_exact_poincare_map_sanity()
+    run_rindler_horizon_reconstruction()
+    run_inertial_vs_rindler_accessibility()
 
 
 if __name__ == "__main__":

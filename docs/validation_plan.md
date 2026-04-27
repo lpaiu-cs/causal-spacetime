@@ -139,3 +139,70 @@ The validation checks whether radar time and radar distance approach the hidden
 stationary-observer values as clock tick density increases. The observer chain
 and clock labels are additional protocol structure, so this is not a test of
 causal order alone.
+
+## Milestone 6: Orientation And Lorentz-Map Validation
+
+The oriented radar experiment validates a two-chain observer protocol in known
+1+1D Minkowski intervals. A single observer chain supplies only unsigned radar
+distance, so mirrored events `(t, x)` and `(t, -x)` remain degenerate. The
+reflection-degeneracy diagnostic records that failure mode directly.
+
+The two-chain protocol supplies a synchronized comoving beacon chain with known
+rest-frame separation. This orientation reference is additional protocol
+structure. Given radar distances to the primary and beacon chains, the protocol
+reconstructs a signed coordinate and compares it against hidden validation
+coordinates.
+
+The Lorentz-map recovery experiment then compares two oriented protocols: one
+stationary and one moving inertially. In the controlled validation setting, the
+map between their reconstructed coordinates should approach the known Lorentz
+map as observer tick density increases. This is a test of protocol consistency
+inside known special relativity, not a proof that causal order alone determines
+signed space or coordinate transformations.
+
+## Milestone 7: Observer Atlas Consistency
+
+The observer-atlas experiment uses three supplied oriented inertial protocols
+with different boosts and affine origins. Each protocol reconstructs chart
+coordinates for support events from the same causal matrix, observer-chain
+indices, beacon-chain indices, and clock labels.
+
+For overlapping chart pairs, the validation fits:
+
+```text
+target_chart ~= L(beta_relative) source_chart + translation
+```
+
+and checks fitted beta error, transition residual RMSE, accessible overlap
+fraction, and invariant interval disagreement. For the chart loop
+`A -> B -> C`, it compares the composed transition map with the direct `A -> C`
+fit.
+
+This moves closer to atlas structure because it tests overlapping charts and
+transition-map consistency. The origins, clocks, beacon separations, and
+orientation references remain supplied protocol data, and the validation is
+still performed inside known 1+1D Minkowski intervals.
+
+## Milestone 8: Rindler Horizon Validation
+
+The Rindler experiment tests reconstruction-inaccessibility for an accelerated
+observer in flat 1+1D Minkowski spacetime. It supplies a uniformly accelerated
+observer chain and proper-time clock labels, then reconstructs two-way radar
+accessibility from causal order alone relative to that protocol.
+
+The validation explicitly separates:
+
+```text
+ideal Rindler wedge accessibility
+finite observer-chain coverage
+reconstructed two-way radar accessibility
+```
+
+The expected result is that reconstructed accessibility mostly matches
+finite-chain coverage, while events outside the Rindler wedge generally lack
+two-way radar reconstruction. False positives should remain low, and
+radar-coordinate errors inside finite coverage should decrease as tick
+resolution increases.
+
+This is a controlled flat-spacetime horizon analogue, not a black hole
+simulation and not a proof that causal order alone derives horizons.
