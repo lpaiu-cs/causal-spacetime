@@ -5,12 +5,14 @@ The project's theory-facing objective is a mathematical reconstruction program:
 ```text
 primitive information-accessibility
   -> causal order
+  -> primitive temporal order
+  -> observer-relative distance order
   -> conformal/light-cone structure
   -> counting measure / density
-  -> volume scale
-  -> timelike duration
   -> dimension
-  -> observer-dependent spatial decomposition
+  -> metric representation layer
+  -> volume scale and timelike duration representations
+  -> observer-dependent spatial coordinate representations
   -> orientation/reference protocols
   -> coordinate maps between observer protocols
   -> overlapping chart atlases
@@ -22,6 +24,12 @@ primitive information-accessibility
 The simulations reproduce and stress-test pieces of this program in known
 settings. They are not intended to replace relativity, and they do not prove
 spacetime emergence.
+
+Milestone 11 makes the order-first interpretation explicit. The primitive
+objects are causal/accessibility order and observer-relative distance order.
+Seconds, meters, ratios, metric tensors, and curvature values are effective
+metric-representation objects. They become useful only when calibration,
+measure/density input, dynamics, and atlas consistency stabilize them.
 
 Milestone 4 adds dimension as an order-statistical observable through the
 Myrheim-Meyer relation fraction. This is closer to the mathematical
@@ -60,6 +68,11 @@ distribution itself. Physical-volume sprinkling makes coordinate event density
 proportional to a supplied `Omega^2` profile, while thinning tests whether
 reconstruction remains stable when density is rescaled under coarse graining.
 The absolute constant scale remains additional structure.
+
+Milestone 11 adds ordinal diagnostics. Radar-return order and oriented chart
+distance-order preservation test order-level reconstruction, while scale,
+calibration, and representability experiments show why metric quantities and
+ratios require stronger conditions than bare order preservation.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

@@ -28,6 +28,13 @@ repository. Open proof obligations include:
   without smuggling in unsupported metric assumptions,
 - coarse-graining laws that specify how density, uncertainty, and reconstructed
   quantities transform under thinning or other reductions of event resolution.
+- ratio-stability conditions explaining when calibrated order structures admit
+  stable duration and distance ratios,
+- metric-representability conditions for observer-relative distance orders,
+  including when a useful low-dimensional Lorentzian or Euclidean
+  representation exists,
+- a clear separation between primitive order structures and effective metric
+  representation-layer objects such as metric tensors and curvature values.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

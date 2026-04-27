@@ -9,6 +9,9 @@ A0. Events are primitive.
 
 A1. Accessibility is represented by a strict partial order.
 
+A1a. Primitive temporal structure is causal/accessibility order, not a
+duration value.
+
 A2. Local finiteness gives discrete interval cardinalities.
 
 A3. Counting measure supplies volume-like information.
@@ -22,6 +25,9 @@ sampling/counting process, but the representation is still additional structure.
 
 A4. Observer chains allow operational time and space decomposition.
 
+A4c. Primitive spatial structure is observer-relative distance order, not an
+absolute length value.
+
 A4a. Signed spatial coordinates require orientation or reference structure
 beyond a single observer chain.
 
@@ -33,6 +39,9 @@ A5. Lorentzian continuum behavior is a limiting property, not assumed at finite
 
 A6. Finite signal speed alone is insufficient; statistical Lorentz
 compatibility or equivalent structure is required.
+
+A7. Metric tensors, units, ratios, and curvature values belong to an effective
+metric representation layer, not the primitive order layer.
 
 ## Candidate Conjectures
 
@@ -61,6 +70,14 @@ intervals.
 
 C5. Observer-dependent spatial distance can be reconstructed from radar or
 overlap protocols under additional assumptions.
+
+C5e. Observer-relative distance order may admit a stable low-dimensional metric
+representation only under additional consistency and representability
+conditions.
+
+C5f. Ratio stability should arise only after calibration, concatenation,
+repeated processes, or dynamics restrict the admissible order-preserving
+representations.
 
 C5a. Given a suitable observer chain with clock labels, radar time and radar
 distance can be approximated from causal accessibility relations, with

@@ -75,6 +75,11 @@ It does not prove spacetime emergence. It does not show that causal order alone
 gives signed space, and it does not derive Lorentz transformations without
 additional protocol structure.
 
+Under the order-first reformulation, oriented radar first supplies an
+observer-relative signed order and pair-distance order. The coordinate values
+and Lorentz-map fits are representation-layer tests of whether that order data
+is well approximated by a calibrated special-relativistic chart.
+
 Milestone 8 does not extend the Lorentz-map fitting layer. Instead, it uses a
 single accelerated observer protocol to study reconstruction-inaccessibility at
 a Rindler horizon analogue in flat spacetime.
@@ -87,3 +92,7 @@ Milestone 10 tests that measure information can also be represented by a
 physical-volume sprinkling distribution and by density rescaling under
 thinning. This does not change the need for explicit orientation/reference
 protocols when reconstructing signed coordinates.
+
+Milestone 11 adds a distance-order preservation diagnostic for oriented charts.
+This is weaker than metric RMSE and more directly tests whether the
+observer-relative order structure survives finite tick resolution.

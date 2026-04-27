@@ -21,6 +21,10 @@ p ≺ q
 and is read as "`q` is causally or informationally accessible from `p`". In
 causal-set simulations this is implemented as a causal order.
 
+In the order-first reformulation, this relation is the primitive temporal
+structure. Duration values are representation-layer quantities introduced only
+after clocks, density, calibration, or dynamics are supplied.
+
 ## Strict Partial Order
 
 A strict partial order is a relation that is:
@@ -117,6 +121,44 @@ to define operational time and distance assignments.
 In discrete radar reconstruction, the observer chain is supplied with strictly
 increasing clock labels. These labels are protocol structure, not information
 derived from causal order alone.
+
+The order along an observer chain is denoted `≺_O`.
+
+## Observer-Relative Distance Order
+
+An observer-relative distance order compares targets or pairs relative to a
+supplied observer protocol:
+
+```text
+A ≺^d_O B
+(a,b) ≺^d_O (c,d)
+```
+
+The first expression means that target `A` is closer than target `B` according
+to observer protocol `O`. The second means that pair `a-b` is closer than pair
+`c-d` relative to that protocol.
+
+This is weaker than metric distance. It does not by itself provide meters,
+ratios, signed coordinates, curvature, or a unique metric tensor.
+
+## Metric Representation Layer
+
+A metric representation layer assigns numerical quantities to order data:
+
+```text
+durations, distances, coordinates, metric tensors, curvature values
+```
+
+These objects can be extremely useful effective descriptions, but they are not
+primitive in the order-first framing. Their stability depends on calibration,
+measure/density input, dynamics, and observer-atlas consistency.
+
+## Effective Metric Geometry
+
+Effective metric geometry is a compact representation of regular order
+structures. It is appropriate when causal order, observer-relative distance
+order, measure information, and transition maps satisfy suitable consistency
+and representability conditions.
 
 ## Orientation Reference
 

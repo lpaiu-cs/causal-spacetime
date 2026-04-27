@@ -183,6 +183,60 @@ from exp24_measure_sprinkling_exact_sanity import (
 from exp24_measure_sprinkling_exact_sanity import (
     write_outputs as write_exp24_outputs,
 )
+from exp25_radar_return_distance_order import (
+    ExperimentConfig as Exp25Config,
+)
+from exp25_radar_return_distance_order import (
+    run_experiment as run_exp25,
+)
+from exp25_radar_return_distance_order import (
+    save_figures as save_exp25_figures,
+)
+from exp25_radar_return_distance_order import (
+    write_outputs as write_exp25_outputs,
+)
+from exp26_metric_representation_scale_invariance import (
+    run_experiment as run_exp26,
+)
+from exp26_metric_representation_scale_invariance import (
+    save_plot as save_exp26_plot,
+)
+from exp26_metric_representation_scale_invariance import (
+    write_outputs as write_exp26_outputs,
+)
+from exp27_ratio_stability_from_calibration import (
+    run_experiment as run_exp27,
+)
+from exp27_ratio_stability_from_calibration import (
+    save_plot as save_exp27_plot,
+)
+from exp27_ratio_stability_from_calibration import (
+    write_outputs as write_exp27_outputs,
+)
+from exp28_oriented_chart_distance_order_preservation import (
+    ExperimentConfig as Exp28Config,
+)
+from exp28_oriented_chart_distance_order_preservation import (
+    run_experiment as run_exp28,
+)
+from exp28_oriented_chart_distance_order_preservation import (
+    save_plot as save_exp28_plot,
+)
+from exp28_oriented_chart_distance_order_preservation import (
+    write_outputs as write_exp28_outputs,
+)
+from exp29_metric_representability_diagnostics import (
+    run_experiment as run_exp29,
+)
+from exp29_metric_representability_diagnostics import (
+    write_outputs as write_exp29_outputs,
+)
+from exp30_ordinal_exact_sanity import (
+    run_experiment as run_exp30,
+)
+from exp30_ordinal_exact_sanity import (
+    write_outputs as write_exp30_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -533,6 +587,65 @@ def run_measure_sprinkling_exact_sanity() -> None:
     print(f"exp24 wrote {output_path}")
 
 
+def run_radar_return_distance_order() -> None:
+    config = Exp25Config(
+        T=2.0,
+        tick_values=(16, 32),
+        target_counts=(50,),
+        repetitions=2,
+        seed=0,
+        emission_tick_fraction=0.25,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp25(config)
+    data_path = write_exp25_outputs(rows, config.output_dir)
+    figure_paths = save_exp25_figures(rows, config.output_dir)
+    print(f"exp25 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_metric_representation_scale_invariance() -> None:
+    rows = run_exp26()
+    data_path = write_exp26_outputs(rows)
+    figure_path = save_exp26_plot(rows)
+    print(f"exp26 wrote {data_path} and {figure_path}")
+
+
+def run_ratio_stability_from_calibration() -> None:
+    rows = run_exp27()
+    data_path = write_exp27_outputs(rows)
+    figure_path = save_exp27_plot(rows)
+    print(f"exp27 wrote {data_path} and {figure_path}")
+
+
+def run_oriented_chart_distance_order_preservation() -> None:
+    config = Exp28Config(
+        T=2.0,
+        n_values=(300,),
+        tick_values=(32, 64),
+        repetitions=2,
+        seed=0,
+        beacon_separation=0.15,
+        pair_count=200,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp28(config)
+    data_path = write_exp28_outputs(rows, config.output_dir)
+    figure_path = save_exp28_plot(rows, config.output_dir)
+    print(f"exp28 wrote {data_path} and {figure_path}")
+
+
+def run_metric_representability_diagnostics() -> None:
+    rows = run_exp29()
+    output_path = write_exp29_outputs(rows)
+    print(f"exp29 wrote {output_path}")
+
+
+def run_ordinal_exact_sanity() -> None:
+    rows = run_exp30()
+    output_path = write_exp30_outputs(rows)
+    print(f"exp30 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -555,6 +668,12 @@ def main() -> None:
     run_local_measure_profile_estimation()
     run_thinning_coarse_graining_stability()
     run_measure_sprinkling_exact_sanity()
+    run_radar_return_distance_order()
+    run_metric_representation_scale_invariance()
+    run_ratio_stability_from_calibration()
+    run_oriented_chart_distance_order_preservation()
+    run_metric_representability_diagnostics()
+    run_ordinal_exact_sanity()
 
 
 if __name__ == "__main__":

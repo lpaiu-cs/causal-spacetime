@@ -15,6 +15,10 @@ null, or spacelike.
 This means causal order can encode light-cone or conformal structure, but it
 does not by itself fix metric scale, physical volume, or clock rates.
 
+In the order-first reformulation, conformal ambiguity is a statement about the
+gap between primitive causal order and metric representation. Causal order can
+remain fixed while metric tensors, duration values, and volume values change.
+
 ## Measure As Additional Structure
 
 In 1+1D, the conformally rescaled volume element is:
@@ -72,6 +76,11 @@ scale remains underdetermined without an external density or volume convention.
 Random thinning is treated as a coarse-graining check. If each event is kept
 with probability `p`, density must be rescaled by `p`; otherwise interval
 volumes are systematically underestimated.
+
+Milestone 11 adds the related point that even ratios are representation-layer
+objects. Positive monotone transformations can preserve order while changing
+ratio structure, so metric scale and ratio stability require additional
+calibration or dynamics.
 
 ## Interpretation
 

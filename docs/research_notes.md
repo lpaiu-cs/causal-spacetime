@@ -332,6 +332,35 @@ constant conformal scale has the same normalized coordinate distribution as the
 flat profile. Absolute scale still requires additional density or volume
 information.
 
+## Milestone 11: Order-First Reformulation
+
+Milestone 11 reinterprets the previous reconstruction experiments as
+representation-layer checks. The order-first thesis is:
+
+```text
+causal order -> primitive temporal order
+observer protocol + causal order -> observer-relative distance order
+order structures + calibration/dynamics -> metric representation
+```
+
+In this framing, seconds, meters, ratios, metric tensors, and curvature values
+are not primitive. They are effective objects that become useful when order
+structures admit stable calibration, observer-atlas consistency, and
+representability conditions.
+
+The new ordinal experiments check:
+
+- radar-return distance order from causal order and observer tick order,
+- preservation of order under positive monotone transformations,
+- failure of arbitrary monotone transformations to preserve ratios,
+- ratio stabilization under equal-step calibration,
+- distance-order preservation in oriented radar charts,
+- finite diagnostics for order cycles, triangle inequality failure, and
+  Euclidean candidate embeddings.
+
+These checks do not show that distance order alone gives metric geometry. They
+separate order preservation from metric-value accuracy.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

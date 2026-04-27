@@ -8,6 +8,20 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
+Milestone 11 makes the theory-facing framing explicitly order-first:
+
+```text
+causal order -> primitive temporal order
+observer protocol + causal order -> observer-relative distance order
+order structures + calibration/dynamics -> metric representation
+```
+
+Metric geometry, seconds, meters, ratios, metric tensors, and curvature values
+are treated as representation-layer objects in this program, not primitive
+inputs. This does not mean metric geometry is unnecessary; it means a metric is
+treated as an effective representation when order structures are sufficiently
+consistent, calibrated, and representable.
+
 ## Current Project State
 
 The project has grown into a lightweight validation suite for 1+1D
@@ -39,6 +53,9 @@ reconstruction experiments:
   controlled 1+1D conformal toy models,
 - test physical-volume sprinkling, local measure-shape recovery, and
   coarse-graining stability under random thinning with density rescaling,
+- test order-first diagnostics for radar-return distance order, monotone
+  invariance, calibration-driven ratio stability, and finite metric
+  representability conditions,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -239,6 +256,31 @@ It writes:
 - `outputs/figures/thinning_dimension_vs_keep_probability.png`
 - `outputs/figures/thinning_count_ratio.png`
 
+Milestone 11 adds order-first diagnostics and metric-representation conditions:
+
+```bash
+python experiments/exp25_radar_return_distance_order.py
+python experiments/exp26_metric_representation_scale_invariance.py
+python experiments/exp27_ratio_stability_from_calibration.py
+python experiments/exp28_oriented_chart_distance_order_preservation.py
+python experiments/exp29_metric_representability_diagnostics.py
+python experiments/exp30_ordinal_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/radar_return_distance_order.csv`
+- `outputs/data/metric_representation_scale_invariance.csv`
+- `outputs/data/ratio_stability_from_calibration.csv`
+- `outputs/data/oriented_chart_distance_order_preservation.csv`
+- `outputs/data/metric_representability_diagnostics.csv`
+- `outputs/data/ordinal_exact_sanity.csv`
+- `outputs/figures/radar_return_order_inversion_vs_ticks.png`
+- `outputs/figures/radar_return_order_scatter.png`
+- `outputs/figures/metric_representation_order_preservation.png`
+- `outputs/figures/ratio_stability_from_calibration.png`
+- `outputs/figures/oriented_chart_distance_order_inversion_vs_ticks.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -363,3 +405,9 @@ statistically from nonuniform counts in controlled conformal toy models, but
 global constant conformal scale remains underdetermined without an absolute
 density scale. Random thinning is a coarse-graining check; corrected density
 should remain stable while uncorrected density should fail.
+Milestone 11 reframes these reconstructions as representation-layer tests.
+Primitive temporal structure is causal order; primitive spatial structure is
+observer-relative distance order. Positive monotone transformations can preserve
+order while changing ratios, so ratio stability requires calibration,
+concatenation, repeated processes, or dynamics. Not every distance order admits
+a useful low-dimensional metric representation.

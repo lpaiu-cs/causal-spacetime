@@ -50,6 +50,11 @@ The experiment tests whether a reconstruction-inaccessibility boundary can be
 detected operationally from causal order and a supplied observer clock protocol
 in a known flat spacetime.
 
+Order-first interpretation: the boundary is first a limitation of
+observer-relative accessibility order. Rindler radar coordinates are a
+representation of the accessible region, not primitive evidence that metric
+geometry has been derived.
+
 It does not prove spacetime emergence. It does not prove black hole physics. It
 does not show that causal order alone derives horizons.
 
@@ -61,3 +66,7 @@ Milestone 10 studies how such measure information can be represented by
 event-density statistics and how reconstruction behaves under thinning. This
 is separate from the Rindler accessibility boundary: thinning changes sampling
 density, not the ideal causal wedge.
+
+Milestone 11 keeps the same distinction: accessibility order can be studied
+before assigning metric distances, ratios, or curvature-like representation
+values.

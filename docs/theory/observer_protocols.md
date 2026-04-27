@@ -60,6 +60,11 @@ with natural units `c = 1`.
 This is an operational spatial decomposition relative to an observer protocol.
 It is not a claim that causal order alone gives spatial distance.
 
+In the order-first reformulation, the first object reconstructed by a radar
+protocol can be an observer-relative distance order, such as which target
+returns earlier to the observer. Numeric radar distance is a calibrated
+representation of that order, not a primitive spatial fact.
+
 ## Orientation Reference
 
 An oriented observer protocol can add a synchronized comoving beacon chain at a
@@ -109,3 +114,7 @@ Milestone 10 keeps that distinction explicit when measure is encoded in event
 statistics. Observer protocols still require clock labels and reference
 structure, while count-based volume reconstruction requires a supplied density
 scale and appropriate rescaling under thinning.
+
+Milestone 11 adds radar-return order diagnostics that use only causal order and
+observer tick order. Numeric clock labels are not needed for that ordinal
+comparison, but metric distances and ratios still require calibration.

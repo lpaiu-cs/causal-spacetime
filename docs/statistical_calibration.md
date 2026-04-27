@@ -149,3 +149,16 @@ recovered from positions alone. For random thinning, the expected density is
 multiplied by the keep probability. Correct density rescaling should preserve
 volume estimates up to increased sampling noise; uncorrected density is a
 deliberate failure baseline.
+
+## Relation To Order-First Diagnostics
+
+Milestone 11 separates ordinal error from metric-value error. An order
+inversion/error rate asks whether pairwise comparisons are preserved, not
+whether a reconstructed value has small RMSE in seconds or meters. This is
+useful for the order-first thesis because metric values are treated as
+representation-layer objects.
+
+Finite tick resolution can preserve coarse order only up to ties. Calibration
+and repeated processes are needed before order data supports stable ratios or
+metric units. These diagnostics complement, rather than replace, the sampling
+noise models used for interval-count reconstruction.

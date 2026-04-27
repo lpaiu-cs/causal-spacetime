@@ -259,3 +259,30 @@ The thinning experiment keeps each event with probability `p`. Reconstruction
 should remain approximately stable when density is rescaled to `p * rho`, while
 using the original density after thinning should produce a scale error. This is
 a coarse-graining stability check, not proof of continuum convergence.
+
+## Milestone 11: Order-First Validation Layer
+
+Milestone 11 changes the theory-facing interpretation from metric-first to
+order-first. Earlier experiments mostly reconstructed metric representation
+values in controlled settings. The new validation layer asks whether ordinal
+relations themselves are preserved:
+
+```text
+causal order -> primitive temporal order
+observer protocol + causal order -> observer-relative distance order
+```
+
+The radar-return experiment reconstructs a same-emission return-tick order from
+causal order and observer tick order without numeric clock labels. The oriented
+chart experiment compares pairwise spatial distance order, which is weaker than
+coordinate RMSE but closer to the order-first thesis.
+
+The scale and calibration experiments show that positive monotone
+transformations preserve order while changing ratios. Ratios become stable only
+after additional calibration or dynamics restricts the admissible
+representations.
+
+The metric-representability diagnostics show that a distance order or candidate
+distance matrix is not automatically a useful metric geometry. Cycles,
+triangle-inequality failures, and embedding diagnostics are separate
+representability checks.

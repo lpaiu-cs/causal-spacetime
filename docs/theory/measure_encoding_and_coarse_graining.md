@@ -5,6 +5,10 @@ events. Milestone 10 tests a complementary representation: events are sprinkled
 uniformly with respect to conformal physical volume, so the counting measure
 itself carries the supplied measure model.
 
+Milestone 11 reinterprets this as a representation-layer issue. Counting
+measure and density help stabilize metric-volume representations, but they are
+not part of bare causal order or bare observer-relative distance order.
+
 ## Physical-Volume Sprinkling
 
 For a positive 1+1D conformal factor,
@@ -68,3 +72,7 @@ Coarse-graining stability is necessary for a serious continuum reconstruction
 program, but it is not sufficient. These controlled conformal toy models do not
 derive the conformal factor, prove spacetime emergence, or replace general
 relativity.
+
+The order-first program therefore treats measure encoding as one condition
+under which an effective metric representation may be useful. It does not imply
+that event distribution alone determines an absolute metric scale.

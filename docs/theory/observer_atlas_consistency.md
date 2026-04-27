@@ -67,6 +67,12 @@ observer reconstruction. It checks overlapping reconstructed charts, affine
 transition maps, invariant interval agreement, and loop consistency in a known
 flat model.
 
+In the order-first reformulation, an atlas is an effective metric
+representation of compatible order data. Transition maps and invariant
+intervals are not primitive; they are consistency conditions indicating that
+multiple observer-relative order structures admit a shared low-dimensional
+Lorentzian representation.
+
 The result remains conservative. It does not prove spacetime emergence, it does
 not show that causal order alone gives a manifold, and it does not establish
 uniqueness of the atlas.
@@ -84,3 +90,7 @@ Milestone 10 extends that limitation into a stability test. If measure is
 encoded by event density, local relative measure shape can be estimated
 statistically, but absolute scale and thinning rescaling remain explicit
 additional inputs to the reconstruction protocol.
+
+Milestone 11 adds explicit representability diagnostics. These emphasize that
+not every distance order or chart overlap can be assumed to admit a useful
+metric representation.
