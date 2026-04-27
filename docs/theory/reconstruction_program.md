@@ -16,6 +16,7 @@ primitive information-accessibility
   -> overlapping chart atlases
   -> horizon-limited reconstruction
   -> measure-dependent metric-scale reconstruction
+  -> measure encoding and coarse-graining stability checks
 ```
 
 The simulations reproduce and stress-test pieces of this program in known
@@ -53,6 +54,12 @@ Milestone 9 adds an explicit conformal ambiguity test. Positive conformal
 rescaling preserves causal order while changing physical volume and clock
 scale. Weighted reconstruction uses supplied measure information to estimate
 conformal physical volume.
+
+Milestone 10 studies how measure information may be encoded in the event
+distribution itself. Physical-volume sprinkling makes coordinate event density
+proportional to a supplied `Omega^2` profile, while thinning tests whether
+reconstruction remains stable when density is rescaled under coarse graining.
+The absolute constant scale remains additional structure.
 
 The bold objective is to formulate coherent reconstruction maps and identify
 their assumptions, limitations, and failure modes.

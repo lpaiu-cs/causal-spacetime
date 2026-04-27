@@ -17,6 +17,9 @@ A3a. Metric-scale reconstruction depends on a supplied measure, density, or
 equivalent volume structure; causal order alone leaves conformal scale
 underdetermined.
 
+A3b. A measure may be represented either by supplied weights or by a specified
+sampling/counting process, but the representation is still additional structure.
+
 A4. Observer chains allow operational time and space decomposition.
 
 A4a. Signed spatial coordinates require orientation or reference structure
@@ -40,6 +43,15 @@ C2. Causal order plus counting measure reconstructs volume-scaled geometry.
 C2a. Positive conformal rescalings should preserve causal order while changing
 physical volume and clock scale, so conformal factors require additional
 measure information.
+
+C2b. If events are sampled uniformly with respect to a supplied physical-volume
+measure, local relative measure shape may be estimated statistically from event
+counts, while global constant scale remains underdetermined without an
+absolute density convention.
+
+C2c. Reconstruction procedures should be stable under random thinning when the
+density is rescaled appropriately, with larger finite-sampling noise at lower
+retention probability.
 
 C3. Timelike duration is recoverable from chain and interval structure under
 appropriate density assumptions.

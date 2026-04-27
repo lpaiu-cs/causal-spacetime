@@ -82,3 +82,8 @@ a Rindler horizon analogue in flat spacetime.
 Milestone 9 addresses a different ambiguity: even when causal order and
 observer protocols are fixed, positive conformal rescaling can change physical
 clock scale and volume unless measure information is supplied.
+
+Milestone 10 tests that measure information can also be represented by a
+physical-volume sprinkling distribution and by density rescaling under
+thinning. This does not change the need for explicit orientation/reference
+protocols when reconstructing signed coordinates.

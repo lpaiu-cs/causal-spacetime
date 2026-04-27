@@ -134,3 +134,18 @@ sprinkling plus unweighted counts estimates coordinate volume. Conformal
 physical volume requires additional `Omega^2` weights or an equivalent density
 field. The weighted estimator can reduce bias when the supplied measure matches
 the validation profile, but the measure is not inferred from causal order.
+
+## Relation To Measure Encoding And Coarse Graining
+
+Milestone 10 keeps the same finite-sampling perspective but changes where the
+measure enters. Instead of attaching weights to coordinate-uniform events, it
+sprinkles events uniformly with respect to conformal physical volume. Then the
+coordinate event density is a statistical representation of the supplied
+measure model.
+
+The relevant density scale is still supplied. For constant conformal rescaling,
+normalized event positions are unchanged, so an absolute scale cannot be
+recovered from positions alone. For random thinning, the expected density is
+multiplied by the keep probability. Correct density rescaling should preserve
+volume estimates up to increased sampling noise; uncorrected density is a
+deliberate failure baseline.

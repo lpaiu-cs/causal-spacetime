@@ -8,10 +8,11 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-## Current Milestone
+## Current Project State
 
-The current milestone upgrades the project into a lightweight validation suite
-for 1+1D special-relativistic and causal-set reconstruction experiments:
+The project has grown into a lightweight validation suite for 1+1D
+special-relativistic, causal-set, observer-protocol, and measure-dependent
+reconstruction experiments:
 
 - decompose events into radar coordinates for stationary and inertial observers,
 - test Lorentz length contraction as lab-simultaneous endpoint event selection,
@@ -36,6 +37,8 @@ for 1+1D special-relativistic and causal-set reconstruction experiments:
   flat-spacetime horizon analogue,
 - demonstrate conformal ambiguity and measure-dependent reconstruction in
   controlled 1+1D conformal toy models,
+- test physical-volume sprinkling, local measure-shape recovery, and
+  coarse-graining stability under random thinning with density rescaling,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -209,6 +212,33 @@ It writes:
 - `outputs/figures/weighted_conformal_volume_rmse_vs_N.png`
 - `outputs/figures/weighted_conformal_volume_bias_by_profile.png`
 
+Milestone 10 adds measure encoding and coarse-graining stability:
+
+```bash
+python experiments/exp21_physical_measure_sprinkling.py
+python experiments/exp22_local_measure_profile_estimation.py
+python experiments/exp23_thinning_coarse_graining_stability.py
+python experiments/exp24_measure_sprinkling_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/physical_measure_sprinkling_pairs.csv`
+- `outputs/data/physical_measure_sprinkling_summary.csv`
+- `outputs/data/local_measure_profile_bins.csv`
+- `outputs/data/local_measure_profile_summary.csv`
+- `outputs/data/thinning_coarse_graining_pairs.csv`
+- `outputs/data/thinning_coarse_graining_summary.csv`
+- `outputs/data/measure_sprinkling_exact_sanity.csv`
+- `outputs/figures/physical_measure_volume_scatter.png`
+- `outputs/figures/physical_measure_rmse_vs_N.png`
+- `outputs/figures/physical_measure_bias_by_profile.png`
+- `outputs/figures/local_measure_profile_shape.png`
+- `outputs/figures/local_measure_profile_rmse_vs_N.png`
+- `outputs/figures/thinning_volume_error_vs_keep_probability.png`
+- `outputs/figures/thinning_dimension_vs_keep_probability.png`
+- `outputs/figures/thinning_count_ratio.png`
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -281,7 +311,8 @@ primitive causal/information-accessibility structure
   + orientation/reference protocol
   -> operational time, distance, dimension, coordinate transformations,
      atlas consistency diagnostics, horizon-limited reconstruction,
-     and measure-dependent metric-scale reconstruction
+     measure-dependent metric-scale reconstruction, and coarse-graining
+     stability checks
 ```
 
 The longest chain is also reported as a causal-order observable with a simple
@@ -325,3 +356,10 @@ Milestone 9 makes the conformal ambiguity explicit. Positive conformal
 rescalings preserve causal order while changing physical volume and clock
 scale. Weighted conformal volume reconstruction uses supplied measure weights;
 the conformal factor is not derived from causal order alone.
+Milestone 10 tests two ways that measure information can enter a reconstruction
+program: as physical-volume event distribution and as a density scale that must
+be rescaled under thinning. Local relative measure shape can be recovered
+statistically from nonuniform counts in controlled conformal toy models, but
+global constant conformal scale remains underdetermined without an absolute
+density scale. Random thinning is a coarse-graining check; corrected density
+should remain stable while uncorrected density should fail.

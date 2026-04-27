@@ -24,6 +24,10 @@ repository. Open proof obligations include:
   boundaries and their relation to horizons in non-flat settings,
 - an account of how conformal scale, volume measure, or density is supplied,
   inferred, or constrained in any proposed physical theory.
+- conditions under which event distributions encode relative measure shape
+  without smuggling in unsupported metric assumptions,
+- coarse-graining laws that specify how density, uncertainty, and reconstructed
+  quantities transform under thinning or other reductions of event resolution.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

@@ -56,3 +56,8 @@ does not show that causal order alone derives horizons.
 Milestone 9 separately addresses conformal ambiguity. The Rindler causal wedge
 is a light-cone accessibility statement; physical volume and clock scale still
 depend on measure or conformal-factor information.
+
+Milestone 10 studies how such measure information can be represented by
+event-density statistics and how reconstruction behaves under thinning. This
+is separate from the Rindler accessibility boundary: thinning changes sampling
+density, not the ideal causal wedge.

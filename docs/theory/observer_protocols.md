@@ -104,3 +104,8 @@ finite chain coverage reported separately from ideal wedge accessibility.
 Milestone 9 clarifies that observer protocols do not remove conformal
 ambiguity by themselves. Clock rates and volume scale depend on supplied
 measure or conformal-factor information.
+
+Milestone 10 keeps that distinction explicit when measure is encoded in event
+statistics. Observer protocols still require clock labels and reference
+structure, while count-based volume reconstruction requires a supplied density
+scale and appropriate rescaling under thinning.

@@ -229,3 +229,33 @@ controlled 1+1D conformal toy model.
 The validation should be read as a limitation statement: causal order determines
 light-cone/conformal structure, while density or volume measure is additional
 metric-scale structure.
+
+## Milestone 10: Measure Encoding And Thinning Stability
+
+Milestone 10 tests how measure information behaves when it is represented by
+counting statistics. In the physical-volume sprinkling experiment, support
+events are sampled with probability density proportional to `Omega^2` in
+coordinate space. The causal order is still the flat causal order, but the event
+distribution encodes the supplied conformal measure model.
+
+The validation compares two density conventions:
+
+```text
+rho_physical = N / V_global_Omega
+rho_coordinate = N / V_global_coordinate
+```
+
+When events are sampled from conformal physical volume, counts divided by
+`rho_physical` should reconstruct conformal physical interval volumes. Counts
+divided by coordinate density are a deliberate failure baseline for non-flat
+physical volume.
+
+The local profile experiment bins events by coordinate time and compares the
+normalized density shape to the normalized `Omega^2` shape. This can recover
+relative local measure statistically, but it cannot identify an overall
+constant conformal scale from normalized event positions alone.
+
+The thinning experiment keeps each event with probability `p`. Reconstruction
+should remain approximately stable when density is rescaled to `p * rho`, while
+using the original density after thinning should produce a scale error. This is
+a coarse-graining stability check, not proof of continuum convergence.

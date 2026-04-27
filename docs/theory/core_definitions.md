@@ -64,6 +64,29 @@ V_hat = count / rho
 Density is additional scale information. It is not determined by causal order
 alone in the current simulations.
 
+## Measure Encoding
+
+Measure information can be supplied as weights on events or encoded
+statistically by the sampling process. In Milestone 10, events are sprinkled
+uniformly with respect to conformal physical volume, so the coordinate event
+density is proportional to the supplied `Omega^2` profile.
+
+This counting measure is still additional structure. A global constant scale is
+not identifiable from normalized event positions without an absolute density or
+volume convention.
+
+## Coarse Graining By Thinning
+
+Random thinning keeps each event with probability `p`. If the original density
+is `rho`, the expected thinned density is:
+
+```text
+rho_thinned = p * rho
+```
+
+Density rescaling is part of the reconstruction protocol. Using the original
+density after thinning is a deliberate failure case.
+
 ## Conformal Ambiguity
 
 Positive conformal rescaling preserves causal order:

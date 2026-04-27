@@ -299,6 +299,39 @@ causal/accessibility order + measure/density -> volume-scaled reconstruction
 
 It does not derive the conformal factor from causal order.
 
+## Milestone 10: Measure Encoding And Coarse-Graining Stability
+
+Milestone 10 extends the measure story in two controlled ways. First, support
+events can be sprinkled uniformly with respect to conformal physical volume
+rather than coordinate volume. For a positive conformal factor in 1+1D,
+
+```text
+dV_Omega = Omega^2 dt dx
+```
+
+so the coordinate-space event density is proportional to `Omega^2`. If the
+physical density `rho_physical = N / V_global_Omega` is supplied, unweighted
+interval counts estimate conformal physical volume. If a coordinate density is
+used instead, non-flat physical measures produce a predictable bias.
+
+Second, the milestone tests random thinning as a coarse-graining diagnostic. If
+events are retained with probability `p`, the density must be rescaled:
+
+```text
+rho_thinned = p * rho_original
+```
+
+Corrected or realized density estimates should remain approximately stable
+under thinning, with larger finite-sampling noise at lower keep probability.
+Using the original unthinned density after thinning should underestimate
+volume.
+
+The local measure-profile experiment also demonstrates a limitation: nonuniform
+relative `Omega^2` shape can be recovered statistically from event counts, but a
+constant conformal scale has the same normalized coordinate distribution as the
+flat profile. Absolute scale still requires additional density or volume
+information.
+
 ## Radar Coordinates
 
 For the stationary observer worldline `O(tau) = (tau, 0)`, the radar

@@ -57,6 +57,22 @@ V_hat_Omega = (1 / rho_coordinate) * sum_{events in interval} Omega(event)^2
 The weights are supplied measure information. The experiment does not derive
 the conformal factor from causal order.
 
+## Measure Encoding By Event Distribution
+
+Milestone 10 tests a complementary encoding. Support events are sprinkled
+uniformly with respect to conformal physical volume, so coordinate event
+density is proportional to the supplied `Omega^2` profile. In that setting,
+unweighted counts estimate conformal physical volume only if the correct
+physical density scale is supplied.
+
+For a constant conformal scale, the normalized coordinate distribution is the
+same as the flat profile. This is a simple reminder that absolute constant
+scale remains underdetermined without an external density or volume convention.
+
+Random thinning is treated as a coarse-graining check. If each event is kept
+with probability `p`, density must be rescaled by `p`; otherwise interval
+volumes are systematically underestimated.
+
 ## Interpretation
 
 This milestone strengthens the reconstruction program by making a limitation

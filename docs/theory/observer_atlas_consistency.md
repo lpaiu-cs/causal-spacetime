@@ -79,3 +79,8 @@ spacetime dynamics.
 Milestone 9 adds a limitation that applies to any atlas layer: transition maps
 and causal order do not by themselves fix conformal volume scale. A measure or
 density field remains additional structure.
+
+Milestone 10 extends that limitation into a stability test. If measure is
+encoded by event density, local relative measure shape can be estimated
+statistically, but absolute scale and thinning rescaling remain explicit
+additional inputs to the reconstruction protocol.

@@ -8,6 +8,8 @@ The project explicitly rejects these weak or misleading claims:
 - "the simulations prove spacetime is information",
 - "causal order alone gives absolute metric scale",
 - "causal order alone gives physical volume or the conformal factor",
+- "event positions alone determine metric scale",
+- "event distribution proves spacetime emergence",
 - "causal order alone gives a manifold or a unique observer atlas",
 - "causal order alone gives signed spatial coordinates or affine translations",
 - "we simulated a black hole",

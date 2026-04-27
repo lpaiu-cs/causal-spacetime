@@ -141,6 +141,48 @@ from exp20_conformal_volume_exact_sanity import (
 from exp20_conformal_volume_exact_sanity import (
     write_outputs as write_exp20_outputs,
 )
+from exp21_physical_measure_sprinkling import (
+    ExperimentConfig as Exp21Config,
+)
+from exp21_physical_measure_sprinkling import (
+    run_experiment as run_exp21,
+)
+from exp21_physical_measure_sprinkling import (
+    save_figures as save_exp21_figures,
+)
+from exp21_physical_measure_sprinkling import (
+    write_outputs as write_exp21_outputs,
+)
+from exp22_local_measure_profile_estimation import (
+    ExperimentConfig as Exp22Config,
+)
+from exp22_local_measure_profile_estimation import (
+    run_experiment as run_exp22,
+)
+from exp22_local_measure_profile_estimation import (
+    save_figures as save_exp22_figures,
+)
+from exp22_local_measure_profile_estimation import (
+    write_outputs as write_exp22_outputs,
+)
+from exp23_thinning_coarse_graining_stability import (
+    ExperimentConfig as Exp23Config,
+)
+from exp23_thinning_coarse_graining_stability import (
+    run_experiment as run_exp23,
+)
+from exp23_thinning_coarse_graining_stability import (
+    save_figures as save_exp23_figures,
+)
+from exp23_thinning_coarse_graining_stability import (
+    write_outputs as write_exp23_outputs,
+)
+from exp24_measure_sprinkling_exact_sanity import (
+    run_experiment as run_exp24,
+)
+from exp24_measure_sprinkling_exact_sanity import (
+    write_outputs as write_exp24_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -422,6 +464,75 @@ def run_conformal_volume_exact_sanity() -> None:
     print(f"exp20 wrote {output_path}")
 
 
+def run_physical_measure_sprinkling() -> None:
+    config = Exp21Config(
+        T=2.0,
+        n_values=(600,),
+        repetitions=2,
+        pairs_per_repetition=100,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows, summary = run_exp21(config)
+    pair_path, summary_path = write_exp21_outputs(rows, summary, config.output_dir)
+    figure_paths = save_exp21_figures(rows, summary, config.output_dir)
+    print(
+        "exp21 wrote "
+        f"{pair_path}, {summary_path}, and {len(figure_paths)} figures"
+    )
+
+
+def run_local_measure_profile_estimation() -> None:
+    config = Exp22Config(
+        T=2.0,
+        n_values=(600, 1200),
+        repetitions=2,
+        num_bins=12,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    bin_rows, summary_rows = run_exp22(config)
+    bin_path, summary_path = write_exp22_outputs(
+        bin_rows,
+        summary_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp22_figures(bin_rows, summary_rows, config.output_dir)
+    print(
+        "exp22 wrote "
+        f"{bin_path}, {summary_path}, and {len(figure_paths)} figures"
+    )
+
+
+def run_thinning_coarse_graining_stability() -> None:
+    config = Exp23Config(
+        T=2.0,
+        n_events=1200,
+        repetitions=2,
+        keep_probabilities=(1.0, 0.5),
+        pairs_per_repetition=100,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    pair_rows, summary_rows = run_exp23(config)
+    pair_path, summary_path = write_exp23_outputs(
+        pair_rows,
+        summary_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp23_figures(summary_rows, config)
+    print(
+        "exp23 wrote "
+        f"{pair_path}, {summary_path}, and {len(figure_paths)} figures"
+    )
+
+
+def run_measure_sprinkling_exact_sanity() -> None:
+    rows = run_exp24()
+    output_path = write_exp24_outputs(rows)
+    print(f"exp24 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -440,6 +551,10 @@ def main() -> None:
     run_conformal_order_ambiguity()
     run_weighted_conformal_volume_reconstruction()
     run_conformal_volume_exact_sanity()
+    run_physical_measure_sprinkling()
+    run_local_measure_profile_estimation()
+    run_thinning_coarse_graining_stability()
+    run_measure_sprinkling_exact_sanity()
 
 
 if __name__ == "__main__":
