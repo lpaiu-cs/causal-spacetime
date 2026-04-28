@@ -8,10 +8,12 @@ repository. Open proof obligations include:
   networks,
 - criteria for extracting observer chains from generated trigger networks
   without inserting a preferred global time,
-- criteria for ranking observer-like chain candidates without treating the
-  top-scoring chain as a uniquely selected observer,
+- criteria for ranking reference-chain candidates without treating the
+  top-scoring chain as a unique observer protocol,
 - stability and ambiguity bounds for chain quality diagnostics such as
   coverage, two-sided bracketing, and interval-profile regularity,
+- conditions under which order-level bracket ranks from selected reference
+  chains are stable under changes of reference protocol,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,

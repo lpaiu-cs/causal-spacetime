@@ -1,4 +1,4 @@
-"""Observer-like chain candidates in finite state-change trigger networks."""
+"""Reference-chain candidates in finite state-change trigger networks."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from numpy.typing import ArrayLike, NDArray
 from causal_spacetime_lab.state_change import StateChangeNetwork
 from causal_spacetime_lab.state_change_order import topological_order_from_adjacency
 
-OBSERVER_CANDIDATE_SOURCES = {
+REFERENCE_CANDIDATE_SOURCES = {
     "local_system",
     "greedy_order",
     "longest_chain",
@@ -18,13 +18,16 @@ OBSERVER_CANDIDATE_SOURCES = {
     "random_order",
 }
 
+OBSERVER_CANDIDATE_SOURCES = REFERENCE_CANDIDATE_SOURCES
+
 
 @dataclass(frozen=True)
-class ObserverChainCandidate:
-    """A finite observer-like chain candidate.
+class ReferenceChainCandidate:
+    """A finite reference-chain candidate.
 
-    This is a candidate observer protocol, not a calibrated physical clock or a
-    unique observer derived from causal order.
+    A reference chain is a candidate reference backbone for order-level
+    protocol diagnostics. It is not a calibrated clock, metric observer, or
+    uniquely selected physical observer.
     """
 
     name: str
@@ -32,14 +35,17 @@ class ObserverChainCandidate:
     source: str
 
     def __post_init__(self) -> None:
-        if self.source not in OBSERVER_CANDIDATE_SOURCES:
-            allowed = ", ".join(sorted(OBSERVER_CANDIDATE_SOURCES))
+        if self.source not in REFERENCE_CANDIDATE_SOURCES:
+            allowed = ", ".join(sorted(REFERENCE_CANDIDATE_SOURCES))
             raise ValueError(f"source must be one of: {allowed}")
         object.__setattr__(
             self,
             "chain_event_ids",
             np.asarray(self.chain_event_ids, dtype=int),
         )
+
+
+ObserverChainCandidate = ReferenceChainCandidate
 
 
 def _validate_order_matrix(order_matrix: ArrayLike) -> NDArray[np.bool_]:
@@ -127,7 +133,7 @@ def latest_predecessor_chain_position(
     chain_event_ids: ArrayLike,
     target_index: int,
 ) -> int | None:
-    """Return latest chain position preceding a target, if one exists."""
+    """Return latest reference-chain position preceding a target, if any."""
 
     matrix = _validate_order_matrix(order_matrix)
     chain = _validate_indices(chain_event_ids, matrix.shape[0])
@@ -141,7 +147,7 @@ def earliest_successor_chain_position(
     chain_event_ids: ArrayLike,
     target_index: int,
 ) -> int | None:
-    """Return earliest chain position succeeding a target, if one exists."""
+    """Return earliest reference-chain position succeeding a target, if any."""
 
     matrix = _validate_order_matrix(order_matrix)
     chain = _validate_indices(chain_event_ids, matrix.shape[0])
@@ -154,15 +160,15 @@ def local_system_chain_candidates(
     network: StateChangeNetwork,
     min_length: int = 2,
 ) -> list[ObserverChainCandidate]:
-    """Return local-system chains as observer-like candidates."""
+    """Return local-system chains as reference-chain candidates."""
 
     if min_length < 1:
         raise ValueError("min_length must be positive")
-    candidates: list[ObserverChainCandidate] = []
+    candidates: list[ReferenceChainCandidate] = []
     for system_id, event_ids in sorted(network.system_event_ids.items()):
         if len(event_ids) >= min_length:
             candidates.append(
-                ObserverChainCandidate(
+                ReferenceChainCandidate(
                     name=f"local_system_{system_id}",
                     chain_event_ids=np.asarray(event_ids, dtype=int),
                     source="local_system",
@@ -177,7 +183,7 @@ def greedy_chain_candidate_from_order(
     start_event_id: int | None = None,
     name: str = "greedy_order_chain",
 ) -> ObserverChainCandidate:
-    """Build a heuristic chain by repeatedly choosing a high-reach successor."""
+    """Build a heuristic reference chain using high-reach successors."""
 
     matrix = _validate_order_matrix(order_matrix)
     n_events = matrix.shape[0]
@@ -202,7 +208,7 @@ def greedy_chain_candidate_from_order(
             current = int(successors[np.argmax(scores)])
             chain_values.append(current)
         chain = np.asarray(chain_values, dtype=int)
-    return ObserverChainCandidate(
+    return ReferenceChainCandidate(
         name=name,
         chain_event_ids=chain,
         source="greedy_order",
@@ -213,7 +219,7 @@ def longest_chain_candidate_from_order(
     order_matrix: ArrayLike,
     name: str = "longest_order_chain",
 ) -> ObserverChainCandidate:
-    """Return a longest chain using the transitive order matrix as a DAG."""
+    """Return a longest reference chain using the transitive order DAG."""
 
     matrix = _validate_order_matrix(order_matrix)
     n_events = matrix.shape[0]
@@ -235,7 +241,7 @@ def longest_chain_candidate_from_order(
             current = int(next_node[current])
             values.append(current)
         chain = np.asarray(values, dtype=int)
-    return ObserverChainCandidate(
+    return ReferenceChainCandidate(
         name=name,
         chain_event_ids=chain,
         source="longest_chain",
@@ -247,7 +253,7 @@ def random_chain_candidate_from_order(
     seed: int | None = None,
     name: str = "random_order_chain",
 ) -> ObserverChainCandidate:
-    """Return a random valid chain by walking forward through successors."""
+    """Return a random valid reference chain by walking through successors."""
 
     matrix = _validate_order_matrix(order_matrix)
     n_events = matrix.shape[0]
@@ -264,8 +270,14 @@ def random_chain_candidate_from_order(
             current = int(rng.choice(successors))
             values.append(current)
         chain = np.asarray(values, dtype=int)
-    return ObserverChainCandidate(
+    return ReferenceChainCandidate(
         name=name,
         chain_event_ids=chain,
         source="random_order",
     )
+
+
+local_system_reference_chain_candidates = local_system_chain_candidates
+greedy_reference_chain_candidate_from_order = greedy_chain_candidate_from_order
+longest_reference_chain_candidate_from_order = longest_chain_candidate_from_order
+random_reference_chain_candidate_from_order = random_chain_candidate_from_order

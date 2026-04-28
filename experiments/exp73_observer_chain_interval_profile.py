@@ -1,4 +1,4 @@
-"""Interval-profile diagnostics for observer-like chain candidates."""
+"""Interval-profile diagnostics for reference-chain candidates."""
 
 from __future__ import annotations
 

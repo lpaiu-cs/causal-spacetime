@@ -22,7 +22,7 @@ DEFAULT_OUTPUT_DIR = Path("outputs")
 
 @dataclass(frozen=True)
 class ExperimentConfig:
-    """Configuration for local observer-like chain diagnostics."""
+    """Configuration for local reference-chain diagnostics."""
 
     num_systems: int = 8
     max_events: int = 300
@@ -36,7 +36,7 @@ def parse_args() -> ExperimentConfig:
     """Parse command-line arguments."""
 
     parser = argparse.ArgumentParser(
-        description="State-change observer-like chain diagnostic."
+        description="State-change reference-chain diagnostic."
     )
     parser.add_argument("--num-systems", type=int, default=8)
     parser.add_argument("--max-events", type=int, default=300)
@@ -64,7 +64,7 @@ def _chain_is_totally_ordered(chain: list[int], closure: np.ndarray) -> bool:
 
 
 def run_experiment(config: ExperimentConfig) -> list[dict[str, float]]:
-    """Run local observer-like chain diagnostics."""
+    """Run local reference-chain diagnostics."""
 
     network = generate_state_change_network(
         config.num_systems,
@@ -111,7 +111,7 @@ def run_experiment(config: ExperimentConfig) -> list[dict[str, float]]:
 
 
 def write_outputs(rows: list[dict[str, float]], output_dir: Path) -> Path:
-    """Write local observer-like chain diagnostics."""
+    """Write local reference-chain diagnostics."""
 
     output_path = output_dir / "data" / "state_change_observer_chain_diagnostic.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -123,7 +123,7 @@ def write_outputs(rows: list[dict[str, float]], output_dir: Path) -> Path:
 
 
 def save_figure(rows: list[dict[str, float]], output_dir: Path) -> Path:
-    """Save local observer-like chain coverage figure."""
+    """Save local reference-chain coverage figure."""
 
     output_path = output_dir / "figures" / "state_change_observer_chain_coverage.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)

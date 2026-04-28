@@ -10,11 +10,16 @@ The toy model stores state-changing events in a finite trigger graph and uses
 transitive closure for order queries. It does not add metric coordinates or
 global physical time.
 
-Milestone 20 adds observer-like chain selection diagnostics in those finite
-trigger networks. Local-system chains and order-only chain candidates can be
-ranked by coverage, two-sided bracketing, interval-profile regularity, and
-ambiguity diagnostics. This is a protocol-candidate diagnostic, not a
-derivation of a unique observer or a metric reconstruction.
+Milestone 20 adds reference-chain selection diagnostics in those finite trigger
+networks. Local-system chains and order-only chain candidates can be ranked by
+coverage, two-sided bracketing, interval-profile regularity, and
+protocol-reference choice diagnostics. This is a reference-protocol diagnostic,
+not an observer-reality claim or a metric reconstruction.
+
+Milestone 21 then computes order-level predecessor and successor brackets from
+selected reference chains. The resulting radar-time ranks and bracket-width
+ranks are rank-level diagnostics, not calibrated clock or metric distance
+quantities.
 
 ## State-Changing Events
 
@@ -92,10 +97,10 @@ layer placed on top of the chain, not primitive structure. The observer chain
 itself is also protocol structure; it is not automatically derived from the
 bare trigger order in the current simulations.
 
-## Observer-Like Chain Candidates
+## Reference-Chain Candidates
 
 A finite state-change network may contain many valid chains. Milestone 20
-therefore treats observer-like chain selection as a diagnostic problem:
+therefore treats reference-chain selection as a diagnostic problem:
 
 - local-system chains use the stored local-system event metadata,
 - greedy and longest order chains use the transitive trigger order,
@@ -103,9 +108,22 @@ therefore treats observer-like chain selection as a diagnostic problem:
 
 Candidate quality is summarized by comparability coverage, two-sided
 bracketing, adjacent interval cardinality profiles, local-system purity, and
-top-score ambiguity. These quantities help identify useful observer protocol
-candidates inside a finite order. They do not supply seconds or select a
-physically privileged observer by themselves.
+top-score gaps. These quantities help identify useful reference protocol
+candidates inside a finite order. They do not supply calibrated time or select
+a physically privileged observer by themselves.
+
+## Reference-Chain Brackets
+
+For an event `e` and a reference chain `R`, define order-level brackets:
+
+```text
+p_R(e) = max { i : r_i ≺_T e }
+q_R(e) = min { j : e ≺_T r_j }
+```
+
+When both exist, `e` is two-sided accessible relative to `R`. Milestone 21
+uses these positions to define `T_rank = p_R + q_R` and `W_rank = q_R - p_R`.
+`W_rank` is a bracket-width rank, not a metric spatial distance.
 
 ## Radar Brackets
 

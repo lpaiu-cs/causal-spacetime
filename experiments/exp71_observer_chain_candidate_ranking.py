@@ -1,4 +1,4 @@
-"""Rank observer-like chain candidates in state-change trigger networks."""
+"""Rank reference-chain candidates in state-change trigger networks."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ DEFAULT_OUTPUT_DIR = Path("outputs")
 
 @dataclass(frozen=True)
 class ExperimentConfig:
-    """Configuration for observer-like chain candidate ranking."""
+    """Configuration for reference-chain candidate ranking."""
 
     num_systems_values: tuple[int, ...] = (5, 10)
     max_events_values: tuple[int, ...] = (100, 300, 600)

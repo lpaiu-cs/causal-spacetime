@@ -1,4 +1,4 @@
-"""Exact sanity checks for observer-like chain selection utilities."""
+"""Exact sanity checks for reference-chain selection utilities."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ DEFAULT_OUTPUT = Path("outputs/data/observer_chain_exact_sanity.csv")
 def parse_args() -> Path:
     """Parse command-line arguments."""
 
-    parser = argparse.ArgumentParser(description="Observer-chain exact sanity.")
+    parser = argparse.ArgumentParser(description="Reference-chain exact sanity.")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     args = parser.parse_args()
     return args.output_dir / "data" / "observer_chain_exact_sanity.csv"
@@ -73,7 +73,7 @@ def build_hand_coded_network() -> StateChangeNetwork:
 
 
 def run_experiment() -> list[dict[str, float | str]]:
-    """Run exact observer-like chain sanity checks."""
+    """Run exact reference-chain sanity checks."""
 
     network = build_hand_coded_network()
     closure = transitive_closure_dag(immediate_trigger_adjacency(network))

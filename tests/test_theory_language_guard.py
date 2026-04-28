@@ -14,8 +14,10 @@ def test_banned_phrase_is_detected_in_temporary_doc(tmp_path: Path) -> None:
 
     violations = find_language_violations([doc])
 
-    assert len(violations) == 1
-    assert violations[0].phrase == "best chain is the true observer"
+    assert len(violations) >= 1
+    assert "best chain is the true observer" in {
+        violation.phrase for violation in violations
+    }
 
 
 def test_rejected_language_section_is_allowed(tmp_path: Path) -> None:

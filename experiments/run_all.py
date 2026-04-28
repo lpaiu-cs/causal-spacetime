@@ -684,6 +684,48 @@ from exp73_observer_chain_interval_profile import (
 from exp73_observer_chain_interval_profile import (
     write_outputs as write_exp73_outputs,
 )
+from exp74_state_change_reference_bracket_diagnostics import (
+    ExperimentConfig as Exp74Config,
+)
+from exp74_state_change_reference_bracket_diagnostics import (
+    run_experiment as run_exp74,
+)
+from exp74_state_change_reference_bracket_diagnostics import (
+    save_figures as save_exp74_figures,
+)
+from exp74_state_change_reference_bracket_diagnostics import (
+    write_outputs as write_exp74_outputs,
+)
+from exp75_state_change_bracket_rank_reference_dependence import (
+    ExperimentConfig as Exp75Config,
+)
+from exp75_state_change_bracket_rank_reference_dependence import (
+    run_experiment as run_exp75,
+)
+from exp75_state_change_bracket_rank_reference_dependence import (
+    save_figures as save_exp75_figures,
+)
+from exp75_state_change_bracket_rank_reference_dependence import (
+    write_outputs as write_exp75_outputs,
+)
+from exp76_state_change_reference_bracket_coverage_vs_trigger_density import (
+    ExperimentConfig as Exp76Config,
+)
+from exp76_state_change_reference_bracket_coverage_vs_trigger_density import (
+    run_experiment as run_exp76,
+)
+from exp76_state_change_reference_bracket_coverage_vs_trigger_density import (
+    save_figures as save_exp76_figures,
+)
+from exp76_state_change_reference_bracket_coverage_vs_trigger_density import (
+    write_outputs as write_exp76_outputs,
+)
+from exp77_state_change_reference_bracket_exact_sanity import (
+    run_experiment as run_exp77,
+)
+from exp77_state_change_reference_bracket_exact_sanity import (
+    write_outputs as write_exp77_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1699,6 +1741,65 @@ def run_observer_chain_interval_profile() -> None:
     print(f"exp73 wrote {data_path} and {len(figure_paths)} figures")
 
 
+def run_state_change_reference_bracket_diagnostics() -> None:
+    config = Exp74Config(
+        num_systems_values=(5,),
+        max_events_values=(100,),
+        trigger_probability_values=(0.20,),
+        max_triggers_per_event=2,
+        repetitions=2,
+        random_candidate_count=3,
+        seed=0,
+        bin_width=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp74(config)
+    data_path = write_exp74_outputs(rows, config.output_dir)
+    figure_paths = save_exp74_figures(rows, config.output_dir)
+    print(f"exp74 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_bracket_rank_reference_dependence() -> None:
+    config = Exp75Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability_values=(0.20,),
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        top_k=3,
+        bin_width=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp75(config)
+    data_path = write_exp75_outputs(rows, config.output_dir)
+    figure_paths = save_exp75_figures(rows, config.output_dir)
+    print(f"exp75 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_reference_bracket_coverage_vs_trigger_density() -> None:
+    config = Exp76Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability_values=(0.10, 0.30),
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        bin_width=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp76(config)
+    data_path = write_exp76_outputs(rows, config.output_dir)
+    figure_paths = save_exp76_figures(rows, config.output_dir)
+    print(f"exp76 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_reference_bracket_exact_sanity() -> None:
+    rows = run_exp77()
+    output_path = write_exp77_outputs(rows)
+    print(f"exp77 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -1770,6 +1871,10 @@ def main() -> None:
     run_observer_chain_candidate_ranking()
     run_observer_chain_coverage_vs_trigger_probability()
     run_observer_chain_interval_profile()
+    run_state_change_reference_bracket_diagnostics()
+    run_state_change_bracket_rank_reference_dependence()
+    run_state_change_reference_bracket_coverage_vs_trigger_density()
+    run_state_change_reference_bracket_exact_sanity()
 
 
 if __name__ == "__main__":

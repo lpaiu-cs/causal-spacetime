@@ -1,4 +1,4 @@
-"""Quality diagnostics for observer-like chain candidates."""
+"""Utility diagnostics for reference-chain candidates."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from numpy.typing import ArrayLike, NDArray
 
 from causal_spacetime_lab.state_change import StateChangeNetwork
 from causal_spacetime_lab.state_change_observers import (
-    ObserverChainCandidate,
+    ReferenceChainCandidate,
     chain_bracketing_mask,
     chain_comparability_mask,
     is_chain,
@@ -18,8 +18,8 @@ from causal_spacetime_lab.state_change_order import causal_interval_indices
 
 
 @dataclass(frozen=True)
-class ChainQualityReport:
-    """Heuristic observer-like chain quality report."""
+class ReferenceChainUtilityReport:
+    """Heuristic reference-chain utility report."""
 
     name: str
     source: str
@@ -33,6 +33,9 @@ class ChainQualityReport:
     chain_gap_interval_cv: float
     max_chain_gap_interval_size: float
     local_system_purity: float
+
+
+ChainQualityReport = ReferenceChainUtilityReport
 
 
 def _interval_sizes_for_adjacent_chain_gaps(
@@ -61,12 +64,12 @@ def _local_system_purity(
     return float(np.max(counts) / chain.size)
 
 
-def evaluate_chain_candidate(
+def evaluate_reference_chain_candidate(
     network: StateChangeNetwork,
     order_matrix: ArrayLike,
-    candidate: ObserverChainCandidate,
-) -> ChainQualityReport:
-    """Evaluate one candidate observer-like chain.
+    candidate: ReferenceChainCandidate,
+) -> ReferenceChainUtilityReport:
+    """Evaluate one candidate reference chain.
 
     Local-system purity uses event metadata, so it is not order-only.
     """
@@ -85,7 +88,7 @@ def evaluate_chain_candidate(
     mean_interval = float(np.mean(interval_sizes)) if interval_sizes.size else 0.0
     std_interval = float(np.std(interval_sizes)) if interval_sizes.size else 0.0
     cv = float(std_interval / mean_interval) if mean_interval > 0.0 else float("nan")
-    return ChainQualityReport(
+    return ReferenceChainUtilityReport(
         name=candidate.name,
         source=candidate.source,
         chain_length=int(chain.size),
@@ -105,17 +108,18 @@ def evaluate_chain_candidate(
     )
 
 
-def rank_chain_candidates(
-    reports: list[ChainQualityReport],
+def rank_reference_chain_candidates(
+    reports: list[ReferenceChainUtilityReport],
     *,
     comparable_weight: float = 0.35,
     bracket_weight: float = 0.45,
     length_weight: float = 0.10,
     regularity_weight: float = 0.10,
 ) -> list[dict[str, float | str]]:
-    """Rank candidates by a heuristic chain quality score.
+    """Rank candidates by a heuristic reference-chain utility score.
 
-    The score is not a proof of physical observerhood.
+    The score only measures utility as a reference backbone for finite
+    order-level diagnostics.
     """
 
     rows: list[dict[str, float | str]] = []
@@ -146,3 +150,32 @@ def rank_chain_candidates(
     for rank, row in enumerate(rows, start=1):
         row["rank"] = float(rank)
     return rows
+
+
+def evaluate_chain_candidate(
+    network: StateChangeNetwork,
+    order_matrix: ArrayLike,
+    candidate: ReferenceChainCandidate,
+) -> ReferenceChainUtilityReport:
+    """Backward-compatible wrapper for reference-chain evaluation."""
+
+    return evaluate_reference_chain_candidate(network, order_matrix, candidate)
+
+
+def rank_chain_candidates(
+    reports: list[ReferenceChainUtilityReport],
+    *,
+    comparable_weight: float = 0.35,
+    bracket_weight: float = 0.45,
+    length_weight: float = 0.10,
+    regularity_weight: float = 0.10,
+) -> list[dict[str, float | str]]:
+    """Backward-compatible wrapper for reference-chain ranking."""
+
+    return rank_reference_chain_candidates(
+        reports,
+        comparable_weight=comparable_weight,
+        bracket_weight=bracket_weight,
+        length_weight=length_weight,
+        regularity_weight=regularity_weight,
+    )

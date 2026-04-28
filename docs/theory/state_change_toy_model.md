@@ -37,8 +37,8 @@ finite graph can be generated and indexed deterministically.
 ## Local Chains Are Not Global Slices
 
 Each local system has a chain of state changes. A local chain can be treated as
-an observer-like ordered protocol for diagnostics, but it is not a universal
-clock, a global slice, or a metric observer with calibrated seconds.
+a reference protocol for diagnostics, but it is not a universal clock, a global
+slice, or a calibrated observer protocol.
 
 Local finiteness means intervals contain finitely many events. It does not
 mean global synchronous ticking.
@@ -57,11 +57,18 @@ partial order.
 ## Milestone 20 Extension
 
 Milestone 20 keeps the same finite trigger-network setting and adds
-observer-like chain selection diagnostics. Local-system chains, greedy
+reference-chain selection diagnostics. Local-system chains, greedy
 order-only chains, longest order chains, and random baseline chains are ranked
 by coverage, two-sided bracketing, interval profiles, and ambiguity measures.
 
-These diagnostics identify candidate observer protocols for later operational
-tests. They do not add metric coordinates, radar distance, physical clock
-calibration, finite-speed spatial geometry, or a unique observer selection
-rule.
+These diagnostics identify candidate reference protocols for later
+order-level tests. They do not add metric coordinates, metric radar distance,
+clock calibration, finite-speed spatial geometry, or a unique observer
+selection rule.
+
+## Milestone 21 Extension
+
+Milestone 21 adds order-level bracket diagnostics for selected reference
+chains. It records predecessor and successor reference positions, two-sided
+accessibility, radar-time rank, bracket-width rank, and rank slices. These are
+rank-level diagnostics only.

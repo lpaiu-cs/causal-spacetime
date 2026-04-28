@@ -28,17 +28,18 @@ Observer time is order along observer chains. Clock values, seconds, and ratios
 enter only through calibration. The framework does not introduce a global
 update tick.
 
-Observer-like chain selection can be studied through finite diagnostics:
-coverage, two-sided bracketing, interval-profile regularity, and ambiguity.
-These diagnostics identify candidate protocol chains; they do not calibrate a
-clock or establish a uniquely preferred observer.
+Reference-chain selection can be studied through finite diagnostics:
+coverage, two-sided bracketing, interval-profile regularity, and
+protocol-reference choice dependence. These diagnostics identify candidate
+reference chains; they do not calibrate a clock or establish a uniquely
+preferred observer.
 
 ## 4. Space
 
-Radar brackets define order-level radar-time and radar-distance ranks.
-Observer slices are generated from radar-time ranks. Spatial comparison is
-observer-slice-relative distance order, with orientation references added only
-when signed coordinates are needed.
+Reference-chain brackets define order-level radar-time ranks and bracket-width
+ranks. Observer slices in stronger protocol layers require additional observer
+structure. Spatial comparison remains observer-slice-relative distance order,
+with orientation references added only when signed coordinates are needed.
 
 ## 5. Metric Representation
 
@@ -74,7 +75,14 @@ spatial geometry, quantum amplitudes, or curved-spacetime dynamics.
 
 ## Milestone 20 Note
 
-Observer-like chain selection is introduced as a finite order diagnostic.
+Reference-chain selection is introduced as a finite order diagnostic.
 Local-system, greedy, longest, and random chain candidates are compared by
-coverage, bracketing, interval profiles, and ambiguity. This remains prior to
-metric reconstruction and radar distance protocols.
+coverage, bracketing, interval profiles, and protocol-reference choice
+dependence. This remains prior to metric reconstruction.
+
+## Milestone 21 Note
+
+Order-level bracket diagnostics compute predecessor and successor reference
+positions from selected reference chains. Radar-time rank and bracket-width
+rank are rank-level diagnostics only; they are not calibrated time or metric
+distance.

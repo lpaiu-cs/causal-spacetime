@@ -75,9 +75,11 @@ reconstruction experiments:
   events and causal trigger order,
 - test a minimal finite state-change causal trigger network as a strict
   partial order diagnostic,
-- rank observer-like chain candidates in finite state-change trigger networks
-  using coverage, two-sided bracketing, interval profiles, and ambiguity
-  diagnostics,
+- rank reference-chain candidates in finite state-change trigger networks
+  using coverage, two-sided bracketing, interval profiles, and
+  protocol-reference choice diagnostics,
+- compute order-level predecessor/successor brackets, radar-time ranks, and
+  bracket-width ranks from selected reference chains,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -517,7 +519,7 @@ does not reconstruct metric geometry, extract observers automatically, add
 finite-speed spatial geometry, derive quantum mechanics, or model curved
 spacetime.
 
-Milestone 20 adds observer-like chain selection diagnostics:
+Milestone 20 adds reference-chain utility diagnostics:
 
 ```bash
 python experiments/exp70_observer_chain_exact_sanity.py
@@ -542,9 +544,32 @@ It writes:
 - `outputs/figures/observer_chain_interval_profile_example.png`
 
 These experiments compare local-system chains, order-only heuristic chains,
-longest chains, and random baselines as candidate observer protocols. The
-scores are finite chain quality diagnostics, not physical clock calibration and
-not a uniqueness claim.
+longest chains, and random baselines as candidate reference protocols. The
+scores are finite reference-chain utility diagnostics, not clock calibration
+and not an observer-reality claim.
+
+Milestone 21 adds order-level bracket diagnostics from selected reference
+chains:
+
+```bash
+python experiments/exp74_state_change_reference_bracket_diagnostics.py
+python experiments/exp75_state_change_bracket_rank_reference_dependence.py
+python experiments/exp76_state_change_reference_bracket_coverage_vs_trigger_density.py
+python experiments/exp77_state_change_reference_bracket_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/state_change_reference_bracket_diagnostics.csv`
+- `outputs/data/state_change_bracket_rank_reference_dependence.csv`
+- `outputs/data/state_change_reference_bracket_coverage_vs_trigger_density.csv`
+- `outputs/data/state_change_reference_bracket_exact_sanity.csv`
+- bracket accessibility, rank-dependence, and trigger-density figures under
+  `outputs/figures/`.
+
+These rank-level diagnostics use only causal trigger order and selected
+reference-chain positions. They do not reconstruct metric radar distance,
+calibrate clocks, or define spatial geometry.
 
 ## Other Experiments
 
@@ -725,5 +750,5 @@ representations. Quantum compatibility is future work and would require an
 additional amplitude or Hilbert-space layer.
 Milestone 19 implements a minimal finite trigger graph. Generated trigger
 networks are checked as locally finite strict partial orders, and local system
-chains are tested as observer-like ordered protocols without introducing global
+chains are tested as reference ordered protocols without introducing global
 physical time.

@@ -1,13 +1,13 @@
-"""Ambiguity diagnostics for observer-like chain candidates."""
+"""Protocol-reference choice diagnostics for reference-chain candidates."""
 
 from __future__ import annotations
 
 import numpy as np
 
-from causal_spacetime_lab.state_change_observers import ObserverChainCandidate
+from causal_spacetime_lab.state_change_observers import ReferenceChainCandidate
 
 
-def top_score_gap(ranked_rows: list[dict[str, float | str]]) -> float:
+def top_reference_score_gap(ranked_rows: list[dict[str, float | str]]) -> float:
     """Return best score minus second-best score, or NaN if unavailable."""
 
     if len(ranked_rows) < 2:
@@ -16,10 +16,10 @@ def top_score_gap(ranked_rows: list[dict[str, float | str]]) -> float:
 
 
 def candidate_overlap_fraction(
-    candidate_a: ObserverChainCandidate,
-    candidate_b: ObserverChainCandidate,
+    candidate_a: ReferenceChainCandidate,
+    candidate_b: ReferenceChainCandidate,
 ) -> float:
-    """Return Jaccard overlap of two candidate chain event-id sets."""
+    """Return Jaccard overlap of two reference-chain event-id sets."""
 
     set_a = set(np.asarray(candidate_a.chain_event_ids, dtype=int).tolist())
     set_b = set(np.asarray(candidate_b.chain_event_ids, dtype=int).tolist())
@@ -29,10 +29,10 @@ def candidate_overlap_fraction(
     return float(len(set_a & set_b) / len(union))
 
 
-def chain_candidate_diversity(
-    candidates: list[ObserverChainCandidate],
+def reference_chain_candidate_diversity(
+    candidates: list[ReferenceChainCandidate],
 ) -> dict[str, float]:
-    """Return pairwise overlap diagnostics for candidate chains."""
+    """Return pairwise overlap diagnostics for reference-chain candidates."""
 
     overlaps: list[float] = []
     for i, candidate_a in enumerate(candidates):
@@ -44,3 +44,17 @@ def chain_candidate_diversity(
         "min_pairwise_overlap": float(np.min(overlaps)) if overlaps else float("nan"),
         "max_pairwise_overlap": float(np.max(overlaps)) if overlaps else float("nan"),
     }
+
+
+def top_score_gap(ranked_rows: list[dict[str, float | str]]) -> float:
+    """Backward-compatible wrapper for top reference-score gap."""
+
+    return top_reference_score_gap(ranked_rows)
+
+
+def chain_candidate_diversity(
+    candidates: list[ReferenceChainCandidate],
+) -> dict[str, float]:
+    """Backward-compatible wrapper for reference-chain diversity."""
+
+    return reference_chain_candidate_diversity(candidates)

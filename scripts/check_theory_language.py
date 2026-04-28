@@ -22,12 +22,24 @@ BANNED_PHRASES = (
     "local finiteness implies global time",
     "state-change network derives relativity",
     "state-change network derives quantum mechanics",
+    "observer-like chain",
+    "observer quality score",
+    "observer selection ambiguity",
+    "true observer",
+    "best observer",
+    "observer derived uniquely",
     "observer is derived uniquely",
     "best chain is the true observer",
     "chain score proves observerhood",
     "chain interval profile is physical time",
     "chain interval count is seconds",
     "observer-chain selection derives metric",
+    "bracket width is distance",
+    "rank width is distance",
+    "radar rank is metric time",
+    "bracket rank gives meters",
+    "chain brackets derive spatial geometry",
+    "order-level bracket proves observerhood",
 )
 
 
@@ -66,7 +78,8 @@ def _allowed_rejected_contexts(lines: list[str]) -> list[bool]:
         if level is not None:
             if active_level is not None and level <= active_level:
                 active_level = None
-            if "rejected language" in line.lower():
+            lower = line.lower()
+            if "rejected language" in lower or "deprecated terminology" in lower:
                 active_level = level
         allowed[index] = active_level is not None
     return allowed

@@ -22,12 +22,13 @@ phrases except in explicit rejected-language contexts.
 Milestone 19 validates a finite DAG diagnostic for state-changing events and
 causal trigger relations. Exact tests check a hand-coded network. The toy-model
 experiment checks generated networks for irreflexive transitive closure and
-finite intervals. The observer-chain diagnostic checks whether one local system
-chain is totally ordered by the closure without treating it as a global clock.
+finite intervals. The reference-chain diagnostic checks whether one local
+system chain is totally ordered by the closure without treating it as a global
+clock.
 
-## Milestone 20: Observer-Like Chain Selection
+## Milestone 20: Reference-Chain Selection
 
-Milestone 20 validates finite observer-like chain selection criteria. Exact
+Milestone 20 validates finite reference-chain selection criteria. Exact
 tests check chain validity, comparability masks, two-sided bracketing, bracket
 positions, quality reports, and ranking output on a hand-coded state-change
 network.
@@ -35,8 +36,22 @@ network.
 The numerical experiments compare local-system chains, greedy order chains,
 longest order chains, and random baselines. They track coverage, bracketing,
 interval-profile regularity, local-system purity, top-score gaps, and
-candidate overlap. The validation target is chain quality and selection
-ambiguity, not metric reconstruction or physical clock calibration.
+candidate overlap. The validation target is reference-chain utility and
+protocol-reference choice dependence, not metric reconstruction or clock
+calibration.
+
+## Milestone 21: Reference-Chain Bracket Diagnostics
+
+Milestone 21 validates order-level brackets induced by selected reference
+chains. Exact tests check predecessor and successor reference positions,
+accessible masks, radar-time ranks, bracket-width ranks, rank slices, and
+coverage summaries.
+
+The experiments compare bracket accessibility and rank slices across
+reference-chain sources, test pairwise bracket-rank dependence among
+high-utility reference chains, and measure how trigger density changes
+two-sided accessibility. The validation target is what a chosen reference
+protocol can order-access, not metric radar distance or calibrated time.
 
 ## Why The Full-Diamond Check Is Limited
 

@@ -7,11 +7,17 @@ Milestone 19 adds the first toy implementation of the primitive layer itself:
 a finite state-change trigger graph checked as a locally finite strict partial
 order.
 
-Milestone 20 adds observer-like chain selection diagnostics inside those
-finite trigger graphs. It compares local-system chains, greedy order chains,
-longest order chains, and random baselines as candidate observer protocols.
-The comparison is based on coverage, two-sided bracketing, interval-profile
-regularity, and ambiguity, not on metric calibration.
+Milestone 20 adds reference-chain selection diagnostics inside those finite
+trigger graphs. It compares local-system chains, greedy order chains, longest
+order chains, and random baselines as candidate reference protocols. The
+comparison is based on coverage, two-sided bracketing, interval-profile
+regularity, and protocol-reference choice dependence, not on metric
+calibration.
+
+Milestone 21 adds order-level bracket diagnostics from selected reference
+chains. It asks which events have predecessor and successor reference
+positions, and how radar-time rank and bracket-width rank depend on the chosen
+reference protocol.
 
 ## Timelike Reconstruction
 
@@ -31,11 +37,11 @@ An observer chain plus causal order gives operational radar decomposition.
 Clock labels and the observer chain are supplied protocol structure. Radar
 brackets can also be treated ordinally through tick positions.
 
-Milestone 20 reinterprets the first step of this pipeline as a chain-selection
-diagnostic: before radar brackets are used for distance protocols, a finite
-network can be searched for useful observer-like chain candidates. The
-best-scoring chain remains a hypothesis for a protocol, not a unique physical
-observer.
+Milestone 20 reinterprets the first step of this pipeline as a
+reference-chain selection diagnostic: before stronger observer protocols are
+introduced, a finite network can be searched for useful reference backbones.
+Milestone 21 then computes bracket ranks from a chosen reference chain without
+interpreting bracket-width rank as metric distance.
 
 ## Oriented Radar And Atlas Tests
 
