@@ -100,3 +100,11 @@ Controlled echo-response motifs plant finite trigger paths with known
 echo-delay ranks. Clean motif networks validate exact recovery, while
 background-interference cases show how shortcut returns can alter recovered
 response depth. These are order-level validation motifs, not metric geometry.
+
+## Milestone 24 Note
+
+Echo shortcut classification studies the full return spectrum for controlled
+motif targets. It separates targeted shortcut-return injection from generic
+acyclic background edge perturbations, then records exact recovery, shortcut
+count, shortcut depth, and rank-resolution loss. This is an order-level
+interference analysis before any stronger representation claim.

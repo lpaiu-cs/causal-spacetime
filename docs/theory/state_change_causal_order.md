@@ -232,3 +232,11 @@ This representation is effective. It can be useful when stable, calibrated,
 and compatible across observer protocols, but it is not primitive. Seconds,
 meters, ratios, velocity, curvature values, and quantitative dynamics belong to
 the representation layer.
+
+## Echo Shortcut Classification
+
+Milestone 24 remains inside the finite state-change trigger-network layer. It
+adds return-spectrum diagnostics for controlled echo-response motifs and
+classifies exact recovery, shortcut returns, and missing or late returns.
+Shortcut returns are earlier causal paths in the transitive trigger order.
+They are not metric quantities and do not add spatial geometry.

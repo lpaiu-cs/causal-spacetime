@@ -29,6 +29,11 @@ Milestone 23 adds controlled echo-response motifs. It plants finite trigger
 paths with known echo-delay ranks so the echo-order protocol can be validated
 against controlled response-depth labels.
 
+Milestone 24 adds shortcut and interference classification for those motifs.
+It studies the full return spectrum, separates targeted shortcut-return stress
+tests from generic acyclic background edge perturbations, and records how
+earliest-return recovery changes.
+
 ## Timelike Reconstruction
 
 Causal interval count plus supplied density gives a proper-time-like
@@ -59,8 +64,9 @@ response structure before any calibrated observer or spatial representation is
 introduced.
 
 Milestone 23 uses planted motifs to test the same echo protocol in clean and
-interfering finite orders. Shortcut returns are treated as causal
-interference, not metric noise.
+interfering finite orders. Milestone 24 then classifies the return spectrum of
+those motifs. Shortcut returns are treated as causal interference in the order,
+not as metric-representation errors.
 
 ## Oriented Radar And Atlas Tests
 

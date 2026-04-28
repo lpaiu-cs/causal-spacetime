@@ -834,6 +834,66 @@ from exp87_echo_motif_reference_choice_visibility import (
 from exp87_echo_motif_reference_choice_visibility import (
     write_outputs as write_exp87_outputs,
 )
+from exp88_echo_shortcut_exact_sanity import (
+    run_experiment as run_exp88,
+)
+from exp88_echo_shortcut_exact_sanity import (
+    write_outputs as write_exp88_outputs,
+)
+from exp89_echo_shortcut_injection_sweep import (
+    ExperimentConfig as Exp89Config,
+)
+from exp89_echo_shortcut_injection_sweep import (
+    run_experiment as run_exp89,
+)
+from exp89_echo_shortcut_injection_sweep import (
+    save_figures as save_exp89_figures,
+)
+from exp89_echo_shortcut_injection_sweep import (
+    write_outputs as write_exp89_outputs,
+)
+from exp90_echo_background_edge_perturbation import (
+    ExperimentConfig as Exp90Config,
+)
+from exp90_echo_background_edge_perturbation import (
+    run_experiment as run_exp90,
+)
+from exp90_echo_background_edge_perturbation import (
+    save_figures as save_exp90_figures,
+)
+from exp90_echo_background_edge_perturbation import (
+    write_outputs as write_exp90_outputs,
+)
+from exp91_echo_motif_path_length_robustness import (
+    ExperimentConfig as Exp91Config,
+)
+from exp91_echo_motif_path_length_robustness import (
+    run_experiment as run_exp91,
+)
+from exp91_echo_motif_path_length_robustness import (
+    save_figures as save_exp91_figures,
+)
+from exp91_echo_motif_path_length_robustness import (
+    write_outputs as write_exp91_outputs,
+)
+from exp92_echo_shortcut_reference_dependence import (
+    ExperimentConfig as Exp92Config,
+)
+from exp92_echo_shortcut_reference_dependence import (
+    run_experiment as run_exp92,
+)
+from exp92_echo_shortcut_reference_dependence import (
+    save_figures as save_exp92_figures,
+)
+from exp92_echo_shortcut_reference_dependence import (
+    write_outputs as write_exp92_outputs,
+)
+from exp93_echo_interference_exact_sanity import (
+    run_experiment as run_exp93,
+)
+from exp93_echo_interference_exact_sanity import (
+    write_outputs as write_exp93_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2059,6 +2119,88 @@ def run_echo_motif_reference_choice_visibility() -> None:
     print(f"exp87 wrote {data_path} and {len(figure_paths)} figures")
 
 
+def run_echo_shortcut_exact_sanity() -> None:
+    rows = run_exp88()
+    output_path = write_exp88_outputs(rows)
+    print(f"exp88 wrote {output_path}")
+
+
+def run_echo_shortcut_injection_sweep() -> None:
+    config = Exp89Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(3, 5, 8),
+        shortcut_probabilities=(0.0, 0.3),
+        shortcut_modes=("target_to_early_reference",),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp89(config)
+    data_path = write_exp89_outputs(rows, config.output_dir)
+    figure_paths = save_exp89_figures(rows, config.output_dir)
+    print(f"exp89 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_background_edge_perturbation() -> None:
+    config = Exp90Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(3, 5, 8),
+        edge_probabilities=(0.0, 0.01),
+        repetitions=2,
+        seed=0,
+        max_edges=100,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp90(config)
+    data_path = write_exp90_outputs(rows, config.output_dir)
+    figure_paths = save_exp90_figures(rows, config.output_dir)
+    print(f"exp90 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_motif_path_length_robustness() -> None:
+    config = Exp91Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(5, 8),
+        outward_steps_values=(0, 1),
+        return_steps_values=(0, 1),
+        shortcut_probability=0.3,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp91(config)
+    data_path = write_exp91_outputs(rows, config.output_dir)
+    figure_paths = save_exp91_figures(rows, config.output_dir)
+    print(f"exp91 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_shortcut_reference_dependence() -> None:
+    config = Exp92Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability=0.20,
+        motif_count=10,
+        shortcut_probability=0.3,
+        repetitions=2,
+        seed=0,
+        top_k=3,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp92(config)
+    data_path = write_exp92_outputs(rows, config.output_dir)
+    figure_paths = save_exp92_figures(rows, config.output_dir)
+    print(f"exp92 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_interference_exact_sanity() -> None:
+    rows = run_exp93()
+    output_path = write_exp93_outputs(rows)
+    print(f"exp93 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2144,6 +2286,12 @@ def main() -> None:
     run_echo_motif_background_interference()
     run_echo_motif_density_resolution()
     run_echo_motif_reference_choice_visibility()
+    run_echo_shortcut_exact_sanity()
+    run_echo_shortcut_injection_sweep()
+    run_echo_background_edge_perturbation()
+    run_echo_motif_path_length_robustness()
+    run_echo_shortcut_reference_dependence()
+    run_echo_interference_exact_sanity()
 
 
 if __name__ == "__main__":

@@ -89,3 +89,11 @@ networks. A motif plants a target event with a known echo-delay rank relative
 to a selected reference chain. Clean networks test exact recovery; background
 interference tests shortcut returns. The planted rank is a validation label
 for the finite order, not a metric quantity.
+
+## Milestone 24 Extension
+
+Milestone 24 classifies shortcut returns using return spectra. It records all
+later reference-chain return positions for a motif target and separates
+targeted shortcut-return stress tests from generic acyclic background edge
+perturbations. This is a finite DAG interference diagnostic, not a metric or
+geometry layer.

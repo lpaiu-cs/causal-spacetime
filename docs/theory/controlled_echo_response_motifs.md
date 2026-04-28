@@ -66,3 +66,16 @@ This is not metric reconstruction, calibrated radar distance, finite-speed
 spatial geometry, quantum mechanics, curved spacetime, or a claim that a
 reference chain is a physical observer. It is a controlled order-level response
 diagnostic.
+
+## Milestone 24 Extension
+
+Milestone 24 adds return-spectrum analysis for the same motif records. For
+each planted target, the spectrum lists all later reference-chain return ranks,
+while the echo protocol recovers the earliest one. Exact recovery, shortcut
+return, missing return, and late recovery are then classified explicitly.
+
+The implementation now distinguishes generic background trigger perturbations
+from deliberately injected shortcut-return stress tests. Injected shortcuts are
+controlled robustness tests; naturally occurring shortcuts come from other
+causal paths already present or added as generic acyclic background edges.
+Both are causal-order interference diagnostics.

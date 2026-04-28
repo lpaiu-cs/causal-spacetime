@@ -71,9 +71,25 @@ reference-chain position.
 
 The planted delay rank is a validation label, not physical distance or
 calibrated time. Clean motif networks should recover planted ranks exactly.
-Background shortcut returns are recorded as causal interference, not metric
-noise. Motif density experiments test how a limited delay-rank set creates ties
-and reduces order resolution.
+Background shortcut returns are recorded as causal interference rather than as
+errors in a metric representation. Motif density experiments test how a limited
+delay-rank set creates ties and reduces order resolution.
+
+## Milestone 24: Echo Shortcut And Interference Classification
+
+Milestone 24 decomposes shortcut returns with return-spectrum diagnostics. For
+a motif target and emission position, the return spectrum records every later
+reference-chain position the target can trigger, while the echo protocol uses
+the earliest-return rule.
+
+The experiments distinguish naturally occurring background shortcut paths from
+deliberately injected shortcut-return stress tests. Targeted injection measures
+how controlled earlier returns reduce exact planted-rank recovery. Generic
+acyclic background edge perturbations test whether unrelated extra trigger
+edges create new shortcuts or deepen existing ones. Path-length and reference
+dependence experiments report motif robustness and reference-protocol
+dependence. These are causal-order interference diagnostics, not distance,
+duration, or geometry claims.
 
 ## Milestone 1: Timelike Reconstruction In 1+1D
 

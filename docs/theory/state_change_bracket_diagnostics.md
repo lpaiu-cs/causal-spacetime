@@ -77,3 +77,8 @@ echo-delay ranks, still without metric distance or calibrated clock values.
 Milestone 23 uses controlled echo-response motifs to validate those echo
 diagnostics. It plants target events with known return positions and records
 exact recovery, shortcut returns, and reference-protocol visibility.
+
+Milestone 24 adds return-spectrum classification for those motif targets. The
+passive bracket layer still supplies reference positions; the shortcut layer
+asks whether additional return positions appear before the planted return
+label and how those returns change earliest-return recovery.

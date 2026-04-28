@@ -53,6 +53,12 @@ BANNED_PHRASES = (
     "echo-response motif is finite-speed geometry",
     "planted delay is physical time",
     "shortcut is metric noise",
+    "background interference is metric noise",
+    "return spectrum gives distance",
+    "shortcut depth is distance",
+    "shortcut depth is speed",
+    "echo interference derives geometry",
+    "shortcut classification proves spatial distance",
 )
 
 

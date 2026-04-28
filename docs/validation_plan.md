@@ -77,7 +77,23 @@ The numerical experiments separate clean recovery, background shortcut
 interference, motif-density tie structure, and reference-choice visibility.
 The validation target is controlled order-level response depth. Planted delay
 rank is not physical distance, and shortcut returns are background causal
-interference rather than metric noise.
+interference rather than errors in a metric representation.
+
+## Milestone 24: Echo Shortcut And Interference Classification
+
+Milestone 24 validates return-spectrum and shortcut-classification utilities.
+Exact sanity checks verify that a planted motif has the expected return
+spectrum, that an injected earlier return changes the recovered delay rank,
+and that the immediate graph remains acyclic.
+
+The numerical experiments separate targeted shortcut-return injection from
+generic acyclic background edge perturbations. Targeted injection sweeps test
+how exact recovery and planted-order agreement degrade under controlled
+earlier returns. Background perturbation sweeps test whether generic extra
+trigger edges create new shortcuts or deepen existing ones. Additional
+experiments measure motif path-length robustness and reference-protocol
+dependence. The validation target is causal interference classification before
+any stronger distance-order interpretation.
 
 ## Why The Full-Diamond Check Is Limited
 

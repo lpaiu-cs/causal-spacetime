@@ -22,6 +22,12 @@ repository. Open proof obligations include:
   under background trigger interference and reference-protocol changes,
 - a principled account of which shortcut returns are meaningful response
   structure rather than artifacts of a particular finite construction,
+- stability conditions for return-spectrum classifications under targeted
+  shortcut-return stress tests, generic background edge perturbations, and
+  changes of reference protocol,
+- criteria for when shortcut count, shortcut depth, and rank-resolution loss
+  are robust order-level diagnostics rather than construction-specific
+  artifacts,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,

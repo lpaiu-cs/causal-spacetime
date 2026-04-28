@@ -1,4 +1,9 @@
-"""Background-interference diagnostics for controlled echo-response motifs."""
+"""Background plus controlled shortcut diagnostics for echo-response motifs.
+
+This Milestone 23 experiment uses random background trigger networks and also
+adds controlled shortcut-return edges as a stress test. Milestone 24 separates
+that targeted injection from generic acyclic background edge perturbations.
+"""
 
 from __future__ import annotations
 

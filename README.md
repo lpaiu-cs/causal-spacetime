@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 18-23 refactor the theory-facing framing around locally finite
+Milestones 18-24 refactor the theory-facing framing around locally finite
 state-change causal trigger order and add the first finite diagnostics at that
 primitive layer:
 
@@ -84,6 +84,9 @@ reconstruction experiments:
   selected reference chains,
 - plant controlled echo-response motifs and test recovery of planted
   echo-delay ranks,
+- classify shortcut returns and causal interference using return spectra,
+  targeted shortcut stress tests, generic background edge perturbations,
+  motif robustness checks, and reference-protocol dependence,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -627,6 +630,34 @@ echo-delay ranks. The planted rank is a validation label, not physical
 distance or calibrated time. Shortcut returns are recorded as background
 causal interference.
 
+Milestone 24 adds echo shortcut and interference classification:
+
+```bash
+python experiments/exp88_echo_shortcut_exact_sanity.py
+python experiments/exp89_echo_shortcut_injection_sweep.py
+python experiments/exp90_echo_background_edge_perturbation.py
+python experiments/exp91_echo_motif_path_length_robustness.py
+python experiments/exp92_echo_shortcut_reference_dependence.py
+python experiments/exp93_echo_interference_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/echo_shortcut_exact_sanity.csv`
+- `outputs/data/echo_shortcut_injection_sweep.csv`
+- `outputs/data/echo_background_edge_perturbation.csv`
+- `outputs/data/echo_motif_path_length_robustness.csv`
+- `outputs/data/echo_shortcut_reference_dependence.csv`
+- `outputs/data/echo_interference_exact_sanity.csv`
+- shortcut fraction, shortcut-depth, background-perturbation, path-robustness,
+  and reference-dependence figures under `outputs/figures/`.
+
+The key diagnostic is the return spectrum for a motif target relative to a
+chosen reference chain and emission position. Targeted shortcut injection and
+generic acyclic background edge perturbations are distinct stress tests; both
+classify causal-order interference before any stronger interpretation is
+attempted.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -824,3 +855,7 @@ Milestone 23 plants controlled echo-response motifs. Clean motif networks
 test whether planted echo-delay ranks are recovered by the echo protocol,
 while interference and reference-choice experiments record shortcut returns,
 ties, and visibility changes as order-level diagnostics.
+Milestone 24 classifies shortcut returns using return spectra. It separates
+targeted shortcut-return stress tests from generic background edge
+perturbations, reports shortcut count and shortcut depth, and treats the
+results as causal-order interference diagnostics.

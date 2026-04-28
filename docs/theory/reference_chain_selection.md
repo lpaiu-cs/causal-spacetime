@@ -70,3 +70,9 @@ Milestone 23 plants controlled echo-response motifs relative to selected
 reference chains. This checks whether the same echo-order protocol recovers
 known planted echo-delay ranks in finite DAGs and how visibility changes when
 a different reference protocol is chosen.
+
+Milestone 24 shows that shortcut classification is also reference-protocol
+dependent. A shortcut return relative to one reference chain can be missing,
+later, or differently ranked relative to another. This is protocol-reference
+dependence in the order-level diagnostic, not a conflict between physical
+observers.

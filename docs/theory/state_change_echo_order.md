@@ -101,4 +101,16 @@ then compared against that label.
 
 Shortcut returns are recorded when additional trigger structure makes the
 target return earlier than the planted label. These are background causal
-interference in the order, not metric perturbations.
+interference in the order, not errors in a metric representation.
+
+## Shortcut Classification
+
+Milestone 24 expands the echo-order protocol from earliest-return recovery to
+return-spectrum classification. The spectrum records every later reference
+return available to a target, while the echo protocol recovers the earliest
+one. This makes exact recovery, shortcut return, missing or late recovery,
+shortcut depth, and shortcut count explicit.
+
+The new diagnostics distinguish targeted shortcut-return stress tests from
+generic acyclic background edge perturbations. Both remain order-level
+response diagnostics relative to a chosen reference protocol.
