@@ -8,7 +8,11 @@ The project explicitly rejects these weak or misleading claims:
 - "the simulations prove spacetime is information",
 - "causal order alone gives absolute metric scale",
 - "causal order alone gives physical volume or the conformal factor",
+- "causal order alone gives metric geometry",
+- "causal order implies global discrete time",
+- "distance equals c times time slice",
 - "distance order alone gives full metric geometry",
+- "space is made of absolute cells",
 - "spatial distance order is observer-independent",
 - "all accessible events belong to one spatial slice",
 - "same-slice order alone gives global space",
@@ -42,6 +46,7 @@ The project explicitly rejects these weak or misleading claims:
 - "inaccessible events do not exist",
 - "1+1D validation proves physical spacetime emergence",
 - "dimension is purely information",
+- "this derives quantum mechanics",
 - "this replaces relativity".
 
 The conservative claim is narrower: causal/accessibility order, counting

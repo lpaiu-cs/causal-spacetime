@@ -5,14 +5,21 @@ and is not established by the simulations.
 
 ## Candidate Axioms
 
-A0. Events are primitive.
+A0. Events are primitive state-changing events:
 
-A1. Accessibility is represented by a strict partial order.
+```text
+e_{alpha,n} = (alpha, n, s_alpha^n -> s_alpha^{n+1})
+```
 
-A1a. Primitive temporal structure is causal/accessibility order, not a
-duration value.
+A1. Causal trigger order `≺_T` is represented by a strict partial order.
+
+A1a. Primitive temporal structure is causal trigger order, not a duration
+value.
 
 A2. Local finiteness gives discrete interval cardinalities.
+
+A2a. Local finiteness does not imply global discrete time slices, a preferred
+global update tick, or absolute discrete spatial cells.
 
 A3. Counting measure supplies volume-like information.
 
@@ -42,6 +49,10 @@ compatibility or equivalent structure is required.
 
 A7. Metric tensors, units, ratios, and curvature values belong to an effective
 metric representation layer, not the primitive order layer.
+
+A8. Quantum compatibility, if pursued, requires an additional amplitude,
+Hilbert-space, or equivalent probabilistic layer. It is not supplied by the
+current state-change order axioms.
 
 ## Candidate Conjectures
 

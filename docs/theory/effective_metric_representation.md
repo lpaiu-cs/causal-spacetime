@@ -3,6 +3,11 @@
 Milestone 12 studies when order data admits a useful low-dimensional metric
 representation. This is an order-first question:
 
+Milestone 18 places this question inside the state-change causal order
+hierarchy. The metric representation layer attempts to compress causal trigger
+order, observer-chain order, and observer-slice distance order after
+calibration. It is not part of the primitive state-changing event definition.
+
 ```text
 Given order relations, when is a metric representation a stable low-complexity
 compression of those relations?

@@ -2,6 +2,10 @@
 
 Milestone 16 separates two kinds of cross-slice statements.
 
+Milestone 18 keeps relational spatial evolution as a non-metric order-level
+history built on supplied persistence. It is weaker than metric dynamics and is
+not part of the primitive state-changing event definition.
+
 Transport-dependent predicates include same position, same direction,
 coordinate velocity, coordinate acceleration, and metric spatial evolution.
 They require a chosen transport, anchor, persistence, calibration, or dynamics

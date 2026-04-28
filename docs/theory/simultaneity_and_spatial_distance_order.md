@@ -4,6 +4,10 @@ Milestone 14 refines the order-first spatial layer. Spatial distance order is
 not treated as absolute. It is observer-relative and depends on a
 slice-selection protocol.
 
+Milestone 18 rephrases this in state-change terms: observer slices are derived
+from radar brackets on an observer chain inside the causal trigger order. They
+are not global update slices and do not define absolute space.
+
 The core distinction is:
 
 ```text

@@ -5,6 +5,11 @@ object persistence. Milestone 16 assumed persistent object labels. Milestone 17
 tests what remains undefined when those labels are absent, and what becomes
 defined only after a persistence hypothesis is supplied or inferred.
 
+Milestone 18 keeps persistence outside the primitive layer. The state-change
+causal trigger order supplies event ordering, not object identity across
+observer slices. Persistence remains supplied, inferred, or dynamically
+constrained structure.
+
 Object identity is additional structure in this project. Causal order,
 observer protocols, and slice-local distance order do not by themselves say
 that an object in slice `S_i` is the same object as one in slice `S_j`.

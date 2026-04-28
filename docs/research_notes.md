@@ -1,5 +1,19 @@
 # Research Notes
 
+## Milestone 18: State-Change Causal Order Refactor
+
+Milestone 18 is a theory refactor. It reorganizes the earlier reconstruction
+layers around locally finite state-changing events and causal trigger order.
+Observer chains, radar-time ranks, and observer slices become observer-derived
+protocol structures. Observer-slice-relative distance order is then the spatial
+order layer, while metric geometry, seconds, meters, ratios, velocity,
+curvature values, and quantitative dynamics remain calibrated effective
+representations.
+
+This milestone does not add a state-change simulation or quantum model.
+Quantum compatibility is marked as future work requiring an additional
+amplitude or Hilbert-space layer.
+
 ## Milestone 1: Timelike Reconstruction In 1+1D
 
 This milestone works in 1+1D Minkowski spacetime with natural units `c = 1`.

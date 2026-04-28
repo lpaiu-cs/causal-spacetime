@@ -1,6 +1,8 @@
 # Order-First Reformulation
 
 Milestone 11 reframes the project as an order-first reconstruction program.
+Milestone 18 sharpens that framing by treating the primitive order as a
+locally finite causal trigger order among state-changing events.
 The point is not that metric geometry is unnecessary. The point is that metric
 geometry is treated as a stable, calibrated representation layer for more
 primitive order structures.
@@ -13,10 +15,19 @@ Space is not primitive length but observer-relative distance order.
 Metric geometry is a stable calibrated representation of order structures.
 ```
 
+Milestone 18 states the same thesis more concretely:
+
+```text
+state-changing events + causal trigger order + local finiteness
+  -> observer-chain time
+  -> observer-slice-relative distance order
+  -> calibrated effective metric representation
+```
+
 The fundamental ingredients in this framing are:
 
 - `E`: an event set,
-- `≺`: causal or accessibility order on events,
+- `≺_T`: causal trigger order on state-changing events,
 - `O`: an observer protocol or observer chain,
 - `≺_O`: order along the observer chain,
 - `A ≺^d_O B`: target `A` is closer than target `B` relative to `O`,

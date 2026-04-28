@@ -1,5 +1,22 @@
 # Validation Plan
 
+## Milestone 18: State-Change Causal Order Refactor
+
+Milestone 18 is validated primarily by documentation and language checks. The
+theory-facing docs should consistently use the hierarchy:
+
+```text
+locally finite state-changing events
+  -> causal trigger order
+  -> observer-chain time
+  -> observer-slice-relative distance order
+  -> calibrated effective metric representation
+```
+
+The validation target is conceptual consistency, not a new numerical
+experiment. The language guard checks that theory docs avoid risky overclaim
+phrases except in explicit rejected-language contexts.
+
 ## Why The Full-Diamond Check Is Limited
 
 The original endpoint reconstruction experiment uses the full generated causal

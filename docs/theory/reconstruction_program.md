@@ -1,12 +1,15 @@
 # Reconstruction Program
 
-The project's theory-facing objective is a mathematical reconstruction program:
+The project's theory-facing objective is now phrased as a state-change causal
+order reconstruction program:
 
 ```text
-primitive information-accessibility
-  -> causal order
-  -> primitive temporal order
-  -> observer-relative distance order
+state-changing events
+  -> causal trigger order
+  -> local finiteness
+  -> observer-chain time order
+  -> radar-time order and observer slices
+  -> observer-slice-relative distance order
   -> conformal/light-cone structure
   -> counting measure / density
   -> dimension
@@ -30,6 +33,11 @@ primitive information-accessibility
 The simulations reproduce and stress-test pieces of this program in known
 settings. They are not intended to replace relativity, and they do not prove
 spacetime emergence.
+
+Milestone 18 consolidates the earlier layers: state-changing events, causal
+trigger order, and local finiteness are primitive; observer chains, radar
+brackets, and slices are observer-derived protocol structures; metric geometry
+is an effective calibrated representation.
 
 Milestone 11 makes the order-first interpretation explicit. The primitive
 objects are causal/accessibility order and observer-relative distance order.

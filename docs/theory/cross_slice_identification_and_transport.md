@@ -4,6 +4,10 @@ Milestone 15 clarifies a missing layer in the order-first program. Same-slice
 distance order gives slice-local spatial structure. It does not by itself
 identify points, directions, or objects across different observer-time slices.
 
+Milestone 18 keeps transport in the effective/protocol layer. The primitive
+state-change trigger order does not define same position, same direction,
+velocity, or metric spatial evolution across observer slices.
+
 The corrected interpretation is:
 
 ```text

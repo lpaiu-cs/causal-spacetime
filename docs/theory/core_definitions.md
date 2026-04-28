@@ -10,6 +10,32 @@ Let `E` be a set of events. Events are treated as primitive elements in the
 theory-facing formulation. Coordinates, if present in simulations, are hidden
 validation data rather than primitive structure.
 
+## State-Changing Event
+
+In the Milestone 18 refactor, a primitive event is a state transition:
+
+```text
+e_{alpha,n} = (alpha, n, s_alpha^n -> s_alpha^{n+1})
+```
+
+Here `alpha` is a local system, node, or physical subsystem, and `n` indexes
+state changes along that subsystem. The event is the transition itself. Metric
+duration, position, velocity, and curvature are not part of this primitive
+definition.
+
+## Causal Trigger Relation
+
+The causal trigger relation is written:
+
+```text
+e_i ≺_T e_j
+```
+
+It means that the state change at `e_i`, or information/trigger emitted by
+`e_i`, enables or contributes to the state change at `e_j`. This is the
+state-change version of the causal/accessibility order used in the simulations.
+It assigns ordering, not metric time or distance.
+
 ## Primitive Relation
 
 The primitive accessibility relation is written:
@@ -24,6 +50,10 @@ causal-set simulations this is implemented as a causal order.
 In the order-first reformulation, this relation is the primitive temporal
 structure. Duration values are representation-layer quantities introduced only
 after clocks, density, calibration, or dynamics are supplied.
+
+Milestone 18 refines this wording: primitive temporal structure is causal
+trigger order among state-changing events. Observer time is order along a
+chosen observer chain.
 
 ## Strict Partial Order
 
@@ -44,6 +74,9 @@ events:
 ```
 
 for all `p ≺ q`.
+
+Local finiteness is not a global update rule. It does not imply global discrete
+time slices, a preferred tick, or absolute discrete spatial cells.
 
 ## Alexandrov Interval
 
@@ -122,6 +155,9 @@ In discrete radar reconstruction, the observer chain is supplied with strictly
 increasing clock labels. These labels are protocol structure, not information
 derived from causal order alone.
 
+The observer chain itself is also protocol structure in the current code. It is
+not derived from the bare causal trigger order.
+
 The order along an observer chain is denoted `≺_O`.
 
 ## Observer-Relative Distance Order
@@ -146,7 +182,8 @@ ratios, signed coordinates, curvature, or a unique metric tensor.
 A metric representation layer assigns numerical quantities to order data:
 
 ```text
-durations, distances, coordinates, metric tensors, curvature values
+durations, distances, coordinates, seconds, meters, ratios, velocity,
+metric tensors, curvature values, quantitative dynamics
 ```
 
 These objects can be extremely useful effective descriptions, but they are not

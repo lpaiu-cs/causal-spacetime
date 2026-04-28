@@ -8,12 +8,14 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 11-17 make the theory-facing framing explicitly order-first:
+Milestone 18 refactors the theory-facing framing around locally finite
+state-change causal trigger order:
 
 ```text
-causal order -> primitive temporal order
-observer protocol + causal order -> observer-relative distance order
-order structures + calibration/dynamics -> metric representation
+state-changing events + causal trigger order + local finiteness
+  -> observer-chain time order
+  -> observer-slice-relative distance order
+  -> calibrated effective metric representation
 ```
 
 Metric geometry, seconds, meters, ratios, metric tensors, and curvature values
@@ -68,6 +70,8 @@ reconstruction experiments:
   slice-local pair-distance order histories,
 - test persistence ambiguity, identity matching, partial-label constraints, and
   hypothesis-dependent relational histories,
+- consolidate the theory-facing layer around locally finite state-changing
+  events and causal trigger order,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -466,6 +470,24 @@ It writes:
 - `outputs/figures/crossing_persistence_track_error.png`
 - `outputs/figures/persistence_hypothesis_change_rates.png`
 
+Milestone 18 is a theory refactor rather than a new simulation milestone. It
+adds:
+
+- `docs/theory/state_change_causal_order.md`
+- `docs/theory/order_vs_metric_representation.md`
+- `docs/theory/relativity_compatibility_conditions.md`
+- `docs/theory/quantum_extension_requirements.md`
+- `docs/theory/milestone_reinterpretation_under_state_change_order.md`
+- `docs/theory/paper_outline_state_change_order.md`
+
+It also adds:
+
+```bash
+python scripts/check_theory_language.py
+```
+
+to guard against risky overclaim language in the theory docs.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -636,3 +658,10 @@ order histories are undefined. Relational-continuity matching, partial labels,
 and anchors can restrict identity hypotheses, but they do not derive object
 identity from causal order alone. Different compatible persistence hypotheses
 can produce different relational-evolution claims.
+Milestone 18 consolidates these layers under a state-change causal trigger
+order thesis. Primitive objects are state-changing events, trigger order, and
+local finiteness. Observer chains, radar-time ranks, and observer slices are
+derived protocol structures. Metric geometry, velocity, curvature values,
+seconds, meters, ratios, and quantitative dynamics remain calibrated effective
+representations. Quantum compatibility is future work and would require an
+additional amplitude or Hilbert-space layer.

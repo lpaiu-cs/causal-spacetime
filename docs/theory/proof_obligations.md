@@ -3,6 +3,7 @@
 A serious theory would require substantially more than the simulations in this
 repository. Open proof obligations include:
 
+- a precise state-change event ontology and causal trigger semantics,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,
@@ -59,6 +60,8 @@ repository. Open proof obligations include:
   dynamics,
 - a clear separation between primitive order structures and effective metric
   representation-layer objects such as metric tensors and curvature values.
+- compatibility conditions for adding a quantum amplitude or Hilbert-space
+  layer without treating it as already derived by the current order model.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

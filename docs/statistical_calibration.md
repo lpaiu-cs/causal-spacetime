@@ -1,5 +1,15 @@
 # Statistical Calibration
 
+## Relation To State-Change Causal Order
+
+Milestone 18 keeps statistical calibration in the representation layer.
+Locally finite state-changing events and causal trigger order provide finite
+intervals and order relations. Counts become volume-like or duration-like only
+after density, clock calibration, or repeated-process assumptions are supplied.
+
+Local finiteness supports finite statistics, but it does not introduce a
+global clock, metric scale, or quantitative dynamics.
+
 ## Why Milestone 2 Was Useful
 
 Milestone 2 sampled internal timelike event pairs from a single sprinkled causal
