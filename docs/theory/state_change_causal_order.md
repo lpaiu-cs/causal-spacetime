@@ -5,6 +5,11 @@ locally finite state-changing events ordered by causal trigger relations. The
 goal is to keep the reconstruction program conservative while reducing the
 appearance that every important structure is inserted independently.
 
+Milestone 19 implements a minimal finite toy model for this primitive layer.
+The toy model stores state-changing events in a finite trigger graph and uses
+transitive closure for order queries. It does not add metric coordinates or
+global physical time.
+
 ## State-Changing Events
 
 A state-changing event is written:

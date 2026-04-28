@@ -59,3 +59,10 @@ persistence.
 Future milestones can study causal-thread persistence, state-change toy
 models, metric representability, coarse graining, a quantum amplitude layer,
 and curved-spacetime or general-relativistic limits.
+
+## Milestone 19 Note
+
+The first state-change toy model is a finite DAG diagnostic for the primitive
+order layer. It checks strict partial-order behavior and local finiteness, but
+does not yet address observer extraction, metric representation, finite-speed
+spatial geometry, quantum amplitudes, or curved-spacetime dynamics.

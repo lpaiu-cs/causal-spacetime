@@ -612,6 +612,36 @@ from exp66_persistence_matching_exact_sanity import (
 from exp66_persistence_matching_exact_sanity import (
     write_outputs as write_exp66_outputs,
 )
+from exp67_state_change_exact_sanity import (
+    run_experiment as run_exp67,
+)
+from exp67_state_change_exact_sanity import (
+    write_outputs as write_exp67_outputs,
+)
+from exp68_state_change_toy_model import (
+    ExperimentConfig as Exp68Config,
+)
+from exp68_state_change_toy_model import (
+    run_experiment as run_exp68,
+)
+from exp68_state_change_toy_model import (
+    save_figures as save_exp68_figures,
+)
+from exp68_state_change_toy_model import (
+    write_outputs as write_exp68_outputs,
+)
+from exp69_state_change_observer_chain_diagnostic import (
+    ExperimentConfig as Exp69Config,
+)
+from exp69_state_change_observer_chain_diagnostic import (
+    run_experiment as run_exp69,
+)
+from exp69_state_change_observer_chain_diagnostic import (
+    save_figure as save_exp69_figure,
+)
+from exp69_state_change_observer_chain_diagnostic import (
+    write_outputs as write_exp69_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1524,6 +1554,43 @@ def run_persistence_matching_exact_sanity() -> None:
     print(f"exp66 wrote {output_path}")
 
 
+def run_state_change_exact_sanity() -> None:
+    rows = run_exp67()
+    output_path = write_exp67_outputs(rows)
+    print(f"exp67 wrote {output_path}")
+
+
+def run_state_change_toy_model() -> None:
+    config = Exp68Config(
+        num_systems_values=(5,),
+        max_events_values=(100,),
+        trigger_probability_values=(0.20,),
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp68(config)
+    data_path = write_exp68_outputs(rows, config.output_dir)
+    figure_paths = save_exp68_figures(rows, config.output_dir)
+    print(f"exp68 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_observer_chain_diagnostic() -> None:
+    config = Exp69Config(
+        num_systems=5,
+        max_events=100,
+        trigger_probability=0.20,
+        max_triggers_per_event=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp69(config)
+    data_path = write_exp69_outputs(rows, config.output_dir)
+    figure_path = save_exp69_figure(rows, config.output_dir)
+    print(f"exp69 wrote {data_path} and {figure_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -1588,6 +1655,9 @@ def main() -> None:
     run_crossing_persistence_failure()
     run_persistence_hypothesis_dependence()
     run_persistence_matching_exact_sanity()
+    run_state_change_exact_sanity()
+    run_state_change_toy_model()
+    run_state_change_observer_chain_diagnostic()
 
 
 if __name__ == "__main__":

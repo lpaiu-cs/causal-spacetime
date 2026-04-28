@@ -3,6 +3,10 @@
 Milestone 18 reinterprets the earlier experiments as support tests for a
 state-change causal trigger order program.
 
+Milestone 19 adds the first toy implementation of the primitive layer itself:
+a finite state-change trigger graph checked as a locally finite strict partial
+order.
+
 ## Timelike Reconstruction
 
 Causal interval count plus supplied density gives a proper-time-like

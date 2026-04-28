@@ -14,6 +14,18 @@ This milestone does not add a state-change simulation or quantum model.
 Quantum compatibility is marked as future work requiring an additional
 amplitude or Hilbert-space layer.
 
+## Milestone 19: Minimal State-Change Toy Model
+
+Milestone 19 implements the first finite state-change causal trigger network.
+Events are local state transitions, and immediate trigger edges form a finite
+DAG. Causal-order queries use the transitive closure.
+
+The validation checks are deliberately order-theoretic: acyclicity,
+irreflexivity, transitivity, finite intervals, local chain lengths, and a local
+observer-like chain diagnostic. No metric reconstruction, observer extraction,
+finite-speed spatial geometry, quantum amplitude layer, or curved-spacetime
+model is introduced.
+
 ## Milestone 1: Timelike Reconstruction In 1+1D
 
 This milestone works in 1+1D Minkowski spacetime with natural units `c = 1`.

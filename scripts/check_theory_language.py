@@ -17,6 +17,11 @@ BANNED_PHRASES = (
     "this replaces relativity",
     "space is made of absolute cells",
     "we proved spacetime emergence",
+    "generation order is physical time",
+    "event id is time",
+    "local finiteness implies global time",
+    "state-change network derives relativity",
+    "state-change network derives quantum mechanics",
 )
 
 

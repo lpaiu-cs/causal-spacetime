@@ -72,6 +72,8 @@ reconstruction experiments:
   hypothesis-dependent relational histories,
 - consolidate the theory-facing layer around locally finite state-changing
   events and causal trigger order,
+- test a minimal finite state-change causal trigger network as a strict
+  partial order diagnostic,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -488,6 +490,29 @@ python scripts/check_theory_language.py
 
 to guard against risky overclaim language in the theory docs.
 
+Milestone 19 adds the first minimal state-change causal trigger toy model:
+
+```bash
+python experiments/exp67_state_change_exact_sanity.py
+python experiments/exp68_state_change_toy_model.py
+python experiments/exp69_state_change_observer_chain_diagnostic.py
+```
+
+It writes:
+
+- `outputs/data/state_change_exact_sanity.csv`
+- `outputs/data/state_change_toy_model_summary.csv`
+- `outputs/data/state_change_observer_chain_diagnostic.csv`
+- `outputs/figures/state_change_relation_density.png`
+- `outputs/figures/state_change_max_interval_size.png`
+- `outputs/figures/state_change_events_per_system.png`
+- `outputs/figures/state_change_observer_chain_coverage.png`
+
+This is a finite DAG diagnostic for the primitive state-change order layer. It
+does not reconstruct metric geometry, extract observers automatically, add
+finite-speed spatial geometry, derive quantum mechanics, or model curved
+spacetime.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -665,3 +690,7 @@ derived protocol structures. Metric geometry, velocity, curvature values,
 seconds, meters, ratios, and quantitative dynamics remain calibrated effective
 representations. Quantum compatibility is future work and would require an
 additional amplitude or Hilbert-space layer.
+Milestone 19 implements a minimal finite trigger graph. Generated trigger
+networks are checked as locally finite strict partial orders, and local system
+chains are tested as observer-like ordered protocols without introducing global
+physical time.

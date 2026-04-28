@@ -4,6 +4,10 @@ A serious theory would require substantially more than the simulations in this
 repository. Open proof obligations include:
 
 - a precise state-change event ontology and causal trigger semantics,
+- continuum-limit or coarse-graining behavior for finite state-change trigger
+  networks,
+- criteria for extracting observer chains from generated trigger networks
+  without inserting a preferred global time,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,

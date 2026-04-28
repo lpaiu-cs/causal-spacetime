@@ -17,6 +17,14 @@ The validation target is conceptual consistency, not a new numerical
 experiment. The language guard checks that theory docs avoid risky overclaim
 phrases except in explicit rejected-language contexts.
 
+## Milestone 19: Minimal State-Change Toy Model
+
+Milestone 19 validates a finite DAG diagnostic for state-changing events and
+causal trigger relations. Exact tests check a hand-coded network. The toy-model
+experiment checks generated networks for irreflexive transitive closure and
+finite intervals. The observer-chain diagnostic checks whether one local system
+chain is totally ordered by the closure without treating it as a global clock.
+
 ## Why The Full-Diamond Check Is Limited
 
 The original endpoint reconstruction experiment uses the full generated causal
