@@ -68,3 +68,8 @@ are defined only after a reference protocol is chosen.
 Milestone 19 provides the finite state-change trigger network. Milestone 20
 scores candidate reference chains. Milestone 21 asks what a selected reference
 chain can order-access through predecessor and successor brackets.
+
+Milestone 22 extends this by fixing a reference emission position first. It
+then asks which target events are after that emission and return to a later
+reference position. This produces same-emission echo-return positions and
+echo-delay ranks, still without metric distance or calibrated clock values.

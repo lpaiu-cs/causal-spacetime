@@ -61,4 +61,7 @@ Milestone 19 introduced finite state-change trigger networks and checked
 strict partial-order behavior. Milestone 20 added reference-chain utility
 diagnostics for choosing candidate reference backbones inside those finite
 orders. Milestone 21 then uses selected reference chains to compute
-order-level bracket ranks.
+order-level bracket ranks. Milestone 22 fixes an emission position on a
+selected reference chain and computes same-emission echo-return positions and
+echo-delay ranks. Those echo diagnostics remain reference-protocol dependent
+and do not add metric calibration.

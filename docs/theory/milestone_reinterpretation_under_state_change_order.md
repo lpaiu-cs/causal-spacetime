@@ -19,6 +19,12 @@ chains. It asks which events have predecessor and successor reference
 positions, and how radar-time rank and bracket-width rank depend on the chosen
 reference protocol.
 
+Milestone 22 adds same-emission echo-order diagnostics from selected reference
+chains. It fixes an emission position and compares target events by their
+later return position on the same reference chain. This tests reference-
+protocol-dependent causal response order, not physical distance or metric
+radar reconstruction.
+
 ## Timelike Reconstruction
 
 Causal interval count plus supplied density gives a proper-time-like
@@ -42,6 +48,11 @@ reference-chain selection diagnostic: before stronger observer protocols are
 introduced, a finite network can be searched for useful reference backbones.
 Milestone 21 then computes bracket ranks from a chosen reference chain without
 interpreting bracket-width rank as metric distance.
+
+Milestone 22 then fixes a reference emission position and computes echo-return
+positions and echo-delay ranks. These are useful for studying order-level
+response structure before any calibrated observer or spatial representation is
+introduced.
 
 ## Oriented Radar And Atlas Tests
 

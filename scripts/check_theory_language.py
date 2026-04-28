@@ -34,12 +34,19 @@ BANNED_PHRASES = (
     "chain interval profile is physical time",
     "chain interval count is seconds",
     "observer-chain selection derives metric",
+    "observer-like ordered protocol",
     "bracket width is distance",
     "rank width is distance",
     "radar rank is metric time",
     "bracket rank gives meters",
     "chain brackets derive spatial geometry",
     "order-level bracket proves observerhood",
+    "echo delay is distance",
+    "echo rank gives distance",
+    "echo order gives spatial geometry",
+    "finite-speed spatial geometry is implemented",
+    "same-emission echo proves distance",
+    "echo protocol derives metric",
 )
 
 

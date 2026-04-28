@@ -14,6 +14,10 @@ repository. Open proof obligations include:
   coverage, two-sided bracketing, and interval-profile regularity,
 - conditions under which order-level bracket ranks from selected reference
   chains are stable under changes of reference protocol,
+- conditions under which same-emission echo-order diagnostics are stable under
+  changes of reference chain and emission position,
+- criteria for when echo-return rank order has useful resolution without
+  treating it as metric distance,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,

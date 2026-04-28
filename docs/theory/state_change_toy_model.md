@@ -72,3 +72,12 @@ Milestone 21 adds order-level bracket diagnostics for selected reference
 chains. It records predecessor and successor reference positions, two-sided
 accessibility, radar-time rank, bracket-width rank, and rank slices. These are
 rank-level diagnostics only.
+
+## Milestone 22 Extension
+
+Milestone 22 adds same-emission echo-order diagnostics. Given a selected
+reference chain and a fixed emission position, the code records which target
+events are after that reference event and return to a later reference-chain
+position. Echo-return position and echo-delay rank are order-level diagnostics
+only. They do not reconstruct metric radar distance, define physical distance,
+or calibrate a clock.

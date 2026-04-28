@@ -53,6 +53,20 @@ high-utility reference chains, and measure how trigger density changes
 two-sided accessibility. The validation target is what a chosen reference
 protocol can order-access, not metric radar distance or calibrated time.
 
+## Milestone 22: Same-Emission Echo Order
+
+Milestone 22 validates fixed-emission echo-order diagnostics relative to
+selected reference chains. Exact tests check echo-return positions, echo-delay
+ranks, reachable masks, echo-order matrices, and summary fields on a
+hand-coded finite trigger network.
+
+The experiments compare same-emission echo reachability across reference-chain
+sources, test reference-protocol dependence among high-utility chains, measure
+emission-position sensitivity, and study trigger-density effects on
+reachability and rank resolution. The validation target is order-level causal
+response structure, not physical distance, calibrated time, or metric radar
+reconstruction.
+
 ## Why The Full-Diamond Check Is Limited
 
 The original endpoint reconstruction experiment uses the full generated causal

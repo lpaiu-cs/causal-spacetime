@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 18-20 refactor the theory-facing framing around locally finite
+Milestones 18-22 refactor the theory-facing framing around locally finite
 state-change causal trigger order and add the first finite diagnostics at that
 primitive layer:
 
@@ -80,6 +80,8 @@ reconstruction experiments:
   protocol-reference choice diagnostics,
 - compute order-level predecessor/successor brackets, radar-time ranks, and
   bracket-width ranks from selected reference chains,
+- compute same-emission echo-return positions and echo-delay ranks from
+  selected reference chains,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -571,6 +573,32 @@ These rank-level diagnostics use only causal trigger order and selected
 reference-chain positions. They do not reconstruct metric radar distance,
 calibrate clocks, or define spatial geometry.
 
+Milestone 22 adds same-emission echo-order diagnostics:
+
+```bash
+python experiments/exp78_state_change_echo_exact_sanity.py
+python experiments/exp79_state_change_echo_order_diagnostics.py
+python experiments/exp80_state_change_echo_reference_dependence.py
+python experiments/exp81_state_change_echo_emission_sensitivity.py
+python experiments/exp82_state_change_echo_coverage_vs_trigger_density.py
+```
+
+It writes:
+
+- `outputs/data/state_change_echo_exact_sanity.csv`
+- `outputs/data/state_change_echo_order_diagnostics.csv`
+- `outputs/data/state_change_echo_reference_dependence.csv`
+- `outputs/data/state_change_echo_emission_sensitivity.csv`
+- `outputs/data/state_change_echo_coverage_vs_trigger_density.csv`
+- echo reachability, reference-dependence, emission-sensitivity, and
+  trigger-density figures under `outputs/figures/`.
+
+These diagnostics fix a reference emission position and ask which target
+events return later to the same selected reference chain. Echo-delay rank is a
+rank/order-level diagnostic. It does not define physical distance, reconstruct
+metric radar distance, implement finite-speed spatial geometry, or calibrate
+time.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -752,3 +780,15 @@ Milestone 19 implements a minimal finite trigger graph. Generated trigger
 networks are checked as locally finite strict partial orders, and local system
 chains are tested as reference ordered protocols without introducing global
 physical time.
+Milestone 20 ranks reference-chain candidates by coverage, two-sided
+bracketing, interval profiles, and protocol-reference choice dependence. The
+reference-chain utility score is a finite diagnostic, not a claim of observer
+reality.
+Milestone 21 computes passive order-level brackets from selected reference
+chains. Predecessor and successor reference positions induce radar-time ranks,
+bracket-width ranks, and rank slices, all without metric calibration.
+Milestone 22 fixes an emission position on a selected reference chain and
+computes same-emission echo-return positions and echo-delay ranks. These
+rank/order diagnostics study causal response structure relative to a chosen
+reference protocol; they do not define physical distance or reconstruct metric
+radar distance.

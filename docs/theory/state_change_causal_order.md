@@ -21,6 +21,11 @@ selected reference chains. The resulting radar-time ranks and bracket-width
 ranks are rank-level diagnostics, not calibrated clock or metric distance
 quantities.
 
+Milestone 22 adds fixed-emission echo-order diagnostics. After choosing a
+reference chain and an emission position, the code asks which target events
+are after that emission and return to a later reference-chain position. The
+echo-return position and echo-delay rank remain order-level quantities.
+
 ## State-Changing Events
 
 A state-changing event is written:
@@ -124,6 +129,25 @@ q_R(e) = min { j : e ≺_T r_j }
 When both exist, `e` is two-sided accessible relative to `R`. Milestone 21
 uses these positions to define `T_rank = p_R + q_R` and `W_rank = q_R - p_R`.
 `W_rank` is a bracket-width rank, not a metric spatial distance.
+
+## Same-Emission Echo Order
+
+For a selected reference chain `R` and fixed emission position `k`, define the
+echo-return position:
+
+```text
+return_R(e; k) = min { j : r_k ≺_T e ≺_T r_j and j > k }
+```
+
+The echo-delay rank is:
+
+```text
+delay_R(e; k) = return_R(e; k) - k
+```
+
+This gives a same-emission echo-order relation among reachable targets by
+comparing delay ranks. It is a reference-protocol-dependent rank diagnostic,
+not a spatial metric, calibrated time, or physical-distance assignment.
 
 ## Radar Brackets
 

@@ -49,6 +49,19 @@ These are rank-level diagnostics for a chosen reference protocol. The
 bracket-width rank is not metric distance, and the rank slices are not global
 time slices.
 
+## Milestone 22: Same-Emission Echo Order
+
+Milestone 22 fixes an emission position on a selected reference chain and asks
+which target events are reached after that reference event and return to a
+later reference position. The resulting echo-return position and echo-delay
+rank define a same-emission echo-order diagnostic.
+
+This remains a reference-protocol-dependent order diagnostic. Echo-delay rank
+is not physical distance, not metric radar distance, and not a calibrated
+duration. The experiments test how reachability, delay-rank resolution, and
+return-rank order depend on reference-chain source, emission position, and
+trigger density.
+
 ## Milestone 1: Timelike Reconstruction In 1+1D
 
 This milestone works in 1+1D Minkowski spacetime with natural units `c = 1`.

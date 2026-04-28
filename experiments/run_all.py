@@ -726,6 +726,60 @@ from exp77_state_change_reference_bracket_exact_sanity import (
 from exp77_state_change_reference_bracket_exact_sanity import (
     write_outputs as write_exp77_outputs,
 )
+from exp78_state_change_echo_exact_sanity import (
+    run_experiment as run_exp78,
+)
+from exp78_state_change_echo_exact_sanity import (
+    write_outputs as write_exp78_outputs,
+)
+from exp79_state_change_echo_order_diagnostics import (
+    ExperimentConfig as Exp79Config,
+)
+from exp79_state_change_echo_order_diagnostics import (
+    run_experiment as run_exp79,
+)
+from exp79_state_change_echo_order_diagnostics import (
+    save_figures as save_exp79_figures,
+)
+from exp79_state_change_echo_order_diagnostics import (
+    write_outputs as write_exp79_outputs,
+)
+from exp80_state_change_echo_reference_dependence import (
+    ExperimentConfig as Exp80Config,
+)
+from exp80_state_change_echo_reference_dependence import (
+    run_experiment as run_exp80,
+)
+from exp80_state_change_echo_reference_dependence import (
+    save_figures as save_exp80_figures,
+)
+from exp80_state_change_echo_reference_dependence import (
+    write_outputs as write_exp80_outputs,
+)
+from exp81_state_change_echo_emission_sensitivity import (
+    ExperimentConfig as Exp81Config,
+)
+from exp81_state_change_echo_emission_sensitivity import (
+    run_experiment as run_exp81,
+)
+from exp81_state_change_echo_emission_sensitivity import (
+    save_figures as save_exp81_figures,
+)
+from exp81_state_change_echo_emission_sensitivity import (
+    write_outputs as write_exp81_outputs,
+)
+from exp82_state_change_echo_coverage_vs_trigger_density import (
+    ExperimentConfig as Exp82Config,
+)
+from exp82_state_change_echo_coverage_vs_trigger_density import (
+    run_experiment as run_exp82,
+)
+from exp82_state_change_echo_coverage_vs_trigger_density import (
+    save_figures as save_exp82_figures,
+)
+from exp82_state_change_echo_coverage_vs_trigger_density import (
+    write_outputs as write_exp82_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1800,6 +1854,81 @@ def run_state_change_reference_bracket_exact_sanity() -> None:
     print(f"exp77 wrote {output_path}")
 
 
+def run_state_change_echo_exact_sanity() -> None:
+    rows = run_exp78()
+    output_path = write_exp78_outputs(rows)
+    print(f"exp78 wrote {output_path}")
+
+
+def run_state_change_echo_order_diagnostics() -> None:
+    config = Exp79Config(
+        num_systems_values=(5,),
+        max_events_values=(100,),
+        trigger_probability_values=(0.20,),
+        max_triggers_per_event=2,
+        repetitions=2,
+        random_candidate_count=3,
+        emission_count=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp79(config)
+    data_path = write_exp79_outputs(rows, config.output_dir)
+    figure_paths = save_exp79_figures(rows, config.output_dir)
+    print(f"exp79 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_echo_reference_dependence() -> None:
+    config = Exp80Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability_values=(0.20,),
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        top_k=3,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp80(config)
+    data_path = write_exp80_outputs(rows, config.output_dir)
+    figure_paths = save_exp80_figures(rows, config.output_dir)
+    print(f"exp80 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_echo_emission_sensitivity() -> None:
+    config = Exp81Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability=0.20,
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        emission_count=3,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp81(config)
+    data_path = write_exp81_outputs(rows, config.output_dir)
+    figure_paths = save_exp81_figures(rows, config.output_dir)
+    print(f"exp81 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_state_change_echo_coverage_vs_trigger_density() -> None:
+    config = Exp82Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability_values=(0.10, 0.30),
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        emission_count=2,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp82(config)
+    data_path = write_exp82_outputs(rows, config.output_dir)
+    figure_paths = save_exp82_figures(rows, config.output_dir)
+    print(f"exp82 wrote {data_path} and {len(figure_paths)} figures")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -1875,6 +2004,11 @@ def main() -> None:
     run_state_change_bracket_rank_reference_dependence()
     run_state_change_reference_bracket_coverage_vs_trigger_density()
     run_state_change_reference_bracket_exact_sanity()
+    run_state_change_echo_exact_sanity()
+    run_state_change_echo_order_diagnostics()
+    run_state_change_echo_reference_dependence()
+    run_state_change_echo_emission_sensitivity()
+    run_state_change_echo_coverage_vs_trigger_density()
 
 
 if __name__ == "__main__":

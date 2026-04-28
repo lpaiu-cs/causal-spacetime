@@ -86,3 +86,10 @@ Order-level bracket diagnostics compute predecessor and successor reference
 positions from selected reference chains. Radar-time rank and bracket-width
 rank are rank-level diagnostics only; they are not calibrated time or metric
 distance.
+
+## Milestone 22 Note
+
+Same-emission echo-order diagnostics fix a reference-chain emission position
+and compare targets by later return position. Echo-delay rank is an
+order-level response diagnostic. It is not physical distance, calibrated radar
+distance, or a finite-speed geometry model.
