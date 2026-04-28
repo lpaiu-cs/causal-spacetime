@@ -76,3 +76,8 @@ dependent. A shortcut return relative to one reference chain can be missing,
 later, or differently ranked relative to another. This is protocol-reference
 dependence in the order-level diagnostic, not a conflict between physical
 observers.
+
+Milestone 25 adds reference-chain subsampling. Keeping fewer reference
+positions creates coarse reference ranks, reduces rank resolution, and can
+merge distinct return ranks into ties. This is another reference-protocol
+choice, not a calibration step.

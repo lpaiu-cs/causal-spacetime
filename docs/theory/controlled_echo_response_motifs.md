@@ -79,3 +79,12 @@ from deliberately injected shortcut-return stress tests. Injected shortcuts are
 controlled robustness tests; naturally occurring shortcuts come from other
 causal paths already present or added as generic acyclic background edges.
 Both are causal-order interference diagnostics.
+
+## Milestone 25 Extension
+
+Milestone 25 tests how motif return spectra behave when the finite
+description is coarsened. Closure-preserving event thinning keeps motif targets
+and reference events while integrating out unretained intermediate events.
+Immediate-edge thinning can remove motif path information unless protected.
+Reference-chain subsampling can turn fine return ranks into coarser labels and
+ties.

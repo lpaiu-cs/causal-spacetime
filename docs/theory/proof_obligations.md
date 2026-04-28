@@ -28,6 +28,10 @@ repository. Open proof obligations include:
 - criteria for when shortcut count, shortcut depth, and rank-resolution loss
   are robust order-level diagnostics rather than construction-specific
   artifacts,
+- criteria for when return-spectrum stability survives closure-preserving event
+  thinning, immediate-edge thinning, and reference-chain subsampling,
+- a principled account of which classification changes are coarse-graining
+  artifacts of finite event, edge, or reference-rank resolution,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,

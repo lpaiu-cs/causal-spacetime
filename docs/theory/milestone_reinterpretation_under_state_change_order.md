@@ -34,6 +34,11 @@ It studies the full return spectrum, separates targeted shortcut-return stress
 tests from generic acyclic background edge perturbations, and records how
 earliest-return recovery changes.
 
+Milestone 25 studies return-spectrum stability under coarse-graining. It
+distinguishes closure-preserving event thinning, immediate-edge thinning, and
+reference-chain subsampling as different finite reductions with different
+effects on rank resolution and classification stability.
+
 ## Timelike Reconstruction
 
 Causal interval count plus supplied density gives a proper-time-like
@@ -67,6 +72,10 @@ Milestone 23 uses planted motifs to test the same echo protocol in clean and
 interfering finite orders. Milestone 24 then classifies the return spectrum of
 those motifs. Shortcut returns are treated as causal interference in the order,
 not as metric-representation errors.
+
+Milestone 25 adds coarse-graining tests for those spectra. Event thinning that
+preserves closure should keep retained-event reachability stable, while edge
+thinning and reference-chain subsampling can alter recoveries or merge ranks.
 
 ## Oriented Radar And Atlas Tests
 

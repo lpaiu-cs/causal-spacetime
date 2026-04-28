@@ -66,7 +66,7 @@ def parse_args() -> ExperimentConfig:
     """Parse command-line arguments."""
 
     parser = argparse.ArgumentParser(
-        description="Observer-like chain candidate ranking."
+        description="Reference-chain candidate ranking."
     )
     parser.add_argument("--num-systems-values", nargs="+", default=["5", "10"])
     parser.add_argument("--max-events-values", nargs="+", default=["100", "300", "600"])

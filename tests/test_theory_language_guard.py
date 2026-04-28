@@ -4,6 +4,7 @@ from pathlib import Path
 
 from scripts.check_theory_language import (
     default_markdown_files,
+    default_python_files,
     find_language_violations,
 )
 
@@ -43,3 +44,9 @@ def test_real_docs_pass_language_guard() -> None:
     root = Path(__file__).resolve().parents[1]
 
     assert find_language_violations(default_markdown_files(root)) == []
+
+
+def test_real_python_docstrings_pass_optional_language_guard() -> None:
+    root = Path(__file__).resolve().parents[1]
+
+    assert find_language_violations(default_python_files(root)) == []

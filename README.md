@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 18-24 refactor the theory-facing framing around locally finite
+Milestones 18-25 refactor the theory-facing framing around locally finite
 state-change causal trigger order and add the first finite diagnostics at that
 primitive layer:
 
@@ -87,6 +87,8 @@ reconstruction experiments:
 - classify shortcut returns and causal interference using return spectra,
   targeted shortcut stress tests, generic background edge perturbations,
   motif robustness checks, and reference-protocol dependence,
+- test return-spectrum stability under closure-preserving event thinning,
+  immediate-edge thinning, and reference-chain subsampling,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -658,6 +660,33 @@ generic acyclic background edge perturbations are distinct stress tests; both
 classify causal-order interference before any stronger interpretation is
 attempted.
 
+Milestone 25 adds return-spectrum stability diagnostics under coarse-graining:
+
+```bash
+python experiments/exp94_echo_coarse_graining_exact_sanity.py
+python experiments/exp95_echo_event_thinning_stability.py
+python experiments/exp96_echo_reference_subsampling_resolution.py
+python experiments/exp97_echo_edge_thinning_fragility.py
+python experiments/exp98_echo_shortcut_classification_under_coarse_graining.py
+python experiments/exp99_echo_return_spectrum_stability_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/echo_coarse_graining_exact_sanity.csv`
+- `outputs/data/echo_event_thinning_stability.csv`
+- `outputs/data/echo_reference_subsampling_resolution.csv`
+- `outputs/data/echo_edge_thinning_fragility.csv`
+- `outputs/data/echo_shortcut_classification_under_coarse_graining.csv`
+- `outputs/data/echo_return_spectrum_stability_exact_sanity.csv`
+- event-thinning, reference-subsampling, edge-thinning, and classification
+  stability figures under `outputs/figures/`.
+
+Closure-preserving event thinning integrates out intermediate events while
+preserving retained-event reachability. Immediate-edge thinning changes the
+trigger graph before closure. Reference-chain subsampling reduces rank
+resolution and can merge return ranks into ties.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -859,3 +888,7 @@ Milestone 24 classifies shortcut returns using return spectra. It separates
 targeted shortcut-return stress tests from generic background edge
 perturbations, reports shortcut count and shortcut depth, and treats the
 results as causal-order interference diagnostics.
+Milestone 25 studies return-spectrum stability under coarse-graining. It
+separates closure-preserving event thinning, immediate-edge thinning, and
+reference-chain subsampling, showing which echo classifications survive and
+which reflect resolution choices in the finite protocol.

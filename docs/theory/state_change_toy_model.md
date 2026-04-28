@@ -97,3 +97,11 @@ later reference-chain return positions for a motif target and separates
 targeted shortcut-return stress tests from generic acyclic background edge
 perturbations. This is a finite DAG interference diagnostic, not a metric or
 geometry layer.
+
+## Milestone 25 Extension
+
+Milestone 25 tests return-spectrum stability under finite coarse-graining.
+Closure-preserving event thinning hides intermediate events without deleting
+their reachability effect. Immediate-edge thinning removes trigger edges and
+can delete causal paths. Reference-chain subsampling coarsens reference ranks
+and can reduce order resolution.

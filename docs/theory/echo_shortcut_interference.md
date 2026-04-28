@@ -94,3 +94,12 @@ earlier returns to measure exact-recovery degradation and rank-resolution loss.
 Return-spectrum analysis is therefore a prerequisite before any stronger
 distance-order interpretation is attempted. In this milestone, planted delay
 rank and recovered delay rank remain order-level response-depth diagnostics.
+
+## Coarse-Graining Stability
+
+Milestone 25 applies coarse-graining to the same return-spectrum
+classification. Closure-preserving event thinning should preserve spectra
+among retained reference and target events. Immediate-edge thinning can remove
+or alter return paths. Reference-chain subsampling can hide shortcuts or merge
+fine ranks into coarse ties. These changes are classified as coarse-graining
+artifacts of the finite protocol.

@@ -894,6 +894,66 @@ from exp93_echo_interference_exact_sanity import (
 from exp93_echo_interference_exact_sanity import (
     write_outputs as write_exp93_outputs,
 )
+from exp94_echo_coarse_graining_exact_sanity import (
+    run_experiment as run_exp94,
+)
+from exp94_echo_coarse_graining_exact_sanity import (
+    write_outputs as write_exp94_outputs,
+)
+from exp95_echo_event_thinning_stability import (
+    ExperimentConfig as Exp95Config,
+)
+from exp95_echo_event_thinning_stability import (
+    run_experiment as run_exp95,
+)
+from exp95_echo_event_thinning_stability import (
+    save_figures as save_exp95_figures,
+)
+from exp95_echo_event_thinning_stability import (
+    write_outputs as write_exp95_outputs,
+)
+from exp96_echo_reference_subsampling_resolution import (
+    ExperimentConfig as Exp96Config,
+)
+from exp96_echo_reference_subsampling_resolution import (
+    run_experiment as run_exp96,
+)
+from exp96_echo_reference_subsampling_resolution import (
+    save_figures as save_exp96_figures,
+)
+from exp96_echo_reference_subsampling_resolution import (
+    write_outputs as write_exp96_outputs,
+)
+from exp97_echo_edge_thinning_fragility import (
+    ExperimentConfig as Exp97Config,
+)
+from exp97_echo_edge_thinning_fragility import (
+    run_experiment as run_exp97,
+)
+from exp97_echo_edge_thinning_fragility import (
+    save_figures as save_exp97_figures,
+)
+from exp97_echo_edge_thinning_fragility import (
+    write_outputs as write_exp97_outputs,
+)
+from exp98_echo_shortcut_classification_under_coarse_graining import (
+    ExperimentConfig as Exp98Config,
+)
+from exp98_echo_shortcut_classification_under_coarse_graining import (
+    run_experiment as run_exp98,
+)
+from exp98_echo_shortcut_classification_under_coarse_graining import (
+    save_figures as save_exp98_figures,
+)
+from exp98_echo_shortcut_classification_under_coarse_graining import (
+    write_outputs as write_exp98_outputs,
+)
+from exp99_echo_return_spectrum_stability_exact_sanity import (
+    run_experiment as run_exp99,
+)
+from exp99_echo_return_spectrum_stability_exact_sanity import (
+    write_outputs as write_exp99_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2201,6 +2261,85 @@ def run_echo_interference_exact_sanity() -> None:
     print(f"exp93 wrote {output_path}")
 
 
+def run_echo_coarse_graining_exact_sanity() -> None:
+    rows = run_exp94()
+    output_path = write_exp94_outputs(rows)
+    print(f"exp94 wrote {output_path}")
+
+
+def run_echo_event_thinning_stability() -> None:
+    config = Exp95Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(3, 5, 8),
+        keep_probabilities=(1.0, 0.4),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp95(config)
+    data_path = write_exp95_outputs(rows, config.output_dir)
+    figure_paths = save_exp95_figures(rows, config.output_dir)
+    print(f"exp95 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_reference_subsampling_resolution() -> None:
+    config = Exp96Config(
+        reference_length=64,
+        motif_count=30,
+        delay_ranks=(2, 3, 5, 8),
+        strides=(1, 4),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp96(config)
+    data_path = write_exp96_outputs(rows, config.output_dir)
+    figure_paths = save_exp96_figures(rows, config.output_dir)
+    print(f"exp96 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_edge_thinning_fragility() -> None:
+    config = Exp97Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(3, 5, 8),
+        removal_probabilities=(0.0, 0.3),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp97(config)
+    data_path = write_exp97_outputs(rows, config.output_dir)
+    figure_paths = save_exp97_figures(rows, config.output_dir)
+    print(f"exp97 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_shortcut_classification_under_coarse_graining() -> None:
+    config = Exp98Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(3, 5, 8),
+        shortcut_probability=0.3,
+        event_keep_probability=0.4,
+        edge_removal_probability=0.15,
+        reference_strides=(1, 4),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp98(config)
+    data_path = write_exp98_outputs(rows, config.output_dir)
+    figure_paths = save_exp98_figures(rows, config.output_dir)
+    print(f"exp98 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_return_spectrum_stability_exact_sanity() -> None:
+    rows = run_exp99()
+    output_path = write_exp99_outputs(rows)
+    print(f"exp99 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2292,6 +2431,12 @@ def main() -> None:
     run_echo_motif_path_length_robustness()
     run_echo_shortcut_reference_dependence()
     run_echo_interference_exact_sanity()
+    run_echo_coarse_graining_exact_sanity()
+    run_echo_event_thinning_stability()
+    run_echo_reference_subsampling_resolution()
+    run_echo_edge_thinning_fragility()
+    run_echo_shortcut_classification_under_coarse_graining()
+    run_echo_return_spectrum_stability_exact_sanity()
 
 
 if __name__ == "__main__":

@@ -108,3 +108,11 @@ motif targets. It separates targeted shortcut-return injection from generic
 acyclic background edge perturbations, then records exact recovery, shortcut
 count, shortcut depth, and rank-resolution loss. This is an order-level
 interference analysis before any stronger representation claim.
+
+## Milestone 25 Note
+
+Return-spectrum coarse-graining studies which echo classifications are stable
+when event, edge, or reference-rank resolution is reduced. Closure-preserving
+event thinning integrates out intermediate events, immediate-edge thinning
+changes causal path information, and reference-chain subsampling reduces rank
+resolution. These remain finite order diagnostics.

@@ -1,4 +1,4 @@
-"""Observer-like chain coverage versus external trigger probability."""
+"""Reference-chain coverage versus external trigger probability."""
 
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def parse_args() -> ExperimentConfig:
     """Parse command-line arguments."""
 
     parser = argparse.ArgumentParser(
-        description="Observer-chain coverage versus trigger probability."
+        description="Reference-chain coverage versus trigger probability."
     )
     parser.add_argument("--num-systems", type=int, default=10)
     parser.add_argument("--max-events", type=int, default=500)

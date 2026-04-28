@@ -82,3 +82,8 @@ Milestone 24 adds return-spectrum classification for those motif targets. The
 passive bracket layer still supplies reference positions; the shortcut layer
 asks whether additional return positions appear before the planted return
 label and how those returns change earliest-return recovery.
+
+Milestone 25 asks whether those bracket and return-rank diagnostics survive
+coarse-graining. Reference-chain subsampling changes the available bracket
+positions and can reduce rank resolution even when the underlying causal order
+is unchanged.

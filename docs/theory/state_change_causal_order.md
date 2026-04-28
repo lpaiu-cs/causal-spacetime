@@ -240,3 +240,12 @@ adds return-spectrum diagnostics for controlled echo-response motifs and
 classifies exact recovery, shortcut returns, and missing or late returns.
 Shortcut returns are earlier causal paths in the transitive trigger order.
 They are not metric quantities and do not add spatial geometry.
+
+## Return-Spectrum Coarse-Graining
+
+Milestone 25 adds stability diagnostics for these return spectra. It separates
+closure-preserving event thinning, which integrates out intermediate events
+while preserving retained-event reachability, from immediate-edge thinning,
+which changes causal path information before closure. It also studies
+reference-chain subsampling as coarse reference-rank resolution, not
+calibration.

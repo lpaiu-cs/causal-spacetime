@@ -95,6 +95,20 @@ experiments measure motif path-length robustness and reference-protocol
 dependence. The validation target is causal interference classification before
 any stronger distance-order interpretation.
 
+## Milestone 25: Return-Spectrum Stability Under Coarse-Graining
+
+Milestone 25 validates coarse-graining utilities for echo return spectra.
+Exact sanity checks verify protected event selection, closure-preserving
+restriction, motif remapping, reference-chain subsampling, expected coarse
+delay ranks, and acyclic immediate-edge thinning.
+
+The numerical experiments separate three cases. Closure-preserving event
+thinning should preserve return spectra among retained reference and target
+events. Immediate-edge thinning can delete path information and create missing
+or delayed recoveries. Reference-chain subsampling reduces rank resolution,
+creates ties, and shifts expected coarse return ranks. Shortcut
+classification is then compared across these coarse-graining choices.
+
 ## Why The Full-Diamond Check Is Limited
 
 The original endpoint reconstruction experiment uses the full generated causal

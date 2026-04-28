@@ -91,6 +91,21 @@ dependence experiments report motif robustness and reference-protocol
 dependence. These are causal-order interference diagnostics, not distance,
 duration, or geometry claims.
 
+## Milestone 25: Return-Spectrum Stability Under Coarse-Graining
+
+Milestone 25 studies how return spectra and shortcut classifications behave
+when the finite trigger-network description is coarsened. Closure-preserving
+event thinning restricts the original transitive closure to retained events,
+so hidden intermediates are integrated out while reachability among retained
+events is preserved. Immediate-edge thinning removes trigger edges before
+closure and can therefore delete causal paths. Reference-chain subsampling
+keeps a coarser set of reference positions and reduces rank resolution.
+
+The experiments compare spectrum Jaccard agreement, earliest-return
+stability, tied target-pair fractions, missing recoveries, and classification
+agreement. The results are diagnostics of finite order resolution and
+reference-protocol dependence, not metric reconstruction.
+
 ## Milestone 1: Timelike Reconstruction In 1+1D
 
 This milestone works in 1+1D Minkowski spacetime with natural units `c = 1`.

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -59,6 +60,10 @@ BANNED_PHRASES = (
     "shortcut depth is speed",
     "echo interference derives geometry",
     "shortcut classification proves spatial distance",
+    "coarse-graining derives geometry",
+    "reference subsampling calibrates time",
+    "edge thinning is metric noise",
+    "shortcut depth is metric error",
 )
 
 
@@ -77,6 +82,14 @@ def default_markdown_files(root: Path) -> list[Path]:
 
     files = [root / "README.md"]
     files.extend(sorted((root / "docs" / "theory").glob("*.md")))
+    return [path for path in files if path.exists()]
+
+
+def default_python_files(root: Path) -> list[Path]:
+    """Return source and experiment Python files for optional language checks."""
+
+    files = sorted((root / "src" / "causal_spacetime_lab").glob("*.py"))
+    files.extend(sorted((root / "experiments").glob("*.py")))
     return [path for path in files if path.exists()]
 
 
@@ -135,8 +148,18 @@ def find_language_violations(
 def main() -> int:
     """Run the language guard on README and docs/theory."""
 
+    parser = argparse.ArgumentParser(description="Check theory-facing language.")
+    parser.add_argument(
+        "--include-python",
+        action="store_true",
+        help="also scan src/causal_spacetime_lab/*.py and experiments/*.py",
+    )
+    args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    violations = find_language_violations(default_markdown_files(root))
+    files = default_markdown_files(root)
+    if args.include_python:
+        files.extend(default_python_files(root))
+    violations = find_language_violations(files)
     if violations:
         print("Theory language guard found risky phrases:")
         for violation in violations:

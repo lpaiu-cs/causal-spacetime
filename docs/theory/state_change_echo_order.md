@@ -114,3 +114,11 @@ shortcut depth, and shortcut count explicit.
 The new diagnostics distinguish targeted shortcut-return stress tests from
 generic acyclic background edge perturbations. Both remain order-level
 response diagnostics relative to a chosen reference protocol.
+
+## Coarse-Grained Echo Ranks
+
+Milestone 25 studies what happens when event, edge, or reference-rank
+resolution is reduced. Closure-preserving event thinning keeps retained-event
+return spectra stable by using the original transitive closure. Immediate-edge
+thinning can delete return paths. Reference-chain subsampling changes the
+available return positions and can reduce echo-order resolution through ties.
