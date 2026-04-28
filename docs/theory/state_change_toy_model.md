@@ -53,3 +53,15 @@ state-change order layer.
 The toy model does not derive relativity or quantum mechanics. It only checks
 that a minimal state-change trigger network behaves as a locally finite strict
 partial order.
+
+## Milestone 20 Extension
+
+Milestone 20 keeps the same finite trigger-network setting and adds
+observer-like chain selection diagnostics. Local-system chains, greedy
+order-only chains, longest order chains, and random baseline chains are ranked
+by coverage, two-sided bracketing, interval profiles, and ambiguity measures.
+
+These diagnostics identify candidate observer protocols for later operational
+tests. They do not add metric coordinates, radar distance, physical clock
+calibration, finite-speed spatial geometry, or a unique observer selection
+rule.

@@ -22,6 +22,12 @@ BANNED_PHRASES = (
     "local finiteness implies global time",
     "state-change network derives relativity",
     "state-change network derives quantum mechanics",
+    "observer is derived uniquely",
+    "best chain is the true observer",
+    "chain score proves observerhood",
+    "chain interval profile is physical time",
+    "chain interval count is seconds",
+    "observer-chain selection derives metric",
 )
 
 

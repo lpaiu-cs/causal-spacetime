@@ -10,6 +10,12 @@ The toy model stores state-changing events in a finite trigger graph and uses
 transitive closure for order queries. It does not add metric coordinates or
 global physical time.
 
+Milestone 20 adds observer-like chain selection diagnostics in those finite
+trigger networks. Local-system chains and order-only chain candidates can be
+ranked by coverage, two-sided bracketing, interval-profile regularity, and
+ambiguity diagnostics. This is a protocol-candidate diagnostic, not a
+derivation of a unique observer or a metric reconstruction.
+
 ## State-Changing Events
 
 A state-changing event is written:
@@ -85,6 +91,21 @@ Observer time is the causal order along such a chain. Seconds are a calibration
 layer placed on top of the chain, not primitive structure. The observer chain
 itself is also protocol structure; it is not automatically derived from the
 bare trigger order in the current simulations.
+
+## Observer-Like Chain Candidates
+
+A finite state-change network may contain many valid chains. Milestone 20
+therefore treats observer-like chain selection as a diagnostic problem:
+
+- local-system chains use the stored local-system event metadata,
+- greedy and longest order chains use the transitive trigger order,
+- random order chains provide baselines.
+
+Candidate quality is summarized by comparability coverage, two-sided
+bracketing, adjacent interval cardinality profiles, local-system purity, and
+top-score ambiguity. These quantities help identify useful observer protocol
+candidates inside a finite order. They do not supply seconds or select a
+physically privileged observer by themselves.
 
 ## Radar Brackets
 

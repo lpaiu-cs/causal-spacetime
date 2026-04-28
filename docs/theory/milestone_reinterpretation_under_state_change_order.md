@@ -7,6 +7,12 @@ Milestone 19 adds the first toy implementation of the primitive layer itself:
 a finite state-change trigger graph checked as a locally finite strict partial
 order.
 
+Milestone 20 adds observer-like chain selection diagnostics inside those
+finite trigger graphs. It compares local-system chains, greedy order chains,
+longest order chains, and random baselines as candidate observer protocols.
+The comparison is based on coverage, two-sided bracketing, interval-profile
+regularity, and ambiguity, not on metric calibration.
+
 ## Timelike Reconstruction
 
 Causal interval count plus supplied density gives a proper-time-like
@@ -24,6 +30,12 @@ manifold structure.
 An observer chain plus causal order gives operational radar decomposition.
 Clock labels and the observer chain are supplied protocol structure. Radar
 brackets can also be treated ordinally through tick positions.
+
+Milestone 20 reinterprets the first step of this pipeline as a chain-selection
+diagnostic: before radar brackets are used for distance protocols, a finite
+network can be searched for useful observer-like chain candidates. The
+best-scoring chain remains a hypothesis for a protocol, not a unique physical
+observer.
 
 ## Oriented Radar And Atlas Tests
 

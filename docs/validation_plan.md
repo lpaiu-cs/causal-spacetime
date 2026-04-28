@@ -25,6 +25,19 @@ experiment checks generated networks for irreflexive transitive closure and
 finite intervals. The observer-chain diagnostic checks whether one local system
 chain is totally ordered by the closure without treating it as a global clock.
 
+## Milestone 20: Observer-Like Chain Selection
+
+Milestone 20 validates finite observer-like chain selection criteria. Exact
+tests check chain validity, comparability masks, two-sided bracketing, bracket
+positions, quality reports, and ranking output on a hand-coded state-change
+network.
+
+The numerical experiments compare local-system chains, greedy order chains,
+longest order chains, and random baselines. They track coverage, bracketing,
+interval-profile regularity, local-system purity, top-score gaps, and
+candidate overlap. The validation target is chain quality and selection
+ambiguity, not metric reconstruction or physical clock calibration.
+
 ## Why The Full-Diamond Check Is Limited
 
 The original endpoint reconstruction experiment uses the full generated causal

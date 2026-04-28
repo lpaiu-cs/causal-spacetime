@@ -22,6 +22,11 @@ Observer time is order along an observer chain. Radar brackets and radar-time
 bins define observer-relative slices. Distance order is then interpreted within
 those slices. This is not a preferred global slicing and not absolute space.
 
+Milestone 20 adds finite diagnostics for selecting observer-like chain
+candidates before radar brackets are used. These diagnostics can compare local
+system chains, order-only chains, and random baselines, but they do not define
+seconds, metric distances, or a preferred observer frame.
+
 ## Effective Atlas Condition
 
 Given observer protocols `O` and `O'`, reconstructed charts should satisfy, on

@@ -26,6 +26,18 @@ observer-like chain diagnostic. No metric reconstruction, observer extraction,
 finite-speed spatial geometry, quantum amplitude layer, or curved-spacetime
 model is introduced.
 
+## Milestone 20: Observer-Like Chain Selection
+
+Milestone 20 studies observer-like chain selection inside finite state-change
+trigger networks. A local-system chain can serve as a candidate observer
+protocol, and order-only greedy, longest-chain, and random baselines are also
+tested.
+
+The diagnostics are coverage, two-sided bracketing, interval-profile
+regularity, local-system purity, top-score gaps, and candidate overlap. These
+are finite chain quality diagnostics. They do not assign seconds, identify a
+unique observer, or reconstruct metric distance.
+
 ## Milestone 1: Timelike Reconstruction In 1+1D
 
 This milestone works in 1+1D Minkowski spacetime with natural units `c = 1`.

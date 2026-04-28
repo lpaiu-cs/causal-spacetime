@@ -28,6 +28,11 @@ Observer time is order along observer chains. Clock values, seconds, and ratios
 enter only through calibration. The framework does not introduce a global
 update tick.
 
+Observer-like chain selection can be studied through finite diagnostics:
+coverage, two-sided bracketing, interval-profile regularity, and ambiguity.
+These diagnostics identify candidate protocol chains; they do not calibrate a
+clock or establish a uniquely preferred observer.
+
 ## 4. Space
 
 Radar brackets define order-level radar-time and radar-distance ranks.
@@ -66,3 +71,10 @@ The first state-change toy model is a finite DAG diagnostic for the primitive
 order layer. It checks strict partial-order behavior and local finiteness, but
 does not yet address observer extraction, metric representation, finite-speed
 spatial geometry, quantum amplitudes, or curved-spacetime dynamics.
+
+## Milestone 20 Note
+
+Observer-like chain selection is introduced as a finite order diagnostic.
+Local-system, greedy, longest, and random chain candidates are compared by
+coverage, bracketing, interval profiles, and ambiguity. This remains prior to
+metric reconstruction and radar distance protocols.

@@ -642,6 +642,48 @@ from exp69_state_change_observer_chain_diagnostic import (
 from exp69_state_change_observer_chain_diagnostic import (
     write_outputs as write_exp69_outputs,
 )
+from exp70_observer_chain_exact_sanity import (
+    run_experiment as run_exp70,
+)
+from exp70_observer_chain_exact_sanity import (
+    write_outputs as write_exp70_outputs,
+)
+from exp71_observer_chain_candidate_ranking import (
+    ExperimentConfig as Exp71Config,
+)
+from exp71_observer_chain_candidate_ranking import (
+    run_experiment as run_exp71,
+)
+from exp71_observer_chain_candidate_ranking import (
+    save_figures as save_exp71_figures,
+)
+from exp71_observer_chain_candidate_ranking import (
+    write_outputs as write_exp71_outputs,
+)
+from exp72_observer_chain_coverage_vs_trigger_probability import (
+    ExperimentConfig as Exp72Config,
+)
+from exp72_observer_chain_coverage_vs_trigger_probability import (
+    run_experiment as run_exp72,
+)
+from exp72_observer_chain_coverage_vs_trigger_probability import (
+    save_figures as save_exp72_figures,
+)
+from exp72_observer_chain_coverage_vs_trigger_probability import (
+    write_outputs as write_exp72_outputs,
+)
+from exp73_observer_chain_interval_profile import (
+    ExperimentConfig as Exp73Config,
+)
+from exp73_observer_chain_interval_profile import (
+    run_experiment as run_exp73,
+)
+from exp73_observer_chain_interval_profile import (
+    save_figures as save_exp73_figures,
+)
+from exp73_observer_chain_interval_profile import (
+    write_outputs as write_exp73_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1591,6 +1633,72 @@ def run_state_change_observer_chain_diagnostic() -> None:
     print(f"exp69 wrote {data_path} and {figure_path}")
 
 
+def run_observer_chain_exact_sanity() -> None:
+    rows = run_exp70()
+    output_path = write_exp70_outputs(rows)
+    print(f"exp70 wrote {output_path}")
+
+
+def run_observer_chain_candidate_ranking() -> None:
+    config = Exp71Config(
+        num_systems_values=(5,),
+        max_events_values=(100,),
+        trigger_probability_values=(0.20,),
+        max_triggers_per_event=2,
+        repetitions=2,
+        random_candidate_count=3,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    ranking_rows, ambiguity_rows = run_exp71(config)
+    ranking_path, ambiguity_path = write_exp71_outputs(
+        ranking_rows,
+        ambiguity_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp71_figures(
+        ranking_rows,
+        ambiguity_rows,
+        config.output_dir,
+    )
+    print(
+        f"exp71 wrote {ranking_path}, {ambiguity_path}, "
+        f"and {len(figure_paths)} figures"
+    )
+
+
+def run_observer_chain_coverage_vs_trigger_probability() -> None:
+    config = Exp72Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability_values=(0.10, 0.30),
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp72(config)
+    data_path = write_exp72_outputs(rows, config.output_dir)
+    figure_paths = save_exp72_figures(rows, config.output_dir)
+    print(f"exp72 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_observer_chain_interval_profile() -> None:
+    config = Exp73Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability=0.20,
+        max_triggers_per_event=2,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows, example_profile = run_exp73(config)
+    data_path = write_exp73_outputs(rows, config.output_dir)
+    figure_paths = save_exp73_figures(rows, example_profile, config.output_dir)
+    print(f"exp73 wrote {data_path} and {len(figure_paths)} figures")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -1658,6 +1766,10 @@ def main() -> None:
     run_state_change_exact_sanity()
     run_state_change_toy_model()
     run_state_change_observer_chain_diagnostic()
+    run_observer_chain_exact_sanity()
+    run_observer_chain_candidate_ranking()
+    run_observer_chain_coverage_vs_trigger_probability()
+    run_observer_chain_interval_profile()
 
 
 if __name__ == "__main__":

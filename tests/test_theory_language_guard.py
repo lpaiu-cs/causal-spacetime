@@ -10,12 +10,12 @@ from scripts.check_theory_language import (
 
 def test_banned_phrase_is_detected_in_temporary_doc(tmp_path: Path) -> None:
     doc = tmp_path / "bad.md"
-    doc.write_text("This derives quantum mechanics.\n", encoding="utf-8")
+    doc.write_text("Best chain is the true observer.\n", encoding="utf-8")
 
     violations = find_language_violations([doc])
 
     assert len(violations) == 1
-    assert violations[0].phrase == "this derives quantum mechanics"
+    assert violations[0].phrase == "best chain is the true observer"
 
 
 def test_rejected_language_section_is_allowed(tmp_path: Path) -> None:

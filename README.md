@@ -8,8 +8,9 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestone 18 refactors the theory-facing framing around locally finite
-state-change causal trigger order:
+Milestones 18-20 refactor the theory-facing framing around locally finite
+state-change causal trigger order and add the first finite diagnostics at that
+primitive layer:
 
 ```text
 state-changing events + causal trigger order + local finiteness
@@ -74,6 +75,9 @@ reconstruction experiments:
   events and causal trigger order,
 - test a minimal finite state-change causal trigger network as a strict
   partial order diagnostic,
+- rank observer-like chain candidates in finite state-change trigger networks
+  using coverage, two-sided bracketing, interval profiles, and ambiguity
+  diagnostics,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -512,6 +516,35 @@ This is a finite DAG diagnostic for the primitive state-change order layer. It
 does not reconstruct metric geometry, extract observers automatically, add
 finite-speed spatial geometry, derive quantum mechanics, or model curved
 spacetime.
+
+Milestone 20 adds observer-like chain selection diagnostics:
+
+```bash
+python experiments/exp70_observer_chain_exact_sanity.py
+python experiments/exp71_observer_chain_candidate_ranking.py
+python experiments/exp72_observer_chain_coverage_vs_trigger_probability.py
+python experiments/exp73_observer_chain_interval_profile.py
+```
+
+It writes:
+
+- `outputs/data/observer_chain_exact_sanity.csv`
+- `outputs/data/observer_chain_candidate_ranking.csv`
+- `outputs/data/observer_chain_candidate_ambiguity.csv`
+- `outputs/data/observer_chain_coverage_vs_trigger_probability.csv`
+- `outputs/data/observer_chain_interval_profile.csv`
+- `outputs/figures/observer_chain_score_by_source.png`
+- `outputs/figures/observer_chain_bracketing_by_source.png`
+- `outputs/figures/observer_chain_ambiguity_gap.png`
+- `outputs/figures/observer_chain_coverage_vs_trigger_probability.png`
+- `outputs/figures/observer_chain_bracketing_vs_trigger_probability.png`
+- `outputs/figures/observer_chain_interval_cv_by_source.png`
+- `outputs/figures/observer_chain_interval_profile_example.png`
+
+These experiments compare local-system chains, order-only heuristic chains,
+longest chains, and random baselines as candidate observer protocols. The
+scores are finite chain quality diagnostics, not physical clock calibration and
+not a uniqueness claim.
 
 ## Other Experiments
 
