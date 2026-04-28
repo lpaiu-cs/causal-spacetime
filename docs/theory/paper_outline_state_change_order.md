@@ -93,3 +93,10 @@ Same-emission echo-order diagnostics fix a reference-chain emission position
 and compare targets by later return position. Echo-delay rank is an
 order-level response diagnostic. It is not physical distance, calibrated radar
 distance, or a finite-speed geometry model.
+
+## Milestone 23 Note
+
+Controlled echo-response motifs plant finite trigger paths with known
+echo-delay ranks. Clean motif networks validate exact recovery, while
+background-interference cases show how shortcut returns can alter recovered
+response depth. These are order-level validation motifs, not metric geometry.

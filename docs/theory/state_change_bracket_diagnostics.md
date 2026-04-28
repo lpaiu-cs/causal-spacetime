@@ -73,3 +73,7 @@ Milestone 22 extends this by fixing a reference emission position first. It
 then asks which target events are after that emission and return to a later
 reference position. This produces same-emission echo-return positions and
 echo-delay ranks, still without metric distance or calibrated clock values.
+
+Milestone 23 uses controlled echo-response motifs to validate those echo
+diagnostics. It plants target events with known return positions and records
+exact recovery, shortcut returns, and reference-protocol visibility.

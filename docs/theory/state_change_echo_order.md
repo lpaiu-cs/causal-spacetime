@@ -90,3 +90,15 @@ distance, implement a finite-speed spatial model, assign seconds or meters,
 or introduce speeds, velocities, or metric coordinates. It provides finite
 diagnostics for how causal response structure is ordered by a selected
 reference protocol.
+
+## Controlled Motif Validation
+
+Milestone 23 adds controlled echo-response motifs as validation cases for this
+protocol. A motif inserts trigger paths so a target event is after a selected
+reference emission and before a planted return position. The planted
+echo-delay rank is a known finite-DAG label. The recovered echo-delay rank is
+then compared against that label.
+
+Shortcut returns are recorded when additional trigger structure makes the
+target return earlier than the planted label. These are background causal
+interference in the order, not metric perturbations.

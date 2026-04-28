@@ -47,6 +47,12 @@ BANNED_PHRASES = (
     "finite-speed spatial geometry is implemented",
     "same-emission echo proves distance",
     "echo protocol derives metric",
+    "planted delay is distance",
+    "echo motif gives distance",
+    "response motif derives geometry",
+    "echo-response motif is finite-speed geometry",
+    "planted delay is physical time",
+    "shortcut is metric noise",
 )
 
 

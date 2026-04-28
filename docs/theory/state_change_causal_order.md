@@ -26,6 +26,10 @@ reference chain and an emission position, the code asks which target events
 are after that emission and return to a later reference-chain position. The
 echo-return position and echo-delay rank remain order-level quantities.
 
+Milestone 23 adds controlled echo-response motifs. These motifs deliberately
+insert trigger paths with known planted echo-delay ranks so the echo-order
+protocol can be checked against finite DAG validation labels.
+
 ## State-Changing Events
 
 A state-changing event is written:
@@ -148,6 +152,22 @@ delay_R(e; k) = return_R(e; k) - k
 This gives a same-emission echo-order relation among reachable targets by
 comparing delay ranks. It is a reference-protocol-dependent rank diagnostic,
 not a spatial metric, calibrated time, or physical-distance assignment.
+
+## Controlled Echo-Response Motifs
+
+A controlled motif plants trigger structure:
+
+```text
+r_k -> ... -> e -> ... -> r_{k+d}
+```
+
+The label `d` is the planted echo-delay rank. Recovery compares this label with
+the order-level echo-delay rank computed from the transitive trigger order. If
+additional trigger structure gives an earlier return to the reference chain,
+the result is recorded as a shortcut return or background interference.
+
+The planted label is a controlled validation tag. It does not represent metric
+distance, calibrated duration, or a finite-speed spatial model.
 
 ## Radar Brackets
 

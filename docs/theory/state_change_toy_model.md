@@ -81,3 +81,11 @@ events are after that reference event and return to a later reference-chain
 position. Echo-return position and echo-delay rank are order-level diagnostics
 only. They do not reconstruct metric radar distance, define physical distance,
 or calibrate a clock.
+
+## Milestone 23 Extension
+
+Milestone 23 inserts controlled echo-response motifs into finite trigger
+networks. A motif plants a target event with a known echo-delay rank relative
+to a selected reference chain. Clean networks test exact recovery; background
+interference tests shortcut returns. The planted rank is a validation label
+for the finite order, not a metric quantity.

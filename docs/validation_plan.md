@@ -67,6 +67,18 @@ reachability and rank resolution. The validation target is order-level causal
 response structure, not physical distance, calibrated time, or metric radar
 reconstruction.
 
+## Milestone 23: Controlled Echo-Response Motifs
+
+Milestone 23 validates the echo-order protocol against planted causal trigger
+motifs. Exact checks insert motifs on a minimal reference backbone and verify
+that the recovered echo-delay rank matches the planted validation label.
+
+The numerical experiments separate clean recovery, background shortcut
+interference, motif-density tie structure, and reference-choice visibility.
+The validation target is controlled order-level response depth. Planted delay
+rank is not physical distance, and shortcut returns are background causal
+interference rather than metric noise.
+
 ## Why The Full-Diamond Check Is Limited
 
 The original endpoint reconstruction experiment uses the full generated causal

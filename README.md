@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 18-22 refactor the theory-facing framing around locally finite
+Milestones 18-23 refactor the theory-facing framing around locally finite
 state-change causal trigger order and add the first finite diagnostics at that
 primitive layer:
 
@@ -82,6 +82,8 @@ reconstruction experiments:
   bracket-width ranks from selected reference chains,
 - compute same-emission echo-return positions and echo-delay ranks from
   selected reference chains,
+- plant controlled echo-response motifs and test recovery of planted
+  echo-delay ranks,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -599,6 +601,32 @@ rank/order-level diagnostic. It does not define physical distance, reconstruct
 metric radar distance, implement finite-speed spatial geometry, or calibrate
 time.
 
+Milestone 23 adds controlled echo-response motif diagnostics:
+
+```bash
+python experiments/exp83_echo_motif_exact_sanity.py
+python experiments/exp84_planted_echo_motif_recovery.py
+python experiments/exp85_echo_motif_background_interference.py
+python experiments/exp86_echo_motif_density_resolution.py
+python experiments/exp87_echo_motif_reference_choice_visibility.py
+```
+
+It writes:
+
+- `outputs/data/echo_motif_exact_sanity.csv`
+- `outputs/data/planted_echo_motif_recovery.csv`
+- `outputs/data/planted_echo_motif_recovery_summary.csv`
+- `outputs/data/echo_motif_background_interference.csv`
+- `outputs/data/echo_motif_density_resolution.csv`
+- `outputs/data/echo_motif_reference_choice_visibility.csv`
+- motif recovery, shortcut, tie-resolution, and reference-visibility figures
+  under `outputs/figures/`.
+
+These experiments insert controlled causal trigger structures with planted
+echo-delay ranks. The planted rank is a validation label, not physical
+distance or calibrated time. Shortcut returns are recorded as background
+causal interference.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -792,3 +820,7 @@ computes same-emission echo-return positions and echo-delay ranks. These
 rank/order diagnostics study causal response structure relative to a chosen
 reference protocol; they do not define physical distance or reconstruct metric
 radar distance.
+Milestone 23 plants controlled echo-response motifs. Clean motif networks
+test whether planted echo-delay ranks are recovered by the echo protocol,
+while interference and reference-choice experiments record shortcut returns,
+ties, and visibility changes as order-level diagnostics.

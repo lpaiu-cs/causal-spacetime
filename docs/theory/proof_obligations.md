@@ -18,6 +18,10 @@ repository. Open proof obligations include:
   changes of reference chain and emission position,
 - criteria for when echo-return rank order has useful resolution without
   treating it as metric distance,
+- conditions under which controlled echo-response motifs remain recoverable
+  under background trigger interference and reference-protocol changes,
+- a principled account of which shortcut returns are meaningful response
+  structure rather than artifacts of a particular finite construction,
 - a representation theorem from causal/accessibility structures to Lorentzian
   manifolds,
 - uniqueness conditions for reconstructed geometry,

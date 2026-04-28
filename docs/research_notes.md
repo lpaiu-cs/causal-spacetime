@@ -62,6 +62,19 @@ duration. The experiments test how reachability, delay-rank resolution, and
 return-rank order depend on reference-chain source, emission position, and
 trigger density.
 
+## Milestone 23: Controlled Echo-Response Motifs
+
+Milestone 23 plants controlled echo-response motifs into finite state-change
+trigger networks. A motif fixes an emission position and a planted echo-delay
+rank, then inserts trigger paths so the target event returns to the intended
+reference-chain position.
+
+The planted delay rank is a validation label, not physical distance or
+calibrated time. Clean motif networks should recover planted ranks exactly.
+Background shortcut returns are recorded as causal interference, not metric
+noise. Motif density experiments test how a limited delay-rank set creates ties
+and reduces order resolution.
+
 ## Milestone 1: Timelike Reconstruction In 1+1D
 
 This milestone works in 1+1D Minkowski spacetime with natural units `c = 1`.

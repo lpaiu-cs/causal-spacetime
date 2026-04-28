@@ -65,3 +65,8 @@ order-level bracket ranks. Milestone 22 fixes an emission position on a
 selected reference chain and computes same-emission echo-return positions and
 echo-delay ranks. Those echo diagnostics remain reference-protocol dependent
 and do not add metric calibration.
+
+Milestone 23 plants controlled echo-response motifs relative to selected
+reference chains. This checks whether the same echo-order protocol recovers
+known planted echo-delay ranks in finite DAGs and how visibility changes when
+a different reference protocol is chosen.

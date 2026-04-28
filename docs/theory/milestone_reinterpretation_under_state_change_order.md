@@ -25,6 +25,10 @@ later return position on the same reference chain. This tests reference-
 protocol-dependent causal response order, not physical distance or metric
 radar reconstruction.
 
+Milestone 23 adds controlled echo-response motifs. It plants finite trigger
+paths with known echo-delay ranks so the echo-order protocol can be validated
+against controlled response-depth labels.
+
 ## Timelike Reconstruction
 
 Causal interval count plus supplied density gives a proper-time-like
@@ -53,6 +57,10 @@ Milestone 22 then fixes a reference emission position and computes echo-return
 positions and echo-delay ranks. These are useful for studying order-level
 response structure before any calibrated observer or spatial representation is
 introduced.
+
+Milestone 23 uses planted motifs to test the same echo protocol in clean and
+interfering finite orders. Shortcut returns are treated as causal
+interference, not metric noise.
 
 ## Oriented Radar And Atlas Tests
 

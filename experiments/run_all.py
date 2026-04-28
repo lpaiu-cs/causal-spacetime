@@ -780,6 +780,60 @@ from exp82_state_change_echo_coverage_vs_trigger_density import (
 from exp82_state_change_echo_coverage_vs_trigger_density import (
     write_outputs as write_exp82_outputs,
 )
+from exp83_echo_motif_exact_sanity import (
+    run_experiment as run_exp83,
+)
+from exp83_echo_motif_exact_sanity import (
+    write_outputs as write_exp83_outputs,
+)
+from exp84_planted_echo_motif_recovery import (
+    ExperimentConfig as Exp84Config,
+)
+from exp84_planted_echo_motif_recovery import (
+    run_experiment as run_exp84,
+)
+from exp84_planted_echo_motif_recovery import (
+    save_figures as save_exp84_figures,
+)
+from exp84_planted_echo_motif_recovery import (
+    write_outputs as write_exp84_outputs,
+)
+from exp85_echo_motif_background_interference import (
+    ExperimentConfig as Exp85Config,
+)
+from exp85_echo_motif_background_interference import (
+    run_experiment as run_exp85,
+)
+from exp85_echo_motif_background_interference import (
+    save_figures as save_exp85_figures,
+)
+from exp85_echo_motif_background_interference import (
+    write_outputs as write_exp85_outputs,
+)
+from exp86_echo_motif_density_resolution import (
+    ExperimentConfig as Exp86Config,
+)
+from exp86_echo_motif_density_resolution import (
+    run_experiment as run_exp86,
+)
+from exp86_echo_motif_density_resolution import (
+    save_figures as save_exp86_figures,
+)
+from exp86_echo_motif_density_resolution import (
+    write_outputs as write_exp86_outputs,
+)
+from exp87_echo_motif_reference_choice_visibility import (
+    ExperimentConfig as Exp87Config,
+)
+from exp87_echo_motif_reference_choice_visibility import (
+    run_experiment as run_exp87,
+)
+from exp87_echo_motif_reference_choice_visibility import (
+    save_figures as save_exp87_figures,
+)
+from exp87_echo_motif_reference_choice_visibility import (
+    write_outputs as write_exp87_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -1929,6 +1983,82 @@ def run_state_change_echo_coverage_vs_trigger_density() -> None:
     print(f"exp82 wrote {data_path} and {len(figure_paths)} figures")
 
 
+def run_echo_motif_exact_sanity() -> None:
+    rows = run_exp83()
+    output_path = write_exp83_outputs(rows)
+    print(f"exp83 wrote {output_path}")
+
+
+def run_planted_echo_motif_recovery() -> None:
+    config = Exp84Config(
+        reference_lengths=(16,),
+        motif_counts=(10,),
+        delay_ranks=(2, 3, 5),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    motif_rows, summary_rows = run_exp84(config)
+    motif_path, summary_path = write_exp84_outputs(
+        motif_rows,
+        summary_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp84_figures(summary_rows, config.output_dir)
+    print(
+        f"exp84 wrote {motif_path}, {summary_path}, "
+        f"and {len(figure_paths)} figures"
+    )
+
+
+def run_echo_motif_background_interference() -> None:
+    config = Exp85Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability_values=(0.05, 0.20),
+        motif_count=10,
+        delay_ranks=(2, 3, 5),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp85(config)
+    data_path = write_exp85_outputs(rows, config.output_dir)
+    figure_paths = save_exp85_figures(rows, config.output_dir)
+    print(f"exp85 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_motif_density_resolution() -> None:
+    config = Exp86Config(
+        reference_length=32,
+        motif_counts=(10, 30),
+        delay_rank_sets=("small", "medium"),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp86(config)
+    data_path = write_exp86_outputs(rows, config.output_dir)
+    figure_paths = save_exp86_figures(rows, config.output_dir)
+    print(f"exp86 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_motif_reference_choice_visibility() -> None:
+    config = Exp87Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability=0.20,
+        motif_count=10,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp87(config)
+    data_path = write_exp87_outputs(rows, config.output_dir)
+    figure_paths = save_exp87_figures(rows, config.output_dir)
+    print(f"exp87 wrote {data_path} and {len(figure_paths)} figures")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2009,6 +2139,11 @@ def main() -> None:
     run_state_change_echo_reference_dependence()
     run_state_change_echo_emission_sensitivity()
     run_state_change_echo_coverage_vs_trigger_density()
+    run_echo_motif_exact_sanity()
+    run_planted_echo_motif_recovery()
+    run_echo_motif_background_interference()
+    run_echo_motif_density_resolution()
+    run_echo_motif_reference_choice_visibility()
 
 
 if __name__ == "__main__":
