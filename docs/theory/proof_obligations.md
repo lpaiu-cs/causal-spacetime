@@ -106,6 +106,8 @@ repository. Open proof obligations include:
 - validation-gate criteria for response-comparison constraint pools, including
   held-out protocol agreement, bootstrap stability, null-baseline separation,
   margin-confidence tradeoffs, and target/pair-node coverage.
+- preregistered handoff rules specifying which eligible and failed constraint
+  pools may be exported as frozen inputs for future representability tests.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

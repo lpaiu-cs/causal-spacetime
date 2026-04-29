@@ -54,3 +54,8 @@ stated assumptions. Passing gates does not make constraints spatial distances.
 
 This milestone does not perform ordinal embedding and does not validate
 distance-order constraints.
+
+Milestone 31 exports handoff manifests for pools that satisfy predeclared
+criteria. These manifests are frozen input specifications for future
+experiments. They do not contain fitted embeddings and do not imply distance
+or geometry.

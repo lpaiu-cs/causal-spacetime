@@ -58,3 +58,8 @@ Passing validation gates makes a pool eligible for future representability
 experiments only under explicitly stated assumptions. Passing gates does not
 make constraints spatial distances, and no ordinal embedding is performed in
 the validation layer.
+
+Milestone 31 freezes eligible pools in handoff manifests. The manifest records
+the admissible comparison protocol and missing-data policy so future
+experiments cannot change them after inspecting held-out or null-baseline
+outcomes.

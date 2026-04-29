@@ -158,3 +158,11 @@ filtering, and coverage diagnostics. Passing validation gates makes a pool a
 candidate input for future representability tests only under explicit
 additional assumptions. It does not perform ordinal embedding and does not
 turn constraints into spatial distances.
+
+## Milestone 31 Note
+
+Predeclared handoff manifests freeze eligible response-comparison constraint
+pools for future experiments. They record protocol settings, validation gates,
+constraint splits, null baselines, stop rules, and forbidden interpretations.
+Failed manifests are cataloged as negative results. The manifests contain no
+fitted embeddings and do not imply distance or geometry.

@@ -954,3 +954,10 @@ margin filtering, and coverage diagnostics. It does not perform ordinal
 embedding. Passing validation gates makes a pool eligible for future
 representability experiments only under explicitly stated assumptions, and
 passing gates does not make constraints spatial distances.
+
+Milestone 31 exports predeclared handoff manifests. These manifests are frozen
+input specifications for future experiments. They record protocol choices,
+validation thresholds, constraint splits, null settings, stop rules, and
+forbidden interpretations. They do not contain fitted embeddings and do not
+imply distance or geometry. Future representability experiments must report
+both eligible and failed manifests.

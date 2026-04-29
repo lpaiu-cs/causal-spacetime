@@ -102,6 +102,13 @@ BANNED_PHRASES = (
     "held-out agreement proves metric",
     "null baseline separation proves space",
     "pre-embedding validation reconstructs distance",
+    "handoff proves geometry",
+    "handoff manifest proves representability",
+    "eligible pool is distance order",
+    "eligible constraints are spatial distances",
+    "manifest contains metric reconstruction",
+    "handoff exports embedding",
+    "failed handoff is ignored",
 )
 
 

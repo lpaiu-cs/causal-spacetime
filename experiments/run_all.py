@@ -1278,6 +1278,69 @@ from exp132_response_constraint_validation_exact_sanity import (
 from exp132_response_constraint_validation_exact_sanity import (
     write_outputs as write_exp132_outputs,
 )
+from exp133_response_handoff_exact_sanity import (
+    run_experiment as run_exp133,
+)
+from exp133_response_handoff_exact_sanity import (
+    write_outputs as write_exp133_outputs,
+)
+from exp134_response_handoff_threshold_sensitivity import (
+    ExperimentConfig as Exp134Config,
+)
+from exp134_response_handoff_threshold_sensitivity import (
+    run_experiment as run_exp134,
+)
+from exp134_response_handoff_threshold_sensitivity import (
+    save_figures as save_exp134_figures,
+)
+from exp134_response_handoff_threshold_sensitivity import (
+    write_outputs as write_exp134_outputs,
+)
+from exp135_response_handoff_protocol_selection import (
+    ExperimentConfig as Exp135Config,
+)
+from exp135_response_handoff_protocol_selection import (
+    run_experiment as run_exp135,
+)
+from exp135_response_handoff_protocol_selection import (
+    save_figures as save_exp135_figures,
+)
+from exp135_response_handoff_protocol_selection import (
+    write_outputs as write_exp135_outputs,
+)
+from exp136_response_handoff_manifest_export import (
+    ExperimentConfig as Exp136Config,
+)
+from exp136_response_handoff_manifest_export import (
+    run_experiment as run_exp136,
+)
+from exp136_response_handoff_manifest_export import (
+    write_outputs as write_exp136_outputs,
+)
+from exp137_response_handoff_failure_catalog import (
+    ExperimentConfig as Exp137Config,
+)
+from exp137_response_handoff_failure_catalog import (
+    run_experiment as run_exp137,
+)
+from exp137_response_handoff_failure_catalog import (
+    save_figures as save_exp137_figures,
+)
+from exp137_response_handoff_failure_catalog import (
+    write_outputs as write_exp137_outputs,
+)
+from exp138_response_handoff_preregistration_rules import (
+    run_experiment as run_exp138,
+)
+from exp138_response_handoff_preregistration_rules import (
+    write_outputs as write_exp138_outputs,
+)
+from exp139_response_handoff_manifest_read_exact_sanity import (
+    run_experiment as run_exp139,
+)
+from exp139_response_handoff_manifest_read_exact_sanity import (
+    write_outputs as write_exp139_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -3106,6 +3169,91 @@ def run_response_constraint_validation_exact_sanity() -> None:
     print(f"exp132 wrote {output_path}")
 
 
+def run_response_handoff_exact_sanity() -> None:
+    rows = run_exp133()
+    output_path = write_exp133_outputs(rows)
+    print(f"exp133 wrote {output_path}")
+
+
+def run_response_handoff_threshold_sensitivity() -> None:
+    config = Exp134Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        min_agreement_values=(0.7, 0.8),
+        min_null_z_values=(0.0, 1.0),
+        min_bootstrap_values=(0.6, 0.7),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp134(config)
+    data_path = write_exp134_outputs(rows, config.output_dir)
+    figure_paths = save_exp134_figures(rows, config.output_dir)
+    print(f"exp134 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_handoff_protocol_selection() -> None:
+    config = Exp135Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        min_margins=(0.0, 0.05),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp135(config)
+    data_path = write_exp135_outputs(rows, config.output_dir)
+    figure_paths = save_exp135_figures(rows, config.output_dir)
+    print(f"exp135 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_handoff_manifest_export() -> None:
+    config = Exp136Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        max_manifests=3,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows, paths = run_exp136(config)
+    data_path = write_exp136_outputs(rows, config.output_dir)
+    print(f"exp136 wrote {data_path} and {len(paths)} manifests")
+
+
+def run_response_handoff_failure_catalog() -> None:
+    config = Exp137Config(
+        target_count=30,
+        protocol_count_values=(2, 4),
+        reachable_probabilities=(0.3, 0.8),
+        unique_rank_counts=(3, 5),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp137(config)
+    data_path = write_exp137_outputs(rows, config.output_dir)
+    figure_paths = save_exp137_figures(rows, config.output_dir)
+    print(f"exp137 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_handoff_preregistration_rules() -> None:
+    rows = run_exp138()
+    output_path = write_exp138_outputs(rows)
+    print(f"exp138 wrote {output_path}")
+
+
+def run_response_handoff_manifest_read_exact_sanity() -> None:
+    rows = run_exp139()
+    output_path = write_exp139_outputs(rows)
+    print(f"exp139 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -3236,6 +3384,13 @@ def main() -> None:
     run_response_constraint_pool_coverage()
     run_response_constraint_validation_gate_summary()
     run_response_constraint_validation_exact_sanity()
+    run_response_handoff_exact_sanity()
+    run_response_handoff_threshold_sensitivity()
+    run_response_handoff_protocol_selection()
+    run_response_handoff_manifest_export()
+    run_response_handoff_failure_catalog()
+    run_response_handoff_preregistration_rules()
+    run_response_handoff_manifest_read_exact_sanity()
 
 
 if __name__ == "__main__":

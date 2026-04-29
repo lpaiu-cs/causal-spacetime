@@ -73,3 +73,6 @@ Milestone 30 validates constraint pools produced by these comparison
 protocols. It checks held-out protocol agreement, bootstrap stability,
 null-baseline separation, and coverage before any future representation test.
 Validated pools remain pre-metric response-comparison outputs.
+
+Milestone 31 exports handoff manifests for eligible pools. Those manifests are
+frozen input specifications and not fitted representations.

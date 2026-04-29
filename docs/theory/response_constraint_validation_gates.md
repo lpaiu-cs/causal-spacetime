@@ -59,3 +59,7 @@ stability, and null-baseline separation.
 Milestone 30 does not fit an embedding. It does not reconstruct metric
 structure, calibrated radar distance, finite-speed spatial geometry, or any
 physical distance scale.
+
+Milestone 31 adds the handoff step after validation. Passing a gate may allow
+a manifest to be exported for future experiments, but the manifest remains a
+no-fit input specification and does not assert representability.

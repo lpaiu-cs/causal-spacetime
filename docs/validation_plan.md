@@ -592,3 +592,23 @@ for coherent structured profiles than for sparse or tie-heavy profiles. Null
 baselines may remain difficult, but separation from them is required before
 any future representation test. This does not perform ordinal embedding, and
 passing validation gates does not make constraints spatial distances.
+
+## Milestone 31: Handoff Manifests
+
+Validation adds:
+
+```text
+exact handoff manifest sanity checks
+threshold sensitivity sweeps
+protocol handoff selection
+eligible manifest JSON export
+failed-handoff catalogs
+preregistration rule tables
+manifest read/write exact checks
+```
+
+Expected behavior is that stricter thresholds reduce eligible handoff
+manifests and that failure reasons remain visible. Exported manifests are
+frozen input specifications for future experiments. They contain
+response-comparison constraints and validation metadata, not embeddings or
+metric interpretations.

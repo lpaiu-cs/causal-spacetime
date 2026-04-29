@@ -67,3 +67,7 @@ pools. Held-out protocol agreement, bootstrap stability, null-baseline
 separation, and coverage are necessary pre-embedding diagnostics. They still
 do not move the project to ordinal embedding or calibrated metric
 representation.
+
+Milestone 31 records successful or failed validation outcomes in handoff
+manifests. A handoff manifest is a frozen input specification for future
+representability experiments, not a new rung of metric interpretation.

@@ -77,3 +77,7 @@ checked for held-out protocol agreement, bootstrap stability, null-baseline
 separation, and coverage before it can be considered for future
 representability experiments. Gate passage is still a pre-metric eligibility
 diagnostic, not a spatial interpretation.
+
+Milestone 31 turns that eligibility decision into a preregistered handoff
+manifest. The manifest freezes settings and failure reasons; it does not
+resolve the underdetermination of metric structure by response profiles.

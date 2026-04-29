@@ -719,3 +719,15 @@ Gate failures are informative: they identify pools with too few constraints,
 low evaluability, weak agreement, excess inversions, weak null separation, or
 poor bootstrap stability. Passing gates does not make constraints spatial
 distances.
+
+## Milestone 31: Predeclared Handoff Manifests
+
+Milestone 31 defines predeclared handoff manifests for response-comparison
+constraint pools. A manifest freezes the profile source, comparison protocol,
+missing-data policy, margin, seed, validation gates, null settings, future
+constraint split, stop rules, and forbidden interpretations.
+
+The manifest is a no-fit handoff artifact. It exports eligible constraint
+pools for future representability experiments, but it does not contain fitted
+embeddings and does not imply distance or geometry. Failed handoff gates are
+reported as negative results.
