@@ -89,6 +89,12 @@ BANNED_PHRASES = (
     "response profile proves geometry",
     "representability ladder proves metric",
     "scalar rank representation is spatial geometry",
+    "pairwise response dissimilarity is distance",
+    "pairwise response comparison is distance order",
+    "response-profile dissimilarity is spatial distance",
+    "response profile recovers pairwise distance",
+    "null baselines prove geometry",
+    "pairwise response protocol derives space",
 )
 
 

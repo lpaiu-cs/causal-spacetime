@@ -63,3 +63,11 @@ baselines.
 
 Milestone 28 therefore treats scalar response-order representability as a weak
 precondition. It is not metric reconstruction and not spatial geometry.
+
+## Milestone 29 Extension
+
+Milestone 29 adds admissible pairwise response-profile comparison protocols.
+They turn multi-reference profiles into pre-metric response-comparison
+constraints under declared missing-data policies. These constraints are useful
+inputs for future tests, but they are not target-target physical distances and
+do not justify ordinal embedding by themselves.

@@ -694,3 +694,15 @@ targets that tie under one protocol. They are still pre-metric. The
 representability ladder records the additional structure required for
 pairwise distance-order tests, ordinal embedding candidates, and calibrated
 metric representations.
+
+## Milestone 29: Pairwise Response-Profile Comparison
+
+Milestone 29 defines admissible pairwise response-profile comparison protocols.
+The protocols compute response-profile dissimilarities using separation,
+rank-gap, reachability-mismatch, or combined policies. They must declare a
+missing-data policy before analysis.
+
+The resulting constraints compare response-profile pairs. They are pre-metric
+response-comparison constraints, not spatial distance-order constraints. Null
+baselines are added to test whether protocol outputs are nontrivial before any
+future embedding attempt.

@@ -104,3 +104,7 @@ response signature remains a scalar preorder. Even when `D_echo` values are
 scalar-rank representable, they do not supply target-target pair comparisons.
 That additional structure belongs to later levels of the representability
 ladder.
+
+Milestone 29 adds one such additional pre-metric layer: admissible pairwise
+response-profile comparison. The resulting dissimilarities are chosen protocol
+outputs, not distances.

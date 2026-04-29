@@ -941,3 +941,9 @@ structure. Multiple reference-protocol columns form richer response profiles,
 but those profiles are still pre-metric. The representability ladder records
 which additional assumptions are needed before pairwise distance-order,
 ordinal-embedding, or calibrated metric-representation tests are meaningful.
+
+Milestone 29 defines admissible pairwise response-profile comparison
+protocols. These protocols produce response-profile dissimilarities and
+response-comparison constraints under declared missing-data policies. They are
+pre-metric and do not produce spatial distance. Null baselines are added before
+any ordinal embedding attempt.

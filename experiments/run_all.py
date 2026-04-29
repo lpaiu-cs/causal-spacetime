@@ -1134,6 +1134,78 @@ from exp118_response_profile_requirement_exact_sanity import (
 from exp118_response_profile_requirement_exact_sanity import (
     write_outputs as write_exp118_outputs,
 )
+from exp119_pairwise_response_profile_exact_sanity import (
+    run_experiment as run_exp119,
+)
+from exp119_pairwise_response_profile_exact_sanity import (
+    write_outputs as write_exp119_outputs,
+)
+from exp120_pairwise_response_protocol_comparison import (
+    ExperimentConfig as Exp120Config,
+)
+from exp120_pairwise_response_protocol_comparison import (
+    run_experiment as run_exp120,
+)
+from exp120_pairwise_response_protocol_comparison import (
+    save_figures as save_exp120_figures,
+)
+from exp120_pairwise_response_protocol_comparison import (
+    write_outputs as write_exp120_outputs,
+)
+from exp121_pairwise_response_null_baselines import (
+    ExperimentConfig as Exp121Config,
+)
+from exp121_pairwise_response_null_baselines import (
+    run_experiment as run_exp121,
+)
+from exp121_pairwise_response_null_baselines import (
+    save_figures as save_exp121_figures,
+)
+from exp121_pairwise_response_null_baselines import (
+    write_outputs as write_exp121_outputs,
+)
+from exp122_pairwise_response_protocol_variant_stability import (
+    ExperimentConfig as Exp122Config,
+)
+from exp122_pairwise_response_protocol_variant_stability import (
+    run_experiment as run_exp122,
+)
+from exp122_pairwise_response_protocol_variant_stability import (
+    save_figures as save_exp122_figures,
+)
+from exp122_pairwise_response_protocol_variant_stability import (
+    write_outputs as write_exp122_outputs,
+)
+from exp123_pairwise_response_missing_data_sensitivity import (
+    ExperimentConfig as Exp123Config,
+)
+from exp123_pairwise_response_missing_data_sensitivity import (
+    run_experiment as run_exp123,
+)
+from exp123_pairwise_response_missing_data_sensitivity import (
+    save_figures as save_exp123_figures,
+)
+from exp123_pairwise_response_missing_data_sensitivity import (
+    write_outputs as write_exp123_outputs,
+)
+from exp124_pairwise_response_protocol_choice_dependence import (
+    ExperimentConfig as Exp124Config,
+)
+from exp124_pairwise_response_protocol_choice_dependence import (
+    run_experiment as run_exp124,
+)
+from exp124_pairwise_response_protocol_choice_dependence import (
+    save_figures as save_exp124_figures,
+)
+from exp124_pairwise_response_protocol_choice_dependence import (
+    write_outputs as write_exp124_outputs,
+)
+from exp125_pairwise_response_null_admissibility_exact_sanity import (
+    run_experiment as run_exp125,
+)
+from exp125_pairwise_response_null_admissibility_exact_sanity import (
+    write_outputs as write_exp125_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2757,6 +2829,101 @@ def run_response_profile_requirement_exact_sanity() -> None:
     print(f"exp118 wrote {output_path}")
 
 
+def run_pairwise_response_profile_exact_sanity() -> None:
+    rows = run_exp119()
+    output_path = write_exp119_outputs(rows)
+    print(f"exp119 wrote {output_path}")
+
+
+def run_pairwise_response_protocol_comparison() -> None:
+    config = Exp120Config(
+        reference_length=48,
+        emission_positions=(6, 12),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp120(config)
+    data_path = write_exp120_outputs(rows, config.output_dir)
+    figure_paths = save_exp120_figures(rows, config.output_dir)
+    print(f"exp120 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_pairwise_response_null_baselines() -> None:
+    config = Exp121Config(
+        reference_length=48,
+        emission_positions=(6, 12),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        repetitions=2,
+        null_repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp121(config)
+    data_path = write_exp121_outputs(rows, config.output_dir)
+    figure_paths = save_exp121_figures(rows, config.output_dir)
+    print(f"exp121 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_pairwise_response_protocol_variant_stability() -> None:
+    config = Exp122Config(
+        reference_length=48,
+        emission_positions=(6, 12),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        shortcut_probability_values=(0.0, 0.3),
+        reference_strides=(1, 2),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp122(config)
+    data_path = write_exp122_outputs(rows, config.output_dir)
+    figure_paths = save_exp122_figures(rows, config.output_dir)
+    print(f"exp122 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_pairwise_response_missing_data_sensitivity() -> None:
+    config = Exp123Config(
+        target_count=30,
+        protocol_count=4,
+        reachable_probabilities=(0.5, 1.0),
+        unique_rank_count=5,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp123(config)
+    data_path = write_exp123_outputs(rows, config.output_dir)
+    figure_paths = save_exp123_figures(rows, config.output_dir)
+    print(f"exp123 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_pairwise_response_protocol_choice_dependence() -> None:
+    config = Exp124Config(
+        target_count=30,
+        protocol_count=4,
+        reachable_probability=0.8,
+        unique_rank_count=5,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp124(config)
+    data_path = write_exp124_outputs(rows, config.output_dir)
+    figure_paths = save_exp124_figures(rows, config.output_dir)
+    print(f"exp124 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_pairwise_response_null_admissibility_exact_sanity() -> None:
+    rows = run_exp125()
+    output_path = write_exp125_outputs(rows)
+    print(f"exp125 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2873,6 +3040,13 @@ def main() -> None:
     run_response_representability_requirement_table()
     run_response_profile_stability_under_protocol_variants()
     run_response_profile_requirement_exact_sanity()
+    run_pairwise_response_profile_exact_sanity()
+    run_pairwise_response_protocol_comparison()
+    run_pairwise_response_null_baselines()
+    run_pairwise_response_protocol_variant_stability()
+    run_pairwise_response_missing_data_sensitivity()
+    run_pairwise_response_protocol_choice_dependence()
+    run_pairwise_response_null_admissibility_exact_sanity()
 
 
 if __name__ == "__main__":

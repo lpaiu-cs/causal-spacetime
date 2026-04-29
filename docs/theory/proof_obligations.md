@@ -100,6 +100,9 @@ repository. Open proof obligations include:
 - criteria specifying what additional reference, pairwise comparison,
   calibration, measure, and validation structure is required before response
   profiles can be used in any stronger representation test.
+- admissibility criteria and stability conditions for pairwise
+  response-profile comparison protocols, including null-baseline behavior,
+  missing-data policy dependence, and protocol-choice dependence.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

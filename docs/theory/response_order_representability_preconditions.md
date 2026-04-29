@@ -55,3 +55,7 @@ Milestone 28 therefore treats single-reference scalar response order as
 underdetermined with respect to target-target pair ordering. Multi-reference
 response profiles are richer inputs, but they remain pre-metric unless a
 separate pairwise comparison or calibration protocol is supplied.
+
+Milestone 29 supplies the first such pre-metric pairwise comparison protocols.
+They define response-profile dissimilarity under declared missing-data
+policies. They are admissible comparison protocols, not spatial measurements.

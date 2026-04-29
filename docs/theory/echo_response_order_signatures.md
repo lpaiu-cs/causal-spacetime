@@ -98,3 +98,8 @@ Multi-reference response profiles add more protocol columns and can reduce
 ties or equivalence classes, but they are still pre-metric. Pairwise
 distance-order and calibrated metric-representation tests require additional
 assumptions recorded in the representability ladder.
+
+Milestone 29 defines admissible pairwise response-profile comparison protocols
+as that next pre-metric diagnostic. They compare response profiles under
+declared methods and missing-data policies, and they are checked against null
+baselines before any embedding attempt.

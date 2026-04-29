@@ -551,3 +551,23 @@ target-target pair ordering. Multi-reference profiles should separate more
 targets than one protocol when their columns carry additional variation, but
 they remain pre-metric. The ladder should make explicit that pairwise
 distance-order and metric-representation tests require additional structure.
+
+## Milestone 29: Pairwise Response-Profile Protocols
+
+Validation adds:
+
+```text
+exact pairwise response-profile protocol sanity checks
+comparison across admissible protocols
+null baselines for profile structure
+shortcut/coarse protocol variant stability
+missing-data policy sensitivity
+protocol-choice dependence checks
+null/admissibility exact sanity checks
+```
+
+Expected behavior is that different admissible protocols and missing-data
+policies can produce different valid-pair coverage, ties, and response-order
+constraints. Null baselines should preserve selected marginals while disrupting
+cross-protocol target structure. No embedding or metric interpretation is
+performed.

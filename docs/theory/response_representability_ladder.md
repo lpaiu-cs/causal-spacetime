@@ -55,3 +55,9 @@ The ladder prevents a category error: a scalar response order is not enough for
 metric interpretation. Multi-reference profiles are richer but still
 pre-metric. Metric geometry requires calibration, measure, consistency
 conditions, and validation beyond response order.
+
+Milestone 29 fills in the transition from `multi_reference_response_profile`
+to `pairwise_distance_order` by defining pre-metric pairwise response-profile
+comparison protocols. These protocols do not themselves reach the
+pairwise-distance-order rung; they only define response-comparison constraints
+that future work may test against stronger assumptions.

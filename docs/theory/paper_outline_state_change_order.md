@@ -142,3 +142,10 @@ structure. Multi-reference response profiles are richer but still pre-metric.
 The representability ladder records the additional assumptions needed before
 pairwise distance-order, ordinal embedding, or calibrated metric
 representation can be tested.
+
+## Milestone 29 Note
+
+Admissible pairwise response-profile comparison protocols are introduced.
+They define pre-metric response-profile dissimilarities, missing-data policies,
+response-comparison constraints, and null baselines. No ordinal embedding or
+metric representation is attempted at this stage.
