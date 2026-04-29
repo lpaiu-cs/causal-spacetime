@@ -103,3 +103,11 @@ among retained reference and target events. Immediate-edge thinning can remove
 or alter return paths. Reference-chain subsampling can hide shortcuts or merge
 fine ranks into coarse ties. These changes are classified as coarse-graining
 artifacts of the finite protocol.
+
+## Response-Order Stability
+
+Milestone 26 asks which pairwise response-rank orders remain stable when
+shortcut perturbations are applied to a population of motif targets. A
+shortcut-robust pair is one whose response-order sign survives the selected
+variants. This is an order-signature stability diagnostic, not a claim that
+shortcut depth or delay rank is a metric error.

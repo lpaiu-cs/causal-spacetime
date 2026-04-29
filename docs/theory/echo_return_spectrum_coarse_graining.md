@@ -68,3 +68,13 @@ subsampling.
 Milestone 25 therefore treats shortcut classifications as protocol- and
 coarse-graining-dependent finite diagnostics. No metric distance, calibrated
 time, speed model, or spatial geometry is inferred.
+
+## Response-Order Signatures Under Coarse Protocols
+
+Milestone 26 uses the same coarse-graining choices to compare response-order
+signatures over motif populations. Closure-preserving event thinning should
+preserve pairwise order when retained targets and reference events are kept.
+Immediate-edge thinning can remove return paths and alter reachability.
+Reference-chain subsampling can merge ranks and increase ties. These effects
+define order-signature stability and tie-resolution loss, not metric
+calibration.

@@ -88,3 +88,11 @@ and reference events while integrating out unretained intermediate events.
 Immediate-edge thinning can remove motif path information unless protected.
 Reference-chain subsampling can turn fine return ranks into coarser labels and
 ties.
+
+## Milestone 26 Extension
+
+Milestone 26 groups controlled motifs into planted response layers and studies
+the pairwise echo-response order signature induced by recovered delay ranks.
+Clean layered motifs should recover the planted ordinal response structure,
+with ties inside a layer expected. Shortcut perturbations and coarse reference
+protocols test how much stable response-order core remains.

@@ -81,3 +81,8 @@ Milestone 25 adds reference-chain subsampling. Keeping fewer reference
 positions creates coarse reference ranks, reduces rank resolution, and can
 merge distinct return ranks into ties. This is another reference-protocol
 choice, not a calibration step.
+
+Milestone 26 uses shared reference protocols to induce echo-response order
+signatures over motif populations. Changing or coarsening the reference
+protocol can change pairwise response-rank order and tie structure. This is
+recorded as protocol-reference dependence, not as spatial-distance variation.

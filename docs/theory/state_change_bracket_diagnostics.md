@@ -87,3 +87,8 @@ Milestone 25 asks whether those bracket and return-rank diagnostics survive
 coarse-graining. Reference-chain subsampling changes the available bracket
 positions and can reduce rank resolution even when the underlying causal order
 is unchanged.
+
+Milestone 26 uses echo-delay ranks from shared reference protocols to form
+response-order signatures over motif populations. Bracket and echo ranks
+remain order-level inputs; stable pairwise response order is not interpreted
+as spatial distance.

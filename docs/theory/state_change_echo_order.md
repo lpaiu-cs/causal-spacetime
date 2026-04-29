@@ -122,3 +122,10 @@ resolution is reduced. Closure-preserving event thinning keeps retained-event
 return spectra stable by using the original transitive closure. Immediate-edge
 thinning can delete return paths. Reference-chain subsampling changes the
 available return positions and can reduce echo-order resolution through ties.
+
+## Response-Order Signatures
+
+Milestone 26 applies the same echo-delay protocol to many motif targets at
+once. The resulting response-order signature records pairwise response-rank
+signs, unresolved pairs, and ties. It remains an ordinal response diagnostic,
+not metric radar distance or a spatial representation.

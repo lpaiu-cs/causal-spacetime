@@ -249,3 +249,12 @@ while preserving retained-event reachability, from immediate-edge thinning,
 which changes causal path information before closure. It also studies
 reference-chain subsampling as coarse reference-rank resolution, not
 calibration.
+
+## Echo-Response Order Signatures
+
+Milestone 26 adds a population-level ordinal layer. Given many controlled
+motif targets under a shared reference protocol, recovered echo-delay ranks
+define an echo-response order signature. This signature records pairwise
+response-rank order, ties, and unresolved pairs. It remains a finite
+order-level diagnostic and does not identify response rank with spatial
+distance or metric geometry.

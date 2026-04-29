@@ -116,3 +116,11 @@ when event, edge, or reference-rank resolution is reduced. Closure-preserving
 event thinning integrates out intermediate events, immediate-edge thinning
 changes causal path information, and reference-chain subsampling reduces rank
 resolution. These remain finite order diagnostics.
+
+## Milestone 26 Note
+
+Echo-response order signatures summarize recovered response-rank order over
+controlled motif populations. Stable response-order cores identify pairwise
+ordinal structure that survives selected protocol variants. They are candidate
+inputs for future representability tests, not metric geometry or spatial
+distance.

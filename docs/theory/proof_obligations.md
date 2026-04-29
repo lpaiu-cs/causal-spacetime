@@ -90,6 +90,10 @@ repository. Open proof obligations include:
   representation-layer objects such as metric tensors and curvature values.
 - compatibility conditions for adding a quantum amplitude or Hilbert-space
   layer without treating it as already derived by the current order model.
+- stability criteria for echo-response order signatures under shortcut,
+  coarse-graining, and reference-protocol variants,
+- representability conditions for stable response-order cores before any
+  stronger metric interpretation is considered.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

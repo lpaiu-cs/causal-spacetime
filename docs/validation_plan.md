@@ -490,3 +490,24 @@ Expected behavior is conservative: asymmetric low-motion histories may be
 matched by relational continuity, while symmetric or crossing cases can remain
 ambiguous or fail. Partial labels should reduce ambiguity because they are
 additional supplied structure.
+
+## Milestone 26: Echo-Response Order Signatures
+
+Validation now includes response-order signatures over controlled motif
+populations. The checks separate:
+
+```text
+exact response-signature construction
+clean layered response-order recovery
+coarse protocol stability
+shortcut-robust stable response-order cores
+reference-protocol dependence
+consensus-order precondition diagnostics
+```
+
+Clean layered motif networks should recover planted ordinal response layers,
+with ties expected within a planted layer. Coarse reference protocols may merge
+fine ranks and reduce strict pair resolution. Shortcut perturbations can
+change pairwise response-rank order, while stable response-order cores isolate
+pairs that remain robust across variants. These are preconditions for later
+representability tests, not metric reconstruction.

@@ -64,6 +64,12 @@ BANNED_PHRASES = (
     "reference subsampling calibrates time",
     "edge thinning is metric noise",
     "shortcut depth is metric error",
+    "response order is distance",
+    "response signature is spatial geometry",
+    "stable response order proves geometry",
+    "echo response order derives metric",
+    "stable response core is distance",
+    "response layer is physical space",
 )
 
 

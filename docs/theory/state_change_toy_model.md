@@ -105,3 +105,11 @@ Closure-preserving event thinning hides intermediate events without deleting
 their reachability effect. Immediate-edge thinning removes trigger edges and
 can delete causal paths. Reference-chain subsampling coarsens reference ranks
 and can reduce order resolution.
+
+## Milestone 26 Extension
+
+Stable echo-response order signatures build on the same finite trigger-network
+toy model. They use controlled motif targets and reference-chain protocols to
+compare response-rank order across protocol variants. The toy model still does
+not introduce metric coordinates, calibrated clocks, speed, or spatial
+geometry.

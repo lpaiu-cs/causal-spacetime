@@ -954,6 +954,78 @@ from exp99_echo_return_spectrum_stability_exact_sanity import (
 from exp99_echo_return_spectrum_stability_exact_sanity import (
     write_outputs as write_exp99_outputs,
 )
+from exp100_echo_response_signature_exact_sanity import (
+    run_experiment as run_exp100,
+)
+from exp100_echo_response_signature_exact_sanity import (
+    write_outputs as write_exp100_outputs,
+)
+from exp101_layered_echo_response_order_recovery import (
+    ExperimentConfig as Exp101Config,
+)
+from exp101_layered_echo_response_order_recovery import (
+    run_experiment as run_exp101,
+)
+from exp101_layered_echo_response_order_recovery import (
+    save_figures as save_exp101_figures,
+)
+from exp101_layered_echo_response_order_recovery import (
+    write_outputs as write_exp101_outputs,
+)
+from exp102_echo_response_signature_coarse_protocol_stability import (
+    ExperimentConfig as Exp102Config,
+)
+from exp102_echo_response_signature_coarse_protocol_stability import (
+    run_experiment as run_exp102,
+)
+from exp102_echo_response_signature_coarse_protocol_stability import (
+    save_figures as save_exp102_figures,
+)
+from exp102_echo_response_signature_coarse_protocol_stability import (
+    write_outputs as write_exp102_outputs,
+)
+from exp103_echo_response_shortcut_robust_core import (
+    ExperimentConfig as Exp103Config,
+)
+from exp103_echo_response_shortcut_robust_core import (
+    run_experiment as run_exp103,
+)
+from exp103_echo_response_shortcut_robust_core import (
+    save_figures as save_exp103_figures,
+)
+from exp103_echo_response_shortcut_robust_core import (
+    write_outputs as write_exp103_outputs,
+)
+from exp104_echo_response_reference_protocol_dependence import (
+    ExperimentConfig as Exp104Config,
+)
+from exp104_echo_response_reference_protocol_dependence import (
+    run_experiment as run_exp104,
+)
+from exp104_echo_response_reference_protocol_dependence import (
+    save_figures as save_exp104_figures,
+)
+from exp104_echo_response_reference_protocol_dependence import (
+    write_outputs as write_exp104_outputs,
+)
+from exp105_echo_response_order_precondition_diagnostics import (
+    ExperimentConfig as Exp105Config,
+)
+from exp105_echo_response_order_precondition_diagnostics import (
+    run_experiment as run_exp105,
+)
+from exp105_echo_response_order_precondition_diagnostics import (
+    save_figures as save_exp105_figures,
+)
+from exp105_echo_response_order_precondition_diagnostics import (
+    write_outputs as write_exp105_outputs,
+)
+from exp106_echo_response_signature_stability_exact_sanity import (
+    run_experiment as run_exp106,
+)
+from exp106_echo_response_signature_stability_exact_sanity import (
+    write_outputs as write_exp106_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2340,6 +2412,106 @@ def run_echo_return_spectrum_stability_exact_sanity() -> None:
     print(f"exp99 wrote {output_path}")
 
 
+def run_echo_response_signature_exact_sanity() -> None:
+    rows = run_exp100()
+    output_path = write_exp100_outputs(rows)
+    print(f"exp100 wrote {output_path}")
+
+
+def run_layered_echo_response_order_recovery() -> None:
+    config = Exp101Config(
+        reference_length=48,
+        emission_position=6,
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer_values=(5,),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp101(config)
+    data_path = write_exp101_outputs(rows, config.output_dir)
+    figure_paths = save_exp101_figures(rows, config.output_dir)
+    print(f"exp101 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_response_signature_coarse_protocol_stability() -> None:
+    config = Exp102Config(
+        reference_length=48,
+        emission_position=6,
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        event_keep_probabilities=(1.0, 0.5),
+        reference_strides=(1, 2),
+        edge_removal_probabilities=(0.0, 0.1),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp102(config)
+    data_path = write_exp102_outputs(rows, config.output_dir)
+    figure_paths = save_exp102_figures(rows, config.output_dir)
+    print(f"exp102 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_response_shortcut_robust_core() -> None:
+    config = Exp103Config(
+        reference_length=48,
+        emission_position=6,
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        shortcut_probabilities=(0.0, 0.3),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp103(config)
+    data_path = write_exp103_outputs(rows, config.output_dir)
+    figure_paths = save_exp103_figures(rows, config.output_dir)
+    print(f"exp103 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_response_reference_protocol_dependence() -> None:
+    config = Exp104Config(
+        num_systems=5,
+        max_events=150,
+        trigger_probability=0.20,
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        repetitions=2,
+        seed=0,
+        top_k=3,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp104(config)
+    data_path = write_exp104_outputs(rows, config.output_dir)
+    figure_paths = save_exp104_figures(rows, config.output_dir)
+    print(f"exp104 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_response_order_precondition_diagnostics() -> None:
+    config = Exp105Config(
+        reference_length=48,
+        emission_position=6,
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        shortcut_probabilities=(0.0, 0.3),
+        reference_strides=(1, 2),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp105(config)
+    data_path = write_exp105_outputs(rows, config.output_dir)
+    figure_paths = save_exp105_figures(rows, config.output_dir)
+    print(f"exp105 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_response_signature_stability_exact_sanity() -> None:
+    rows = run_exp106()
+    output_path = write_exp106_outputs(rows)
+    print(f"exp106 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2437,6 +2609,13 @@ def main() -> None:
     run_echo_edge_thinning_fragility()
     run_echo_shortcut_classification_under_coarse_graining()
     run_echo_return_spectrum_stability_exact_sanity()
+    run_echo_response_signature_exact_sanity()
+    run_layered_echo_response_order_recovery()
+    run_echo_response_signature_coarse_protocol_stability()
+    run_echo_response_shortcut_robust_core()
+    run_echo_response_reference_protocol_dependence()
+    run_echo_response_order_precondition_diagnostics()
+    run_echo_response_signature_stability_exact_sanity()
 
 
 if __name__ == "__main__":

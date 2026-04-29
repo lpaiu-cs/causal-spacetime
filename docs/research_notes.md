@@ -653,3 +653,16 @@ The proxies are strongly affected by the finite sampling region, event density,
 and boundary placement. They are useful diagnostics for failure modes and
 possible correlations, but they are not validated estimators of spacelike
 distance.
+
+## Milestone 26: Stable Echo-Response Order Signatures
+
+Milestone 26 studies populations of controlled echo-response motif targets.
+For each shared reference protocol, recovered echo-delay ranks define an
+echo-response order signature over target pairs. Ties record unresolved pairs
+or rank-resolution loss, especially under coarse reference protocols.
+
+The stable response-order core is the subset of pairwise response-rank orders
+that agree across selected protocol variants such as shortcut perturbations,
+closure-preserving event thinning, reference-chain subsampling, and immediate
+edge thinning. This is an ordinal response-structure diagnostic. It is not a
+spatial-distance claim, and it does not reconstruct metric geometry.

@@ -8,7 +8,7 @@ The project is scientifically conservative: these simulations are sanity checks
 for reconstruction procedures and known relativistic behavior. They do not prove
 a new theory of spacetime.
 
-Milestones 18-25 refactor the theory-facing framing around locally finite
+Milestones 18-26 refactor the theory-facing framing around locally finite
 state-change causal trigger order and add the first finite diagnostics at that
 primitive layer:
 
@@ -89,6 +89,8 @@ reconstruction experiments:
   motif robustness checks, and reference-protocol dependence,
 - test return-spectrum stability under closure-preserving event thinning,
   immediate-edge thinning, and reference-chain subsampling,
+- test echo-response order signatures over motif populations, stable
+  response-order cores, and protocol-variant response-rank order,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -687,6 +689,34 @@ preserving retained-event reachability. Immediate-edge thinning changes the
 trigger graph before closure. Reference-chain subsampling reduces rank
 resolution and can merge return ranks into ties.
 
+Milestone 26 adds stable echo-response order signatures:
+
+```bash
+python experiments/exp100_echo_response_signature_exact_sanity.py
+python experiments/exp101_layered_echo_response_order_recovery.py
+python experiments/exp102_echo_response_signature_coarse_protocol_stability.py
+python experiments/exp103_echo_response_shortcut_robust_core.py
+python experiments/exp104_echo_response_reference_protocol_dependence.py
+python experiments/exp105_echo_response_order_precondition_diagnostics.py
+python experiments/exp106_echo_response_signature_stability_exact_sanity.py
+```
+
+It writes:
+
+- `outputs/data/echo_response_signature_exact_sanity.csv`
+- `outputs/data/layered_echo_response_order_recovery.csv`
+- `outputs/data/echo_response_signature_coarse_protocol_stability.csv`
+- `outputs/data/echo_response_shortcut_robust_core.csv`
+- `outputs/data/echo_response_reference_protocol_dependence.csv`
+- `outputs/data/echo_response_order_precondition_diagnostics.csv`
+- `outputs/data/echo_response_signature_stability_exact_sanity.csv`
+- response-signature recovery, stable-core, shortcut-robustness, reference
+  dependence, and precondition figures under `outputs/figures/`.
+
+Response-order signatures are ordinal diagnostics over motif populations. A
+stable response-order core is candidate input for later representability tests,
+not a spatial-distance claim or metric reconstruction.
+
 ## Other Experiments
 
 The original full-diamond timelike reconstruction sanity check can be run with:
@@ -892,3 +922,7 @@ Milestone 25 studies return-spectrum stability under coarse-graining. It
 separates closure-preserving event thinning, immediate-edge thinning, and
 reference-chain subsampling, showing which echo classifications survive and
 which reflect resolution choices in the finite protocol.
+Milestone 26 studies echo-response order signatures over motif populations.
+It compares planted, recovered, shortcut-perturbed, coarse-protocol, and
+reference-dependent response-rank orders. Stable response-order cores are
+treated as inputs for future representability tests, not as metric geometry.

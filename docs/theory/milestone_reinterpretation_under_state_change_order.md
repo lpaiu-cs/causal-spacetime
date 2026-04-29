@@ -77,6 +77,11 @@ Milestone 25 adds coarse-graining tests for those spectra. Event thinning that
 preserves closure should keep retained-event reachability stable, while edge
 thinning and reference-chain subsampling can alter recoveries or merge ranks.
 
+Milestone 26 then collects many motif targets into echo-response order
+signatures. Stable response-order cores are interpreted as candidate ordinal
+inputs for later representability tests, not as spatial geometry or calibrated
+metric structure.
+
 ## Oriented Radar And Atlas Tests
 
 An observer protocol plus beacon reference can provide signed coordinate
