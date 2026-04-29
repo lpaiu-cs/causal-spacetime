@@ -146,7 +146,7 @@ return_R(e; k) = min { j : r_k ≺_T e ≺_T r_j and j > k }
 The echo-delay rank is:
 
 ```text
-delay_R(e; k) = return_R(e; k) - k
+D_echo(e; k) = return_R(e; k) - k
 ```
 
 This gives a same-emission echo-order relation among reachable targets by

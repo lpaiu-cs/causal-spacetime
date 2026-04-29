@@ -82,6 +82,13 @@ BANNED_PHRASES = (
     "stable response order is distance order",
     "scalar representability proves geometry",
     "scalar rank is metric",
+    "single response order gives distance",
+    "response order defines pairwise distance",
+    "scalar response order is distance order",
+    "multi-reference profile is metric",
+    "response profile proves geometry",
+    "representability ladder proves metric",
+    "scalar rank representation is spatial geometry",
 )
 
 
@@ -108,6 +115,7 @@ def default_python_files(root: Path) -> list[Path]:
 
     files = sorted((root / "src" / "causal_spacetime_lab").glob("*.py"))
     files.extend(sorted((root / "experiments").glob("*.py")))
+    files.extend(sorted((root / "docs").glob("*.md")))
     return [path for path in files if path.exists()]
 
 

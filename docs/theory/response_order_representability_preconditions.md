@@ -44,3 +44,14 @@ A scalar-rank-representable stable core can be used as input for future
 representability tests. Those future tests would still need explicit
 calibration or stronger physical protocol structure before making metric
 claims.
+
+## Milestone 28 Clarification
+
+Scalar ordinal representability is only the first rung of a representability
+ladder. It shows that the response-order relation can be represented by
+topological scalar ranks. It does not provide pairwise target comparison data.
+
+Milestone 28 therefore treats single-reference scalar response order as
+underdetermined with respect to target-target pair ordering. Multi-reference
+response profiles are richer inputs, but they remain pre-metric unless a
+separate pairwise comparison or calibration protocol is supplied.

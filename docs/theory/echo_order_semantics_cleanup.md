@@ -96,3 +96,11 @@ Stable response-order signatures are ordinal diagnostics. They are not
 distance orders, spatial representations, or metric reconstructions. Milestone
 27 only clarifies which rank is being used and which return spectrum is being
 queried.
+
+## Milestone 28 Follow-Up
+
+Milestone 28 uses these cleaned semantics to show that a single-reference
+response signature remains a scalar preorder. Even when `D_echo` values are
+scalar-rank representable, they do not supply target-target pair comparisons.
+That additional structure belongs to later levels of the representability
+ladder.

@@ -681,3 +681,16 @@ Stable response-order cores are then tested for scalar ordinal
 representability by cycle checks and topological rank representation. This is
 a precondition for later representability work, not a metric embedding or
 calibrated spatial model.
+
+## Milestone 28: Response-Order Underdetermination
+
+Milestone 28 separates scalar response-order representability from pairwise
+target comparison structure. A single reference response signature is a scalar
+preorder over targets. It can be represented by many monotone scalar layouts,
+and those layouts can disagree on synthetic target-target pair order.
+
+Multi-reference response profiles add protocol columns and can distinguish
+targets that tie under one protocol. They are still pre-metric. The
+representability ladder records the additional structure required for
+pairwise distance-order tests, ordinal embedding candidates, and calibrated
+metric representations.

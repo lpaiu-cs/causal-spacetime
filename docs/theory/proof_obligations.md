@@ -97,6 +97,9 @@ repository. Open proof obligations include:
 - formal conditions under which scalar ordinal representability of a stable
   response-order core is necessary or useful for later representability tests,
   without treating that scalar rank as a metric object.
+- criteria specifying what additional reference, pairwise comparison,
+  calibration, measure, and validation structure is required before response
+  profiles can be used in any stronger representation test.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

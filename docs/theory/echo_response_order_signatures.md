@@ -86,3 +86,15 @@ rank representation.
 This is scalar ordinal representability, not metric representability. A stable
 response-order core that admits topological ranks is a candidate input for
 future representability tests, not a proof of geometry.
+
+## Milestone 28 Underdetermination
+
+Milestone 28 makes explicit that a single-reference response-order signature
+is a scalar preorder over targets. It is not a pairwise target-comparison
+structure. Many rank-preserving scalar layouts can preserve the same response
+order while disagreeing on synthetic target-target pair ordering.
+
+Multi-reference response profiles add more protocol columns and can reduce
+ties or equivalence classes, but they are still pre-metric. Pairwise
+distance-order and calibrated metric-representation tests require additional
+assumptions recorded in the representability ladder.

@@ -133,3 +133,12 @@ fixed-emission earliest-return delay rank is `D_echo`. Full transitive,
 retained-reference, and immediate-edge return spectra are distinct protocol
 queries. Scalar ordinal representability of a stable response-order core is an
 acyclicity and topological-rank precondition, not metric reconstruction.
+
+## Milestone 28 Note
+
+Response-order underdetermination is made explicit. A single-reference
+response signature is a scalar preorder, not a target-target comparison
+structure. Multi-reference response profiles are richer but still pre-metric.
+The representability ladder records the additional assumptions needed before
+pairwise distance-order, ordinal embedding, or calibrated metric
+representation can be tested.

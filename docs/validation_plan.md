@@ -531,3 +531,23 @@ and immediate-edge spectra can be sparse. Gated echo can suppress some early
 returns only because it is a different protocol selected before evaluation.
 Scalar-rank representability checks acyclicity of ordinal response constraints;
 it is not metric representability.
+
+## Milestone 28: Response-Order Underdetermination
+
+Validation adds:
+
+```text
+exact single-reference underdetermination sanity checks
+synthetic rank-preserving layout disagreement sweeps
+multi-reference response-profile diagnostics
+representability requirement table
+response-profile stability under protocol variants
+exact profile and ladder sanity checks
+```
+
+Expected behavior is that many rank-preserving scalar layouts preserve the
+same single-reference response order while inducing different synthetic
+target-target pair ordering. Multi-reference profiles should separate more
+targets than one protocol when their columns carry additional variation, but
+they remain pre-metric. The ladder should make explicit that pairwise
+distance-order and metric-representation tests require additional structure.

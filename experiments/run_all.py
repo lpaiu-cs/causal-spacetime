@@ -1080,6 +1080,60 @@ from exp112_response_representability_exact_sanity import (
 from exp112_response_representability_exact_sanity import (
     write_outputs as write_exp112_outputs,
 )
+from exp113_response_order_underdetermination_exact_sanity import (
+    run_experiment as run_exp113,
+)
+from exp113_response_order_underdetermination_exact_sanity import (
+    write_outputs as write_exp113_outputs,
+)
+from exp114_single_reference_response_order_underdetermination import (
+    ExperimentConfig as Exp114Config,
+)
+from exp114_single_reference_response_order_underdetermination import (
+    run_experiment as run_exp114,
+)
+from exp114_single_reference_response_order_underdetermination import (
+    save_figures as save_exp114_figures,
+)
+from exp114_single_reference_response_order_underdetermination import (
+    write_outputs as write_exp114_outputs,
+)
+from exp115_multi_reference_response_profile_diagnostics import (
+    ExperimentConfig as Exp115Config,
+)
+from exp115_multi_reference_response_profile_diagnostics import (
+    run_experiment as run_exp115,
+)
+from exp115_multi_reference_response_profile_diagnostics import (
+    save_figures as save_exp115_figures,
+)
+from exp115_multi_reference_response_profile_diagnostics import (
+    write_outputs as write_exp115_outputs,
+)
+from exp116_response_representability_requirement_table import (
+    run_experiment as run_exp116,
+)
+from exp116_response_representability_requirement_table import (
+    write_outputs as write_exp116_outputs,
+)
+from exp117_response_profile_stability_under_protocol_variants import (
+    ExperimentConfig as Exp117Config,
+)
+from exp117_response_profile_stability_under_protocol_variants import (
+    run_experiment as run_exp117,
+)
+from exp117_response_profile_stability_under_protocol_variants import (
+    save_figures as save_exp117_figures,
+)
+from exp117_response_profile_stability_under_protocol_variants import (
+    write_outputs as write_exp117_outputs,
+)
+from exp118_response_profile_requirement_exact_sanity import (
+    run_experiment as run_exp118,
+)
+from exp118_response_profile_requirement_exact_sanity import (
+    write_outputs as write_exp118_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2636,6 +2690,73 @@ def run_response_representability_exact_sanity() -> None:
     print(f"exp112 wrote {output_path}")
 
 
+def run_response_order_underdetermination_exact_sanity() -> None:
+    rows = run_exp113()
+    output_path = write_exp113_outputs(rows)
+    print(f"exp113 wrote {output_path}")
+
+
+def run_single_reference_response_order_underdetermination() -> None:
+    config = Exp114Config(
+        target_counts=(8, 16),
+        unique_rank_counts=(3, 5),
+        layout_count=20,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp114(config)
+    data_path = write_exp114_outputs(rows, config.output_dir)
+    figure_paths = save_exp114_figures(rows, config.output_dir)
+    print(f"exp114 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_multi_reference_response_profile_diagnostics() -> None:
+    config = Exp115Config(
+        reference_length=48,
+        emission_positions=(6, 12),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp115(config)
+    data_path = write_exp115_outputs(rows, config.output_dir)
+    figure_paths = save_exp115_figures(rows, config.output_dir)
+    print(f"exp115 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_representability_requirement_table() -> None:
+    rows = run_exp116()
+    output_path = write_exp116_outputs(rows)
+    print(f"exp116 wrote {output_path}")
+
+
+def run_response_profile_stability_under_protocol_variants() -> None:
+    config = Exp117Config(
+        reference_length=48,
+        emission_positions=(6, 12),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        shortcut_probability_values=(0.0, 0.3),
+        reference_strides=(1, 2),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp117(config)
+    data_path = write_exp117_outputs(rows, config.output_dir)
+    figure_paths = save_exp117_figures(rows, config.output_dir)
+    print(f"exp117 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_profile_requirement_exact_sanity() -> None:
+    rows = run_exp118()
+    output_path = write_exp118_outputs(rows)
+    print(f"exp118 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2746,6 +2867,12 @@ def main() -> None:
     run_response_order_scalar_representability()
     run_echo_terminology_audit()
     run_response_representability_exact_sanity()
+    run_response_order_underdetermination_exact_sanity()
+    run_single_reference_response_order_underdetermination()
+    run_multi_reference_response_profile_diagnostics()
+    run_response_representability_requirement_table()
+    run_response_profile_stability_under_protocol_variants()
+    run_response_profile_requirement_exact_sanity()
 
 
 if __name__ == "__main__":

@@ -934,3 +934,10 @@ protocols against the earliest-return rule, and checks whether stable
 response-order cores are scalar-rank representable. These are ordinal
 precondition diagnostics, not metric reconstruction, clock calibration, or
 spatial geometry.
+
+Milestone 28 studies underdetermination of pairwise distance order by scalar
+response order. A single reference response signature is not a distance-order
+structure. Multiple reference-protocol columns form richer response profiles,
+but those profiles are still pre-metric. The representability ladder records
+which additional assumptions are needed before pairwise distance-order,
+ordinal-embedding, or calibrated metric-representation tests are meaningful.
