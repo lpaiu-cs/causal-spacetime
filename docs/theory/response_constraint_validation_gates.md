@@ -63,3 +63,8 @@ physical distance scale.
 Milestone 31 adds the handoff step after validation. Passing a gate may allow
 a manifest to be exported for future experiments, but the manifest remains a
 no-fit input specification and does not assert representability.
+
+Milestone 32 consumes exported manifests as fixed inputs. The held-out split
+comes from the manifest and is not changed. Held-out performance is a
+diagnostic of response-comparison constraint generalization, not physical
+geometry.

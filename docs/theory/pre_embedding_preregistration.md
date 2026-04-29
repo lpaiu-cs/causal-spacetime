@@ -44,3 +44,8 @@ report both eligible and failed manifests.
 Handoff eligibility does not imply metric representability. It only states
 that a response-comparison constraint pool has passed predeclared finite
 diagnostics and may be used as a future input under explicit assumptions.
+
+Milestone 32 is the first consumer of those preregistered inputs. It fits
+latent ordinal representation models from frozen manifests, but it does not
+change the manifest train/held-out split, tune thresholds using held-out
+results, or exclude failed manifests after the fact.

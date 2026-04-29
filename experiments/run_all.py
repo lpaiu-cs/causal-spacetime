@@ -1341,6 +1341,81 @@ from exp139_response_handoff_manifest_read_exact_sanity import (
 from exp139_response_handoff_manifest_read_exact_sanity import (
     write_outputs as write_exp139_outputs,
 )
+from exp140_manifest_representability_exact_sanity import (
+    run_experiment as run_exp140,
+)
+from exp140_manifest_representability_exact_sanity import (
+    write_outputs as write_exp140_outputs,
+)
+from exp141_frozen_manifest_ordinal_representation import (
+    ExperimentConfig as Exp141Config,
+)
+from exp141_frozen_manifest_ordinal_representation import (
+    run_experiment as run_exp141,
+)
+from exp141_frozen_manifest_ordinal_representation import (
+    save_figures as save_exp141_figures,
+)
+from exp141_frozen_manifest_ordinal_representation import (
+    write_outputs as write_exp141_outputs,
+)
+from exp142_frozen_manifest_representation_nulls import (
+    ExperimentConfig as Exp142Config,
+)
+from exp142_frozen_manifest_representation_nulls import (
+    run_experiment as run_exp142,
+)
+from exp142_frozen_manifest_representation_nulls import (
+    save_figures as save_exp142_figures,
+)
+from exp142_frozen_manifest_representation_nulls import (
+    write_outputs as write_exp142_outputs,
+)
+from exp143_frozen_manifest_fit_stability import (
+    ExperimentConfig as Exp143Config,
+)
+from exp143_frozen_manifest_fit_stability import (
+    run_experiment as run_exp143,
+)
+from exp143_frozen_manifest_fit_stability import (
+    save_figures as save_exp143_figures,
+)
+from exp143_frozen_manifest_fit_stability import (
+    write_outputs as write_exp143_outputs,
+)
+from exp144_frozen_manifest_dimension_complexity_curve import (
+    ExperimentConfig as Exp144Config,
+)
+from exp144_frozen_manifest_dimension_complexity_curve import (
+    run_experiment as run_exp144,
+)
+from exp144_frozen_manifest_dimension_complexity_curve import (
+    save_figures as save_exp144_figures,
+)
+from exp144_frozen_manifest_dimension_complexity_curve import (
+    write_outputs as write_exp144_outputs,
+)
+from exp145_failed_manifest_no_fit_controls import (
+    ExperimentConfig as Exp145Config,
+)
+from exp145_failed_manifest_no_fit_controls import (
+    run_experiment as run_exp145,
+)
+from exp145_failed_manifest_no_fit_controls import (
+    write_outputs as write_exp145_outputs,
+)
+from exp146_frozen_manifest_representation_summary import (
+    run_experiment as run_exp146,
+)
+from exp146_frozen_manifest_representation_summary import (
+    write_outputs as write_exp146_outputs,
+)
+from exp147_manifest_representation_no_metric_exact_sanity import (
+    run_experiment as run_exp147,
+)
+from exp147_manifest_representation_no_metric_exact_sanity import (
+    write_outputs as write_exp147_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -3254,6 +3329,101 @@ def run_response_handoff_manifest_read_exact_sanity() -> None:
     print(f"exp139 wrote {output_path}")
 
 
+def run_manifest_representability_exact_sanity() -> None:
+    rows = run_exp140()
+    output_path = write_exp140_outputs(rows)
+    print(f"exp140 wrote {output_path}")
+
+
+def run_frozen_manifest_ordinal_representation() -> None:
+    config = Exp141Config(
+        manifest_dir=Path("outputs/manifests"),
+        dims=(1, 2),
+        steps=300,
+        restarts=1,
+        learning_rate=0.05,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp141(config)
+    data_path = write_exp141_outputs(rows, config.output_dir)
+    figure_paths = save_exp141_figures(rows, config.output_dir)
+    print(f"exp141 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_frozen_manifest_representation_nulls() -> None:
+    config = Exp142Config(
+        manifest_dir=Path("outputs/manifests"),
+        embedding_dim=2,
+        null_repetitions=2,
+        steps=300,
+        restarts=1,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp142(config)
+    data_path = write_exp142_outputs(rows, config.output_dir)
+    figure_paths = save_exp142_figures(rows, config.output_dir)
+    print(f"exp142 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_frozen_manifest_fit_stability() -> None:
+    config = Exp143Config(
+        manifest_dir=Path("outputs/manifests"),
+        embedding_dim=2,
+        restart_count=3,
+        steps=300,
+        learning_rate=0.05,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp143(config)
+    data_path = write_exp143_outputs(rows, config.output_dir)
+    figure_paths = save_exp143_figures(rows, config.output_dir)
+    print(f"exp143 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_frozen_manifest_dimension_complexity_curve() -> None:
+    config = Exp144Config(
+        manifest_dir=Path("outputs/manifests"),
+        candidate_dims=(1, 2, 3),
+        steps=300,
+        restarts=1,
+        learning_rate=0.05,
+        complexity_lambda=0.01,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp144(config)
+    data_path = write_exp144_outputs(rows, config.output_dir)
+    figure_paths = save_exp144_figures(rows, config.output_dir)
+    print(f"exp144 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_failed_manifest_no_fit_controls() -> None:
+    config = Exp145Config(
+        manifest_dir=Path("outputs/manifests"),
+        generate_failed_controls=True,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp145(config)
+    data_path = write_exp145_outputs(rows, config.output_dir)
+    print(f"exp145 wrote {data_path}")
+
+
+def run_frozen_manifest_representation_summary() -> None:
+    rows = run_exp146()
+    output_path = write_exp146_outputs(rows)
+    print(f"exp146 wrote {output_path}")
+
+
+def run_manifest_representation_no_metric_exact_sanity() -> None:
+    rows = run_exp147()
+    output_path = write_exp147_outputs(rows)
+    print(f"exp147 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -3391,6 +3561,14 @@ def main() -> None:
     run_response_handoff_failure_catalog()
     run_response_handoff_preregistration_rules()
     run_response_handoff_manifest_read_exact_sanity()
+    run_manifest_representability_exact_sanity()
+    run_frozen_manifest_ordinal_representation()
+    run_frozen_manifest_representation_nulls()
+    run_frozen_manifest_fit_stability()
+    run_frozen_manifest_dimension_complexity_curve()
+    run_failed_manifest_no_fit_controls()
+    run_frozen_manifest_representation_summary()
+    run_manifest_representation_no_metric_exact_sanity()
 
 
 if __name__ == "__main__":

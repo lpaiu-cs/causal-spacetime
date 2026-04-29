@@ -961,3 +961,11 @@ validation thresholds, constraint splits, null settings, stop rules, and
 forbidden interpretations. They do not contain fitted embeddings and do not
 imply distance or geometry. Future representability experiments must report
 both eligible and failed manifests.
+
+Milestone 32 performs latent ordinal representation diagnostics from frozen
+manifests. The fitted variables are mathematical representation variables, not
+spatial coordinates. The manifest train/held-out split is consumed exactly as
+exported and is not changed. Held-out performance is a diagnostic of
+response-comparison constraint generalization, not physical geometry. Null
+baselines test artifacts, not geometry, and failed manifests remain explicit
+no-fit rows.

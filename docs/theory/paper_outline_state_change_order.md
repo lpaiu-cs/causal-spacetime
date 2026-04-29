@@ -166,3 +166,11 @@ pools for future experiments. They record protocol settings, validation gates,
 constraint splits, null baselines, stop rules, and forbidden interpretations.
 Failed manifests are cataloged as negative results. The manifests contain no
 fitted embeddings and do not imply distance or geometry.
+
+## Milestone 32 Note
+
+Frozen handoff manifests are consumed by latent ordinal representation
+diagnostics. The manifest train split is used for fitting and the manifest
+held-out split is evaluated separately. The fitted coordinates are not spatial
+coordinates, null baselines test artifacts rather than geometry, and failed
+manifests remain visible in no-fit reports.

@@ -108,6 +108,9 @@ repository. Open proof obligations include:
   margin-confidence tradeoffs, and target/pair-node coverage.
 - preregistered handoff rules specifying which eligible and failed constraint
   pools may be exported as frozen inputs for future representability tests.
+- guarantees that latent ordinal representation diagnostics from frozen
+  manifests generalize beyond finite response-comparison constraints, including
+  null-baseline, restart-stability, and failed-manifest reporting obligations.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

@@ -612,3 +612,25 @@ manifests and that failure reasons remain visible. Exported manifests are
 frozen input specifications for future experiments. They contain
 response-comparison constraints and validation metadata, not embeddings or
 metric interpretations.
+
+## Milestone 32: Frozen Manifest Representation Diagnostics
+
+Validation adds:
+
+```text
+exact manifest-loading and fit sanity checks
+frozen-manifest latent ordinal representation curves
+representation null baselines
+restart and latent-order stability diagnostics
+dimension-complexity curves
+failed-manifest no-fit controls
+manifest-level aggregate summaries
+no-metric exact sanity checks
+```
+
+Expected behavior is that eligible manifests can be fit using only their
+manifest train split and evaluated on their manifest held-out split. Held-out
+performance is a diagnostic of constraint generalization, not physical
+geometry. Null baselines test representation artifacts, failed manifests are
+reported, and chosen latent dimension is representation complexity rather than
+a physical dimension claim.

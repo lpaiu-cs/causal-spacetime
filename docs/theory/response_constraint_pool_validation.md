@@ -59,3 +59,8 @@ Milestone 31 exports handoff manifests for pools that satisfy predeclared
 criteria. These manifests are frozen input specifications for future
 experiments. They do not contain fitted embeddings and do not imply distance
 or geometry.
+
+Milestone 32 is the first fitting consumer of those manifests. It fits latent
+ordinal representation models from the frozen train split and evaluates the
+frozen held-out split. This does not alter the validation gates, and it does
+not infer spatial distance or metric geometry.

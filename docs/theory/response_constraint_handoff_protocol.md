@@ -47,3 +47,9 @@ handoff gates are reported as negative results, not silently removed.
 
 Handoff eligibility does not imply metric representability. Passing handoff
 does not imply distance, geometry, or calibrated scale.
+
+Milestone 32 consumes these frozen manifests without changing their constraint
+splits. The manifest train split is used for latent ordinal representation
+fitting, while the manifest held-out split is evaluated only after fitting.
+Held-out performance is a diagnostic of constraint generalization, not
+physical geometry.

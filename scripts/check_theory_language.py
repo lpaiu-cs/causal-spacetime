@@ -109,6 +109,14 @@ BANNED_PHRASES = (
     "manifest contains metric reconstruction",
     "handoff exports embedding",
     "failed handoff is ignored",
+    "fitted coordinates are spatial coordinates",
+    "manifest embedding recovers geometry",
+    "ordinal representation proves metric",
+    "heldout violation proves space",
+    "latent representation is physical distance",
+    "dimension curve gives spacetime dimension",
+    "null fit proves geometry",
+    "manifest fit reconstructs distance",
 )
 
 

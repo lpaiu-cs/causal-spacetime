@@ -731,3 +731,16 @@ The manifest is a no-fit handoff artifact. It exports eligible constraint
 pools for future representability experiments, but it does not contain fitted
 embeddings and does not imply distance or geometry. Failed handoff gates are
 reported as negative results.
+
+## Milestone 32: Frozen-Manifest Representation Diagnostics
+
+Milestone 32 fits latent ordinal representation models from frozen manifests.
+The manifest was produced before fitting and supplies the train/held-out split;
+that split is not changed during the diagnostic. The fitted coordinates are
+not spatial coordinates. They are finite latent variables used to evaluate
+response-comparison constraint fit.
+
+Held-out violation, hinge loss, restart stability, null comparisons, and
+dimension-complexity curves are manifest-level diagnostics. Null baselines
+test artifacts, not geometry. Failed manifests remain in the summary as
+explicit no-fit rows.

@@ -71,3 +71,8 @@ representation.
 Milestone 31 records successful or failed validation outcomes in handoff
 manifests. A handoff manifest is a frozen input specification for future
 representability experiments, not a new rung of metric interpretation.
+
+Milestone 32 adds latent ordinal representation diagnostics that consume
+handoff manifests. This checks whether frozen response-comparison constraints
+can be fit by finite latent variables, but the fitted coordinates are not
+spatial coordinates and the exercise does not reconstruct metric geometry.
