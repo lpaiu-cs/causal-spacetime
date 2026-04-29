@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -24,6 +25,7 @@ BANNED_PHRASES = (
     "state-change network derives relativity",
     "state-change network derives quantum mechanics",
     "observer-like chain",
+    "observer quality",
     "observer quality score",
     "observer selection ambiguity",
     "true observer",
@@ -70,6 +72,16 @@ BANNED_PHRASES = (
     "echo response order derives metric",
     "stable response core is distance",
     "response layer is physical space",
+    "R_rank",
+    "echo distance",
+    "response distance",
+    "D_echo is distance",
+    "D_echo is duration",
+    "D_echo is time",
+    "gated echo fixes shortcut",
+    "stable response order is distance order",
+    "scalar representability proves geometry",
+    "scalar rank is metric",
 )
 
 
@@ -137,7 +149,12 @@ def find_language_violations(
         for line_number, line in enumerate(lines, start=1):
             lower = line.lower()
             for phrase in banned_phrases:
-                if phrase in lower:
+                pattern = (
+                    r"(?<![a-z0-9_])"
+                    + re.escape(phrase.lower())
+                    + r"(?![a-z0-9_])"
+                )
+                if re.search(pattern, lower):
                     if path_is_rejected_claims or allowed_context[line_number - 1]:
                         continue
                     violations.append(

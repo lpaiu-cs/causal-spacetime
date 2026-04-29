@@ -47,7 +47,7 @@ The reference-chain echo-order protocol recovers:
 
 ```text
 return_R(e; k) = min { j : e ≺_T r_j and j > k }
-delay_R(e; k) = return_R(e; k) - k
+D_echo(e; k) = return_R(e; k) - k
 ```
 
 In a clean motif network, the recovered echo-delay rank should match the
@@ -96,3 +96,11 @@ the pairwise echo-response order signature induced by recovered delay ranks.
 Clean layered motifs should recover the planted ordinal response structure,
 with ties inside a layer expected. Shortcut perturbations and coarse reference
 protocols test how much stable response-order core remains.
+
+## Milestone 27 Semantics
+
+Milestone 27 clarifies that the recovered motif quantity is `D_echo`, the
+earliest-return delay rank from the full transitive return spectrum. The
+planted delay rank remains a validation label. Full transitive spectra,
+retained-reference spectra, and immediate-edge spectra are different queries
+and should not be conflated.

@@ -182,11 +182,12 @@ If both brackets exist, define rank-level quantities:
 
 ```text
 T_rank(e) = p_O(e) + q_O(e)
-R_rank(e) = q_O(e) - p_O(e)
+W_rank(e) = q_O(e) - p_O(e)
 ```
 
-These use only observer tick order and causal trigger order. They do not use
-metric coordinates, seconds, or meters.
+`W_rank` is a passive bracket-width rank. These quantities use only observer
+tick order and causal trigger order. They do not use metric coordinates,
+seconds, or meters.
 
 ## Observer Slices
 
@@ -258,3 +259,17 @@ define an echo-response order signature. This signature records pairwise
 response-rank order, ties, and unresolved pairs. It remains a finite
 order-level diagnostic and does not identify response rank with spatial
 distance or metric geometry.
+
+## Echo-Order Semantics And Scalar Preconditions
+
+Milestone 27 separates passive bracket-width rank from fixed-emission
+echo-delay rank. `W_rank` names the passive bracket-width diagnostic, while
+`D_echo` names the earliest-return delay rank from the full transitive return
+spectrum for a chosen reference chain and emission position.
+
+The milestone also distinguishes `S_full`, `S_retained`, and `S_immediate`.
+Only `S_full` is the full transitive return spectrum; retained-reference and
+immediate-edge spectra answer different finite-protocol queries. Stable
+response-order cores are then checked for scalar ordinal representability by
+acyclicity and topological rank representation. This is a precondition
+diagnostic, not metric representability.

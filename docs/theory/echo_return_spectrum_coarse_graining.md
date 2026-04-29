@@ -8,15 +8,22 @@ resolution, edge resolution, or reference-chain resolution.
 ## Return-Spectrum Stability
 
 For a motif target `e` and reference emission position `k`, the return
-spectrum is the set of later reference-rank returns:
+full transitive return spectrum is the set of later reference-rank returns:
 
 ```text
-S_R(e; k) = { j - k : e ≺_T r_j, j > k }
+S_full(e; k) = { j - k : e ≺_T r_j, j > k }
 ```
 
 Return-spectrum stability asks whether this set, its earliest return, and its
 shortcut classification survive a controlled reduction of the finite
 description.
+
+Milestone 27 separates `S_full` from `S_retained` and `S_immediate`.
+Closure-preserving event thinning keeps the transitive reachability used by
+`S_full` among retained targets and reference events. Reference-chain
+subsampling changes the retained reference ticks queried by `S_retained`.
+Immediate-edge thinning changes the immediate graph before closure and can
+alter `S_immediate` and the derived transitive return spectrum.
 
 The diagnostics include:
 

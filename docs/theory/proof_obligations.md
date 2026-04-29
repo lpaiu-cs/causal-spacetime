@@ -94,6 +94,9 @@ repository. Open proof obligations include:
   coarse-graining, and reference-protocol variants,
 - representability conditions for stable response-order cores before any
   stronger metric interpretation is considered.
+- formal conditions under which scalar ordinal representability of a stable
+  response-order core is necessary or useful for later representability tests,
+  without treating that scalar rank as a metric object.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

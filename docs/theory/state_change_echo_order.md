@@ -35,22 +35,22 @@ return_R(e; k) = min { j : e ≺_T r_j and j > k }
 
 This is a position along the chosen reference chain. It is not a clock reading.
 
-## Echo-Delay Rank
+## Fixed-Emission Echo-Delay Rank
 
 The echo-delay rank is:
 
 ```text
-delay_R(e; k) = return_R(e; k) - k
+D_echo(e; k) = return_R(e; k) - k
 ```
 
-This is an order-level rank. It is not physical distance, metric radar
-distance, or a calibrated duration.
+This is a fixed-emission echo-delay rank. It is not distance, duration,
+speed, or a calibrated time label.
 
 For two reachable targets, the same-emission echo-order relation is:
 
 ```text
 e_a ≺^{echo}_{R,k} e_b
-  iff delay_R(e_a; k) < delay_R(e_b; k)
+  iff D_echo(e_a; k) < D_echo(e_b; k)
 ```
 
 Ties indicate finite rank resolution rather than a quantitative equality of
@@ -129,3 +129,19 @@ Milestone 26 applies the same echo-delay protocol to many motif targets at
 once. The resulting response-order signature records pairwise response-rank
 signs, unresolved pairs, and ties. It remains an ordinal response diagnostic,
 not metric radar distance or a spatial representation.
+
+## Milestone 27 Semantics
+
+Milestone 27 distinguishes full transitive, retained-reference, and
+immediate-edge return spectra:
+
+```text
+S_full(e; k)
+S_retained(e; k)
+S_immediate(e; k)
+```
+
+`D_echo` is the earliest-return delay rank from `S_full` for the selected
+reference chain and emission rank. A shortcut return is an earlier causal
+return selected by the earliest-return rule. Gated echo rules are separate
+predeclared protocols, not adjustments made after inspecting shortcuts.

@@ -124,3 +124,12 @@ controlled motif populations. Stable response-order cores identify pairwise
 ordinal structure that survives selected protocol variants. They are candidate
 inputs for future representability tests, not metric geometry or spatial
 distance.
+
+## Milestone 27 Note
+
+Echo-order semantics are cleaned before scalar ordinal representability
+diagnostics are introduced. The passive bracket-width rank is `W_rank`; the
+fixed-emission earliest-return delay rank is `D_echo`. Full transitive,
+retained-reference, and immediate-edge return spectra are distinct protocol
+queries. Scalar ordinal representability of a stable response-order core is an
+acyclicity and topological-rank precondition, not metric reconstruction.

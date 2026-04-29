@@ -926,3 +926,11 @@ Milestone 26 studies echo-response order signatures over motif populations.
 It compares planted, recovered, shortcut-perturbed, coarse-protocol, and
 reference-dependent response-rank orders. Stable response-order cores are
 treated as inputs for future representability tests, not as metric geometry.
+
+Milestone 27 cleans echo-order semantics before representability checks. It
+separates passive `W_rank` from fixed-emission `D_echo`, distinguishes
+`S_full`, `S_retained`, and `S_immediate`, compares predeclared gated echo
+protocols against the earliest-return rule, and checks whether stable
+response-order cores are scalar-rank representable. These are ordinal
+precondition diagnostics, not metric reconstruction, clock calibration, or
+spatial geometry.

@@ -666,3 +666,18 @@ that agree across selected protocol variants such as shortcut perturbations,
 closure-preserving event thinning, reference-chain subsampling, and immediate
 edge thinning. This is an ordinal response-structure diagnostic. It is not a
 spatial-distance claim, and it does not reconstruct metric geometry.
+
+## Milestone 27: Echo Semantics And Scalar Preconditions
+
+Milestone 27 separates passive bracket-width rank from fixed-emission
+echo-delay rank. The passive bracket diagnostic uses `W_rank`; the echo
+protocol uses `D_echo = min S_full` for a selected reference chain and emission
+position.
+
+The milestone also distinguishes full transitive return spectra from retained
+reference spectra and immediate-edge spectra. Gated echo is treated as a
+separate predeclared protocol, not as a correction after shortcuts are found.
+Stable response-order cores are then tested for scalar ordinal
+representability by cycle checks and topological rank representation. This is
+a precondition for later representability work, not a metric embedding or
+calibrated spatial model.

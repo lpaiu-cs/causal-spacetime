@@ -82,6 +82,13 @@ signatures. Stable response-order cores are interpreted as candidate ordinal
 inputs for later representability tests, not as spatial geometry or calibrated
 metric structure.
 
+Milestone 27 fixes echo-order terminology before those representability tests
+are attempted. Passive bracket-width rank is kept separate from fixed-emission
+`D_echo`, and full transitive spectra are distinguished from retained
+reference spectra and immediate-edge spectra. Scalar ordinal representability
+checks only acyclicity and topological rank representation of stable
+response-order cores.
+
 ## Oriented Radar And Atlas Tests
 
 An observer protocol plus beacon reference can provide signed coordinate

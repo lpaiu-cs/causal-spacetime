@@ -29,15 +29,20 @@ The echo protocol recovers the earliest available return:
 D_echo(e; k) = min { j - k : e ≺_T r_j, j > k }
 ```
 
-The full return spectrum is:
+The full transitive return spectrum is:
 
 ```text
-S_R(e; k) = { j - k : e ≺_T r_j, j > k }
+S_full(e; k) = { j - k : e ≺_T r_j, j > k }
 ```
 
 The spectrum records all later reference-chain positions reachable from the
 target. It does not require that the target was reached from the emission; that
 reachability is checked separately.
+
+With a full reference chain and transitive closure, `S_full` is generally a
+suffix from the earliest return to the last reachable reference position.
+Retained-reference spectra and immediate-edge spectra are different queries
+and can be sparse.
 
 ## Classifications
 
@@ -111,3 +116,15 @@ shortcut perturbations are applied to a population of motif targets. A
 shortcut-robust pair is one whose response-order sign survives the selected
 variants. This is an order-signature stability diagnostic, not a claim that
 shortcut depth or delay rank is a metric error.
+
+## Milestone 27 Extension
+
+Milestone 27 makes the earliest-return rule explicit:
+
+```text
+D_echo(e; k) = min S_full(e; k)
+```
+
+Gated-return rules are separate predeclared protocols. They can be compared
+against the earliest-return protocol, but they are not corrections applied
+after shortcut returns are observed.

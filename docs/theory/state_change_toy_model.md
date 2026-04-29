@@ -113,3 +113,15 @@ toy model. They use controlled motif targets and reference-chain protocols to
 compare response-rank order across protocol variants. The toy model still does
 not introduce metric coordinates, calibrated clocks, speed, or spatial
 geometry.
+
+## Milestone 27 Extension
+
+Milestone 27 cleans the echo-order semantics used by the toy model. Passive
+bracket-width rank is written as `W_rank`; fixed-emission echo-delay rank is
+written as `D_echo`. Full transitive, retained-reference, and immediate-edge
+return spectra are treated as distinct protocol queries.
+
+The milestone also adds scalar ordinal representability checks for stable
+response-order cores. These checks ask whether the finite response-order
+relation is acyclic enough to admit a topological rank representation. They do
+not infer metric distance, calibrated time, speed, or spatial geometry.

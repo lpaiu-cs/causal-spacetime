@@ -1026,6 +1026,60 @@ from exp106_echo_response_signature_stability_exact_sanity import (
 from exp106_echo_response_signature_stability_exact_sanity import (
     write_outputs as write_exp106_outputs,
 )
+from exp107_echo_order_semantics_exact_sanity import (
+    run_experiment as run_exp107,
+)
+from exp107_echo_order_semantics_exact_sanity import (
+    write_outputs as write_exp107_outputs,
+)
+from exp108_gated_echo_protocol_comparison import (
+    ExperimentConfig as Exp108Config,
+)
+from exp108_gated_echo_protocol_comparison import (
+    run_experiment as run_exp108,
+)
+from exp108_gated_echo_protocol_comparison import (
+    save_figures as save_exp108_figures,
+)
+from exp108_gated_echo_protocol_comparison import (
+    write_outputs as write_exp108_outputs,
+)
+from exp109_echo_delay_spacing_tie_resolution import (
+    ExperimentConfig as Exp109Config,
+)
+from exp109_echo_delay_spacing_tie_resolution import (
+    run_experiment as run_exp109,
+)
+from exp109_echo_delay_spacing_tie_resolution import (
+    save_figures as save_exp109_figures,
+)
+from exp109_echo_delay_spacing_tie_resolution import (
+    write_outputs as write_exp109_outputs,
+)
+from exp110_response_order_scalar_representability import (
+    ExperimentConfig as Exp110Config,
+)
+from exp110_response_order_scalar_representability import (
+    run_experiment as run_exp110,
+)
+from exp110_response_order_scalar_representability import (
+    save_figures as save_exp110_figures,
+)
+from exp110_response_order_scalar_representability import (
+    write_outputs as write_exp110_outputs,
+)
+from exp111_echo_terminology_audit import (
+    run_experiment as run_exp111,
+)
+from exp111_echo_terminology_audit import (
+    write_outputs as write_exp111_outputs,
+)
+from exp112_response_representability_exact_sanity import (
+    run_experiment as run_exp112,
+)
+from exp112_response_representability_exact_sanity import (
+    write_outputs as write_exp112_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2512,6 +2566,76 @@ def run_echo_response_signature_stability_exact_sanity() -> None:
     print(f"exp106 wrote {output_path}")
 
 
+def run_echo_order_semantics_exact_sanity() -> None:
+    rows = run_exp107()
+    output_path = write_exp107_outputs(rows)
+    print(f"exp107 wrote {output_path}")
+
+
+def run_gated_echo_protocol_comparison() -> None:
+    config = Exp108Config(
+        reference_length=32,
+        motif_count=20,
+        delay_ranks=(5, 8, 13),
+        shortcut_probability_values=(0.0, 0.5),
+        gate_delay_ranks=(1, 5),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp108(config)
+    data_path = write_exp108_outputs(rows, config.output_dir)
+    figure_paths = save_exp108_figures(rows, config.output_dir)
+    print(f"exp108 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_delay_spacing_tie_resolution() -> None:
+    config = Exp109Config(
+        reference_length_values=(64,),
+        emission_position=8,
+        layer_sets=("compact", "medium"),
+        targets_per_layer=5,
+        reference_strides=(1, 4),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp109(config)
+    data_path = write_exp109_outputs(rows, config.output_dir)
+    figure_paths = save_exp109_figures(rows, config.output_dir)
+    print(f"exp109 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_order_scalar_representability() -> None:
+    config = Exp110Config(
+        reference_length=48,
+        emission_position=6,
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        shortcut_probabilities=(0.0, 0.5),
+        reference_strides=(1, 2),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp110(config)
+    data_path = write_exp110_outputs(rows, config.output_dir)
+    figure_paths = save_exp110_figures(rows, config.output_dir)
+    print(f"exp110 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_echo_terminology_audit() -> None:
+    rows = run_exp111()
+    output_path = write_exp111_outputs(rows)
+    print(f"exp111 wrote {output_path}")
+
+
+def run_response_representability_exact_sanity() -> None:
+    rows = run_exp112()
+    output_path = write_exp112_outputs(rows)
+    print(f"exp112 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -2616,6 +2740,12 @@ def main() -> None:
     run_echo_response_reference_protocol_dependence()
     run_echo_response_order_precondition_diagnostics()
     run_echo_response_signature_stability_exact_sanity()
+    run_echo_order_semantics_exact_sanity()
+    run_gated_echo_protocol_comparison()
+    run_echo_delay_spacing_tie_resolution()
+    run_response_order_scalar_representability()
+    run_echo_terminology_audit()
+    run_response_representability_exact_sanity()
 
 
 if __name__ == "__main__":

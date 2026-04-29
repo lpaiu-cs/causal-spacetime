@@ -60,7 +60,14 @@ def return_delay_spectrum(
     target_index: int,
     emission_position: int,
 ) -> NDArray[np.int_]:
-    """Return sorted return-delay ranks for one target and emission."""
+    """Return sorted return-delay ranks for one target and emission.
+
+    When ``order_matrix`` is the full transitive closure and the supplied
+    reference chain is the full reference chain, this is S_full. In that case
+    the spectrum is usually suffix/range-like because reference chains are
+    themselves transitive. Retained/subsampled reference chains and immediate
+    edge spectra should be distinguished from this full transitive spectrum.
+    """
 
     positions = return_positions_for_target(
         order_matrix,

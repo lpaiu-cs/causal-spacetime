@@ -75,3 +75,14 @@ It does not reconstruct metric geometry, calibrated radar distance, speed,
 velocity, or finite-speed spatial geometry. It only asks whether controlled
 echo-response motif populations produce ordinal response structures that remain
 stable under specified finite protocol variations.
+
+## Milestone 27 Preconditions
+
+Milestone 27 adds scalar ordinal representability diagnostics for stable
+response-order cores. A nonzero response-order sign is treated as a directed
+ordinal constraint, and acyclicity is checked before assigning a topological
+rank representation.
+
+This is scalar ordinal representability, not metric representability. A stable
+response-order core that admits topological ranks is a candidate input for
+future representability tests, not a proof of geometry.

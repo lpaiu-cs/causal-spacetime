@@ -511,3 +511,23 @@ fine ranks and reduce strict pair resolution. Shortcut perturbations can
 change pairwise response-rank order, while stable response-order cores isolate
 pairs that remain robust across variants. These are preconditions for later
 representability tests, not metric reconstruction.
+
+## Milestone 27: Echo Semantics And Scalar Representability Preconditions
+
+Validation adds:
+
+```text
+exact S_full / S_retained / S_immediate semantics
+predeclared gated echo protocol comparison
+delay-spacing and reference-subsampling tie-resolution checks
+scalar ordinal representability diagnostics
+terminology audit
+exact representability sanity checks
+```
+
+Expected behavior is conservative. `S_full` should behave as a suffix in the
+full transitive closure with a full reference chain, while retained-reference
+and immediate-edge spectra can be sparse. Gated echo can suppress some early
+returns only because it is a different protocol selected before evaluation.
+Scalar-rank representability checks acyclicity of ordinal response constraints;
+it is not metric representability.
