@@ -132,6 +132,21 @@ BANNED_PHRASES = (
     "selected family is spatial geometry",
     "blocked families ignored",
     "threshold sensitivity chooses best threshold",
+    "failure analysis retunes thresholds",
+    "missing metric counts as pass",
+    "blocked family can be stress-tested anyway",
+    "stop condition ignored",
+    "remediation recovers geometry",
+    "failure decomposition proves metric",
+    "thresholds changed after failure",
+    "failed families dropped",
+    "remediation plan fixes geometry",
+    "remediation recovers metric",
+    "planned v2 family is current result",
+    "future run can execute now",
+    "thresholds lowered after failure",
+    "blocked family stress-tested anyway",
+    "remediation plan exports new fit",
 )
 
 

@@ -36,3 +36,9 @@ Milestone 34 defines cross-family carry-forward decisions using fixed
 diagnostic thresholds. Carry-forward is stress-test eligibility, not geometry.
 Provisional and blocked families remain reported, and threshold sensitivity is
 not threshold retuning.
+
+Milestone 35 decomposes failure modes after the carry-forward stop condition.
+It distinguishes measured failure from missing diagnostic metrics and keeps
+blocked, report-only, and failed-control families visible. It does not retune
+thresholds. It does not run stress tests. Future remediation must be
+preregistered.

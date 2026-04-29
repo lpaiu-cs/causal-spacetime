@@ -679,3 +679,46 @@ failed-control decisions. Carry-forward is stress-test eligibility, not
 geometry. Provisional and blocked families remain reported. Threshold
 sensitivity is not threshold retuning, and if no family passes then later
 stress tests should stop or run only report-only controls.
+
+## Milestone 35: Carry-Forward Failure Decomposition
+
+Validation adds:
+
+```text
+exact carry-forward failure decomposition sanity checks
+criterion-level failure decomposition
+cross-family diagnostic completeness audit
+stress-test stop-condition audit
+upstream remediation design table
+missing-metric impact report
+no-retuning compliance audit
+aggregate carry-forward failure report card
+exact final failure sanity checks
+```
+
+Expected behavior is that Milestone 35 decomposes failure modes after the
+carry-forward stop condition. It does not retune thresholds. It does not run
+stress tests. Missing metrics are not success and not the same as measured
+failure. Future remediation must be preregistered before execution-changing
+manifest work.
+
+## Milestone 36: Preregistered Remediation Plan
+
+Validation adds:
+
+```text
+exact remediation-plan sanity checks
+diagnostic-complete schema export
+failure-to-remediation mapping
+planned v2 manifest-family design
+remediation plan JSON export
+future manifest-run spec export
+no-execution audit
+aggregate remediation report card
+exact final remediation sanity checks
+```
+
+Expected behavior is that Milestone 36 produces a preregistered remediation
+plan. The plan is not executed in Milestone 36. It does not retune thresholds.
+It does not run stress tests. It does not fit new representation models.
+Future execution requires a new preregistered run.

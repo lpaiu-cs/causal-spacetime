@@ -191,3 +191,19 @@ provisional, blocked, report-only, or failed-control. Carry-forward is
 stress-test eligibility, not geometry. Threshold sensitivity is reported as
 sensitivity analysis only, and failed, ineligible, blocked, and provisional
 families remain visible.
+
+## Milestone 35 Note
+
+Carry-forward failure decomposition follows the stop condition from Milestone
+34. It separates measured failures from missing metrics, audits diagnostic
+completeness, and records report-only upstream remediation designs. It does
+not retune thresholds. It does not run stress tests. Missing metrics are not
+success and not the same as measured failure. Future remediation must be
+preregistered.
+
+## Milestone 36 Note
+
+Milestone 36 produces a preregistered remediation plan. The plan is not
+executed in Milestone 36. It does not retune thresholds. It does not run stress
+tests. It does not fit new representation models. Planned v2 families are not
+current results, and future execution requires a new preregistered run.

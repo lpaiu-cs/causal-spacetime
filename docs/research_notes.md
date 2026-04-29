@@ -769,3 +769,26 @@ Carry-forward is stress-test eligibility, not geometry. Provisional and
 blocked families remain reported. Threshold sensitivity is not threshold
 retuning; it is reported as sensitivity analysis only. If no family passes,
 later stress tests should stop or run only report-only controls.
+
+## Milestone 35: Carry-Forward Failure Decomposition
+
+Milestone 35 decomposes failure modes after the carry-forward stop condition.
+It separates measured failures, missing diagnostic metrics, stricter-threshold
+failures, null-taxonomy weakness, coverage weakness, restart or latent-order
+instability, accounting controls, and output-bundle incompleteness.
+
+This is not threshold retuning. It is not a stress test. Missing metrics are
+not success and not the same as measured failure. Upstream remediation
+proposals are design notes only; future remediation must be preregistered
+before execution.
+
+## Milestone 36: Preregistered Remediation Plan
+
+Milestone 36 preregisters a remediation plan. It defines diagnostic-complete
+manifest requirements, maps measured failures and missing metrics to future
+actions, and writes planned v2 manifest-family specifications.
+
+The plan is not executed in Milestone 36. It does not retune thresholds. It
+does not run stress tests. It does not fit new representation models. Planned
+v2 families are not current results, and future execution requires a new
+preregistered run.

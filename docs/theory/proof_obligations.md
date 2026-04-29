@@ -117,6 +117,12 @@ repository. Open proof obligations include:
 - carry-forward criteria that specify when family-level diagnostics are strong
   enough for later stress tests, while preserving blocked, provisional,
   ineligible, and failed-control accounting.
+- failure-decomposition criteria that distinguish measured failures from
+  missing diagnostics after a carry-forward stop condition, without retuning
+  thresholds or treating missing metrics as success.
+- diagnostic-complete remediation plans that predeclare future metric
+  production, planned manifest families, and no-execution boundaries before
+  any new manifest generation is attempted.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

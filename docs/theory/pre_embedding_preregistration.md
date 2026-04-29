@@ -59,3 +59,14 @@ are separated, and failed or ineligible manifests remain visible.
 Milestone 34 applies fixed carry-forward criteria to those reports. Threshold
 sensitivity is recorded as sensitivity analysis only, not as a way to choose a
 preferred threshold after the fact.
+
+Milestone 35 adds a no-retuning stop-condition audit. If carry-forward gates
+fail, the permitted continuation is failure decomposition and diagnostic
+completeness reporting. It does not retune thresholds. It does not run stress
+tests. Missing metrics are not success and not the same as measured failure.
+Future remediation must be preregistered.
+
+Milestone 36 records that future execution requires a new preregistered run.
+The remediation plan freezes intended metrics, planned families, forbidden
+interpretations, and the execution boundary before any future manifest
+generation is attempted.

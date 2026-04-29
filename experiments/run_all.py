@@ -1569,6 +1569,153 @@ from exp164_cross_family_robustness_final_sanity import (
 from exp164_cross_family_robustness_final_sanity import (
     write_outputs as write_exp164_outputs,
 )
+from exp165_carry_forward_failure_decomposition_exact_sanity import (
+    run_experiment as run_exp165,
+)
+from exp165_carry_forward_failure_decomposition_exact_sanity import (
+    write_outputs as write_exp165_outputs,
+)
+from exp166_carry_forward_failure_decomposition import (
+    ExperimentConfig as Exp166Config,
+)
+from exp166_carry_forward_failure_decomposition import (
+    run_experiment as run_exp166,
+)
+from exp166_carry_forward_failure_decomposition import (
+    save_figures as save_exp166_figures,
+)
+from exp166_carry_forward_failure_decomposition import (
+    write_outputs as write_exp166_outputs,
+)
+from exp167_cross_family_diagnostic_completeness_audit import (
+    ExperimentConfig as Exp167Config,
+)
+from exp167_cross_family_diagnostic_completeness_audit import (
+    run_experiment as run_exp167,
+)
+from exp167_cross_family_diagnostic_completeness_audit import (
+    save_figures as save_exp167_figures,
+)
+from exp167_cross_family_diagnostic_completeness_audit import (
+    write_outputs as write_exp167_outputs,
+)
+from exp168_stress_test_stop_condition_audit import (
+    ExperimentConfig as Exp168Config,
+)
+from exp168_stress_test_stop_condition_audit import (
+    run_experiment as run_exp168,
+)
+from exp168_stress_test_stop_condition_audit import (
+    write_outputs as write_exp168_outputs,
+)
+from exp169_upstream_remediation_design_table import (
+    ExperimentConfig as Exp169Config,
+)
+from exp169_upstream_remediation_design_table import (
+    run_experiment as run_exp169,
+)
+from exp169_upstream_remediation_design_table import (
+    write_outputs as write_exp169_outputs,
+)
+from exp170_missing_metric_impact_report import (
+    ExperimentConfig as Exp170Config,
+)
+from exp170_missing_metric_impact_report import (
+    run_experiment as run_exp170,
+)
+from exp170_missing_metric_impact_report import (
+    write_outputs as write_exp170_outputs,
+)
+from exp171_failure_decomposition_no_retuning_audit import (
+    run_experiment as run_exp171,
+)
+from exp171_failure_decomposition_no_retuning_audit import (
+    write_outputs as write_exp171_outputs,
+)
+from exp172_carry_forward_failure_report_card import (
+    ExperimentConfig as Exp172Config,
+)
+from exp172_carry_forward_failure_report_card import (
+    run_experiment as run_exp172,
+)
+from exp172_carry_forward_failure_report_card import (
+    write_outputs as write_exp172_outputs,
+)
+from exp173_carry_forward_failure_final_sanity import (
+    run_experiment as run_exp173,
+)
+from exp173_carry_forward_failure_final_sanity import (
+    write_outputs as write_exp173_outputs,
+)
+from exp174_remediation_plan_exact_sanity import (
+    run_experiment as run_exp174,
+)
+from exp174_remediation_plan_exact_sanity import (
+    write_outputs as write_exp174_outputs,
+)
+from exp175_diagnostic_complete_schema_export import (
+    run_experiment as run_exp175,
+)
+from exp175_diagnostic_complete_schema_export import (
+    write_outputs as write_exp175_outputs,
+)
+from exp176_failure_to_remediation_mapping import (
+    ExperimentConfig as Exp176Config,
+)
+from exp176_failure_to_remediation_mapping import (
+    run_experiment as run_exp176,
+)
+from exp176_failure_to_remediation_mapping import (
+    write_outputs as write_exp176_outputs,
+)
+from exp177_new_manifest_family_design_v2 import (
+    run_experiment as run_exp177,
+)
+from exp177_new_manifest_family_design_v2 import (
+    write_outputs as write_exp177_outputs,
+)
+from exp178_preregistered_remediation_plan_export import (
+    ExperimentConfig as Exp178Config,
+)
+from exp178_preregistered_remediation_plan_export import (
+    run_experiment as run_exp178,
+)
+from exp178_preregistered_remediation_plan_export import (
+    write_outputs as write_exp178_outputs,
+)
+from exp179_future_manifest_run_spec import (
+    ExperimentConfig as Exp179Config,
+)
+from exp179_future_manifest_run_spec import (
+    run_experiment as run_exp179,
+)
+from exp179_future_manifest_run_spec import (
+    write_outputs as write_exp179_outputs,
+)
+from exp180_remediation_no_execution_audit import (
+    ExperimentConfig as Exp180Config,
+)
+from exp180_remediation_no_execution_audit import (
+    run_experiment as run_exp180,
+)
+from exp180_remediation_no_execution_audit import (
+    write_outputs as write_exp180_outputs,
+)
+from exp181_remediation_plan_report_card import (
+    ExperimentConfig as Exp181Config,
+)
+from exp181_remediation_plan_report_card import (
+    run_experiment as run_exp181,
+)
+from exp181_remediation_plan_report_card import (
+    write_outputs as write_exp181_outputs,
+)
+from exp182_remediation_plan_final_sanity import (
+    run_experiment as run_exp182,
+)
+from exp182_remediation_plan_final_sanity import (
+    write_outputs as write_exp182_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -3735,6 +3882,128 @@ def run_cross_family_robustness_final_sanity() -> None:
     print(f"exp164 wrote {output_path}")
 
 
+def run_carry_forward_failure_decomposition_exact_sanity() -> None:
+    rows = run_exp165()
+    output_path = write_exp165_outputs(rows)
+    print(f"exp165 wrote {output_path}")
+
+
+def run_carry_forward_failure_decomposition() -> None:
+    config = Exp166Config(output_dir=Path("outputs"))
+    records, summary_rows = run_exp166(config)
+    paths = write_exp166_outputs(records, summary_rows, config.output_dir)
+    figure_paths = save_exp166_figures(summary_rows, config.output_dir)
+    print(f"exp166 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp166 wrote {len(figure_paths)} figures")
+
+
+def run_cross_family_diagnostic_completeness_audit() -> None:
+    config = Exp167Config(output_dir=Path("outputs"))
+    rows = run_exp167(config)
+    output_path = write_exp167_outputs(rows, config.output_dir)
+    figure_paths = save_exp167_figures(rows, config.output_dir)
+    print(f"exp167 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_stress_test_stop_condition_audit() -> None:
+    config = Exp168Config(output_dir=Path("outputs"))
+    rows = run_exp168(config)
+    output_path = write_exp168_outputs(rows, config.output_dir)
+    print(f"exp168 wrote {output_path}")
+
+
+def run_upstream_remediation_design_table() -> None:
+    config = Exp169Config(output_dir=Path("outputs"))
+    rows = run_exp169(config)
+    output_path = write_exp169_outputs(rows, config.output_dir)
+    print(f"exp169 wrote {output_path}")
+
+
+def run_missing_metric_impact_report() -> None:
+    config = Exp170Config(output_dir=Path("outputs"))
+    rows = run_exp170(config)
+    output_path = write_exp170_outputs(rows, config.output_dir)
+    print(f"exp170 wrote {output_path}")
+
+
+def run_failure_decomposition_no_retuning_audit() -> None:
+    rows = run_exp171()
+    output_path = write_exp171_outputs(rows)
+    print(f"exp171 wrote {output_path}")
+
+
+def run_carry_forward_failure_report_card() -> None:
+    config = Exp172Config(output_dir=Path("outputs"))
+    rows = run_exp172(config)
+    output_path = write_exp172_outputs(rows, config.output_dir)
+    print(f"exp172 wrote {output_path}")
+
+
+def run_carry_forward_failure_final_sanity() -> None:
+    rows = run_exp173()
+    output_path = write_exp173_outputs(rows)
+    print(f"exp173 wrote {output_path}")
+
+
+def run_remediation_plan_exact_sanity() -> None:
+    rows = run_exp174()
+    output_path = write_exp174_outputs(rows)
+    print(f"exp174 wrote {output_path}")
+
+
+def run_diagnostic_complete_schema_export() -> None:
+    rows, summary = run_exp175()
+    paths = write_exp175_outputs(rows, summary)
+    print(f"exp175 wrote {', '.join(str(path) for path in paths)}")
+
+
+def run_failure_to_remediation_mapping() -> None:
+    config = Exp176Config(output_dir=Path("outputs"))
+    rows = run_exp176(config)
+    output_path = write_exp176_outputs(rows, config.output_dir)
+    print(f"exp176 wrote {output_path}")
+
+
+def run_new_manifest_family_design_v2() -> None:
+    rows = run_exp177()
+    output_path = write_exp177_outputs(rows)
+    print(f"exp177 wrote {output_path}")
+
+
+def run_preregistered_remediation_plan_export() -> None:
+    config = Exp178Config(output_dir=Path("outputs"))
+    plan_path, rows = run_exp178(config)
+    output_path = write_exp178_outputs(rows, config.output_dir)
+    print(f"exp178 wrote {output_path} and {plan_path}")
+
+
+def run_future_manifest_run_spec() -> None:
+    config = Exp179Config(output_dir=Path("outputs"))
+    spec_path, rows = run_exp179(config)
+    output_path = write_exp179_outputs(rows, config.output_dir)
+    print(f"exp179 wrote {output_path} and {spec_path}")
+
+
+def run_remediation_no_execution_audit() -> None:
+    config = Exp180Config(output_dir=Path("outputs"))
+    rows = run_exp180(config)
+    output_path = write_exp180_outputs(rows, config.output_dir)
+    print(f"exp180 wrote {output_path}")
+
+
+def run_remediation_plan_report_card() -> None:
+    config = Exp181Config(output_dir=Path("outputs"))
+    rows = run_exp181(config)
+    output_path = write_exp181_outputs(rows, config.output_dir)
+    print(f"exp181 wrote {output_path}")
+
+
+def run_remediation_plan_final_sanity() -> None:
+    rows = run_exp182()
+    output_path = write_exp182_outputs(rows)
+    print(f"exp182 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -3897,6 +4166,24 @@ def main() -> None:
     run_stress_test_handoff_plan()
     run_cross_family_robustness_report_card()
     run_cross_family_robustness_final_sanity()
+    run_carry_forward_failure_decomposition_exact_sanity()
+    run_carry_forward_failure_decomposition()
+    run_cross_family_diagnostic_completeness_audit()
+    run_stress_test_stop_condition_audit()
+    run_upstream_remediation_design_table()
+    run_missing_metric_impact_report()
+    run_failure_decomposition_no_retuning_audit()
+    run_carry_forward_failure_report_card()
+    run_carry_forward_failure_final_sanity()
+    run_remediation_plan_exact_sanity()
+    run_diagnostic_complete_schema_export()
+    run_failure_to_remediation_mapping()
+    run_new_manifest_family_design_v2()
+    run_preregistered_remediation_plan_export()
+    run_future_manifest_run_spec()
+    run_remediation_no_execution_audit()
+    run_remediation_plan_report_card()
+    run_remediation_plan_final_sanity()
 
 
 if __name__ == "__main__":

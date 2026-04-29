@@ -983,3 +983,16 @@ or failed-control using fixed diagnostic thresholds. Carry-forward eligibility
 is not evidence of metric geometry. Failed, ineligible, blocked, and
 provisional families must remain visible in reports. No thresholds are retuned
 after seeing fit outcomes.
+
+Milestone 35 decomposes failure modes after the carry-forward stop condition.
+It audits why no family currently passes carry-forward, separates measured
+failures from missing-metric warnings, and records upstream remediation
+designs as report-only proposals. It does not retune thresholds. It does not
+run stress tests. Missing metrics are not success and not the same as measured
+failure. Future remediation must be preregistered.
+
+Milestone 36 produces a preregistered remediation plan. The plan is not
+executed in Milestone 36. It does not retune thresholds. It does not run stress
+tests. It does not fit new representation models. Planned v2 families are not
+current results. Missing-metric remediation and measured-failure remediation
+are distinct, and future execution requires a new preregistered run.

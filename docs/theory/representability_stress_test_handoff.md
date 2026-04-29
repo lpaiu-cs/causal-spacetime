@@ -30,3 +30,13 @@ Milestone 34 defines cross-family carry-forward decisions. Carry-forward is
 stress-test eligibility, not geometry. Provisional and blocked families remain
 reported. Threshold sensitivity is not threshold retuning. If no family passes,
 later stress tests should stop or run only report-only controls.
+
+Milestone 35 makes the stop condition explicit. It decomposes measured
+failures and missing diagnostics, audits completeness, and records upstream
+remediation designs without changing thresholds or running stress tests.
+Missing metrics are not success and not the same as measured failure. Future
+remediation must be preregistered.
+
+Milestone 36 produces a preregistered remediation plan but does not execute it.
+No stress tests are allowed until carry-forward or provisional families exist.
+Planned v2 families are future specifications, not current stress-test inputs.
