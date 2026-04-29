@@ -969,3 +969,10 @@ exported and is not changed. Held-out performance is a diagnostic of
 response-comparison constraint generalization, not physical geometry. Null
 baselines test artifacts, not geometry, and failed manifests remain explicit
 no-fit rows.
+
+Milestone 33 compares frozen manifest families under preregistered settings.
+The comparison does not retune thresholds after seeing fit results.
+Target-label permutation is a symmetry control, not a destructive null.
+Destructive nulls and marginal-preserving nulls are reported separately.
+Failed and ineligible manifests are included in accounting. No physical
+geometry is inferred.

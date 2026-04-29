@@ -76,3 +76,9 @@ Milestone 32 adds latent ordinal representation diagnostics that consume
 handoff manifests. This checks whether frozen response-comparison constraints
 can be fit by finite latent variables, but the fitted coordinates are not
 spatial coordinates and the exercise does not reconstruct metric geometry.
+
+Milestone 33 adds preregistered family comparison across frozen manifests.
+This is still inside the latent ordinal representation diagnostic level: it
+compares structured families, failed or ineligible controls, destructive
+nulls, symmetry controls, and marginal-preserving nulls without retuning
+thresholds. It does not add a calibrated metric level to the ladder.

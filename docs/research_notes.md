@@ -744,3 +744,16 @@ Held-out violation, hinge loss, restart stability, null comparisons, and
 dimension-complexity curves are manifest-level diagnostics. Null baselines
 test artifacts, not geometry. Failed manifests remain in the summary as
 explicit no-fit rows.
+
+## Milestone 33: Preregistered Manifest-Family Comparison
+
+Milestone 33 compares manifest families rather than tuning individual fits.
+Eligible rank-gap, combined, other eligible, ineligible, and failed-control
+families are evaluated under fixed settings. The comparison does not retune
+thresholds after seeing fit results.
+
+Target-label permutation is a symmetry control, not a destructive null.
+Shuffled sides and random constraints are destructive nulls, while delay,
+reachability, and same-marginal profile nulls are marginal-preserving
+baselines. Family-level fit quality is a latent ordinal diagnostic, not
+physical geometry, and failed and ineligible manifests must be reported.

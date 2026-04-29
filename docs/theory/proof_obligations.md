@@ -111,6 +111,9 @@ repository. Open proof obligations include:
 - guarantees that latent ordinal representation diagnostics from frozen
   manifests generalize beyond finite response-comparison constraints, including
   null-baseline, restart-stability, and failed-manifest reporting obligations.
+- preregistered family-level comparison rules for frozen manifests, including
+  destructive-null, symmetry-control, marginal-preserving-null, ineligible, and
+  failed-manifest accounting under fixed no-retuning settings.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

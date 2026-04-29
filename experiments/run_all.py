@@ -1416,6 +1416,78 @@ from exp147_manifest_representation_no_metric_exact_sanity import (
 from exp147_manifest_representation_no_metric_exact_sanity import (
     write_outputs as write_exp147_outputs,
 )
+from exp148_manifest_family_exact_sanity import (
+    run_experiment as run_exp148,
+)
+from exp148_manifest_family_exact_sanity import (
+    write_outputs as write_exp148_outputs,
+)
+from exp149_manifest_family_fit_comparison import (
+    ExperimentConfig as Exp149Config,
+)
+from exp149_manifest_family_fit_comparison import (
+    run_experiment as run_exp149,
+)
+from exp149_manifest_family_fit_comparison import (
+    save_figures as save_exp149_figures,
+)
+from exp149_manifest_family_fit_comparison import (
+    write_outputs as write_exp149_outputs,
+)
+from exp150_manifest_family_null_taxonomy import (
+    ExperimentConfig as Exp150Config,
+)
+from exp150_manifest_family_null_taxonomy import (
+    run_experiment as run_exp150,
+)
+from exp150_manifest_family_null_taxonomy import (
+    save_figures as save_exp150_figures,
+)
+from exp150_manifest_family_null_taxonomy import (
+    write_outputs as write_exp150_outputs,
+)
+from exp151_manifest_family_stricter_criteria import (
+    ExperimentConfig as Exp151Config,
+)
+from exp151_manifest_family_stricter_criteria import (
+    run_experiment as run_exp151,
+)
+from exp151_manifest_family_stricter_criteria import (
+    save_figures as save_exp151_figures,
+)
+from exp151_manifest_family_stricter_criteria import (
+    write_outputs as write_exp151_outputs,
+)
+from exp152_manifest_family_failed_manifest_accounting import (
+    ExperimentConfig as Exp152Config,
+)
+from exp152_manifest_family_failed_manifest_accounting import (
+    run_experiment as run_exp152,
+)
+from exp152_manifest_family_failed_manifest_accounting import (
+    save_figures as save_exp152_figures,
+)
+from exp152_manifest_family_failed_manifest_accounting import (
+    write_outputs as write_exp152_outputs,
+)
+from exp153_manifest_family_no_retuning_audit import (
+    run_experiment as run_exp153,
+)
+from exp153_manifest_family_no_retuning_audit import (
+    write_outputs as write_exp153_outputs,
+)
+from exp154_manifest_family_report_card import (
+    run_experiment as run_exp154,
+)
+from exp154_manifest_family_report_card import (
+    write_outputs as write_exp154_outputs,
+)
+from exp155_manifest_family_comparison_exact_sanity import (
+    run_experiment as run_exp155,
+)
+from exp155_manifest_family_comparison_exact_sanity import (
+    write_outputs as write_exp155_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -3424,6 +3496,95 @@ def run_manifest_representation_no_metric_exact_sanity() -> None:
     print(f"exp147 wrote {output_path}")
 
 
+def run_manifest_family_exact_sanity() -> None:
+    rows = run_exp148()
+    output_path = write_exp148_outputs(rows)
+    print(f"exp148 wrote {output_path}")
+
+
+def run_manifest_family_fit_comparison() -> None:
+    config = Exp149Config(
+        manifest_dir=Path("outputs/manifests"),
+        dims=(1, 2),
+        steps=300,
+        restarts=1,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    fit_rows, summary_rows, failed_rows = run_exp149(config)
+    paths = write_exp149_outputs(
+        fit_rows,
+        summary_rows,
+        failed_rows,
+        config.output_dir,
+    )
+    figure_paths = save_exp149_figures(summary_rows, config.output_dir)
+    print(f"exp149 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp149 wrote {len(figure_paths)} figures")
+
+
+def run_manifest_family_null_taxonomy() -> None:
+    config = Exp150Config(
+        manifest_dir=Path("outputs/manifests"),
+        embedding_dim=2,
+        null_repetitions=2,
+        steps=300,
+        restarts=1,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows, taxonomy_rows = run_exp150(config)
+    data_path = write_exp150_outputs(rows, config.output_dir)
+    figure_paths = save_exp150_figures(taxonomy_rows, config.output_dir)
+    print(f"exp150 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_manifest_family_stricter_criteria() -> None:
+    config = Exp151Config(
+        manifest_dir=Path("outputs/manifests"),
+        dims=(1, 2),
+        steps=300,
+        restarts=1,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp151(config)
+    data_path = write_exp151_outputs(rows, config.output_dir)
+    figure_paths = save_exp151_figures(rows, config.output_dir)
+    print(f"exp151 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_manifest_family_failed_manifest_accounting() -> None:
+    config = Exp152Config(
+        manifest_dir=Path("outputs/manifests"),
+        generate_failed_controls=True,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp152(config)
+    data_path = write_exp152_outputs(rows, config.output_dir)
+    figure_paths = save_exp152_figures(rows, config.output_dir)
+    print(f"exp152 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_manifest_family_no_retuning_audit() -> None:
+    rows = run_exp153()
+    output_path = write_exp153_outputs(rows)
+    print(f"exp153 wrote {output_path}")
+
+
+def run_manifest_family_report_card() -> None:
+    rows = run_exp154()
+    output_path = write_exp154_outputs(rows)
+    print(f"exp154 wrote {output_path}")
+
+
+def run_manifest_family_comparison_exact_sanity() -> None:
+    rows = run_exp155()
+    output_path = write_exp155_outputs(rows)
+    print(f"exp155 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -3569,6 +3730,14 @@ def main() -> None:
     run_failed_manifest_no_fit_controls()
     run_frozen_manifest_representation_summary()
     run_manifest_representation_no_metric_exact_sanity()
+    run_manifest_family_exact_sanity()
+    run_manifest_family_fit_comparison()
+    run_manifest_family_null_taxonomy()
+    run_manifest_family_stricter_criteria()
+    run_manifest_family_failed_manifest_accounting()
+    run_manifest_family_no_retuning_audit()
+    run_manifest_family_report_card()
+    run_manifest_family_comparison_exact_sanity()
 
 
 if __name__ == "__main__":

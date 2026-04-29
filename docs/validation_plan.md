@@ -634,3 +634,25 @@ performance is a diagnostic of constraint generalization, not physical
 geometry. Null baselines test representation artifacts, failed manifests are
 reported, and chosen latent dimension is representation complexity rather than
 a physical dimension claim.
+
+## Milestone 33: Preregistered Manifest-Family Comparison
+
+Validation adds:
+
+```text
+exact manifest-family sanity checks
+family-level latent ordinal fit comparison
+null taxonomy comparison
+stricter fixed criteria checks
+failed-manifest accounting
+no-retuning audit
+aggregate family report cards
+exact final family sanity checks
+```
+
+Expected behavior is that eligible structured families can be compared under
+fixed fit settings, while ineligible and failed manifests remain visible.
+Target-label permutation is a symmetry control. Destructive nulls and
+marginal-preserving nulls are reported separately. The family comparison does
+not retune thresholds after seeing fit results and does not infer physical
+geometry.

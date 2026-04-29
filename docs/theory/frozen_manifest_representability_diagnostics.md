@@ -32,3 +32,10 @@ The outcome of Milestone 32 is a manifest-level report: train and held-out
 violation rates, hinge losses, restart stability, null comparisons, and
 dimension-complexity diagnostics. These reports are finite response-comparison
 representation diagnostics only.
+
+Milestone 33 compares frozen manifest families under preregistered settings.
+It keeps the Milestone 32 fitting procedure fixed while grouping structured,
+ineligible, failed-control, destructive-null, symmetry-control, and
+marginal-preserving-null cases. Target-label permutation is treated as a
+symmetry control, not a destructive null. Family-level fit quality is a latent
+ordinal diagnostic, not physical geometry.

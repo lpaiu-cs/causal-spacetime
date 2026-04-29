@@ -49,3 +49,9 @@ Milestone 32 is the first consumer of those preregistered inputs. It fits
 latent ordinal representation models from frozen manifests, but it does not
 change the manifest train/held-out split, tune thresholds using held-out
 results, or exclude failed manifests after the fact.
+
+Milestone 33 extends the preregistration discipline to family-level reports.
+The family comparison uses fixed fit settings and fixed diagnostic thresholds;
+it does not retune after seeing fit outcomes. Target-label permutation is
+reported as a symmetry control, destructive nulls and marginal-preserving nulls
+are separated, and failed or ineligible manifests remain visible.

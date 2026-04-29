@@ -174,3 +174,12 @@ diagnostics. The manifest train split is used for fitting and the manifest
 held-out split is evaluated separately. The fitted coordinates are not spatial
 coordinates, null baselines test artifacts rather than geometry, and failed
 manifests remain visible in no-fit reports.
+
+## Milestone 33 Note
+
+Frozen manifest families are compared under preregistered settings. The
+comparison separates structured eligible families, ineligible and failed
+controls, destructive nulls, symmetry controls, and marginal-preserving nulls.
+Target-label permutation is a symmetry control, not a destructive null.
+Family-level fit quality is a latent ordinal diagnostic, not physical
+geometry, and failed or ineligible manifests remain in the accounting.

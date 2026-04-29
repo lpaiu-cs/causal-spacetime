@@ -53,3 +53,9 @@ splits. The manifest train split is used for latent ordinal representation
 fitting, while the manifest held-out split is evaluated only after fitting.
 Held-out performance is a diagnostic of constraint generalization, not
 physical geometry.
+
+Milestone 33 compares manifest families under fixed settings rather than
+retuning individual fits. Eligible, ineligible, failed, structured, destructive
+null, symmetry-control, and marginal-preserving-null families are all reported.
+The family comparison is a no-retuning diagnostic and does not turn handoff
+eligibility into a claim about distance or geometry.

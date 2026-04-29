@@ -117,6 +117,13 @@ BANNED_PHRASES = (
     "dimension curve gives spacetime dimension",
     "null fit proves geometry",
     "manifest fit reconstructs distance",
+    "family comparison proves geometry",
+    "manifest family recovers space",
+    "dimension selected is physical dimension",
+    "permuted target null destroys geometry",
+    "target permutation null proves structure",
+    "failed manifests ignored",
+    "stricter criteria prove metric",
 )
 
 
