@@ -947,3 +947,10 @@ protocols. These protocols produce response-profile dissimilarities and
 response-comparison constraints under declared missing-data policies. They are
 pre-metric and do not produce spatial distance. Null baselines are added before
 any ordinal embedding attempt.
+
+Milestone 30 validates response-comparison constraint pools. It adds
+held-out protocol agreement, bootstrap stability, null-baseline separation,
+margin filtering, and coverage diagnostics. It does not perform ordinal
+embedding. Passing validation gates makes a pool eligible for future
+representability experiments only under explicitly stated assumptions, and
+passing gates does not make constraints spatial distances.

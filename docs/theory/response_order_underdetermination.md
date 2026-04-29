@@ -71,3 +71,9 @@ They turn multi-reference profiles into pre-metric response-comparison
 constraints under declared missing-data policies. These constraints are useful
 inputs for future tests, but they are not target-target physical distances and
 do not justify ordinal embedding by themselves.
+
+Milestone 30 adds validation gates for those constraint pools. A pool must be
+checked for held-out protocol agreement, bootstrap stability, null-baseline
+separation, and coverage before it can be considered for future
+representability experiments. Gate passage is still a pre-metric eligibility
+diagnostic, not a spatial interpretation.

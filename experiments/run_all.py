@@ -1206,6 +1206,78 @@ from exp125_pairwise_response_null_admissibility_exact_sanity import (
 from exp125_pairwise_response_null_admissibility_exact_sanity import (
     write_outputs as write_exp125_outputs,
 )
+from exp126_response_constraint_pool_exact_sanity import (
+    run_experiment as run_exp126,
+)
+from exp126_response_constraint_pool_exact_sanity import (
+    write_outputs as write_exp126_outputs,
+)
+from exp127_response_constraint_heldout_protocol_validation import (
+    ExperimentConfig as Exp127Config,
+)
+from exp127_response_constraint_heldout_protocol_validation import (
+    run_experiment as run_exp127,
+)
+from exp127_response_constraint_heldout_protocol_validation import (
+    save_figures as save_exp127_figures,
+)
+from exp127_response_constraint_heldout_protocol_validation import (
+    write_outputs as write_exp127_outputs,
+)
+from exp128_response_constraint_bootstrap_stability import (
+    ExperimentConfig as Exp128Config,
+)
+from exp128_response_constraint_bootstrap_stability import (
+    run_experiment as run_exp128,
+)
+from exp128_response_constraint_bootstrap_stability import (
+    save_figures as save_exp128_figures,
+)
+from exp128_response_constraint_bootstrap_stability import (
+    write_outputs as write_exp128_outputs,
+)
+from exp129_response_constraint_null_separation import (
+    ExperimentConfig as Exp129Config,
+)
+from exp129_response_constraint_null_separation import (
+    run_experiment as run_exp129,
+)
+from exp129_response_constraint_null_separation import (
+    save_figures as save_exp129_figures,
+)
+from exp129_response_constraint_null_separation import (
+    write_outputs as write_exp129_outputs,
+)
+from exp130_response_constraint_pool_coverage import (
+    ExperimentConfig as Exp130Config,
+)
+from exp130_response_constraint_pool_coverage import (
+    run_experiment as run_exp130,
+)
+from exp130_response_constraint_pool_coverage import (
+    save_figures as save_exp130_figures,
+)
+from exp130_response_constraint_pool_coverage import (
+    write_outputs as write_exp130_outputs,
+)
+from exp131_response_constraint_validation_gate_summary import (
+    ExperimentConfig as Exp131Config,
+)
+from exp131_response_constraint_validation_gate_summary import (
+    run_experiment as run_exp131,
+)
+from exp131_response_constraint_validation_gate_summary import (
+    save_figures as save_exp131_figures,
+)
+from exp131_response_constraint_validation_gate_summary import (
+    write_outputs as write_exp131_outputs,
+)
+from exp132_response_constraint_validation_exact_sanity import (
+    run_experiment as run_exp132,
+)
+from exp132_response_constraint_validation_exact_sanity import (
+    write_outputs as write_exp132_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -2924,6 +2996,116 @@ def run_pairwise_response_null_admissibility_exact_sanity() -> None:
     print(f"exp125 wrote {output_path}")
 
 
+def run_response_constraint_pool_exact_sanity() -> None:
+    rows = run_exp126()
+    output_path = write_exp126_outputs(rows)
+    print(f"exp126 wrote {output_path}")
+
+
+def run_response_constraint_heldout_protocol_validation() -> None:
+    config = Exp127Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        train_fractions=(0.5,),
+        max_constraints=1000,
+        min_margins=(0.0, 0.05),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp127(config)
+    data_path = write_exp127_outputs(rows, config.output_dir)
+    figure_paths = save_exp127_figures(rows, config.output_dir)
+    print(f"exp127 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_constraint_bootstrap_stability() -> None:
+    config = Exp128Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        max_constraints=1000,
+        min_margin=0.05,
+        bootstrap_count=10,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp128(config)
+    data_path = write_exp128_outputs(rows, config.output_dir)
+    figure_paths = save_exp128_figures(rows, config.output_dir)
+    print(f"exp128 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_constraint_null_separation() -> None:
+    config = Exp129Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        max_constraints=1000,
+        min_margin=0.05,
+        null_repetitions=3,
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    summary_rows, by_type_rows = run_exp129(config)
+    data_paths = write_exp129_outputs(summary_rows, by_type_rows, config.output_dir)
+    figure_paths = save_exp129_figures(summary_rows, by_type_rows, config.output_dir)
+    print(
+        f"exp129 wrote {data_paths[0]}, {data_paths[1]}, "
+        f"and {len(figure_paths)} figures"
+    )
+
+
+def run_response_constraint_pool_coverage() -> None:
+    config = Exp130Config(
+        target_counts=(20,),
+        protocol_counts=(3, 5),
+        unique_rank_count=5,
+        reachable_probability=0.8,
+        max_constraints_values=(500, 1000),
+        min_margins=(0.0, 0.05),
+        repetitions=2,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp130(config)
+    data_path = write_exp130_outputs(rows, config.output_dir)
+    figure_paths = save_exp130_figures(rows, config.output_dir)
+    print(f"exp130 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_constraint_validation_gate_summary() -> None:
+    config = Exp131Config(
+        reference_length=48,
+        emission_positions=(6, 12, 18),
+        layer_delay_ranks=(3, 5, 8),
+        targets_per_layer=5,
+        max_constraints=1000,
+        min_margin_values=(0.0, 0.05),
+        repetitions=2,
+        bootstrap_count=10,
+        null_repetitions=3,
+        seed=0,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp131(config)
+    data_path = write_exp131_outputs(rows, config.output_dir)
+    figure_paths = save_exp131_figures(rows, config.output_dir)
+    print(f"exp131 wrote {data_path} and {len(figure_paths)} figures")
+
+
+def run_response_constraint_validation_exact_sanity() -> None:
+    rows = run_exp132()
+    output_path = write_exp132_outputs(rows)
+    print(f"exp132 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -3047,6 +3229,13 @@ def main() -> None:
     run_pairwise_response_missing_data_sensitivity()
     run_pairwise_response_protocol_choice_dependence()
     run_pairwise_response_null_admissibility_exact_sanity()
+    run_response_constraint_pool_exact_sanity()
+    run_response_constraint_heldout_protocol_validation()
+    run_response_constraint_bootstrap_stability()
+    run_response_constraint_null_separation()
+    run_response_constraint_pool_coverage()
+    run_response_constraint_validation_gate_summary()
+    run_response_constraint_validation_exact_sanity()
 
 
 if __name__ == "__main__":

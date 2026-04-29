@@ -59,3 +59,8 @@ separate pairwise comparison or calibration protocol is supplied.
 Milestone 29 supplies the first such pre-metric pairwise comparison protocols.
 They define response-profile dissimilarity under declared missing-data
 policies. They are admissible comparison protocols, not spatial measurements.
+
+Milestone 30 adds pre-embedding validation gates for the resulting
+response-comparison constraint pools. These gates test stability and coverage
+before any future representation experiment. They do not fit an embedding and
+do not validate physical distance.

@@ -61,3 +61,9 @@ to `pairwise_distance_order` by defining pre-metric pairwise response-profile
 comparison protocols. These protocols do not themselves reach the
 pairwise-distance-order rung; they only define response-comparison constraints
 that future work may test against stronger assumptions.
+
+Milestone 30 adds validation gates for those response-comparison constraint
+pools. Held-out protocol agreement, bootstrap stability, null-baseline
+separation, and coverage are necessary pre-embedding diagnostics. They still
+do not move the project to ordinal embedding or calibrated metric
+representation.

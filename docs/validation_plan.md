@@ -571,3 +571,24 @@ policies can produce different valid-pair coverage, ties, and response-order
 constraints. Null baselines should preserve selected marginals while disrupting
 cross-protocol target structure. No embedding or metric interpretation is
 performed.
+
+## Milestone 30: Response-Comparison Constraint Validation
+
+Validation adds:
+
+```text
+exact response-comparison constraint-pool sanity checks
+held-out protocol-column validation
+bootstrap protocol-column stability
+null-baseline separation diagnostics
+constraint target and pair-node coverage
+integrated validation-gate summaries
+exact validation sanity checks
+```
+
+Expected behavior is that larger margins may improve held-out agreement while
+reducing constraint count and coverage. Bootstrap stability should be stronger
+for coherent structured profiles than for sparse or tie-heavy profiles. Null
+baselines may remain difficult, but separation from them is required before
+any future representation test. This does not perform ordinal embedding, and
+passing validation gates does not make constraints spatial distances.

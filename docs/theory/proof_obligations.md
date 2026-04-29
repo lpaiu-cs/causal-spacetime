@@ -103,6 +103,9 @@ repository. Open proof obligations include:
 - admissibility criteria and stability conditions for pairwise
   response-profile comparison protocols, including null-baseline behavior,
   missing-data policy dependence, and protocol-choice dependence.
+- validation-gate criteria for response-comparison constraint pools, including
+  held-out protocol agreement, bootstrap stability, null-baseline separation,
+  margin-confidence tradeoffs, and target/pair-node coverage.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

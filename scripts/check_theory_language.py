@@ -95,6 +95,13 @@ BANNED_PHRASES = (
     "response profile recovers pairwise distance",
     "null baselines prove geometry",
     "pairwise response protocol derives space",
+    "validated constraints are distance",
+    "validated constraints are distance-order constraints",
+    "constraint pool recovers geometry",
+    "validation gates prove geometry",
+    "held-out agreement proves metric",
+    "null baseline separation proves space",
+    "pre-embedding validation reconstructs distance",
 )
 
 

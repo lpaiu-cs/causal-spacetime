@@ -68,3 +68,8 @@ comparison protocol. Null-baseline behavior does not prove geometry.
 Milestone 29 stops at response-comparison constraints. It does not fit
 embeddings, recover target-target distance, or interpret profile
 dissimilarity as spatial structure.
+
+Milestone 30 validates constraint pools produced by these comparison
+protocols. It checks held-out protocol agreement, bootstrap stability,
+null-baseline separation, and coverage before any future representation test.
+Validated pools remain pre-metric response-comparison outputs.

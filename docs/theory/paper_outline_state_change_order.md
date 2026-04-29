@@ -149,3 +149,12 @@ Admissible pairwise response-profile comparison protocols are introduced.
 They define pre-metric response-profile dissimilarities, missing-data policies,
 response-comparison constraints, and null baselines. No ordinal embedding or
 metric representation is attempted at this stage.
+
+## Milestone 30 Note
+
+Response-comparison constraint pools are validated by held-out protocol
+agreement, bootstrap stability, null-baseline separation, high-margin
+filtering, and coverage diagnostics. Passing validation gates makes a pool a
+candidate input for future representability tests only under explicit
+additional assumptions. It does not perform ordinal embedding and does not
+turn constraints into spatial distances.

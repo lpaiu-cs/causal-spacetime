@@ -706,3 +706,16 @@ The resulting constraints compare response-profile pairs. They are pre-metric
 response-comparison constraints, not spatial distance-order constraints. Null
 baselines are added to test whether protocol outputs are nontrivial before any
 future embedding attempt.
+
+## Milestone 30: Constraint Pool Validation
+
+Milestone 30 validates response-comparison constraint pools before any future
+representability experiment. The diagnostics include held-out protocol
+agreement, bootstrap stability, null-baseline separation, high-margin
+filtering, and target/pair-node coverage.
+
+The output is an admissible constraint-pool decision, not an embedding result.
+Gate failures are informative: they identify pools with too few constraints,
+low evaluability, weak agreement, excess inversions, weak null separation, or
+poor bootstrap stability. Passing gates does not make constraints spatial
+distances.
