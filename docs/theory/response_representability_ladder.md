@@ -82,3 +82,7 @@ This is still inside the latent ordinal representation diagnostic level: it
 compares structured families, failed or ineligible controls, destructive
 nulls, symmetry controls, and marginal-preserving nulls without retuning
 thresholds. It does not add a calibrated metric level to the ladder.
+
+Milestone 34 adds a carry-forward gate for future stress-test eligibility.
+This remains a pre-stress-test administrative and diagnostic step; it does not
+advance the ladder to calibrated geometry.

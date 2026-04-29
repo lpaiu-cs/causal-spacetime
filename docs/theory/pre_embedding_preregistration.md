@@ -55,3 +55,7 @@ The family comparison uses fixed fit settings and fixed diagnostic thresholds;
 it does not retune after seeing fit outcomes. Target-label permutation is
 reported as a symmetry control, destructive nulls and marginal-preserving nulls
 are separated, and failed or ineligible manifests remain visible.
+
+Milestone 34 applies fixed carry-forward criteria to those reports. Threshold
+sensitivity is recorded as sensitivity analysis only, not as a way to choose a
+preferred threshold after the fact.

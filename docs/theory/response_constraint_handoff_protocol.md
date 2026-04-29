@@ -59,3 +59,7 @@ retuning individual fits. Eligible, ineligible, failed, structured, destructive
 null, symmetry-control, and marginal-preserving-null families are all reported.
 The family comparison is a no-retuning diagnostic and does not turn handoff
 eligibility into a claim about distance or geometry.
+
+Milestone 34 turns fixed family diagnostics into carry-forward, provisional,
+blocked, report-only, or failed-control decisions for later stress-test
+planning. Carry-forward eligibility is not evidence of metric geometry.

@@ -39,3 +39,7 @@ ineligible, failed-control, destructive-null, symmetry-control, and
 marginal-preserving-null cases. Target-label permutation is treated as a
 symmetry control, not a destructive null. Family-level fit quality is a latent
 ordinal diagnostic, not physical geometry.
+
+Milestone 34 consumes those family-level reports to decide carry-forward
+eligibility for future stress tests. It performs no new fitting and does not
+retune thresholds after seeing fit outcomes.

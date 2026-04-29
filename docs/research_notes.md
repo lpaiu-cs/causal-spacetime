@@ -757,3 +757,15 @@ Shuffled sides and random constraints are destructive nulls, while delay,
 reachability, and same-marginal profile nulls are marginal-preserving
 baselines. Family-level fit quality is a latent ordinal diagnostic, not
 physical geometry, and failed and ineligible manifests must be reported.
+
+## Milestone 34: Cross-Family Robustness Carry-Forward Criteria
+
+Milestone 34 defines cross-family carry-forward decisions. It reads the
+Milestone 33 family outputs and classifies each family as carry-forward,
+provisional, blocked, report-only, or failed-control under fixed diagnostic
+thresholds.
+
+Carry-forward is stress-test eligibility, not geometry. Provisional and
+blocked families remain reported. Threshold sensitivity is not threshold
+retuning; it is reported as sensitivity analysis only. If no family passes,
+later stress tests should stop or run only report-only controls.

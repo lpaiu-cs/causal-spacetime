@@ -31,3 +31,8 @@ only reports successful fits would lose the negative evidence supplied by
 handoff validation and failed-control manifests. No physical geometry is
 inferred from family-level pass rates, null separation, or selected latent
 representation dimension.
+
+Milestone 34 defines cross-family carry-forward decisions using fixed
+diagnostic thresholds. Carry-forward is stress-test eligibility, not geometry.
+Provisional and blocked families remain reported, and threshold sensitivity is
+not threshold retuning.

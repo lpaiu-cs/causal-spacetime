@@ -656,3 +656,26 @@ Target-label permutation is a symmetry control. Destructive nulls and
 marginal-preserving nulls are reported separately. The family comparison does
 not retune thresholds after seeing fit results and does not infer physical
 geometry.
+
+## Milestone 34: Cross-Family Robustness Carry-Forward Criteria
+
+Validation adds:
+
+```text
+exact cross-family robustness sanity checks
+fixed robustness criteria table
+family robustness decision outputs
+threshold-sensitivity diagnostics
+carry-forward registry export
+failed/provisional accounting
+future stress-test handoff plan
+aggregate robustness report card
+exact final robustness sanity checks
+```
+
+Expected behavior is that families are classified using fixed diagnostic
+thresholds into carry-forward, provisional, blocked, report-only, or
+failed-control decisions. Carry-forward is stress-test eligibility, not
+geometry. Provisional and blocked families remain reported. Threshold
+sensitivity is not threshold retuning, and if no family passes then later
+stress tests should stop or run only report-only controls.

@@ -1488,6 +1488,87 @@ from exp155_manifest_family_comparison_exact_sanity import (
 from exp155_manifest_family_comparison_exact_sanity import (
     write_outputs as write_exp155_outputs,
 )
+from exp156_cross_family_robustness_exact_sanity import (
+    run_experiment as run_exp156,
+)
+from exp156_cross_family_robustness_exact_sanity import (
+    write_outputs as write_exp156_outputs,
+)
+from exp157_cross_family_robustness_criteria_table import (
+    run_experiment as run_exp157,
+)
+from exp157_cross_family_robustness_criteria_table import (
+    write_outputs as write_exp157_outputs,
+)
+from exp158_cross_family_robustness_decision import (
+    ExperimentConfig as Exp158Config,
+)
+from exp158_cross_family_robustness_decision import (
+    run_experiment as run_exp158,
+)
+from exp158_cross_family_robustness_decision import (
+    save_figures as save_exp158_figures,
+)
+from exp158_cross_family_robustness_decision import (
+    write_outputs as write_exp158_outputs,
+)
+from exp159_cross_family_robustness_threshold_sensitivity import (
+    ExperimentConfig as Exp159Config,
+)
+from exp159_cross_family_robustness_threshold_sensitivity import (
+    run_experiment as run_exp159,
+)
+from exp159_cross_family_robustness_threshold_sensitivity import (
+    save_figures as save_exp159_figures,
+)
+from exp159_cross_family_robustness_threshold_sensitivity import (
+    write_outputs as write_exp159_outputs,
+)
+from exp160_carry_forward_registry_export import (
+    ExperimentConfig as Exp160Config,
+)
+from exp160_carry_forward_registry_export import (
+    run_experiment as run_exp160,
+)
+from exp160_carry_forward_registry_export import (
+    write_outputs as write_exp160_outputs,
+)
+from exp161_cross_family_failed_provisional_accounting import (
+    ExperimentConfig as Exp161Config,
+)
+from exp161_cross_family_failed_provisional_accounting import (
+    run_experiment as run_exp161,
+)
+from exp161_cross_family_failed_provisional_accounting import (
+    save_figures as save_exp161_figures,
+)
+from exp161_cross_family_failed_provisional_accounting import (
+    write_outputs as write_exp161_outputs,
+)
+from exp162_stress_test_handoff_plan import (
+    ExperimentConfig as Exp162Config,
+)
+from exp162_stress_test_handoff_plan import (
+    run_experiment as run_exp162,
+)
+from exp162_stress_test_handoff_plan import (
+    write_outputs as write_exp162_outputs,
+)
+from exp163_cross_family_robustness_report_card import (
+    ExperimentConfig as Exp163Config,
+)
+from exp163_cross_family_robustness_report_card import (
+    run_experiment as run_exp163,
+)
+from exp163_cross_family_robustness_report_card import (
+    write_outputs as write_exp163_outputs,
+)
+from exp164_cross_family_robustness_final_sanity import (
+    run_experiment as run_exp164,
+)
+from exp164_cross_family_robustness_final_sanity import (
+    write_outputs as write_exp164_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -3585,6 +3666,75 @@ def run_manifest_family_comparison_exact_sanity() -> None:
     print(f"exp155 wrote {output_path}")
 
 
+def run_cross_family_robustness_exact_sanity() -> None:
+    rows = run_exp156()
+    output_path = write_exp156_outputs(rows)
+    print(f"exp156 wrote {output_path}")
+
+
+def run_cross_family_robustness_criteria_table() -> None:
+    rows = run_exp157()
+    output_path = write_exp157_outputs(rows)
+    print(f"exp157 wrote {output_path}")
+
+
+def run_cross_family_robustness_decision() -> None:
+    config = Exp158Config(output_dir=Path("outputs"))
+    metrics, decisions = run_exp158(config)
+    paths = write_exp158_outputs(metrics, decisions, config.output_dir)
+    figure_paths = save_exp158_figures(decisions, config.output_dir)
+    print(f"exp158 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp158 wrote {len(figure_paths)} figures")
+
+
+def run_cross_family_robustness_threshold_sensitivity() -> None:
+    config = Exp159Config(
+        output_dir=Path("outputs"),
+        heldout_thresholds=(0.20, 0.25),
+        null_gap_thresholds=(0.05, 0.10),
+        stricter_pass_thresholds=(0.25, 0.50),
+    )
+    rows = run_exp159(config)
+    output_path = write_exp159_outputs(rows, config.output_dir)
+    figure_paths = save_exp159_figures(rows, config.output_dir)
+    print(f"exp159 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_carry_forward_registry_export() -> None:
+    config = Exp160Config(output_dir=Path("outputs"))
+    registry_path, rows = run_exp160(config)
+    output_path = write_exp160_outputs(rows, config.output_dir)
+    print(f"exp160 wrote {output_path} and {registry_path}")
+
+
+def run_cross_family_failed_provisional_accounting() -> None:
+    config = Exp161Config(output_dir=Path("outputs"))
+    rows = run_exp161(config)
+    output_path = write_exp161_outputs(rows, config.output_dir)
+    figure_paths = save_exp161_figures(rows, config.output_dir)
+    print(f"exp161 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_stress_test_handoff_plan() -> None:
+    config = Exp162Config(output_dir=Path("outputs"))
+    rows = run_exp162(config)
+    output_path = write_exp162_outputs(rows, config.output_dir)
+    print(f"exp162 wrote {output_path}")
+
+
+def run_cross_family_robustness_report_card() -> None:
+    config = Exp163Config(output_dir=Path("outputs"))
+    rows = run_exp163(config)
+    output_path = write_exp163_outputs(rows, config.output_dir)
+    print(f"exp163 wrote {output_path}")
+
+
+def run_cross_family_robustness_final_sanity() -> None:
+    rows = run_exp164()
+    output_path = write_exp164_outputs(rows)
+    print(f"exp164 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -3738,6 +3888,15 @@ def main() -> None:
     run_manifest_family_no_retuning_audit()
     run_manifest_family_report_card()
     run_manifest_family_comparison_exact_sanity()
+    run_cross_family_robustness_exact_sanity()
+    run_cross_family_robustness_criteria_table()
+    run_cross_family_robustness_decision()
+    run_cross_family_robustness_threshold_sensitivity()
+    run_carry_forward_registry_export()
+    run_cross_family_failed_provisional_accounting()
+    run_stress_test_handoff_plan()
+    run_cross_family_robustness_report_card()
+    run_cross_family_robustness_final_sanity()
 
 
 if __name__ == "__main__":

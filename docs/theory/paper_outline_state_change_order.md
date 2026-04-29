@@ -183,3 +183,11 @@ controls, destructive nulls, symmetry controls, and marginal-preserving nulls.
 Target-label permutation is a symmetry control, not a destructive null.
 Family-level fit quality is a latent ordinal diagnostic, not physical
 geometry, and failed or ineligible manifests remain in the accounting.
+
+## Milestone 34 Note
+
+Cross-family robustness criteria classify families as carry-forward,
+provisional, blocked, report-only, or failed-control. Carry-forward is
+stress-test eligibility, not geometry. Threshold sensitivity is reported as
+sensitivity analysis only, and failed, ineligible, blocked, and provisional
+families remain visible.

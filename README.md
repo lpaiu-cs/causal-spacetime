@@ -976,3 +976,10 @@ Target-label permutation is a symmetry control, not a destructive null.
 Destructive nulls and marginal-preserving nulls are reported separately.
 Failed and ineligible manifests are included in accounting. No physical
 geometry is inferred.
+
+Milestone 34 defines carry-forward eligibility for future stress tests.
+Families are classified as carry-forward, provisional, blocked, report-only,
+or failed-control using fixed diagnostic thresholds. Carry-forward eligibility
+is not evidence of metric geometry. Failed, ineligible, blocked, and
+provisional families must remain visible in reports. No thresholds are retuned
+after seeing fit outcomes.

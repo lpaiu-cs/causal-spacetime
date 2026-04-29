@@ -124,6 +124,14 @@ BANNED_PHRASES = (
     "target permutation null proves structure",
     "failed manifests ignored",
     "stricter criteria prove metric",
+    "carry-forward proves geometry",
+    "family robustness proves geometry",
+    "family-level fit recovers space",
+    "carry-forward family recovers distance",
+    "stress-test eligibility proves metric",
+    "selected family is spatial geometry",
+    "blocked families ignored",
+    "threshold sensitivity chooses best threshold",
 )
 
 
@@ -178,6 +186,24 @@ def _allowed_rejected_contexts(lines: list[str]) -> list[bool]:
     return allowed
 
 
+def _allowed_python_forbidden_contexts(path: Path, lines: list[str]) -> list[bool]:
+    """Mark lines inside explicit Python forbidden-interpretation helpers."""
+
+    allowed = [False] * len(lines)
+    if path.suffix != ".py":
+        return allowed
+    active_indent: int | None = None
+    for index, line in enumerate(lines):
+        stripped = line.lstrip()
+        indent = len(line) - len(stripped)
+        if active_indent is not None and stripped and indent <= active_indent:
+            active_indent = None
+        if stripped.startswith("def forbidden_"):
+            active_indent = indent
+        allowed[index] = active_indent is not None
+    return allowed
+
+
 def find_language_violations(
     files: list[Path],
     banned_phrases: tuple[str, ...] = BANNED_PHRASES,
@@ -188,6 +214,7 @@ def find_language_violations(
     for path in files:
         lines = path.read_text(encoding="utf-8").splitlines()
         allowed_context = _allowed_rejected_contexts(lines)
+        python_forbidden_context = _allowed_python_forbidden_contexts(path, lines)
         path_is_rejected_claims = path.name == "rejected_claims.md"
         for line_number, line in enumerate(lines, start=1):
             lower = line.lower()
@@ -198,7 +225,11 @@ def find_language_violations(
                     + r"(?![a-z0-9_])"
                 )
                 if re.search(pattern, lower):
-                    if path_is_rejected_claims or allowed_context[line_number - 1]:
+                    if (
+                        path_is_rejected_claims
+                        or allowed_context[line_number - 1]
+                        or python_forbidden_context[line_number - 1]
+                    ):
                         continue
                     violations.append(
                         LanguageViolation(
