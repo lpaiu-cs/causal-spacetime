@@ -2118,6 +2118,48 @@ from exp263_v3_protocol_no_retuning_audit import (
 from exp264_v3_protocol_blocked_v4_final_sanity import (
     main as run_exp264_main,
 )
+from exp265_v4_protocol_execution_spec_exact_sanity import (
+    main as run_exp265_main,
+)
+from exp266_v4_protocol_mapping_exact_sanity import (
+    main as run_exp266_main,
+)
+from exp267_v4_protocol_manifest_generation import (
+    main as run_exp267_main,
+)
+from exp268_v4_protocol_manifest_metadata_audit import (
+    main as run_exp268_main,
+)
+from exp269_v4_protocol_family_fit_diagnostics import (
+    main as run_exp269_main,
+)
+from exp270_v4_protocol_null_taxonomy_diagnostics import (
+    main as run_exp270_main,
+)
+from exp271_v4_protocol_stricter_criteria_diagnostics import (
+    main as run_exp271_main,
+)
+from exp272_v4_protocol_failed_accounting import (
+    main as run_exp272_main,
+)
+from exp273_v4_protocol_coverage_metrics import (
+    main as run_exp273_main,
+)
+from exp274_v4_protocol_restart_latent_order_stability import (
+    main as run_exp274_main,
+)
+from exp275_v4_protocol_no_retuning_audit import (
+    main as run_exp275_main,
+)
+from exp276_v4_protocol_required_metric_aggregation import (
+    main as run_exp276_main,
+)
+from exp277_v4_protocol_diagnostic_complete_bundle_report import (
+    main as run_exp277_main,
+)
+from exp278_v4_protocol_manifest_generation_final_sanity import (
+    main as run_exp278_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4862,6 +4904,62 @@ def run_v3_protocol_blocked_v4_final_sanity() -> None:
     run_exp264_main()
 
 
+def run_v4_protocol_execution_spec_exact_sanity() -> None:
+    run_exp265_main()
+
+
+def run_v4_protocol_mapping_exact_sanity() -> None:
+    run_exp266_main()
+
+
+def run_v4_protocol_manifest_generation() -> None:
+    run_exp267_main()
+
+
+def run_v4_protocol_manifest_metadata_audit() -> None:
+    run_exp268_main()
+
+
+def run_v4_protocol_family_fit_diagnostics() -> None:
+    run_exp269_main()
+
+
+def run_v4_protocol_null_taxonomy_diagnostics() -> None:
+    run_exp270_main()
+
+
+def run_v4_protocol_stricter_criteria_diagnostics() -> None:
+    run_exp271_main()
+
+
+def run_v4_protocol_failed_accounting() -> None:
+    run_exp272_main()
+
+
+def run_v4_protocol_coverage_metrics() -> None:
+    run_exp273_main()
+
+
+def run_v4_protocol_restart_latent_order_stability() -> None:
+    run_exp274_main()
+
+
+def run_v4_protocol_no_retuning_audit() -> None:
+    run_exp275_main()
+
+
+def run_v4_protocol_required_metric_aggregation() -> None:
+    run_exp276_main()
+
+
+def run_v4_protocol_diagnostic_complete_bundle_report() -> None:
+    run_exp277_main()
+
+
+def run_v4_protocol_manifest_generation_final_sanity() -> None:
+    run_exp278_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -5124,6 +5222,20 @@ def main() -> None:
     run_v3_protocol_blocked_decision_report_card()
     run_v3_protocol_blocked_no_retuning_audit()
     run_v3_protocol_blocked_v4_final_sanity()
+    run_v4_protocol_execution_spec_exact_sanity()
+    run_v4_protocol_mapping_exact_sanity()
+    run_v4_protocol_manifest_generation()
+    run_v4_protocol_manifest_metadata_audit()
+    run_v4_protocol_family_fit_diagnostics()
+    run_v4_protocol_null_taxonomy_diagnostics()
+    run_v4_protocol_stricter_criteria_diagnostics()
+    run_v4_protocol_failed_accounting()
+    run_v4_protocol_coverage_metrics()
+    run_v4_protocol_restart_latent_order_stability()
+    run_v4_protocol_no_retuning_audit()
+    run_v4_protocol_required_metric_aggregation()
+    run_v4_protocol_diagnostic_complete_bundle_report()
+    run_v4_protocol_manifest_generation_final_sanity()
 
 
 if __name__ == "__main__":

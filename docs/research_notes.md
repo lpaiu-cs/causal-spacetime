@@ -15,6 +15,17 @@ does not run stress tests. It does not execute v4. V4 design is planned-only and
 requires a later execution milestone. Report-only counterfactuals are recorded
 as diagnostics and do not alter decisions.
 
+## Milestone 44: V4 Protocol Manifest-Generation Run
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run
+from `outputs/remediation/v4_protocol_preregistration_spec_m43.json`. It
+produces production v4 handoff manifests and a diagnostic-complete v4 output
+bundle.
+
+It does not evaluate carry-forward decisions. It does not run stress tests. It
+does not retune thresholds. It does not infer metric geometry.
+Diagnostic-complete v4 output is not carry-forward success.
+
 ## Milestone 18: State-Change Causal Order Refactor
 
 Milestone 18 is a theory refactor. It reorganizes the earlier reconstruction

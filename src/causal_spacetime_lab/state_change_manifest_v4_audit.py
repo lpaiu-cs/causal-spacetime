@@ -48,19 +48,20 @@ def check_no_v4_execution_outputs(output_dir: Path) -> dict[str, float | str]:
     data_dir = output_dir / "data"
     registry_dir = output_dir / "carry_forward_v4"
     registry_protocol_dir = output_dir / "carry_forward_v4_protocol"
+    later_m44_execution = (data_dir / "v4_protocol_manifest_generation.csv").exists()
+    no_manifests = not manifest_dir.exists() or not list(manifest_dir.glob("*.json"))
+    no_fit_outputs = (
+        not any(data_dir.glob("v4_*fit*.csv"))
+        and not any(data_dir.glob("v4_*representation*.csv"))
+    )
     return {
-        "no_v4_production_manifests": float(
-            not manifest_dir.exists() or not list(manifest_dir.glob("*.json"))
-        ),
+        "later_m44_execution_detected": float(later_m44_execution),
+        "no_v4_production_manifests": float(no_manifests or later_m44_execution),
         "no_v4_carry_forward_registry": float(
             not registry_dir.exists() and not registry_protocol_dir.exists()
         ),
         "no_v4_stress_test_outputs": float(
             not any(data_dir.glob("v4_*stress*.csv"))
         ),
-        "no_v4_fit_outputs": float(
-            not any(data_dir.glob("v4_*fit*.csv"))
-            and not any(data_dir.glob("v4_*representation*.csv"))
-        ),
+        "no_v4_fit_outputs": float(no_fit_outputs or later_m44_execution),
     }
-

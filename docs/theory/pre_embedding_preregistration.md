@@ -112,3 +112,11 @@ Milestone 43 audits why v3 protocol families remain blocked and records a v4
 upstream remediation design before execution. It does not change M42 decisions.
 It does not retune thresholds. It does not run stress tests. It does not execute
 v4. V4 design is planned-only and requires a later execution milestone.
+
+## Milestone 44 Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run
+from the frozen M43 preregistration. It does not evaluate carry-forward
+decisions. It does not run stress tests. It does not retune thresholds. It does
+not infer metric geometry. Diagnostic-complete v4 output is not carry-forward
+success.

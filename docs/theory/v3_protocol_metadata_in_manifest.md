@@ -24,3 +24,11 @@ Protocol metadata, profile metadata, and provenance metadata are preconditions
 for admissibility. They do not imply carry-forward. M42 does not regenerate
 manifests, rerun fits, retune thresholds, or run stress tests. Carry-forward is
 stress-test eligibility, not geometry.
+
+## Milestone 44 Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run and
+continues to require measurement protocol, profile, and handoff provenance
+metadata. It does not evaluate carry-forward decisions. It does not run stress
+tests. It does not retune thresholds. It does not infer metric geometry.
+Diagnostic-complete v4 output is not carry-forward success.

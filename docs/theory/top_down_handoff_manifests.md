@@ -30,3 +30,11 @@ as evidence. It audits why v3 protocol families remain blocked and
 preregisters planned-only v4 remediation. It does not change M42 decisions. It
 does not retune thresholds. It does not run stress tests. It does not execute
 v4.
+
+## Milestone 44 Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run
+with top-down or hybrid provenance still treated as admissibility metadata, not
+as evidence. It does not evaluate carry-forward decisions. It does not run
+stress tests. It does not retune thresholds. It does not infer metric geometry.
+Diagnostic-complete v4 output is not carry-forward success.

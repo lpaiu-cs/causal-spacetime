@@ -157,3 +157,12 @@ audits why v3 protocol families remain blocked. It does not change M42
 decisions. It does not retune thresholds. It does not run stress tests. It does
 not execute v4. V4 design is planned-only and requires a later execution
 milestone.
+
+## Milestone 44 Obligations
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run and
+must show protocol-invariant profile construction, parameter-complete
+measurement protocols, provenance-aware handoff manifests, and all required
+diagnostic metrics. It does not evaluate carry-forward decisions. It does not
+run stress tests. It does not retune thresholds. It does not infer metric
+geometry. Diagnostic-complete v4 output is not carry-forward success.

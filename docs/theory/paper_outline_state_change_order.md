@@ -255,3 +255,11 @@ M43 should be described as a blocked-decision audit and preregistration step. It
 audits why v3 protocol families remain blocked, decomposes measured failures,
 and preregisters a planned-only v4 design. It does not change M42 decisions,
 retune thresholds, run stress tests, or execute v4.
+
+## Milestone 44 Placement
+
+M44 should be described as execution of the preregistered v4 protocol
+manifest-generation run. It produces production v4 handoff manifests and a
+diagnostic-complete v4 output bundle, but it does not evaluate carry-forward
+decisions, run stress tests, retune thresholds, or infer metric geometry.
+Diagnostic-complete v4 output is not carry-forward success.

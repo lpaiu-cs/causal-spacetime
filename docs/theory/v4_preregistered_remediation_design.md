@@ -37,3 +37,7 @@ Remediation design is not proof that a later run will pass. A future v4
 execution would still need diagnostic production and a separate carry-forward
 evaluation.
 
+Milestone 44 executes the preregistered v4 protocol manifest-generation run from
+this design. It does not evaluate carry-forward decisions. It does not run
+stress tests. It does not retune thresholds. It does not infer metric geometry.
+Diagnostic-complete v4 output is not carry-forward success.

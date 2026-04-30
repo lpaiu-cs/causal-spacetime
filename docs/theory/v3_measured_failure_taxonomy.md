@@ -36,3 +36,10 @@ Diagnostic completeness is not success. Protocol invariance is not success.
 Provenance integrity is not success. Carry-forward failure is not a proof that
 the research hypothesis is false.
 
+## Milestone 44 Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run
+after this measured-failure audit. It does not evaluate carry-forward
+decisions. It does not run stress tests. It does not retune thresholds. It does
+not infer metric geometry. Diagnostic-complete v4 output is not carry-forward
+success.

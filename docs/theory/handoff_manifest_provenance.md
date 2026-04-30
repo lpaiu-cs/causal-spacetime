@@ -40,3 +40,11 @@ Milestone 43 audits v3 measured failures without treating bottom-up, top-down,
 or hybrid provenance as evidence. It does not change M42 decisions. It does not
 retune thresholds. It does not run stress tests. It does not execute v4. V4
 design is planned-only and requires a later execution milestone.
+
+## Milestone 44 Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run and
+retains provenance-aware handoff manifests. It does not evaluate carry-forward
+decisions. It does not run stress tests. It does not retune thresholds. It does
+not infer metric geometry. Diagnostic-complete v4 output is not carry-forward
+success.

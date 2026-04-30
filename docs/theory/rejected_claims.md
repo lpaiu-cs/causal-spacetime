@@ -278,3 +278,25 @@ forbidden-language sections:
 Milestone 43 audits why v3 protocol families remain blocked. It does not change
 M42 decisions, retune thresholds, run stress tests, execute v4, or infer metric
 geometry. Report-only counterfactuals do not alter decisions.
+
+## Milestone 44 Rejected Language
+
+The following formulations are rejected outside explicit rejected-language or
+forbidden-language sections:
+
+- "v4 generation means success"
+- "v4 diagnostic complete means carry-forward"
+- "v4 manifests prove geometry"
+- "v4 manifests recover metric"
+- "v4 protocol manifests prove geometry"
+- "v4 execution evaluates carry-forward"
+- "v4 generation runs stress tests"
+- "v4 family passes by construction"
+- "v4 fixes theory"
+- "v4 remediation proves metric"
+- "diagnostic-complete v4 proves space"
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run. It
+does not evaluate carry-forward decisions, run stress tests, retune thresholds,
+or infer metric geometry. Diagnostic-complete v4 output is not carry-forward
+success.

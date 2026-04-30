@@ -24,3 +24,9 @@ evidence.
 Stress-test design remains stopped unless a later milestone produces at least
 one carry-forward or provisional family under the fixed criteria.
 
+## Milestone 44 Follow-Up
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run
+that follows this audit. It does not evaluate carry-forward decisions. It does
+not run stress tests. It does not retune thresholds. It does not infer metric
+geometry. Diagnostic-complete v4 output is not carry-forward success.

@@ -31,3 +31,11 @@ It does not regenerate manifests. It does not rerun fits. It does not retune
 thresholds. It does not run stress tests. Carry-forward is stress-test
 eligibility, not geometry. Top-down/hybrid provenance is allowed only as
 preregistered manifest provenance, not as evidence.
+
+## Milestone 44 Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run
+using the same protocol-invariant profile construction boundary. It does not
+evaluate carry-forward decisions. It does not run stress tests. It does not
+retune thresholds. It does not infer metric geometry. Diagnostic-complete v4
+output is not carry-forward success.

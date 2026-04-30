@@ -214,6 +214,16 @@ BANNED_PHRASES = (
     "report-only counterfactual justifies threshold",
     "v3 failure proves theory false",
     "v4 remediation proves metric",
+    "v4 generation means success",
+    "v4 diagnostic complete means carry-forward",
+    "v4 manifests prove geometry",
+    "v4 manifests recover metric",
+    "v4 protocol manifests prove geometry",
+    "v4 execution evaluates carry-forward",
+    "v4 generation runs stress tests",
+    "v4 family passes by construction",
+    "v4 fixes theory",
+    "diagnostic-complete v4 proves space",
 )
 
 

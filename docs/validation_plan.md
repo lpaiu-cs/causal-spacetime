@@ -842,3 +842,13 @@ Validation artifacts for this milestone include criterion-level root-cause
 rows, criterion-margin rows, manifest-level drilldowns, null and stability
 drilldowns, report-only counterfactual diagnostics, a planned-only v4 design
 table, a v4 preregistration JSON, and a no-execution audit.
+
+## Milestone 44 Validation Boundary
+
+Milestone 44 executes the preregistered v4 protocol manifest-generation run. It
+does not evaluate carry-forward decisions. It does not run stress tests. It does
+not retune thresholds. It does not infer metric geometry. Diagnostic-complete v4
+output is not carry-forward success. Validation checks cover v4 execution-spec
+loading, protocol mapping, manifest metadata, fit diagnostics, null taxonomy,
+stricter diagnostics, failed/report-only accounting, coverage, stability,
+metric aggregation, bundle reporting, no-retuning audit, and final sanity.
