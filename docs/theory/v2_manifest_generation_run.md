@@ -29,3 +29,7 @@ not mean that any family passes future criteria.
 Milestone 38 applies fixed criteria to v2 outputs. It does not regenerate
 manifests, rerun fits, retune thresholds, or run stress tests.
 Carry-forward is stress-test eligibility, not geometry.
+
+Milestone 39 reads the v2 decision outputs as blocked results. It audits root
+causes and preregisters v3 design work, but it does not change the M37 v2
+generation outputs.

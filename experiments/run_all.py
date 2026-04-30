@@ -1941,6 +1941,33 @@ from exp205_v2_carry_forward_final_sanity import (
 from exp205_v2_carry_forward_final_sanity import (
     write_outputs as write_exp205_outputs,
 )
+from exp206_v2_blocking_analysis_exact_sanity import (
+    main as run_exp206_main,
+)
+from exp207_v2_blocked_root_cause_audit import (
+    main as run_exp207_main,
+)
+from exp208_v2_criterion_margin_report import (
+    main as run_exp208_main,
+)
+from exp209_v2_structural_vs_measured_blocking import (
+    main as run_exp209_main,
+)
+from exp210_v3_manifest_family_design import (
+    main as run_exp210_main,
+)
+from exp211_v3_preregistration_export import (
+    main as run_exp211_main,
+)
+from exp212_v3_no_execution_audit import (
+    main as run_exp212_main,
+)
+from exp213_v2_blocked_decision_report_card import (
+    main as run_exp213_main,
+)
+from exp214_v2_blocked_v3_preregistration_final_sanity import (
+    main as run_exp214_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4449,6 +4476,42 @@ def run_v2_carry_forward_final_sanity() -> None:
     print(f"exp205 wrote {output_path}")
 
 
+def run_v2_blocking_analysis_exact_sanity() -> None:
+    run_exp206_main()
+
+
+def run_v2_blocked_root_cause_audit() -> None:
+    run_exp207_main()
+
+
+def run_v2_criterion_margin_report() -> None:
+    run_exp208_main()
+
+
+def run_v2_structural_vs_measured_blocking() -> None:
+    run_exp209_main()
+
+
+def run_v3_manifest_family_design() -> None:
+    run_exp210_main()
+
+
+def run_v3_preregistration_export() -> None:
+    run_exp211_main()
+
+
+def run_v3_no_execution_audit() -> None:
+    run_exp212_main()
+
+
+def run_v2_blocked_decision_report_card() -> None:
+    run_exp213_main()
+
+
+def run_v2_blocked_v3_preregistration_final_sanity() -> None:
+    run_exp214_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -4652,6 +4715,15 @@ def main() -> None:
     run_v2_carry_forward_no_retuning_audit()
     run_v2_carry_forward_report_card()
     run_v2_carry_forward_final_sanity()
+    run_v2_blocking_analysis_exact_sanity()
+    run_v2_blocked_root_cause_audit()
+    run_v2_criterion_margin_report()
+    run_v2_structural_vs_measured_blocking()
+    run_v3_manifest_family_design()
+    run_v3_preregistration_export()
+    run_v3_no_execution_audit()
+    run_v2_blocked_decision_report_card()
+    run_v2_blocked_v3_preregistration_final_sanity()
 
 
 if __name__ == "__main__":

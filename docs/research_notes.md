@@ -815,3 +815,15 @@ plan, accounting rows, and a report card.
 It does not regenerate manifests. It does not rerun fits. It does not retune
 thresholds. It does not run stress tests. Carry-forward is stress-test
 eligibility, not geometry.
+
+## Milestone 39: V2 Blocked Audit And V3 Preregistration
+
+Milestone 39 audits why v2 families were blocked. Structural blocking and
+measured blocking are distinct: one records design-level inability to satisfy
+a fixed criterion such as manifest count, while the other records finite
+diagnostics that fail fixed thresholds.
+
+The audit also records diagnostic blocking and control-family blocking. V3
+family design is preregistered but not executed. V3 planned families are not
+current results. No thresholds are retuned. No stress tests are run, and
+blocked v2 families remain reported.

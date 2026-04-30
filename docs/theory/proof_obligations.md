@@ -127,6 +127,8 @@ repository. Open proof obligations include:
   family-level metric columns before any future carry-forward evaluation.
 - fixed v2 carry-forward evaluation that reports blocked, provisional,
   report-only, and failed-control families without retuning or stress tests.
+- root-cause audits that separate structural blocking from measured blocking
+  before preregistering any replicated future manifest-family design.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

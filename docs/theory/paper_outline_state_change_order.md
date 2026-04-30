@@ -220,3 +220,10 @@ Milestone 38 applies fixed criteria to v2 outputs and exports family
 decisions, a registry, and a future stress-test handoff plan. It does not
 regenerate manifests. It does not rerun fits. It does not run stress tests.
 Carry-forward means future stress-test eligibility only.
+
+## Milestone 39 Note
+
+Milestone 39 audits why v2 families were blocked. It distinguishes structural
+blocking from measured blocking and preregisters a v3 family design without
+executing it. No thresholds are retuned, no stress tests are run, and blocked
+v2 families remain visible.

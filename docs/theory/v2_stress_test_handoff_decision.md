@@ -21,3 +21,6 @@ and failed-control families are not future stress-test inputs.
 Future stress tests still cannot claim physical distance, metric
 reconstruction, a GR limit, or quantum structure. They would remain finite
 diagnostics over frozen response-comparison artifacts.
+
+Milestone 39 keeps this boundary closed. It audits blocked v2 families and
+preregisters v3 design work, but it does not run stress tests.

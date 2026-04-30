@@ -1013,3 +1013,9 @@ criteria to v2 outputs, exports v2 family decisions, writes a carry-forward
 registry, and builds a future stress-test handoff plan. It does not regenerate
 manifests. It does not rerun fits. It does not retune thresholds. It does not
 run stress tests. Carry-forward is stress-test eligibility, not geometry.
+
+Milestone 39 audits why v2 families were blocked. It separates structural
+blocking from measured blocking, diagnostic blocking, and control-family
+blocking. The v3 family design is preregistered but not executed. No
+thresholds are retuned. No stress tests are run. Blocked v2 families remain
+reported.

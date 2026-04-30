@@ -29,3 +29,6 @@ builds a future stress-test handoff plan.
 Blocked, provisional, report-only, and failed-control families remain visible
 in accounting. Missing or incomplete v2 bundle inputs are reported explicitly
 rather than silently ignored.
+
+Milestone 39 audits why v2 families were blocked. It separates structural
+blocking from measured blocking without changing Milestone 38 decisions.

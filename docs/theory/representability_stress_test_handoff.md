@@ -49,3 +49,6 @@ allows them.
 Milestone 38 performs that carry-forward evaluation for v2 families. If no v2
 family is carry-forward or provisional, the future stress-test handoff remains
 stopped or report-only.
+
+Milestone 39 does not reopen the handoff. It audits why the v2 handoff stopped
+and preregisters a v3 design, while leaving stress tests unavailable.

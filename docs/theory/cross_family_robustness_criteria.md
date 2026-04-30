@@ -52,3 +52,7 @@ read without changing the M37 generation results.
 Milestone 38 applies fixed criteria to v2 outputs. It does not regenerate
 manifests, rerun fits, retune thresholds, or run stress tests. Carry-forward
 is stress-test eligibility, not geometry.
+
+Milestone 39 separates structural blocking from measured blocking in the v2
+results. Structural counterfactuals are report-only, and v3 design is
+preregistered but not executed.

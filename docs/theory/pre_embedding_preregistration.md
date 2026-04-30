@@ -79,3 +79,7 @@ criteria.
 Milestone 38 preserves the same no-retuning boundary. It reads M37 outputs and
 applies the fixed criteria without changing manifest generation, fit settings,
 or thresholds after seeing decisions.
+
+Milestone 39 preserves the boundary again. It audits v2 blocked decisions and
+exports a planned-only v3 preregistration. V3 planned families are not current
+results, and no thresholds are retuned.

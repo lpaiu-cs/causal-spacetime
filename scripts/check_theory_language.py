@@ -162,6 +162,14 @@ BANNED_PHRASES = (
     "diagnostic completeness means carry-forward",
     "carry-forward means physical coordinates",
     "threshold sensitivity chooses threshold",
+    "v3 design fixes geometry",
+    "v3 family will pass",
+    "structural counterfactual changes decision",
+    "ignore manifest count failure",
+    "thresholds adjusted for v3",
+    "v3 preregistration executes manifests",
+    "blocked v2 family can be stress-tested",
+    "measured failure is only structural",
 )
 
 

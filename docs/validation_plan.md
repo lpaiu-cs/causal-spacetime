@@ -769,3 +769,24 @@ Expected behavior is that Milestone 38 evaluates the v2 diagnostic-complete
 bundle under fixed criteria. It does not regenerate manifests. It does not
 rerun fits. It does not retune thresholds. It does not run stress tests.
 Carry-forward means future stress-test eligibility only.
+
+## Milestone 39: V2 Blocked Audit And V3 Preregistration
+
+Validation adds:
+
+```text
+exact v2 blocking-analysis sanity checks
+v2 blocked root-cause audit
+v2 criterion-margin report
+structural-versus-measured report-only counterfactuals
+v3 planned family design table
+v3 preregistration JSON export
+v3 no-execution audit
+blocked-decision report card
+exact final v2-blocked/v3-preregistration sanity checks
+```
+
+Expected behavior is that Milestone 39 separates structural blocking from
+measured blocking. Structural counterfactuals are report-only. The v3 design
+is preregistered but not executed, and v3 planned families are not current
+results. No thresholds are retuned. No stress tests are run.

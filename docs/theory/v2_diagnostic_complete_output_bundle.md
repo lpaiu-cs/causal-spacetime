@@ -58,3 +58,7 @@ Milestone 38 evaluates this bundle. Carry-forward means future stress-test
 eligibility only, and carry-forward does not imply geometry.
 It does not regenerate manifests. It does not rerun fits. It does not retune
 thresholds. It does not run stress tests.
+
+Milestone 39 uses the evaluated v2 bundle to separate structural and measured
+blocking. Diagnostic completeness remains a property of the input bundle, not
+a carry-forward outcome.
