@@ -91,6 +91,9 @@ reconstruction experiments:
   immediate-edge thinning, and reference-chain subsampling,
 - test echo-response order signatures over motif populations, stable
   response-order cores, and protocol-variant response-rank order,
+- execute the preregistered v2 manifest-generation run, producing a
+  diagnostic-complete v2 output bundle while deferring carry-forward
+  evaluation,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 

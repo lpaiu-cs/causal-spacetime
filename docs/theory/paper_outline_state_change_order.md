@@ -207,3 +207,9 @@ Milestone 36 produces a preregistered remediation plan. The plan is not
 executed in Milestone 36. It does not retune thresholds. It does not run stress
 tests. It does not fit new representation models. Planned v2 families are not
 current results, and future execution requires a new preregistered run.
+
+## Milestone 37 Note
+
+Milestone 37 executes the preregistered v2 manifest-generation run and
+produces a diagnostic-complete output bundle without carry-forward
+evaluation. It does not run stress tests and does not infer metric geometry.

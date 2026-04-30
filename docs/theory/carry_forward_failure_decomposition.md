@@ -64,3 +64,7 @@ Milestone 36 produces a preregistered remediation plan from this decomposition.
 The plan is not executed in Milestone 36. It does not retune thresholds. It
 does not run stress tests. It does not fit new representation models. Future
 execution requires a new preregistered run.
+
+Milestone 37 follows this boundary by executing only the preregistered v2
+manifest-generation run. It produces new diagnostic-complete outputs for a
+future evaluation and does not change the Milestone 35 failure conclusions.

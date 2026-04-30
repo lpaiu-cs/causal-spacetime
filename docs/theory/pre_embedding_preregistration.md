@@ -70,3 +70,8 @@ Milestone 36 records that future execution requires a new preregistered run.
 The remediation plan freezes intended metrics, planned families, forbidden
 interpretations, and the execution boundary before any future manifest
 generation is attempted.
+
+Milestone 37 executes that preregistered v2 generation run. It records fixed
+settings, writes production v2 manifests, and preserves the no-retuning rule:
+the resulting v2 diagnostics are not used inside M37 to alter carry-forward
+criteria.

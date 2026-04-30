@@ -123,6 +123,8 @@ repository. Open proof obligations include:
 - diagnostic-complete remediation plans that predeclare future metric
   production, planned manifest families, and no-execution boundaries before
   any new manifest generation is attempted.
+- diagnostic-complete v2 output production that supplies all required
+  family-level metric columns before any future carry-forward evaluation.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

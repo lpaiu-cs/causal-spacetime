@@ -792,3 +792,15 @@ The plan is not executed in Milestone 36. It does not retune thresholds. It
 does not run stress tests. It does not fit new representation models. Planned
 v2 families are not current results, and future execution requires a new
 preregistered run.
+
+## Milestone 37: Diagnostic-Complete V2 Manifest Generation
+
+Milestone 37 executes the preregistered v2 manifest-generation run. The
+planned v2 families from Milestone 36 are generated as production v2 handoff
+manifests under `outputs/manifests_v2/`.
+
+The milestone produces diagnostic-complete v2 outputs, including all 14
+required family-level metric columns for a future evaluation bundle. It does
+not evaluate carry-forward decisions. It does not run stress tests. It does
+not infer metric geometry. Diagnostic-complete does not mean successful; it
+only means the next evaluation has the required inputs.

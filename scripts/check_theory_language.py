@@ -147,6 +147,13 @@ BANNED_PHRASES = (
     "thresholds lowered after failure",
     "blocked family stress-tested anyway",
     "remediation plan exports new fit",
+    "v2 manifests prove geometry",
+    "diagnostic complete means successful",
+    "v2 generation evaluates carry-forward",
+    "v2 generation runs stress tests",
+    "v2 manifests recover metric",
+    "diagnostic-complete bundle proves space",
+    "v2 family passes by construction",
 )
 
 

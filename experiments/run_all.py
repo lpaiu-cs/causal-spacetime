@@ -1716,6 +1716,126 @@ from exp182_remediation_plan_final_sanity import (
 from exp182_remediation_plan_final_sanity import (
     write_outputs as write_exp182_outputs,
 )
+from exp183_v2_manifest_spec_exact_sanity import (
+    run_experiment as run_exp183,
+)
+from exp183_v2_manifest_spec_exact_sanity import (
+    write_outputs as write_exp183_outputs,
+)
+from exp184_v2_manifest_generation import (
+    ExperimentConfig as Exp184Config,
+)
+from exp184_v2_manifest_generation import (
+    run_experiment as run_exp184,
+)
+from exp184_v2_manifest_generation import (
+    write_outputs as write_exp184_outputs,
+)
+from exp185_v2_family_fit_diagnostics import (
+    ExperimentConfig as Exp185Config,
+)
+from exp185_v2_family_fit_diagnostics import (
+    run_experiment as run_exp185,
+)
+from exp185_v2_family_fit_diagnostics import (
+    save_figures as save_exp185_figures,
+)
+from exp185_v2_family_fit_diagnostics import (
+    write_outputs as write_exp185_outputs,
+)
+from exp186_v2_null_taxonomy_diagnostics import (
+    ExperimentConfig as Exp186Config,
+)
+from exp186_v2_null_taxonomy_diagnostics import (
+    run_experiment as run_exp186,
+)
+from exp186_v2_null_taxonomy_diagnostics import (
+    save_figures as save_exp186_figures,
+)
+from exp186_v2_null_taxonomy_diagnostics import (
+    write_outputs as write_exp186_outputs,
+)
+from exp187_v2_stricter_criteria_diagnostics import (
+    ExperimentConfig as Exp187Config,
+)
+from exp187_v2_stricter_criteria_diagnostics import (
+    run_experiment as run_exp187,
+)
+from exp187_v2_stricter_criteria_diagnostics import (
+    save_figures as save_exp187_figures,
+)
+from exp187_v2_stricter_criteria_diagnostics import (
+    write_outputs as write_exp187_outputs,
+)
+from exp188_v2_failed_accounting import (
+    ExperimentConfig as Exp188Config,
+)
+from exp188_v2_failed_accounting import (
+    run_experiment as run_exp188,
+)
+from exp188_v2_failed_accounting import (
+    save_figures as save_exp188_figures,
+)
+from exp188_v2_failed_accounting import (
+    write_outputs as write_exp188_outputs,
+)
+from exp189_v2_coverage_metrics import (
+    ExperimentConfig as Exp189Config,
+)
+from exp189_v2_coverage_metrics import (
+    run_experiment as run_exp189,
+)
+from exp189_v2_coverage_metrics import (
+    write_outputs as write_exp189_outputs,
+)
+from exp190_v2_restart_latent_order_stability import (
+    ExperimentConfig as Exp190Config,
+)
+from exp190_v2_restart_latent_order_stability import (
+    run_experiment as run_exp190,
+)
+from exp190_v2_restart_latent_order_stability import (
+    save_figures as save_exp190_figures,
+)
+from exp190_v2_restart_latent_order_stability import (
+    write_outputs as write_exp190_outputs,
+)
+from exp191_v2_no_retuning_audit import (
+    ExperimentConfig as Exp191Config,
+)
+from exp191_v2_no_retuning_audit import (
+    run_experiment as run_exp191,
+)
+from exp191_v2_no_retuning_audit import (
+    write_outputs as write_exp191_outputs,
+)
+from exp192_v2_required_metric_aggregation import (
+    ExperimentConfig as Exp192Config,
+)
+from exp192_v2_required_metric_aggregation import (
+    run_experiment as run_exp192,
+)
+from exp192_v2_required_metric_aggregation import (
+    save_figures as save_exp192_figures,
+)
+from exp192_v2_required_metric_aggregation import (
+    write_outputs as write_exp192_outputs,
+)
+from exp193_v2_diagnostic_complete_bundle_report import (
+    ExperimentConfig as Exp193Config,
+)
+from exp193_v2_diagnostic_complete_bundle_report import (
+    run_experiment as run_exp193,
+)
+from exp193_v2_diagnostic_complete_bundle_report import (
+    write_outputs as write_exp193_outputs,
+)
+from exp194_v2_manifest_generation_final_sanity import (
+    run_experiment as run_exp194,
+)
+from exp194_v2_manifest_generation_final_sanity import (
+    write_outputs as write_exp194_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4004,6 +4124,135 @@ def run_remediation_plan_final_sanity() -> None:
     print(f"exp182 wrote {output_path}")
 
 
+def run_v2_manifest_spec_exact_sanity() -> None:
+    rows = run_exp183()
+    output_path = write_exp183_outputs(rows)
+    print(f"exp183 wrote {output_path}")
+
+
+def run_v2_manifest_generation() -> None:
+    config = Exp184Config(
+        output_dir=Path("outputs"),
+        seed=0,
+        max_constraints=1000,
+        min_margin=0.05,
+        bootstrap_count=5,
+        null_repetitions=3,
+    )
+    paths, rows = run_exp184(config)
+    output_path = write_exp184_outputs(rows, config.output_dir)
+    print(f"exp184 wrote {output_path} and {len(paths)} manifests")
+
+
+def run_v2_family_fit_diagnostics() -> None:
+    config = Exp185Config(
+        manifest_dir=Path("outputs/manifests_v2"),
+        dims=(1, 2),
+        steps=300,
+        restarts=1,
+        output_dir=Path("outputs"),
+    )
+    rows, summary_rows = run_exp185(config)
+    paths = write_exp185_outputs(rows, summary_rows, config.output_dir)
+    figure_paths = save_exp185_figures(summary_rows, config.output_dir)
+    print(f"exp185 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp185 wrote {len(figure_paths)} figures")
+
+
+def run_v2_null_taxonomy_diagnostics() -> None:
+    config = Exp186Config(
+        manifest_dir=Path("outputs/manifests_v2"),
+        embedding_dim=2,
+        null_repetitions=2,
+        steps=300,
+        restarts=1,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp186(config)
+    output_path = write_exp186_outputs(rows, config.output_dir)
+    figure_paths = save_exp186_figures(rows, config.output_dir)
+    print(f"exp186 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_v2_stricter_criteria_diagnostics() -> None:
+    config = Exp187Config(
+        manifest_dir=Path("outputs/manifests_v2"),
+        dims=(1, 2),
+        steps=300,
+        restarts=1,
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp187(config)
+    output_path = write_exp187_outputs(rows, config.output_dir)
+    figure_paths = save_exp187_figures(rows, config.output_dir)
+    print(f"exp187 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_v2_failed_accounting() -> None:
+    config = Exp188Config(
+        manifest_dir=Path("outputs/manifests_v2"),
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp188(config)
+    output_path = write_exp188_outputs(rows, config.output_dir)
+    figure_paths = save_exp188_figures(rows, config.output_dir)
+    print(f"exp188 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_v2_coverage_metrics() -> None:
+    config = Exp189Config(
+        manifest_dir=Path("outputs/manifests_v2"),
+        output_dir=Path("outputs"),
+    )
+    rows = run_exp189(config)
+    output_path = write_exp189_outputs(rows, config.output_dir)
+    print(f"exp189 wrote {output_path}")
+
+
+def run_v2_restart_latent_order_stability() -> None:
+    config = Exp190Config(
+        manifest_dir=Path("outputs/manifests_v2"),
+        embedding_dim=2,
+        restart_count=3,
+        steps=300,
+        output_dir=Path("outputs"),
+    )
+    restart_rows, latent_rows = run_exp190(config)
+    paths = write_exp190_outputs(restart_rows, latent_rows, config.output_dir)
+    figure_paths = save_exp190_figures(restart_rows, latent_rows, config.output_dir)
+    print(f"exp190 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp190 wrote {len(figure_paths)} figures")
+
+
+def run_v2_no_retuning_audit() -> None:
+    config = Exp191Config(output_dir=Path("outputs"))
+    rows = run_exp191(config)
+    output_path = write_exp191_outputs(rows, config.output_dir)
+    print(f"exp191 wrote {output_path}")
+
+
+def run_v2_required_metric_aggregation() -> None:
+    config = Exp192Config(output_dir=Path("outputs"))
+    metric_rows, completeness_rows = run_exp192(config)
+    paths = write_exp192_outputs(metric_rows, completeness_rows, config.output_dir)
+    figure_paths = save_exp192_figures(completeness_rows, config.output_dir)
+    print(f"exp192 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp192 wrote {len(figure_paths)} figures")
+
+
+def run_v2_diagnostic_complete_bundle_report() -> None:
+    config = Exp193Config(output_dir=Path("outputs"))
+    rows = run_exp193(config)
+    output_path = write_exp193_outputs(rows, config.output_dir)
+    print(f"exp193 wrote {output_path}")
+
+
+def run_v2_manifest_generation_final_sanity() -> None:
+    rows = run_exp194()
+    output_path = write_exp194_outputs(rows)
+    print(f"exp194 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -4184,6 +4433,18 @@ def main() -> None:
     run_remediation_no_execution_audit()
     run_remediation_plan_report_card()
     run_remediation_plan_final_sanity()
+    run_v2_manifest_spec_exact_sanity()
+    run_v2_manifest_generation()
+    run_v2_family_fit_diagnostics()
+    run_v2_null_taxonomy_diagnostics()
+    run_v2_stricter_criteria_diagnostics()
+    run_v2_failed_accounting()
+    run_v2_coverage_metrics()
+    run_v2_restart_latent_order_stability()
+    run_v2_no_retuning_audit()
+    run_v2_required_metric_aggregation()
+    run_v2_diagnostic_complete_bundle_report()
+    run_v2_manifest_generation_final_sanity()
 
 
 if __name__ == "__main__":

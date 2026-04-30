@@ -722,3 +722,27 @@ Expected behavior is that Milestone 36 produces a preregistered remediation
 plan. The plan is not executed in Milestone 36. It does not retune thresholds.
 It does not run stress tests. It does not fit new representation models.
 Future execution requires a new preregistered run.
+
+## Milestone 37: Diagnostic-Complete V2 Manifest Generation
+
+Validation adds:
+
+```text
+v2 family spec exact sanity checks
+production v2 handoff manifest generation
+v2 family fit diagnostics
+v2 null taxonomy diagnostics
+v2 fixed stricter-criteria diagnostics
+v2 failed-control accounting
+v2 target and pair-node coverage metrics
+v2 restart and latent-order stability metrics
+v2 no-retuning audit
+v2 required metric aggregation
+v2 diagnostic-complete bundle report
+exact final v2 generation sanity checks
+```
+
+Expected behavior is that Milestone 37 executes the v2 manifest-generation
+run and produces a diagnostic-complete v2 output bundle. It does not evaluate
+carry-forward decisions. It does not run stress tests. Diagnostic-complete
+does not mean successful.

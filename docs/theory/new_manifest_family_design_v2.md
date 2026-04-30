@@ -25,3 +25,8 @@ Each planned family must predeclare profile-column policy, target-inclusion
 policy, pair-node coverage policy, null taxonomy policy, restart-stability
 outputs, and latent-order stability outputs. These specifications are future
 design proposals, not evidence that a family will pass carry-forward.
+
+Milestone 37 is the first execution of this planned design. The execution
+status is recorded in M37 output tables and v2 manifest files, while the M36
+plan remains a planned preregistration artifact. The v2 families are not
+carry-forward evaluated in Milestone 37.

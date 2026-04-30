@@ -44,3 +44,7 @@ be preregistered.
 Milestone 36 preregisters a remediation plan for diagnostic-complete future
 manifest generation. It does not execute remediation, fit new representation
 models, or change the fixed carry-forward thresholds.
+
+Milestone 37 does not apply these criteria to v2 outputs. The v2 bundle is
+prepared for a future Milestone 38 evaluation, where the fixed criteria can be
+read without changing the M37 generation results.

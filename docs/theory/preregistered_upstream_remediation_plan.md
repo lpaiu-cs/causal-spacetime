@@ -37,3 +37,11 @@ ineligible families if executed later.
 Diagnostic-complete manifest design means that required metrics are
 predeclared and produced. It does not imply metric structure or physical
 interpretation.
+
+## Milestone 37 Boundary
+
+Milestone 37 executes the preregistered v2 manifest-generation run derived
+from this plan. The plan itself remains the preregistration artifact; M37
+does not rewrite it as a result. It produces diagnostic-complete v2 outputs,
+but it does not evaluate carry-forward decisions, does not run stress tests,
+and does not fit any model for the purpose of improving a criterion.

@@ -40,3 +40,8 @@ remediation must be preregistered.
 Milestone 36 produces a preregistered remediation plan but does not execute it.
 No stress tests are allowed until carry-forward or provisional families exist.
 Planned v2 families are future specifications, not current stress-test inputs.
+
+Milestone 37 executes the v2 manifest-generation run but does not cross the
+stress-test boundary. The v2 outputs are prepared for a future carry-forward
+evaluation, and stress tests remain unavailable until that later evaluation
+allows them.
