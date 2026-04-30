@@ -1836,6 +1836,111 @@ from exp194_v2_manifest_generation_final_sanity import (
 from exp194_v2_manifest_generation_final_sanity import (
     write_outputs as write_exp194_outputs,
 )
+from exp195_v2_carry_forward_exact_sanity import (
+    run_experiment as run_exp195,
+)
+from exp195_v2_carry_forward_exact_sanity import (
+    write_outputs as write_exp195_outputs,
+)
+from exp196_v2_bundle_input_audit import (
+    ExperimentConfig as Exp196Config,
+)
+from exp196_v2_bundle_input_audit import (
+    run_experiment as run_exp196,
+)
+from exp196_v2_bundle_input_audit import (
+    write_outputs as write_exp196_outputs,
+)
+from exp197_v2_carry_forward_decision import (
+    ExperimentConfig as Exp197Config,
+)
+from exp197_v2_carry_forward_decision import (
+    run_experiment as run_exp197,
+)
+from exp197_v2_carry_forward_decision import (
+    save_figures as save_exp197_figures,
+)
+from exp197_v2_carry_forward_decision import (
+    write_outputs as write_exp197_outputs,
+)
+from exp198_v2_carry_forward_threshold_sensitivity import (
+    ExperimentConfig as Exp198Config,
+)
+from exp198_v2_carry_forward_threshold_sensitivity import (
+    run_experiment as run_exp198,
+)
+from exp198_v2_carry_forward_threshold_sensitivity import (
+    save_figures as save_exp198_figures,
+)
+from exp198_v2_carry_forward_threshold_sensitivity import (
+    write_outputs as write_exp198_outputs,
+)
+from exp199_v2_carry_forward_registry_export import (
+    ExperimentConfig as Exp199Config,
+)
+from exp199_v2_carry_forward_registry_export import (
+    run_experiment as run_exp199,
+)
+from exp199_v2_carry_forward_registry_export import (
+    write_outputs as write_exp199_outputs,
+)
+from exp200_v2_stress_test_handoff_plan import (
+    ExperimentConfig as Exp200Config,
+)
+from exp200_v2_stress_test_handoff_plan import (
+    run_experiment as run_exp200,
+)
+from exp200_v2_stress_test_handoff_plan import (
+    write_outputs as write_exp200_outputs,
+)
+from exp201_v2_failed_provisional_accounting import (
+    ExperimentConfig as Exp201Config,
+)
+from exp201_v2_failed_provisional_accounting import (
+    run_experiment as run_exp201,
+)
+from exp201_v2_failed_provisional_accounting import (
+    save_figures as save_exp201_figures,
+)
+from exp201_v2_failed_provisional_accounting import (
+    write_outputs as write_exp201_outputs,
+)
+from exp202_v2_carry_forward_failure_decomposition import (
+    ExperimentConfig as Exp202Config,
+)
+from exp202_v2_carry_forward_failure_decomposition import (
+    run_experiment as run_exp202,
+)
+from exp202_v2_carry_forward_failure_decomposition import (
+    save_figures as save_exp202_figures,
+)
+from exp202_v2_carry_forward_failure_decomposition import (
+    write_outputs as write_exp202_outputs,
+)
+from exp203_v2_carry_forward_no_retuning_audit import (
+    ExperimentConfig as Exp203Config,
+)
+from exp203_v2_carry_forward_no_retuning_audit import (
+    run_experiment as run_exp203,
+)
+from exp203_v2_carry_forward_no_retuning_audit import (
+    write_outputs as write_exp203_outputs,
+)
+from exp204_v2_carry_forward_report_card import (
+    ExperimentConfig as Exp204Config,
+)
+from exp204_v2_carry_forward_report_card import (
+    run_experiment as run_exp204,
+)
+from exp204_v2_carry_forward_report_card import (
+    write_outputs as write_exp204_outputs,
+)
+from exp205_v2_carry_forward_final_sanity import (
+    run_experiment as run_exp205,
+)
+from exp205_v2_carry_forward_final_sanity import (
+    write_outputs as write_exp205_outputs,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4253,6 +4358,97 @@ def run_v2_manifest_generation_final_sanity() -> None:
     print(f"exp194 wrote {output_path}")
 
 
+def run_v2_carry_forward_exact_sanity() -> None:
+    rows = run_exp195()
+    output_path = write_exp195_outputs(rows)
+    print(f"exp195 wrote {output_path}")
+
+
+def run_v2_bundle_input_audit() -> None:
+    config = Exp196Config(output_dir=Path("outputs"))
+    rows = run_exp196(config)
+    output_path = write_exp196_outputs(rows, config.output_dir)
+    print(f"exp196 wrote {output_path}")
+
+
+def run_v2_carry_forward_decision() -> None:
+    config = Exp197Config(output_dir=Path("outputs"))
+    metrics, decisions = run_exp197(config)
+    paths = write_exp197_outputs(metrics, decisions, config.output_dir)
+    figure_paths = save_exp197_figures(decisions, config.output_dir)
+    print(f"exp197 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp197 wrote {len(figure_paths)} figures")
+
+
+def run_v2_carry_forward_threshold_sensitivity() -> None:
+    config = Exp198Config(
+        output_dir=Path("outputs"),
+        heldout_thresholds=(0.20, 0.25),
+        null_gap_thresholds=(0.05, 0.10),
+        stricter_pass_thresholds=(0.25, 0.50),
+    )
+    rows = run_exp198(config)
+    output_path = write_exp198_outputs(rows, config.output_dir)
+    figure_paths = save_exp198_figures(rows, config.output_dir)
+    print(f"exp198 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_v2_carry_forward_registry_export() -> None:
+    config = Exp199Config(
+        output_dir=Path("outputs"),
+        manifest_dir=Path("outputs/manifests_v2"),
+    )
+    registry_path, rows = run_exp199(config)
+    output_path = write_exp199_outputs(rows, config.output_dir)
+    print(f"exp199 wrote {output_path}")
+    if registry_path is not None:
+        print(f"exp199 wrote {registry_path}")
+
+
+def run_v2_stress_test_handoff_plan() -> None:
+    config = Exp200Config(output_dir=Path("outputs"))
+    rows = run_exp200(config)
+    output_path = write_exp200_outputs(rows, config.output_dir)
+    print(f"exp200 wrote {output_path}")
+
+
+def run_v2_failed_provisional_accounting() -> None:
+    config = Exp201Config(output_dir=Path("outputs"))
+    rows = run_exp201(config)
+    output_path = write_exp201_outputs(rows, config.output_dir)
+    figure_paths = save_exp201_figures(rows, config.output_dir)
+    print(f"exp201 wrote {output_path} and {len(figure_paths)} figures")
+
+
+def run_v2_carry_forward_failure_decomposition() -> None:
+    config = Exp202Config(output_dir=Path("outputs"))
+    rows, summary = run_exp202(config)
+    paths = write_exp202_outputs(rows, summary, config.output_dir)
+    figure_paths = save_exp202_figures(summary, config.output_dir)
+    print(f"exp202 wrote {', '.join(str(path) for path in paths)}")
+    print(f"exp202 wrote {len(figure_paths)} figures")
+
+
+def run_v2_carry_forward_no_retuning_audit() -> None:
+    config = Exp203Config(output_dir=Path("outputs"))
+    rows = run_exp203(config)
+    output_path = write_exp203_outputs(rows, config.output_dir)
+    print(f"exp203 wrote {output_path}")
+
+
+def run_v2_carry_forward_report_card() -> None:
+    config = Exp204Config(output_dir=Path("outputs"))
+    rows = run_exp204(config)
+    output_path = write_exp204_outputs(rows, config.output_dir)
+    print(f"exp204 wrote {output_path}")
+
+
+def run_v2_carry_forward_final_sanity() -> None:
+    rows = run_exp205()
+    output_path = write_exp205_outputs(rows)
+    print(f"exp205 wrote {output_path}")
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -4445,6 +4641,17 @@ def main() -> None:
     run_v2_required_metric_aggregation()
     run_v2_diagnostic_complete_bundle_report()
     run_v2_manifest_generation_final_sanity()
+    run_v2_carry_forward_exact_sanity()
+    run_v2_bundle_input_audit()
+    run_v2_carry_forward_decision()
+    run_v2_carry_forward_threshold_sensitivity()
+    run_v2_carry_forward_registry_export()
+    run_v2_stress_test_handoff_plan()
+    run_v2_failed_provisional_accounting()
+    run_v2_carry_forward_failure_decomposition()
+    run_v2_carry_forward_no_retuning_audit()
+    run_v2_carry_forward_report_card()
+    run_v2_carry_forward_final_sanity()
 
 
 if __name__ == "__main__":

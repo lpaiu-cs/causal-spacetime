@@ -746,3 +746,26 @@ Expected behavior is that Milestone 37 executes the v2 manifest-generation
 run and produces a diagnostic-complete v2 output bundle. It does not evaluate
 carry-forward decisions. It does not run stress tests. Diagnostic-complete
 does not mean successful.
+
+## Milestone 38: V2 Carry-Forward Evaluation
+
+Validation adds:
+
+```text
+exact v2 carry-forward decision sanity checks
+v2 bundle input audit
+fixed-criteria v2 family decisions
+v2 threshold-sensitivity reporting
+v2 carry-forward registry export
+v2 future stress-test handoff plan
+v2 blocked/provisional/failed accounting
+v2 failure decomposition
+v2 no-retuning and no-stress audit
+v2 carry-forward report card
+exact final v2 carry-forward sanity checks
+```
+
+Expected behavior is that Milestone 38 evaluates the v2 diagnostic-complete
+bundle under fixed criteria. It does not regenerate manifests. It does not
+rerun fits. It does not retune thresholds. It does not run stress tests.
+Carry-forward means future stress-test eligibility only.

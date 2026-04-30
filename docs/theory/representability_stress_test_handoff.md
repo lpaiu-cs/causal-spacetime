@@ -45,3 +45,7 @@ Milestone 37 executes the v2 manifest-generation run but does not cross the
 stress-test boundary. The v2 outputs are prepared for a future carry-forward
 evaluation, and stress tests remain unavailable until that later evaluation
 allows them.
+
+Milestone 38 performs that carry-forward evaluation for v2 families. If no v2
+family is carry-forward or provisional, the future stress-test handoff remains
+stopped or report-only.

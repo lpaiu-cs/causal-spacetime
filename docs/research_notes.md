@@ -804,3 +804,14 @@ required family-level metric columns for a future evaluation bundle. It does
 not evaluate carry-forward decisions. It does not run stress tests. It does
 not infer metric geometry. Diagnostic-complete does not mean successful; it
 only means the next evaluation has the required inputs.
+
+## Milestone 38: V2 Carry-Forward Evaluation
+
+Milestone 38 evaluates the v2 diagnostic-complete bundle. It applies the fixed
+Milestone 34 cross-family robustness criteria to the M37 v2 outputs and writes
+family decisions, a v2 carry-forward registry, a future stress-test handoff
+plan, accounting rows, and a report card.
+
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry.

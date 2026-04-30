@@ -37,3 +37,6 @@ Milestone 37 executes the v2 manifest-generation run and is required to
 produce every listed family-level metric in a v2 output bundle. Diagnostic
 completeness is a reporting requirement, not a success criterion and not a
 claim about metric geometry.
+
+Milestone 38 uses those metrics as inputs to fixed carry-forward criteria. It
+does not create replacement metrics after seeing the v2 decisions.

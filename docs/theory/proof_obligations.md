@@ -125,6 +125,8 @@ repository. Open proof obligations include:
   any new manifest generation is attempted.
 - diagnostic-complete v2 output production that supplies all required
   family-level metric columns before any future carry-forward evaluation.
+- fixed v2 carry-forward evaluation that reports blocked, provisional,
+  report-only, and failed-control families without retuning or stress tests.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

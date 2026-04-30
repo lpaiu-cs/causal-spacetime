@@ -25,3 +25,7 @@ forbidden by the stop-rule logic from Milestones 34 and 35.
 Diagnostic-complete does not mean successful. A complete output bundle means
 that the required metric columns are present for later evaluation; it does
 not mean that any family passes future criteria.
+
+Milestone 38 applies fixed criteria to v2 outputs. It does not regenerate
+manifests, rerun fits, retune thresholds, or run stress tests.
+Carry-forward is stress-test eligibility, not geometry.

@@ -213,3 +213,10 @@ current results, and future execution requires a new preregistered run.
 Milestone 37 executes the preregistered v2 manifest-generation run and
 produces a diagnostic-complete output bundle without carry-forward
 evaluation. It does not run stress tests and does not infer metric geometry.
+
+## Milestone 38 Note
+
+Milestone 38 applies fixed criteria to v2 outputs and exports family
+decisions, a registry, and a future stress-test handoff plan. It does not
+regenerate manifests. It does not rerun fits. It does not run stress tests.
+Carry-forward means future stress-test eligibility only.

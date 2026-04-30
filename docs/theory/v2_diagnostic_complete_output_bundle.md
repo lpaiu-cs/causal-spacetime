@@ -53,3 +53,8 @@ remain separated by family kind.
 
 Metric completeness is not carry-forward success. The bundle is a prerequisite
 input for a future evaluation only.
+
+Milestone 38 evaluates this bundle. Carry-forward means future stress-test
+eligibility only, and carry-forward does not imply geometry.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests.

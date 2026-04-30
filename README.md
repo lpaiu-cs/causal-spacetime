@@ -94,6 +94,9 @@ reconstruction experiments:
 - execute the preregistered v2 manifest-generation run, producing a
   diagnostic-complete v2 output bundle while deferring carry-forward
   evaluation,
+- apply fixed carry-forward criteria to that v2 bundle, exporting decisions,
+  a registry, and a future stress-test handoff plan without running stress
+  tests,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
@@ -999,3 +1002,14 @@ executed in Milestone 36. It does not retune thresholds. It does not run stress
 tests. It does not fit new representation models. Planned v2 families are not
 current results. Missing-metric remediation and measured-failure remediation
 are distinct, and future execution requires a new preregistered run.
+
+Milestone 37 executes the preregistered v2 manifest-generation run. It writes
+production v2 handoff manifests and a diagnostic-complete v2 output bundle for
+later evaluation. It does not decide carry-forward status, does not run stress
+tests, and does not infer metric geometry.
+
+Milestone 38 evaluates the v2 diagnostic-complete bundle. It applies fixed
+criteria to v2 outputs, exports v2 family decisions, writes a carry-forward
+registry, and builds a future stress-test handoff plan. It does not regenerate
+manifests. It does not rerun fits. It does not retune thresholds. It does not
+run stress tests. Carry-forward is stress-test eligibility, not geometry.

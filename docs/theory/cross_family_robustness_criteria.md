@@ -48,3 +48,7 @@ models, or change the fixed carry-forward thresholds.
 Milestone 37 does not apply these criteria to v2 outputs. The v2 bundle is
 prepared for a future Milestone 38 evaluation, where the fixed criteria can be
 read without changing the M37 generation results.
+
+Milestone 38 applies fixed criteria to v2 outputs. It does not regenerate
+manifests, rerun fits, retune thresholds, or run stress tests. Carry-forward
+is stress-test eligibility, not geometry.

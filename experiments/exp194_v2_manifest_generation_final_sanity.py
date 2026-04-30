@@ -17,6 +17,27 @@ from v2_manifest_experiment_helpers import (
 )
 
 
+def _later_m38_outputs_present(output_dir: Path) -> bool:
+    """Return whether existing v2 decision files are later-stage artifacts."""
+
+    data_dir = output_dir / "data"
+    registry = output_dir / "carry_forward_v2" / "carry_forward_registry_v2.json"
+    return (
+        data_path(output_dir, "v2_carry_forward_report_card.csv").exists()
+        or data_path(output_dir, "v2_carry_forward_no_retuning_audit.csv").exists()
+        or data_path(output_dir, "v2_stress_test_handoff_plan.csv").exists()
+        or registry.exists()
+        or any(data_dir.glob("v2_carry_forward_*.csv"))
+    )
+
+
+def _no_m37_carry_forward_decision_file(output_dir: Path) -> bool:
+    """Keep the M37 final sanity check stable after M38 has run."""
+
+    decision_path = data_path(output_dir, "v2_cross_family_robustness_decisions.csv")
+    return not decision_path.exists() or _later_m38_outputs_present(output_dir)
+
+
 def run_experiment(
     output_dir: Path = DEFAULT_OUTPUT_DIR,
 ) -> list[dict[str, float | str]]:
@@ -47,15 +68,12 @@ def run_experiment(
             and all(metric in metric_rows[0] for metric in REQUIRED_V2_METRICS),
         ),
         (
-            "no_v2_carry_forward_decision_file",
-            not data_path(
-                output_dir,
-                "v2_cross_family_robustness_decisions.csv",
-            ).exists(),
+            "no_m37_carry_forward_decision_generated",
+            _no_m37_carry_forward_decision_file(output_dir),
         ),
         (
-            "no_v2_stress_test_outputs",
-            not any((output_dir / "data").glob("v2_*stress*.csv")),
+            "no_v2_stress_test_result_outputs",
+            not any((output_dir / "data").glob("v2_*stress_test_result*.csv")),
         ),
         ("m36_plan_specs_remain_planned_only", plan_still_planned),
     ]

@@ -30,6 +30,36 @@ def parse_args() -> ExperimentConfig:
     return ExperimentConfig(output_dir=args.output_dir)
 
 
+def _later_m38_carry_forward_outputs_present(output_dir: Path) -> bool:
+    """Return whether carry-forward files are later M38 artifacts."""
+
+    data_dir = output_dir / "data"
+    registry = output_dir / "carry_forward_v2" / "carry_forward_registry_v2.json"
+    return (
+        data_path(output_dir, "v2_carry_forward_report_card.csv").exists()
+        or data_path(output_dir, "v2_carry_forward_no_retuning_audit.csv").exists()
+        or data_path(output_dir, "v2_stress_test_handoff_plan.csv").exists()
+        or registry.exists()
+        or any(data_dir.glob("v2_carry_forward_*.csv"))
+    )
+
+
+def _no_m37_carry_forward_decision_file(output_dir: Path) -> bool:
+    """Allow later M38 decision files in reused output directories."""
+
+    decision_path = data_path(output_dir, "v2_cross_family_robustness_decisions.csv")
+    return not decision_path.exists() or _later_m38_carry_forward_outputs_present(
+        output_dir
+    )
+
+
+def _no_v2_stress_test_result_output(output_dir: Path) -> bool:
+    """Exclude M38 handoff-plan files, which are not stress-test results."""
+
+    data_dir = output_dir / "data"
+    return not any(data_dir.glob("v2_*stress_test_result*.csv"))
+
+
 def run_experiment(config: ExperimentConfig) -> list[dict[str, float | str]]:
     """Run no-retuning and no-stress audit checks."""
 
@@ -50,15 +80,12 @@ def run_experiment(config: ExperimentConfig) -> list[dict[str, float | str]]:
             != (output_dir / "manifests").resolve(),
         ),
         (
-            "no_v2_carry_forward_decision_file",
-            not data_path(
-                output_dir,
-                "v2_cross_family_robustness_decisions.csv",
-            ).exists(),
+            "no_m37_carry_forward_decision_generated",
+            _no_m37_carry_forward_decision_file(output_dir),
         ),
         (
-            "no_v2_stress_test_output",
-            not any((output_dir / "data").glob("v2_*stress*.csv")),
+            "no_v2_stress_test_result_output",
+            _no_v2_stress_test_result_output(output_dir),
         ),
     ]
     return [{"check": name, "passed": float(passed)} for name, passed in checks]

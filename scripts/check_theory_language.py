@@ -154,6 +154,14 @@ BANNED_PHRASES = (
     "v2 manifests recover metric",
     "diagnostic-complete bundle proves space",
     "v2 family passes by construction",
+    "v2 carry-forward proves geometry",
+    "v2 family recovers metric",
+    "v2 carry-forward recovers space",
+    "v2 decision runs stress tests",
+    "v2 decision reruns fits",
+    "diagnostic completeness means carry-forward",
+    "carry-forward means physical coordinates",
+    "threshold sensitivity chooses threshold",
 )
 
 

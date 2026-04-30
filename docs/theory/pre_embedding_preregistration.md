@@ -75,3 +75,7 @@ Milestone 37 executes that preregistered v2 generation run. It records fixed
 settings, writes production v2 manifests, and preserves the no-retuning rule:
 the resulting v2 diagnostics are not used inside M37 to alter carry-forward
 criteria.
+
+Milestone 38 preserves the same no-retuning boundary. It reads M37 outputs and
+applies the fixed criteria without changing manifest generation, fit settings,
+or thresholds after seeing decisions.
