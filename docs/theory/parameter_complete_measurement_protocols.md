@@ -21,3 +21,10 @@ If required parameter values are omitted, the profile is underspecified and not
 production-admissible for pairwise response-profile dissimilarity. Parameter
 metadata is an admissibility check, not a physical interpretation.
 
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+Parameter-complete measurement protocol metadata is a carry-forward
+precondition, not evidence by itself. M42 does not regenerate manifests, rerun
+fits, retune thresholds, or run stress tests. Carry-forward is stress-test
+eligibility, not geometry.

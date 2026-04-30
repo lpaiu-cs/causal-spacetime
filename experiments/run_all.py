@@ -2043,6 +2043,42 @@ from exp238_v3_protocol_diagnostic_complete_bundle_report import (
 from exp239_v3_protocol_manifest_generation_final_sanity import (
     main as run_exp239_main,
 )
+from exp240_v3_protocol_carry_forward_exact_sanity import (
+    main as run_exp240_main,
+)
+from exp241_v3_protocol_bundle_input_audit import (
+    main as run_exp241_main,
+)
+from exp242_v3_protocol_precondition_audit import (
+    main as run_exp242_main,
+)
+from exp243_v3_protocol_carry_forward_decision import (
+    main as run_exp243_main,
+)
+from exp244_v3_protocol_threshold_sensitivity import (
+    main as run_exp244_main,
+)
+from exp245_v3_protocol_registry_export import (
+    main as run_exp245_main,
+)
+from exp246_v3_protocol_stress_test_handoff_plan import (
+    main as run_exp246_main,
+)
+from exp247_v3_protocol_failed_provisional_accounting import (
+    main as run_exp247_main,
+)
+from exp248_v3_protocol_failure_decomposition import (
+    main as run_exp248_main,
+)
+from exp249_v3_protocol_no_retuning_no_refit_audit import (
+    main as run_exp249_main,
+)
+from exp250_v3_protocol_carry_forward_report_card import (
+    main as run_exp250_main,
+)
+from exp251_v3_protocol_carry_forward_final_sanity import (
+    main as run_exp251_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4687,6 +4723,54 @@ def run_v3_protocol_manifest_generation_final_sanity() -> None:
     run_exp239_main()
 
 
+def run_v3_protocol_carry_forward_exact_sanity() -> None:
+    run_exp240_main()
+
+
+def run_v3_protocol_bundle_input_audit() -> None:
+    run_exp241_main()
+
+
+def run_v3_protocol_precondition_audit() -> None:
+    run_exp242_main()
+
+
+def run_v3_protocol_carry_forward_decision() -> None:
+    run_exp243_main()
+
+
+def run_v3_protocol_threshold_sensitivity() -> None:
+    run_exp244_main()
+
+
+def run_v3_protocol_registry_export() -> None:
+    run_exp245_main()
+
+
+def run_v3_protocol_stress_test_handoff_plan() -> None:
+    run_exp246_main()
+
+
+def run_v3_protocol_failed_provisional_accounting() -> None:
+    run_exp247_main()
+
+
+def run_v3_protocol_failure_decomposition() -> None:
+    run_exp248_main()
+
+
+def run_v3_protocol_no_retuning_no_refit_audit() -> None:
+    run_exp249_main()
+
+
+def run_v3_protocol_carry_forward_report_card() -> None:
+    run_exp250_main()
+
+
+def run_v3_protocol_carry_forward_final_sanity() -> None:
+    run_exp251_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -4924,6 +5008,18 @@ def main() -> None:
     run_v3_protocol_required_metric_aggregation()
     run_v3_protocol_diagnostic_complete_bundle_report()
     run_v3_protocol_manifest_generation_final_sanity()
+    run_v3_protocol_carry_forward_exact_sanity()
+    run_v3_protocol_bundle_input_audit()
+    run_v3_protocol_precondition_audit()
+    run_v3_protocol_carry_forward_decision()
+    run_v3_protocol_threshold_sensitivity()
+    run_v3_protocol_registry_export()
+    run_v3_protocol_stress_test_handoff_plan()
+    run_v3_protocol_failed_provisional_accounting()
+    run_v3_protocol_failure_decomposition()
+    run_v3_protocol_no_retuning_no_refit_audit()
+    run_v3_protocol_carry_forward_report_card()
+    run_v3_protocol_carry_forward_final_sanity()
 
 
 if __name__ == "__main__":

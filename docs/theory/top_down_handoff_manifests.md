@@ -15,3 +15,10 @@ when preregistered and frozen before evaluation. The M41 top-down or hybrid
 metadata changes manifest provenance accounting, not the fixed M34 criteria and
 not any M38, M39, or M40 decision.
 
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+Top-down/hybrid provenance is allowed only as preregistered manifest provenance,
+not as evidence. M42 does not regenerate manifests, rerun fits, retune
+thresholds, or run stress tests. Carry-forward is stress-test eligibility, not
+geometry.

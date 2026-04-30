@@ -69,3 +69,11 @@ cross-family robustness criteria. M41 does not evaluate carry-forward decisions.
 M41 does not run stress tests. M41 does not retune thresholds. M41 does not infer
 metric geometry. A future milestone must apply the unchanged fixed criteria to
 the M41 outputs.
+
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+The M34 thresholds remain fixed. M42 does not regenerate manifests, rerun fits,
+retune thresholds, or run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Top-down/hybrid provenance is allowed only as
+preregistered manifest provenance, not as evidence.

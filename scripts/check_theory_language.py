@@ -195,6 +195,15 @@ BANNED_PHRASES = (
     "v3 manifests recover metric",
     "protocol-invariant family passes by construction",
     "parameter metadata recovers metric",
+    "v3 protocol carry-forward proves geometry",
+    "v3 protocol family recovers metric",
+    "v3 carry-forward recovers space",
+    "top-down carry-forward proves geometry",
+    "hybrid handoff proves theory",
+    "provenance integrity proves metric",
+    "protocol metadata means physical coordinates",
+    "v3 decision runs stress tests",
+    "v3 decision reruns fits",
 )
 
 

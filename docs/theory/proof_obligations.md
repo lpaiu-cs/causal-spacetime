@@ -142,3 +142,10 @@ M41 adds obligations to verify parameter-complete measurement protocols,
 protocol-invariant response profiles, and valid handoff provenance in every
 production v3 handoff manifest. These obligations are admissibility checks. They
 do not establish carry-forward status and do not infer metric geometry.
+
+## Milestone 42 Proof Obligations
+
+M42 must verify diagnostic completeness, protocol invariance, parameter
+completeness, and handoff-provenance integrity before applying fixed M34
+criteria. These checks are preconditions. They do not replace the performance
+criteria and do not infer metric geometry.

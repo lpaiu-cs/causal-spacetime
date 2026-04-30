@@ -241,3 +241,10 @@ M41 should be described as execution of a protocol-invariant patched v3
 manifest-generation run. It produces production v3 handoff manifests and a
 diagnostic-complete v3 output bundle, but it does not evaluate carry-forward
 decisions, run stress tests, retune thresholds, or infer metric geometry.
+
+## Milestone 42 Placement
+
+M42 should be described as a v3 protocol carry-forward evaluation using fixed
+M34 criteria. It does not regenerate manifests, rerun fits, retune thresholds,
+or run stress tests. Carry-forward is stress-test eligibility, not geometry, and
+top-down/hybrid provenance is an admissibility record rather than evidence.

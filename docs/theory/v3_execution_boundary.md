@@ -31,3 +31,11 @@ M41 executes the protocol-invariant patched v3 manifest-generation run and write
 production v3 handoff manifests under `outputs/manifests_v3/`. M41 does not
 evaluate carry-forward decisions. M41 does not run stress tests. M41 does not
 retune thresholds. M41 does not infer metric geometry.
+
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Top-down/hybrid provenance is allowed only as
+preregistered manifest provenance, not as evidence.

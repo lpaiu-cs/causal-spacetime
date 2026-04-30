@@ -237,3 +237,24 @@ forbidden-language sections:
 Milestone 41 executes a protocol-invariant patched v3 manifest-generation run.
 It does not evaluate carry-forward decisions, does not run stress tests, does
 not retune thresholds, and does not infer metric geometry.
+
+## Milestone 42 Rejected Language
+
+The following formulations are rejected outside explicit rejected-language or
+forbidden-language sections:
+
+- "v3 protocol carry-forward proves geometry"
+- "v3 protocol family recovers metric"
+- "v3 carry-forward recovers space"
+- "top-down carry-forward proves geometry"
+- "hybrid handoff proves theory"
+- "provenance integrity proves metric"
+- "diagnostic completeness means carry-forward"
+- "protocol metadata means physical coordinates"
+- "v3 decision runs stress tests"
+- "v3 decision reruns fits"
+- "threshold sensitivity chooses threshold"
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+It does not regenerate manifests, rerun fits, retune thresholds, run stress
+tests, or infer metric geometry.

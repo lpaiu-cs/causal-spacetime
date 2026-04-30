@@ -87,3 +87,11 @@ rule, spectrum type, subsampling, normalization, missing policy, tie policy, or
 margin policy varies, those variants must form separate profile families or be
 explicitly marked exploratory/report-only. Protocol metadata, profile metadata,
 and provenance metadata are admissibility metadata, not physical interpretation.
+
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+Protocol invariance is necessary for production pairwise response-profile
+dissimilarity but does not imply carry-forward. M42 does not regenerate
+manifests, rerun fits, retune thresholds, or run stress tests. Carry-forward is
+stress-test eligibility, not geometry.

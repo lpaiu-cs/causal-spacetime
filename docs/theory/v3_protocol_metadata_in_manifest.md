@@ -17,3 +17,10 @@ Protocol metadata, profile metadata, and provenance metadata are admissibility
 metadata, not physical interpretation. Metadata does not imply geometry, metric
 scale, or spatial coordinates.
 
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+Protocol metadata, profile metadata, and provenance metadata are preconditions
+for admissibility. They do not imply carry-forward. M42 does not regenerate
+manifests, rerun fits, retune thresholds, or run stress tests. Carry-forward is
+stress-test eligibility, not geometry.

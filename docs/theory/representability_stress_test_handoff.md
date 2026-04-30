@@ -63,3 +63,10 @@ M41 executes the protocol-invariant patched v3 manifest-generation run and
 produces a diagnostic-complete v3 output bundle. It does not authorize stress
 tests. Stress tests remain blocked unless a later carry-forward evaluation finds
 at least one carry_forward or explicitly provisional v3 family.
+
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle
+and writes a future stress-test handoff plan. It does not run stress tests. It
+does not regenerate manifests, rerun fits, or retune thresholds. Carry-forward
+is stress-test eligibility, not geometry.

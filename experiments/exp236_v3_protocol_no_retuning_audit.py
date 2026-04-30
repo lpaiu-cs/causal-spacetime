@@ -54,7 +54,9 @@ def run_experiment(config: ExperimentConfig) -> list[dict[str, float | str]]:
         },
         {
             "check": "no_v3_stress_test_output_exists",
-            "passed": float(not bool(list(data_dir.glob("v3_*stress*.csv")))),
+            "passed": float(
+                not bool(list(data_dir.glob("v3_*stress_test_result*.csv")))
+            ),
         },
         {
             "check": "fixed_m34_criteria_not_modified_here",

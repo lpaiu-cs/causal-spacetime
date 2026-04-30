@@ -1041,3 +1041,11 @@ not evidence of geometry. M41 does not evaluate carry-forward decisions. M41 doe
 not run stress tests. M41 does not retune thresholds. M41 does not infer metric
 geometry. Protocol metadata, profile metadata, and provenance metadata are
 admissibility metadata, not physical interpretation.
+
+## Milestone 42
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Top-down/hybrid provenance is allowed only as
+preregistered manifest provenance, not as evidence.

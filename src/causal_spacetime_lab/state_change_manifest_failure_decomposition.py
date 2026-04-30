@@ -30,6 +30,12 @@ ROOT_CAUSE_CATEGORIES = {
     "missing_metric",
     "accounting_control",
     "ineligible_control",
+    "provenance_failure",
+    "protocol_metadata_failure",
+    "profile_metadata_failure",
+    "parameter_completeness_failure",
+    "protocol_invariance_failure",
+    "diagnostic_completeness_failure",
     "unknown",
 }
 

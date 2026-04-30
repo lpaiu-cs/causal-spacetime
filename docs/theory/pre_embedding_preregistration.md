@@ -97,3 +97,11 @@ after the patched v3 preregistration is frozen. Top-down and hybrid handoff
 provenance are admissible only when the design source, design digest, allowed
 dependencies, forbidden dependencies, and evaluation boundary are recorded before
 fit, carry-forward, or stress-test evaluation.
+
+## Milestone 42 Boundary
+
+Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
+Top-down/hybrid provenance is allowed only as preregistered manifest provenance,
+not as evidence. M42 does not regenerate manifests, rerun fits, retune
+thresholds, or run stress tests. Carry-forward is stress-test eligibility, not
+geometry.
