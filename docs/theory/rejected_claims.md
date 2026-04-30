@@ -214,3 +214,26 @@ The project explicitly rejects these weak or misleading claims:
 The conservative claim is narrower: causal/accessibility order, counting
 measure, and observer protocols can be studied as ingredients in operational
 reconstruction procedures inside controlled models.
+## Milestone 41 Rejected Language
+
+The following formulations are rejected outside explicit rejected-language or
+forbidden-language sections:
+
+- "v3 protocol manifests prove geometry"
+- "protocol metadata proves geometry"
+- "parameter-complete protocol is distance"
+- "top-down handoff proves geometry"
+- "top-down manifest is evidence"
+- "top-down design recovers metric"
+- "handoff provenance proves theory"
+- "v3 protocol generation means success"
+- "v3 diagnostic complete means carry-forward"
+- "v3 protocol generation evaluates carry-forward"
+- "v3 protocol generation runs stress tests"
+- "v3 manifests recover metric"
+- "protocol-invariant family passes by construction"
+- "parameter metadata recovers metric"
+
+Milestone 41 executes a protocol-invariant patched v3 manifest-generation run.
+It does not evaluate carry-forward decisions, does not run stress tests, does
+not retune thresholds, and does not infer metric geometry.

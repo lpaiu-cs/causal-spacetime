@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from dataclasses import replace
 
+from causal_spacetime_lab.state_change_handoff_provenance import (
+    HandoffProvenanceMetadata,
+    handoff_provenance_jsonable,
+    validate_handoff_provenance,
+)
 from causal_spacetime_lab.state_change_response_constraint_coverage import (
     constraint_pool_summary,
 )
@@ -30,8 +35,15 @@ from causal_spacetime_lab.state_change_response_handoff import (
 from causal_spacetime_lab.state_change_response_pairwise import (
     PairwiseResponseComparisonProtocol,
     pairwise_response_dissimilarity,
+    pairwise_response_dissimilarity_checked,
 )
-from causal_spacetime_lab.state_change_response_profiles import EchoResponseProfile
+from causal_spacetime_lab.state_change_response_profile_metadata import (
+    profile_metadata_jsonable,
+)
+from causal_spacetime_lab.state_change_response_profiles import (
+    EchoResponseProfile,
+    EchoResponseProfileWithMetadata,
+)
 
 
 def build_candidate_handoff_manifest(
@@ -120,6 +132,130 @@ def build_candidate_handoff_manifest(
             "random_same_marginals",
         ],
         forbidden_interpretations=forbidden_interpretations_default(),
+    )
+    digest = manifest_digest(manifest_to_jsonable(manifest))
+    return replace(manifest, manifest_id=digest)
+
+
+def build_candidate_handoff_manifest_checked(
+    profile_with_metadata: EchoResponseProfileWithMetadata,
+    comparison_protocol: PairwiseResponseComparisonProtocol,
+    gate: ConstraintValidationGate,
+    provenance: HandoffProvenanceMetadata,
+    *,
+    max_constraints: int = 5000,
+    train_fraction: float = 0.7,
+    constraint_seed: int = 0,
+    bootstrap_count: int = 20,
+    null_repetitions: int = 5,
+    source_label: str = "candidate",
+) -> ResponseConstraintHandoffManifest:
+    """Build a production-safe handoff manifest with metadata checks."""
+
+    provenance_report = validate_handoff_provenance(provenance)
+    if float(provenance_report["valid_provenance"]) != 1.0:
+        raise ValueError(
+            "invalid handoff provenance: "
+            + str(provenance_report["failed_reasons"])
+        )
+    metadata = profile_with_metadata.metadata
+    dissimilarity = pairwise_response_dissimilarity_checked(
+        profile_with_metadata,
+        comparison_protocol,
+    )
+    margin_value = float(
+        metadata.measurement_protocol.protocol_parameters.get("margin_value", 0.05)
+        if metadata.measurement_protocol.protocol_parameters
+        else 0.05
+    )
+    pool = build_constraint_pool_from_dissimilarity(
+        dissimilarity,
+        max_constraints=max_constraints,
+        min_margin=margin_value,
+        seed=constraint_seed,
+        source_label=source_label,
+    )
+    profile = profile_with_metadata.profile
+    coverage = constraint_pool_summary(pool, int(profile.target_event_ids.size))
+    heldout = heldout_protocol_constraint_validation(
+        profile,
+        comparison_protocol,
+        train_fraction=train_fraction,
+        max_constraints=max_constraints,
+        min_margin=margin_value,
+        seed=constraint_seed,
+    )
+    bootstrap = bootstrap_constraint_stability(
+        profile,
+        comparison_protocol,
+        pool,
+        bootstrap_count=bootstrap_count,
+        seed=constraint_seed,
+    )
+    nulls = evaluate_constraint_pool_against_nulls(
+        profile,
+        comparison_protocol,
+        pool,
+        null_repetitions=null_repetitions,
+        seed=constraint_seed,
+    )
+    summary = build_handoff_validation_summary(
+        heldout,
+        bootstrap,
+        nulls,
+        coverage,
+        int(pool.constraints.shape[0]),
+    )
+    decision = decide_handoff_eligibility(summary, gate)
+    train_indices, heldout_indices = split_constraint_indices(
+        int(pool.constraints.shape[0]),
+        train_fraction,
+        seed=constraint_seed,
+    )
+    profile_json = profile_metadata_jsonable(metadata)
+    provenance_json = handoff_provenance_jsonable(provenance)
+    manifest = ResponseConstraintHandoffManifest(
+        manifest_id="",
+        created_by_milestone="41",
+        profile_label=source_label,
+        comparison_protocol_name=comparison_protocol.name,
+        comparison_method=comparison_protocol.method,
+        missing_policy=comparison_protocol.missing_policy,
+        min_common_protocols=comparison_protocol.min_common_protocols,
+        min_margin=margin_value,
+        max_constraints=int(max_constraints),
+        constraint_seed=int(constraint_seed),
+        train_fraction=float(train_fraction),
+        validation_gate_name=gate.name,
+        validation_summary=summary,
+        handoff_decision=decision,
+        target_event_ids=pool.target_event_ids.copy(),
+        constraints=pool.constraints.copy(),
+        margins=pool.margins.copy(),
+        train_constraint_indices=train_indices,
+        heldout_constraint_indices=heldout_indices,
+        null_baseline_labels=[
+            "shuffle_delays",
+            "shuffle_reachability",
+            "permute_profiles",
+            "random_same_marginals",
+        ],
+        forbidden_interpretations=forbidden_interpretations_default(),
+        profile_metadata=profile_json,
+        measurement_protocol=profile_json["measurement_protocol"],
+        measurement_protocol_id=str(profile_json["measurement_protocol_id"]),
+        measurement_protocol_hash=str(profile_json["measurement_protocol_hash"]),
+        reference_set_id=str(profile_json["reference_set_id"]),
+        reference_chain_ids=list(metadata.reference_chain_ids),
+        profile_invariance_status=metadata.profile_invariance_status,
+        admissible_for_pairwise_dissimilarity=(
+            metadata.admissible_for_pairwise_dissimilarity
+        ),
+        handoff_provenance=provenance_json,
+        handoff_provenance_type=provenance.provenance_type,
+        handoff_design_digest=provenance.design_digest,
+        top_down_template_id=provenance.template_id,
+        top_down_template_hash=provenance.template_hash,
     )
     digest = manifest_digest(manifest_to_jsonable(manifest))
     return replace(manifest, manifest_id=digest)

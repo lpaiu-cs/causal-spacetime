@@ -69,3 +69,12 @@ The handoff boundary now also requires explicit measurement-protocol metadata:
 a single response profile must not mix measurement protocols. This does not
 change M34, M38, or M39 decisions. It does not generate v3 manifests, run
 stress tests, fit new representation models, or retune thresholds.
+## Milestone 41 Provenance Extension
+
+M41 supports bottom-up, top-down, and hybrid handoff provenance. Top-down handoff
+is allowed only when preregistered and frozen before evaluation. Top-down
+handoff is not evidence of geometry. The handoff protocol continues to freeze
+response-profile generation settings, comparison protocols, missing-data policy,
+margin threshold, validation thresholds, null definitions, stop rules, and
+forbidden interpretations. M41 extends that freeze with explicit provenance
+metadata; it does not replace the frozen handoff protocol.

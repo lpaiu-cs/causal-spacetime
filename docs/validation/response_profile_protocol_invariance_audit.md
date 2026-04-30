@@ -7,14 +7,19 @@ It does not generate v3 manifests, run stress tests, or fit new representation m
 
 ## Status Counts
 
-- underspecified: 11
+- underspecified: 16
 
 ## Audit Rows
 
 - v2_manifest: combined_diagnostic_complete_v2 -> underspecified (missing measurement protocol metadata)
+- v2_manifest: combined_diagnostic_complete_v2 -> underspecified (missing measurement protocol metadata)
+- v2_manifest: failed_controls_v2 -> underspecified (missing measurement protocol metadata)
 - v2_manifest: failed_controls_v2 -> underspecified (missing measurement protocol metadata)
 - v2_manifest: rank_gap_coverage_enriched_v2 -> underspecified (missing measurement protocol metadata)
+- v2_manifest: rank_gap_coverage_enriched_v2 -> underspecified (missing measurement protocol metadata)
 - v2_manifest: rank_gap_more_protocol_columns_v2 -> underspecified (missing measurement protocol metadata)
+- v2_manifest: rank_gap_more_protocol_columns_v2 -> underspecified (missing measurement protocol metadata)
+- v2_manifest: rank_gap_rank_resolution_enriched_v2 -> underspecified (missing measurement protocol metadata)
 - v2_manifest: rank_gap_rank_resolution_enriched_v2 -> underspecified (missing measurement protocol metadata)
 - v3_design: rank_gap_multi_manifest_v3 -> underspecified (missing measurement protocol metadata)
 - v3_design: rank_gap_more_protocol_columns_v3 -> underspecified (missing measurement protocol metadata)

@@ -70,6 +70,20 @@ class ResponseConstraintHandoffManifest:
     heldout_constraint_indices: NDArray[np.int_]
     null_baseline_labels: list[str]
     forbidden_interpretations: list[str]
+    profile_metadata: dict[str, Any] | None = None
+    measurement_protocol: dict[str, Any] | None = None
+    measurement_protocol_id: str = ""
+    measurement_protocol_hash: str = ""
+    reference_set_id: str = ""
+    reference_chain_ids: list[str] | None = None
+    profile_invariance_status: str = ""
+    admissible_for_pairwise_dissimilarity: bool = False
+    handoff_provenance: dict[str, Any] | None = None
+    handoff_provenance_type: str = ""
+    handoff_design_digest: str = ""
+    top_down_template: dict[str, Any] | None = None
+    top_down_template_id: str = ""
+    top_down_template_hash: str = ""
 
 
 def forbidden_interpretations_default() -> list[str]:
@@ -230,3 +244,85 @@ def read_handoff_manifest(path: Path) -> dict[str, object]:
     """Read a handoff manifest JSON file."""
 
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def manifest_has_provenance(manifest_json: dict[str, object]) -> bool:
+    """Return whether a manifest carries handoff provenance metadata."""
+
+    return isinstance(manifest_json.get("handoff_provenance"), dict)
+
+
+def manifest_provenance_type(manifest_json: dict[str, object]) -> str:
+    """Return the manifest provenance type when declared."""
+
+    provenance = manifest_json.get("handoff_provenance")
+    if isinstance(provenance, dict):
+        return str(
+            provenance.get(
+                "provenance_type",
+                manifest_json.get("handoff_provenance_type", ""),
+            )
+        )
+    return str(manifest_json.get("handoff_provenance_type", ""))
+
+
+def manifest_is_top_down_or_hybrid(manifest_json: dict[str, object]) -> bool:
+    """Return whether a manifest has top-down or hybrid handoff provenance."""
+
+    return manifest_provenance_type(manifest_json) in {
+        "top_down_preregistered_template",
+        "hybrid_template_instantiated_from_profile",
+    }
+
+
+def manifest_provenance_integrity_report(
+    manifest_json: dict[str, object],
+) -> dict[str, float | str]:
+    """Return provenance integrity diagnostics for a handoff manifest."""
+
+    provenance = manifest_json.get("handoff_provenance")
+    if not isinstance(provenance, dict):
+        return {
+            "has_provenance": 0.0,
+            "provenance_type": "",
+            "has_design_digest": 0.0,
+            "forbidden_outputs_unused": 0.0,
+            "has_template_metadata": 0.0,
+            "provenance_integrity_passed": 0.0,
+        }
+    provenance_type = str(provenance.get("provenance_type", ""))
+    has_design_digest = bool(
+        provenance.get("design_digest") or manifest_json.get("handoff_design_digest")
+    )
+    forbidden_outputs_unused = not any(
+        bool(provenance.get(key, False))
+        for key in [
+            "fit_outputs_used",
+            "heldout_outputs_used",
+            "carry_forward_outputs_used",
+            "stress_test_outputs_used",
+        ]
+    )
+    has_template = bool(
+        manifest_json.get("top_down_template")
+        or provenance.get("template_id")
+        or manifest_json.get("top_down_template_id")
+    )
+    passed = (
+        bool(provenance_type)
+        and has_design_digest
+        and forbidden_outputs_unused
+        and (
+            provenance_type == "bottom_up_profile_derived"
+            or has_template
+            or provenance_type == "report_only_control"
+        )
+    )
+    return {
+        "has_provenance": 1.0,
+        "provenance_type": provenance_type,
+        "has_design_digest": float(has_design_digest),
+        "forbidden_outputs_unused": float(forbidden_outputs_unused),
+        "has_template_metadata": float(has_template),
+        "provenance_integrity_passed": float(passed),
+    }

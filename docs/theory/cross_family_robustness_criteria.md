@@ -62,3 +62,10 @@ protocol invariance before v3 execution and patches planned v3 family
 semantics. The patch does not change M34, M38, or M39 decisions, does not
 generate v3 manifests, does not run stress tests, and does not fit new
 representation models.
+## Milestone 41 Non-Decision Boundary
+
+M41 produces a diagnostic-complete v3 output bundle but does not apply the fixed
+cross-family robustness criteria. M41 does not evaluate carry-forward decisions.
+M41 does not run stress tests. M41 does not retune thresholds. M41 does not infer
+metric geometry. A future milestone must apply the unchanged fixed criteria to
+the M41 outputs.

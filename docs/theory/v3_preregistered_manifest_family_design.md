@@ -42,3 +42,10 @@ echo rule, spectrum type, subsampling, normalization, missing policy, tie
 policy, or margin policy varies, those variants must form separate profile
 families or be explicitly marked exploratory/report-only. The patched v3
 families remain planned-only.
+## Milestone 41 Protocol Metadata Patch
+
+M41 executes the protocol-invariant patched v3 manifest-generation run from the
+Milestone 40 patched preregistration. The original planned-only v3 design remains
+part of the preregistration history; M41 adds parameter-complete protocol
+metadata, response-profile metadata, and handoff provenance metadata before
+production v3 manifests are written.

@@ -25,3 +25,10 @@ contexts. Failed controls remain report-only controls with explicit metadata.
 
 These planned v3 families are not current results. They do not imply future
 carry-forward status and do not infer metric geometry.
+## Milestone 41 Execution Boundary
+
+M41 executes the protocol-invariant patched v3 manifest-generation run using the
+patched v3 preregistration. Patched v3 families become production v3 handoff
+manifest families only for diagnostic-complete output production. M41 does not
+evaluate carry-forward decisions. M41 does not run stress tests. M41 does not
+retune thresholds. M41 does not infer metric geometry.

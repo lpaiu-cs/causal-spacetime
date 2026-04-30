@@ -235,3 +235,9 @@ This is a pre-execution design correction, not threshold retuning. It does not
 change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
 not run stress tests. It does not fit new representation models. A single
 response profile must not mix measurement protocols.
+## Milestone 41 Placement
+
+M41 should be described as execution of a protocol-invariant patched v3
+manifest-generation run. It produces production v3 handoff manifests and a
+diagnostic-complete v3 output bundle, but it does not evaluate carry-forward
+decisions, run stress tests, retune thresholds, or infer metric geometry.

@@ -5,6 +5,9 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict, dataclass
+from typing import TypeAlias
+
+ProtocolParameterValue: TypeAlias = str | int | float | bool
 
 ECHO_RULES = {
     "earliest_return",
@@ -67,6 +70,7 @@ class MeasurementProtocolSpec:
     tie_policy: str
     margin_policy: str
     protocol_label: str = ""
+    protocol_parameters: dict[str, ProtocolParameterValue] | None = None
 
     def __post_init__(self) -> None:
         _validate_allowed("echo_rule", self.echo_rule, ECHO_RULES)
@@ -96,13 +100,17 @@ def _validate_allowed(field_name: str, value: str, allowed_values: set[str]) -> 
 
 def measurement_protocol_jsonable(
     spec: MeasurementProtocolSpec,
-) -> dict[str, str]:
+) -> dict[str, object]:
     """Return JSON-compatible measurement-protocol metadata."""
 
-    return asdict(spec)
+    payload = asdict(spec)
+    payload["protocol_parameters"] = normalized_protocol_parameters(
+        spec.protocol_parameters
+    )
+    return payload
 
 
-def _hash_payload(spec: MeasurementProtocolSpec) -> dict[str, str]:
+def _hash_payload(spec: MeasurementProtocolSpec) -> dict[str, object]:
     payload = measurement_protocol_jsonable(spec)
     payload.pop("protocol_label", None)
     return payload
@@ -140,6 +148,7 @@ def default_earliest_full_protocol(
     missing_policy: str = "common_reachable",
     tie_policy: str = "tie_as_unresolved",
     margin_policy: str = "fixed_margin",
+    margin_value: float = 0.05,
 ) -> MeasurementProtocolSpec:
     """Return the default earliest-return full-spectrum protocol."""
 
@@ -154,6 +163,11 @@ def default_earliest_full_protocol(
         tie_policy=tie_policy,
         margin_policy=margin_policy,
         protocol_label="earliest_full",
+        protocol_parameters={
+            "emission_position_rule": "declared_fixed_position",
+            "normalization_scope": "profile_family",
+            "margin_value": float(margin_value),
+        },
     )
 
 
@@ -162,6 +176,8 @@ def default_gated_full_protocol(
     missing_policy: str = "common_reachable",
     tie_policy: str = "tie_as_unresolved",
     margin_policy: str = "fixed_margin",
+    gate_delay_rank: int = 1,
+    margin_value: float = 0.05,
 ) -> MeasurementProtocolSpec:
     """Return the default gated-return full-spectrum protocol."""
 
@@ -176,6 +192,12 @@ def default_gated_full_protocol(
         tie_policy=tie_policy,
         margin_policy=margin_policy,
         protocol_label="gated_full",
+        protocol_parameters={
+            "emission_position_rule": "declared_fixed_position",
+            "gate_delay_rank": int(gate_delay_rank),
+            "normalization_scope": "profile_family",
+            "margin_value": float(margin_value),
+        },
     )
 
 
@@ -184,6 +206,8 @@ def default_earliest_retained_protocol(
     missing_policy: str = "common_reachable",
     tie_policy: str = "tie_as_unresolved",
     margin_policy: str = "fixed_margin",
+    retained_reference_policy: str = "declared_retained_reference_set",
+    margin_value: float = 0.05,
 ) -> MeasurementProtocolSpec:
     """Return the default earliest-return retained-reference protocol."""
 
@@ -198,6 +222,12 @@ def default_earliest_retained_protocol(
         tie_policy=tie_policy,
         margin_policy=margin_policy,
         protocol_label="earliest_retained",
+        protocol_parameters={
+            "emission_position_rule": "declared_fixed_position",
+            "retained_reference_policy": retained_reference_policy,
+            "normalization_scope": "profile_family",
+            "margin_value": float(margin_value),
+        },
     )
 
 
@@ -206,6 +236,7 @@ def default_immediate_edge_protocol(
     missing_policy: str = "common_reachable",
     tie_policy: str = "tie_as_unresolved",
     margin_policy: str = "fixed_margin",
+    margin_value: float = 0.05,
 ) -> MeasurementProtocolSpec:
     """Return the default immediate-edge response protocol."""
 
@@ -220,4 +251,81 @@ def default_immediate_edge_protocol(
         tie_policy=tie_policy,
         margin_policy=margin_policy,
         protocol_label="immediate_edge",
+        protocol_parameters={
+            "emission_position_rule": "declared_fixed_position",
+            "normalization_scope": "profile_family",
+            "margin_value": float(margin_value),
+        },
     )
+
+
+def normalized_protocol_parameters(
+    parameters: dict[str, ProtocolParameterValue] | None,
+) -> dict[str, ProtocolParameterValue]:
+    """Return canonical protocol parameters used by protocol hashing."""
+
+    if not parameters:
+        return {}
+    normalized: dict[str, ProtocolParameterValue] = {}
+    for key in sorted(parameters):
+        value = parameters[key]
+        if isinstance(value, bool):
+            normalized[str(key)] = bool(value)
+        elif isinstance(value, int) and not isinstance(value, bool):
+            normalized[str(key)] = int(value)
+        elif isinstance(value, float):
+            normalized[str(key)] = float(value)
+        else:
+            normalized[str(key)] = str(value)
+    return normalized
+
+
+def measurement_protocol_parameter_table(
+    spec: MeasurementProtocolSpec,
+) -> list[dict[str, str]]:
+    """Return protocol parameters as CSV-friendly rows."""
+
+    parameters = normalized_protocol_parameters(spec.protocol_parameters)
+    return [
+        {
+            "measurement_protocol_id": measurement_protocol_id(spec),
+            "parameter_name": key,
+            "parameter_value": str(value),
+        }
+        for key, value in parameters.items()
+    ]
+
+
+def parameter_complete_for_protocol(spec: MeasurementProtocolSpec) -> bool:
+    """Return whether required protocol-rule parameters are declared."""
+
+    return not missing_required_protocol_parameters(spec)
+
+
+def missing_required_protocol_parameters(spec: MeasurementProtocolSpec) -> list[str]:
+    """Return required parameter names missing from a protocol spec."""
+
+    parameters = normalized_protocol_parameters(spec.protocol_parameters)
+    required: list[str] = []
+    if spec.gate_rule == "fixed_min_delay":
+        required.append("gate_delay_rank")
+    if spec.emission_rule == "fixed_position":
+        required.extend(["emission_position_rule|emission_position"])
+    if spec.reference_subsampling_rule == "fixed_stride":
+        required.append("reference_stride")
+    if spec.reference_subsampling_rule == "retained_reference_set":
+        required.append("retained_reference_policy")
+    if spec.normalization_rule == "per_protocol_range":
+        required.append("normalization_scope")
+    if spec.margin_policy == "fixed_margin":
+        required.append("margin_value")
+
+    missing: list[str] = []
+    for item in required:
+        if "|" in item:
+            choices = item.split("|")
+            if not any(choice in parameters for choice in choices):
+                missing.append(item)
+        elif item not in parameters:
+            missing.append(item)
+    return missing

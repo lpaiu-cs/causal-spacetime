@@ -181,6 +181,20 @@ BANNED_PHRASES = (
     "v3 protocol patch proves geometry",
     "protocol-invariant profile is distance",
     "patched v3 family will pass",
+    "v3 protocol manifests prove geometry",
+    "protocol metadata proves geometry",
+    "parameter-complete protocol is distance",
+    "top-down handoff proves geometry",
+    "top-down manifest is evidence",
+    "top-down design recovers metric",
+    "handoff provenance proves theory",
+    "v3 protocol generation means success",
+    "v3 diagnostic complete means carry-forward",
+    "v3 protocol generation evaluates carry-forward",
+    "v3 protocol generation runs stress tests",
+    "v3 manifests recover metric",
+    "protocol-invariant family passes by construction",
+    "parameter metadata recovers metric",
 )
 
 

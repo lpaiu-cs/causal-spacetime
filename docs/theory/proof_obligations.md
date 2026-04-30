@@ -136,3 +136,9 @@ repository. Open proof obligations include:
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.
+## Milestone 41 Proof Obligations
+
+M41 adds obligations to verify parameter-complete measurement protocols,
+protocol-invariant response profiles, and valid handoff provenance in every
+production v3 handoff manifest. These obligations are admissibility checks. They
+do not establish carry-forward status and do not infer metric geometry.

@@ -9,6 +9,8 @@ from causal_spacetime_lab.state_change_measurement_protocol import (
     measurement_protocol_hash,
     measurement_protocol_id,
     measurement_protocol_jsonable,
+    missing_required_protocol_parameters,
+    parameter_complete_for_protocol,
 )
 
 PROFILE_INVARIANCE_STATUSES = {
@@ -108,6 +110,50 @@ def profile_metadata_from_protocols(
             reason_if_blocked="missing measurement protocol metadata",
         )
 
+    incomplete = [
+        (
+            measurement_protocol_id(protocol),
+            missing_required_protocol_parameters(protocol),
+        )
+        for protocol in protocols
+        if not parameter_complete_for_protocol(protocol)
+    ]
+    if incomplete:
+        fallback = protocols[0]
+        reason = ";".join(
+            f"{protocol_id}:{','.join(missing)}"
+            for protocol_id, missing in incomplete
+        )
+        return ResponseProfileMetadata(
+            profile_family_id=profile_family_id,
+            profile_family_semantics="underspecified measurement protocol parameters",
+            measurement_protocol_id=measurement_protocol_id(fallback),
+            measurement_protocol_hash=measurement_protocol_hash(fallback),
+            measurement_protocol=fallback,
+            reference_set_id=reference_set_id,
+            reference_chain_ids=list(reference_chain_ids),
+            profile_invariance_status="underspecified",
+            admissible_for_pairwise_dissimilarity=False,
+            exploratory_mixed_context=exploratory_mixed_context,
+            reason_if_blocked=f"missing protocol parameters: {reason}",
+        )
+
+    if not reference_chain_ids or not reference_set_id:
+        fallback = protocols[0]
+        return ResponseProfileMetadata(
+            profile_family_id=profile_family_id,
+            profile_family_semantics="underspecified reference metadata",
+            measurement_protocol_id=measurement_protocol_id(fallback),
+            measurement_protocol_hash=measurement_protocol_hash(fallback),
+            measurement_protocol=fallback,
+            reference_set_id=reference_set_id,
+            reference_chain_ids=list(reference_chain_ids),
+            profile_invariance_status="underspecified",
+            admissible_for_pairwise_dissimilarity=False,
+            exploratory_mixed_context=exploratory_mixed_context,
+            reason_if_blocked="missing reference_chain_ids or reference_set_id",
+        )
+
     hashes = [measurement_protocol_hash(protocol) for protocol in protocols]
     unique_hashes = set(hashes)
     first_protocol = protocols[0]
@@ -171,6 +217,35 @@ def validate_profile_admissibility(
         "number_of_protocols_mixed": float(mixed_count),
         "number_of_references": float(len(metadata.reference_chain_ids)),
         "reason_if_blocked": metadata.reason_if_blocked,
+    }
+
+
+def profile_parameter_completeness_report(
+    metadata: ResponseProfileMetadata,
+) -> dict[str, float | str]:
+    """Report parameter completeness for response-profile metadata."""
+
+    missing = missing_required_protocol_parameters(metadata.measurement_protocol)
+    complete = (
+        not missing
+        and bool(metadata.reference_chain_ids)
+        and bool(metadata.reference_set_id)
+    )
+    reason = ""
+    if missing:
+        reason = "missing protocol parameters: " + ",".join(missing)
+    elif not metadata.reference_chain_ids:
+        reason = "missing reference_chain_ids"
+    elif not metadata.reference_set_id:
+        reason = "missing reference_set_id"
+    return {
+        "profile_family_id": metadata.profile_family_id,
+        "parameter_complete": float(complete),
+        "missing_parameter_reason": reason,
+        "profile_invariance_status": metadata.profile_invariance_status,
+        "admissible_for_pairwise_dissimilarity": float(
+            metadata.admissible_for_pairwise_dissimilarity
+        ),
     }
 
 

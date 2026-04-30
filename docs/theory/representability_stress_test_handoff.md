@@ -57,3 +57,9 @@ Milestone 40 also does not reopen the handoff. It audits response-profile
 protocol invariance before v3 execution and patches v3 design semantics only.
 No stress tests are allowed, no v3 manifests are generated, no new
 representation models are fit, and no carry-forward decisions are changed.
+## Milestone 41 Stress-Test Boundary
+
+M41 executes the protocol-invariant patched v3 manifest-generation run and
+produces a diagnostic-complete v3 output bundle. It does not authorize stress
+tests. Stress tests remain blocked unless a later carry-forward evaluation finds
+at least one carry_forward or explicitly provisional v3 family.

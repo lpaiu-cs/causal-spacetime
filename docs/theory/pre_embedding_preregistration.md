@@ -90,3 +90,10 @@ This is a pre-execution design correction, not threshold retuning. It does not
 change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
 not run stress tests. It does not fit new representation models. A single
 response profile must not mix measurement protocols.
+## Milestone 41 Preregistration Boundary
+
+M41 executes the protocol-invariant patched v3 manifest-generation run only
+after the patched v3 preregistration is frozen. Top-down and hybrid handoff
+provenance are admissible only when the design source, design digest, allowed
+dependencies, forbidden dependencies, and evaluation boundary are recorded before
+fit, carry-forward, or stress-test evaluation.

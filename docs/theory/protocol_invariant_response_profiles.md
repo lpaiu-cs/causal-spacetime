@@ -78,3 +78,12 @@ An exploratory mixed-context profile is a labeled report-only object used to
 identify how sensitive results are to changing measurement rules. It is not a
 production input for pairwise response-profile dissimilarity and cannot be used
 to produce handoff manifests.
+## Milestone 41 Extension
+
+M41 executes the protocol-invariant patched v3 manifest-generation run. A
+response profile used for pairwise response-profile dissimilarity may vary
+reference chains inside one fixed measurement protocol. If emission, gate, echo
+rule, spectrum type, subsampling, normalization, missing policy, tie policy, or
+margin policy varies, those variants must form separate profile families or be
+explicitly marked exploratory/report-only. Protocol metadata, profile metadata,
+and provenance metadata are admissibility metadata, not physical interpretation.

@@ -25,3 +25,9 @@ Milestone 40 is a pre-execution design correction, not threshold retuning. It
 does not change M34, M38, or M39 decisions. It does not generate v3 manifests.
 It does not run stress tests. It does not fit new representation models. A
 single response profile must not mix measurement protocols.
+## Milestone 41 Boundary
+
+M41 executes the protocol-invariant patched v3 manifest-generation run and writes
+production v3 handoff manifests under `outputs/manifests_v3/`. M41 does not
+evaluate carry-forward decisions. M41 does not run stress tests. M41 does not
+retune thresholds. M41 does not infer metric geometry.

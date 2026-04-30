@@ -813,3 +813,12 @@ threshold retuning. It does not change M34, M38, or M39 decisions. It does not
 generate v3 manifests. It does not run stress tests. It does not fit new
 representation models. A single response profile must not mix measurement
 protocols.
+## Milestone 41 Validation Boundary
+
+M41 executes the protocol-invariant patched v3 manifest-generation run. M41
+supports bottom-up, top-down, and hybrid handoff provenance. Top-down handoff is
+allowed only when preregistered and frozen before evaluation. Top-down handoff is
+not evidence of geometry. M41 does not evaluate carry-forward decisions. M41 does
+not run stress tests. M41 does not retune thresholds. M41 does not infer metric
+geometry. Protocol metadata, profile metadata, and provenance metadata are
+admissibility metadata, not physical interpretation.

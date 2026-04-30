@@ -1995,6 +1995,54 @@ from exp222_protocol_patch_no_execution_audit import (
 from exp223_protocol_invariance_final_sanity import (
     main as run_exp223_main,
 )
+from exp224_v3_protocol_execution_spec_exact_sanity import (
+    main as run_exp224_main,
+)
+from exp225_v3_protocol_parameter_completeness_sanity import (
+    main as run_exp225_main,
+)
+from exp226_handoff_provenance_exact_sanity import (
+    main as run_exp226_main,
+)
+from exp227_top_down_handoff_template_exact_sanity import (
+    main as run_exp227_main,
+)
+from exp228_v3_protocol_manifest_generation import (
+    main as run_exp228_main,
+)
+from exp229_v3_protocol_manifest_metadata_audit import (
+    main as run_exp229_main,
+)
+from exp230_v3_protocol_family_fit_diagnostics import (
+    main as run_exp230_main,
+)
+from exp231_v3_protocol_null_taxonomy_diagnostics import (
+    main as run_exp231_main,
+)
+from exp232_v3_protocol_stricter_criteria_diagnostics import (
+    main as run_exp232_main,
+)
+from exp233_v3_protocol_failed_accounting import (
+    main as run_exp233_main,
+)
+from exp234_v3_protocol_coverage_metrics import (
+    main as run_exp234_main,
+)
+from exp235_v3_protocol_restart_latent_order_stability import (
+    main as run_exp235_main,
+)
+from exp236_v3_protocol_no_retuning_audit import (
+    main as run_exp236_main,
+)
+from exp237_v3_protocol_required_metric_aggregation import (
+    main as run_exp237_main,
+)
+from exp238_v3_protocol_diagnostic_complete_bundle_report import (
+    main as run_exp238_main,
+)
+from exp239_v3_protocol_manifest_generation_final_sanity import (
+    main as run_exp239_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4575,6 +4623,70 @@ def run_protocol_invariance_final_sanity() -> None:
     run_exp223_main()
 
 
+def run_v3_protocol_execution_spec_exact_sanity() -> None:
+    run_exp224_main()
+
+
+def run_v3_protocol_parameter_completeness_sanity() -> None:
+    run_exp225_main()
+
+
+def run_handoff_provenance_exact_sanity() -> None:
+    run_exp226_main()
+
+
+def run_top_down_handoff_template_exact_sanity() -> None:
+    run_exp227_main()
+
+
+def run_v3_protocol_manifest_generation() -> None:
+    run_exp228_main()
+
+
+def run_v3_protocol_manifest_metadata_audit() -> None:
+    run_exp229_main()
+
+
+def run_v3_protocol_family_fit_diagnostics() -> None:
+    run_exp230_main()
+
+
+def run_v3_protocol_null_taxonomy_diagnostics() -> None:
+    run_exp231_main()
+
+
+def run_v3_protocol_stricter_criteria_diagnostics() -> None:
+    run_exp232_main()
+
+
+def run_v3_protocol_failed_accounting() -> None:
+    run_exp233_main()
+
+
+def run_v3_protocol_coverage_metrics() -> None:
+    run_exp234_main()
+
+
+def run_v3_protocol_restart_latent_order_stability() -> None:
+    run_exp235_main()
+
+
+def run_v3_protocol_no_retuning_audit() -> None:
+    run_exp236_main()
+
+
+def run_v3_protocol_required_metric_aggregation() -> None:
+    run_exp237_main()
+
+
+def run_v3_protocol_diagnostic_complete_bundle_report() -> None:
+    run_exp238_main()
+
+
+def run_v3_protocol_manifest_generation_final_sanity() -> None:
+    run_exp239_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -4796,6 +4908,22 @@ def main() -> None:
     run_protocol_invariance_language_audit()
     run_protocol_patch_no_execution_audit()
     run_protocol_invariance_final_sanity()
+    run_v3_protocol_execution_spec_exact_sanity()
+    run_v3_protocol_parameter_completeness_sanity()
+    run_handoff_provenance_exact_sanity()
+    run_top_down_handoff_template_exact_sanity()
+    run_v3_protocol_manifest_generation()
+    run_v3_protocol_manifest_metadata_audit()
+    run_v3_protocol_family_fit_diagnostics()
+    run_v3_protocol_null_taxonomy_diagnostics()
+    run_v3_protocol_stricter_criteria_diagnostics()
+    run_v3_protocol_failed_accounting()
+    run_v3_protocol_coverage_metrics()
+    run_v3_protocol_restart_latent_order_stability()
+    run_v3_protocol_no_retuning_audit()
+    run_v3_protocol_required_metric_aggregation()
+    run_v3_protocol_diagnostic_complete_bundle_report()
+    run_v3_protocol_manifest_generation_final_sanity()
 
 
 if __name__ == "__main__":

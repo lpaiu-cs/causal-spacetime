@@ -34,3 +34,9 @@ reported, and no blocked family is reinterpreted as eligible.
 Mixed contexts may be useful for exploratory diagnosis, but they must be
 explicitly marked report-only. They are not admissible production inputs for
 pairwise response-profile dissimilarity.
+## Milestone 41 Extension
+
+M41 executes the protocol-invariant patched v3 manifest-generation run after the
+Milestone 40 protocol-invariance audit. It does not change M34, M38, M39, or
+M40 decisions. It does not evaluate carry-forward decisions, does not run stress
+tests, does not retune thresholds, and does not infer metric geometry.
