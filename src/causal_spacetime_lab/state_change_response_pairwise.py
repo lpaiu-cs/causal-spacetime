@@ -11,7 +11,10 @@ from dataclasses import dataclass
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
-from causal_spacetime_lab.state_change_response_profiles import EchoResponseProfile
+from causal_spacetime_lab.state_change_response_profiles import (
+    EchoResponseProfile,
+    EchoResponseProfileWithMetadata,
+)
 
 PAIRWISE_METHODS = {
     "separation_fraction",
@@ -202,6 +205,67 @@ def pairwise_response_dissimilarity(
         protocol_name=protocol.name,
         method=protocol.method,
     )
+
+
+def validate_profile_for_pairwise_dissimilarity(
+    profile_or_wrapped: EchoResponseProfile | EchoResponseProfileWithMetadata,
+) -> dict[str, float | str]:
+    """Validate profile metadata before production pairwise comparison."""
+
+    metadata = getattr(profile_or_wrapped, "metadata", None)
+    if isinstance(profile_or_wrapped, EchoResponseProfileWithMetadata):
+        metadata = profile_or_wrapped.metadata
+    if metadata is None:
+        return {
+            "profile_invariance_status": "underspecified",
+            "admissible_for_pairwise_dissimilarity": 0.0,
+            "exploratory_mixed_context": 0.0,
+            "reason_if_blocked": "missing measurement protocol metadata",
+        }
+    admissible = (
+        metadata.profile_invariance_status == "protocol_invariant"
+        and metadata.admissible_for_pairwise_dissimilarity
+    )
+    reason = metadata.reason_if_blocked
+    if not admissible and not reason:
+        reason = "profile metadata is not production admissible"
+    return {
+        "profile_invariance_status": metadata.profile_invariance_status,
+        "admissible_for_pairwise_dissimilarity": float(admissible),
+        "exploratory_mixed_context": float(metadata.exploratory_mixed_context),
+        "reason_if_blocked": reason,
+    }
+
+
+def pairwise_response_dissimilarity_checked(
+    profile_or_wrapped: EchoResponseProfile | EchoResponseProfileWithMetadata,
+    protocol: PairwiseResponseComparisonProtocol,
+    *,
+    allow_exploratory_mixed_context: bool = False,
+) -> PairwiseResponseDissimilarity:
+    """Return pairwise response-profile dissimilarity after metadata checks."""
+
+    validation = validate_profile_for_pairwise_dissimilarity(profile_or_wrapped)
+    status = str(validation["profile_invariance_status"])
+    admissible = bool(float(validation["admissible_for_pairwise_dissimilarity"]))
+    exploratory = bool(float(validation["exploratory_mixed_context"]))
+    if not admissible:
+        if not (
+            allow_exploratory_mixed_context
+            and exploratory
+            and status == "protocol_mixed"
+        ):
+            reason = validation["reason_if_blocked"]
+            raise ValueError(
+                "response profile is inadmissible for production pairwise "
+                f"response-profile dissimilarity: {reason}"
+            )
+    profile = (
+        profile_or_wrapped.profile
+        if isinstance(profile_or_wrapped, EchoResponseProfileWithMetadata)
+        else profile_or_wrapped
+    )
+    return pairwise_response_dissimilarity(profile, protocol)
 
 
 def response_pair_comparison_constraints(

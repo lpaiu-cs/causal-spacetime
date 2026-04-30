@@ -129,6 +129,10 @@ repository. Open proof obligations include:
   report-only, and failed-control families without retuning or stress tests.
 - root-cause audits that separate structural blocking from measured blocking
   before preregistering any replicated future manifest-family design.
+- protocol-invariance audits showing that a response profile used for
+  pairwise response-profile dissimilarity varies reference chains only inside
+  one fixed measurement protocol, with rule variants split into separate
+  families or marked exploratory/report-only.
 
 The current code provides controlled validation experiments and counterexamples.
 It does not discharge these proof obligations.

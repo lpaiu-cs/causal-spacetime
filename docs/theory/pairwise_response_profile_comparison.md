@@ -76,3 +76,11 @@ Validated pools remain pre-metric response-comparison outputs.
 
 Milestone 31 exports handoff manifests for eligible pools. Those manifests are
 frozen input specifications and not fitted representations.
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+For production pairwise response-profile dissimilarity, a single response
+profile may vary reference chains inside one fixed measurement protocol only.
+If emission, gate, echo rule, spectrum type, subsampling, normalization,
+missing policy, tie policy, or margin policy varies, those variants must form
+separate profile families or be explicitly marked exploratory/report-only.
+This is a pre-execution design correction, not threshold retuning.

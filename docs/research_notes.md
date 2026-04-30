@@ -689,8 +689,9 @@ target comparison structure. A single reference response signature is a scalar
 preorder over targets. It can be represented by many monotone scalar layouts,
 and those layouts can disagree on synthetic target-target pair order.
 
-Multi-reference response profiles add protocol columns and can distinguish
-targets that tie under one protocol. They are still pre-metric. The
+Multi-reference response profiles add reference-chain columns inside a fixed
+measurement protocol and can distinguish targets that tie under one reference.
+They are still pre-metric. The
 representability ladder records the additional structure required for
 pairwise distance-order tests, ordinal embedding candidates, and calibrated
 metric representations.
@@ -827,3 +828,20 @@ The audit also records diagnostic blocking and control-family blocking. V3
 family design is preregistered but not executed. V3 planned families are not
 current results. No thresholds are retuned. No stress tests are run, and
 blocked v2 families remain reported.
+
+## Milestone 40: Protocol-Invariant Response-Profile Audit
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+This is a pre-execution design correction, not threshold retuning. It does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
+not run stress tests. It does not fit new representation models.
+
+A single response profile must not mix measurement protocols. A response
+profile used for pairwise response-profile dissimilarity may vary reference
+chains inside one fixed measurement protocol. If emission, gate, echo rule,
+spectrum type, subsampling, normalization, missing policy, tie policy, or
+margin policy varies, those variants must form separate profile families or be
+explicitly marked exploratory/report-only.
+
+The patched v3 families remain planned-only. Future v3 production manifest
+generation requires a later milestone.

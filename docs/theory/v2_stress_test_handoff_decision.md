@@ -24,3 +24,8 @@ diagnostics over frozen response-comparison artifacts.
 
 Milestone 39 keeps this boundary closed. It audits blocked v2 families and
 preregisters v3 design work, but it does not run stress tests.
+
+Milestone 40 keeps this boundary closed as well. It is a pre-execution design
+correction for response-profile protocol invariance. It does not generate v3
+manifests, fit new representation models, retune thresholds, or run stress
+tests.

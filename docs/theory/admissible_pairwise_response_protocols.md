@@ -63,3 +63,11 @@ Milestone 31 freezes eligible pools in handoff manifests. The manifest records
 the admissible comparison protocol and missing-data policy so future
 experiments cannot change them after inspecting held-out or null-baseline
 outcomes.
+
+Milestone 40 adds an upstream admissibility condition for the response profile
+itself. A response profile used for pairwise response-profile dissimilarity may
+vary reference chains inside one fixed measurement protocol. If emission,
+gate, echo rule, spectrum type, subsampling, normalization, missing policy,
+tie policy, or margin policy varies, those variants must form separate profile
+families or be explicitly marked exploratory/report-only. A single response
+profile must not mix measurement protocols.

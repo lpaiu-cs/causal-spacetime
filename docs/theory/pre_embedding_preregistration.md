@@ -83,3 +83,10 @@ or thresholds after seeing decisions.
 Milestone 39 preserves the boundary again. It audits v2 blocked decisions and
 exports a planned-only v3 preregistration. V3 planned families are not current
 results, and no thresholds are retuned.
+
+Milestone 40 preserves the boundary before v3 execution. It audits
+response-profile protocol invariance and patches the planned-only v3 design.
+This is a pre-execution design correction, not threshold retuning. It does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
+not run stress tests. It does not fit new representation models. A single
+response profile must not mix measurement protocols.

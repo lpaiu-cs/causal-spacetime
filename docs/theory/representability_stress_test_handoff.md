@@ -52,3 +52,8 @@ stopped or report-only.
 
 Milestone 39 does not reopen the handoff. It audits why the v2 handoff stopped
 and preregisters a v3 design, while leaving stress tests unavailable.
+
+Milestone 40 also does not reopen the handoff. It audits response-profile
+protocol invariance before v3 execution and patches v3 design semantics only.
+No stress tests are allowed, no v3 manifests are generated, no new
+representation models are fit, and no carry-forward decisions are changed.

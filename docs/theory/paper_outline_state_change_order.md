@@ -227,3 +227,11 @@ Milestone 39 audits why v2 families were blocked. It distinguishes structural
 blocking from measured blocking and preregisters a v3 family design without
 executing it. No thresholds are retuned, no stress tests are run, and blocked
 v2 families remain visible.
+
+## Milestone 40 Note
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+This is a pre-execution design correction, not threshold retuning. It does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
+not run stress tests. It does not fit new representation models. A single
+response profile must not mix measurement protocols.

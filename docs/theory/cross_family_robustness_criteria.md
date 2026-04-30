@@ -56,3 +56,9 @@ is stress-test eligibility, not geometry.
 Milestone 39 separates structural blocking from measured blocking in the v2
 results. Structural counterfactuals are report-only, and v3 design is
 preregistered but not executed.
+
+Milestone 40 does not apply robustness criteria. It audits response-profile
+protocol invariance before v3 execution and patches planned v3 family
+semantics. The patch does not change M34, M38, or M39 decisions, does not
+generate v3 manifests, does not run stress tests, and does not fit new
+representation models.

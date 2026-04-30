@@ -63,3 +63,9 @@ eligibility into a claim about distance or geometry.
 Milestone 34 turns fixed family diagnostics into carry-forward, provisional,
 blocked, report-only, or failed-control decisions for later stress-test
 planning. Carry-forward eligibility is not evidence of metric geometry.
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+The handoff boundary now also requires explicit measurement-protocol metadata:
+a single response profile must not mix measurement protocols. This does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests, run
+stress tests, fit new representation models, or retune thresholds.

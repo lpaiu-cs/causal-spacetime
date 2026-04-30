@@ -62,3 +62,7 @@ thresholds. It does not run stress tests.
 Milestone 39 uses the evaluated v2 bundle to separate structural and measured
 blocking. Diagnostic completeness remains a property of the input bundle, not
 a carry-forward outcome.
+
+Milestone 40 does not alter the v2 bundle. It audits response-profile protocol
+invariance before v3 execution and patches planned v3 family semantics. A
+single response profile must not mix measurement protocols.

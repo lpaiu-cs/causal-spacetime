@@ -32,3 +32,8 @@ rather than silently ignored.
 
 Milestone 39 audits why v2 families were blocked. It separates structural
 blocking from measured blocking without changing Milestone 38 decisions.
+
+Milestone 40 also preserves Milestone 38 decisions. It audits response-profile
+protocol invariance before v3 execution and patches planned v3 semantics only.
+It does not regenerate manifests. It does not rerun fits. It does not run
+stress tests. A single response profile must not mix measurement protocols.

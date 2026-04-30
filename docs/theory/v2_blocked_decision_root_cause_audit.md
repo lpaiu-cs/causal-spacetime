@@ -27,3 +27,9 @@ Structural counterfactuals are report-only. They do not alter Milestone 38
 decisions and do not justify threshold changes. Milestone 39 does not retune
 thresholds. Milestone 39 does not run stress tests.
 
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+This is a pre-execution design correction, not threshold retuning. It does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
+not run stress tests. It does not fit new representation models. A single
+response profile must not mix measurement protocols. This patch preserves the
+M39 structural-versus-measured blocking report.

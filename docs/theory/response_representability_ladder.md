@@ -21,9 +21,10 @@ Does not imply: spatial distance.
 
 3. `multi_reference_response_profile`
 
-Input: multiple reference chains or emission positions.
-Output: response-profile embedding candidate.
-Additional assumption: aligned target identities and protocol labels.
+Input: multiple reference chains inside one fixed measurement protocol.
+Output: protocol-invariant multi-reference response profile.
+Additional assumption: aligned target identities and explicit measurement
+protocol metadata.
 Does not imply: metric space.
 
 4. `pairwise_distance_order`
@@ -78,6 +79,18 @@ can be fit by finite latent variables, but the fitted coordinates are not
 spatial coordinates and the exercise does not reconstruct metric geometry.
 
 Milestone 33 adds preregistered family comparison across frozen manifests.
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+This is a pre-execution design correction, not threshold retuning. It does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
+not run stress tests. It does not fit new representation models. A single
+response profile must not mix measurement protocols.
+
+A response profile used for pairwise response-profile dissimilarity may vary
+reference chains inside one fixed measurement protocol. If emission, gate,
+echo rule, spectrum type, subsampling, normalization, missing policy, tie
+policy, or margin policy varies, those variants must form separate profile
+families or be explicitly marked exploratory/report-only.
 This is still inside the latent ordinal representation diagnostic level: it
 compares structured families, failed or ineligible controls, destructive
 nulls, symmetry controls, and marginal-preserving nulls without retuning

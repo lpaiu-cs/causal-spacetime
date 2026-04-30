@@ -33,3 +33,8 @@ Carry-forward is stress-test eligibility, not geometry.
 Milestone 39 reads the v2 decision outputs as blocked results. It audits root
 causes and preregisters v3 design work, but it does not change the M37 v2
 generation outputs.
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+It does not change v2 generation outputs, M38 decisions, or M39 blocking
+analysis. It does not generate v3 manifests. It does not run stress tests. It
+does not fit new representation models.

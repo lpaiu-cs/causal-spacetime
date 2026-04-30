@@ -1968,6 +1968,33 @@ from exp213_v2_blocked_decision_report_card import (
 from exp214_v2_blocked_v3_preregistration_final_sanity import (
     main as run_exp214_main,
 )
+from exp215_protocol_metadata_exact_sanity import (
+    main as run_exp215_main,
+)
+from exp216_response_profile_invariance_exact_sanity import (
+    main as run_exp216_main,
+)
+from exp217_current_profile_protocol_invariance_audit import (
+    main as run_exp217_main,
+)
+from exp218_v3_protocol_invariant_patch_design import (
+    main as run_exp218_main,
+)
+from exp219_v3_protocol_patched_preregistration_export import (
+    main as run_exp219_main,
+)
+from exp220_v3_protocol_patch_audit import (
+    main as run_exp220_main,
+)
+from exp221_protocol_invariance_language_audit import (
+    main as run_exp221_main,
+)
+from exp222_protocol_patch_no_execution_audit import (
+    main as run_exp222_main,
+)
+from exp223_protocol_invariance_final_sanity import (
+    main as run_exp223_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4512,6 +4539,42 @@ def run_v2_blocked_v3_preregistration_final_sanity() -> None:
     run_exp214_main()
 
 
+def run_protocol_metadata_exact_sanity() -> None:
+    run_exp215_main()
+
+
+def run_response_profile_invariance_exact_sanity() -> None:
+    run_exp216_main()
+
+
+def run_current_profile_protocol_invariance_audit() -> None:
+    run_exp217_main()
+
+
+def run_v3_protocol_invariant_patch_design() -> None:
+    run_exp218_main()
+
+
+def run_v3_protocol_patched_preregistration_export() -> None:
+    run_exp219_main()
+
+
+def run_v3_protocol_patch_audit() -> None:
+    run_exp220_main()
+
+
+def run_protocol_invariance_language_audit() -> None:
+    run_exp221_main()
+
+
+def run_protocol_patch_no_execution_audit() -> None:
+    run_exp222_main()
+
+
+def run_protocol_invariance_final_sanity() -> None:
+    run_exp223_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -4724,6 +4787,15 @@ def main() -> None:
     run_v3_no_execution_audit()
     run_v2_blocked_decision_report_card()
     run_v2_blocked_v3_preregistration_final_sanity()
+    run_protocol_metadata_exact_sanity()
+    run_response_profile_invariance_exact_sanity()
+    run_current_profile_protocol_invariance_audit()
+    run_v3_protocol_invariant_patch_design()
+    run_v3_protocol_patched_preregistration_export()
+    run_v3_protocol_patch_audit()
+    run_protocol_invariance_language_audit()
+    run_protocol_patch_no_execution_audit()
+    run_protocol_invariance_final_sanity()
 
 
 if __name__ == "__main__":

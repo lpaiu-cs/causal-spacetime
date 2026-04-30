@@ -81,3 +81,11 @@ diagnostic, not a spatial interpretation.
 Milestone 31 turns that eligibility decision into a preregistered handoff
 manifest. The manifest freezes settings and failure reasons; it does not
 resolve the underdetermination of metric structure by response profiles.
+
+Milestone 40 adds a protocol-invariance correction to response-profile
+construction. A response profile used for pairwise response-profile
+dissimilarity may vary reference chains inside one fixed measurement protocol.
+If emission, gate, echo rule, spectrum type, subsampling, normalization,
+missing policy, tie policy, or margin policy varies, those variants must form
+separate profile families or be explicitly marked exploratory/report-only. A
+single response profile must not mix measurement protocols.

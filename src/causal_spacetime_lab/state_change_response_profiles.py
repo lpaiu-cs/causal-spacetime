@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 from numpy.typing import NDArray
@@ -11,20 +12,61 @@ from causal_spacetime_lab.state_change_response_signature import (
     EchoResponseSignature,
 )
 
+if TYPE_CHECKING:
+    from causal_spacetime_lab.state_change_response_profile_metadata import (
+        ResponseProfileMetadata,
+    )
+
 
 @dataclass(frozen=True)
 class EchoResponseProfile:
     """Delay-rank matrix for shared targets across protocol columns.
 
     A response profile is richer than one scalar response order, but it is
-    still pre-metric. Protocol columns may encode reference choices, emission
-    positions, gate values, or variant labels.
+    still pre-metric. For production pairwise response-profile dissimilarity,
+    columns should vary reference chains inside one fixed measurement protocol.
+    If emission, gate, echo rule, spectrum type, subsampling, normalization,
+    missing policy, tie policy, or margin policy varies, those variants must
+    form separate profile families or be marked exploratory/report-only.
     """
 
     target_event_ids: NDArray[np.int_]
     protocol_labels: list[str]
     delay_rank_matrix: NDArray[np.int_]
     reachable_matrix: NDArray[np.bool_]
+    metadata: ResponseProfileMetadata | None = None
+
+
+@dataclass(frozen=True)
+class EchoResponseProfileWithMetadata:
+    """Legacy-safe wrapper carrying response-profile metadata."""
+
+    profile: EchoResponseProfile
+    metadata: ResponseProfileMetadata
+
+
+def attach_profile_metadata(
+    profile: EchoResponseProfile,
+    metadata: ResponseProfileMetadata,
+) -> EchoResponseProfileWithMetadata:
+    """Attach metadata without forcing legacy profile constructors to change."""
+
+    return EchoResponseProfileWithMetadata(profile=profile, metadata=metadata)
+
+
+def profile_admissible_for_pairwise_dissimilarity(
+    profile_or_wrapped: EchoResponseProfile | EchoResponseProfileWithMetadata,
+) -> bool:
+    """Return whether profile metadata permits production pairwise comparison."""
+
+    metadata = getattr(profile_or_wrapped, "metadata", None)
+    if isinstance(profile_or_wrapped, EchoResponseProfileWithMetadata):
+        metadata = profile_or_wrapped.metadata
+    return bool(
+        metadata is not None
+        and metadata.profile_invariance_status == "protocol_invariant"
+        and metadata.admissible_for_pairwise_dissimilarity
+    )
 
 
 def _index_by_target(signature: EchoResponseSignature) -> dict[int, int]:

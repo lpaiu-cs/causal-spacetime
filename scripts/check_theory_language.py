@@ -170,6 +170,17 @@ BANNED_PHRASES = (
     "v3 preregistration executes manifests",
     "blocked v2 family can be stress-tested",
     "measured failure is only structural",
+    "mixed protocol profile",
+    "profile distance",
+    "response-profile distance",
+    "measurement-rule-mixed dissimilarity",
+    "D_echo distance",
+    "protocol-mixed profile is admissible",
+    "mixed protocols can be concatenated",
+    "measurement protocol variation is reference variation",
+    "v3 protocol patch proves geometry",
+    "protocol-invariant profile is distance",
+    "patched v3 family will pass",
 )
 
 
@@ -196,7 +207,9 @@ def default_python_files(root: Path) -> list[Path]:
 
     files = sorted((root / "src" / "causal_spacetime_lab").glob("*.py"))
     files.extend(sorted((root / "experiments").glob("*.py")))
+    files.extend(sorted((root / "scripts").glob("*.py")))
     files.extend(sorted((root / "docs").glob("*.md")))
+    files.append(root / "README.md")
     return [path for path in files if path.exists()]
 
 
@@ -229,6 +242,16 @@ def _allowed_python_forbidden_contexts(path: Path, lines: list[str]) -> list[boo
 
     allowed = [False] * len(lines)
     if path.suffix != ".py":
+        return allowed
+    if path.name == "check_theory_language.py":
+        active_tuple = False
+        for index, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith("BANNED_PHRASES = ("):
+                active_tuple = True
+            allowed[index] = active_tuple
+            if active_tuple and stripped == ")":
+                active_tuple = False
         return allowed
     active_indent: int | None = None
     for index, line in enumerate(lines):

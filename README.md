@@ -943,8 +943,9 @@ spatial geometry.
 
 Milestone 28 studies underdetermination of pairwise distance order by scalar
 response order. A single reference response signature is not a distance-order
-structure. Multiple reference-protocol columns form richer response profiles,
-but those profiles are still pre-metric. The representability ladder records
+structure. Multiple reference chains inside a fixed measurement protocol form
+richer response profiles, but those profiles are still pre-metric. The
+representability ladder records
 which additional assumptions are needed before pairwise distance-order,
 ordinal-embedding, or calibrated metric-representation tests are meaningful.
 
@@ -1019,3 +1020,15 @@ blocking from measured blocking, diagnostic blocking, and control-family
 blocking. The v3 family design is preregistered but not executed. No
 thresholds are retuned. No stress tests are run. Blocked v2 families remain
 reported.
+
+Milestone 40 audits response-profile protocol invariance before v3 execution.
+This is a pre-execution design correction, not threshold retuning. It does not
+change M34, M38, or M39 decisions. It does not generate v3 manifests. It does
+not run stress tests. It does not fit new representation models. A single
+response profile must not mix measurement protocols.
+
+A response profile used for pairwise response-profile dissimilarity may vary
+reference chains inside one fixed measurement protocol. If emission, gate,
+echo rule, spectrum type, subsampling, normalization, missing policy, tie
+policy, or margin policy varies, those variants must form separate profile
+families or be explicitly marked exploratory/report-only.

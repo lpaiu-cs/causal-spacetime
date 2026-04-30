@@ -36,9 +36,13 @@ def default_response_representability_ladder() -> list[RepresentabilityRequireme
         ),
         RepresentabilityRequirement(
             level="multi_reference_response_profile",
-            input_structure="multiple reference chains or emission positions",
-            output_structure="response-profile embedding candidate",
-            additional_assumptions="aligned target identities and protocol labels",
+            input_structure=(
+                "multiple reference chains inside one fixed measurement protocol"
+            ),
+            output_structure="protocol-invariant multi-reference response profile",
+            additional_assumptions=(
+                "aligned target identities and explicit measurement protocol metadata"
+            ),
             what_it_does_not_imply="metric space",
         ),
         RepresentabilityRequirement(

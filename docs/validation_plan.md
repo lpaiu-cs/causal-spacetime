@@ -790,3 +790,26 @@ Expected behavior is that Milestone 39 separates structural blocking from
 measured blocking. Structural counterfactuals are report-only. The v3 design
 is preregistered but not executed, and v3 planned families are not current
 results. No thresholds are retuned. No stress tests are run.
+
+## Milestone 40: Protocol-Invariant Response-Profile Audit
+
+Validation adds:
+
+```text
+exact measurement-protocol metadata sanity checks
+response-profile invariance sanity checks
+current v2 and planned v3 protocol-metadata audit
+planned-only v3 protocol-invariant patch design
+patched v3 preregistration export
+patched v3 protocol-invariance audit
+protocol-invariance language audit
+protocol-patch no-execution audit
+exact final protocol-invariance sanity checks
+```
+
+Expected behavior is that Milestone 40 audits response-profile protocol
+invariance before v3 execution. This is a pre-execution design correction, not
+threshold retuning. It does not change M34, M38, or M39 decisions. It does not
+generate v3 manifests. It does not run stress tests. It does not fit new
+representation models. A single response profile must not mix measurement
+protocols.
