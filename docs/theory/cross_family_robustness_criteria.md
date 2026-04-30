@@ -77,3 +77,10 @@ The M34 thresholds remain fixed. M42 does not regenerate manifests, rerun fits,
 retune thresholds, or run stress tests. Carry-forward is stress-test
 eligibility, not geometry. Top-down/hybrid provenance is allowed only as
 preregistered manifest provenance, not as evidence.
+
+## Milestone 43 Use
+
+Milestone 43 audits why v3 protocol families remain blocked under the same
+fixed M34 criteria. It does not change M42 decisions. It does not retune
+thresholds. It does not run stress tests. It does not execute v4. V4 design is
+planned-only and requires a later execution milestone.

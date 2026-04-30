@@ -204,6 +204,16 @@ BANNED_PHRASES = (
     "protocol metadata means physical coordinates",
     "v3 decision runs stress tests",
     "v3 decision reruns fits",
+    "v4 design fixes geometry",
+    "v4 family will pass",
+    "thresholds adjusted for v4",
+    "blocked v3 ignored",
+    "top-down provenance proves structure",
+    "hybrid provenance proves theory",
+    "counterfactual changes decision",
+    "report-only counterfactual justifies threshold",
+    "v3 failure proves theory false",
+    "v4 remediation proves metric",
 )
 
 

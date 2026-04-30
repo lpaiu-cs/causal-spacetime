@@ -258,3 +258,23 @@ forbidden-language sections:
 Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
 It does not regenerate manifests, rerun fits, retune thresholds, run stress
 tests, or infer metric geometry.
+
+## Milestone 43 Rejected Language
+
+The following formulations are rejected outside explicit rejected-language or
+forbidden-language sections:
+
+- "v4 design fixes geometry"
+- "v4 family will pass"
+- "thresholds adjusted for v4"
+- "blocked v3 ignored"
+- "top-down provenance proves structure"
+- "hybrid provenance proves theory"
+- "counterfactual changes decision"
+- "report-only counterfactual justifies threshold"
+- "v3 failure proves theory false"
+- "v4 remediation proves metric"
+
+Milestone 43 audits why v3 protocol families remain blocked. It does not change
+M42 decisions, retune thresholds, run stress tests, execute v4, or infer metric
+geometry. Report-only counterfactuals do not alter decisions.

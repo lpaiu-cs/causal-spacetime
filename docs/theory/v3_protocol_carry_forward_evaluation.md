@@ -23,3 +23,9 @@ criteria as bottom-up profile-derived handoffs.
 Blocked, report-only, and failed-control families remain visible in the
 decision tables, registry, accounting outputs, and report card.
 
+## Milestone 43 Follow-Up
+
+Milestone 43 audits why v3 protocol families remain blocked. It does not change
+M42 decisions. It does not retune thresholds. It does not run stress tests. It
+does not execute v4. V4 design is planned-only and requires a later execution
+milestone.

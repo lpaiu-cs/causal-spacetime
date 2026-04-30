@@ -149,3 +149,11 @@ M42 must verify diagnostic completeness, protocol invariance, parameter
 completeness, and handoff-provenance integrity before applying fixed M34
 criteria. These checks are preconditions. They do not replace the performance
 criteria and do not infer metric geometry.
+
+## Milestone 43 Obligations
+
+Milestone 43 satisfies an audit obligation, not an execution obligation. It
+audits why v3 protocol families remain blocked. It does not change M42
+decisions. It does not retune thresholds. It does not run stress tests. It does
+not execute v4. V4 design is planned-only and requires a later execution
+milestone.

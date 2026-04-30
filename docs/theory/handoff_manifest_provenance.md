@@ -33,3 +33,10 @@ Top-down/hybrid provenance is allowed only as preregistered manifest provenance,
 not as evidence. M42 does not regenerate manifests, rerun fits, retune
 thresholds, or run stress tests. Carry-forward is stress-test eligibility, not
 geometry.
+
+## Milestone 43 Follow-Up
+
+Milestone 43 audits v3 measured failures without treating bottom-up, top-down,
+or hybrid provenance as evidence. It does not change M42 decisions. It does not
+retune thresholds. It does not run stress tests. It does not execute v4. V4
+design is planned-only and requires a later execution milestone.

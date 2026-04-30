@@ -20,3 +20,9 @@ Milestone 42 applies fixed carry-forward criteria to the M41 v3 protocol bundle.
 It does not regenerate manifests. It does not rerun fits. It does not retune
 thresholds. Carry-forward is stress-test eligibility, not geometry.
 
+## Milestone 43 Stop Status
+
+Milestone 43 audits why v3 protocol families remain blocked. Because M42 found
+no carry-forward or provisional family, stress-test design remains stopped. It
+does not change M42 decisions. It does not retune thresholds. It does not run
+stress tests. It does not execute v4.

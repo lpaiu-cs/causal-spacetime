@@ -1,5 +1,20 @@
 # Research Notes
 
+## Milestone 43: V3 Protocol Blocked-Decision Audit And V4 Preregistration
+
+Milestone 43 audits why v3 protocol families remain blocked after the fixed
+M42 carry-forward evaluation. It separates measured metric failure from
+precondition failure and control-family blocking. The measured drilldowns cover
+held-out failure, generalization-gap failure, null taxonomy weakness,
+symmetry-control failure, restart instability, latent-order instability,
+profile-resolution effects, reachability effects, provenance-mode drilldown,
+and manifest-level variance.
+
+This milestone does not change M42 decisions. It does not retune thresholds. It
+does not run stress tests. It does not execute v4. V4 design is planned-only and
+requires a later execution milestone. Report-only counterfactuals are recorded
+as diagnostics and do not alter decisions.
+
 ## Milestone 18: State-Change Causal Order Refactor
 
 Milestone 18 is a theory refactor. It reorganizes the earlier reconstruction

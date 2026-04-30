@@ -248,3 +248,10 @@ M42 should be described as a v3 protocol carry-forward evaluation using fixed
 M34 criteria. It does not regenerate manifests, rerun fits, retune thresholds,
 or run stress tests. Carry-forward is stress-test eligibility, not geometry, and
 top-down/hybrid provenance is an admissibility record rather than evidence.
+
+## Milestone 43 Placement
+
+M43 should be described as a blocked-decision audit and preregistration step. It
+audits why v3 protocol families remain blocked, decomposes measured failures,
+and preregisters a planned-only v4 design. It does not change M42 decisions,
+retune thresholds, run stress tests, or execute v4.

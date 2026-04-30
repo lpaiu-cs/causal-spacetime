@@ -2079,6 +2079,45 @@ from exp250_v3_protocol_carry_forward_report_card import (
 from exp251_v3_protocol_carry_forward_final_sanity import (
     main as run_exp251_main,
 )
+from exp252_v3_protocol_blocking_exact_sanity import (
+    main as run_exp252_main,
+)
+from exp253_v3_protocol_blocked_root_cause_audit import (
+    main as run_exp253_main,
+)
+from exp254_v3_protocol_criterion_margin_report import (
+    main as run_exp254_main,
+)
+from exp255_v3_protocol_manifest_level_drilldown import (
+    main as run_exp255_main,
+)
+from exp256_v3_protocol_null_failure_drilldown import (
+    main as run_exp256_main,
+)
+from exp257_v3_protocol_stability_failure_drilldown import (
+    main as run_exp257_main,
+)
+from exp258_v3_protocol_report_only_counterfactuals import (
+    main as run_exp258_main,
+)
+from exp259_v4_protocol_family_design import (
+    main as run_exp259_main,
+)
+from exp260_v4_protocol_preregistration_export import (
+    main as run_exp260_main,
+)
+from exp261_v4_no_execution_audit import (
+    main as run_exp261_main,
+)
+from exp262_v3_protocol_blocked_decision_report_card import (
+    main as run_exp262_main,
+)
+from exp263_v3_protocol_no_retuning_audit import (
+    main as run_exp263_main,
+)
+from exp264_v3_protocol_blocked_v4_final_sanity import (
+    main as run_exp264_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4771,6 +4810,58 @@ def run_v3_protocol_carry_forward_final_sanity() -> None:
     run_exp251_main()
 
 
+def run_v3_protocol_blocking_exact_sanity() -> None:
+    run_exp252_main()
+
+
+def run_v3_protocol_blocked_root_cause_audit() -> None:
+    run_exp253_main()
+
+
+def run_v3_protocol_criterion_margin_report() -> None:
+    run_exp254_main()
+
+
+def run_v3_protocol_manifest_level_drilldown() -> None:
+    run_exp255_main()
+
+
+def run_v3_protocol_null_failure_drilldown() -> None:
+    run_exp256_main()
+
+
+def run_v3_protocol_stability_failure_drilldown() -> None:
+    run_exp257_main()
+
+
+def run_v3_protocol_report_only_counterfactuals() -> None:
+    run_exp258_main()
+
+
+def run_v4_protocol_family_design() -> None:
+    run_exp259_main()
+
+
+def run_v4_protocol_preregistration_export() -> None:
+    run_exp260_main()
+
+
+def run_v4_no_execution_audit() -> None:
+    run_exp261_main()
+
+
+def run_v3_protocol_blocked_decision_report_card() -> None:
+    run_exp262_main()
+
+
+def run_v3_protocol_blocked_no_retuning_audit() -> None:
+    run_exp263_main()
+
+
+def run_v3_protocol_blocked_v4_final_sanity() -> None:
+    run_exp264_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -5020,6 +5111,19 @@ def main() -> None:
     run_v3_protocol_no_retuning_no_refit_audit()
     run_v3_protocol_carry_forward_report_card()
     run_v3_protocol_carry_forward_final_sanity()
+    run_v3_protocol_blocking_exact_sanity()
+    run_v3_protocol_blocked_root_cause_audit()
+    run_v3_protocol_criterion_margin_report()
+    run_v3_protocol_manifest_level_drilldown()
+    run_v3_protocol_null_failure_drilldown()
+    run_v3_protocol_stability_failure_drilldown()
+    run_v3_protocol_report_only_counterfactuals()
+    run_v4_protocol_family_design()
+    run_v4_protocol_preregistration_export()
+    run_v4_no_execution_audit()
+    run_v3_protocol_blocked_decision_report_card()
+    run_v3_protocol_blocked_no_retuning_audit()
+    run_v3_protocol_blocked_v4_final_sanity()
 
 
 if __name__ == "__main__":

@@ -97,10 +97,20 @@ reconstruction experiments:
 - apply fixed carry-forward criteria to that v2 bundle, exporting decisions,
   a registry, and a future stress-test handoff plan without running stress
   tests,
+- execute protocol-invariant, provenance-aware v3 manifest generation, apply
+  fixed carry-forward criteria to the v3 bundle, and audit why the v3 protocol
+  families remain blocked,
+- preregister a planned-only v4 remediation design while keeping v4 execution,
+  carry-forward evaluation, and stress tests in later milestones,
 - test finite-speed lattice counterexamples and exploratory spacelike-distance
   proxies.
 
 Natural units are used throughout, with `c = 1`.
+
+Milestone 43 audits why v3 protocol families remain blocked. It does not change
+M42 decisions. It does not retune thresholds. It does not run stress tests. It
+does not execute v4. V4 design is planned-only and requires a later execution
+milestone.
 
 ## Installation
 

@@ -23,3 +23,9 @@ M42 does not regenerate manifests. M42 does not rerun fits. M42 does not retune
 thresholds. M42 does not run stress tests. Carry-forward is stress-test
 eligibility, not geometry.
 
+## Milestone 43 Follow-Up
+
+Milestone 43 audits why v3 protocol families remain blocked after those
+preconditions have been checked. It does not change M42 decisions. It does not
+retune thresholds. It does not run stress tests. It does not execute v4. V4
+design is planned-only and requires a later execution milestone.
