@@ -300,3 +300,48 @@ Milestone 44 executes the preregistered v4 protocol manifest-generation run. It
 does not evaluate carry-forward decisions, run stress tests, retune thresholds,
 or infer metric geometry. Diagnostic-complete v4 output is not carry-forward
 success.
+
+## Milestone 45 Rejected Language
+
+The following formulations are rejected outside explicit rejected-language or
+forbidden-language sections:
+
+- "v4 protocol carry-forward proves geometry"
+- "v4 protocol family recovers metric"
+- "v4 carry-forward recovers space"
+- "v4 carry-forward proves theory"
+- "provenance integrity proves metric"
+- "diagnostic completeness means carry-forward"
+- "protocol metadata means physical coordinates"
+- "v4 decision runs stress tests"
+- "v4 decision reruns fits"
+- "threshold sensitivity chooses threshold"
+- "top-down handoff is evidence"
+- "hybrid provenance proves structure"
+
+Milestone 45 applies fixed carry-forward criteria to the M44 v4 protocol bundle.
+It does not regenerate manifests, rerun fits, retune thresholds, run stress
+tests, or infer metric geometry. Diagnostic-complete v4 output is not
+carry-forward success. Top-down/hybrid provenance is admissibility metadata,
+not evidence.
+
+## Milestone 46 Rejected Language
+
+The following formulations are rejected outside explicit rejected-language or
+forbidden-language sections:
+
+- "v5 design fixes geometry"
+- "v5 family will pass"
+- "thresholds adjusted for v5"
+- "blocked v4 ignored"
+- "counterfactual changes decision"
+- "report-only counterfactual justifies threshold"
+- "v4 failure proves theory false"
+- "v5 remediation proves metric"
+- "more remediation guarantees success"
+- "v5 execution starts in m46"
+
+Milestone 46 audits why v4 protocol families remain blocked. It does not change
+M45 decisions, retune thresholds, run stress tests, execute v5, or infer metric
+geometry. Report-only counterfactuals do not alter decisions. V5 design is
+planned-only.

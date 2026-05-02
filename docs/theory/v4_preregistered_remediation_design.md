@@ -41,3 +41,9 @@ Milestone 44 executes the preregistered v4 protocol manifest-generation run from
 this design. It does not evaluate carry-forward decisions. It does not run
 stress tests. It does not retune thresholds. It does not infer metric geometry.
 Diagnostic-complete v4 output is not carry-forward success.
+
+Milestone 45 applies fixed carry-forward criteria to the M44 v4 protocol bundle.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Top-down/hybrid provenance is admissibility metadata,
+not evidence.

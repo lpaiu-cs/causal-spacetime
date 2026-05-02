@@ -16,3 +16,17 @@ success.
 
 M45 is the future v4 carry-forward evaluation milestone.
 
+## Milestone 45 Decision Layer
+
+Milestone 45 applies fixed carry-forward criteria to the M44 v4 protocol bundle.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Diagnostic-complete v4 output is not carry-forward
+success. Top-down/hybrid provenance is admissibility metadata, not evidence.
+
+## Milestone 46 Follow-Up
+
+Milestone 46 audits why v4 protocol families remain blocked. It does not change
+M45 decisions. It does not retune thresholds. It does not run stress tests. It
+does not execute v5. V5 design is planned-only. Repeated remediation is an
+overfitting risk unless justified by root-cause analysis.

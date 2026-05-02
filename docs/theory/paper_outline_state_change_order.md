@@ -263,3 +263,19 @@ manifest-generation run. It produces production v4 handoff manifests and a
 diagnostic-complete v4 output bundle, but it does not evaluate carry-forward
 decisions, run stress tests, retune thresholds, or infer metric geometry.
 Diagnostic-complete v4 output is not carry-forward success.
+
+## Milestone 45 Placement
+
+M45 should be described as the v4 protocol carry-forward evaluation. It applies
+fixed M34 criteria to the M44 diagnostic-complete v4 protocol bundle. It does
+not regenerate manifests, rerun fits, retune thresholds, or run stress tests.
+Carry-forward is stress-test eligibility, not geometry. Top-down/hybrid
+provenance is admissibility metadata, not evidence.
+
+## Milestone 46 Placement
+
+M46 should be described as the v4 blocked-decision audit and planned-only v5
+preregistration milestone. It audits why v4 protocol families remain blocked,
+does not change M45 decisions, does not retune thresholds, does not run stress
+tests, and does not execute v5. V5 design is planned-only. Repeated remediation
+is an overfitting risk unless justified by root-cause analysis.

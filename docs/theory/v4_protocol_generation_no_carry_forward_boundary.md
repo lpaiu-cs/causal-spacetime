@@ -10,3 +10,9 @@ does not run stress tests and does not infer metric geometry.
 M45 is the future fixed-criteria decision layer. Only that later milestone may
 apply the fixed M34 carry-forward criteria to the v4 diagnostic-complete output
 bundle.
+
+Milestone 45 applies fixed carry-forward criteria to the M44 v4 protocol bundle.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Diagnostic-complete v4 output is not carry-forward
+success. Top-down/hybrid provenance is admissibility metadata, not evidence.

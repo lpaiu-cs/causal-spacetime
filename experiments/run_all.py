@@ -2160,6 +2160,90 @@ from exp277_v4_protocol_diagnostic_complete_bundle_report import (
 from exp278_v4_protocol_manifest_generation_final_sanity import (
     main as run_exp278_main,
 )
+from exp279_v4_protocol_carry_forward_exact_sanity import (
+    main as run_exp279_main,
+)
+from exp280_v4_protocol_bundle_input_audit import (
+    main as run_exp280_main,
+)
+from exp281_v4_protocol_precondition_audit import (
+    main as run_exp281_main,
+)
+from exp282_v4_protocol_carry_forward_decision import (
+    main as run_exp282_main,
+)
+from exp283_v4_protocol_threshold_sensitivity import (
+    main as run_exp283_main,
+)
+from exp284_v4_protocol_registry_export import (
+    main as run_exp284_main,
+)
+from exp285_v4_protocol_stress_test_handoff_plan import (
+    main as run_exp285_main,
+)
+from exp286_v4_protocol_failed_provisional_accounting import (
+    main as run_exp286_main,
+)
+from exp287_v4_protocol_failure_decomposition import (
+    main as run_exp287_main,
+)
+from exp288_v4_protocol_no_retuning_no_refit_audit import (
+    main as run_exp288_main,
+)
+from exp289_v4_protocol_carry_forward_report_card import (
+    main as run_exp289_main,
+)
+from exp290_v4_protocol_carry_forward_final_sanity import (
+    main as run_exp290_main,
+)
+from exp291_v4_blocking_exact_sanity import (
+    main as run_exp291_main,
+)
+from exp292_v4_blocked_root_cause_audit import (
+    main as run_exp292_main,
+)
+from exp293_v4_criterion_margin_report import (
+    main as run_exp293_main,
+)
+from exp294_v4_manifest_level_drilldown import (
+    main as run_exp294_main,
+)
+from exp295_v4_null_failure_drilldown import (
+    main as run_exp295_main,
+)
+from exp296_v4_stability_failure_drilldown import (
+    main as run_exp296_main,
+)
+from exp297_v4_coverage_failure_drilldown import (
+    main as run_exp297_main,
+)
+from exp298_v3_to_v4_delta_audit import (
+    main as run_exp298_main,
+)
+from exp299_v4_report_only_counterfactuals import (
+    main as run_exp299_main,
+)
+from exp300_v5_protocol_family_design import (
+    main as run_exp300_main,
+)
+from exp301_v5_remediation_iteration_risk_audit import (
+    main as run_exp301_main,
+)
+from exp302_v5_protocol_preregistration_export import (
+    main as run_exp302_main,
+)
+from exp303_v5_no_execution_audit import (
+    main as run_exp303_main,
+)
+from exp304_v4_blocked_decision_report_card import (
+    main as run_exp304_main,
+)
+from exp305_v4_blocked_no_retuning_audit import (
+    main as run_exp305_main,
+)
+from exp306_v4_blocked_v5_final_sanity import (
+    main as run_exp306_main,
+)
 
 
 def run_lorentz_length_contraction() -> None:
@@ -4960,6 +5044,118 @@ def run_v4_protocol_manifest_generation_final_sanity() -> None:
     run_exp278_main()
 
 
+def run_v4_protocol_carry_forward_exact_sanity() -> None:
+    run_exp279_main()
+
+
+def run_v4_protocol_bundle_input_audit() -> None:
+    run_exp280_main()
+
+
+def run_v4_protocol_precondition_audit() -> None:
+    run_exp281_main()
+
+
+def run_v4_protocol_carry_forward_decision() -> None:
+    run_exp282_main()
+
+
+def run_v4_protocol_threshold_sensitivity() -> None:
+    run_exp283_main()
+
+
+def run_v4_protocol_registry_export() -> None:
+    run_exp284_main()
+
+
+def run_v4_protocol_stress_test_handoff_plan() -> None:
+    run_exp285_main()
+
+
+def run_v4_protocol_failed_provisional_accounting() -> None:
+    run_exp286_main()
+
+
+def run_v4_protocol_failure_decomposition() -> None:
+    run_exp287_main()
+
+
+def run_v4_protocol_no_retuning_no_refit_audit() -> None:
+    run_exp288_main()
+
+
+def run_v4_protocol_carry_forward_report_card() -> None:
+    run_exp289_main()
+
+
+def run_v4_protocol_carry_forward_final_sanity() -> None:
+    run_exp290_main()
+
+
+def run_v4_blocking_exact_sanity() -> None:
+    run_exp291_main()
+
+
+def run_v4_blocked_root_cause_audit() -> None:
+    run_exp292_main()
+
+
+def run_v4_criterion_margin_report() -> None:
+    run_exp293_main()
+
+
+def run_v4_manifest_level_drilldown() -> None:
+    run_exp294_main()
+
+
+def run_v4_null_failure_drilldown() -> None:
+    run_exp295_main()
+
+
+def run_v4_stability_failure_drilldown() -> None:
+    run_exp296_main()
+
+
+def run_v4_coverage_failure_drilldown() -> None:
+    run_exp297_main()
+
+
+def run_v3_to_v4_delta_audit() -> None:
+    run_exp298_main()
+
+
+def run_v4_report_only_counterfactuals() -> None:
+    run_exp299_main()
+
+
+def run_v5_protocol_family_design() -> None:
+    run_exp300_main()
+
+
+def run_v5_remediation_iteration_risk_audit() -> None:
+    run_exp301_main()
+
+
+def run_v5_protocol_preregistration_export() -> None:
+    run_exp302_main()
+
+
+def run_v5_no_execution_audit() -> None:
+    run_exp303_main()
+
+
+def run_v4_blocked_decision_report_card() -> None:
+    run_exp304_main()
+
+
+def run_v4_blocked_no_retuning_audit() -> None:
+    run_exp305_main()
+
+
+def run_v4_blocked_v5_final_sanity() -> None:
+    run_exp306_main()
+
+
 def main() -> None:
     run_lorentz_length_contraction()
     run_legacy_timelike_reconstruction()
@@ -5236,6 +5432,34 @@ def main() -> None:
     run_v4_protocol_required_metric_aggregation()
     run_v4_protocol_diagnostic_complete_bundle_report()
     run_v4_protocol_manifest_generation_final_sanity()
+    run_v4_protocol_carry_forward_exact_sanity()
+    run_v4_protocol_bundle_input_audit()
+    run_v4_protocol_precondition_audit()
+    run_v4_protocol_carry_forward_decision()
+    run_v4_protocol_threshold_sensitivity()
+    run_v4_protocol_registry_export()
+    run_v4_protocol_stress_test_handoff_plan()
+    run_v4_protocol_failed_provisional_accounting()
+    run_v4_protocol_failure_decomposition()
+    run_v4_protocol_no_retuning_no_refit_audit()
+    run_v4_protocol_carry_forward_report_card()
+    run_v4_protocol_carry_forward_final_sanity()
+    run_v4_blocking_exact_sanity()
+    run_v4_blocked_root_cause_audit()
+    run_v4_criterion_margin_report()
+    run_v4_manifest_level_drilldown()
+    run_v4_null_failure_drilldown()
+    run_v4_stability_failure_drilldown()
+    run_v4_coverage_failure_drilldown()
+    run_v3_to_v4_delta_audit()
+    run_v4_report_only_counterfactuals()
+    run_v5_protocol_family_design()
+    run_v5_remediation_iteration_risk_audit()
+    run_v5_protocol_preregistration_export()
+    run_v5_no_execution_audit()
+    run_v4_blocked_decision_report_card()
+    run_v4_blocked_no_retuning_audit()
+    run_v4_blocked_v5_final_sanity()
 
 
 if __name__ == "__main__":

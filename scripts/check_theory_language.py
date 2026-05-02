@@ -224,6 +224,22 @@ BANNED_PHRASES = (
     "v4 family passes by construction",
     "v4 fixes theory",
     "diagnostic-complete v4 proves space",
+    "v4 protocol carry-forward proves geometry",
+    "v4 protocol family recovers metric",
+    "v4 carry-forward recovers space",
+    "v4 carry-forward proves theory",
+    "v4 decision runs stress tests",
+    "v4 decision reruns fits",
+    "top-down handoff is evidence",
+    "hybrid provenance proves structure",
+    "v5 design fixes geometry",
+    "v5 family will pass",
+    "thresholds adjusted for v5",
+    "blocked v4 ignored",
+    "v4 failure proves theory false",
+    "v5 remediation proves metric",
+    "more remediation guarantees success",
+    "v5 execution starts in m46",
 )
 
 

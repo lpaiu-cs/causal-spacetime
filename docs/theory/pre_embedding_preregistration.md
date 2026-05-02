@@ -120,3 +120,18 @@ from the frozen M43 preregistration. It does not evaluate carry-forward
 decisions. It does not run stress tests. It does not retune thresholds. It does
 not infer metric geometry. Diagnostic-complete v4 output is not carry-forward
 success.
+
+## Milestone 45 Boundary
+
+Milestone 45 applies fixed carry-forward criteria to the M44 v4 protocol bundle.
+It does not regenerate manifests. It does not rerun fits. It does not retune
+thresholds. It does not run stress tests. Carry-forward is stress-test
+eligibility, not geometry. Top-down/hybrid provenance is admissibility metadata,
+not evidence.
+
+## Milestone 46 Boundary
+
+Milestone 46 audits why v4 protocol families remain blocked. It does not change
+M45 decisions. It does not retune thresholds. It does not run stress tests. It
+does not execute v5. V5 design is planned-only. Repeated remediation is an
+overfitting risk unless justified by root-cause analysis.

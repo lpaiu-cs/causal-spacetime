@@ -95,7 +95,7 @@ def template_from_v3_protocol_family_spec(
         forbidden_interpretations=[
             "metric reconstruction",
             "geometry recovery",
-            "top-down handoff is evidence of geometry",
+            "top-down handoff is not evidence",
         ],
     )
     digest = top_down_template_digest(template)

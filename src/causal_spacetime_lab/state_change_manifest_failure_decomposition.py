@@ -23,6 +23,7 @@ ROOT_CAUSE_CATEGORIES = {
     "heldout_failure",
     "generalization_gap_failure",
     "null_separation_failure",
+    "symmetry_control_failure",
     "coverage_failure",
     "restart_instability",
     "latent_order_instability",
@@ -36,6 +37,7 @@ ROOT_CAUSE_CATEGORIES = {
     "parameter_completeness_failure",
     "protocol_invariance_failure",
     "diagnostic_completeness_failure",
+    "control_family_blocking",
     "unknown",
 }
 

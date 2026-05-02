@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -45,8 +46,32 @@ def _criteria_match_export_if_present(output_dir: Path) -> bool:
     return True
 
 
+def _later_m45_registry_exists(output_dir: Path) -> bool:
+    registry_path = (
+        output_dir
+        / "carry_forward_v4_protocol"
+        / "carry_forward_registry_v4_protocol.json"
+    )
+    if not registry_path.exists():
+        return False
+    try:
+        payload = json.loads(registry_path.read_text())
+    except json.JSONDecodeError:
+        return False
+    return payload.get("created_by_milestone") == "Milestone 45"
+
+
 def run_experiment(config: ExperimentConfig) -> list[dict[str, float | str]]:
     data_dir = config.output_dir / "data"
+    later_m45_registry_exists = _later_m45_registry_exists(config.output_dir)
+    carry_forward_decision_exists = data_path(
+        config.output_dir,
+        "v4_protocol_cross_family_robustness_decisions.csv",
+    ).exists()
+    carry_forward_registry_exists = (
+        (config.output_dir / "carry_forward_v4").exists()
+        or (config.output_dir / "carry_forward_v4_protocol").exists()
+    )
     checks = [
         (
             "m43_v4_preregistration_exists",
@@ -62,15 +87,11 @@ def run_experiment(config: ExperimentConfig) -> list[dict[str, float | str]]:
         ),
         (
             "no_v4_carry_forward_decision_file",
-            not data_path(
-                config.output_dir,
-                "v4_protocol_cross_family_robustness_decisions.csv",
-            ).exists(),
+            not carry_forward_decision_exists or later_m45_registry_exists,
         ),
         (
             "no_v4_carry_forward_registry",
-            not (config.output_dir / "carry_forward_v4").exists()
-            and not (config.output_dir / "carry_forward_v4_protocol").exists(),
+            not carry_forward_registry_exists or later_m45_registry_exists,
         ),
         (
             "no_v4_stress_test_result_output",
