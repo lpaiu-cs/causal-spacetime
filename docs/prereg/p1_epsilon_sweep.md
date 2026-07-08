@@ -111,9 +111,17 @@ Hard floors (fixed now):
 
 Mechanical test constants from P1-A distributions:
 
-- H-MONO test: per seed, Spearman(epsilon, truth_order_error) over the grid
-  (density-held cells only). H-MONO supported for a seed if rho_seed >=
-  rho_min, where rho_min = min(0.85, round_down(p10_A(rho_seed), 0.05)).
+- Coverage requirement (amended, deviation D1): a seed enters the
+  monotonicity test only if its density-held curve has >= 6 cells and includes
+  both endpoints (epsilon = 0 and epsilon = 1). Under-covered seeds (a diluted
+  order that drops below the min-target count at several epsilons) are recorded
+  as insufficient_coverage and excluded from the test denominator, exactly as
+  scene-invalid cells are handled. A 3-point curve cannot test monotonicity
+  across an 8-point grid. The PC-V1 scene instrument (min_targets = 30) is not
+  modified.
+- H-MONO test: per covered seed, Spearman(epsilon, truth_order_error) over the
+  density-held cells. H-MONO supported for a seed if rho_seed >= rho_min, where
+  rho_min = min(0.85, round_down(p10_A(rho_seed over covered seeds), 0.05)).
 - H-THRESH estimate: epsilon* = the linearly interpolated epsilon at which
   truth_order_error first crosses the midpoint level
   (truth@eps0 + truth@eps1) / 2. Report the across-seed median and IQR. No
@@ -124,7 +132,9 @@ Mechanical test constants from P1-A distributions:
 
 ## 7. Decision rules (P1-B confirmatory)
 
-- H-MONO supported: >= 16 of 20 valid seeds have rho_seed >= rho_min.
+- H-MONO supported: >= 80% of COVERED seeds have rho_seed >= rho_min (covered
+  seeds are those meeting the Section 6 coverage requirement; insufficient
+  seeds are reported, not counted in the denominator).
 - H-THRESH supported: epsilon* is estimable (both endpoints reproduce HF1/HF2)
   for >= 16 of 20 seeds; report its distribution. (This is a reporting
   criterion, not a pass/fail of a physical claim.)
@@ -169,5 +179,13 @@ version, and the requested-vs-executed fit budget.
 
 ## 11. Deviations log
 
-(empty — append dated entries; deviations do not retroactively change recorded
-decisions)
+- D1 (2026-07-09, coverage requirement for the monotonicity test). The first
+  P1-A calibration (seeds 0-9, code f1bb7d5) had 9 of 10 seeds with clean
+  monotone curves (Spearman rho 0.905-1.0), but one seed (9) fell below the
+  min-target count at epsilon >= 0.45 (25-29 < 30 targets), leaving only a
+  3-point low-epsilon curve whose rho (0.50) was meaningless and dragged the
+  proposed rho_min down to 0.45. This is a pre-freeze test refinement (Section
+  8), not a scene-instrument change: seeds without >= 6 density-held cells
+  spanning both endpoints are recorded as insufficient_coverage and excluded
+  from the H-MONO denominator, mirroring scene-invalid handling. The PC-V1
+  frozen instrument is untouched. Thresholds are set only from the re-run.

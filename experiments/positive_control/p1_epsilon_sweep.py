@@ -43,6 +43,7 @@ from causal_spacetime_lab.positive_control.scene import (
 
 EPSILON_GRID = (0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0)
 SMOKE_GRID = (0.0, 0.5, 1.0)
+MIN_TEST_CELLS = 6
 FROZEN_CONSTANTS_PATH = Path("docs/prereg/frozen/p1_test_constants.json")
 PC_V1_THRESHOLDS_PATH = Path("docs/prereg/frozen/pc_v1_thresholds.json")
 DENSITY_TOLERANCE = 0.02
@@ -177,23 +178,29 @@ def main() -> None:
 
     write_rows_csv(args.output_dir / f"p1_epsilon_sweep_{stage}{suffix}.csv", all_rows)
 
-    # per-seed monotonicity + crossings
+    # A seed enters the monotonicity test only if its density-held curve has
+    # enough coverage to span the grid (>= MIN_TEST_CELLS cells, both endpoints
+    # present). Under-covered seeds are recorded and excluded from the test
+    # denominator -- a 3-point curve cannot test monotonicity across the grid.
+    min_cells = min(MIN_TEST_CELLS, len(grid))
     rhos, cross_truth, cross_heldout = [], [], []
+    insufficient: list[int] = []
     for seed in seeds:
         eps, truth, heldout = per_seed_curve(all_rows, seed)
-        if len(eps) < 3:
+        if len(eps) < min_cells or eps[0] != 0.0 or eps[-1] != max(grid):
+            insufficient.append(seed)
             continue
         rhos.append((seed, spearman(eps, truth)))
-        ct = crossing_epsilon(eps, truth, 0.15)
-        ch = crossing_epsilon(eps, heldout, 0.05)
-        cross_truth.append(ct)
-        cross_heldout.append(ch)
+        cross_truth.append(crossing_epsilon(eps, truth, 0.15))
+        cross_heldout.append(crossing_epsilon(eps, heldout, 0.05))
 
     valid_rho = [r for _, r in rhos if r == r]  # drop nan
     summary = {
         "stage": f"P1-{stage.upper()}",
         "code_version": code_version,
         "seed_count": len(seeds),
+        "covered_seed_count": len(rhos),
+        "insufficient_coverage_seeds": insufficient,
         "epsilon_grid": list(grid),
         "median_monotonicity_rho": (
             sorted(valid_rho)[len(valid_rho) // 2] if valid_rho else None
