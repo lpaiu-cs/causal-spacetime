@@ -1,6 +1,10 @@
 # PC-V1: Positive-Control Preregistration For Response-Profile Representability
 
-Status: DRAFT v1 (not frozen). Freezing procedure is defined in Section 12.
+Status: FROZEN v1 (2026-07-08). Calibration provenance: Stage A at commit
+9162e8e, seeds 0-9. Frozen thresholds: `docs/prereg/frozen/pc_v1_thresholds.json`.
+Instrument repairs D1/D2 (Section 14) were applied before this freeze; the
+frozen thresholds derive only from the post-repair calibration. After this
+point, thresholds are locked (Sections 10-12) and Stage B/C are confirmatory.
 This document lives in version control. Nothing under `outputs/` is ever an
 input to a decision defined here.
 

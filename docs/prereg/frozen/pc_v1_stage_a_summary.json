@@ -1,0 +1,11 @@
+{
+  "stage": "A",
+  "valid_seed_count": 10,
+  "median_structured_heldout": 0.025,
+  "median_null_gap": 0.26299999999999996,
+  "effect_size_cohens_d": 7.2315065811045764,
+  "hard_floor_f1_pass": true,
+  "hard_floor_f2_pass": true,
+  "code_version": "9162e8e",
+  "threshold_proposal_path": "outputs/positive_control/stage_a_threshold_proposal.json"
+}
