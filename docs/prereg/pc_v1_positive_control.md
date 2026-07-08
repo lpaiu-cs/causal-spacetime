@@ -287,3 +287,27 @@ decisions.
   geometric POST-closure density (Section 9). The transitive-closure helper
   was also switched to a float32 BLAS matmul (identical result, ~140x faster)
   to keep the per-scene bisection affordable.
+
+## 15. Confirmatory outcome (post-freeze factual record)
+
+This section records the result of executing the frozen Stage B/C decisions.
+It changes no design or threshold. Registries and per-seed CSVs are under
+`docs/prereg/frozen/`.
+
+- Frozen thresholds (commit b77f588, calibration provenance 9162e8e): heldout
+  <= 0.05, null_gap >= 0.15, restart_order_disagreement <= 0.15,
+  truth_order_error <= 0.15, at gate dim d=1.
+- Stage B (sensitivity, seeds 100-119): H-SENS SUPPORTED. 20/20 valid seeds
+  pass all four gates (rule >= 16/20); every individual gate passed 20/20,
+  including the tight stability gate.
+- Stage C (specificity, seeds 200-209): H-SPEC SUPPORTED. Both control
+  families block 10/10 (rule >= 8/10): density-matched random_order (9
+  evaluated-and-blocked + 1 scene-invalid structural block) and
+  column_shuffled_geometric (10 evaluated-and-blocked).
+- Conclusion: on fresh confirmatory seeds under frozen thresholds, the
+  pipeline passes on measured Minkowski-geometric order and blocks on matched
+  geometry-free order, with clean non-overlapping separation. PC-V1 validates
+  the response-profile representability pipeline as a latent-geometry
+  discriminator at this scale. This is not a spacetime-emergence claim; it
+  licenses the P1 epsilon-sweep (geometry as manipulated variable) and
+  application to dynamically generated order data.

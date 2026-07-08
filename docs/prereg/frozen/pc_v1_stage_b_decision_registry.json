@@ -1,0 +1,212 @@
+{
+  "stage": "B",
+  "frozen_commit": "9162e8e",
+  "seed_count": 20,
+  "valid_seed_count": 20,
+  "gate_pass_count": 20,
+  "pass_rule": ">=16/20",
+  "h_sens_supported": true,
+  "code_version": "b77f588",
+  "decisions": [
+    {
+      "seed": 100.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.23500000000000001
+    },
+    {
+      "seed": 101.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.245
+    },
+    {
+      "seed": 102.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.26799999999999996
+    },
+    {
+      "seed": 103.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.19999999999999998
+    },
+    {
+      "seed": 104.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.182
+    },
+    {
+      "seed": 105.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.224
+    },
+    {
+      "seed": 106.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.193
+    },
+    {
+      "seed": 107.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.28800000000000003
+    },
+    {
+      "seed": 108.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.306
+    },
+    {
+      "seed": 109.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.31699999999999995
+    },
+    {
+      "seed": 110.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.193
+    },
+    {
+      "seed": 111.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.204
+    },
+    {
+      "seed": 112.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.26399999999999996
+    },
+    {
+      "seed": 113.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.224
+    },
+    {
+      "seed": 114.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.213
+    },
+    {
+      "seed": 115.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.25699999999999995
+    },
+    {
+      "seed": 116.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.169
+    },
+    {
+      "seed": 117.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.251
+    },
+    {
+      "seed": 118.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.225
+    },
+    {
+      "seed": 119.0,
+      "status": "ok",
+      "g1_heldout_pass": 1.0,
+      "g2_null_gap_pass": 1.0,
+      "g3_stability_pass": 1.0,
+      "g4_truth_pass": 1.0,
+      "all_gates_pass": 1.0,
+      "null_gap": 0.228
+    }
+  ]
+}

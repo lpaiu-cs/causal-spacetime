@@ -1,0 +1,236 @@
+{
+  "stage": "C",
+  "frozen_commit": "9162e8e",
+  "seed_count": 10,
+  "families": {
+    "random_order": {
+      "block_count": 10,
+      "block_rule": ">=8/10",
+      "h_spec_supported": true,
+      "decisions": [
+        {
+          "seed": 200.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 1.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.07800000000000001
+        },
+        {
+          "seed": 201.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.07400000000000001
+        },
+        {
+          "seed": 202.0,
+          "status": "structural_block",
+          "blocked": 1.0
+        },
+        {
+          "seed": 203.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.04000000000000001
+        },
+        {
+          "seed": 204.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.01200000000000001
+        },
+        {
+          "seed": 205.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 1.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.07400000000000001
+        },
+        {
+          "seed": 206.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.07900000000000001
+        },
+        {
+          "seed": 207.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.005999999999999978
+        },
+        {
+          "seed": 208.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.07700000000000001
+        },
+        {
+          "seed": 209.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.088
+        }
+      ]
+    },
+    "column_shuffled_geometric": {
+      "block_count": 10,
+      "block_rule": ">=8/10",
+      "h_spec_supported": true,
+      "decisions": [
+        {
+          "seed": 200.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.07499999999999998
+        },
+        {
+          "seed": 201.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.01200000000000001
+        },
+        {
+          "seed": 202.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.023999999999999994
+        },
+        {
+          "seed": 203.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.01599999999999996
+        },
+        {
+          "seed": 204.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 1.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.013000000000000012
+        },
+        {
+          "seed": 205.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.05499999999999999
+        },
+        {
+          "seed": 206.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.055999999999999994
+        },
+        {
+          "seed": 207.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.086
+        },
+        {
+          "seed": 208.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": -0.03200000000000003
+        },
+        {
+          "seed": 209.0,
+          "status": "ok",
+          "blocked": 1.0,
+          "g1_heldout_pass": 0.0,
+          "g2_null_gap_pass": 0.0,
+          "g3_stability_pass": 0.0,
+          "g4_truth_pass": 1.0,
+          "all_gates_pass": 0.0,
+          "null_gap": 0.01899999999999999
+        }
+      ]
+    }
+  },
+  "code_version": "b77f588"
+}
