@@ -67,22 +67,33 @@ def test_structured_beats_destructive_null_and_recovers_truth_order() -> None:
         shuffle_profile_columns(profiles, seed=14), None, SMOKE_POLICY, seed=3
     )[0]
 
-    assert structured["heldout_violation"] < 0.20
-    assert shuffled["heldout_violation"] > structured["heldout_violation"] + 0.10
+    # Smoke scale (4 chains): centering shrinks the absolute separation; the
+    # full 6-chain separation is validated in Stage A. Assert the ordering.
+    assert structured["heldout_violation"] < 0.10
+    assert shuffled["heldout_violation"] > structured["heldout_violation"] + 0.05
     assert structured["truth_distance_order_error"] < 0.25
     assert structured["restart_order_disagreement"] < 0.35
     assert np.isnan(shuffled["truth_distance_order_error"])
 
 
 def test_geometry_free_control_order_is_transitive_with_chains_intact() -> None:
+    from causal_spacetime_lab.positive_control.rewire import (
+        geometric_post_closure_density,
+    )
+
     scene = build_positive_control_scene(SMOKE_CONFIG)
     control, density = geometry_free_scene(scene, seed=5)
     closed = control.causal
     assert np.array_equal(closed, transitive_closure(closed))
-    assert 0.0 < density < 1.0
     for chain in control.chain_index_arrays:
         assert bool(np.all(closed[chain[:-1], chain[1:]]))
     assert control.causal_digest != scene.causal_digest
+
+    # The repaired control matches the geometric post-closure density rather
+    # than percolating to a near-complete (degenerate) order.
+    geometric_density, _, _ = geometric_post_closure_density(scene)
+    assert abs(density - geometric_density) <= 0.05
+    assert density < 0.9
 
 
 def test_threshold_proposal_respects_hard_floors_and_round_trips(

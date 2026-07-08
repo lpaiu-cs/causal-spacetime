@@ -15,16 +15,51 @@ from numpy.typing import NDArray
 from causal_spacetime_lab.positive_control.echo_profiles import EchoProfileMatrix
 
 
+def parallax_profiles(profiles: EchoProfileMatrix) -> NDArray[np.float64]:
+    """Return reference-centered (parallax) bracket-width profiles.
+
+    Each target's bracket widths are centered across the references that
+    reach it, removing the shared per-target scalar (a global/temporal
+    common mode that any time-respecting order injects) and retaining only
+    the cross-observer parallax that carries spatial information. Enforcing
+    this operationalizes the response-order underdetermination principle: a
+    single shared scalar across observers is not a distance structure.
+    Unreachable entries are left as NaN.
+    """
+
+    delays = profiles.delay_ranks
+    reachable = profiles.reachable
+    centered = np.full_like(delays, np.nan, dtype=np.float64)
+    for row in range(profiles.target_count):
+        columns = reachable[row]
+        if not np.any(columns):
+            continue
+        values = delays[row, columns].astype(np.float64)
+        centered[row, columns] = values - values.mean()
+    return centered
+
+
 def profile_dissimilarity_matrix(
     profiles: EchoProfileMatrix,
     min_common_columns: int = 4,
+    center_references: bool = True,
 ) -> NDArray[np.float64]:
-    """Return the RMS profile dissimilarity matrix (NaN where undefined)."""
+    """Return the RMS profile dissimilarity matrix (NaN where undefined).
+
+    With ``center_references`` (the fixed default), the dissimilarity is
+    computed over reference-centered parallax profiles so that a shared
+    per-target scalar cannot masquerade as spatial structure. Set it False
+    only for diagnostics that deliberately inspect the raw common mode.
+    """
 
     if min_common_columns < 1:
         raise ValueError("min_common_columns must be positive")
-    delays = profiles.delay_ranks
     reachable = profiles.reachable
+    delays = (
+        parallax_profiles(profiles)
+        if center_references
+        else profiles.delay_ranks.astype(np.float64)
+    )
     n = profiles.target_count
     dissimilarity = np.full((n, n), np.nan, dtype=np.float64)
     np.fill_diagonal(dissimilarity, 0.0)

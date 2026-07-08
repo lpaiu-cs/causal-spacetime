@@ -137,6 +137,18 @@ def run_seed_conditions(
     measured = measure_bracket_echo_profiles(scene)
     truth_x = scene.target_coords[:, 1]
 
+    # The density-matched geometry-free order is expensive (bisection over
+    # transitive closures); build it at most once per seed and reuse for both
+    # the random_order and random_order_shuffled conditions.
+    control_cache: dict[str, object] = {}
+
+    def geometry_free_profiles() -> tuple[object, float]:
+        if "profiles" not in control_cache:
+            control_scene, density = geometry_free_scene(scene, seed + 41)
+            control_cache["profiles"] = measure_bracket_echo_profiles(control_scene)
+            control_cache["density"] = density
+        return control_cache["profiles"], float(control_cache["density"])
+
     rows: list[dict[str, float | str]] = []
     for condition in conditions:
         try:
@@ -164,15 +176,13 @@ def run_seed_conditions(
                 )
                 extra = {}
             elif condition == "random_order":
-                control_scene, density = geometry_free_scene(scene, seed + 41)
-                control_profiles = measure_bracket_echo_profiles(control_scene)
+                control_profiles, density = geometry_free_profiles()
                 metric_rows = analyze_profiles(
                     control_profiles, None, policy, seed
                 )
                 extra = {"achieved_density": density}
             elif condition == "random_order_shuffled":
-                control_scene, density = geometry_free_scene(scene, seed + 41)
-                control_profiles = measure_bracket_echo_profiles(control_scene)
+                control_profiles, density = geometry_free_profiles()
                 metric_rows = analyze_profiles(
                     shuffle_profile_columns(control_profiles, seed + 61),
                     None,

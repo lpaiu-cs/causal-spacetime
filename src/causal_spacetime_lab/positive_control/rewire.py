@@ -23,13 +23,19 @@ from causal_spacetime_lab.positive_control.scene import (
 
 
 def transitive_closure(relation: NDArray[np.bool_]) -> NDArray[np.bool_]:
-    """Return the transitive closure of an acyclic boolean relation."""
+    """Return the transitive closure of an acyclic boolean relation.
 
-    closure = np.asarray(relation, dtype=bool).copy()
+    Reachability doubling: closure |= closure @ closure until a fixpoint. The
+    boolean matmul is done in float32 (BLAS-backed); sums are bounded by the
+    node count, well below float32's exact-integer range, so ``> 0`` is exact.
+    """
+
+    closure = np.array(relation, dtype=bool)
     while True:
-        expanded = closure | (
-            np.matmul(closure.astype(np.uint8), closure.astype(np.uint8)) > 0
-        )
+        reach = (
+            closure.astype(np.float32) @ closure.astype(np.float32)
+        ) > 0.0
+        expanded = closure | reach
         if bool(np.array_equal(expanded, closure)):
             return closure
         closure = expanded
@@ -48,31 +54,85 @@ def bulk_relation_density(scene: PositiveControlScene) -> float:
     return float(np.sum(related) / ordered_count)
 
 
+def geometric_post_closure_density(
+    scene: PositiveControlScene,
+) -> tuple[float, NDArray[np.bool_], int]:
+    """Return the geometric causal density among time-ordered event pairs.
+
+    This is the density the geometry-free control is tuned to match
+    (PC-V1 Section 9, amended). Also returns the time-order mask and its
+    pair count so callers avoid recomputing them.
+    """
+
+    times = scene.events[:, 0]
+    ordered = times[:, None] < times[None, :]
+    ordered_count = int(np.sum(ordered))
+    if ordered_count == 0:
+        raise ValueError("no time-ordered event pairs")
+    density = float(np.sum(scene.causal & ordered) / ordered_count)
+    return density, ordered, ordered_count
+
+
+def _closed_order_at_q(
+    ordered: NDArray[np.bool_],
+    uniform: NDArray[np.float64],
+    q: float,
+    chain_index_arrays: tuple[NDArray[np.int_], ...],
+) -> NDArray[np.bool_]:
+    relation = ordered & (uniform < q)
+    for chain in chain_index_arrays:
+        relation[chain[:-1], chain[1:]] = True
+    return transitive_closure(relation)
+
+
 def random_time_respecting_order(
     scene: PositiveControlScene,
     seed: int,
-) -> tuple[NDArray[np.bool_], float]:
-    """Random time-respecting order with matched pre-closure edge density.
+    target_density: float | None = None,
+    tolerance: float = 0.03,
+    max_iters: int = 14,
+) -> tuple[NDArray[np.bool_], float, float]:
+    """Density-matched geometry-free order (PC-V1 Section 9, amended).
 
-    Returns the transitively closed relation and the achieved post-closure
-    density among time-ordered pairs (recorded, per preregistration).
+    A time-respecting transitive percolation whose pre-closure edge
+    probability ``q`` is tuned by bisection so the achieved post-closure
+    relation density among time-ordered pairs matches the geometric scene's
+    causal density (chain-internal edges preserved). A single shared uniform
+    draw makes density monotone in ``q``, so bisection is exact and
+    deterministic. Returns the closed relation, achieved density, and ``q``.
     """
 
+    geometric_density, ordered, ordered_count = geometric_post_closure_density(
+        scene
+    )
+    target = geometric_density if target_density is None else float(target_density)
     rng = np.random.default_rng(seed)
-    density = bulk_relation_density(scene)
-    times = scene.events[:, 0]
-    n = times.size
-    ordered = times[:, None] < times[None, :]
-    relation = ordered & (rng.uniform(size=(n, n)) < density)
+    n = scene.events.shape[0]
+    uniform = rng.uniform(size=(n, n))
 
-    for chain in scene.chain_index_arrays:
-        for offset in range(chain.size - 1):
-            relation[chain[offset], chain[offset + 1]] = True
+    low, high = 0.0, 1.0
+    best_closed: NDArray[np.bool_] | None = None
+    best_density = float("inf")
+    best_q = float("nan")
+    for _ in range(max_iters):
+        mid = 0.5 * (low + high)
+        closed = _closed_order_at_q(
+            ordered, uniform, mid, scene.chain_index_arrays
+        )
+        density = float(np.sum(closed & ordered) / ordered_count)
+        if abs(density - target) < abs(best_density - target):
+            best_closed, best_density, best_q = closed, density, mid
+        if abs(density - target) <= tolerance:
+            break
+        if density < target:
+            low = mid
+        else:
+            high = mid
 
-    closed = transitive_closure(relation)
-    np.fill_diagonal(closed, False)
-    achieved = float(np.sum(closed & ordered) / max(1, int(np.sum(ordered))))
-    return closed, achieved
+    if best_closed is None:
+        raise RuntimeError("bisection produced no candidate order")
+    np.fill_diagonal(best_closed, False)
+    return best_closed, best_density, best_q
 
 
 def geometry_free_scene(
@@ -86,7 +146,7 @@ def geometry_free_scene(
     policy is re-applied under the random order.
     """
 
-    closed, achieved_density = random_time_respecting_order(scene, seed)
+    closed, achieved_density, _ = random_time_respecting_order(scene, seed)
     config = scene.config
 
     bulk = scene.events[: scene.bulk_count]

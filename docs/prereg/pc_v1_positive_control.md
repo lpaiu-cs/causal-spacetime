@@ -98,8 +98,15 @@ M40 audit, kept).
 
 ## 6. Dissimilarity, split, constraints
 
+- Parallax profile (amended, see deviation D1): each target's bracket widths
+  are centered across the references that reach it,
+  `P[j, r] = W[j, r] - mean_r' W[j, r']`. This removes the shared per-target
+  common mode (a global/temporal scalar that any time-respecting order
+  injects) and keeps only cross-observer parallax, the part that carries
+  spatial information. It operationalizes the underdetermination principle
+  that a single shared scalar across observers is not a distance structure.
 - Profile dissimilarity: `D[i, j] = RMS over common reachable columns of
-  (W[i, .] - W[j, .])`, defined only if >= 4 common columns (primary: all 6).
+  (P[i, .] - P[j, .])`, defined only if >= 4 common columns (primary: all 6).
 - Constraint margin: `delta = 25th percentile of positive |D(i,j) - D(k,l)|`
   over 20,000 deterministic probe quadruples. The margin is derived from the
   measured resolution, not hand-tuned.
@@ -166,13 +173,16 @@ all dims are reported.
   with probability 0.5; heldout_violation must move to ~0.5.
 - C-SYM (symmetry, non-destructive): consistent relabeling; metrics must be
   unchanged (m8).
-- C-RANDOM-ORDER (Stage C): time-respecting random partial order with
-  Bernoulli edge density matched to the geometric scene's bulk relation
-  density before transitive closure; chain-internal edges preserved; then
-  transitively closed. Achieved post-closure density is recorded. Target
-  selection policy is re-applied under the random order. This is the epsilon
-  = 1 endpoint; the graded epsilon sweep is deferred to the next
-  preregistration (P1).
+- C-RANDOM-ORDER (Stage C): time-respecting random partial order (transitive
+  percolation) whose pre-closure edge probability is tuned by bisection so
+  the achieved post-closure relation density among time-ordered pairs matches
+  the geometric scene's causal density (amended, see deviation D2);
+  chain-internal edges preserved; transitively closed. A single shared
+  uniform draw makes density monotone in the edge probability, so the
+  bisection is exact and deterministic. Achieved density and the tuned edge
+  probability are recorded. Target selection policy is re-applied under the
+  random order. This is the epsilon = 1 endpoint; the graded epsilon sweep is
+  deferred to the next preregistration (P1).
 
 ## 10. Gates and threshold-setting rule
 
@@ -247,5 +257,29 @@ Decision rules (per configuration):
 
 ## 14. Deviations log
 
-(empty — append dated entries here; deviations do not retroactively change
-recorded decisions)
+All entries below are PRE-FREEZE instrument repairs (permitted by Section 11,
+which allows metric/split/control changes before the freeze). They were
+prompted by a first Stage A calibration run (seeds 0-9, code 4a2d0fa) whose
+specificity controls exposed two instrument defects. Thresholds were not set
+from that run; Stage A is re-run after these repairs and thresholds derive
+only from the re-run. Deviations do not retroactively change recorded
+decisions.
+
+- D1 (2026-07-08, parallax dissimilarity). The first calibration showed that
+  a geometry-free order, once its density was made comparable (D2), still
+  passed the embeddability gate: its bracket-width profiles were dominated by
+  a per-target shared scalar (cross-chain column correlation ~0.7 vs ~0.0 for
+  geometric scenes) that embeds in 1D without encoding space (fitted 1D
+  coordinate correlated with x at ~0.1-0.5 vs ~0.98 for geometric scenes).
+  Fix: compute dissimilarity over reference-centered parallax profiles
+  (Section 6) so only cross-observer disagreement counts as spatial signal.
+  After the fix, geometric scenes still recover x (corr ~0.98, heldout ~0.02)
+  while density-matched random orders block (heldout ~0.22-0.30).
+
+- D2 (2026-07-08, density-matched control). The first calibration's
+  C-RANDOM-ORDER matched PRE-closure edge density, but transitive closure
+  percolated to a near-complete order (density ~0.997), an unfair degenerate
+  foil. Fix: tune the pre-closure edge probability by bisection to match the
+  geometric POST-closure density (Section 9). The transitive-closure helper
+  was also switched to a float32 BLAS matmul (identical result, ~140x faster)
+  to keep the per-scene bisection affordable.
