@@ -26,10 +26,15 @@ continuum limit, or dynamics. See `manuscript.md` Section 7 (claim boundary).
 
 ## Files
 
-- `manuscript.md` — the v0.1 draft (all sections; reproducibility in Section 9).
+- `manuscript.md` — the v0.2 draft (all sections + Appendix A parameter table;
+  reproducibility in Section 9). Inline citations are pandoc keys matching the
+  bibliography.
 - `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 7).
 - `figures/make_figures.py` — regenerates every figure from the frozen CSVs.
 - `figures/*.png` — generated figures (committed for convenience).
+- `citations/references.bib` — verified bibliography (every entry confirmed
+  against an authoritative source; no fabricated field).
+- `citations/citation_verification_report.md` — per-entry source + corrections.
 
 ## Provenance
 

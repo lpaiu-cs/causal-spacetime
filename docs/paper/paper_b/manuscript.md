@@ -44,7 +44,7 @@ relations, with metric scale requiring additional structure such as event
 density or observer protocols, rather than from velocity as displacement over
 time. Within causal-set theory this is a familiar stance: causal order plus a
 counting measure fixes a great deal of Lorentzian geometry in suitable
-continuum limits [BLMS87; Sorkin05; Surya19]. A weaker, finite, and more
+continuum limits [@blms1987; @sorkin2005; @surya2019]. A weaker, finite, and more
 operational question is whether *observer-relative distance order*, derived
 from causal accessibility and an observer protocol, admits a stable
 low-dimensional metric representation, and under what conditions.
@@ -81,13 +81,13 @@ truth-recovery check is load-bearing.
 ## 2. Related work and positioning
 
 Causal-set theory reconstructs timelike distance from longest chains and
-volume from interval cardinality [BLMS87; BrightwellGregory91], and dimension
-from ordering fractions [Myrheim78; MeyerThesis88]. Order-theoretic results
+volume from interval cardinality [@blms1987; @brightwell1991], and dimension
+from ordering fractions [@myrheim1978; @meyer1988]. Order-theoretic results
 fix conformal structure from causal order in the continuum
-[Malament77; HKM76; KronheimerPenrose67]. Ordinal-embedding methods from
+[@malament1977; @hkm1976; @kronheimer1967]. Ordinal-embedding methods from
 machine learning fit low-dimensional coordinates to quadruplet ("is d(i,j) <
-d(k,l)") comparisons [Shepard62; Kruskal64; KleindessnerVonLuxburg14;
-AgarwalEtAl07]. Our pipeline sits at the intersection: it derives quadruplet
+d(k,l)") comparisons [@shepard1962; @kruskal1964; @kleindessner2014;
+@agarwal2007]. Our pipeline sits at the intersection: it derives quadruplet
 comparisons operationally from causal accessibility and observer protocols,
 then applies ordinal embedding, but treats the fitted coordinates as a
 representation diagnostic rather than as physical coordinates. The novel
@@ -95,8 +95,9 @@ methodological emphasis is the explicit discriminator validation and the
 geometry-dilution dose-response, neither of which, to our knowledge, is
 standard in order-first reconstruction studies.
 
-(Citation keys above are placeholders for the reference list; each is a
-well-identified source to be finalized in the bibliography pass.)
+Inline citations use pandoc-style keys (`@blms1987`, ...) matching the
+verified `references.bib`; see `citations/citation_verification_report.md` for
+the source confirming each entry.
 
 ## 3. Methods
 
@@ -211,6 +212,9 @@ overlap:
 | column-shuffled | should block | 0.210-0.376 | 0.277 |
 | density-matched random | should block | 0.202-0.348 | 0.261 |
 
+*Table 1. PC-V1 calibration: held-out violation by condition at the gate
+dimension d = 1 (seeds 0-9). The two arms do not overlap.*
+
 Structured scenes recover the true spatial order (truth-order error mean
 0.097); the symmetry control mirrors structured (mean 0.023), confirming
 label-equivariance. On the confirmatory runs under frozen thresholds:
@@ -264,6 +268,10 @@ dose-response (confirmatory means over density-held seeds):
 | 0.75 | 0.446 | 0.203 | 0.575 |
 | 0.90 | 0.504 | 0.251 | 0.579 |
 | 1.00 | 0.496 | 0.259 | 0.576 |
+
+*Table 2. P1 dose-response: confirmatory means over density-held seeds
+(300-319). Relation density is held near 0.57 throughout, so the response is to
+geometric consistency, not density.*
 
 All four preregistered criteria are supported on the fresh confirmatory seeds:
 
@@ -372,10 +380,48 @@ Calibration runs are deterministic: re-running the calibration script at the
 cited commit reproduces the frozen constants. Every output row carries scene
 content hashes, seed, stage, and the requested-vs-executed fit budget.
 
+## Appendix A: Fixed parameters
+
+All parameters are frozen in the preregistrations; the pipeline reuses one
+scene/measurement/fit configuration across both experiments (only the order
+generator differs).
+
+| Group | Parameter | Value |
+| --- | --- | --- |
+| Scene | events N | 900 |
+| | diamond duration T | 2.0 |
+| | reference chains K | 6 at x0 = linspace(-0.25, 0.25, 6) |
+| | ticks per chain | 96 |
+| | target band | \|t\| <= 0.10, \|x\| <= 0.25 |
+| | targets per scene | >= 30, subsampled to <= 40 |
+| | required bracketing chains | 6 (two-sided) |
+| Dissimilarity | centering | parallax (per-target mean over chains removed) |
+| | min common columns | 4 |
+| | margin | 25th percentile of positive \|D(i,j)-D(k,l)\| gaps |
+| Split | pair train fraction | 0.8 (pair-level, leak-free) |
+| | constraints | 4000 train / 1000 held-out |
+| Fit | embedding dims | {1, 2, 3}; gate dim 1 |
+| | steps / restarts | 1500 / 5 (asserted, no silent clamp) |
+| | learning rate / batch | 0.05 / full |
+| | stability | sign discordance over 4 restart fits |
+| PC-V1 gates | held-out / null-gap / stability / truth | <= 0.05 / >= 0.15 / <= 0.15 / <= 0.15 |
+| PC-V1 seeds | A / B / C | 0-9 / 100-119 / 200-209 |
+| P1 generator | dilution | covering-edge rewiring, re-closed |
+| | density hold | post-closure density matched, tol 0.02 |
+| | epsilon grid | {0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0} |
+| P1 constants | rho_min / mono-pass / endpoint | 0.85 / 0.8 of covered / >= 18/20 |
+| | crossing levels (truth / held-out) | 0.15 / 0.05 |
+| | test coverage | >= 6 density-held cells spanning endpoints |
+| P1 seeds | A / B | 0-9 / 300-319 |
+
+*Table 3. Fixed parameters, frozen in the preregistrations.*
+
 ## References
 
-To be finalized in the bibliography pass. Anchor sources: Bombelli, Lee, Meyer
-& Sorkin (1987); Brightwell & Gregory (1991); Myrheim (1978); Meyer (1988);
-Malament (1977); Hawking, King & McCarthy (1976); Kronheimer & Penrose (1967);
-Sorkin (2005); Surya, Living Reviews in Relativity (2019); Shepard (1962);
-Kruskal (1964); Agarwal et al. (2007); Kleindessner & von Luxburg (2014).
+Verified bibliography: `citations/references.bib` (each entry confirmed
+against an authoritative source; see `citations/citation_verification_report.md`).
+Anchor sources: Bombelli, Lee, Meyer & Sorkin (1987); Brightwell & Gregory
+(1991); Myrheim (1978); Meyer (1988); Malament (1977); Hawking, King & McCarthy
+(1976); Kronheimer & Penrose (1967); Sorkin (2005); Surya, Living Reviews in
+Relativity (2019); Shepard (1962); Kruskal (1964); Agarwal et al. (2007);
+Kleindessner & von Luxburg (2014).
