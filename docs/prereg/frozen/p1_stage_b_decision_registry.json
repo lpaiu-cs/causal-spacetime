@@ -1,0 +1,219 @@
+{
+  "stage": "P1-B",
+  "frozen_commit": "6b21bb7",
+  "pc_v1_frozen_commit": "9162e8e",
+  "code_version": "a218d9a",
+  "covered_seed_count": 20,
+  "rho_min": 0.85,
+  "h_mono_pass_count": 20,
+  "h_mono_supported": true,
+  "h_thresh_estimable_count": 20,
+  "h_thresh_supported": true,
+  "h_lag_median_gap": 0.19126373626373638,
+  "h_lag_supported": true,
+  "endpoint_reproduction_count": 19,
+  "endpoint_reproduction_supported": true,
+  "median_truth_crossing_eps": 0.3139337788578372,
+  "per_seed": [
+    {
+      "seed": 300,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.22774223034734914,
+      "cross_heldout": 0.6042857142857143,
+      "eps0_truth": 0.09367755532139094,
+      "eps0_heldout": 0.021,
+      "eps1_truth": 0.49378292939936774,
+      "eps1_heldout": 0.255
+    },
+    {
+      "seed": 301,
+      "rho": 1.0,
+      "cross_truth": 0.24126987633322977,
+      "cross_heldout": 0.5522727272727272,
+      "eps0_truth": 0.09678100263852243,
+      "eps0_heldout": 0.02,
+      "eps1_truth": 0.48929142248268515,
+      "eps1_heldout": 0.183
+    },
+    {
+      "seed": 302,
+      "rho": 0.9285714285714286,
+      "cross_truth": 0.3143793103448276,
+      "cross_heldout": 0.4642857142857143,
+      "eps0_truth": 0.09922138047138047,
+      "eps0_heldout": 0.028,
+      "eps1_truth": 0.5094299863028132,
+      "eps1_heldout": 0.315
+    },
+    {
+      "seed": 303,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.29968677494199536,
+      "cross_heldout": 0.538235294117647,
+      "eps0_truth": 0.08889825152728038,
+      "eps0_heldout": 0.024,
+      "eps1_truth": 0.5005299978800085,
+      "eps1_heldout": 0.247
+    },
+    {
+      "seed": 304,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.3053571428571428,
+      "cross_heldout": 0.4522058823529412,
+      "eps0_truth": 0.10110352075669994,
+      "eps0_heldout": 0.02,
+      "eps1_truth": 0.49591858369553693,
+      "eps1_heldout": 0.291
+    },
+    {
+      "seed": 305,
+      "rho": 0.9285714285714286,
+      "cross_truth": 0.26873626373626364,
+      "cross_heldout": 0.46,
+      "eps0_truth": 0.09838133277275594,
+      "eps0_heldout": 0.023,
+      "eps1_truth": 0.47591948572030773,
+      "eps1_heldout": 0.256
+    },
+    {
+      "seed": 306,
+      "rho": 0.9642857142857142,
+      "cross_truth": 0.25925729442970824,
+      "cross_heldout": 0.5250000000000002,
+      "eps0_truth": 0.0878577441077441,
+      "eps0_heldout": 0.029,
+      "eps1_truth": 0.5003156565656566,
+      "eps1_heldout": 0.281
+    },
+    {
+      "seed": 307,
+      "rho": 0.9523809523809523,
+      "cross_truth": 0.4245343839541547,
+      "cross_heldout": 0.5109375,
+      "eps0_truth": 0.10703363914373089,
+      "eps0_heldout": 0.014,
+      "eps1_truth": 0.49728116003838363,
+      "eps1_heldout": 0.233
+    },
+    {
+      "seed": 308,
+      "rho": 1.0,
+      "cross_truth": 0.22784832059943283,
+      "cross_heldout": 0.6008771929824561,
+      "eps0_truth": 0.10018963337547408,
+      "eps0_heldout": 0.014,
+      "eps1_truth": 0.5199449793672627,
+      "eps1_heldout": 0.211
+    },
+    {
+      "seed": 309,
+      "rho": 0.9523809523809523,
+      "cross_truth": 0.3139337788578372,
+      "cross_heldout": 0.4963636363636364,
+      "eps0_truth": 0.0969232384752704,
+      "eps0_heldout": 0.015,
+      "eps1_truth": 0.4765305050929329,
+      "eps1_heldout": 0.328
+    },
+    {
+      "seed": 310,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.22964069591527986,
+      "cross_heldout": 0.6051724137931034,
+      "eps0_truth": 0.09027704624460128,
+      "eps0_heldout": 0.007,
+      "eps1_truth": 0.5086516142646128,
+      "eps1_heldout": 0.212
+    },
+    {
+      "seed": 311,
+      "rho": 0.9642857142857142,
+      "cross_truth": 0.4505867200878028,
+      "cross_heldout": 0.47114093959731546,
+      "eps0_truth": 0.10821643286573146,
+      "eps0_heldout": 0.034,
+      "eps1_truth": 0.49199699215812653,
+      "eps1_heldout": 0.228
+    },
+    {
+      "seed": 312,
+      "rho": 0.9523809523809523,
+      "cross_truth": 0.3321634615384615,
+      "cross_heldout": 0.04090909090909086,
+      "eps0_truth": 0.11203450452345887,
+      "eps0_heldout": 0.053,
+      "eps1_truth": 0.48586796034591856,
+      "eps1_heldout": 0.32
+    },
+    {
+      "seed": 313,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.3299990964524464,
+      "cross_heldout": 0.4148936170212766,
+      "eps0_truth": 0.09354566547141953,
+      "eps0_heldout": 0.015,
+      "eps1_truth": 0.476357454043141,
+      "eps1_heldout": 0.333
+    },
+    {
+      "seed": 314,
+      "rho": 1.0,
+      "cross_truth": 0.30692307692307685,
+      "cross_heldout": 0.509016393442623,
+      "eps0_truth": 0.10747368421052632,
+      "eps0_heldout": 0.028,
+      "eps1_truth": 0.5188421052631579,
+      "eps1_heldout": 0.315
+    },
+    {
+      "seed": 315,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.32645750988142286,
+      "cross_heldout": 0.4981651376146789,
+      "eps0_truth": 0.09921177088807147,
+      "eps0_heldout": 0.015,
+      "eps1_truth": 0.5047819232790332,
+      "eps1_heldout": 0.262
+    },
+    {
+      "seed": 316,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.31843294460641397,
+      "cross_heldout": 0.48642857142857143,
+      "eps0_truth": 0.08504367961267235,
+      "eps0_heldout": 0.021,
+      "eps1_truth": 0.5095253131249342,
+      "eps1_heldout": 0.261
+    },
+    {
+      "seed": 317,
+      "rho": 0.9761904761904762,
+      "cross_truth": 0.3158625702274781,
+      "cross_heldout": 0.36585365853658536,
+      "eps0_truth": 0.10327455919395466,
+      "eps0_heldout": 0.031,
+      "eps1_truth": 0.4696648281714043,
+      "eps1_heldout": 0.243
+    },
+    {
+      "seed": 318,
+      "rho": 1.0,
+      "cross_truth": 0.3619241379310345,
+      "cross_heldout": 0.6060240963855421,
+      "eps0_truth": 0.09755840875605136,
+      "eps0_heldout": 0.022,
+      "eps1_truth": 0.5098835345656587,
+      "eps1_heldout": 0.181
+    },
+    {
+      "seed": 319,
+      "rho": 1.0,
+      "cross_truth": 0.3060629922961511,
+      "cross_heldout": 0.5029411764705882,
+      "eps0_truth": 0.09670976558393778,
+      "eps0_heldout": 0.032,
+      "eps1_truth": 0.49524011000634655,
+      "eps1_heldout": 0.216
+    }
+  ]
+}

@@ -193,3 +193,30 @@ version, and the requested-vs-executed fit budget.
   spanning both endpoints are recorded as insufficient_coverage and excluded
   from the H-MONO denominator, mirroring scene-invalid handling. The PC-V1
   frozen instrument is untouched. Thresholds are set only from the re-run.
+
+## 12. Confirmatory outcome (post-freeze factual record)
+
+Result of executing the frozen P1-B decisions (constants frozen at commit
+6b21bb7 / a218d9a; PC-V1 gates at 9162e8e). Registries and per-seed CSVs are
+under `docs/prereg/frozen/`. It changes no constant.
+
+- P1-B (confirmatory, seeds 300-319): all four criteria SUPPORTED.
+  - H-MONO: 20/20 covered seeds have rho >= 0.85 (per-seed rho 0.929-1.0,
+    median 0.976); no seed was insufficient_coverage.
+  - H-THRESH: epsilon* estimable for 20/20 seeds; median geometry-recovery
+    crossing epsilon* = 0.314 -- a graded transition, not a cliff.
+  - H-LAG: median (heldout crossing - truth crossing) = 0.191 > 0
+    (heldout crosses at ~0.50, truth at ~0.31). The false-pass window -
+    profiles still embed in 1D while no longer recovering true space - is
+    confirmed on fresh seeds, wider than in calibration (0.146).
+  - Endpoint reproduction: 19/20 seeds reproduce both endpoints (epsilon = 0
+    passes the frozen PC-V1 gate; epsilon = 1 blocks), above the 18/20 rule.
+- Conclusion: at fixed relation density, geometry-recovery degrades
+  monotonically as causal order is diluted from Minkowski (epsilon = 0) to
+  geometry-free (epsilon = 1), with an identifiable graded transition near
+  epsilon ~ 0.3. The validated PC-V1 discriminator responds to the amount of
+  geometric consistency in the order, not to density. This is a controlled
+  dose-response inside a fixed generator family at finite scale; it is not a
+  spacetime-emergence, continuum-limit, or dynamics claim. The H-LAG window is
+  a cautionary methodological result: embeddability alone over-reports
+  geometry, so the truth gate is load-bearing.
