@@ -1,10 +1,14 @@
 # P1: Geometry-Dilution Epsilon Sweep
 
-Status: DRAFT v1 (not frozen). Builds on the frozen PC-V1 positive control
-(`docs/prereg/pc_v1_positive_control.md`), which validated the response-profile
-pipeline as a latent-geometry discriminator (H-SENS and H-SPEC both supported).
-This document lives in version control. Nothing under `outputs/` is ever an
-input to a decision defined here.
+Status: FROZEN v1 (2026-07-09). Calibration provenance: P1-A at commit 6b21bb7,
+seeds 0-9. Frozen constants: `docs/prereg/frozen/p1_test_constants.json`.
+Refinement D1 (Section 11) was applied before this freeze; constants derive
+only from the post-refinement calibration. After this point the P1 test
+constants are locked and P1-B is confirmatory. Builds on the frozen PC-V1
+positive control (`docs/prereg/pc_v1_positive_control.md`), which validated the
+response-profile pipeline as a latent-geometry discriminator (H-SENS and
+H-SPEC both supported). This document lives in version control. Nothing under
+`outputs/` is ever an input to a decision defined here.
 
 ## 1. Motivation
 

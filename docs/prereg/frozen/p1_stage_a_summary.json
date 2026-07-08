@@ -1,0 +1,27 @@
+{
+  "stage": "P1-A",
+  "code_version": "6b21bb7",
+  "seed_count": 10,
+  "covered_seed_count": 9,
+  "insufficient_coverage_seeds": [
+    9
+  ],
+  "epsilon_grid": [
+    0.0,
+    0.15,
+    0.3,
+    0.45,
+    0.6,
+    0.75,
+    0.9,
+    1.0
+  ],
+  "median_monotonicity_rho": 0.9761904761904762,
+  "min_monotonicity_rho": 0.9047619047619048,
+  "median_truth_crossing_eps": 0.3169164364640884,
+  "median_heldout_crossing_eps": 0.4785714285714286,
+  "median_heldout_minus_truth_crossing": 0.14602941176470596,
+  "proposed_rho_min": 0.85,
+  "hard_floor_hf1_note": "check epsilon=0 truth<=0.15 & heldout<=0.05",
+  "hard_floor_hf2_note": "check epsilon=1 truth>=0.40"
+}
