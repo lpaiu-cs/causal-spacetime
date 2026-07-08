@@ -32,6 +32,7 @@ from causal_spacetime_lab.positive_control.epsilon_sweep import build_epsilon_sc
 from causal_spacetime_lab.positive_control.gates import (
     RepresentabilityFitPolicy,
     analyze_profiles,
+    load_frozen_thresholds,
 )
 from causal_spacetime_lab.positive_control.rewire import (
     geometric_post_closure_density,
@@ -168,6 +169,12 @@ def main() -> None:
     code_version = git_describe()
     suffix = "_smoke" if args.smoke else ""
 
+    if stage == "b" and not args.smoke and not FROZEN_CONSTANTS_PATH.exists():
+        raise SystemExit(
+            f"frozen P1 constants not found at {FROZEN_CONSTANTS_PATH}; P1-B may "
+            "only run after the P1 freeze (preregistration Section 9)"
+        )
+
     all_rows: list[dict] = []
     for seed in seeds:
         config = smoke_scene_config(seed) if args.smoke else primary_scene_config(seed)
@@ -183,42 +190,49 @@ def main() -> None:
     # present). Under-covered seeds are recorded and excluded from the test
     # denominator -- a 3-point curve cannot test monotonicity across the grid.
     min_cells = min(MIN_TEST_CELLS, len(grid))
-    rhos, cross_truth, cross_heldout = [], [], []
+    covered: list[dict] = []
     insufficient: list[int] = []
     for seed in seeds:
         eps, truth, heldout = per_seed_curve(all_rows, seed)
         if len(eps) < min_cells or eps[0] != 0.0 or eps[-1] != max(grid):
             insufficient.append(seed)
             continue
-        rhos.append((seed, spearman(eps, truth)))
-        cross_truth.append(crossing_epsilon(eps, truth, 0.15))
-        cross_heldout.append(crossing_epsilon(eps, heldout, 0.05))
+        covered.append(
+            {
+                "seed": seed,
+                "rho": spearman(eps, truth),
+                "cross_truth": crossing_epsilon(eps, truth, 0.15),
+                "cross_heldout": crossing_epsilon(eps, heldout, 0.05),
+                "eps0_truth": truth[0],
+                "eps0_heldout": heldout[0],
+                "eps1_truth": truth[-1],
+                "eps1_heldout": heldout[-1],
+            }
+        )
 
-    valid_rho = [r for _, r in rhos if r == r]  # drop nan
+    valid_rho = [c["rho"] for c in covered if c["rho"] == c["rho"]]
+    lag = [
+        c["cross_heldout"] - c["cross_truth"]
+        for c in covered
+        if c["cross_heldout"] is not None and c["cross_truth"] is not None
+    ]
     summary = {
         "stage": f"P1-{stage.upper()}",
         "code_version": code_version,
         "seed_count": len(seeds),
-        "covered_seed_count": len(rhos),
+        "covered_seed_count": len(covered),
         "insufficient_coverage_seeds": insufficient,
         "epsilon_grid": list(grid),
-        "median_monotonicity_rho": (
-            sorted(valid_rho)[len(valid_rho) // 2] if valid_rho else None
-        ),
+        "median_monotonicity_rho": _median(valid_rho),
         "min_monotonicity_rho": min(valid_rho) if valid_rho else None,
         "median_truth_crossing_eps": _median(
-            [c for c in cross_truth if c is not None]
+            [c["cross_truth"] for c in covered if c["cross_truth"] is not None]
         ),
         "median_heldout_crossing_eps": _median(
-            [c for c in cross_heldout if c is not None]
+            [c["cross_heldout"] for c in covered if c["cross_heldout"] is not None]
         ),
+        "median_heldout_minus_truth_crossing": _median(lag),
     }
-    lag = [
-        h - t
-        for h, t in zip(cross_heldout, cross_truth, strict=True)
-        if h is not None and t is not None
-    ]
-    summary["median_heldout_minus_truth_crossing"] = _median(lag)
 
     if stage == "a":
         p10 = _quantile(valid_rho, 0.10) if valid_rho else float("nan")
@@ -231,8 +245,83 @@ def main() -> None:
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, indent=2))
+
+    if stage == "b" and not args.smoke:
+        _decide_confirmatory(covered, summary, args.output_dir, code_version)
     if args.smoke:
         print("SMOKE RUN: engineering check only; no preregistered meaning.")
+
+
+def _decide_confirmatory(
+    covered: list[dict], summary: dict, output_dir: Path, code_version: str
+) -> None:
+    """Apply frozen P1 constants + frozen PC-V1 gates (preregistration Section 7)."""
+
+    constants = _load_p1_constants(FROZEN_CONSTANTS_PATH)
+    pcv1 = load_frozen_thresholds(PC_V1_THRESHOLDS_PATH)
+    rho_min = float(constants["rho_min"])
+    n_covered = len(covered)
+
+    mono_pass = sum(1 for c in covered if c["rho"] >= rho_min)
+    h_mono = n_covered > 0 and mono_pass >= constants["mono_pass_fraction"] * n_covered
+
+    lag = [
+        c["cross_heldout"] - c["cross_truth"]
+        for c in covered
+        if c["cross_heldout"] is not None and c["cross_truth"] is not None
+    ]
+    h_lag = bool(lag) and (_median(lag) or 0.0) > 0.0
+
+    thresh_estimable = sum(1 for c in covered if c["cross_truth"] is not None)
+    h_thresh = thresh_estimable >= constants["thresh_estimable_min"]
+
+    def gate_pass(truth: float, heldout: float) -> bool:
+        return truth <= pcv1.truth_error_max and heldout <= pcv1.heldout_max
+
+    endpoints_ok = sum(
+        1
+        for c in covered
+        if gate_pass(c["eps0_truth"], c["eps0_heldout"])
+        and not gate_pass(c["eps1_truth"], c["eps1_heldout"])
+    )
+
+    registry = {
+        "stage": "P1-B",
+        "frozen_commit": constants.get("frozen_commit"),
+        "pc_v1_frozen_commit": pcv1.frozen_commit,
+        "code_version": code_version,
+        "covered_seed_count": n_covered,
+        "rho_min": rho_min,
+        "h_mono_pass_count": mono_pass,
+        "h_mono_supported": bool(h_mono),
+        "h_thresh_estimable_count": thresh_estimable,
+        "h_thresh_supported": bool(h_thresh),
+        "h_lag_median_gap": _median(lag),
+        "h_lag_supported": bool(h_lag),
+        "endpoint_reproduction_count": endpoints_ok,
+        "endpoint_reproduction_supported": bool(
+            endpoints_ok >= constants["endpoint_reproduction_min"]
+        ),
+        "median_truth_crossing_eps": summary["median_truth_crossing_eps"],
+        "per_seed": covered,
+    }
+    path = output_dir / "p1_stage_b_decision_registry.json"
+    path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
+    print(
+        f"\nP1-B: H-MONO={h_mono} ({mono_pass}/{n_covered}>=rho_min {rho_min}) "
+        f"H-THRESH={h_thresh} H-LAG={h_lag} "
+        f"endpoints={endpoints_ok}/{n_covered} reproduce"
+    )
+    print(f"Commit {path} under docs/prereg/frozen/ per Section 9.")
+
+
+def _load_p1_constants(path: Path) -> dict:
+    if not path.exists():
+        raise FileNotFoundError(
+            f"frozen P1 constants not found at {path}; P1-B may only run after "
+            "the P1 freeze (preregistration Section 9)"
+        )
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _median(values: list[float]) -> float | None:
