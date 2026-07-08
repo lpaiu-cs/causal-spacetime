@@ -1,0 +1,172 @@
+"""Regenerate Paper B figures from the frozen preregistration CSVs.
+
+Reads only committed frozen artifacts under docs/prereg/frozen/ so figures are
+reproducible and provenance-locked. Palette: Okabe-Ito blue/vermillion
+(colorblind-safe; validated). Single y-axis per figure; both series in a figure
+share the same [0,1] violation/discordance scale.
+
+Usage: python docs/paper/paper_b/figures/make_figures.py
+"""
+
+from __future__ import annotations
+
+import csv
+import statistics as st
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+FROZEN = Path("docs/prereg/frozen")
+OUT = Path("docs/paper/paper_b/figures")
+BLUE = "#0072B2"  # truth-order error / structured
+VERM = "#D55E00"  # held-out violation / foils
+INK = "#222222"
+MUTED = "#888888"
+GRID = "#DDDDDD"
+
+
+def _rows(name: str) -> list[dict]:
+    return list(csv.DictReader(open(FROZEN / name)))
+
+
+def _num(r: dict, k: str) -> float:
+    try:
+        return float(r[k])
+    except (TypeError, ValueError):
+        return float("nan")
+
+
+def _d1_ok(rows: list[dict], condition: str) -> list[float]:
+    return [
+        _num(r, "heldout_violation")
+        for r in rows
+        if r.get("status") == "ok"
+        and r.get("condition") == condition
+        and r.get("embedding_dim") == "1.0"
+    ]
+
+
+def _style(ax) -> None:
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    for spine in ("left", "bottom"):
+        ax.spines[spine].set_color(MUTED)
+    ax.tick_params(colors=INK, labelsize=9)
+    ax.yaxis.grid(True, color=GRID, linewidth=0.8)
+    ax.set_axisbelow(True)
+
+
+def figure_discriminator() -> None:
+    """Fig 1: confirmatory held-out violation by condition (gate dim d=1)."""
+
+    stage_b = _rows("pc_v1_stage_b_sensitivity.csv")
+    stage_c = _rows("pc_v1_stage_c_specificity.csv")
+    series = [
+        ("structured\n(geometric)", _d1_ok(stage_b, "structured"), BLUE),
+        ("random order\n(geometry-free)", _d1_ok(stage_c, "random_order"), VERM),
+        (
+            "column-shuffled\n(consistency-destroyed)",
+            _d1_ok(stage_c, "column_shuffled"),
+            VERM,
+        ),
+    ]
+    fig, ax = plt.subplots(figsize=(6.4, 4.0))
+    _style(ax)
+    for i, (_label, vals, color) in enumerate(series):
+        xs = [i + (j - len(vals) / 2) * 0.012 for j in range(len(vals))]
+        ax.scatter(xs, vals, s=26, color=color, alpha=0.75, edgecolor="white",
+                   linewidth=0.5, zorder=3)
+        m = st.mean(vals)
+        ax.plot([i - 0.22, i + 0.22], [m, m], color=INK, linewidth=2, zorder=4)
+        ax.annotate(f"mean {m:.3f}", (i + 0.24, m), fontsize=8, color=INK,
+                    va="center")
+    ax.axhline(0.05, color=MUTED, linestyle="--", linewidth=1.2, zorder=2)
+    ax.annotate("held-out gate = 0.05", (2.35, 0.065), fontsize=8, color=MUTED,
+                ha="right")
+    ax.set_xticks(range(len(series)))
+    ax.set_xticklabels([s[0] for s in series], fontsize=9)
+    ax.set_ylabel("held-out violation (d = 1)", fontsize=10, color=INK)
+    ax.set_ylim(-0.02, 0.42)
+    ax.set_title(
+        "PC-V1: the pipeline passes on geometric order and blocks on\n"
+        "matched geometry-free order (confirmatory seeds, frozen gate)",
+        fontsize=10.5, color=INK, loc="left",
+    )
+    fig.tight_layout()
+    fig.savefig(OUT / "fig1_discriminator.png", dpi=200)
+    plt.close(fig)
+
+
+def figure_dose_response() -> None:
+    """Fig 2: P1 geometry-dilution dose-response with the false-pass window."""
+
+    rows = [
+        r
+        for r in _rows("p1_stage_b_epsilon_sweep.csv")
+        if r.get("status") == "ok" and _num(r, "density_held") == 1.0
+    ]
+    grid = [0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0]
+
+    def series(col: str) -> tuple[list[float], list[float], list[float]]:
+        means, sds, eps = [], [], []
+        for e in grid:
+            cells = [_num(r, col) for r in rows if _num(r, "epsilon") == e]
+            if cells:
+                eps.append(e)
+                means.append(st.mean(cells))
+                sds.append(st.pstdev(cells) if len(cells) > 1 else 0.0)
+        return eps, means, sds
+
+    e_t, truth, truth_sd = series("truth_order_error")
+    e_h, held, held_sd = series("heldout_violation")
+
+    fig, ax = plt.subplots(figsize=(6.8, 4.4))
+    _style(ax)
+
+    # false-pass window: between truth crossing (~0.31) and heldout crossing (~0.50)
+    ax.axvspan(0.31, 0.50, color=MUTED, alpha=0.12, zorder=0)
+    ax.annotate("false-pass window\n(embeds, but not true space)",
+                (0.405, 0.44), fontsize=8, color=MUTED, ha="center")
+
+    for eps, mean, sd, color, label in (
+        (e_t, truth, truth_sd, BLUE, "truth-order error (space recovery)"),
+        (e_h, held, held_sd, VERM, "held-out violation (embeddability)"),
+    ):
+        lo = [m - s for m, s in zip(mean, sd, strict=True)]
+        hi = [m + s for m, s in zip(mean, sd, strict=True)]
+        ax.fill_between(eps, lo, hi, color=color, alpha=0.15, zorder=1)
+        ax.plot(eps, mean, color=color, linewidth=2, marker="o", markersize=5,
+                zorder=3, label=label)
+
+    ax.axhline(0.15, color=BLUE, linestyle=":", linewidth=1.1, zorder=2)
+    ax.axhline(0.05, color=VERM, linestyle=":", linewidth=1.1, zorder=2)
+    ax.annotate("truth gate 0.15", (1.0, 0.16), fontsize=7.5, color=BLUE, ha="right")
+    ax.annotate("held-out gate 0.05", (1.0, 0.06), fontsize=7.5, color=VERM, ha="right")
+    ax.axvline(0.31, color=INK, linestyle="-", linewidth=0.8, alpha=0.5, zorder=2)
+    ax.annotate("epsilon* ~ 0.31", (0.31, -0.045), fontsize=8, color=INK, ha="center")
+
+    ax.set_xlabel("geometry dilution  epsilon   (0 = Minkowski, 1 = geometry-free)",
+                  fontsize=10, color=INK)
+    ax.set_ylabel("sign-discordance / violation fraction", fontsize=10, color=INK)
+    ax.set_xlim(-0.03, 1.03)
+    ax.set_ylim(-0.06, 0.58)
+    ax.legend(loc="upper left", fontsize=8.5, frameon=False)
+    ax.set_title(
+        "P1: geometry recovery degrades monotonically as order is diluted\n"
+        "at fixed relation density (~0.57 across all epsilon; bands = +/-1 SD)",
+        fontsize=10.5, color=INK, loc="left",
+    )
+    fig.tight_layout()
+    fig.savefig(OUT / "fig2_dose_response.png", dpi=200)
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    OUT.mkdir(parents=True, exist_ok=True)
+    figure_discriminator()
+    figure_dose_response()
+    print("wrote", OUT / "fig1_discriminator.png")
+    print("wrote", OUT / "fig2_dose_response.png")
