@@ -1,7 +1,7 @@
 # A validated discriminator for latent geometry in discrete causal order, and its response to geometry dilution
 
-**Draft v0.1.** Causal Spacetime Lab. All quantitative results trace to frozen
-preregistration artifacts (`docs/prereg/frozen/`); see Section 9.
+**Draft v0.3.** Causal Spacetime Lab. All quantitative results trace to frozen
+preregistration artifacts (`docs/prereg/frozen/`); see Section 10.
 
 ## Abstract
 
@@ -29,12 +29,17 @@ epsilon of the geometric covering relation toward random time-respecting edges
 at fixed relation density. Geometry recovery degrades monotonically in epsilon
 (Spearman rho >= 0.85 on 20/20 confirmatory seeds), with an identifiable
 graded transition near epsilon ~ 0.31 and a robust "false-pass" window in which
-profiles still embed in one dimension while no longer encoding true space. We
-conclude that, on this controlled family at finite scale, effective metric
+profiles still embed in one dimension while no longer encoding true space.
+Extending to 2+1D (experiment P2), where the effective spatial dimension is a
+live test, the same pipeline passes and recovers true 2D position, blocks on
+geometry-free order, and selects dimension 2 — one embedding dimension
+underfits and three add nothing — on 20/20 confirmatory seeds. We conclude
+that, on this controlled family at finite scale, effective metric
 representability responds to the *amount* of geometric consistency in a causal
-order, not to its density; and that embeddability alone is an unsafe indicator
-of geometry, which has direct methodological implications for order-first
-reconstruction claims. We make no claim of spacetime emergence.
+order, not to its density, and tracks the correct spatial dimension; and that
+embeddability alone is an unsafe indicator of geometry, which has direct
+methodological implications for order-first reconstruction claims. We make no
+claim of spacetime emergence.
 
 ## 1. Introduction
 
@@ -196,7 +201,7 @@ density but percolated under transitive closure to a near-complete order
 post-closure density by bisection. Both are logged as pre-freeze repairs; the
 frozen thresholds derive only from the post-repair calibration.
 
-The first confound is quantified in Figure 3 (Section 6): under raw
+The first confound is quantified in Figure 4 (Section 7): under raw
 dissimilarity the geometry-free control sits at the gate (mean held-out 0.056;
 4 of 9 seeds fall below 0.05 and would false-pass), whereas parallax centering
 lifts every seed decisively into blocking (mean 0.238).
@@ -310,7 +315,52 @@ held-out violation (embeddability) crosses its 0.05 gate near epsilon ~ 0.50.
 The gap is the false-pass window, where profiles still embed in one dimension
 but no longer recover true space.*
 
-## 6. Discussion
+## 6. Robustness: 2+1D and dimension selection
+
+PC-V1 and P1 are 1+1D, where there is one spatial dimension and the effective
+embedding dimension is trivially 1. A stronger test of whether the pipeline
+recovers genuine spatial structure is 2+1D: with two spatial dimensions, a
+faithful recovery must not only pass and reconstruct true position, but require
+dimension 2 — one embedding dimension must be insufficient. We ran this
+(experiment P2) with the frozen PC-V1 measurement/dissimilarity/fit pipeline
+unchanged; the only new element is a 2+1D scene: a sprinkled 3D Minkowski
+diamond with eight stationary observer chains on a ring of 2D positions
+(non-collinear, so cross-observer parallax fixes a 2D location). We fit
+dimensions 1, 2, 3, score truth recovery against the true 2D coordinates, and
+gate at dimension 2.
+
+The confirmatory result (fresh seeds, frozen thresholds) supports all three
+hypotheses on 20/20 valid seeds:
+
+- **Passes and recovers 2D (H-SENS-2D).** At d = 2, held-out violation is
+  0.026-0.072 (gate 0.10) and truth-order error against true 2D position is
+  0.090-0.116 (gate 0.15).
+- **Requires dimension 2 (H-DIM).** Dimension 1 underfits on every seed —
+  truth-order error 0.203-0.276, above the 0.15 gate — while dimension 2
+  recovers (<= 0.116); dimension 3 adds nothing (0.096-0.119, saturated). The
+  effective spatial dimension is 2, the test 1+1D could not provide (Figure 3).
+- **Blocks on geometry-free order (H-SPEC-2D).** Every density-matched
+  geometry-free control blocks at d = 2 (held-out 0.127-0.268).
+
+![Figure 3](figures/fig3_dimension_2d.png)
+
+*Figure 3. 2+1D dimension selection (P2-v2 confirmatory, seeds 500-519, gate
+dimension shown per column). Truth-order error against true 2D position drops
+from d = 1 (underfits, mean 0.241, above the 0.15 gate) to d = 2 (recovers,
+mean 0.103) and does not improve at d = 3 (mean 0.108). The effective spatial
+dimension is 2.*
+
+One methodological note, in keeping with the rest of this study. The first
+2+1D confirmatory run missed the sensitivity bar not because recovery failed
+(15 of 16 valid seeds passed) but because ~20% of 2+1D scenes did not yield
+enough two-sided-bracketed targets, against a fixed denominator. Rather than
+retune, we preregistered a remediation (larger scenes to remove the
+scene-invalidity, and the coverage-aware denominator already used in P1),
+re-froze on fresh calibration seeds, and confirmed all three hypotheses on
+fresh confirmatory seeds — the numbers above. The preregistration prevented an
+underpowered run from being read as either a pass or a genuine failure.
+
+## 7. Discussion
 
 On this controlled family at finite scale, effective metric representability of
 observer-relative distance order responds monotonically to the amount of
@@ -338,13 +388,13 @@ confound is exactly a common mode masquerading as structure; the degenerate
 control is a fairness failure that would have flattered the gate. Both were
 invisible to a single pass/looks-fine reading and were caught only because the
 protocol required a matched negative control and a density-held foil before any
-threshold was frozen. Figure 3 makes the shared-scalar case concrete: with the
+threshold was frozen. Figure 4 makes the shared-scalar case concrete: with the
 common mode retained (raw dissimilarity) the geometry-free control passes the
 gate on several seeds; removing it (parallax dissimilarity) blocks every seed.
 
-![Figure 3](figures/fig3_confound.png)
+![Figure 4](figures/fig4_confound.png)
 
-*Figure 3. The shared-scalar confound on geometry-free (density-matched random)
+*Figure 4. The shared-scalar confound on geometry-free (density-matched random)
 order, PC-V1 Stage C seeds, d = 1. Each line is one seed's held-out violation
 under raw bracket-width dissimilarity (shared scalar retained; several seeds
 below the 0.05 gate, i.e., false-passing) and under parallax dissimilarity
@@ -352,7 +402,7 @@ below the 0.05 gate, i.e., false-passing) and under parallax dissimilarity
 frozen Stage C registry exactly; the raw values are the same pipeline with
 centering disabled.*
 
-## 7. Claim boundary
+## 8. Claim boundary
 
 We claim: (a) the described pipeline is, on 1+1D Minkowski causal sets at the
 stated scale, a discriminator that passes on geometric order and blocks on
@@ -369,33 +419,41 @@ the representability gate is satisfiable by measured geometric order, and
 "block" is the expected outcome on geometry-free order, not a falsification of
 any theory.
 
-## 8. Limitations and future work
+## 9. Limitations and future work
 
-The study is 1+1D, single diamond geometry, a fixed observer-chain layout, and
-a single dilution family (covering-edge rewiring at held density). The absolute
-gate values are scale-dependent; the *contrast* (pass vs block, and the
-monotone curve) is the transferable content, not the specific thresholds. The
+The core study (PC-V1, P1) is 1+1D, single diamond geometry, a fixed
+observer-chain layout, and a single dilution family (covering-edge rewiring at
+held density); Section 6 extends the discriminator and dimension selection to
+2+1D but not the dilution dose-response. The absolute gate values are
+scale-dependent; the *contrast* (pass vs block, the monotone curve, and the
+dimension elbow) is the transferable content, not the specific thresholds. The
 epsilon* estimate is a property of this generator and scale. Natural extensions
-are: 2+1D scenes (where one spatial dimension no longer suffices and dimension
-selection becomes a live test); boosted or mixed observer layouts; finer
-epsilon grids near the transition; alternative dilution families (e.g.,
-link-swap at fixed count) as robustness checks; and, most importantly, orders
-produced by a candidate dynamics rather than by hand-tuned dilution, which is
-where an emergence question could eventually be posed.
+are: the geometry-dilution dose-response in 2+1D; higher spatial dimensions;
+boosted or mixed observer layouts; finer epsilon grids near the transition;
+alternative dilution families (e.g., link-swap at fixed count) as robustness
+checks; and, most importantly, orders produced by a candidate dynamics rather
+than by hand-tuned dilution, which is where an emergence question could
+eventually be posed.
 
-## 9. Reproducibility
+## 10. Reproducibility
 
 All results derive from frozen artifacts under `docs/prereg/frozen/`:
 PC-V1 thresholds and Stage A/B/C registries; P1 test constants and P1-A/P1-B
-registries; and the per-seed CSVs. Preregistrations:
-`docs/prereg/pc_v1_positive_control.md` (FROZEN) and
-`docs/prereg/p1_epsilon_sweep.md` (FROZEN). Provenance commits: PC-V1
+registries; the P2 and P2-v2 constants and registries; and the per-seed CSVs.
+Preregistrations: `docs/prereg/pc_v1_positive_control.md`,
+`docs/prereg/p1_epsilon_sweep.md`, `docs/prereg/p2_2plus1d.md`, and
+`docs/prereg/p2_v2_2plus1d.md` (all FROZEN). Provenance commits: PC-V1
 preregistration `4a2d0fa`, instrument repair `9162e8e`, freeze `b77f588`,
 confirmatory `891498f`; P1 skeleton `f1bb7d5`, coverage refinement `6b21bb7`,
-confirmatory logic `8bc65ae`, freeze `a218d9a`, confirmatory `4c05cf2`.
-Calibration runs are deterministic: re-running the calibration script at the
-cited commit reproduces the frozen constants. Every output row carries scene
-content hashes, seed, stage, and the requested-vs-executed fit budget.
+confirmatory logic `8bc65ae`, freeze `a218d9a`, confirmatory `4c05cf2`; P2
+skeleton `b941be0`, gate refinement `d2508b4`, freeze/logic `e3fe823`,
+confirmatory (mixed) `44d2fc8`; P2-v2 skeleton `aee54e0`, freeze `cdeb696`,
+confirmatory `0ec57fd`. Calibration runs are deterministic: re-running the
+calibration script at the cited commit reproduces the frozen constants. Every
+output row carries scene content hashes, seed, stage, and the
+requested-vs-executed fit budget. Section 6 reports P2-v2 (the remediated 2+1D
+run); P2 §12 records the initial 2+1D run that missed its sensitivity bar for a
+scene-generation reason and motivated the preregistered remediation.
 
 ## Appendix A: Fixed parameters
 

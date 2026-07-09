@@ -21,6 +21,11 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   required.
 - The degradation is a response to **geometry, not density** (achieved density
   held at 0.566-0.584 across all epsilon).
+- The result is **robust to 2+1D**: the same pipeline passes and recovers true
+  2D position, blocks on geometry-free order, and **selects the correct spatial
+  dimension** (d=2: d=1 underfits, d=3 adds nothing) on 20/20 confirmatory
+  seeds (P2-v2). The initial 2+1D run (P2) missed the sensitivity bar for a
+  scene-generation reason and was remediated by preregistration, not retuning.
 
 ## NOT claimed
 

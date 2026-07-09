@@ -36,7 +36,8 @@ continuum limit, or dynamics. See `manuscript.md` Section 7 (claim boundary).
   vs parallax dissimilarity on the Stage C seeds); the parallax column
   reproduces the frozen Stage C registry exactly.
 - `figures/*.png` — generated figures (committed for convenience). Fig 1
-  discriminator separation, Fig 2 dose-response, Fig 3 shared-scalar confound.
+  discriminator separation, Fig 2 dose-response, Fig 3 2+1D dimension
+  selection, Fig 4 shared-scalar confound.
 - `citations/references.bib` — verified bibliography (every entry confirmed
   against an authoritative source; no fabricated field).
 - `citations/citation_verification_report.md` — per-entry source + corrections.

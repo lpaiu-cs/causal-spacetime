@@ -219,15 +219,60 @@ def figure_confound() -> None:
         fontsize=10.5, color=INK, loc="left",
     )
     fig.tight_layout()
-    fig.savefig(OUT / "fig3_confound.png", dpi=200)
+    fig.savefig(OUT / "fig4_confound.png", dpi=200)
+    plt.close(fig)
+
+
+def figure_dimension_2d() -> None:
+    """Fig 4: 2+1D dimension selection (P2-v2 confirmatory)."""
+
+    rows = [
+        r
+        for r in _rows("p2_v2_stage_b_2plus1d.csv")
+        if r.get("status") == "ok"
+    ]
+    dims = [1, 2, 3]
+    truth = {d: [_num(r, f"d{d}_truth") for r in rows] for d in dims}
+    gate = 0.15  # frozen P2-v2 truth gate
+
+    fig, ax = plt.subplots(figsize=(6.2, 4.2))
+    _style(ax)
+    ax.axhline(gate, color=MUTED, linestyle="--", linewidth=1.2, zorder=2)
+    ax.annotate("truth gate 0.15", (2.4, gate + 0.008), fontsize=8, color=MUTED,
+                ha="right")
+    for i, d in enumerate(dims):
+        vals = truth[d]
+        xs = [i + (j - len(vals) / 2) * 0.010 for j in range(len(vals))]
+        color = VERM if d == 1 else BLUE
+        ax.scatter(xs, vals, s=24, color=color, alpha=0.75, edgecolor="white",
+                   linewidth=0.5, zorder=3)
+        m = st.mean(vals)
+        ax.plot([i - 0.2, i + 0.2], [m, m], color=INK, linewidth=2.2, zorder=4)
+        ax.annotate(f"mean {m:.3f}", (i + 0.24, m), fontsize=8, color=INK,
+                    va="center")
+    ax.set_xticks(range(len(dims)))
+    ax.set_xticklabels(
+        ["d = 1\n(underfits)", "d = 2\n(recovers 2D)", "d = 3\n(no gain)"],
+        fontsize=9.5,
+    )
+    ax.set_ylabel("truth-order error vs true 2D position", fontsize=10, color=INK)
+    ax.set_ylim(0.0, 0.32)
+    ax.set_title(
+        "2+1D dimension selection (P2-v2, confirmatory): recovery needs d = 2\n"
+        "and saturates there -- d = 1 underfits, d = 3 adds nothing",
+        fontsize=10.5, color=INK, loc="left",
+    )
+    fig.tight_layout()
+    fig.savefig(OUT / "fig3_dimension_2d.png", dpi=200)
     plt.close(fig)
 
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    figure_discriminator()
-    figure_dose_response()
-    figure_confound()
-    print("wrote", OUT / "fig1_discriminator.png")
-    print("wrote", OUT / "fig2_dose_response.png")
-    print("wrote", OUT / "fig3_confound.png")
+    figure_discriminator()      # Fig 1 (PC-V1, Section 4)
+    figure_dose_response()      # Fig 2 (P1, Section 5)
+    figure_dimension_2d()       # Fig 3 (P2-v2 robustness, Section 6)
+    figure_confound()           # Fig 4 (confound, Discussion Section 7)
+    for name in ("fig1_discriminator", "fig2_dose_response",
+                 "fig3_dimension_2d", "fig4_confound"):
+        print("wrote", OUT / f"{name}.png")
