@@ -3,12 +3,13 @@
 Working title: **An operational reconstruction ladder for spacetime quantities
 from causal order.**
 
-Status: DRAFT v0.1 (in progress, 2026-07-09). The scientific content is the
-verified M1-M10 foundation layer on the `restart/m17-baseline` line, whose
-numerical correctness against known causal-set and special-relativistic results
-was independently checked. Quantitative results are grounded in the experiment
-output CSVs (`outputs/data/`, regenerable); no number is from memory. Cells
-still awaiting a grounded number are marked `[NUM: exp##]` until filled.
+Status: DRAFT v0.2 (2026-07-09). The scientific content is the verified M1-M10
+foundation layer on the `restart/m17-baseline` line, whose numerical
+correctness against known causal-set and special-relativistic results was
+independently checked. Every quantitative result is grounded in the experiment
+output CSVs (`outputs/data/`, regenerable); no number is from memory. Figures
+are the natural next addition (a ladder schematic and/or grounded convergence
+panels).
 
 ## Scope and relation to Paper B
 
