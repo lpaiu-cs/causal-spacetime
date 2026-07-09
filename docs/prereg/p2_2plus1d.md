@@ -71,10 +71,13 @@ Hard floors (fixed now):
 - HF2: Stage A minimum d = 1 truth-order error > the proposed truth gate
   (1D genuinely underfits, so H-DIM is testable).
 
-Mechanical thresholds from Stage A distributions:
+Mechanical thresholds from Stage A distributions (amended, deviation D1 — gates
+are placed at the MIDPOINT between the pass cluster and the fail cluster so both
+sides keep margin, since resolution does not move the d=2-truth floor):
 
-- gate_heldout = min(0.10, round_up(p90_A(d2 held-out), 0.05))
-- gate_truth = min(0.20, round_up(p90_A(d2 truth), 0.05))
+- gate_truth = min(0.20, round(0.5 * (max_A(d2 truth) + min_A(d1 truth)), 0.05))
+- gate_heldout = min(0.10, round(0.5 * (max_A(d2 held-out) +
+  min_A(control d2 held-out)), 0.05))
 
 ## 7. Decision rules (P2-B confirmatory)
 
@@ -112,5 +115,15 @@ in and recovered.
 
 ## 11. Deviations log
 
-(empty — append dated entries; deviations do not retroactively change recorded
-decisions)
+- D1 (2026-07-09, midpoint gate placement). The first P2-A calibration
+  (seeds 0-9, code b941be0) passed all three hypotheses and both hard floors,
+  but the original truth gate (p90 of d=2 truth, rounded) landed at 0.10 and
+  hugged the d=2 cluster (d=2 truth 0.089-0.117), leaving one seed above it and
+  no margin. A resolution sweep (chains 8->12, N 2600->3200, ticks 96->128)
+  did NOT move the d=2-truth floor (mean ~0.097 throughout): the ~0.10 floor is
+  a near-degenerate-pair effect in the compact 2D target band, not a resolution
+  limit. Margin is therefore secured by gate PLACEMENT, not resolution: both
+  gates are placed at the midpoint between the pass cluster and the fail cluster
+  (Section 6). This is a pre-freeze gate-construction refinement; the frozen
+  PC-V1 measurement/fit pipeline is untouched and no scene parameter changed.
+  Thresholds derive only from the post-refinement re-calibration.

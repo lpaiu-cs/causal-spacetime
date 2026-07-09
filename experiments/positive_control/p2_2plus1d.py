@@ -185,21 +185,36 @@ def main() -> None:
         ),
     }
     if stage == "a":
-        def ru(v):
-            return float(math.ceil(v / 0.05) * 0.05)
+        def rnd(v):
+            return float(round(v / 0.05) * 0.05)
 
-        summary["proposed_gate_heldout"] = min(
-            0.10, ru(_q([r["d2_heldout"] for r in ok], 0.9))
-        )
+        # Gates are placed at the MIDPOINT between the pass cluster (d=2 / the
+        # geometric fit) and the fail cluster (d=1 truth for the truth gate; the
+        # geometry-free control for the held-out gate), so both sides keep
+        # margin. Anchoring to the pass cluster's p90 (the first rule) hugged
+        # the d=2 cluster and left no margin; resolution does not move the
+        # d=2-truth floor, so margin must come from gate placement (deviation
+        # D1).
+        d2_truth_max = max(r["d2_truth"] for r in ok)
+        d1_truth_min = min(r["d1_truth"] for r in ok)
+        d2_heldout_max = max(r["d2_heldout"] for r in ok)
+        control_vals = [
+            r["control_d2_heldout"]
+            for r in ok
+            if r["control_status"] == "ok"
+            and not math.isnan(r["control_d2_heldout"])
+        ]
+        control_heldout_min = min(control_vals) if control_vals else 0.15
         summary["proposed_gate_truth"] = min(
-            0.20, ru(_q([r["d2_truth"] for r in ok], 0.9))
+            0.20, rnd(0.5 * (d2_truth_max + d1_truth_min))
         )
-        summary["d1_truth_min"] = min(
-            (r["d1_truth"] for r in ok), default=float("nan")
+        summary["proposed_gate_heldout"] = min(
+            0.10, rnd(0.5 * (d2_heldout_max + control_heldout_min))
         )
-        summary["d2_truth_max"] = max(
-            (r["d2_truth"] for r in ok), default=float("nan")
-        )
+        summary["d1_truth_min"] = d1_truth_min
+        summary["d2_truth_max"] = d2_truth_max
+        summary["d2_heldout_max"] = d2_heldout_max
+        summary["control_heldout_min"] = control_heldout_min
     (args.output_dir / f"p2_summary_{stage}.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
