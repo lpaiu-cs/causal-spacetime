@@ -1,11 +1,15 @@
 # P2-v2: 2+1D robustness, remediated
 
-Status: DRAFT v1 (not frozen). A preregistered remediation of P2 (frozen,
-`docs/prereg/p2_2plus1d.md`), whose confirmatory H-SENS-2D missed the 16/20 bar
-for a scene-generation reason (20% 2+1D scene-invalidity against a fixed /20
-denominator; P2 §12). P2-v2 does not retune any P2 threshold; it applies the
-two remedies P2 §12 named and re-runs the full calibrate -> freeze -> confirm
-cycle on fresh seeds. This document lives in version control.
+Status: FROZEN v1 (2026-07-09). Calibration provenance: P2v2-A at commit
+aee54e0, seeds 0-9 (0/10 scene-invalid). Frozen thresholds:
+`docs/prereg/frozen/p2_v2_test_constants.json` (gate_truth 0.15, gate_heldout
+0.10; coverage floor V>=18, >=80% of valid). After this point the thresholds
+are locked and P2v2-B is confirmatory. A preregistered remediation of P2
+(frozen, `docs/prereg/p2_2plus1d.md`), whose confirmatory H-SENS-2D missed the
+16/20 bar for a scene-generation reason (20% 2+1D scene-invalidity against a
+fixed /20 denominator; P2 §12). P2-v2 does not retune any P2 threshold; it
+applies the two remedies P2 §12 named and re-runs the full calibrate -> freeze
+-> confirm cycle on fresh seeds. This document lives in version control.
 
 ## 1. What changed from P2 (and why)
 

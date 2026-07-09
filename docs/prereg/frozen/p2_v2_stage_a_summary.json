@@ -1,0 +1,15 @@
+{
+  "stage": "P2v2-A",
+  "code_version": "aee54e0",
+  "seed_count": 10,
+  "valid_seed_count": 10,
+  "scene_invalid_seeds": [],
+  "median_d1_truth": 0.23792055340111098,
+  "median_d2_truth": 0.10170555613686304,
+  "median_d3_truth": 0.10696308724832215,
+  "median_d2_heldout": 0.041,
+  "proposed_gate_truth": 0.15000000000000002,
+  "proposed_gate_heldout": 0.1,
+  "d1_truth_min": 0.20628601361969617,
+  "d2_truth_max": 0.11064630830370216
+}

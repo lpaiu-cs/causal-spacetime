@@ -1,0 +1,30 @@
+{
+  "gate_dim": 2,
+  "gate_truth": 0.15,
+  "gate_heldout": 0.10,
+  "coverage_floor": 18,
+  "pass_fraction": 0.80,
+  "denominator": 20,
+  "n_events": 3600,
+  "frozen_commit": "aee54e0",
+  "pc_v1_frozen_commit": "9162e8e",
+  "provenance": {
+    "calibration_stage": "P2v2-A",
+    "calibration_seeds": "0-9",
+    "calibration_code_version": "aee54e0",
+    "valid_seed_count": 10,
+    "scene_invalid_seeds": [],
+    "median_d1_truth": 0.2379,
+    "median_d2_truth": 0.1017,
+    "median_d2_heldout": 0.041,
+    "d2_truth_max": 0.1106,
+    "d1_truth_min": 0.2063,
+    "gate_margins": {
+      "truth_pass_side": 0.039,
+      "truth_fail_side": 0.056,
+      "heldout_pass_side": 0.033,
+      "heldout_fail_side": 0.039
+    },
+    "note": "P2-v2 remediation of P2: N raised to 3600 (0/10 scene-invalid in calibration) and a coverage-aware confirmatory denominator (floor V>=18, >=80% of valid per hypothesis). Gates by the midpoint rule. Deterministic; re-running p2_v2_2plus1d --stage a at aee54e0 reproduces them. Do not edit after freezing."
+  }
+}
