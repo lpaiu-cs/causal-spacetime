@@ -3,13 +3,13 @@
 Working title: **An operational reconstruction ladder for spacetime quantities
 from causal order.**
 
-Status: DRAFT v0.2 (2026-07-09). The scientific content is the verified M1-M10
+Status: DRAFT v0.3 (2026-07-09). The scientific content is the verified M1-M10
 foundation layer on the `restart/m17-baseline` line, whose numerical
 correctness against known causal-set and special-relativistic results was
 independently checked. Every quantitative result is grounded in the experiment
-output CSVs (`outputs/data/`, regenerable); no number is from memory. Figures
-are the natural next addition (a ladder schematic and/or grounded convergence
-panels).
+output CSVs; no number is from memory. Three figures are included (ladder
+schematic; grounded convergence panel; measure dependence), regenerable from
+committed summary CSVs.
 
 ## Scope and relation to Paper B
 
@@ -32,7 +32,11 @@ preregistered discriminator for it. Paper A is the foundation Paper B stands on.
 - `claim_boundary.md` — claim/non-claim checklist.
 - `citations/references.bib` — verified bibliography (shared core with Paper B;
   each entry confirmed against an authoritative source).
-- `figures/` — figure-generation script + PNGs (to be added).
+- `figures/make_figures.py` — regenerates the figures from `figures/data/`.
+- `figures/data/*.csv` — committed experiment summary CSVs (from the cited
+  exp scripts) that the figures read, so figures are reproducible.
+- `figures/*.png` — Fig 1 reconstruction ladder, Fig 2 convergence panel
+  (dimension / proper time / radar / Lorentz), Fig 3 measure dependence.
 
 ## Provenance
 

@@ -97,7 +97,15 @@ Rungs (minimal ingredient -> what is reconstructed):
 Three negative results bound the ladder from below (Section 5): conformal scale
 is not fixed by order alone (motivating M and W); a single observer gives only
 unsigned distance (motivating R); and finite signal speed alone does not give
-Lorentzian structure.
+Lorentzian structure. Figure 1 summarizes the ladder.
+
+![Figure 1](figures/fig1_ladder.png)
+
+*Figure 1. The reconstruction ladder. Each rung adds one supplied ingredient to
+the primitive causal order and unlocks a reconstructed quantity, bounded by what
+that ingredient does not supply. Reading top-down recovers operational geometry;
+reading the "bounded by" column is the ledger of what each reconstruction
+costs.*
 
 ## 3. Methods (verified foundation layer)
 
@@ -200,6 +208,20 @@ at 128 ticks for beta = 0.3, and from 0.016 to 0.0061 for beta = 0.6 (again
 about halving per tick doubling) (exp13;
 `outputs/data/oriented_radar_lorentz_summary.csv`).
 
+Figure 2 collects the convergence behavior of the first four rungs: dimension
+recovery (a), timelike proper time (b), observer radar (c), and Lorentz-map
+recovery (d).
+
+![Figure 2](figures/fig2_convergence.png)
+
+*Figure 2. Reconstruction accuracy in controlled models. (a) Myrheim-Meyer
+dimension converges to the true value for D = 2, 3, 4 as N grows (exp10).
+(b) Timelike proper-time relative RMSE falls with N, the interval-volume
+estimator beating the longest-chain estimator (exp07). (c) Observer radar time
+and distance RMSE fall about by half per doubling of clock ticks (exp11).
+(d) Recovered Lorentz beta RMSE falls with clock ticks for two boosts (exp13).
+Panels (c, d) are means over N; axes are logarithmic where noted.*
+
 ### 4.5 R4 — + atlas: transition-map consistency
 
 With overlapping observer charts, affine Lorentz/Poincare transition maps fit
@@ -230,6 +252,15 @@ volume/proper-time formulas are verified to ~1e-7 (exp19, exp20;
 reconstruction is stable (volume RMSE 0.018 -> 0.009, dimension steady ~2.0)
 while the uncorrected estimate blows up to RMSE 0.270 (bias -0.183) at 25%
 retention (exp23; `outputs/data/thinning_coarse_graining_summary.csv`).
+Figure 3 shows the measure dependence directly.
+
+![Figure 3](figures/fig3_measure.png)
+
+*Figure 3. R5: volume reconstruction requires a supplied measure. With measure
+weights supplied, the weighted volume estimate is unbiased and converges with N;
+without them the unweighted estimate is biased low and does not converge
+(constant-1.5 conformal profile, exp19). This is why order-alone recovers only
+timelike shape, not absolute scale.*
 
 ### 4.7 Horizon analogue — Rindler reconstruction-inaccessibility
 
