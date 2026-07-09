@@ -106,4 +106,30 @@ claimed.
 
 ## 11. Deviations log
 
-(empty)
+(empty — no pre-freeze repair was needed; the P2v2-A calibration passed cleanly.)
+
+## 12. Confirmatory outcome (post-freeze factual record)
+
+Result of executing the frozen P2v2-B decisions (P2-v2 constants at aee54e0;
+PC-V1 gates at 9162e8e), fresh seeds 500-519. Registry and per-seed CSV under
+`docs/prereg/frozen/`. Changes no threshold or rule.
+
+- **All three hypotheses SUPPORTED, 20/20 valid seeds** (0 scene-invalid;
+  coverage floor met).
+  - H-SENS-2D: 20/20 (d=2 held-out 0.026-0.072 all <= 0.10; d=2 truth
+    0.090-0.116 all <= 0.15).
+  - H-DIM: 20/20 (d=1 truth 0.203-0.276 all > 0.15 so 1D underfits; d=2 truth
+    <= 0.15 so 2D suffices; recovery saturates at d=2 on 20/20).
+  - H-SPEC-2D: 20/20 (every geometry-free control blocks).
+- The two P2 remedies worked: raising N to 3600 eliminated scene-invalidity
+  (0/20), and the seed with a borderline d=2 held-out in P2 (0.133) did not
+  recur (max d=2 held-out 0.072 here). The coverage-aware denominator was not
+  even needed (V = 20) but is in force.
+
+Conclusion: P2-v2 confirms the full 2+1D robustness result — the validated
+discriminator passes on measured 2+1D geometric order, recovers true 2D
+structure, selects the correct effective spatial dimension (2, not 1), and
+blocks on matched geometry-free order, all on fresh confirmatory seeds under
+frozen thresholds. This completes the H-SENS-2D confirmation that P2 missed for
+a scene-generation reason. It remains a controlled result: not a
+spacetime-emergence, continuum-limit, or dynamics claim.

@@ -1,0 +1,20 @@
+{
+  "stage": "P2v2-B",
+  "frozen_commit": "aee54e0",
+  "code_version": "cdeb696",
+  "seed_count": 20,
+  "valid_seed_count": 20,
+  "scene_invalid_seeds": [],
+  "coverage_floor": 18,
+  "coverage_ok": true,
+  "pass_needed": 16,
+  "gate_truth": 0.15,
+  "gate_heldout": 0.1,
+  "h_sens_2d_pass_count": 20,
+  "h_sens_2d_supported": true,
+  "h_dim_pass_count": 20,
+  "h_dim_supported": true,
+  "h_dim_saturation_count": 20,
+  "h_spec_2d_block_count": 20,
+  "h_spec_2d_supported": true
+}
