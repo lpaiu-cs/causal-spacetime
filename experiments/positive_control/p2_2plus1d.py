@@ -220,6 +220,52 @@ def main() -> None:
     )
     print(json.dumps(summary, indent=2))
 
+    if stage == "b":
+        _decide_confirmatory(ok, len(seeds), args.output_dir, code_version)
+
+
+def _decide_confirmatory(ok, seed_count, output_dir, code_version):
+    """Apply frozen P2 gates: H-SENS-2D, H-DIM, H-SPEC-2D (Section 7)."""
+
+    const = json.loads(FROZEN_CONSTANTS_PATH.read_text(encoding="utf-8"))
+    gt, gh = float(const["gate_truth"]), float(const["gate_heldout"])
+    pass_min = int(const["pass_min"])
+
+    sens = sum(1 for r in ok if r["d2_heldout"] <= gh and r["d2_truth"] <= gt)
+    hdim = sum(1 for r in ok if r["d1_truth"] > gt and r["d2_truth"] <= gt)
+    saturate = sum(1 for r in ok if r["d2_truth"] <= r["d3_truth"] + 0.05)
+    spec = sum(
+        1
+        for r in ok
+        if r["control_status"] != "ok" or r["control_d2_heldout"] > gh
+    )
+    registry = {
+        "stage": "P2-B",
+        "frozen_commit": const.get("frozen_commit"),
+        "code_version": code_version,
+        "seed_count": seed_count,
+        "valid_seed_count": len(ok),
+        "gate_truth": gt,
+        "gate_heldout": gh,
+        "pass_rule": f">={pass_min}/{seed_count}",
+        "h_sens_2d_pass_count": sens,
+        "h_sens_2d_supported": sens >= pass_min,
+        "h_dim_pass_count": hdim,
+        "h_dim_supported": hdim >= pass_min,
+        "h_dim_saturation_count": saturate,
+        "h_spec_2d_block_count": spec,
+        "h_spec_2d_supported": spec >= pass_min,
+    }
+    path = output_dir / "p2_stage_b_decision_registry.json"
+    path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
+    print(
+        f"\nP2-B: H-SENS-2D={registry['h_sens_2d_supported']} ({sens}/{len(ok)}) "
+        f"H-DIM={registry['h_dim_supported']} ({hdim}/{len(ok)}, "
+        f"saturate {saturate}) H-SPEC-2D={registry['h_spec_2d_supported']} "
+        f"({spec}/{len(ok)})"
+    )
+    print(f"Commit {path} under docs/prereg/frozen/ per Section 9.")
+
 
 def _median(values):
     vals = sorted(v for v in values if not (isinstance(v, float) and math.isnan(v)))

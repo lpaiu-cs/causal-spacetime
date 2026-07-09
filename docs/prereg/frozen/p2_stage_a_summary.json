@@ -1,0 +1,18 @@
+{
+  "stage": "P2-A",
+  "code_version": "d2508b4",
+  "seed_count": 10,
+  "valid_seed_count": 9,
+  "median_d1_truth": 0.22577570687281584,
+  "median_d2_truth": 0.0939320131314201,
+  "median_d3_truth": 0.10084121976866456,
+  "median_d2_heldout": 0.039,
+  "median_control_d2_heldout": 0.207,
+  "control_block_count": 9,
+  "proposed_gate_truth": 0.15000000000000002,
+  "proposed_gate_heldout": 0.1,
+  "d1_truth_min": 0.19123931623931623,
+  "d2_truth_max": 0.11724500525762356,
+  "d2_heldout_max": 0.072,
+  "control_heldout_min": 0.119
+}

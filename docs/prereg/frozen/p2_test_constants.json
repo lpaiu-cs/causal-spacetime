@@ -1,0 +1,30 @@
+{
+  "gate_dim": 2,
+  "gate_truth": 0.15,
+  "gate_heldout": 0.10,
+  "pass_min": 16,
+  "denominator": 20,
+  "frozen_commit": "d2508b4",
+  "pc_v1_frozen_commit": "9162e8e",
+  "provenance": {
+    "calibration_stage": "P2-A",
+    "calibration_seeds": "0-9",
+    "calibration_code_version": "d2508b4",
+    "valid_seed_count": 9,
+    "median_d1_truth": 0.2258,
+    "median_d2_truth": 0.0939,
+    "median_d3_truth": 0.1008,
+    "median_d2_heldout": 0.039,
+    "d2_truth_max": 0.1172,
+    "d1_truth_min": 0.1912,
+    "d2_heldout_max": 0.072,
+    "control_heldout_min": 0.119,
+    "gate_margins": {
+      "truth_pass_side": 0.033,
+      "truth_fail_side": 0.041,
+      "heldout_pass_side": 0.028,
+      "heldout_fail_side": 0.019
+    },
+    "note": "Gates placed at the midpoint between the pass cluster (d=2) and the fail cluster (d=1 truth / geometry-free control) so both sides keep margin (deviation D1). Deterministic; re-running p2_2plus1d --stage a at commit d2508b4 reproduces them. Do not edit after freezing."
+  }
+}

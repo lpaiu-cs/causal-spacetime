@@ -1,8 +1,12 @@
 # P2: 2+1D robustness and dimension selection
 
-Status: DRAFT v1 (not frozen). Builds on the frozen PC-V1 discriminator and P1
-dose-response, extending them to 2+1D. This document lives in version control;
-nothing under `outputs/` is ever a decision input.
+Status: FROZEN v1 (2026-07-09). Calibration provenance: P2-A at commit d2508b4,
+seeds 0-9. Frozen thresholds: `docs/prereg/frozen/p2_test_constants.json`
+(gate_truth 0.15, gate_heldout 0.10, both placed with margin per deviation D1).
+After this point the thresholds are locked and P2-B is confirmatory. Builds on
+the frozen PC-V1 discriminator and P1 dose-response, extending them to 2+1D.
+This document lives in version control; nothing under `outputs/` is ever a
+decision input.
 
 ## 1. Motivation
 
