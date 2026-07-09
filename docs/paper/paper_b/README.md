@@ -30,8 +30,13 @@ continuum limit, or dynamics. See `manuscript.md` Section 7 (claim boundary).
   reproducibility in Section 9). Inline citations are pandoc keys matching the
   bibliography.
 - `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 7).
-- `figures/make_figures.py` — regenerates every figure from the frozen CSVs.
-- `figures/*.png` — generated figures (committed for convenience).
+- `figures/make_figures.py` — regenerates every figure from the frozen CSVs
+  (and, for Fig 3, from `confound_data.csv`).
+- `figures/compute_confound_data.py` — recomputes the Fig 3 confound data (raw
+  vs parallax dissimilarity on the Stage C seeds); the parallax column
+  reproduces the frozen Stage C registry exactly.
+- `figures/*.png` — generated figures (committed for convenience). Fig 1
+  discriminator separation, Fig 2 dose-response, Fig 3 shared-scalar confound.
 - `citations/references.bib` — verified bibliography (every entry confirmed
   against an authoritative source; no fabricated field).
 - `citations/citation_verification_report.md` — per-entry source + corrections.

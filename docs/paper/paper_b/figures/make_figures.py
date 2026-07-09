@@ -164,9 +164,70 @@ def figure_dose_response() -> None:
     plt.close(fig)
 
 
+def figure_confound() -> None:
+    """Fig 3: the shared-scalar confound — raw vs parallax dissimilarity.
+
+    Slopegraph on the geometry-free control (PC-V1 Stage C seeds). Each line is
+    one seed's d=1 held-out violation under raw bracket-width dissimilarity
+    (left, shared scalar retained) and parallax dissimilarity (right, shared
+    scalar removed). Reads confound_data.csv (compute_confound_data.py); the
+    parallax column reproduces the frozen Stage C result exactly.
+    """
+
+    rows = list(csv.DictReader(open(OUT / "confound_data.csv")))
+    raw = [float(r["raw"]) for r in rows]
+    par = [float(r["parallax"]) for r in rows]
+    gate = 0.05
+
+    fig, ax = plt.subplots(figsize=(6.2, 4.4))
+    _style(ax)
+    ax.axhspan(-0.02, gate, color=MUTED, alpha=0.10, zorder=0)
+    ax.axhline(gate, color=MUTED, linestyle="--", linewidth=1.2, zorder=2)
+    ax.annotate("gate 0.05", (1.5, gate), fontsize=8, color=MUTED, va="center",
+                ha="right")
+    ax.annotate("shaded = passes the gate\n(false-pass for geometry-free input)",
+                (-0.33, 0.012), fontsize=8, color=MUTED, ha="left", va="center")
+
+    for r_val, p_val in zip(raw, par, strict=True):
+        ax.plot([0, 1], [r_val, p_val], color=MUTED, linewidth=1.0, alpha=0.6,
+                zorder=2)
+        raw_color = VERM if r_val <= gate else INK
+        ax.scatter([0], [r_val], s=34, color=raw_color, zorder=3,
+                   edgecolor="white", linewidth=0.5)
+        ax.scatter([1], [p_val], s=34, color=BLUE, zorder=3,
+                   edgecolor="white", linewidth=0.5)
+
+    for x, vals in ((0, raw), (1, par)):
+        m = sum(vals) / len(vals)
+        ax.plot([x - 0.09, x + 0.09], [m, m], color=INK, linewidth=2.5, zorder=4)
+        ax.annotate(f"mean {m:.3f}", (x, m + 0.018), fontsize=8.5, color=INK,
+                    ha="center")
+
+    false_pass = sum(1 for v in raw if v <= gate)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels([
+        "raw dissimilarity\n(shared scalar retained)",
+        "parallax dissimilarity\n(shared scalar removed)",
+    ], fontsize=9.5)
+    ax.set_xlim(-0.35, 1.5)
+    ax.set_ylim(-0.02, 0.36)
+    ax.set_ylabel("held-out violation (d = 1)", fontsize=10, color=INK)
+    ax.set_title(
+        "PC-V1 confound: on geometry-free order, raw dissimilarity sits at the\n"
+        f"gate ({false_pass}/{len(raw)} false-pass); parallax centering blocks all "
+        f"{len(par)}/{len(par)}",
+        fontsize=10.5, color=INK, loc="left",
+    )
+    fig.tight_layout()
+    fig.savefig(OUT / "fig3_confound.png", dpi=200)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     figure_discriminator()
     figure_dose_response()
+    figure_confound()
     print("wrote", OUT / "fig1_discriminator.png")
     print("wrote", OUT / "fig2_dose_response.png")
+    print("wrote", OUT / "fig3_confound.png")
