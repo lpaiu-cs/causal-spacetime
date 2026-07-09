@@ -1,0 +1,17 @@
+{
+  "stage": "P2-B",
+  "frozen_commit": "d2508b4",
+  "code_version": "e3fe823",
+  "seed_count": 20,
+  "valid_seed_count": 16,
+  "gate_truth": 0.15,
+  "gate_heldout": 0.1,
+  "pass_rule": ">=16/20",
+  "h_sens_2d_pass_count": 15,
+  "h_sens_2d_supported": false,
+  "h_dim_pass_count": 16,
+  "h_dim_supported": true,
+  "h_dim_saturation_count": 16,
+  "h_spec_2d_block_count": 16,
+  "h_spec_2d_supported": true
+}

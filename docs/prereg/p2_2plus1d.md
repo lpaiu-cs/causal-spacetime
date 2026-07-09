@@ -131,3 +131,36 @@ in and recovered.
   (Section 6). This is a pre-freeze gate-construction refinement; the frozen
   PC-V1 measurement/fit pipeline is untouched and no scene parameter changed.
   Thresholds derive only from the post-refinement re-calibration.
+
+## 12. Confirmatory outcome (post-freeze factual record)
+
+Result of executing the frozen P2-B decisions (P2 constants at d2508b4; PC-V1
+gates at 9162e8e). Registry and per-seed CSV under `docs/prereg/frozen/`. It
+changes no threshold or rule. This is a MIXED result and is reported as such.
+
+- **H-DIM: SUPPORTED (16/16 valid seeds).** Every valid seed has d=1 truth
+  above the gate (1D underfits) and d=2 truth within it (2D suffices); recovery
+  saturates at d=2 (16/16 have d=2 truth <= d=3 truth + 0.05). The effective
+  spatial dimension is 2 — the novel test 1+1D could not provide.
+- **H-SPEC-2D: SUPPORTED (16/16).** Every density-matched geometry-free control
+  blocks.
+- **H-SENS-2D: NOT SUPPORTED (15/20, below the frozen 16/20 bar).** Among the
+  valid seeds it is 15/16 (94%); the miss is driven by two factors: (i) 4 of 20
+  seeds (403, 405, 407, 409) were scene-invalid (2+1D scenes with < 30
+  bracketed targets), which the fixed /20 denominator counts against the bar,
+  and (ii) one valid seed (416) had d=2 held-out 0.133, above the 0.10 gate.
+
+Diagnosis (post-hoc, does NOT change the decision): the binding cause is the
+20% 2+1D scene-invalidity rate combined with a fixed /20 denominator. P1 uses a
+coverage-aware denominator (under-covered seeds excluded and reported); that
+rule was not carried into the frozen P2 decision, and cannot be applied post
+hoc here. A future preregistered P2-v2 should (a) reduce scene-invalidity
+(larger N or a wider bracketed band) and/or (b) adopt the P1 coverage-aware
+denominator, then re-calibrate and re-confirm. No threshold, rule, or seed set
+is retuned now.
+
+Conclusion: the 2+1D dimension-selection and specificity claims (H-DIM,
+H-SPEC-2D) are confirmed; the 2+1D sensitivity claim narrowly missed its
+preregistered bar for a scene-generation reason, not a failure of geometry
+recovery on valid scenes (15/16 valid seeds pass). This is a partial 2+1D
+robustness result, honestly bounded.
