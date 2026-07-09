@@ -1,0 +1,24 @@
+{
+  "gate_heldout": 0.10,
+  "gate_nullgap": 0.10,
+  "gate_truth": 0.40,
+  "emergence_pass_min": 16,
+  "denominator": 20,
+  "p_sweep": [0.006, 0.008, 0.010, 0.014, 0.020],
+  "frozen_commit": "f4837c8",
+  "pc_v1_frozen_commit": "9162e8e",
+  "provenance": {
+    "calibration_stage": "P3-A",
+    "calibration_seeds": "0-9",
+    "calibration_code_version": "f4837c8",
+    "valid_seed_count": 10,
+    "median_structured_heldout": 0.035,
+    "median_null_gap": 0.246,
+    "median_truth": 0.219,
+    "effect_size_d": 10.37,
+    "structured_heldout_max": 0.065,
+    "shuffle_heldout_min": 0.226,
+    "structured_nullgap_min": 0.186,
+    "note": "Order-intrinsic discriminator re-validated on sprinkled 1+1D (pass, recovers geometry) vs column-shuffle (block). Gate placed between the clusters. Transitive percolation (the dynamics under test) is NOT used in gate construction (P3 Section 3). Deterministic; re-running p3_dynamics --stage a at f4837c8 reproduces these. Do not edit after freezing."
+  }
+}

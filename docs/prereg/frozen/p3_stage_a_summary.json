@@ -1,0 +1,15 @@
+{
+  "stage": "P3-A",
+  "code_version": "f4837c8",
+  "valid": 10,
+  "median_structured_heldout": 0.035,
+  "median_null_gap": 0.24625000000000002,
+  "median_truth": 0.2185577803952362,
+  "effect_size_d": 10.37109998113813,
+  "proposed_gate_heldout": 0.1,
+  "proposed_gate_nullgap": 0.1,
+  "proposed_gate_truth": 0.4,
+  "structured_heldout_max": 0.065,
+  "shuffle_heldout_min": 0.22625,
+  "structured_nullgap_min": 0.18625
+}

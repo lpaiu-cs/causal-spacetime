@@ -1,8 +1,13 @@
 # P3: does geometry emerge from a geometry-free dynamics?
 
-Status: DRAFT v1 (not frozen). The first test of the emergence question the
-whole program builds toward: run the validated representability discriminator
-on causal orders produced by a DYNAMICS that never refers to geometry, rather
+Status: FROZEN v1 (2026-07-09). Calibration provenance: P3-A at commit f4837c8,
+seeds 0-9. Frozen gates: `docs/prereg/frozen/p3_test_constants.json`
+(heldout <= 0.10, null_gap >= 0.10; order-intrinsic discriminator re-validated
+on sprinkled vs column-shuffle, effect size d = 10.4). After this point the
+gates are locked and P3-B is the confirmatory application to the dynamics. The
+first test of the emergence question the whole program builds toward: run the
+validated representability discriminator on causal orders produced by a
+DYNAMICS that never refers to geometry, rather
 than on geometry that was sprinkled in (PC-V1/P2) or hand-diluted (P1). This
 document lives in version control.
 
