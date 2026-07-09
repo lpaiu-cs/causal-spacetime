@@ -1,0 +1,51 @@
+{
+  "stage": "P3-B",
+  "frozen_commit": "f4837c8",
+  "code_version": "2558335",
+  "gate_heldout": 0.1,
+  "gate_nullgap": 0.1,
+  "p_sweep": [
+    0.006,
+    0.008,
+    0.01,
+    0.014,
+    0.02
+  ],
+  "verdict_by_p": {
+    "0.006": {
+      "valid": 0,
+      "pass": 0,
+      "block": 20,
+      "emergence_supported": false,
+      "no_emergence": true
+    },
+    "0.008": {
+      "valid": 0,
+      "pass": 0,
+      "block": 20,
+      "emergence_supported": false,
+      "no_emergence": true
+    },
+    "0.01": {
+      "valid": 16,
+      "pass": 0,
+      "block": 20,
+      "emergence_supported": false,
+      "no_emergence": true
+    },
+    "0.014": {
+      "valid": 20,
+      "pass": 0,
+      "block": 20,
+      "emergence_supported": false,
+      "no_emergence": true
+    },
+    "0.02": {
+      "valid": 20,
+      "pass": 0,
+      "block": 20,
+      "emergence_supported": false,
+      "no_emergence": true
+    }
+  }
+}

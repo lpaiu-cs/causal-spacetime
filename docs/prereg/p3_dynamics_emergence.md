@@ -114,4 +114,35 @@ parameter, and code version.
 
 ## 9. Deviations log
 
-(empty)
+(empty -- no pre-freeze repair was needed; P3-A calibration passed cleanly.)
+
+## 10. Confirmatory outcome (post-freeze factual record)
+
+Result of executing the frozen P3-B decisions (P3 gates at f4837c8; PC-V1
+pipeline at 9162e8e), transitive percolation over the frozen p-sweep, seeds
+100-119. Registry and per-(p, seed) CSV under `docs/prereg/frozen/`. Changes no
+threshold or rule.
+
+- **NO-EMERGENCE across the entire sweep: 20/20 block at every p** (0 passes of
+  100 dynamics runs). Two regimes, both blocking:
+  - Low p (0.006, 0.008; density 0.19-0.34): all 20 seeds STRUCTURALLY block --
+    the order cannot furnish six disjoint chains of >= 25 ticks (short chains,
+    wide antichains), a Kleitman-Rothschild-type non-manifoldlike signature.
+  - Higher p (0.010-0.020; density 0.46-0.73): chains exist (16-20 valid) but
+    the geometry gate fails -- held-out violation ~0.23-0.25 (>> 0.10) and null
+    gap ~0 (+0.019, -0.005, +0.004; << 0.10). The profiles are no better than
+    their column-shuffle: no consistent latent geometric structure.
+- The verdict is interpretable because the SAME order-intrinsic discriminator
+  passes on sprinkled geometry and recovers true position (P3-A: structured
+  held-out 0.024-0.065, truth ~0.22 << 0.5 chance, separation d = 10.4). The
+  block on the dynamics is therefore a property of the dynamics, not an
+  instrument artifact.
+
+Conclusion: transitive percolation (classical sequential growth), judged by the
+validated discriminator at this scale, does not produce low-dimensional
+geometry -- geometry does not emerge from this geometry-free dynamics. This is
+consistent with the known non-manifoldlikeness of generic classical sequential
+growth. Per Section 7 it is a controlled negative result about this specific
+dynamics, not a statement about all possible dynamics; the natural next step is
+dynamics families designed or tuned toward manifoldlikeness (e.g., non-trivial
+CSG couplings), evaluated by the same frozen discriminator.
