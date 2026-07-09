@@ -196,21 +196,10 @@ density but percolated under transitive closure to a near-complete order
 post-closure density by bisection. Both are logged as pre-freeze repairs; the
 frozen thresholds derive only from the post-repair calibration.
 
-Figure 3 quantifies the first confound on the confirmatory specificity seeds:
-under raw dissimilarity the geometry-free control sits at the gate (mean 0.056;
+The first confound is quantified in Figure 3 (Section 6): under raw
+dissimilarity the geometry-free control sits at the gate (mean held-out 0.056;
 4 of 9 seeds fall below 0.05 and would false-pass), whereas parallax centering
-lifts every seed decisively into blocking (mean 0.238). The parallax column is
-the frozen Stage C result; the raw column is the same pipeline with centering
-disabled.
-
-![Figure 3](figures/fig3_confound.png)
-
-*Figure 3. The shared-scalar confound on geometry-free (density-matched random)
-order, PC-V1 Stage C seeds, d = 1. Each line is one seed's held-out violation
-under raw bracket-width dissimilarity (shared scalar retained; several seeds
-below the 0.05 gate, i.e., false-passing) and under parallax dissimilarity
-(shared scalar removed; all seeds block). The parallax values reproduce the
-frozen Stage C registry exactly.*
+lifts every seed decisively into blocking (mean 0.238).
 
 **Frozen thresholds** (gate dimension d = 1): held-out violation <= 0.05, null
 gap >= 0.15, restart stability <= 0.15, truth-order error <= 0.15. These were
@@ -349,7 +338,19 @@ confound is exactly a common mode masquerading as structure; the degenerate
 control is a fairness failure that would have flattered the gate. Both were
 invisible to a single pass/looks-fine reading and were caught only because the
 protocol required a matched negative control and a density-held foil before any
-threshold was frozen.
+threshold was frozen. Figure 3 makes the shared-scalar case concrete: with the
+common mode retained (raw dissimilarity) the geometry-free control passes the
+gate on several seeds; removing it (parallax dissimilarity) blocks every seed.
+
+![Figure 3](figures/fig3_confound.png)
+
+*Figure 3. The shared-scalar confound on geometry-free (density-matched random)
+order, PC-V1 Stage C seeds, d = 1. Each line is one seed's held-out violation
+under raw bracket-width dissimilarity (shared scalar retained; several seeds
+below the 0.05 gate, i.e., false-passing) and under parallax dissimilarity
+(shared scalar removed; all seeds block). The parallax values reproduce the
+frozen Stage C registry exactly; the raw values are the same pipeline with
+centering disabled.*
 
 ## 7. Claim boundary
 
