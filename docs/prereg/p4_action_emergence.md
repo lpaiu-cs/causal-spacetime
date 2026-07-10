@@ -95,4 +95,26 @@ exploratory data and may honestly land in transition/hysteresis).
 
 ## 8. Confirmatory outcome
 
-(to be recorded after the stage-B run; changes no gate or rule)
+Executed 2026-07-10 on seeds 100-104 (60 chains). Registry and per-chain CSV
+under `docs/prereg/frozen/`. **Experiment PASS** -- all three frozen pass
+criteria met; sharp predictions 5/6.
+
+- beta 0, 1, 2: **continuum**, 30/30 chains, dual starts agree (start-gap
+  0.0003 / 0.023 / 0.94, all <= 5). The crystal start melts back to the
+  sprinkled profile every time.
+- beta 3: **transition/hysteresis**, 10/10 "other" with start-gap 19.1 --
+  the first-order-like signature, exactly as predicted.
+- beta 4: **transition/hysteresis** (7 crystal, 3 other; start-gap 23.5).
+  The one missed sharp prediction ("crystal"), and it missed in precisely
+  the direction Section 5 flagged in advance: three random-start chains
+  stuck in partially layered states above the strict n1+n2 crystal
+  threshold. The pass criterion (non-continuum at 4) is met.
+- beta 6: **crystal**, 10/10; X-start chains reach S ~ -118 vs the exact
+  bipartite value -120.
+
+Conclusion: in the restricted 2D-orders ensemble the smeared-action-weighted
+continuum phase exists and is stable for beta <= 2, and geometry is
+destroyed through a hysteretic (first-order-like) transition beginning
+between beta 2 and 3 -- completing, with P3 and E1, the demonstration that
+emergence requires BOTH entropy control and bounded coupling. Instrument-
+level judgment of this continuum phase is P5.
