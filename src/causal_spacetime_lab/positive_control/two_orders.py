@@ -41,10 +41,14 @@ def bipartite_perm(n_elements: int) -> np.ndarray:
 
 
 def order_height(causal_matrix: np.ndarray) -> int:
-    """Length (number of elements) of the longest chain."""
+    """Length (number of elements) of the longest chain.
+
+    Works for any index labelling: ancestor counts strictly increase along
+    relations, so sorting by them yields a valid topological order.
+    """
     n = causal_matrix.shape[0]
     heights = np.ones(n, dtype=int)
-    for j in range(n):
+    for j in np.argsort(causal_matrix.sum(axis=0)):
         below = np.where(causal_matrix[:, j])[0]
         if below.size:
             heights[j] = 1 + heights[below].max()

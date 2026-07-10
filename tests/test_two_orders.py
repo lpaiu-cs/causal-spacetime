@@ -39,6 +39,21 @@ def test_order_height():
     assert order_height(perm_to_causal_matrix(bipartite_perm(n))) == 2
 
 
+def test_order_height_index_order_invariant():
+    # Height must not depend on element labelling (sprinkled matrices are
+    # not time-sorted). Relabel a chain adversarially and check.
+    n = 12
+    rng = np.random.default_rng(5)
+    C = perm_to_causal_matrix(np.arange(n))
+    relabel = rng.permutation(n)
+    shuffled = C[np.ix_(relabel, relabel)]
+    assert order_height(shuffled) == n
+    for seed in range(3):
+        C = _sprinkled(80, 2, seed)
+        relabel = rng.permutation(80)
+        assert order_height(C[np.ix_(relabel, relabel)]) == order_height(C)
+
+
 def _sprinkled(n: int, dim: int, seed: int):
     events = sprinkle_minkowski_causal_diamond(n, spacetime_dim=dim, T=2.0, seed=seed)
     fn = causal_matrix_1p1 if dim == 2 else causal_matrix_minkowski

@@ -1,0 +1,41 @@
+{
+  "n_elements": 100,
+  "eps": 0.12,
+  "steps": 400000,
+  "sample_every": 1000,
+  "burn_frac": 0.5,
+  "beta_grid": [0.0, 1.0, 2.0, 3.0, 4.0, 6.0],
+  "seeds": "100-104",
+  "starts": ["R (seeded random permutation)", "X (complete bipartite crystal)"],
+  "reference": {
+    "R": 2486.733333333333,
+    "n0": 324.43333333333334,
+    "n1": 228.63333333333333,
+    "n2": 181.33333333333334,
+    "height": 17.0
+  },
+  "continuum_n0_rel_tol": 0.5,
+  "continuum_height_min": 12,
+  "crystal_n12_frac": 0.5,
+  "crystal_height_max": 9,
+  "start_gap_max": 5.0,
+  "predictions": {
+    "0": "continuum",
+    "1": "continuum",
+    "2": "continuum",
+    "3": "transition/hysteresis",
+    "4": "crystal",
+    "6": "crystal"
+  },
+  "experiment_pass_criteria": "PASS iff (i) verdict continuum at beta in {0,1,2}, (ii) verdict crystal at beta=6, (iii) verdict not continuum at beta=3 and beta=4. Predictions are sharper than the pass criteria and are scored separately.",
+  "provenance": {
+    "calibration_stage": "P4-A",
+    "calibration_code_commit": "d2295d5 (+ order_height labelling fix)",
+    "reference_seeds": "0-29 sprinkled 2D diamond N=100",
+    "gibbs_tv": 0.0184,
+    "gibbs_visited": "720/720",
+    "beta0_identity_rel_dev": 0.0017,
+    "recon_basis": "exploratory dual-start sweep (scratchpad p9), N=100 eps=0.12: continuum profile through beta=2, hysteretic crystallization at beta>=3, ideal bipartite reached at beta=6 X-start (S=-118.4 vs theory -120)",
+    "note": "Gates and predictions frozen BEFORE the confirmatory multi-seed run (seeds 100-104 disjoint from all calibration/recon seeds). MM dimension deliberately excluded from gates: bipartite crystals also sit at MM ~ 2 (E1/E2 lesson); discriminating observables are n0 deviation, n1+n2 collapse, and height. Do not edit after freezing."
+  }
+}
