@@ -22,7 +22,7 @@ from math import gamma
 
 import numpy as np
 
-from .action import abundances, smeared_action_2d
+from .action import abundances, smeared_action_2d, smearing_f2
 
 
 def perm_to_causal_matrix(pi: np.ndarray) -> np.ndarray:
@@ -94,6 +94,97 @@ def chain_observables(causal_matrix: np.ndarray) -> dict[str, float]:
         "mm_dim": myrheim_meyer_dimension(causal_matrix),
         "height": float(order_height(causal_matrix)),
     }
+
+
+class _IncrementalState:
+    """C, M = C@C and T = sum f2 over related pairs, updated in O(N^2)/move.
+
+    A value swap at positions (a, b) only changes relations with endpoint a
+    or b. Middle-element contributions of a and b to M are rank-1 outer
+    products; rows/columns a and b of M are recomputed exactly afterwards.
+    """
+
+    def __init__(self, pi: np.ndarray, eps: float):
+        self.eps = eps
+        self.pi = np.array(pi, dtype=int).copy()
+        n = self.pi.size
+        self.lut = smearing_f2(np.arange(n + 1), eps)
+        self.C = perm_to_causal_matrix(self.pi)
+        self.Cf = self.C.astype(np.float32)
+        self.M = (self.Cf @ self.Cf).astype(np.int32)
+        self._recompute_T()
+
+    def _recompute_T(self) -> None:
+        self.T = float(self.lut[self.M[self.C]].sum())
+
+    def action(self) -> float:
+        return 2.0 * self.eps * self.pi.size - 4.0 * self.eps * self.eps * self.T
+
+    def swap(self, a: int, b: int) -> None:
+        pi, C, M = self.pi, self.C, self.M
+        idx = np.arange(pi.size)
+        # remove old middle-element contributions of a and b
+        M -= np.outer(C[:, a], C[a, :]).astype(np.int32)
+        M -= np.outer(C[:, b], C[b, :]).astype(np.int32)
+        pi[a], pi[b] = pi[b], pi[a]
+        # rewrite the four changed lines of C
+        C[a, :] = (idx > a) & (pi[a] < pi)
+        C[:, a] = (idx < a) & (pi < pi[a])
+        C[b, :] = (idx > b) & (pi[b] < pi)
+        C[:, b] = (idx < b) & (pi < pi[b])
+        self.Cf = C.astype(np.float32)
+        # add new middle-element contributions
+        M += np.outer(C[:, a], C[a, :]).astype(np.int32)
+        M += np.outer(C[:, b], C[b, :]).astype(np.int32)
+        # endpoint rows/columns of a and b: recompute exactly
+        for r in (a, b):
+            M[r, :] = (self.Cf[r, :] @ self.Cf).astype(np.int32)
+            M[:, r] = (self.Cf @ self.Cf[:, r]).astype(np.int32)
+        self._recompute_T()
+
+
+def mcmc_2d_order_fast(
+    pi0: np.ndarray,
+    beta: float,
+    eps: float,
+    steps: int,
+    seed: int,
+    sample_every: int = 1000,
+    burn_frac: float = 0.5,
+    collect_perms: bool = False,
+) -> tuple[list[dict[str, float]], float, list[np.ndarray]]:
+    """Same chain as :func:`mcmc_2d_order` (identical RNG stream and
+    trajectory) with O(N^2)/move incremental action updates, usable at
+    N of several hundred. Rejected proposals are undone by re-swapping.
+
+    Returns (samples, acceptance, perms) where perms holds sampled
+    permutations if ``collect_perms`` (for downstream discriminator runs).
+    """
+    rng = np.random.default_rng(seed)
+    state = _IncrementalState(pi0, eps)
+    action = state.action()
+    burn = int(steps * burn_frac)
+    samples: list[dict[str, float]] = []
+    perms: list[np.ndarray] = []
+    accepted = 0
+    for t in range(steps):
+        i, j = rng.integers(0, state.pi.size, 2)
+        if i == j:
+            continue
+        state.swap(i, j)
+        proposed = state.action()
+        if np.log(rng.uniform()) < -beta * (proposed - action):
+            action = proposed
+            accepted += 1
+        else:
+            state.swap(i, j)
+        if t >= burn and t % sample_every == 0:
+            obs = chain_observables(state.C)
+            obs["S"] = action
+            samples.append(obs)
+            if collect_perms:
+                perms.append(state.pi.copy())
+    return samples, accepted / steps, perms
 
 
 def mcmc_2d_order(

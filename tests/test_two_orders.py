@@ -9,9 +9,11 @@ import numpy as np
 from causal_spacetime_lab.causal import causal_matrix_1p1, causal_matrix_minkowski
 from causal_spacetime_lab.positive_control.action import smeared_action_2d
 from causal_spacetime_lab.positive_control.two_orders import (
+    _IncrementalState,
     bipartite_perm,
     chain_observables,
     mcmc_2d_order,
+    mcmc_2d_order_fast,
     myrheim_meyer_dimension,
     order_height,
     perm_to_causal_matrix,
@@ -113,6 +115,37 @@ def test_mcmc_exact_gibbs_small_n():
     empirical = counts / counts.sum()
     assert int((counts > 0).sum()) == len(perms)
     assert 0.5 * np.abs(target - empirical).sum() < 0.06
+
+
+def test_incremental_state_matches_full_recompute():
+    rng = np.random.default_rng(6)
+    state = _IncrementalState(rng.permutation(60), eps=0.12)
+    for _ in range(300):
+        i, j = rng.integers(0, 60, 2)
+        if i == j:
+            continue
+        state.swap(i, j)
+    Cf = state.C.astype(np.float32)
+    assert np.array_equal(state.M, (Cf @ Cf).astype(np.int32))
+    assert abs(state.T - float(state.lut[state.M[state.C]].sum())) < 1e-6
+
+
+def test_fast_sampler_identical_trajectory():
+    # Same seed => same RNG stream => the fast sampler must reproduce the
+    # reference sampler's trajectory exactly.
+    rng = np.random.default_rng(7)
+    pi0 = rng.permutation(30)
+    slow, acc_slow = mcmc_2d_order(
+        pi0, beta=0.8, eps=0.2, steps=8_000, seed=8, sample_every=200
+    )
+    fast, acc_fast, _ = mcmc_2d_order_fast(
+        pi0, beta=0.8, eps=0.2, steps=8_000, seed=8, sample_every=200
+    )
+    assert acc_slow == acc_fast
+    assert len(slow) == len(fast)
+    for s, f in zip(slow, fast):
+        assert abs(s["S"] - f["S"]) < 1e-6
+        assert s["n0"] == f["n0"] and s["height"] == f["height"]
 
 
 def test_mcmc_beta0_reproduces_uniform_ensemble():
