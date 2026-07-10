@@ -1,0 +1,32 @@
+{
+  "n_elements": 600,
+  "eps": 0.02,
+  "gate_heldout": 0.10,
+  "gate_nullgap": 0.10,
+  "gate_truth": 0.40,
+  "pass_min_fraction": 0.75,
+  "continuum_betas": [2.0, 8.0],
+  "crystal_beta": 32.0,
+  "seeds": "100-102",
+  "steps_continuum": 3000000,
+  "steps_crystal": 1000000,
+  "sample_every_continuum": 400000,
+  "sample_every_crystal": 200000,
+  "burn_frac": 0.6,
+  "start_continuum": "R (seeded random permutation)",
+  "start_crystal": "X (complete bipartite)",
+  "expectations": {
+    "2": "pass",
+    "8": "pass",
+    "32": "block"
+  },
+  "provenance": {
+    "calibration_stage": "P5-A",
+    "gates_inherited_from": "P3 (p3_test_constants.json) -- same discriminator protocol (6 chains >= 25 ticks, >= 20 bracketed targets, order-intrinsic profiles), re-validated at N=600 on uniform 2D orders: 10/10 valid, heldout 0.016-0.084 (max < 0.10), null_gap 0.106-0.322 (min > 0.10), truth 0.10-0.21 (recovers true lightcone x = i - pi_i)",
+    "profile_reference_n600": {"n0": 2987.1, "n1": 2410.95, "n2": 2113.5, "height": 44.0},
+    "recon": "400k-step dual-start sweep at N=600 eps=0.02: beta=2 and beta=8 continuum (crystal start MELTS, profiles at reference), beta=32 non-continuum (hysteretic; R-start drifts to a layered state n0 3.8x ref, X-start stays near bipartite S=-108.6 vs theory -120). beta_c in (8, 32).",
+    "eps_choice": "eps*N = 12 held at the P4 value so the crystal's action advantage S_bip = eps N (2 - eps N) = -120 is scale-invariant while entropy grows with N (continuum window widens: P4 beta_c in (2,3) at N=100 -> here beta_c in (8,32)).",
+    "expectation_semantics": "pass at a continuum beta iff >= 75% of its 9 configs (3 seeds x 3 equilibrium samples) clear all three gates; block at the crystal control iff 0 of its configs clear the gates (structural block counts as non-pass).",
+    "note": "Frozen before any stage-B chain was run. Confirmatory seeds 100-102 disjoint from calibration (0-9) and recon (50-63) seeds. Do not edit after freezing."
+  }
+}

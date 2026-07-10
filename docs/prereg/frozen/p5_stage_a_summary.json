@@ -1,0 +1,16 @@
+{
+  "n_elements": 600,
+  "eps": 0.02,
+  "n_valid": 10,
+  "median_heldout": 0.04625,
+  "max_heldout": 0.08375,
+  "median_null_gap": 0.24750000000000003,
+  "min_null_gap": 0.10625,
+  "median_truth": 0.1436072459963245,
+  "profile_reference": {
+    "n0": 2987.1,
+    "n1": 2410.95,
+    "n2": 2113.5,
+    "height": 44.0
+  }
+}
