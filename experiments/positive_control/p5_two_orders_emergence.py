@@ -131,7 +131,7 @@ def stage_recon(betas: list[float], steps: int) -> None:
 def stage_b(betas: list[float], seeds: list[int]) -> None:
     frozen = json.loads(FROZEN.read_text())
     rows = []
-    tag = "-".join(f"{b:g}" for b in betas)
+    tag = "-".join(f"{b:g}" for b in betas) + f"_s{seeds[0]}-{seeds[-1]}"
     for beta in betas:
         crystal = beta == frozen["crystal_beta"]
         steps = frozen["steps_crystal" if crystal else "steps_continuum"]
