@@ -1,0 +1,36 @@
+{
+  "frozen_constants": "p5_test_constants.json",
+  "verdict_by_beta": {
+    "2": {
+      "n_configs": 9,
+      "n_structural_block": 0,
+      "n_gate_pass": 9,
+      "median_heldout": 0.03125,
+      "median_null_gap": 0.22624999999999998,
+      "median_truth": 0.14006300866369126,
+      "expected": "pass",
+      "expectation_met": true
+    },
+    "8": {
+      "n_configs": 9,
+      "n_structural_block": 0,
+      "n_gate_pass": 9,
+      "median_heldout": 0.03875,
+      "median_null_gap": 0.23874999999999996,
+      "median_truth": 0.1330263157894737,
+      "expected": "pass",
+      "expectation_met": true
+    },
+    "32": {
+      "n_configs": 4,
+      "n_structural_block": 4,
+      "n_gate_pass": 0,
+      "median_heldout": null,
+      "median_null_gap": null,
+      "median_truth": null,
+      "expected": "block",
+      "expectation_met": true
+    }
+  },
+  "all_expectations_met": true
+}

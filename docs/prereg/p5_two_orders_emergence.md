@@ -73,4 +73,30 @@ result; no gate will be moved post hoc.
 
 ## 7. Confirmatory outcome
 
-(to be recorded after stage B; changes no gate or rule)
+Executed 2026-07-10/11 (chains detached from the authoring session; wrap-up
+2026-07-12). Registry and per-config CSV under `docs/prereg/frozen/`.
+**Experiment PASS -- all three frozen expectations met, unanimously.**
+
+- beta = 2: **9/9 configs pass** all gates. Median heldout 0.031, null_gap
+  0.226, truth 0.140. Chain <S> ~ +1.7 to +2.1, acceptance 0.98.
+- beta = 8: **9/9 configs pass**. Median heldout 0.039, null_gap 0.239,
+  truth 0.133. Chain <S> ~ +1.6, acceptance 0.92.
+- beta = 32 (crystal control): **4/4 structural block** ("only 0 chains" --
+  the crystal states cannot furnish even one 25-tick chain), 0 gate passes.
+  Chain S ~ -106, acceptance 0.006.
+
+The continuum-phase configurations are statistically indistinguishable from
+the uniform-ensemble calibration (P5-A median heldout 0.046, truth 0.144):
+action weighting up to beta = 8 -- an order of magnitude in beta, reaching
+within the decade of the transition at beta_c in (8, 32) -- fully preserves
+order-intrinsically reconstructable geometry, with true lightcone position
+recovered to truth ~ 0.13-0.14 (chance 0.5).
+
+Conclusion: equilibrium samples of the smeared-action-weighted 2D-orders
+ensemble in its continuum phase PASS the validated geometry discriminator --
+geometry in this ensemble is not merely profile-level but reconstructable,
+and the discriminator correctly rejects the crystal phase. Together with
+P3 (dynamics alone: no geometry), E1/de-risk (action alone, unrestricted:
+no geometry, exact bipartite obstruction), and P4 (restricted + action:
+continuum phase exists, crystallizes at beta_c), this completes the
+program's emergence chain with an instrument-level positive result.
