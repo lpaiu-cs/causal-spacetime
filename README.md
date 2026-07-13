@@ -1,6 +1,6 @@
-# causal-spacetime-lab
+# causal-spacetime
 
-`causal-spacetime-lab` is a small Python research simulation project for
+`causal-spacetime` is a small Python research simulation project for
 testing operational reconstructions of spacetime quantities from causal order
 and related information-accessibility structure.
 
