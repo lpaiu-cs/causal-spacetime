@@ -33,7 +33,7 @@ reconstruction layer is the measurement side of Paper B's instrument.
 
 ## Files
 
-- `manuscript.md` — the v0.1 draft (all sections).
+- `manuscript.md` — the v0.3 draft (all sections).
 - `claim_boundary.md` — claim/non-claim checklist.
 - `citations/references.bib` — verified bibliography (shared core with Paper B;
   each entry confirmed against an authoritative source).

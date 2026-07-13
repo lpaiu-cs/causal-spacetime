@@ -16,6 +16,7 @@ profiles for a set of observer reference chains on a causal set, converts them
 to a reference-centered (parallax) dissimilarity, and tests whether the
 implied distance order admits a stable low-dimensional ordinal embedding, under
 fixed acceptance gates. We first validate the pipeline as a *discriminator*
+— on the stated generator families and scales, the sense used throughout
 (experiment PC-V1): on 1+1D Minkowski-sprinkled causal sets it passes every
 gate on 20/20 held-out confirmatory seeds and recovers the true spatial order
 of targets, while on density-matched geometry-free order and on
@@ -120,6 +121,26 @@ methodological emphasis is the explicit discriminator validation and the
 geometry-dilution dose-response, neither of which, to our knowledge, is
 standard in order-first reconstruction studies.
 
+Order-intrinsic probes of manifoldlikeness exist in the causal-set
+literature and are the natural comparators for our instrument: interval-
+abundance profiles as a locality/manifoldlikeness diagnostic [@glaser2013],
+stable homology of thickened antichains [@major2009], spacelike-distance
+constructions [@rideout2009], and the dimension estimators already cited
+[@myrheim1978; @meyer1988]. These diagnostics ask "does this order look
+manifoldlike?" observable-by-observable. Our discriminator differs in three
+ways: it is validated end-to-end against matched positive and negative
+controls before use (sensitivity and specificity, with frozen gates); it
+requires truth recovery, not only a favorable statistic, wherever ground
+truth exists; and it is preregistered, so its verdicts on new ensembles
+(Section 7) are decided by rules fixed in advance. Section 7.2 shows why
+this matters in practice: a bipartite crystal defeats the Myrheim-Meyer
+estimator but not the discriminator. On the theory side, recent work proves
+a quantitative embedding-uniqueness (Hauptvermutung-type) result for causal
+sets admitting well-conditioned embeddings [@madsen2026]; this is
+complementary — it says recovered geometry is essentially unique when it
+exists in the high-density limit, while our instrument decides, at finite
+scale, whether it exists.
+
 For the emergence chain (Section 7) the relevant background is dynamical and
 statistical: classical sequential growth and its simplest member, transitive
 percolation [@rideout2000]; the entropic dominance of non-manifoldlike
@@ -128,7 +149,8 @@ causal-set action and its smeared, nonlocal family [@benincasa2010;
 @dowker2013]; and Markov-chain studies of 2D causal set quantum gravity on
 the restricted ensemble of 2D orders [@winkler1985; @surya2012], which
 established a continuum/crystalline phase structure characterized by
-macroscopic observables. Our contribution there is not the phase structure —
+macroscopic observables, with finite-size scaling of the transition studied
+in [@glaser2018]. Our contribution there is not the phase structure —
 which we independently reproduce under preregistration — but the judgment of
 its phases by a validated reconstruction instrument, and the exact bipartite
 obstruction explaining why the ensemble restriction is load-bearing.
@@ -204,7 +226,14 @@ saturating metric made every verdict uninterpretable.
 
 Each experiment is preregistered with fixed hypotheses, an exploratory
 calibration stage that proposes thresholds by a mechanical rule, and a
-confirmatory stage on disjoint fresh seeds under frozen thresholds. Instrument
+confirmatory stage on disjoint fresh seeds under frozen thresholds. The
+PC-V1 rule, stated in the preregistration before calibration ran, is:
+held-out gate = min(0.35, p90 of the structured calibration distribution
+rounded up to 0.05); null-gap gate = max(0.10, p10 rounded down to 0.05);
+stability gate = min(0.30, p90 rounded up); truth gate = p90 rounded up.
+Later experiments use the analogous midpoint or percentile rules recorded in
+their preregistrations (e.g., P2-v2 places gates by the midpoint rule
+between the d = 2 pass cluster and the d = 1 fail cluster). Instrument
 repairs are permitted only before the freeze and are logged. Thresholds are
 never retuned after the freeze; under-covered or scene-invalid cells are
 recorded, never silently dropped. Frozen thresholds and decision registries
@@ -219,7 +248,10 @@ apply the frozen thresholds. Sensitivity uses geometric scenes (H-SENS: they
 should pass and recover x). Specificity uses two geometry-free control
 families (H-SPEC: they should block): a density-matched random time-respecting
 order, and a column-shuffle of the real profiles that preserves marginals but
-destroys cross-observer consistency.
+destroys cross-observer consistency. Throughout, "geometry-free" is
+operational shorthand for these spatial-geometry-destroyed nulls: they remain
+time-respecting partial orders (global temporal structure and observer
+chains are intact); what is removed is latent spatial geometry.
 
 **Two confounds fixed before freezing.** The first calibration passed, but its
 specificity controls exposed two instrument defects. (i) A geometry-free order,
@@ -324,7 +356,10 @@ All four preregistered criteria are supported on the fresh confirmatory seeds:
 - **H-THRESH (identifiable transition): supported.** The geometry-recovery
   crossing (truth-order error crossing 0.15) is estimable for 20/20 seeds with
   median epsilon* = 0.31. The curve rises smoothly across epsilon ~ 0.3-0.75:
-  a graded transition, not a cliff.
+  a graded transition, not a cliff. (epsilon* is a recovery-threshold
+  crossover of this instrument-generator pair, not a thermodynamic
+  transition; the hysteretic transition of Section 7 is the thermodynamic
+  kind.)
 - **H-LAG (false-pass window): supported.** The held-out crossing (embeddability
   crossing 0.05) sits at a larger epsilon than the truth crossing; the median
   gap is 0.19 (embeddability crosses at ~0.50, truth at ~0.31). Between these,
@@ -515,6 +550,16 @@ preserves order-intrinsically reconstructable geometry, with true lightcone
 position recovered at truth-order error ~ 0.13-0.14 against a 0.5 chance
 level.
 
+Within-chain configurations are 400k Metropolis moves (~ 667 sweeps) apart
+and are not guaranteed independent; we therefore report the verdict's
+sensitivity to intra-chain correlation. Collapsing each chain to a single
+pass/block unit leaves the outcome unchanged and unanimous — 3/3 independent
+chains pass at beta = 2, 3/3 at beta = 8, 2/2 block at beta = 32 — and the
+per-configuration gate statistics sit inside the calibration distribution
+obtained from fully independent uniform samples. A formal effective-sample-
+size analysis would sharpen the confidence statement but cannot change a
+verdict that is unanimous at chain level under frozen expectations.
+
 ### 7.5 What the chain establishes
 
 | experiment | ensemble | action | outcome |
@@ -644,8 +689,10 @@ geometry-dilution dose-response in 2+1D; higher spatial dimensions; boosted
 or mixed observer layouts; alternative dilution families as robustness
 checks; manifoldlike-targeting growth dynamics beyond percolation, judged by
 the same frozen instrument; complex or quantum weights on the restricted
-ensemble; and instrument-level judgment of the 2D-orders phase diagram
-across (beta, eps, N), including the approach to beta_c from below.
+ensemble; formal autocorrelation/effective-sample-size analysis of the
+equilibrium chains (Section 7.4 reports chain-level sensitivity instead);
+and instrument-level judgment of the 2D-orders phase diagram across
+(beta, eps, N), including the approach to beta_c from below.
 
 ## 11. Reproducibility
 
@@ -678,6 +725,24 @@ output row carries scene content hashes, seed, stage, and the
 requested-vs-executed fit budget. Section 6 reports P2-v2 (the remediated 2+1D
 run); P2 §12 records the initial 2+1D run that missed its sensitivity bar for a
 scene-generation reason and motivated the preregistered remediation.
+
+## 12. Conclusion
+
+A measurement pipeline from causal order to geometry verdicts is only as
+meaningful as its validation, and validating it changes what can be asked.
+With sensitivity, specificity, dose-response, and dimension selection
+established on controlled families, the same frozen instrument could be
+carried to orders nobody tuned: it returned a clean null on the simplest
+growth dynamics, an exact reason why unrestricted action weighting cannot
+produce geometry, and an instrument-level positive — equilibrium
+configurations of the action-weighted 2D-orders continuum phase support
+genuine order-intrinsic reconstruction of position, and its crystal phase
+does not. The pattern of the results is the point: geometry appears exactly
+when entropy is controlled and coupling is bounded, each direction certified
+by its own control. We offer the discriminator methodology — validate, then
+preregister, then judge — as a transferable standard for order-first
+reconstruction claims, and the emergence chain as its first application
+beyond hand-built orders.
 
 ## Appendix A: Fixed parameters
 
@@ -712,6 +777,10 @@ generator differs).
 | | crossing levels (truth / held-out) | 0.15 / 0.05 |
 | | test coverage | >= 6 density-held cells spanning endpoints |
 | P1 seeds | A / B | 0-9 / 300-319 |
+| P2-v2 scene | events N / observers | 3600 / 8 stationary chains on a ring of 2D positions |
+| P2-v2 gates | gate dim / held-out / truth | 2 / <= 0.10 / <= 0.15 (midpoint rule) |
+| P2-v2 coverage | valid-seed floor / pass fraction | >= 18 of 20 / >= 0.80 of valid |
+| P2-v2 seeds | A / B | 0-9 / 500-519 |
 
 *Table 3. Fixed parameters, frozen in the preregistrations.*
 
@@ -746,4 +815,6 @@ Anchor sources: Bombelli, Lee, Meyer & Sorkin (1987); Brightwell & Gregory
 Relativity (2019); Shepard (1962); Kruskal (1964); Agarwal et al. (2007);
 Kleindessner & von Luxburg (2014); Rideout & Sorkin (2000); Kleitman &
 Rothschild (1975); Winkler (1985); Benincasa & Dowker (2010); Surya (2012);
-Dowker & Glaser (2013).
+Dowker & Glaser (2013); Glaser & Surya (2013); Major, Rideout & Surya
+(2009); Rideout & Wallden (2009); Glaser, O'Connor & Surya (2018); Madsen
+(2026, preprint).

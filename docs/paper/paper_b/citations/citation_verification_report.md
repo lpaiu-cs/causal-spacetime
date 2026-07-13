@@ -1,7 +1,7 @@
 # Citation verification report
 
-All 19 references in `references.bib` were verified (13 on 2026-07-09, 6 on
-2026-07-14 for the emergence section) against
+All 24 references in `references.bib` were verified (13 on 2026-07-09, 11 on
+2026-07-14 for the emergence section and related-work coverage) against
 authoritative sources (APS, AIP, Cambridge Core, Springer, PMLR, arXiv, CERN
 CDS, NASA ADS, MIT DSpace). Each entry was cross-checked on author list, year,
 venue, and volume/page (or article number). No field was fabricated.
@@ -27,6 +27,11 @@ venue, and volume/page (or article number). No field was fabricated.
 | benincasa2010 | APS doi 10.1103/PhysRevLett.104.181301; arXiv:1001.2725 | new entry (2026-07-14) |
 | surya2012 | IOP doi 10.1088/0264-9381/29/13/132001; arXiv:1110.6244 (arXiv v1 title differs: "Evidence for a Phase Transition..."; published title used) | new entry (2026-07-14) |
 | dowker2013 | IOP 10.1088/0264-9381/30/19/195016; arXiv:1305.2588 (formulas additionally cross-checked against the PDF, eqs. 25--26, Tables 1--2) | new entry (2026-07-14) |
+| glaser2013 | APS doi 10.1103/PhysRevD.88.124026; arXiv:1309.3403 | new entry (2026-07-14) |
+| major2009 | IOP doi 10.1088/0264-9381/26/17/175008; arXiv:0902.0434 | new entry (2026-07-14) |
+| rideout2009 | IOP doi 10.1088/0264-9381/26/15/155013; arXiv:0810.1768 | new entry (2026-07-14) |
+| glaser2018 | IOP doi 10.1088/1361-6382/aa9540 (CQG 35, issue 4); arXiv:1706.06432 | new entry; article number not captured, omitted |
+| madsen2026 | arXiv abs page 2607.05840 (preprint, no journal) | new entry (2026-07-14) |
 
 ## Residual judgment calls
 

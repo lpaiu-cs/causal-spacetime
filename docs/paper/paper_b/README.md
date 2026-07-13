@@ -39,7 +39,7 @@ See `manuscript.md` Section 9 (claim boundary).
 
 ## Files
 
-- `manuscript.md` — the v0.2 draft (all sections + Appendix A parameter table;
+- `manuscript.md` — the v0.4 draft (all sections incl. the Section 7 emergence chain, a Conclusion, and Appendix tables;
   reproducibility in Section 9). Inline citations are pandoc keys matching the
   bibliography.
 - `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 7).

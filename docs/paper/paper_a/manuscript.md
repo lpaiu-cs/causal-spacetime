@@ -124,7 +124,8 @@ the conventions the results depend on.
   so irreflexive).
 - **Longest chain.** Topological-sort longest-path DP on the order; the 1+1D
   proper-time normalization uses the Brightwell-Gregory constant
-  (L ~ 2 sqrt(rho) tau, i.e. L ~ 2 sqrt(N/2) in a diamond), with an
+  (L ~ sqrt(2 rho) tau, i.e. L ~ 2 sqrt(N) in a diamond of N events,
+  consistent with Section 4.2 and Appendix A), with an
   endpoint-inclusive counting convention and acknowledged finite-size
   corrections.
 - **Interval cardinality.** The open Alexandrov interval count K between two
