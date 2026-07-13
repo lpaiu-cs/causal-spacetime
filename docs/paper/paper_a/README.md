@@ -23,8 +23,13 @@ makes explicit the accounting of what each rung requires and the negative
 results that bound it.
 
 Paper B (separate) takes the next question — whether observer-relative distance
-*order* can be validated as recovering latent geometry — and builds a
-preregistered discriminator for it. Paper A is the foundation Paper B stands on.
+*order* can be validated as recovering latent geometry — builds a preregistered
+discriminator for it, and carries that instrument through geometry dilution,
+2+1D dimension selection, and an emergence chain (growth dynamics; an exact
+obstruction to unrestricted action weighting; the action-weighted 2D-orders
+ensemble, whose continuum phase passes the discriminator and whose crystal
+phase blocks). Paper A is the foundation Paper B stands on: its verified
+reconstruction layer is the measurement side of Paper B's instrument.
 
 ## Files
 

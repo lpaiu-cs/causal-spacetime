@@ -3,13 +3,14 @@
 Working title: **A validated discriminator for latent geometry in discrete
 causal order, and its response to geometry dilution.**
 
-Status: DRAFT v0.1 (2026-07-09). Prose grounded entirely in the frozen
-preregistration artifacts under `docs/prereg/frozen/` (PC-V1 and P1). No number
-in the manuscript is from memory; each traces to a committed registry or CSV.
+Status: DRAFT v0.4 (2026-07-14). Prose grounded entirely in the frozen
+preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1, P2/P2-v2,
+P3, P4, P5). No number in the manuscript is from memory; each traces to a
+committed registry or CSV.
 
 ## Scope
 
-This paper reports two controlled results on the `restart/m17-baseline` line:
+This paper reports the validated-instrument line of the program:
 
 1. **PC-V1** validates the response-profile representability pipeline as a
    *discriminator* for latent low-dimensional geometry in discrete causal
@@ -20,9 +21,21 @@ This paper reports two controlled results on the `restart/m17-baseline` line:
    monotonically as the order is diluted from Minkowski to geometry-free, with
    an identifiable graded transition and a "false-pass" window where
    embeddability outlasts true-geometry recovery.
+3. **P2/P2-v2** extend the discriminator to 2+1D, where it selects the
+   correct spatial dimension (d = 2) on 20/20 confirmatory seeds.
+4. **The emergence chain (P3, P4, P5, plus an exact obstruction)** carries the
+   validated instrument to orders not built by hand: a geometry-free growth
+   dynamics blocks 100/100; action weighting of unrestricted orders is
+   obstructed exactly (bipartite crystal, S_eps = eps N (2 - eps N)); the
+   action-weighted restricted ensemble (2D orders) has a continuum phase with
+   a hysteretic crystallization transition; and equilibrium configurations of
+   that continuum phase pass the full discriminator (18/18) while the crystal
+   control blocks (4/4).
 
-It is deliberately conservative: it does not claim spacetime emergence, a
-continuum limit, or dynamics. See `manuscript.md` Section 7 (claim boundary).
+It is deliberately conservative: it does not claim continuum spacetime
+emergence or quantum dynamics; the emergence claims are survival/destruction
+of reconstructable geometry with each necessity backed by a controlled null.
+See `manuscript.md` Section 9 (claim boundary).
 
 ## Files
 

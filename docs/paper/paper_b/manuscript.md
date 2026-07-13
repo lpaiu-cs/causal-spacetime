@@ -1,7 +1,7 @@
 # A validated discriminator for latent geometry in discrete causal order, and its response to geometry dilution
 
-**Draft v0.3.** Causal Spacetime Lab. All quantitative results trace to frozen
-preregistration artifacts (`docs/prereg/frozen/`); see Section 10.
+**Draft v0.4.** Causal Spacetime Lab. All quantitative results trace to frozen
+preregistration artifacts (`docs/prereg/frozen/`); see Section 11.
 
 ## Abstract
 
@@ -33,13 +33,27 @@ profiles still embed in one dimension while no longer encoding true space.
 Extending to 2+1D (experiment P2), where the effective spatial dimension is a
 live test, the same pipeline passes and recovers true 2D position, blocks on
 geometry-free order, and selects dimension 2 — one embedding dimension
-underfits and three add nothing — on 20/20 confirmatory seeds. We conclude
-that, on this controlled family at finite scale, effective metric
-representability responds to the *amount* of geometric consistency in a causal
-order, not to its density, and tracks the correct spatial dimension; and that
+underfits and three add nothing — on 20/20 confirmatory seeds. Finally we take
+the validated instrument to the emergence question. Orders grown by a
+geometry-free dynamics (transitive percolation) block on 100/100 preregistered
+runs; weighting unrestricted orders by the (verified) 2D Benincasa-Dowker
+action cannot help, for an exact reason — the complete bipartite crystal has
+smeared action eps N (2 - eps N), far below the sprinkled value whenever the
+nonlocality scale resolves the system; but in the entropically restricted
+ensemble of 2D orders the action-weighted equilibrium has a continuum phase
+(dual-start confirmed, with a hysteretic crystallization transition), and
+equilibrium configurations of that phase pass the full discriminator —
+18/18 at beta = 2 and 8 combined, recovering true lightcone position at
+truth-order error ~ 0.14 against 0.5 chance, while the crystal control blocks
+4/4. We conclude that, on this controlled family at finite scale, effective
+metric representability responds to the *amount* of geometric consistency in a
+causal order, not to its density, tracks the correct spatial dimension, and —
+in the one ensemble family we tested end-to-end — survives action weighting
+exactly when entropy is controlled and the coupling is bounded; and that
 embeddability alone is an unsafe indicator of geometry, which has direct
 methodological implications for order-first reconstruction claims. We make no
-claim of spacetime emergence.
+claim of continuum spacetime emergence: all statements are finite-scale,
+instrument-relative, and bounded in Section 9.
 
 ## 1. Introduction
 
@@ -79,9 +93,15 @@ protocol that fixes the fit budget and forbids a saturating stability metric;
 (2) a positive/negative control (PC-V1) demonstrating sensitivity and
 specificity, including two confounds that had to be removed before freezing;
 (3) a geometry-dilution dose-response (P1) showing monotone degradation, an
-identifiable transition, and a false-pass window; and (4) the methodological
+identifiable transition, and a false-pass window; (4) the methodological
 consequence that embeddability alone over-reports geometry, so a
-truth-recovery check is load-bearing.
+truth-recovery check is load-bearing; and (5) an emergence chain (Section 7)
+that carries the validated instrument to orders no longer built by hand — a
+preregistered null on a geometry-free growth dynamics, an exact obstruction
+to action weighting on unrestricted orders, a preregistered phase structure
+for the action-weighted restricted ensemble, and the instrument-level
+verdict that its continuum phase supports genuine order-intrinsic geometry
+reconstruction while its crystal phase does not.
 
 ## 2. Related work and positioning
 
@@ -99,6 +119,19 @@ representation diagnostic rather than as physical coordinates. The novel
 methodological emphasis is the explicit discriminator validation and the
 geometry-dilution dose-response, neither of which, to our knowledge, is
 standard in order-first reconstruction studies.
+
+For the emergence chain (Section 7) the relevant background is dynamical and
+statistical: classical sequential growth and its simplest member, transitive
+percolation [@rideout2000]; the entropic dominance of non-manifoldlike
+Kleitman-Rothschild-type orders [@kleitman1975]; the Benincasa-Dowker
+causal-set action and its smeared, nonlocal family [@benincasa2010;
+@dowker2013]; and Markov-chain studies of 2D causal set quantum gravity on
+the restricted ensemble of 2D orders [@winkler1985; @surya2012], which
+established a continuum/crystalline phase structure characterized by
+macroscopic observables. Our contribution there is not the phase structure —
+which we independently reproduce under preregistration — but the judgment of
+its phases by a validated reconstruction instrument, and the exact bipartite
+obstruction explaining why the ensemble restriction is load-bearing.
 
 Inline citations use pandoc-style keys (`@blms1987`, ...) matching the
 verified `references.bib`; see `citations/citation_verification_report.md` for
@@ -201,7 +234,7 @@ density but percolated under transitive closure to a near-complete order
 post-closure density by bisection. Both are logged as pre-freeze repairs; the
 frozen thresholds derive only from the post-repair calibration.
 
-The first confound is quantified in Figure 4 (Section 7): under raw
+The first confound is quantified in Figure 4 (Section 8): under raw
 dissimilarity the geometry-free control sits at the gate (mean held-out 0.056;
 4 of 9 seeds fall below 0.05 and would false-pass), whereas parallax centering
 lifts every seed decisively into blocking (mean 0.238).
@@ -360,7 +393,148 @@ re-froze on fresh calibration seeds, and confirmed all three hypotheses on
 fresh confirmatory seeds — the numbers above. The preregistration prevented an
 underpowered run from being read as either a pass or a genuine failure.
 
-## 7. Discussion
+## 7. From dilution to emergence: judging dynamical and equilibrium order
+
+PC-V1, P1, and P2 validate the instrument on orders whose geometry (or its
+absence) is put in by hand. The question the program builds toward is
+different: does geometry *arise* in orders produced by a rule that never
+refers to geometry? We report a controlled chain of four results (P3, an
+exploratory obstruction, P4, P5), each preregistered where confirmatory,
+that together answer: not from the dynamics we tested, not from action
+weighting alone, but yes — in a restricted equilibrium ensemble at bounded
+coupling, where the continuum phase passes the full discriminator.
+
+Because dynamically grown orders carry no supplied observer chains, these
+experiments use an order-intrinsic variant of the frozen protocol: the six
+reference chains are extracted from the order itself (greedy disjoint longest
+chains, >= 25 ticks each), targets are elements two-sided bracketed by all
+six chains (20-44 per order), and profiles use per-chain tick positions as
+clocks. The variant was re-validated before freezing (P3-A, sprinkled 1+1D
+diamonds): 10/10 seeds pass with median held-out 0.035 (max 0.065), median
+null gap 0.246 (min 0.186), and truth-order error 0.219, separating from the
+column-shuffle null with effect size d = 10.4. Gates were frozen at held-out
+<= 0.10 and null gap >= 0.10, between the two clusters. Crucially, the
+dynamics under test is never used in gate construction.
+
+### 7.1 P3: a geometry-free growth dynamics produces no geometry
+
+Transitive percolation — the simplest classical sequential growth dynamics
+[@rideout2000] — was run over a preregistered density sweep
+(p in {0.006, ..., 0.020}, twenty fresh seeds each). The result is a uniform
+null: **0 of 100 runs pass; 20/20 block at every p.** The blocking mechanism
+splits by density. At low p (relation density 0.19-0.34) every run blocks
+structurally: the order cannot furnish six disjoint 25-tick chains — short
+chains and wide antichains, the Kleitman-Rothschild-type signature of generic
+partial orders [@kleitman1975]. At higher p (density 0.46-0.73) chains exist
+but the geometry gate fails: held-out violation 0.23-0.25 (gate 0.10) with
+null gap ~ 0 — the profiles are no better than their own shuffle. Because the
+same protocol passes on sprinkled geometry (P3-A), the block is a property of
+the dynamics, not of the instrument. This is consistent with, and gives an
+instrument-level form to, the known non-manifoldlikeness of generic
+sequential growth.
+
+### 7.2 An exact obstruction: action weighting cannot rescue the unrestricted ensemble
+
+A natural next lever is to weight orders by the causal-set action. We
+implemented the 2D Benincasa-Dowker action [@benincasa2010] and its smeared
+(nonlocal) family [@dowker2013], verifying conventions against the source
+(the eps = 1 limit reproduces the raw action exactly; flat sprinklings sit at
+S ~ 0 with the expected fluctuation damping as eps decreases). Exploratory
+weighted sampling over unrestricted posets (validated against exact Gibbs
+enumeration at small N) then exposed a structural obstruction, which has an
+exact form: the complete bipartite order on N elements has smeared action
+
+    S_eps = eps N (2 - eps N)
+
+(every relation is a link; the identity is locked as a unit test). At any
+nonlocality scale that still resolves the system (eps N >> 2), this is far
+below the sprinkled value S ~ 0, so exp(-beta S) weighting drives the
+unrestricted ensemble into a crystalline bilayer, not toward geometry; the
+crystal only rises above the sprinkled cluster when the nonlocality scale
+reaches the system size, where the action no longer measures local geometry.
+Two corollaries matter methodologically. First, no tuning of eps escapes a
+pathology that scales as -eps^2 N^2. Second, the bipartite crystal has
+Myrheim-Meyer dimension ~ 2 — a dimension estimator alone cannot distinguish
+it from 2D geometry; the interval-abundance profile (n1, n2 collapse to
+zero) and the order height are the discriminating observables. This is the
+false-pass lesson of Section 5 recurring at the level of ensembles.
+
+### 7.3 P4: a restricted equilibrium ensemble has a continuum phase
+
+The obstruction is entropic/energetic, and the literature's response is
+ensemble restriction [@surya2012]. We preregistered P4 on the ensemble of 2D
+orders — intersections of two total orders, canonically permutations
+[@winkler1985] — whose uniform measure provably coincides with the causal
+structure of 2D-diamond sprinkling (verified in-pipeline: MCMC at beta = 0,
+direct random permutations, and sprinkled diamonds agree). The restriction
+does not exclude the crystal geometrically (the bipartite order is the
+permutation (k..1, 2k..k+1)); it suppresses it entropically only, so the
+continuum/crystal competition is genuine. The sampler is Metropolis over
+permutations, validated against exact Gibbs enumeration (N = 6: all 720
+states visited, total-variation distance 0.018).
+
+At N = 100, eps = 0.12, with frozen profile gates and dual starts (random
+and crystal), the confirmatory sweep (seeds 100-104, 60 chains) gives:
+**continuum at beta = 0, 1, 2 (30/30 chains; the crystal start melts back to
+the sprinkled profile; start-gaps <= 0.94), a hysteretic transition at
+beta = 3-4 (start-gaps 19-23, the first-order-like signature), and crystal
+at beta = 6 (10/10; the bipartite start reaches S ~ -118 against the exact
+value -120).** Five of six sharp predictions held; the miss (beta = 4,
+predicted crystal, observed transition) was in the direction the
+preregistration flagged in advance, and the frozen pass criteria
+(continuum at beta <= 2, non-continuum at 3-4, crystal at 6) were all met.
+
+### 7.4 P5: the continuum phase passes the discriminator
+
+P4 characterizes phases by profiles. P5 asks the instrument-level question:
+do equilibrium configurations of the continuum phase support genuine
+order-intrinsic geometry reconstruction? To our knowledge, phases of
+causal-set statistical ensembles have previously been characterized by
+macroscopic observables (action, interval abundances, ordering fractions)
+[@surya2012]; judging them with a validated reconstruction instrument is the
+new step.
+
+The frozen P3 protocol requires N = 600 (the smallest scale at which uniform
+2D orders furnish six disjoint 25-tick chains: 6/6 seeds, against 0/6 at
+N = 400). Re-calibration at that scale passes 10/10 (held-out 0.016-0.084,
+null gap 0.106-0.322, truth 0.10-0.21 against the exact lightcone coordinate
+x = i - pi_i). We fixed eps = 0.02, preserving the dimensionless combination
+eps N = 12 of P4 so the crystal's exact action advantage (-120) is held
+across scales; reconnaissance located the transition in beta_c in (8, 32).
+The frozen design judges three equilibrium configurations from each of three
+independent 3-million-step chains at beta = 2 and beta = 8, plus a crystal
+control at beta = 32.
+
+The outcome is unanimous. **At beta = 2, 9/9 configurations pass every gate
+(median held-out 0.031, null gap 0.226, truth 0.140); at beta = 8, 9/9 pass
+(0.039, 0.239, 0.133); the crystal control blocks 4/4** — structurally, as
+its states cannot furnish a single 25-tick chain. The continuum-phase
+configurations are statistically indistinguishable from the uniform-ensemble
+calibration: action weighting within a decade of the transition fully
+preserves order-intrinsically reconstructable geometry, with true lightcone
+position recovered at truth-order error ~ 0.13-0.14 against a 0.5 chance
+level.
+
+### 7.5 What the chain establishes
+
+| experiment | ensemble | action | outcome |
+| --- | --- | --- | --- |
+| P3 | unrestricted (growth dynamics) | none | no geometry (0/100) |
+| exploratory | unrestricted | raw / smeared BD | no geometry (exact bipartite obstruction) |
+| P4 | restricted (2D orders) | smeared BD | continuum phase, hysteretic crystallization |
+| P5 | restricted, equilibrium samples | smeared BD | **discriminator passes continuum, rejects crystal** |
+
+At this scale and in this family, geometry in a causal order is not produced
+by growth dynamics alone and not selected by action weighting alone; it
+survives — in the full, instrument-verified sense of supporting
+order-intrinsic reconstruction of true position — exactly when the ensemble
+is entropically restricted *and* the coupling is bounded away from the
+crystallization transition. Each necessity claim is backed by its own
+controlled null, and the positive claim is backed by the validated
+discriminator rather than by embeddability or a dimension estimator, both of
+which Section 7.2 shows would over-report geometry here too.
+
+## 8. Discussion
 
 On this controlled family at finite scale, effective metric representability of
 observer-relative distance order responds monotonically to the amount of
@@ -402,24 +576,52 @@ below the 0.05 gate, i.e., false-passing) and under parallax dissimilarity
 frozen Stage C registry exactly; the raw values are the same pipeline with
 centering disabled.*
 
-## 8. Claim boundary
+The emergence chain extends the same theme from instruments to ensembles.
+Twice in Section 7 an accessible summary statistic would have over-reported
+geometry where the discriminator does not: the bipartite crystal sits at
+Myrheim-Meyer dimension ~ 2, and percolated orders at moderate density embed
+their profiles as well as anything does — it is the null gap, the truth
+check, and the structural chain requirement that carry the verdict. The
+positive result is correspondingly stronger for being instrument-relative:
+"the continuum phase has geometry" here means that configurations drawn from
+it support the same order-intrinsic reconstruction, at the same gates, that
+sprinkled geometry supports, with no observable degradation an order of
+magnitude in beta into the weighted regime. That the transition to the
+crystal is first-order-like (hysteretic dual starts) at both scales we
+tested also matters practically: near beta_c, profile observables mix
+slowly, and only the frozen-gate protocol prevented partially crystallized
+chains from being read as a new phase.
+
+## 9. Claim boundary
 
 We claim: (a) the described pipeline is, on 1+1D Minkowski causal sets at the
 stated scale, a discriminator that passes on geometric order and blocks on
 matched geometry-free order; (b) its recovery degrades monotonically as
 geometry is diluted at fixed density, with an identifiable graded transition;
-and (c) embeddability alone over-reports geometry, so an independent
-recovery/specificity check is required.
+(c) embeddability alone over-reports geometry, so an independent
+recovery/specificity check is required; (d) transitive percolation, judged by
+the validated order-intrinsic instrument at the stated scale, produces no
+reconstructable geometry, and action weighting of unrestricted orders cannot
+produce it (exact bipartite obstruction); and (e) the smeared-action-weighted
+2D-orders ensemble has a continuum phase, at both scales tested, whose
+equilibrium configurations pass the full discriminator — including exact
+truth recovery — while its crystal phase blocks.
 
-We do not claim: spacetime emergence; that causal order alone yields metric
-scale, signed coordinates, or a manifold; a continuum limit or dynamics; or
-that these finite results establish any physical theory. The experiments are
-controlled dose-response studies inside a fixed generator family; "pass" means
-the representability gate is satisfiable by measured geometric order, and
-"block" is the expected outcome on geometry-free order, not a falsification of
-any theory.
+We do not claim: continuum spacetime emergence; that causal order alone
+yields metric scale, signed coordinates, or a manifold; a continuum limit; or
+that these finite results establish any physical theory. Claim (e) is about
+one restricted ensemble family in 1+1 effective dimensions at N <= 600, whose
+beta = 0 measure is already sprinkling-equivalent: the emergence content is
+that reconstructable geometry *survives* action weighting up to the
+crystallization transition and is *destroyed* beyond it, together with the
+controlled nulls showing that neither the dynamics nor the unrestricted
+weighting produces geometry — not that geometry arises from nothing. The
+experiments are controlled studies inside fixed generator families; "pass"
+means the representability gate is satisfiable by the measured order, and
+"block" is the expected outcome on geometry-free or crystalline order, not a
+falsification of any theory.
 
-## 9. Limitations and future work
+## 10. Limitations and future work
 
 The core study (PC-V1, P1) is 1+1D, single diamond geometry, a fixed
 observer-chain layout, and a single dilution family (covering-edge rewiring at
@@ -427,15 +629,25 @@ held density); Section 6 extends the discriminator and dimension selection to
 2+1D but not the dilution dose-response. The absolute gate values are
 scale-dependent; the *contrast* (pass vs block, the monotone curve, and the
 dimension elbow) is the transferable content, not the specific thresholds. The
-epsilon* estimate is a property of this generator and scale. Natural extensions
-are: the geometry-dilution dose-response in 2+1D; higher spatial dimensions;
-boosted or mixed observer layouts; finer epsilon grids near the transition;
-alternative dilution families (e.g., link-swap at fixed count) as robustness
-checks; and, most importantly, orders produced by a candidate dynamics rather
-than by hand-tuned dilution, which is where an emergence question could
-eventually be posed.
+epsilon* estimate is a property of this generator and scale.
 
-## 10. Reproducibility
+The emergence chain has its own boundaries. The dynamics tested is the
+simplest sequential growth (transitive percolation); richer couplings could
+behave differently, and the same frozen instrument is the natural judge. The
+equilibrium study is classical statistical weighting exp(-beta S) — a
+standard analytic continuation, not quantum dynamics [@surya2012] — on 2D
+orders at N <= 600 and one eps N; the crystallization point beta_c and the
+hysteresis strength are scale- and eps-dependent, and only the qualitative
+structure (continuum window, first-order-like transition, exact bipartite
+attractor) is claimed to transfer. Natural extensions are: the
+geometry-dilution dose-response in 2+1D; higher spatial dimensions; boosted
+or mixed observer layouts; alternative dilution families as robustness
+checks; manifoldlike-targeting growth dynamics beyond percolation, judged by
+the same frozen instrument; complex or quantum weights on the restricted
+ensemble; and instrument-level judgment of the 2D-orders phase diagram
+across (beta, eps, N), including the approach to beta_c from below.
+
+## 11. Reproducibility
 
 All results derive from frozen artifacts under `docs/prereg/frozen/`:
 PC-V1 thresholds and Stage A/B/C registries; P1 test constants and P1-A/P1-B
@@ -448,8 +660,20 @@ confirmatory `891498f`; P1 skeleton `f1bb7d5`, coverage refinement `6b21bb7`,
 confirmatory logic `8bc65ae`, freeze `a218d9a`, confirmatory `4c05cf2`; P2
 skeleton `b941be0`, gate refinement `d2508b4`, freeze/logic `e3fe823`,
 confirmatory (mixed) `44d2fc8`; P2-v2 skeleton `aee54e0`, freeze `cdeb696`,
-confirmatory `0ec57fd`. Calibration runs are deterministic: re-running the
-calibration script at the cited commit reproduces the frozen constants. Every
+confirmatory `0ec57fd`. The emergence chain (Section 7): P3 skeleton
+`f4837c8`, freeze `2558335`, confirmatory `3a7cc86`; verified action and
+2D-orders modules with their validation tests `d2295d5` (the exact bipartite
+identity and the eps = 1 reduction are unit tests in `tests/test_action.py`);
+incremental sampler `e3d557a`; P4 freeze `4bb05b5`, confirmatory `c3363c3`;
+P5 freeze `546bc63`, confirmatory `f9badc7`. Preregistrations:
+`docs/prereg/p3_dynamics_emergence.md`, `p4_action_emergence.md`, and
+`p5_two_orders_emergence.md` (all FROZEN, each with its decision registry and
+per-run CSV under `docs/prereg/frozen/`). The unrestricted-ensemble
+obstruction (Section 7.2) is exploratory rather than preregistered; its
+load-bearing content is the exact closed form, which is test-locked, and its
+consequence is tested by the preregistered P4/P5. Calibration runs are
+deterministic: re-running the calibration script at the cited commit
+reproduces the frozen constants. Every
 output row carries scene content hashes, seed, stage, and the
 requested-vs-executed fit budget. Section 6 reports P2-v2 (the remediated 2+1D
 run); P2 §12 records the initial 2+1D run that missed its sensitivity bar for a
@@ -491,6 +715,27 @@ generator differs).
 
 *Table 3. Fixed parameters, frozen in the preregistrations.*
 
+| Group | Parameter | Value |
+| --- | --- | --- |
+| Order-intrinsic protocol | chains / min ticks | 6 disjoint (greedy longest) / 25 |
+| | targets | two-sided bracketed by all chains, 20-44 |
+| | fit | 3000 train / 800 held-out constraints, 1500 steps, 5 restarts |
+| | gates (held-out / null gap / truth) | <= 0.10 / >= 0.10 / <= 0.40 |
+| P3 | dynamics | transitive percolation, p in {0.006, 0.008, 0.010, 0.014, 0.020} |
+| | N / seeds | 1500 / 100-119 |
+| P4 | ensemble | 2D orders (permutations), N = 100 |
+| | action | smeared 2D BD, eps = 0.12 |
+| | chains | 400k steps, dual start (random / bipartite), seeds 100-104 |
+| | beta grid | {0, 1, 2, 3, 4, 6} |
+| | phase gates | n0 within 50% of reference; height >= 12 (continuum) / <= 9 and n1+n2 <= 50% (crystal); start-gap <= 5 |
+| P5 | ensemble / action | 2D orders, N = 600 / eps = 0.02 (eps N = 12) |
+| | continuum arms | beta in {2, 8}, seeds 100-102, 3M steps, 3 configs each |
+| | crystal control | beta = 32, bipartite start, 1M steps |
+| | expectations | >= 75% configs pass (continuum); 0 pass (crystal) |
+
+*Table 4. Emergence-chain parameters (Section 7), frozen in the P3/P4/P5
+preregistrations.*
+
 ## References
 
 Verified bibliography: `citations/references.bib` (each entry confirmed
@@ -499,4 +744,6 @@ Anchor sources: Bombelli, Lee, Meyer & Sorkin (1987); Brightwell & Gregory
 (1991); Myrheim (1978); Meyer (1988); Malament (1977); Hawking, King & McCarthy
 (1976); Kronheimer & Penrose (1967); Sorkin (2005); Surya, Living Reviews in
 Relativity (2019); Shepard (1962); Kruskal (1964); Agarwal et al. (2007);
-Kleindessner & von Luxburg (2014).
+Kleindessner & von Luxburg (2014); Rideout & Sorkin (2000); Kleitman &
+Rothschild (1975); Winkler (1985); Benincasa & Dowker (2010); Surya (2012);
+Dowker & Glaser (2013).

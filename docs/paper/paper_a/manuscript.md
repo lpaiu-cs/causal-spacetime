@@ -353,7 +353,10 @@ The spacelike proxy is exploratory. The natural next question — whether
 observer-relative distance *order* can be validated as recovering latent
 geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this
-foundation.
+foundation, measures its dose-response to geometry dilution and its dimension
+selection in 2+1D, and then carries it to orders produced by growth dynamics
+and by action-weighted equilibrium ensembles, where the continuum phase of a
+restricted ensemble passes the instrument and the crystalline phase does not.
 
 ## 9. Reproducibility
 

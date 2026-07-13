@@ -1,6 +1,7 @@
 # Citation verification report
 
-All 13 references in `references.bib` were verified on 2026-07-09 against
+All 19 references in `references.bib` were verified (13 on 2026-07-09, 6 on
+2026-07-14 for the emergence section) against
 authoritative sources (APS, AIP, Cambridge Core, Springer, PMLR, arXiv, CERN
 CDS, NASA ADS, MIT DSpace). Each entry was cross-checked on author list, year,
 venue, and volume/page (or article number). No field was fabricated.
@@ -20,6 +21,12 @@ venue, and volume/page (or article number). No field was fabricated.
 | kruskal1964 | Springer doi 10.1007/BF02289565 | pages completed 1--27; added issue 1, DOI |
 | agarwal2007 | PMLR proceedings.mlr.press/v2/agarwal07a.html | matched (PMLR v2, pp 11--18, editors Meila & Shen) |
 | kleindessner2014 | PMLR proceedings.mlr.press/v35/kleindessner14.html | matched (PMLR v35, pp 40--67); canonical "von Luxburg" |
+| rideout2000 | APS doi 10.1103/PhysRevD.61.024002 (PRD 61, 024002; published 1999-12-13, volume year 2000) | new entry (2026-07-14) |
+| kleitman1975 | Trans. AMS 205 (1975) 205--220 (search-confirmed volume/pages) | new entry; DOI not verified, omitted |
+| winkler1985 | Springer doi 10.1007/BF00582738 (Order 1, 317--331) | new entry (2026-07-14) |
+| benincasa2010 | APS doi 10.1103/PhysRevLett.104.181301; arXiv:1001.2725 | new entry (2026-07-14) |
+| surya2012 | IOP doi 10.1088/0264-9381/29/13/132001; arXiv:1110.6244 (arXiv v1 title differs: "Evidence for a Phase Transition..."; published title used) | new entry (2026-07-14) |
+| dowker2013 | IOP 10.1088/0264-9381/30/19/195016; arXiv:1305.2588 (formulas additionally cross-checked against the PDF, eqs. 25--26, Tables 1--2) | new entry (2026-07-14) |
 
 ## Residual judgment calls
 
