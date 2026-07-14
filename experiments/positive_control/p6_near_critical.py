@@ -15,43 +15,15 @@ from pc_common import git_describe, write_rows_csv
 from causal_spacetime_lab.positive_control.accelerated_two_orders import (
     mcmc_2d_order_replay_accelerated,
 )
+from causal_spacetime_lab.positive_control.mcmc_diagnostics import (
+    classify_phase,
+    integrated_autocorrelation,
+)
 from causal_spacetime_lab.positive_control.two_orders import bipartite_perm
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "outputs" / "positive_control"
 FROZEN = ROOT / "docs" / "prereg" / "frozen" / "p6_near_critical_constants.json"
-
-
-def integrated_autocorrelation(values: list[float]) -> tuple[float, float]:
-    """Initial-positive-sequence IAT and ESS for a short scalar chain."""
-    array = np.asarray(values, dtype=float)
-    centered = array - array.mean()
-    variance = float(np.dot(centered, centered) / array.size)
-    if variance == 0.0:
-        return 1.0, float(array.size)
-    tau = 1.0
-    for lag in range(1, array.size // 2 + 1):
-        covariance = float(np.dot(centered[:-lag], centered[lag:]) / (array.size - lag))
-        correlation = covariance / variance
-        if correlation <= 0.0:
-            break
-        tau += 2.0 * correlation
-    return tau, float(array.size / tau)
-
-
-def _phase(samples: list[dict], reference: dict) -> str:
-    mean_n0 = float(np.mean([row["n0"] for row in samples]))
-    mean_n12 = float(np.mean([row["n1"] + row["n2"] for row in samples]))
-    mean_height = float(np.mean([row["height"] for row in samples]))
-    reference_n12 = reference["n1"] + reference["n2"]
-    if (
-        abs(mean_n0 / reference["n0"] - 1.0) <= 0.5
-        and mean_height >= 0.7 * reference["height"]
-    ):
-        return "continuum"
-    if mean_n12 <= 0.5 * reference_n12 and mean_height <= 0.25 * reference["height"]:
-        return "crystal"
-    return "intermediate"
 
 
 def _gate_pass(row: dict, gates: dict) -> bool:
@@ -106,7 +78,7 @@ def run_chain(beta: float, chain: int) -> None:
         )
 
     version = git_describe()
-    phase = _phase(samples, constants["phase_reference"])
+    phase = classify_phase(samples, constants["phase_reference"])
     rows = []
     for sample_index, row in enumerate(samples):
         rows.append(

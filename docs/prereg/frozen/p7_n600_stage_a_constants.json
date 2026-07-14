@@ -1,0 +1,41 @@
+{
+  "n_elements": 600,
+  "eps": 0.02,
+  "all_betas": [12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 28.0],
+  "reused_p6_betas": [12.0, 16.0, 24.0],
+  "new_betas": [14.0, 18.0, 20.0, 22.0, 28.0],
+  "chains_per_beta": [
+    {"chain": 0, "start": "random", "initial_seed_base": 510000},
+    {"chain": 1, "start": "random", "initial_seed_base": 610000},
+    {"chain": 2, "start": "bipartite", "initial_seed_base": null}
+  ],
+  "proposal_seed_base": 900000,
+  "seed_formula": "base + 1000*int(beta) + chain",
+  "steps": 3000000,
+  "burn_frac": 0.60,
+  "sample_every": 25000,
+  "nominal_sample_count": 48,
+  "minimum_sample_count": 45,
+  "instrument_sample_positions": ["first", "middle", "last"],
+  "resync_every": 1000,
+  "ess_screening_min": 20.0,
+  "phase_reference": {
+    "n0": 2987.1,
+    "n1": 2410.95,
+    "n2": 2113.5,
+    "height": 44.0
+  },
+  "phase_rules": {
+    "continuum": "abs(mean_n0/ref_n0 - 1) <= 0.5 and mean_height >= 0.7*ref_height",
+    "crystal": "mean(n1+n2) <= 0.5*ref(n1+n2) and mean_height <= 0.25*ref_height",
+    "otherwise": "intermediate"
+  },
+  "geometry_score_constants": "p7_geometry_score_constants.json",
+  "provenance": {
+    "freeze_date": "2026-07-14",
+    "roadmap_commit": "538d0a5",
+    "reused_arm": "p6_near_critical_constants.json and its frozen outputs",
+    "expectation_semantics": "Characterization only. No beta-specific phase, convergence, or G prediction is frozen.",
+    "note": "Frozen before any added beta chain was run. Do not alter the beta grid, seeds, or screening rule after execution begins."
+  }
+}

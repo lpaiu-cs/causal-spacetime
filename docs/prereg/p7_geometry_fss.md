@@ -1,6 +1,7 @@
 # P7: Geometry order parameter and finite-size scaling
 
-Status: **G DEFINITION FROZEN; N=600 GRID NOT YET RUN** (2026-07-14).
+Status: **G AND N=600 CHARACTERIZATION GRID FROZEN, GRID NOT YET RUN**
+(2026-07-14).
 
 ## Question
 
@@ -54,6 +55,27 @@ beta=24 random and bipartite starts remained in different basins. Therefore
 phase labels alone cannot identify beta_c. P7 must report each start
 separately, make convergence a prerequisite for equilibrium inference, and
 not interpret a pooled two-start histogram as an equilibrium double peak.
+
+## Frozen N=600 characterization grid
+
+The grid is beta in `{12, 14, 16, 18, 20, 22, 24, 28}` at N=600 and
+epsilon=0.02. Existing P6a chains at 12, 16, and 24 are reused without
+rerunning. At each added beta, run three 3M-step chains under the exact replay
+sampler: two seeded random starts and one exact bipartite start, with 60%
+burn-in and nominally 48 retained samples every 25,000 steps. Evaluate G on
+the first, middle, and last retained states.
+
+For every chain report acceptance, phase label, action/n0/height IAT and ESS,
+and the three G values. Also report start-separated mean action, n0
+susceptibility `var(n0)/N`, centered n0 Binder cumulant, height, and G. The
+screening rule marks a beta mixing-adequate only when all three starts share a
+phase label and the minimum ESS over action/n0/height and chains is at least
+20. This is a warning rule, not a proof of convergence. Non-adequate starts
+must not be pooled into an equilibrium histogram or transition estimate.
+
+The added betas are characterization-only and carry no expected phase or G
+verdict. Constants and seeds are frozen in
+`p7_n600_stage_a_constants.json` before executing any added chain.
 
 ## Confirmatory status
 

@@ -2,19 +2,9 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-import pytest
-
-pytest.importorskip("numba")
-
-EXPERIMENT_DIR = (
-    Path(__file__).resolve().parents[1] / "experiments" / "positive_control"
+from causal_spacetime_lab.positive_control.mcmc_diagnostics import (
+    integrated_autocorrelation,
 )
-sys.path.insert(0, str(EXPERIMENT_DIR))
-
-from p6_near_critical import integrated_autocorrelation  # noqa: E402
 
 
 def test_iat_reports_full_ess_for_constant_or_alternating_series():
