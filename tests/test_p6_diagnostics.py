@@ -12,7 +12,12 @@ EXPERIMENT_DIR = (
 )
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
-from p6_diagnostics import _instrument_margin, roc_auc, spearman  # noqa: E402
+from p6_diagnostics import (  # noqa: E402
+    _instrument_margin,
+    _normalize_p5_row,
+    roc_auc,
+    spearman,
+)
 
 
 def test_roc_auc_handles_perfect_reverse_and_ties():
@@ -34,3 +39,19 @@ def test_p1_instrument_margin_accepts_frozen_column_names():
         "truth_order_error": "0.075",
     }
     assert _instrument_margin("P1", row) == pytest.approx(0.5)
+
+
+def test_legacy_short_p5_crystal_row_is_normalized():
+    row = {
+        "beta": "32.0",
+        "heldout": "1",
+        "min_chain_len": "101",
+        "n_targets": "structural_block: only 0 chains",
+        "sample": None,
+        "seed": None,
+        "status": None,
+    }
+    normalized = _normalize_p5_row(row)
+    assert normalized["sample"] == "1"
+    assert normalized["seed"] == "101"
+    assert normalized["status"] == "structural_block: only 0 chains"

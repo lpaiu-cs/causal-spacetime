@@ -49,6 +49,25 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def _normalize_p5_row(row: dict[str, str]) -> dict[str, str]:
+    """Repair legacy short crystal rows in the frozen concatenated P5 CSV."""
+    if row.get("seed") is not None:
+        return row
+    if row.get("beta") != "32.0" or not str(row.get("n_targets", "")).startswith(
+        "structural_block:"
+    ):
+        raise ValueError("unrecognized malformed P5 frozen row")
+    return {
+        **row,
+        "sample": row["heldout"],
+        "seed": row["min_chain_len"],
+        "status": row["n_targets"],
+        "heldout": "",
+        "min_chain_len": "",
+        "n_targets": "",
+    }
+
+
 def _float(row: dict, key: str) -> float | None:
     value = row.get(key)
     return float(value) if value not in (None, "") else None
@@ -223,7 +242,9 @@ def collect_p6() -> None:
 
 def collect_p5(beta: float, seed: int, accelerated: bool = False) -> None:
     constants = json.loads((FROZEN / "p5_test_constants.json").read_text())
-    frozen = _read_csv(FROZEN / "p5_stage_b_all.csv")
+    frozen = [
+        _normalize_p5_row(row) for row in _read_csv(FROZEN / "p5_stage_b_all.csv")
+    ]
     expected = [
         row for row in frozen if float(row["beta"]) == beta and int(row["seed"]) == seed
     ]
