@@ -45,3 +45,32 @@ P7's geometry-order-parameter threshold or transition hypothesis.
 ## Deviations log
 
 (empty)
+
+## Outcome
+
+Executed 2026-07-14. This characterization does not produce a confirmatory
+PASS/FAIL. All nine chains met the frozen sample-count requirement and all
+scheduled outputs are archived under `docs/prereg/frozen/`.
+
+- At beta = 12, all three starts were classified continuum, all 9/9
+  instrument snapshots passed, and the smallest reported ESS was 31.4. This
+  is the only tested point with clean dual-start agreement and no material
+  mixing warning.
+- At beta = 16, both random starts remained continuum and passed all 6/6
+  snapshots. The bipartite start ended with a continuum mean label, but only
+  its last snapshot became structurally measurable (1/3 pass); its action,
+  n0, and height ESS were only 2.34, 2.80, and 2.57. The apparent phase
+  agreement is therefore not evidence of equilibration.
+- At beta = 24, both random starts remained continuum and passed 6/6
+  snapshots, while the bipartite start remained intermediate and was
+  structurally blocked in 3/3 snapshots. Acceptance was 0.0116. This is
+  direct finite-run hysteresis / basin dependence, not an equilibrium
+  estimate of beta_c.
+
+The N = 600 refinement therefore establishes a usable lower anchor at
+beta = 12 and detects severe metastability by beta = 16, with explicit
+dual-start disagreement at beta = 24. It does **not** locate an equilibrium
+critical beta inside `(12, 24)`. P7 must retain dual starts, treat convergence
+as a prerequisite for transition inference, and use replica exchange or an
+equivalent mixing intervention before making a thermodynamic coincidence
+claim.

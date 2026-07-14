@@ -1,0 +1,4 @@
+beta,chain,start,proposal_seed,sample,acceptance,phase,code_version,status,gate_pass
+24.0,2,bipartite,700202,0,0.011607666666666667,intermediate,4507002,structural_block: only 0 chains,0.0
+24.0,2,bipartite,700202,24,0.011607666666666667,intermediate,4507002,structural_block: only 0 chains,0.0
+24.0,2,bipartite,700202,47,0.011607666666666667,intermediate,4507002,structural_block: only 0 chains,0.0
