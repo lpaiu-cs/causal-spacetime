@@ -1,10 +1,28 @@
 # Next experiments plan — post Paper B v0.5
 
-Date: 2026-07-14. Status: **PLANNED, nothing frozen.** This is a roadmap, not
-a preregistration: per program methodology, gates and predictions freeze only
-after each experiment's own Stage A calibration, in its own
-`docs/prereg/p*.md`. Numbers quoted here are from frozen artifacts of past
-experiments or are explicitly marked as estimates.
+Date: 2026-07-14. Status: **P6 COMPLETE; P7 N=600 STAGE A COMPLETE; T1 NOT
+STARTED.** This remains a roadmap rather than a preregistration. Frozen
+protocols and outcomes live in the experiment-specific `docs/prereg/p*.md`
+files.
+
+Execution update (2026-07-14):
+
+- P6a constructed hard negatives completed on fresh seeds; all eight frozen
+  cells remained chain-rich and blocked as predicted. The local-shuffle arm
+  was audited as coordinate relabelling and was not promoted to a false hard
+  negative.
+- P6b same-data comparison completed. The instrument had ROC AUC 0.993 versus
+  0.967 for height, 0.939 for Myrheim-Meyer, and 0.933 for interval abundance;
+  height remained slightly more monotone on P1, so no blanket superiority is
+  claimed.
+- P6a/P7 N=600 characterization completed. The continuous score G was frozen
+  from existing gate margins and validated on frozen data. Only beta 12 and
+  14 passed the frozen mixing screen. Beta 16--28 showed severe metastability
+  and a broad start-dependent G hysteresis window.
+- P7 N=900/1200 confirmatory FSS is not yet justified. A validated enhanced-
+  sampling method with overlap/convergence evidence must precede scaling;
+  ordinary local chains or a coarse replica ladder do not resolve the observed
+  action barrier.
 
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
