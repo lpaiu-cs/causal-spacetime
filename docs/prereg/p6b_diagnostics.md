@@ -66,3 +66,32 @@ reproduce its frozen mean action before it is accepted.
 ## Deviations log
 
 (empty)
+
+## Outcome
+
+Executed on the complete frozen input set: 442 orders, of which 58 geometric
+and 304 non-geometric orders enter the primary ROC comparison; 80 intermediate
+P1 cells are rank/overlap only. All eight replayed P5 chains reproduced their
+frozen mean actions before their 22 configurations were admitted.
+
+| Diagnostic | ROC AUC | Median P1 rho vs epsilon | H-LAG false-pass overlap |
+|---|---:|---:|---:|
+| Frozen instrument margin | **0.993** | 0.976 | n/a |
+| MM dimension distance | 0.939 | 0.012 | 25/27 (0.926) |
+| Interval-abundance distance | 0.933 | 0.786 | 0/27 (0.000) |
+| Height distance | 0.967 | **0.994** | 0/27 (0.000) |
+
+The discriminator has the strongest overall class separation, but the result
+does **not** support claiming that cheap diagnostics are generally inadequate.
+Normalized height is highly competitive and tracks the P1 dose response even
+slightly more monotonically; abundance and height both reject all frozen P1
+H-LAG cells under their preregistered reference cutoffs. MM dimension is the
+clear weak diagnostic for graded degradation and false-passes 25/27 H-LAG
+cells, consistent with the known crystalline-MM degeneracy.
+
+The added value of the instrument is therefore narrower and operational: it
+directly establishes whether observer-derived profiles support held-out
+ordinal reconstruction and, where truth labels exist, whether the recovered
+order is correct. It improves mixed-class AUC by 0.027 over height, while
+height remains an effective low-cost screening observable. Paper B should
+present both facts and avoid a blanket superiority claim.
