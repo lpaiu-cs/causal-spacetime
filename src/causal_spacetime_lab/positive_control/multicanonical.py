@@ -146,6 +146,7 @@ def wang_landau_2d_order(
     max_sweeps: int = 100_000,
     max_sweeps_per_stage: int = 50,
     min_round_trips_per_stage: int = 1,
+    max_round_trips: int | None = None,
 ) -> WangLandauResult:
     """Estimate ln g(S) by Wang-Landau random walk over the action.
 
@@ -246,6 +247,13 @@ def wang_landau_2d_order(
                 last_end = 1
 
         sweeps += 1
+
+        # Early stop for tunneling-time measurement: the cost of a round trip is
+        # the quantity that decides whether this method scales to N=600, and
+        # measuring it does not require driving ln_f to convergence.
+        if max_round_trips is not None and round_trips >= max_round_trips:
+            break
+
         if one_over_t:
             continue
 
