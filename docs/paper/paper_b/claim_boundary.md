@@ -19,8 +19,9 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   where profiles embed in 1D but no longer recover true space (P1 H-LAG,
   median crossing gap 0.19). A recovery/specificity check is therefore
   required.
-- The degradation is a response to **geometry, not density** (achieved density
-  held at 0.566-0.584 across all epsilon).
+- The degradation is **not explained by global relation density** (achieved
+  density held at 0.566-0.584 across all epsilon; density is the only order
+  statistic held fixed).
 - The result is **robust to 2+1D**: the same pipeline passes and recovers true
   2D position, blocks on geometry-free order, and **selects the correct spatial
   dimension** (d=2: d=1 underfits, d=3 adds nothing) on 20/20 confirmatory
@@ -31,22 +32,25 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   sweep — structurally at low density, at the geometry gate (null gap ~ 0)
   at higher density — while the same order-intrinsic protocol passes on
   sprinkled geometry (P3; separation d = 10.4).
-- **Action weighting cannot rescue the unrestricted ensemble**: the complete
-  bipartite crystal has smeared 2D BD action eps N (2 - eps N) exactly
-  (test-locked identity), below the sprinkled value whenever the nonlocality
-  scale resolves the system. Corollary: Myrheim-Meyer dimension ~ 2 for this
-  crystal — a dimension estimator alone cannot exclude it.
+- **The unrestricted ensemble has an exact crystalline low-action
+  obstruction**: the complete bipartite crystal has smeared 2D BD action
+  eps N (2 - eps N) exactly (test-locked identity), below the sprinkled value
+  whenever the nonlocality scale resolves the system; exploratory sampling
+  found no geometric window (this is a low-action state plus a sampling
+  null, not a free-energy theorem). Corollary: Myrheim-Meyer dimension ~ 2
+  for this crystal — a dimension estimator alone cannot exclude it.
 - **The action-weighted restricted ensemble (2D orders) has a continuum
   phase** at beta below a hysteretic, first-order-like transition
   (P4: continuum 30/30 chains at beta <= 2 with dual-start agreement;
   crystal 10/10 at beta = 6 reaching the exact bipartite action; frozen pass
   criteria all met, sharp predictions 5/6 with the miss pre-flagged).
-- **Equilibrium configurations of that continuum phase pass the full
+- **Post-burn-in samples of that continuum phase pass the full
   discriminator** (P5: 9/9 at beta = 2 and 9/9 at beta = 8, truth-order error
-  ~ 0.13-0.14 vs 0.5 chance, statistically indistinguishable from the
-  uniform-ensemble calibration; the crystal control blocks 4/4,
-  structurally). Emergence content: reconstructable geometry *survives*
-  action weighting below beta_c and is *destroyed* above it.
+  ~ 0.13-0.14 vs 0.5 chance, gate statistics within the range of the
+  uniform-ensemble calibration; the crystal control blocks 4/4 — structurally,
+  at the chain-extraction stage, before any geometry gate). Emergence
+  content: reconstructable geometry *survives* action weighting below beta_c
+  and is *destroyed* above it.
 
 ## NOT claimed
 

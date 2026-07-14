@@ -3,7 +3,7 @@
 Working title: **A validated discriminator for latent geometry in discrete
 causal order, and its response to geometry dilution.**
 
-Status: DRAFT v0.4 (2026-07-14). Prose grounded entirely in the frozen
+Status: DRAFT v0.5 (2026-07-14). Prose grounded entirely in the frozen
 preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1, P2/P2-v2,
 P3, P4, P5). No number in the manuscript is from memory; each traces to a
 committed registry or CSV.
@@ -25,12 +25,13 @@ This paper reports the validated-instrument line of the program:
    correct spatial dimension (d = 2) on 20/20 confirmatory seeds.
 4. **The emergence chain (P3, P4, P5, plus an exact obstruction)** carries the
    validated instrument to orders not built by hand: a geometry-free growth
-   dynamics blocks 100/100; action weighting of unrestricted orders is
-   obstructed exactly (bipartite crystal, S_eps = eps N (2 - eps N)); the
-   action-weighted restricted ensemble (2D orders) has a continuum phase with
-   a hysteretic crystallization transition; and equilibrium configurations of
-   that continuum phase pass the full discriminator (18/18) while the crystal
-   control blocks (4/4).
+   dynamics blocks 100/100; action weighting of unrestricted orders meets an
+   exact crystalline low-action obstruction (bipartite crystal,
+   S_eps = eps N (2 - eps N)) with no geometric window found in exploratory
+   sampling; the action-weighted restricted ensemble (2D orders) has a
+   continuum phase with a hysteretic crystallization transition; and
+   post-burn-in samples of that continuum phase pass the full discriminator
+   (18/18) while the crystal control blocks structurally (4/4).
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
@@ -39,10 +40,10 @@ See `manuscript.md` Section 9 (claim boundary).
 
 ## Files
 
-- `manuscript.md` — the v0.4 draft (all sections incl. the Section 7 emergence chain, a Conclusion, and Appendix tables;
-  reproducibility in Section 9). Inline citations are pandoc keys matching the
+- `manuscript.md` — the v0.5 draft (all sections incl. the Section 7 emergence chain, a Conclusion, and Appendix tables;
+  reproducibility in Section 11). Inline citations are pandoc keys matching the
   bibliography.
-- `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 7).
+- `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 9).
 - `figures/make_figures.py` — regenerates every figure from the frozen CSVs
   (and, for Fig 3, from `confound_data.csv`).
 - `figures/compute_confound_data.py` — recomputes the Fig 3 confound data (raw
