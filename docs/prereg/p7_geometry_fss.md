@@ -1,6 +1,6 @@
 # P7: Geometry order parameter and finite-size scaling
 
-Status: **G AND N=600 CHARACTERIZATION GRID FROZEN, GRID NOT YET RUN**
+Status: **N=600 CHARACTERIZATION COMPLETE; CONFIRMATORY FSS NOT FROZEN**
 (2026-07-14).
 
 ## Question
@@ -83,6 +83,47 @@ No H-G-MONO, H-COINCIDE, or H-HYST prediction is frozen yet. Those hypotheses
 may be fixed only after the N=600 characterization grid and a viable mixing
 strategy are established. N=900/1200 confirmatory work must use fresh seeds
 and may not proceed by silently averaging non-converged starts.
+
+## N=600 characterization outcome
+
+All 15 added chains completed, and the three P6a beta points were reused as
+frozen. Only beta = 12 and 14 passed the prespecified mixing screen.
+
+- Beta 12 and 14: all starts reached the continuum label. Minimum ESS was
+  31.4 and 29.4, respectively. Mean G was 0.98--0.99 for random starts and
+  0.99/0.81 for bipartite starts.
+- Beta 16: all starts had a continuum mean label, but the bipartite chain had
+  action ESS 2.34, mean action -25.7 versus +1.0 for random starts, and mean
+  G 0.26 versus 0.95. This point is not mixed.
+- Beta 18--24: random starts stayed continuum with mean G 0.95--1.00, while
+  bipartite starts stayed intermediate with G = 0. Their start-separated
+  action gaps grew from 76.8 to 95.9. These are explicit finite-run
+  hysteresis points, not equilibrium mixtures.
+- Beta 28: all starts were labelled intermediate and had G = 0, but the
+  random and bipartite means still differed by 32.4 in action and 9,773 in
+  n0. Random-start action ESS was only 3.50--3.97. Matching coarse labels do
+  not establish convergence.
+
+Operationally, the bipartite basin loses reconstructable geometry between
+beta 14 and 16, phase-label disagreement begins by beta 18, and the random
+basin loses geometry between beta 24 and 28. This wide, start-dependent
+window is the principal Stage A observation. It prevents an equilibrium
+estimate of either `beta_c^geo` or `beta_c^thermo`, so H-G-MONO and
+H-COINCIDE remain unfrozen.
+
+Naive coarse replica exchange is not an adequate automatic fallback here.
+At beta 18 the observed start-separated action gap is about 77; a direct
+cross-basin exchange with target acceptance 0.2 would require a local beta
+spacing of order `-log(0.2)/77 ~= 0.02`, far denser than this grid and still
+not a guarantee of barrier crossing. Before N=900/1200, P7 therefore needs a
+validated enhanced-sampling method (for example multicanonical/umbrella
+sampling with overlap checks, or a demonstrated sufficiently dense replica
+ladder). Scaling non-converged local Metropolis chains would add compute but
+not resolve the scientific question.
+
+Frozen outputs include all added raw chains and instrument snapshots,
+start-separated chain/beta summaries, the JSON registry, and the
+`p7_n600_stage_a_observables` figure.
 
 ## Deviations log
 

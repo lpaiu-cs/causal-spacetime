@@ -1,0 +1,4 @@
+beta,chain,start,proposal_seed,sample,acceptance,phase,code_version,status,n_targets,min_chain_len,heldout,null_gap,truth,G
+20.0,1,random,920001,0,0.8038616666666667,continuum,644e87b,ok,44.0,28.0,0.02625,0.21125,0.11029121096323627,1.0
+20.0,1,random,920001,24,0.8038616666666667,continuum,644e87b,ok,44.0,28.0,0.02625,0.1975,0.13074297715935942,1.0
+20.0,1,random,920001,47,0.8038616666666667,continuum,644e87b,ok,44.0,26.0,0.04875,0.20875,0.10954063604240283,1.0
