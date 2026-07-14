@@ -10,6 +10,7 @@ from causal_spacetime_lab.causal import causal_matrix_1p1, causal_matrix_minkows
 from causal_spacetime_lab.positive_control.action import smeared_action_2d
 from causal_spacetime_lab.positive_control.two_orders import (
     _IncrementalState,
+    balanced_layered_perm,
     bipartite_perm,
     chain_observables,
     mcmc_2d_order,
@@ -17,6 +18,7 @@ from causal_spacetime_lab.positive_control.two_orders import (
     myrheim_meyer_dimension,
     order_height,
     perm_to_causal_matrix,
+    windowed_transpositions,
 )
 from causal_spacetime_lab.sprinkling import sprinkle_minkowski_causal_diamond
 
@@ -39,6 +41,31 @@ def test_order_height():
     assert order_height(perm_to_causal_matrix(np.arange(n))) == n
     assert order_height(perm_to_causal_matrix(np.arange(n)[::-1])) == 1
     assert order_height(perm_to_causal_matrix(bipartite_perm(n))) == 2
+
+
+def test_balanced_layered_permutation_is_seeded_and_has_requested_height():
+    first = balanced_layered_perm(120, layer_count=12, seed=3, min_layer_size=6)
+    repeat = balanced_layered_perm(120, layer_count=12, seed=3, min_layer_size=6)
+    other = balanced_layered_perm(120, layer_count=12, seed=4, min_layer_size=6)
+    assert np.array_equal(np.sort(first), np.arange(120))
+    assert np.array_equal(first, repeat)
+    assert not np.array_equal(first, other)
+    assert order_height(perm_to_causal_matrix(first)) == 12
+
+
+def test_windowed_transpositions_are_seeded_and_preserve_permutation():
+    original = np.arange(80)
+    first = windowed_transpositions(original, moves=30, window=5, seed=7)
+    repeat = windowed_transpositions(original, moves=30, window=5, seed=7)
+    assert np.array_equal(np.sort(first), original)
+    assert np.array_equal(first, repeat)
+    assert not np.array_equal(first, original)
+
+    one_move = windowed_transpositions(original, moves=1, window=5, seed=8)
+    changed = np.flatnonzero(one_move != original)
+    assert changed.size in (0, 2)
+    if changed.size:
+        assert int(np.ptp(changed)) <= 5
 
 
 def test_order_height_index_order_invariant():

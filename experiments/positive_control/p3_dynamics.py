@@ -77,7 +77,7 @@ def _column_shuffle(profiles: EchoProfileMatrix, seed: int) -> EchoProfileMatrix
     return EchoProfileMatrix(delays, reach, profiles.target_indices.copy())
 
 
-def analyze_order(causal, times, coords, seed, want_truth):
+def analyze_order(causal, times, coords, seed, want_truth, extra_truth_coords=None):
     """Return a result dict for one causal order (structural blocks recorded)."""
 
     chains = select_disjoint_chains(causal, times, CHAIN_COUNT, MIN_CHAIN_LEN)
@@ -104,6 +104,13 @@ def analyze_order(causal, times, coords, seed, want_truth):
         row["truth"] = float(
             embedding_distance_order_error(
                 coords_fit, coords[targets].reshape(-1, 1),
+                num_pair_comparisons=8000, seed=seed + 9,
+            )
+        )
+    for name, values in (extra_truth_coords or {}).items():
+        row[f"truth_{name}"] = float(
+            embedding_distance_order_error(
+                coords_fit, np.asarray(values)[targets].reshape(-1, 1),
                 num_pair_comparisons=8000, seed=seed + 9,
             )
         )

@@ -1,0 +1,4 @@
+beta,chain,start,proposal_seed,sample,acceptance,phase,code_version,status,G
+28.0,1,random,928001,0,0.049724,intermediate,644e87b,structural_block: only 0 chains,0.0
+28.0,1,random,928001,24,0.049724,intermediate,644e87b,structural_block: only 0 chains,0.0
+28.0,1,random,928001,47,0.049724,intermediate,644e87b,structural_block: only 0 chains,0.0

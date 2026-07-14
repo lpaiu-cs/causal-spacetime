@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import math
 import subprocess
+from functools import cache
 from pathlib import Path
 
 from causal_spacetime_lab.positive_control.echo_profiles import (
@@ -69,6 +70,7 @@ def smoke_fit_policy() -> RepresentabilityFitPolicy:
     )
 
 
+@cache
 def git_describe() -> str:
     """Return a short code-version string for provenance rows."""
 
@@ -269,7 +271,7 @@ def write_rows_csv(path: Path, rows: list[dict[str, float | str]]) -> None:
             if key not in fieldnames:
                 fieldnames.append(key)
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 

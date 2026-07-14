@@ -1,0 +1,77 @@
+{
+  "code_version": "79ca113",
+  "n_rows": 442,
+  "n_labelled": 362,
+  "class_counts": {
+    "geometric": 58,
+    "nongeometric": 304
+  },
+  "roc_auc": {
+    "instrument_margin": 0.9934494101633394,
+    "mm_distance": 0.93880444646098,
+    "abundance_distance": 0.9325657894736842,
+    "height_distance": 0.9667649727767695
+  },
+  "reference_cutoffs": {
+    "p1_scene:mm_distance": 2.1484542598655434,
+    "p1_scene:abundance_distance": 1.592525946608501,
+    "p1_scene:height_distance": 1.7867555798982455,
+    "p3_n1500:mm_distance": 1.4331842438225888,
+    "p3_n1500:abundance_distance": 1.3004374273287884,
+    "p3_n1500:height_distance": 1.8034826229354854,
+    "orders_n600:mm_distance": 1.7676626295987556,
+    "orders_n600:abundance_distance": 1.5607588955168157,
+    "orders_n600:height_distance": 1.621899004095096
+  },
+  "p1_h_lag_overlap": {
+    "mm_distance": {
+      "n_h_lag": 27,
+      "n_false_pass": 25,
+      "fraction": 0.9259259259259259
+    },
+    "abundance_distance": {
+      "n_h_lag": 27,
+      "n_false_pass": 0,
+      "fraction": 0.0
+    },
+    "height_distance": {
+      "n_h_lag": 27,
+      "n_false_pass": 0,
+      "fraction": 0.0
+    }
+  },
+  "p1_rank_summary": {
+    "instrument_margin": {
+      "median_rho_epsilon": 0.9761904761904763,
+      "min_rho_epsilon": 0.9047619047619048,
+      "max_rho_epsilon": 1.0,
+      "median_rho_truth": 0.9761904761904763,
+      "min_rho_truth": 0.9047619047619048,
+      "max_rho_truth": 1.0
+    },
+    "mm_distance": {
+      "median_rho_epsilon": 0.011904761904761911,
+      "min_rho_epsilon": -0.4523809523809524,
+      "max_rho_epsilon": 0.8571428571428572,
+      "median_rho_truth": 0.0,
+      "min_rho_truth": -0.38095238095238104,
+      "max_rho_truth": 0.9285714285714287
+    },
+    "abundance_distance": {
+      "median_rho_epsilon": 0.7857142857142858,
+      "min_rho_epsilon": 0.7619047619047621,
+      "max_rho_epsilon": 0.8571428571428573,
+      "median_rho_truth": 0.8095238095238096,
+      "min_rho_truth": 0.7619047619047621,
+      "max_rho_truth": 0.8928571428571429
+    },
+    "height_distance": {
+      "median_rho_epsilon": 0.9940297973880049,
+      "min_rho_epsilon": 0.9518763181059627,
+      "max_rho_epsilon": 1.0,
+      "median_rho_truth": 0.9761904761904763,
+      "min_rho_truth": 0.9157291161525718,
+      "max_rho_truth": 1.0
+    }
+  }
+}

@@ -40,6 +40,71 @@ def bipartite_perm(n_elements: int) -> np.ndarray:
     )
 
 
+def balanced_layered_perm(
+    n_elements: int,
+    layer_count: int,
+    seed: int,
+    min_layer_size: int = 6,
+) -> np.ndarray:
+    """Return a randomized complete layered 2D order.
+
+    Positions and values are partitioned into matching contiguous blocks.
+    Reversing values inside each block makes elements within a layer
+    incomparable, while every element in an earlier layer precedes every
+    element in a later layer. Random layer sizes prevent the construction
+    from depending on one specially balanced partition.
+    """
+    if layer_count < 2:
+        raise ValueError("layer_count must be at least 2")
+    if min_layer_size < 1:
+        raise ValueError("min_layer_size must be positive")
+    required = layer_count * min_layer_size
+    if required > n_elements:
+        raise ValueError("minimum layer sizes exceed n_elements")
+
+    rng = np.random.default_rng(seed)
+    sizes = np.full(layer_count, min_layer_size, dtype=int)
+    sizes += rng.multinomial(
+        n_elements - required, np.full(layer_count, 1 / layer_count)
+    )
+    parts: list[np.ndarray] = []
+    start = 0
+    for size in sizes:
+        stop = start + int(size)
+        parts.append(np.arange(start, stop, dtype=int)[::-1])
+        start = stop
+    return np.concatenate(parts)
+
+
+def windowed_transpositions(
+    permutation: np.ndarray,
+    moves: int,
+    window: int,
+    seed: int,
+) -> np.ndarray:
+    """Apply random transpositions whose positions are at most ``window`` apart."""
+    pi = np.asarray(permutation, dtype=int)
+    if moves < 0:
+        raise ValueError("moves must be non-negative")
+    if window < 1:
+        raise ValueError("window must be positive")
+    if pi.ndim != 1 or not np.array_equal(np.sort(pi), np.arange(pi.size)):
+        raise ValueError("permutation must contain each integer in [0, N) exactly once")
+
+    result = pi.copy()
+    if result.size < 2:
+        return result
+    rng = np.random.default_rng(seed)
+    for _ in range(moves):
+        first = int(rng.integers(0, result.size))
+        low = max(0, first - window)
+        high = min(result.size, first + window + 1)
+        second = int(rng.integers(low, high))
+        if first != second:
+            result[first], result[second] = result[second], result[first]
+    return result
+
+
 def order_height(causal_matrix: np.ndarray) -> int:
     """Length (number of elements) of the longest chain.
 

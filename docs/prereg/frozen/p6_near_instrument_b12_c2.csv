@@ -1,0 +1,4 @@
+beta,chain,start,proposal_seed,sample,acceptance,phase,code_version,status,n_targets,min_chain_len,heldout,null_gap,truth,gate_pass
+12.0,2,bipartite,700002,0,0.810019,continuum,4507002,ok,44.0,26.0,0.0525,0.1825,0.17286709609570133,1.0
+12.0,2,bipartite,700002,24,0.810019,continuum,4507002,ok,44.0,28.0,0.045,0.21250000000000002,0.1150965707528577,1.0
+12.0,2,bipartite,700002,47,0.810019,continuum,4507002,ok,44.0,28.0,0.0375,0.24625,0.15725330887170752,1.0

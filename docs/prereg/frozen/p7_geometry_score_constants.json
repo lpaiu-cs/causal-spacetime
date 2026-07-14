@@ -1,0 +1,20 @@
+{
+  "heldout_max": 0.10,
+  "null_gap_min": 0.10,
+  "truth_error_max": 0.40,
+  "normalized_margins": [
+    "(heldout_max - heldout) / heldout_max",
+    "(null_gap - null_gap_min) / null_gap_min",
+    "(truth_error_max - truth_error) / truth_error_max"
+  ],
+  "score": "clip(0.5 + min(normalized_margins), 0, 1)",
+  "structural_block_score": 0.0,
+  "gate_equivalent_threshold": 0.5,
+  "provenance": {
+    "freeze_date": "2026-07-14",
+    "roadmap_commit": "538d0a5",
+    "calibration_inputs": "Previously frozen P1, P3, P5, and P6 artifacts only",
+    "stage_a_summary": "p7_stage_a_geometry_score_summary.json",
+    "note": "Frozen before any new P7 ensemble chain was run. Do not fit or move the score threshold after observing P7 chains."
+  }
+}

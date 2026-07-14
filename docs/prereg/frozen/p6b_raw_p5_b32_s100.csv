@@ -1,0 +1,3 @@
+source,condition,reference_group,seed,beta,sample,label,status,heldout,null_gap,truth,instrument_margin,acceptance,code_version,R,n0,n1,n2,mm_dim,height,S
+P5,beta=32,orders_n600,100.0,32.0,0.0,0.0,structural_block: only 0 chains,,,,-5.0,0.005682,79ca113,90354.0,29365.0,24519.0,15213.0,1.992538701012149,8.0,-106.97359367942695
+P5,beta=32,orders_n600,100.0,32.0,1.0,0.0,structural_block: only 0 chains,,,,-5.0,0.005682,79ca113,90290.0,27958.0,20222.0,15444.0,1.993484197315734,8.0,-105.1735610958558

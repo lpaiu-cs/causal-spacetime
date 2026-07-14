@@ -1,0 +1,39 @@
+{
+  "reference_seeds_p1_scene": "0-19",
+  "reference_seeds_p3_sprinkled": "0-19",
+  "reference_seeds_p5_uniform": "1000-1019",
+  "p1_geometric_eps_max": 0.15,
+  "p1_nongeometric_eps_min": 0.90,
+  "reference_pass_quantile": 0.95,
+  "diagnostics": [
+    "frozen_instrument_margin",
+    "mm_dimension_distance",
+    "interval_abundance_distance",
+    "height_distance"
+  ],
+  "metrics": [
+    "roc_auc",
+    "p1_per_seed_spearman_vs_epsilon",
+    "p1_per_seed_spearman_vs_truth_error",
+    "p1_h_lag_false_pass_overlap"
+  ],
+  "labels": {
+    "geometric": "P1 epsilon <= 0.15; P5 beta in {2,8}",
+    "nongeometric": "P1 epsilon >= 0.90; all P3; P5 beta=32; confirmed P6 layered cells",
+    "report_only": "P1 0.15 < epsilon < 0.90"
+  },
+  "normalization": "Within each of p1_scene, p3_n1500, and orders_n600, compute mean and sample standard deviation on log1p(n0,n1,n2,height) and on MM dimension from the frozen reference seeds. Distances are absolute z for MM and height and root-mean-square z for the three abundance coordinates. A zero standard deviation is replaced by 1e-12.",
+  "cheap_pass_rule": "distance <= the within-reference 95th-percentile distance, using linear interpolation",
+  "instrument_margin": {
+    "P1": "min((0.15-truth)/0.15, (0.05-heldout)/0.05)",
+    "P3": "min((0.10-heldout)/0.10, (null_gap-0.10)/0.10)",
+    "P5_P6": "min((0.40-truth)/0.40, (0.10-heldout)/0.10, (null_gap-0.10)/0.10)",
+    "structural_block": -5.0
+  },
+  "provenance": {
+    "freeze_date": "2026-07-14",
+    "roadmap_commit": "538d0a5",
+    "p6_confirmatory_commit": "db3f0eb",
+    "note": "Frozen before computing P6b aggregate comparisons. P6 chain observables already existed as provenance columns, but no P6b normalization, threshold, AUC, rank, or overlap metric had been computed. Do not edit after analysis begins."
+  }
+}

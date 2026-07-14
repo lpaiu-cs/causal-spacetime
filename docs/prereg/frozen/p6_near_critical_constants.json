@@ -1,0 +1,41 @@
+{
+  "n_elements": 600,
+  "eps": 0.02,
+  "betas": [12.0, 16.0, 24.0],
+  "chains_per_beta": [
+    {"chain": 0, "start": "random", "initial_seed_offset": 3100},
+    {"chain": 1, "start": "random", "initial_seed_offset": 4100},
+    {"chain": 2, "start": "bipartite", "initial_seed_offset": null}
+  ],
+  "proposal_seed_base": 700000,
+  "steps": 3000000,
+  "burn_frac": 0.60,
+  "sample_every": 25000,
+  "nominal_sample_count": 48,
+  "minimum_sample_count": 45,
+  "instrument_sample_positions": ["first", "middle", "last"],
+  "resync_every": 1000,
+  "phase_reference": {
+    "n0": 2987.1,
+    "n1": 2410.95,
+    "n2": 2113.5,
+    "height": 44.0
+  },
+  "phase_rules": {
+    "continuum": "abs(mean_n0/ref_n0 - 1) <= 0.5 and mean_height >= 0.7*ref_height",
+    "crystal": "mean(n1+n2) <= 0.5*ref(n1+n2) and mean_height <= 0.25*ref_height",
+    "otherwise": "intermediate"
+  },
+  "instrument_gates": {
+    "heldout_max": 0.10,
+    "null_gap_min": 0.10,
+    "truth_max": 0.40
+  },
+  "provenance": {
+    "freeze_date": "2026-07-14",
+    "roadmap_commit": "538d0a5",
+    "p5_reference": "p5_stage_a_summary.json",
+    "expectation_semantics": "Characterization only. No beta-specific phase or geometry verdict is predicted. The frozen outputs refine beta_c at N=600 and seed P7.",
+    "note": "Frozen before any beta 12/16/24 chain was run. Do not edit after execution begins."
+  }
+}

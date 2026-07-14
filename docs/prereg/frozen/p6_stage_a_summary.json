@@ -1,0 +1,277 @@
+{
+  "stage": "P6-A",
+  "code_version": "1df2ff1",
+  "n_elements": 600,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "gates_inherited_from": "P3",
+  "layered_cells": [
+    {
+      "layer_count": 25.0,
+      "moves": 20.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.09,
+      "median_null_gap": 0.058750000000000004,
+      "median_truth": 0.4721329046087889,
+      "median_truth_current": null,
+      "median_height": 41.0
+    },
+    {
+      "layer_count": 25.0,
+      "moves": 100.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.215,
+      "median_null_gap": -0.018750000000000017,
+      "median_truth": 0.41833579782228797,
+      "median_truth_current": null,
+      "median_height": 69.0
+    },
+    {
+      "layer_count": 25.0,
+      "moves": 500.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 1,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.15625,
+      "median_null_gap": 0.04125000000000001,
+      "median_truth": 0.3121944774739067,
+      "median_truth_current": null,
+      "median_height": 97.0
+    },
+    {
+      "layer_count": 25.0,
+      "moves": 2000.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 7,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.0875,
+      "median_null_gap": 0.16,
+      "median_truth": 0.21097657278231113,
+      "median_truth_current": null,
+      "median_height": 77.0
+    },
+    {
+      "layer_count": 40.0,
+      "moves": 20.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 1,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.0475,
+      "median_null_gap": 0.07125000000000001,
+      "median_truth": 0.43185914321364205,
+      "median_truth_current": null,
+      "median_height": 51.0
+    },
+    {
+      "layer_count": 40.0,
+      "moves": 100.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.17375,
+      "median_null_gap": 0.048750000000000016,
+      "median_truth": 0.3651535380507343,
+      "median_truth_current": null,
+      "median_height": 76.0
+    },
+    {
+      "layer_count": 40.0,
+      "moves": 500.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.19,
+      "median_null_gap": 0.04374999999999998,
+      "median_truth": 0.33962264150943394,
+      "median_truth_current": null,
+      "median_height": 103.0
+    },
+    {
+      "layer_count": 40.0,
+      "moves": 2000.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 5,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.11375,
+      "median_null_gap": 0.16249999999999998,
+      "median_truth": 0.23272010512483574,
+      "median_truth_current": null,
+      "median_height": 77.0
+    },
+    {
+      "layer_count": 60.0,
+      "moves": 20.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 3,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.05125,
+      "median_null_gap": 0.1375,
+      "median_truth": 0.39832285115303984,
+      "median_truth_current": null,
+      "median_height": 67.0
+    },
+    {
+      "layer_count": 60.0,
+      "moves": 100.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.18125,
+      "median_null_gap": 0.08249999999999999,
+      "median_truth": 0.4082690773730391,
+      "median_truth_current": null,
+      "median_height": 85.0
+    },
+    {
+      "layer_count": 60.0,
+      "moves": 500.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.18125,
+      "median_null_gap": 0.0325,
+      "median_truth": 0.32344800316330563,
+      "median_truth_current": null,
+      "median_height": 105.0
+    },
+    {
+      "layer_count": 60.0,
+      "moves": 2000.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 6,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 0,
+      "median_heldout": 0.09375,
+      "median_null_gap": 0.13624999999999998,
+      "median_truth": 0.2019192848691994,
+      "median_truth_current": null,
+      "median_height": 77.0
+    }
+  ],
+  "proposed_layered_confirmatory_cells": [
+    {
+      "layer_count": 25,
+      "moves": 20
+    },
+    {
+      "layer_count": 25,
+      "moves": 100
+    },
+    {
+      "layer_count": 25,
+      "moves": 500
+    },
+    {
+      "layer_count": 40,
+      "moves": 20
+    },
+    {
+      "layer_count": 40,
+      "moves": 100
+    },
+    {
+      "layer_count": 40,
+      "moves": 500
+    },
+    {
+      "layer_count": 60,
+      "moves": 100
+    },
+    {
+      "layer_count": 60,
+      "moves": 500
+    }
+  ],
+  "local_shuffle_cells": [
+    {
+      "moves": 30.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 10,
+      "n_gate_pass_current": 10,
+      "median_heldout": 0.04625,
+      "median_null_gap": 0.23875000000000002,
+      "median_truth": 0.21676300578034682,
+      "median_truth_current": 0.14518460123505453,
+      "median_height": 45.0
+    },
+    {
+      "moves": 150.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 8,
+      "n_gate_pass_current": 10,
+      "median_heldout": 0.03875,
+      "median_null_gap": 0.205,
+      "median_truth": 0.3575661793757408,
+      "median_truth_current": 0.1507967865138944,
+      "median_height": 45.0
+    },
+    {
+      "moves": 600.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 10,
+      "median_heldout": 0.0475,
+      "median_null_gap": 0.20249999999999999,
+      "median_truth": 0.47349730369590953,
+      "median_truth_current": 0.14417016806722688,
+      "median_height": 44.0
+    },
+    {
+      "moves": 2400.0,
+      "n_total": 10,
+      "n_valid": 10,
+      "n_gate_pass": 0,
+      "n_gate_pass_original": 0,
+      "n_gate_pass_current": 8,
+      "median_heldout": 0.04125,
+      "median_null_gap": 0.215,
+      "median_truth": 0.48730096065271744,
+      "median_truth_current": 0.13873590348806714,
+      "median_height": 45.0
+    }
+  ],
+  "local_shuffle_disposition": "construction audit only: every output is still an exact 2D order; a current-coordinate pass with an original-coordinate failure is coordinate remapping, not a geometry-free hard negative"
+}
