@@ -1,0 +1,29 @@
+{
+  "n_elements": 600,
+  "gate_heldout": 0.10,
+  "gate_nullgap": 0.10,
+  "gate_truth": 0.40,
+  "layer_jitter_window": 60,
+  "layered_cells": [
+    {"layer_count": 25, "moves": 20},
+    {"layer_count": 25, "moves": 100},
+    {"layer_count": 25, "moves": 500},
+    {"layer_count": 40, "moves": 20},
+    {"layer_count": 40, "moves": 100},
+    {"layer_count": 40, "moves": 500},
+    {"layer_count": 60, "moves": 100},
+    {"layer_count": 60, "moves": 500}
+  ],
+  "calibration_seeds": "0-9",
+  "confirmatory_seeds": "100-119",
+  "minimum_chain_rich_blocks": 16,
+  "local_shuffle_arm": "retired_after_construction_audit",
+  "provenance": {
+    "calibration_stage": "P6-A",
+    "calibration_code_version": "1df2ff1",
+    "selection_rule": "Freeze every cell with at least 8/10 numerical-gate-valid configurations and at least 8/10 numerical-gate blocks.",
+    "expectation": "Each frozen cell confirms only if at least 16/20 fresh seeds reach the numerical gates and block there; structural blocks do not count.",
+    "local_shuffle_finding": "At 600 transpositions, the original-coordinate gate passed 0/10 while the exact current-coordinate gate passed 10/10. A transposed permutation remains an exact 2D order, so this construction remaps coordinates and is not a geometry-free hard negative.",
+    "note": "Frozen after P6-A and before P6-B. Inherited P3 gates are unchanged. Do not edit after freezing."
+  }
+}

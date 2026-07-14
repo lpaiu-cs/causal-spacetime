@@ -1,8 +1,8 @@
 # P6: Chain-rich hard negatives and diagnostic comparison
 
-Status: **STAGE A PLANNED, nothing frozen** (2026-07-14). Stage B is locked
-until the Stage-A artifacts and `docs/prereg/frozen/p6_test_constants.json`
-are committed together.
+Status: **FROZEN v1** (2026-07-14). Stage-A artifacts and confirmatory
+constants are stored under `docs/prereg/frozen/`. The freeze was made after
+P6-A at code commit `1df2ff1` and before any P6-B seed was run.
 
 ## 1. Question
 
@@ -76,4 +76,20 @@ heavier diagnostics remain outside the primary comparison.
 
 ## 6. Deviations log
 
-(empty)
+- The local-shuffle candidate was retired after its planned construction
+  audit. At 600 moves, the original-coordinate gate passed 0/10 while the
+  exact current-coordinate gate passed 10/10 (median truth errors 0.473 and
+  0.144 respectively). This is coordinate remapping, not intrinsic geometry
+  destruction, and the exact 2D-order representation makes regenerating the
+  P5 beta=2/8 states immaterial to that conclusion.
+
+## 7. Stage-A calibration outcome and frozen expectations
+
+All 12 layered cells were chain-rich on 10/10 seeds. The mechanical 8/10 rule
+selected eight confirmatory cells: `(k, moves)` = (25,20), (25,100),
+(25,500), (40,20), (40,100), (40,500), (60,100), and (60,500). Their Stage-A
+gate-pass counts were respectively 0, 0, 1, 1, 0, 0, 0, and 0 out of 10.
+
+P6-B uses fresh seeds 100-119. Each selected cell is expected to remain
+chain-rich and block at the numerical gates on at least 16/20 seeds. The
+experiment confirms only if all eight frozen cell expectations are met.
