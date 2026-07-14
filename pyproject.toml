@@ -18,6 +18,9 @@ dev = [
   "pytest>=8",
   "ruff>=0.4",
 ]
+experiments = [
+  "numba>=0.59",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -32,4 +35,3 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "UP"]
-

@@ -81,6 +81,13 @@ source .venv/bin/activate
 python -m pip install -e ".[dev]"
 ```
 
+The long 2D-orders replay experiments (P6/P7) use the optional Numba
+accelerator:
+
+```bash
+python -m pip install -e ".[dev,experiments]"
+```
+
 ## Run Tests
 
 ```bash
