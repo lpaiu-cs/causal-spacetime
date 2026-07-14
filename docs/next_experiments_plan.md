@@ -16,9 +16,12 @@ Execution update (2026-07-14):
   height remained slightly more monotone on P1, so no blanket superiority is
   claimed.
 - P6a/P7 N=600 characterization completed. The continuous score G was frozen
-  from existing gate margins and validated on frozen data. Only beta 12 and
-  14 passed the frozen mixing screen. Beta 16--28 showed severe metastability
-  and a broad start-dependent G hysteresis window.
+  from existing gate margins and validated on frozen data. After the
+  review-driven Geyer IAT correction (logged in the P6a/P7 deviations logs),
+  only beta 12 passes the frozen mixing screen; beta 14 is marginal (minimum
+  ESS 19.7 against the frozen 20) with full phase agreement, and should be
+  re-judged with longer chains rather than dropped. Beta 16--28 showed severe
+  metastability and a broad start-dependent G hysteresis window.
 - P7 N=900/1200 confirmatory FSS is not yet justified. A validated enhanced-
   sampling method with overlap/convergence evidence must precede scaling;
   ordinary local chains or a coarse replica ladder do not resolve the observed
