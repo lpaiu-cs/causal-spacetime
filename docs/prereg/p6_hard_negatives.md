@@ -93,3 +93,18 @@ gate-pass counts were respectively 0, 0, 1, 1, 0, 0, 0, and 0 out of 10.
 P6-B uses fresh seeds 100-119. Each selected cell is expected to remain
 chain-rich and block at the numerical gates on at least 16/20 seeds. The
 experiment confirms only if all eight frozen cell expectations are met.
+
+## 8. Confirmatory outcome
+
+P6-B was executed at code commit `d0d2220` on the frozen seeds and design.
+**All eight expectations were met.** Every cell reached the numerical gates
+on 20/20 seeds. In the frozen cell order above, gate-pass counts were 0, 0,
+4, 3, 0, 1, 2, and 1; equivalently, chain-rich gate-block counts were 20,
+20, 16, 17, 20, 19, 18, and 19. The result closes the P5 control gap: the
+discriminator rejects these non-manifoldlike layered orders at its numerical
+geometry gates rather than merely at chain extraction.
+
+The strongest clean cells are `(k, moves)` = (25,100) and (40,100), both
+0/20 gate passes with median heldout 0.185/0.163 and median null gaps
+0.039/0.022. The broader eight-cell result is primary because the cells were
+selected mechanically and frozen before P6-B.
