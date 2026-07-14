@@ -17,6 +17,7 @@ from causal_spacetime_lab.positive_control.geometry_score import (
     geometry_order_parameter,
 )
 from causal_spacetime_lab.positive_control.mcmc_diagnostics import (
+    IAT_ESTIMATOR,
     classify_phase,
     integrated_autocorrelation,
 )
@@ -165,6 +166,28 @@ def _instrument_score(row: dict[str, str]) -> float:
     )
 
 
+def _group_chains_by_start(chains: list[dict]) -> dict[str, list[dict]]:
+    """Return the required two-random/one-bipartite start groups."""
+
+    grouped = {
+        start: sorted(
+            (row for row in chains if row["start"] == start),
+            key=lambda row: int(row["chain"]),
+        )
+        for start in ("random", "bipartite")
+    }
+    unexpected = sorted(
+        {row["start"] for row in chains} - {"random", "bipartite"}
+    )
+    if len(grouped["random"]) != 2 or len(grouped["bipartite"]) != 1 or unexpected:
+        raise SystemExit(
+            "P7 aggregation requires exactly two random starts and one "
+            f"bipartite start; got random={len(grouped['random'])}, "
+            f"bipartite={len(grouped['bipartite'])}, unexpected={unexpected}"
+        )
+    return grouped
+
+
 def _write_figure(beta_rows: list[dict]) -> None:
     betas = [row["beta"] for row in beta_rows]
     figure, axes = plt.subplots(1, 3, figsize=(11.2, 3.5))
@@ -245,21 +268,23 @@ def aggregate() -> None:
 
     for beta in constants["all_betas"]:
         chains = [row for row in chain_summaries if row["beta"] == beta]
+        grouped = _group_chains_by_start(chains)
         phases = [row["phase"] for row in chains]
         min_ess = min(
             row[f"ess_{field}"] for row in chains for field in ("S", "n0", "height")
         )
         row = {
             "beta": beta,
-            "phase_random_0": chains[0]["phase"],
-            "phase_random_1": chains[1]["phase"],
-            "phase_bipartite": chains[2]["phase"],
+            "phase_random_0": grouped["random"][0]["phase"],
+            "phase_random_1": grouped["random"][1]["phase"],
+            "phase_bipartite": grouped["bipartite"][0]["phase"],
             "phase_agreement": len(set(phases)) == 1,
             "minimum_ess": min_ess,
             "mixing_screen_adequate": len(set(phases)) == 1
             and min_ess >= constants["ess_screening_min"],
         }
-        for start, chain_ids in (("random", (0, 1)), ("bipartite", (2,))):
+        for start, start_chains in grouped.items():
+            chain_ids = [int(item["chain"]) for item in start_chains]
             samples = [
                 sample
                 for chain in chain_ids
@@ -302,6 +327,7 @@ def aggregate() -> None:
         "stage": "P7-N600-A",
         "code_version": git_describe(),
         "characterization_only": True,
+        "iat_estimator": IAT_ESTIMATOR,
         "chain_summaries": chain_summaries,
         "beta_summaries": beta_summaries,
         "mixing_adequate_betas": [

@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import math
 import subprocess
+from functools import cache
 from pathlib import Path
 
 from causal_spacetime_lab.positive_control.echo_profiles import (
@@ -69,6 +70,7 @@ def smoke_fit_policy() -> RepresentabilityFitPolicy:
     )
 
 
+@cache
 def git_describe() -> str:
     """Return a short code-version string for provenance rows."""
 

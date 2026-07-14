@@ -7,6 +7,41 @@ from collections.abc import Iterable
 import numpy as np
 
 
+def minimum_gate_margin(
+    *,
+    heldout: float,
+    heldout_max: float,
+    null_gap: float | None = None,
+    null_gap_min: float | None = None,
+    truth_error: float | None = None,
+    truth_error_max: float | None = None,
+) -> float:
+    """Return the limiting normalized margin for the supplied frozen gates."""
+
+    pairs = (
+        (null_gap, null_gap_min, "null-gap"),
+        (truth_error, truth_error_max, "truth-error"),
+    )
+    if heldout_max <= 0.0:
+        raise ValueError("gate thresholds must be positive")
+    margins = [(heldout_max - float(heldout)) / heldout_max]
+    for value, threshold, name in pairs:
+        if (value is None) != (threshold is None):
+            raise ValueError(f"{name} value and threshold must be supplied together")
+        if value is None:
+            continue
+        if threshold <= 0.0:
+            raise ValueError("gate thresholds must be positive")
+        if name == "null-gap":
+            margins.append((float(value) - threshold) / threshold)
+        else:
+            margins.append((threshold - float(value)) / threshold)
+    values = np.asarray(margins, dtype=float)
+    if not np.all(np.isfinite(values)):
+        raise ValueError("gate quantities must be finite")
+    return float(np.min(values))
+
+
 def clipped_gate_margin_score(margins: Iterable[float]) -> float:
     """Map the limiting normalized gate margin to a score in ``[0, 1]``.
 
@@ -44,12 +79,12 @@ def geometry_order_parameter(
         return 0.0
     if heldout is None or null_gap is None or truth_error is None:
         raise ValueError("valid reconstructions require all three gate quantities")
-    if heldout_max <= 0.0 or null_gap_min <= 0.0 or truth_error_max <= 0.0:
-        raise ValueError("gate thresholds must be positive")
-    return clipped_gate_margin_score(
-        (
-            (heldout_max - float(heldout)) / heldout_max,
-            (float(null_gap) - null_gap_min) / null_gap_min,
-            (truth_error_max - float(truth_error)) / truth_error_max,
-        )
+    margin = minimum_gate_margin(
+        heldout=heldout,
+        heldout_max=heldout_max,
+        null_gap=null_gap,
+        null_gap_min=null_gap_min,
+        truth_error=truth_error,
+        truth_error_max=truth_error_max,
     )
+    return clipped_gate_margin_score((margin,))

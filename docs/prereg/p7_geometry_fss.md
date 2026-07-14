@@ -70,8 +70,10 @@ and the three G values. Also report start-separated mean action, n0
 susceptibility `var(n0)/N`, centered n0 Binder cumulant, height, and G. The
 screening rule marks a beta mixing-adequate only when all three starts share a
 phase label and the minimum ESS over action/n0/height and chains is at least
-20. This is a warning rule, not a proof of convergence. Non-adequate starts
-must not be pooled into an equilibrium histogram or transition estimate.
+20. IAT and ESS use Geyer's initial-positive-pair sequence, truncated at the
+first non-positive paired autocorrelation sum. This is a warning rule, not a
+proof of convergence. Non-adequate starts must not be pooled into an
+equilibrium histogram or transition estimate.
 
 The added betas are characterization-only and carry no expected phase or G
 verdict. Constants and seeds are frozen in
@@ -87,13 +89,16 @@ and may not proceed by silently averaging non-converged starts.
 ## N=600 characterization outcome
 
 All 15 added chains completed, and the three P6a beta points were reused as
-frozen. Only beta = 12 and 14 passed the prespecified mixing screen.
+frozen. After the IAT estimator correction recorded below, only beta = 12
+passes the prespecified mixing screen.
 
-- Beta 12 and 14: all starts reached the continuum label. Minimum ESS was
-  31.4 and 29.4, respectively. Mean G was 0.98--0.99 for random starts and
-  0.99/0.81 for bipartite starts.
+- Beta 12: all starts reached the continuum label, and the minimum ESS was
+  31.8. Mean G was 0.98 for random starts and 0.99 for the bipartite start.
+- Beta 14: all starts reached the continuum label, but the corrected minimum
+  ESS is 19.7, below the frozen threshold of 20. Mean G was 0.99 for random
+  starts and 0.81 for the bipartite start. This point is not mixing-adequate.
 - Beta 16: all starts had a continuum mean label, but the bipartite chain had
-  action ESS 2.34, mean action -25.7 versus +1.0 for random starts, and mean
+  action ESS 2.69, mean action -25.7 versus +1.0 for random starts, and mean
   G 0.26 versus 0.95. This point is not mixed.
 - Beta 18--24: random starts stayed continuum with mean G 0.95--1.00, while
   bipartite starts stayed intermediate with G = 0. Their start-separated
@@ -101,7 +106,7 @@ frozen. Only beta = 12 and 14 passed the prespecified mixing screen.
   hysteresis points, not equilibrium mixtures.
 - Beta 28: all starts were labelled intermediate and had G = 0, but the
   random and bipartite means still differed by 32.4 in action and 9,773 in
-  n0. Random-start action ESS was only 3.50--3.97. Matching coarse labels do
+  n0. Random-start action ESS was only 3.97--4.44. Matching coarse labels do
   not establish convergence.
 
 Operationally, the bipartite basin loses reconstructable geometry between
@@ -127,4 +132,10 @@ start-separated chain/beta summaries, the JSON registry, and the
 
 ## Deviations log
 
-(empty)
+- On 2026-07-14, PR review identified that the original summary used
+  first-non-positive-single-lag IAT truncation. Summary-only aggregation was
+  corrected to Geyer's initial-positive-pair sequence using the unchanged
+  frozen chains and instrument snapshots. This changed beta=14's minimum ESS
+  from 29.4 to 19.7 and therefore changed its mixing-screen verdict from
+  adequate to inadequate. No phase label, geometry score, raw chain, or
+  instrument result changed.

@@ -12,10 +12,9 @@ from p3_dynamics import analyze_order
 from p5_two_orders_emergence import order_inputs
 from pc_common import git_describe, write_rows_csv
 
-from causal_spacetime_lab.positive_control.accelerated_two_orders import (
-    mcmc_2d_order_replay_accelerated,
-)
+from causal_spacetime_lab.positive_control.geometry_score import minimum_gate_margin
 from causal_spacetime_lab.positive_control.mcmc_diagnostics import (
+    IAT_ESTIMATOR,
     classify_phase,
     integrated_autocorrelation,
 )
@@ -27,12 +26,69 @@ FROZEN = ROOT / "docs" / "prereg" / "frozen" / "p6_near_critical_constants.json"
 
 
 def _gate_pass(row: dict, gates: dict) -> bool:
-    return bool(
-        row["status"] == "ok"
-        and row["heldout"] <= gates["heldout_max"]
-        and row["null_gap"] >= gates["null_gap_min"]
-        and row["truth"] <= gates["truth_max"]
-    )
+    if row["status"] != "ok":
+        return False
+    return minimum_gate_margin(
+        heldout=row["heldout"],
+        heldout_max=gates["heldout_max"],
+        null_gap=row["null_gap"],
+        null_gap_min=gates["null_gap_min"],
+        truth_error=row["truth"],
+        truth_error_max=gates["truth_max"],
+    ) >= 0.0
+
+
+def _validate_aggregate_inputs(
+    expected: set[tuple[float, int]],
+    chain_rows: list[dict[str, str]],
+    instrument_rows: list[dict[str, str]],
+    *,
+    minimum_samples: int,
+    nominal_samples: int,
+) -> None:
+    """Require complete chain and instrument shards before aggregation."""
+
+    for label, rows in (("chain", chain_rows), ("instrument", instrument_rows)):
+        observed = {(float(row["beta"]), int(row["chain"])) for row in rows}
+        if observed != expected:
+            missing = sorted(expected - observed)
+            unexpected = sorted(observed - expected)
+            raise SystemExit(
+                f"near-critical {label} inputs incomplete: "
+                f"missing={missing}, unexpected={unexpected}"
+            )
+
+    for beta, chain in sorted(expected):
+        chain_subset = [
+            row
+            for row in chain_rows
+            if float(row["beta"]) == beta and int(row["chain"]) == chain
+        ]
+        sample_indices = sorted(int(row["sample"]) for row in chain_subset)
+        if not minimum_samples <= len(chain_subset) <= nominal_samples:
+            raise SystemExit(
+                f"near-critical chain beta={beta:g} chain={chain} has "
+                f"{len(chain_subset)} samples; expected "
+                f"{minimum_samples}-{nominal_samples}"
+            )
+        if sample_indices != list(range(len(chain_subset))):
+            raise SystemExit(
+                f"near-critical chain beta={beta:g} chain={chain} has "
+                "missing or duplicate sample indices"
+            )
+        instrument_subset = [
+            row
+            for row in instrument_rows
+            if float(row["beta"]) == beta and int(row["chain"]) == chain
+        ]
+        expected_instrument = [0, len(chain_subset) // 2, len(chain_subset) - 1]
+        observed_instrument = sorted(int(row["sample"]) for row in instrument_subset)
+        if observed_instrument != expected_instrument:
+            raise SystemExit(
+                f"near-critical instrument beta={beta:g} chain={chain} has "
+                f"sample indices {observed_instrument}; expected "
+                f"{expected_instrument}"
+            )
 
 
 def _chain_config(constants: dict, beta: float, chain: int) -> dict:
@@ -47,6 +103,10 @@ def _chain_config(constants: dict, beta: float, chain: int) -> dict:
 
 
 def run_chain(beta: float, chain: int) -> None:
+    from causal_spacetime_lab.positive_control.accelerated_two_orders import (
+        mcmc_2d_order_replay_accelerated,
+    )
+
     constants = json.loads(FROZEN.read_text(encoding="utf-8"))
     config = _chain_config(constants, beta, chain)
     beta_index = constants["betas"].index(beta)
@@ -147,10 +207,13 @@ def aggregate() -> None:
     }
     chain_rows = _read_rows("p6_near_chain_b*_c*.csv")
     instrument_rows = _read_rows("p6_near_instrument_b*_c*.csv")
-    observed = {(float(row["beta"]), int(row["chain"])) for row in chain_rows}
-    if observed != expected:
-        missing = sorted(expected - observed)
-        raise SystemExit(f"near-critical aggregation missing chains: {missing}")
+    _validate_aggregate_inputs(
+        expected,
+        chain_rows,
+        instrument_rows,
+        minimum_samples=constants["minimum_sample_count"],
+        nominal_samples=constants["nominal_sample_count"],
+    )
 
     chains = []
     for beta, chain in sorted(expected):
@@ -185,6 +248,7 @@ def aggregate() -> None:
     result = {
         "code_version": git_describe(),
         "characterization_only": True,
+        "iat_estimator": IAT_ESTIMATOR,
         "chains": chains,
         "dual_start_phase_by_beta": {
             f"{beta:g}": [row["phase"] for row in chains if row["beta"] == beta]

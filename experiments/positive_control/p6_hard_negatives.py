@@ -21,6 +21,7 @@ import numpy as np
 from p3_dynamics import _median, analyze_order
 from pc_common import git_describe, parse_seed_spec, write_rows_csv
 
+from causal_spacetime_lab.positive_control.geometry_score import minimum_gate_margin
 from causal_spacetime_lab.positive_control.two_orders import (
     balanced_layered_perm,
     chain_observables,
@@ -52,12 +53,36 @@ def order_inputs(pi: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 def gate_pass(row: dict, truth_key: str = "truth") -> bool:
     """Apply the inherited frozen P3 gates to one successful analysis row."""
-    return bool(
-        row.get("status") == "ok"
-        and row["heldout"] <= GATE_HELDOUT
-        and row["null_gap"] >= GATE_NULL_GAP
-        and row[truth_key] <= GATE_TRUTH
-    )
+    if row.get("status") != "ok":
+        return False
+    return minimum_gate_margin(
+        heldout=row["heldout"],
+        heldout_max=GATE_HELDOUT,
+        null_gap=row["null_gap"],
+        null_gap_min=GATE_NULL_GAP,
+        truth_error=row[truth_key],
+        truth_error_max=GATE_TRUTH,
+    ) >= 0.0
+
+
+def _validate_frozen_constants(frozen: dict) -> dict:
+    expected = {
+        "n_elements": N_ELEMENTS,
+        "gate_heldout": GATE_HELDOUT,
+        "gate_nullgap": GATE_NULL_GAP,
+        "gate_truth": GATE_TRUTH,
+        "layer_jitter_window": LAYER_JITTER_WINDOW,
+    }
+    mismatches = {
+        key: (frozen.get(key), value)
+        for key, value in expected.items()
+        if frozen.get(key) != value
+    }
+    if mismatches:
+        raise RuntimeError(
+            f"P6 module constants disagree with frozen JSON: {mismatches}"
+        )
+    return frozen
 
 
 def _with_observables(row: dict, causal: np.ndarray) -> dict:
@@ -224,7 +249,7 @@ def _load_frozen() -> dict:
             f"frozen P6 constants not found at {FROZEN}; run Stage A, inspect "
             "the calibration, and freeze expectations before Stage B"
         )
-    return json.loads(FROZEN.read_text(encoding="utf-8"))
+    return _validate_frozen_constants(json.loads(FROZEN.read_text(encoding="utf-8")))
 
 
 def stage_b(seeds: Iterable[int]) -> None:

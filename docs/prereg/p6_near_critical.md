@@ -30,10 +30,11 @@ for action/n0/height, and a phase label using the already used P5 reference
 rules. The three instrument snapshots record structural status, heldout,
 null-gap, truth error, and frozen gate pass.
 
-The IAT estimator sums positive sample autocorrelations until the first
-non-positive lag. With only 48 retained samples it is a screening diagnostic,
-not a precision ESS claim. Dual-start disagreement is reported directly and
-is not averaged away.
+The IAT estimator uses Geyer's initial-positive-pair sequence: consecutive
+autocorrelations are summed as `rho[2k] + rho[2k+1]`, and truncation occurs at
+the first non-positive pair. With only 48 retained samples it is a screening
+diagnostic, not a precision ESS claim. Dual-start disagreement is reported
+directly and is not averaged away.
 
 ## Decision semantics
 
@@ -44,7 +45,14 @@ P7's geometry-order-parameter threshold or transition hypothesis.
 
 ## Deviations log
 
-(empty)
+- On 2026-07-14, PR review identified that the archived aggregation had
+  truncated IAT at the first non-positive single lag rather than the first
+  non-positive paired sum. The estimator was corrected to Geyer's
+  initial-positive-pair sequence and summaries were regenerated from the
+  unchanged retained chains. No MCMC chain or instrument snapshot was rerun.
+  Phase labels and reconstruction results were unchanged; the downstream P7
+  beta=14 minimum ESS changed enough to alter its screening verdict, as
+  recorded in `p7_geometry_fss.md`.
 
 ## Outcome
 
@@ -53,13 +61,13 @@ PASS/FAIL. All nine chains met the frozen sample-count requirement and all
 scheduled outputs are archived under `docs/prereg/frozen/`.
 
 - At beta = 12, all three starts were classified continuum, all 9/9
-  instrument snapshots passed, and the smallest reported ESS was 31.4. This
+  instrument snapshots passed, and the smallest reported ESS was 31.8. This
   is the only tested point with clean dual-start agreement and no material
   mixing warning.
 - At beta = 16, both random starts remained continuum and passed all 6/6
   snapshots. The bipartite start ended with a continuum mean label, but only
   its last snapshot became structurally measurable (1/3 pass); its action,
-  n0, and height ESS were only 2.34, 2.80, and 2.57. The apparent phase
+  n0, and height ESS were only 2.69, 3.17, and 2.94. The apparent phase
   agreement is therefore not evidence of equilibration.
 - At beta = 24, both random starts remained continuum and passed 6/6
   snapshots, while the bipartite start remained intermediate and was

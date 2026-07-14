@@ -21,6 +21,7 @@ from pc_common import (
 from causal_spacetime_lab.causal import causal_matrix_1p1
 from causal_spacetime_lab.positive_control.dynamics import transitive_percolation
 from causal_spacetime_lab.positive_control.epsilon_sweep import epsilon_diluted_order
+from causal_spacetime_lab.positive_control.geometry_score import minimum_gate_margin
 from causal_spacetime_lab.positive_control.rewire import geometric_post_closure_density
 from causal_spacetime_lab.positive_control.scene import build_positive_control_scene
 from causal_spacetime_lab.positive_control.two_orders import (
@@ -91,13 +92,20 @@ def _instrument_margin(source: str, row: dict) -> float:
     null_gap = _float(row, "null_gap")
     if source == "P1":
         assert truth is not None
-        return min((0.15 - truth) / 0.15, (0.05 - heldout) / 0.05)
-    margins = [(0.10 - heldout) / 0.10]
-    if null_gap is not None:
-        margins.append((null_gap - 0.10) / 0.10)
-    if truth is not None:
-        margins.append((0.40 - truth) / 0.40)
-    return min(margins)
+        return minimum_gate_margin(
+            heldout=heldout,
+            heldout_max=0.05,
+            truth_error=truth,
+            truth_error_max=0.15,
+        )
+    return minimum_gate_margin(
+        heldout=heldout,
+        heldout_max=0.10,
+        null_gap=null_gap,
+        null_gap_min=0.10 if null_gap is not None else None,
+        truth_error=truth,
+        truth_error_max=0.40 if truth is not None else None,
+    )
 
 
 def _base_row(

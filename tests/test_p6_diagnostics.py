@@ -18,7 +18,7 @@ from p6_diagnostics import (  # noqa: E402
     roc_auc,
     spearman,
 )
-from pc_common import write_rows_csv  # noqa: E402
+from pc_common import git_describe, write_rows_csv  # noqa: E402
 
 
 def test_roc_auc_handles_perfect_reverse_and_ties():
@@ -64,3 +64,21 @@ def test_shared_csv_writer_uses_lf_line_endings(tmp_path):
     payload = path.read_bytes()
     assert b"\r\n" not in payload
     assert payload.count(b"\n") == 2
+
+
+def test_git_describe_is_cached(monkeypatch):
+    calls = 0
+
+    def fake_run(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return type("Result", (), {"stdout": "abc123\n"})()
+
+    git_describe.cache_clear()
+    monkeypatch.setattr("pc_common.subprocess.run", fake_run)
+    try:
+        assert git_describe() == "abc123"
+        assert git_describe() == "abc123"
+        assert calls == 1
+    finally:
+        git_describe.cache_clear()
