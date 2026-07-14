@@ -31,8 +31,8 @@ import json
 from pathlib import Path
 
 import numpy as np
+from p3_dynamics import _median, analyze_order  # frozen P3 pipeline
 
-from p3_dynamics import analyze_order, cohens_d, _median  # frozen P3 pipeline
 from causal_spacetime_lab.positive_control.two_orders import (
     bipartite_perm,
     chain_observables,
@@ -72,7 +72,9 @@ def stage_a() -> None:
     ok = [r for r in rows if r["status"] == "ok"]
     reference = {
         key: float(np.mean([chain_observables(
-            perm_to_causal_matrix(np.random.default_rng(1000 + s).permutation(N_ELEMENTS))
+            perm_to_causal_matrix(
+                np.random.default_rng(1000 + s).permutation(N_ELEMENTS)
+            )
         )[key] for s in range(20)]))
         for key in ("n0", "n1", "n2", "height")
     }
@@ -115,7 +117,10 @@ def stage_recon(betas: list[float], steps: int) -> None:
             m = {k: float(np.mean([s[k] for s in samples]))
                  for k in ("S", "n0", "n1", "n2", "height")}
             n12 = m["n1"] + m["n2"]
-            if abs(m["n0"] / ref["n0"] - 1.0) <= 0.5 and m["height"] >= 0.7 * ref["height"]:
+            if (
+                abs(m["n0"] / ref["n0"] - 1.0) <= 0.5
+                and m["height"] >= 0.7 * ref["height"]
+            ):
                 phase = "continuum"
             elif n12 <= 0.5 * n12_ref and m["height"] <= 0.25 * ref["height"]:
                 phase = "crystal"

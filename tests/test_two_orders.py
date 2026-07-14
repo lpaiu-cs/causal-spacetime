@@ -103,9 +103,10 @@ def test_uniform_permutations_match_sprinkled_diamond():
     # (lightcone coordinates), so abundances must agree statistically.
     n = 60
     rng = np.random.default_rng(1)
-    perm_n0 = np.mean(
-        [chain_observables(perm_to_causal_matrix(rng.permutation(n)))["n0"] for _ in range(40)]
-    )
+    perm_n0 = np.mean([
+        chain_observables(perm_to_causal_matrix(rng.permutation(n)))["n0"]
+        for _ in range(40)
+    ])
     spr_n0 = np.mean([chain_observables(_sprinkled(n, 2, s))["n0"] for s in range(40)])
     assert abs(perm_n0 - spr_n0) / spr_n0 < 0.15
 
@@ -170,7 +171,7 @@ def test_fast_sampler_identical_trajectory():
     )
     assert acc_slow == acc_fast
     assert len(slow) == len(fast)
-    for s, f in zip(slow, fast):
+    for s, f in zip(slow, fast, strict=True):
         assert abs(s["S"] - f["S"]) < 1e-6
         assert s["n0"] == f["n0"] and s["height"] == f["height"]
 
@@ -184,7 +185,8 @@ def test_mcmc_beta0_reproduces_uniform_ensemble():
     )
     assert acceptance > 0.95
     mcmc_n0 = np.mean([s["n0"] for s in samples])
-    direct_n0 = np.mean(
-        [chain_observables(perm_to_causal_matrix(rng.permutation(n)))["n0"] for _ in range(150)]
-    )
+    direct_n0 = np.mean([
+        chain_observables(perm_to_causal_matrix(rng.permutation(n)))["n0"]
+        for _ in range(150)
+    ])
     assert abs(mcmc_n0 - direct_n0) / direct_n0 < 0.12
