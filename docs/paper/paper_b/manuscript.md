@@ -1,4 +1,4 @@
-# A validated discriminator for latent geometry in discrete causal order, and its response to geometry dilution
+# A validated discriminator for latent geometry in discrete causal order: dilution response and survival in an action-weighted ensemble
 
 **Draft v0.5.** Causal Spacetime Lab. All quantitative results trace to frozen
 preregistration artifacts (`docs/prereg/frozen/`); see Section 11.
@@ -249,7 +249,7 @@ density but percolated under transitive closure to a near-complete order
 post-closure density by bisection. Both are logged as pre-freeze repairs; the
 frozen thresholds derive only from the post-repair calibration.
 
-The first confound is quantified in Figure 4 (Section 8): under raw
+The first confound is quantified in Figure 5 (Section 8): under raw
 dissimilarity the geometry-free control sits at the gate (mean held-out 0.056;
 4 of 9 seeds fall below 0.05 and would false-pass), whereas parallax centering
 lifts every seed decisively into blocking (mean 0.238).
@@ -595,6 +595,26 @@ verdict that is unanimous at chain level under frozen expectations.
 
 ### 7.5 What the chain establishes
 
+Figure 4 collects the three quantitative legs of the chain; the table
+summarizes the design.
+
+![Figure 4](figures/fig4_emergence_chain.png)
+
+*Figure 4. The emergence chain. Left: P3 — transitive percolation blocks at
+every density (0/100): at low p the orders cannot furnish six 25-tick chains
+(structural-block counts along the top); where chains exist, held-out
+violation sits far above the 0.10 gate, while the same order-intrinsic
+protocol passes on sprinkled 1+1D geometry (blue band, P3-A calibration).
+Center: P4 — dual-start chain mean action versus beta at N = 100: the random
+and bipartite starts agree through the continuum phase (beta <= 2), separate
+hysteretically at beta = 3-4, and the bipartite start reaches the exact
+crystal action -120 at beta = 6. Right: P5 — per-configuration gate metrics
+at N = 600: held-out violation (below the gate), null gap (above it), and
+truth-order error (far below the 0.5 chance level) sit in the same range
+across the uniform calibration and beta = 2, 8, while the beta = 32 crystal
+control cannot produce a single 25-tick chain (structural block, 4/4). Every
+point is read from the frozen CSVs.*
+
 | experiment | ensemble | action | outcome |
 | --- | --- | --- | --- |
 | P3 | unrestricted (growth dynamics) | none | no geometry (0/100) |
@@ -641,13 +661,13 @@ confound is exactly a common mode masquerading as structure; the degenerate
 control is a fairness failure that would have flattered the gate. Both were
 invisible to a single pass/looks-fine reading and were caught only because the
 protocol required a matched negative control and a density-held foil before any
-threshold was frozen. Figure 4 makes the shared-scalar case concrete: with the
+threshold was frozen. Figure 5 makes the shared-scalar case concrete: with the
 common mode retained (raw dissimilarity) the geometry-free control passes the
 gate on several seeds; removing it (parallax dissimilarity) blocks every seed.
 
-![Figure 4](figures/fig4_confound.png)
+![Figure 5](figures/fig5_confound.png)
 
-*Figure 4. The shared-scalar confound on geometry-free (density-matched random)
+*Figure 5. The shared-scalar confound on geometry-free (density-matched random)
 order, PC-V1 Stage C seeds, d = 1. Each line is one seed's held-out violation
 under raw bracket-width dissimilarity (shared scalar retained; several seeds
 below the 0.05 gate, i.e., false-passing) and under parallax dissimilarity

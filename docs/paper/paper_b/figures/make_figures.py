@@ -23,6 +23,7 @@ FROZEN = Path("docs/prereg/frozen")
 OUT = Path("docs/paper/paper_b/figures")
 BLUE = "#0072B2"  # truth-order error / structured
 VERM = "#D55E00"  # held-out violation / foils
+GREEN = "#009E73"  # null gap (Fig 5 only)
 INK = "#222222"
 MUTED = "#888888"
 GRID = "#DDDDDD"
@@ -165,7 +166,7 @@ def figure_dose_response() -> None:
 
 
 def figure_confound() -> None:
-    """Fig 3: the shared-scalar confound — raw vs parallax dissimilarity.
+    """Fig 5: the shared-scalar confound — raw vs parallax dissimilarity.
 
     Slopegraph on the geometry-free control (PC-V1 Stage C seeds). Each line is
     one seed's d=1 held-out violation under raw bracket-width dissimilarity
@@ -219,12 +220,12 @@ def figure_confound() -> None:
         fontsize=10.5, color=INK, loc="left",
     )
     fig.tight_layout()
-    fig.savefig(OUT / "fig4_confound.png", dpi=200)
+    fig.savefig(OUT / "fig5_confound.png", dpi=200)
     plt.close(fig)
 
 
 def figure_dimension_2d() -> None:
-    """Fig 4: 2+1D dimension selection (P2-v2 confirmatory)."""
+    """Fig 3: 2+1D dimension selection (P2-v2 confirmatory)."""
 
     rows = [
         r
@@ -267,12 +268,140 @@ def figure_dimension_2d() -> None:
     plt.close(fig)
 
 
+def figure_emergence_chain() -> None:
+    """Fig 4: the emergence chain in one row — P3 null | P4 phases | P5 verdict.
+
+    Panel A: P3 percolation sweep (held-out violation where six chains exist;
+    structural-block counts where they do not; sprinkled P3-A reference band).
+    Panel B: P4 dual-start mean action vs beta (hysteresis opens at beta 3-4;
+    exact bipartite floor -120). Panel C: P5 per-configuration gate metrics vs
+    beta with the uniform-ensemble calibration at beta = 0 and the structural
+    block at beta = 32.
+    """
+
+    fig, (ax_a, ax_b, ax_c) = plt.subplots(1, 3, figsize=(12.8, 4.3))
+    for ax in (ax_a, ax_b, ax_c):
+        _style(ax)
+
+    # --- Panel A: P3 percolation sweep -----------------------------------
+    p3 = _rows("p3_stage_b_dynamics.csv")
+    cal3 = [_num(r, "heldout") for r in _rows("p3_stage_a_calibration.csv")
+            if r.get("status") == "ok"]
+    grid_p = sorted({_num(r, "p") for r in p3})
+    ax_a.axhspan(min(cal3), max(cal3), color=BLUE, alpha=0.15, zorder=0)
+    ax_a.annotate("sprinkled 1+1D reference (P3-A, passes)",
+                  (grid_p[0], max(cal3) + 0.012), fontsize=7.5, color=BLUE)
+    ax_a.axhline(0.10, color=MUTED, linestyle="--", linewidth=1.2, zorder=2)
+    ax_a.annotate("held-out gate 0.10", (grid_p[-1], 0.108), fontsize=7.5,
+                  color=MUTED, ha="right")
+    for p in grid_p:
+        rows = [r for r in p3 if _num(r, "p") == p]
+        ok = [_num(r, "heldout") for r in rows if r.get("status") == "ok"]
+        blocked = len(rows) - len(ok)
+        xs = [p + (j - len(ok) / 2) * 0.00012 for j in range(len(ok))]
+        ax_a.scatter(xs, ok, s=22, color=VERM, alpha=0.75, edgecolor="white",
+                     linewidth=0.5, zorder=3)
+        ax_a.annotate(f"{blocked}/20", (p, 0.372), fontsize=7, color=MUTED,
+                      ha="center")
+    ax_a.annotate("structurally blocked runs (no six 25-tick chains)",
+                  (grid_p[-1], 0.345), fontsize=7, color=MUTED, ha="right")
+    ax_a.set_xticks(grid_p)
+    ax_a.set_xticklabels([f"{p:g}" for p in grid_p], fontsize=8.5)
+    ax_a.set_xlabel("percolation probability p", fontsize=9.5, color=INK)
+    ax_a.set_ylabel("held-out violation", fontsize=9.5, color=INK)
+    ax_a.set_ylim(0.0, 0.40)
+    ax_a.set_title("P3: transitive percolation\n0/100 pass (blocks at every p)",
+                   fontsize=10, color=INK, loc="left")
+
+    # --- Panel B: P4 dual-start hysteresis --------------------------------
+    p4 = _rows("p4_stage_b_sweep.csv")
+    betas4 = sorted({_num(r, "beta") for r in p4})
+    ax_b.axvspan(2.5, 4.5, color=MUTED, alpha=0.10, zorder=0)
+    ax_b.annotate("continuum", (1.0, 15), fontsize=8, color=MUTED, ha="center")
+    ax_b.annotate("transition\n(hysteresis)", (3.5, 15), fontsize=8,
+                  color=MUTED, ha="center")
+    ax_b.annotate("crystal", (5.6, 15), fontsize=8, color=MUTED, ha="center")
+    ax_b.axhline(-120, color=INK, linestyle="--", linewidth=1.0, alpha=0.6,
+                 zorder=2)
+    ax_b.annotate("exact bipartite S = -120", (0.0, -117), fontsize=7.5,
+                  color=INK, alpha=0.8)
+    for start, color, marker, label in (
+        ("R", BLUE, "o", "random start"),
+        ("X", VERM, "s", "crystal (bipartite) start"),
+    ):
+        means = []
+        for b in betas4:
+            vals = [_num(r, "S") for r in p4
+                    if _num(r, "beta") == b and r.get("start") == start]
+            xs = [b + (j - len(vals) / 2) * 0.02 for j in range(len(vals))]
+            ax_b.scatter(xs, vals, s=18, color=color, alpha=0.55,
+                         edgecolor="white", linewidth=0.4, zorder=3,
+                         marker=marker)
+            means.append(st.mean(vals))
+        ax_b.plot(betas4, means, color=color, linewidth=1.8, marker=marker,
+                  markersize=5, zorder=4, label=label)
+    ax_b.set_xticks(betas4)
+    ax_b.set_xticklabels([f"{b:g}" for b in betas4], fontsize=8.5)
+    ax_b.set_xlabel("coupling beta", fontsize=9.5, color=INK)
+    ax_b.set_ylabel("chain mean action <S>", fontsize=9.5, color=INK)
+    ax_b.legend(loc="center left", fontsize=8, frameon=False)
+    ax_b.set_title("P4: 2D-orders phases (N = 100)\nhysteretic crystallization",
+                   fontsize=10, color=INK, loc="left")
+
+    # --- Panel C: P5 discriminator verdict --------------------------------
+    # beta = 32 rows come from the shard schema (acc, beta, chain_S, sample,
+    # seed, status): DictReader leaves null_gap/truth unset for them.
+    p5 = _rows("p5_stage_b_all.csv")
+    ok5 = [r for r in p5 if r.get("status") == "ok"]
+    cal5 = [r for r in _rows("p5_stage_a_calibration.csv")
+            if r.get("status") == "ok"]
+    n_blocked = len(p5) - len(ok5)
+    groups = [("0\n(uniform cal.)", cal5), ("2", [r for r in ok5 if _num(r, "beta") == 2.0]),
+              ("8", [r for r in ok5 if _num(r, "beta") == 8.0])]
+    ax_c.axhline(0.10, color=MUTED, linestyle="--", linewidth=1.2, zorder=2)
+    ax_c.annotate("gate 0.10", (3.5, 0.112), fontsize=7.5, color=MUTED,
+                  ha="right")
+    ax_c.axhline(0.50, color=BLUE, linestyle=":", linewidth=1.0, zorder=2)
+    ax_c.annotate("truth chance level 0.5", (3.45, 0.515), fontsize=7.5,
+                  color=BLUE, ha="right")
+    for series_key, color, marker, dx, label in (
+        ("heldout", VERM, "o", -0.18, "held-out violation"),
+        ("null_gap", GREEN, "^", 0.0, "null gap"),
+        ("truth", BLUE, "s", 0.18, "truth-order error"),
+    ):
+        for i, (_lbl, rows) in enumerate(groups):
+            vals = [_num(r, series_key) for r in rows]
+            xs = [i + dx + (j - len(vals) / 2) * 0.014 for j in range(len(vals))]
+            ax_c.scatter(xs, vals, s=22, color=color, alpha=0.75,
+                         edgecolor="white", linewidth=0.5, zorder=3,
+                         marker=marker, label=label if i == 0 else None)
+    ax_c.axvspan(2.6, 3.4, color=MUTED, alpha=0.12, zorder=0)
+    ax_c.annotate(f"structural block\n(0 chains, {n_blocked}/{n_blocked})",
+                  (3.0, 0.30), fontsize=8, color=MUTED, ha="center")
+    ax_c.set_xticks([0, 1, 2, 3])
+    ax_c.set_xticklabels([g[0] for g in groups] + ["32\n(crystal)"],
+                         fontsize=8.5)
+    ax_c.set_xlim(-0.55, 3.55)
+    ax_c.set_ylim(0.0, 0.70)
+    ax_c.set_xlabel("coupling beta", fontsize=9.5, color=INK)
+    ax_c.set_ylabel("gate metric", fontsize=9.5, color=INK)
+    ax_c.legend(loc="upper left", fontsize=8, frameon=False)
+    ax_c.set_title("P5: discriminator verdict (N = 600)\n18/18 pass; crystal blocked",
+                   fontsize=10, color=INK, loc="left")
+
+    fig.tight_layout()
+    fig.savefig(OUT / "fig4_emergence_chain.png", dpi=200)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     figure_discriminator()      # Fig 1 (PC-V1, Section 4)
     figure_dose_response()      # Fig 2 (P1, Section 5)
     figure_dimension_2d()       # Fig 3 (P2-v2 robustness, Section 6)
-    figure_confound()           # Fig 4 (confound, Discussion Section 7)
+    figure_emergence_chain()    # Fig 4 (emergence chain, Section 7)
+    figure_confound()           # Fig 5 (confound, Discussion Section 8)
     for name in ("fig1_discriminator", "fig2_dose_response",
-                 "fig3_dimension_2d", "fig4_confound"):
+                 "fig3_dimension_2d", "fig4_emergence_chain",
+                 "fig5_confound"):
         print("wrote", OUT / f"{name}.png")

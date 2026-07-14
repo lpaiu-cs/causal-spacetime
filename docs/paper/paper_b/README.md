@@ -1,7 +1,8 @@
 # Paper B (draft)
 
 Working title: **A validated discriminator for latent geometry in discrete
-causal order, and its response to geometry dilution.**
+causal order: dilution response and survival in an action-weighted
+ensemble.**
 
 Status: DRAFT v0.5 (2026-07-14). Prose grounded entirely in the frozen
 preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1, P2/P2-v2,
@@ -45,13 +46,14 @@ See `manuscript.md` Section 9 (claim boundary).
   bibliography.
 - `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 9).
 - `figures/make_figures.py` — regenerates every figure from the frozen CSVs
-  (and, for Fig 3, from `confound_data.csv`).
-- `figures/compute_confound_data.py` — recomputes the Fig 3 confound data (raw
+  (and, for Fig 5, from `confound_data.csv`).
+- `figures/compute_confound_data.py` — recomputes the Fig 5 confound data (raw
   vs parallax dissimilarity on the Stage C seeds); the parallax column
   reproduces the frozen Stage C registry exactly.
 - `figures/*.png` — generated figures (committed for convenience). Fig 1
   discriminator separation, Fig 2 dose-response, Fig 3 2+1D dimension
-  selection, Fig 4 shared-scalar confound.
+  selection, Fig 4 emergence chain (P3 | P4 | P5), Fig 5 shared-scalar
+  confound.
 - `citations/references.bib` — verified bibliography (every entry confirmed
   against an authoritative source; no fabricated field).
 - `citations/citation_verification_report.md` — per-entry source + corrections.
