@@ -56,10 +56,17 @@ OUT = ROOT / "outputs" / "positive_control"
 EPS_N = 12.0
 REWEIGHT_BETAS = [0.0, 4.0, 8.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0]
 
-# A reweighting that does not move <S> as beta sweeps has not reweighted
-# anything: the samples are degenerate in action. High Kish ESS in that case
-# means "the weights were all equal", not "well supported".
-MIN_S_SPREAD = 1e-3
+# The multicanonical run is the real acceptance test for ln_g, and it is a
+# harsher one than Wang-Landau's own convergence flag. If ln_g were the true
+# density of states, the production chain would random-walk flat across the
+# whole action window. So: it must actually traverse it.
+#
+# These thresholds exist because a run passed a weaker check and was still
+# worthless. An earlier pilot reported converged=True with a production chain
+# that covered 4.7% of the window at 1.3% acceptance -- ln_f had reached its
+# target while ln_g was still wrong. A spread-only guard waved it through.
+MIN_MUCA_COVERAGE = 0.5
+MIN_MUCA_ROUND_TRIPS = 2
 
 
 def main() -> None:
@@ -181,12 +188,26 @@ def main() -> None:
         f"{window_span:.3f} window ({coverage:.1%})",
         flush=True,
     )
-    if action_spread < MIN_S_SPREAD:
+    muca_fatal = []
+    if coverage < MIN_MUCA_COVERAGE:
+        muca_fatal.append(
+            f"the production chain covered {coverage:.1%} of the action window "
+            f"(need {MIN_MUCA_COVERAGE:.0%}). A correct ln_g makes this chain "
+            f"flat in S; a chain that stays put means ln_g is still wrong, "
+            f"whatever Wang-Landau's convergence flag says."
+        )
+    if production.round_trips < MIN_MUCA_ROUND_TRIPS:
+        muca_fatal.append(
+            f"the production chain completed {production.round_trips} round "
+            f"trips (need {MIN_MUCA_ROUND_TRIPS}). Without traversals there is "
+            f"no demonstrated overlap between the two basins."
+        )
+    if muca_fatal:
+        for line in muca_fatal:
+            print(f"REFUSING TO REWEIGHT: {line}", flush=True)
         print(
-            "REFUSING TO REWEIGHT: the production samples are degenerate in S. "
-            "Every reweighting weight would be equal, ESS would report its "
-            "maximum, and the beta table would be a flat line dressed up as an "
-            "estimate.",
+            "\nNo beta table is produced. The Wang-Landau stage needs a longer "
+            "run, more bins, or a wider window.",
             flush=True,
         )
         raise SystemExit(1)

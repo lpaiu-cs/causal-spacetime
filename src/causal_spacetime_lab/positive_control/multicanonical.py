@@ -65,6 +65,11 @@ class WangLandauResult:
     acceptance: float
     converged: bool
 
+    entered_one_over_t: bool = False
+    """True once the run left the flatness regime for the 1/t schedule."""
+
+    moves: int = 0
+
     def bin_centers(self) -> np.ndarray:
         return 0.5 * (self.bin_edges[:-1] + self.bin_edges[1:])
 
@@ -139,6 +144,8 @@ def wang_landau_2d_order(
     ln_f_init: float = 1.0,
     ln_f_final: float = 1e-6,
     max_sweeps: int = 100_000,
+    max_sweeps_per_stage: int = 50,
+    min_round_trips_per_stage: int = 1,
 ) -> WangLandauResult:
     """Estimate ln g(S) by Wang-Landau random walk over the action.
 
@@ -148,11 +155,18 @@ def wang_landau_2d_order(
     ``[s_min, s_max]`` are rejected, so the window must actually contain both
     basins -- use :func:`action_range` to set it.
 
-    Each visit does ``ln_g[bin] += ln_f`` and ``H[bin] += 1``. When the
-    visit histogram over reached bins is flat to ``flatness``, ln_f is halved
-    and H reset. The run converges when ln_f falls below ``ln_f_final``; if
-    ``max_sweeps`` is hit first, ``converged`` is False and the result must
-    not be used for production reweighting.
+    Each visit does ``ln_g[bin] += ln_f`` and ``H[bin] += 1``. ln_f is halved
+    when the visit histogram over reached bins comes flat to ``flatness`` -- or,
+    failing that, after ``max_sweeps_per_stage`` sweeps. The budget matters: on
+    this ensemble g(S) spans many decades, flatness almost never passes, and a
+    flatness-only schedule freezes ln_f (the N=60 pilot managed one halving in
+    24M moves). Once ln_f has fallen to ``1/t``, the run switches permanently to
+    the Belardinelli-Pereyra ``ln_f = 1/t`` schedule, which has no flatness test
+    to stall on and still lets ln_g accumulate, since the harmonic sum diverges.
+
+    The run converges when ln_f falls below ``ln_f_final``; if ``max_sweeps``
+    is hit first, ``converged`` is False and the result must not be used for
+    production reweighting.
     """
 
     if s_max <= s_min:
@@ -185,6 +199,10 @@ def wang_landau_2d_order(
     proposed_moves = 0
     accepted = 0
     sweeps = 0
+    stage_sweeps = 0
+    round_trips_at_stage_start = 0
+    updates = 0
+    one_over_t = False
 
     while ln_f > ln_f_final and sweeps < max_sweeps:
         for _ in range(sweep_steps):
@@ -204,9 +222,19 @@ def wang_landau_2d_order(
             else:
                 state.swap(i, j)
 
+            updates += 1
             ln_g[current] += ln_f
             histogram[current] += 1
             visited[current] = True
+
+            if one_over_t:
+                # Belardinelli-Pereyra: once the flatness schedule has driven
+                # ln_f below 1/t, keep it pinned there. The 1/t decay is slow
+                # enough to preserve detailed balance asymptotically and fast
+                # enough to terminate, and -- the reason it is here -- it does
+                # not depend on a flatness test that a rugged density of states
+                # may never satisfy.
+                ln_f = 1.0 / updates
 
             if current <= low_zone:
                 if last_end == 1:
@@ -218,10 +246,46 @@ def wang_landau_2d_order(
                 last_end = 1
 
         sweeps += 1
+        if one_over_t:
+            continue
+
+        stage_sweeps += 1
         reached = histogram[visited]
-        if reached.size and reached.min() >= flatness * reached.mean():
+        flat = bool(reached.size and reached.min() >= flatness * reached.mean())
+
+        # Halve on flatness, or on an exhausted stage budget -- but never before
+        # the walker has traversed the window at least once in the current stage.
+        #
+        # Both halves of that rule were forced by an observed failure:
+        #
+        # - Without the budget, ln_f freezes. g(S) here spans many decades, the
+        #   flatness test almost never passes, and the N=60 pilot managed ONE
+        #   halving in 24M moves. The textbook 1/t switch cannot rescue that
+        #   either: a frozen ln_f compared against a shrinking 1/t never fires.
+        #
+        # - Without the round-trip requirement, the budget overshoots the other
+        #   way. Halving every 50 sweeps regardless of exploration drove ln_f
+        #   onto the 1/t curve while ln_g was still wrong, and the run then
+        #   reported converged=True on a ln_g whose multicanonical chain covered
+        #   4.7% of the window at 1.3% acceptance. ln_f reaching its target says
+        #   nothing about ln_g being right.
+        #
+        # Tying the schedule to completed round trips makes the decay rate
+        # answer to exploration rather than to the wall clock.
+        explored = round_trips - round_trips_at_stage_start
+        if (flat or stage_sweeps >= max_sweeps_per_stage) and (
+            explored >= min_round_trips_per_stage
+        ):
             ln_f *= 0.5
             histogram[:] = 0
+            stage_sweeps = 0
+            round_trips_at_stage_start = round_trips
+
+        # Hand over to 1/t once it decays at least as fast as halving would.
+        # Beyond this point there is no flatness test left to stall on, and the
+        # harmonic sum still diverges, so ln_g keeps accumulating corrections.
+        if ln_f <= 1.0 / updates:
+            one_over_t = True
 
     if visited.any():
         ln_g[visited] -= ln_g[visited].min()
@@ -236,6 +300,8 @@ def wang_landau_2d_order(
         round_trips=round_trips,
         acceptance=accepted / proposed_moves if proposed_moves else 0.0,
         converged=ln_f <= ln_f_final,
+        entered_one_over_t=one_over_t,
+        moves=updates,
     )
 
 

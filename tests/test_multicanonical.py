@@ -112,6 +112,44 @@ def test_wang_landau_converges_and_crosses_the_barrier(wl):
     assert 0.0 < wl.acceptance < 1.0
 
 
+def test_wang_landau_escapes_the_flatness_stall_via_one_over_t():
+    """Regression: a flatness-only schedule stalls on a rugged density of states.
+
+    In the eps*N=12 regime the N=60 pilot managed a single ln_f halving in 24M
+    moves -- the histogram over a many-decade g(S) simply never came flat, so
+    ln_f froze at 0.5 and the run could never converge however long it ran.
+
+    Forcing an unreachable flatness (1.0 demands a perfectly uniform histogram)
+    reproduces that stall exactly. The 1/t schedule must take over and still
+    drive ln_f to the target.
+    """
+
+    actions = [action for action, _ in _exact_states(N, EPS)]
+    span = max(actions) - min(actions)
+
+    result = wang_landau_2d_order(
+        pi0=np.arange(N),
+        eps=EPS,
+        s_min=min(actions) - 0.05 * span,
+        s_max=max(actions) + 0.05 * span,
+        n_bins=24,
+        seed=5,
+        sweep_steps=2000,
+        flatness=1.0,  # unsatisfiable: only the stage budget can drive ln_f down
+        max_sweeps_per_stage=5,
+        ln_f_final=1e-6,
+        max_sweeps=1200,
+    )
+
+    # 1/t engages late by design -- it handles the fine-convergence tail, after
+    # halving has already brought ln_f down to the 1/t curve.
+    assert result.entered_one_over_t, "the 1/t schedule never engaged"
+    assert result.converged, (
+        f"1/t failed to drive ln_f to target: stalled at {result.final_ln_f:.2e}"
+    )
+    assert result.final_ln_f <= 1e-6
+
+
 def test_wang_landau_ln_g_matches_exact_enumeration(wl, window):
     exact, occupied = _exact_ln_g(N, EPS, wl.bin_edges)
 
@@ -151,6 +189,44 @@ def test_reweighted_canonical_means_match_exact_gibbs(wl, beta):
 
     # Reweighting is only licensed where it retains statistical support.
     assert effective_sample_size(production.samples, beta) > 10.0
+
+
+def test_ln_f_does_not_decay_before_the_walker_traverses_the_window():
+    """Regression: ln_f reaching its target says nothing about ln_g being right.
+
+    A stage budget that halves ln_f on a sweep count alone will drive ln_f onto
+    the 1/t curve while the walker is still stuck in one basin -- and then the
+    run reports converged=True on a ln_g that is simply wrong. That happened:
+    an N=60 pilot "converged" with a multicanonical chain covering 4.7% of the
+    window at 1.3% acceptance.
+
+    Demanding an impossible number of round trips per stage must therefore
+    freeze the schedule outright rather than let it decay on schedule.
+    """
+
+    actions = [action for action, _ in _exact_states(N, EPS)]
+    span = max(actions) - min(actions)
+
+    result = wang_landau_2d_order(
+        pi0=np.arange(N),
+        eps=EPS,
+        s_min=min(actions) - 0.05 * span,
+        s_max=max(actions) + 0.05 * span,
+        n_bins=24,
+        seed=5,
+        sweep_steps=2000,
+        flatness=1.0,
+        max_sweeps_per_stage=1,
+        min_round_trips_per_stage=10_000_000,  # unreachable
+        ln_f_final=1e-6,
+        max_sweeps=60,
+    )
+
+    assert not result.converged
+    assert result.final_ln_f == pytest.approx(1.0), (
+        "ln_f decayed despite the walker never meeting the round-trip bar"
+    )
+    assert not result.entered_one_over_t
 
 
 def test_reweighting_ess_decays_away_from_flat_support(wl):
