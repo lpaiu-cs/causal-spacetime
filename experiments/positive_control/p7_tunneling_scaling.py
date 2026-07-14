@@ -70,8 +70,16 @@ def main() -> None:
     parser.add_argument(
         "--target-round-trips",
         type=int,
-        default=6,
-        help="stop each N once this many traversals are measured",
+        default=25,
+        help="traversals per run; round-trip times are heavy-tailed, so a "
+        "handful of them does not measure tau",
+    )
+    parser.add_argument(
+        "--repeats",
+        type=int,
+        default=3,
+        help="independent seeds per N, so tau gets an error bar rather than a "
+        "single noisy point",
     )
     parser.add_argument(
         "--move-budget",
@@ -89,94 +97,143 @@ def main() -> None:
 
     for n in args.sizes:
         eps = args.eps_n / n
-        rng = np.random.default_rng(args.seed + n)
-        pi0 = rng.permutation(n)
-        s_min, s_max = action_range(n, eps, seed=args.seed + n, probes=200)
+        for repeat in range(args.repeats):
+            seed = args.seed + 1000 * repeat + n
+            rng = np.random.default_rng(seed)
+            pi0 = rng.permutation(n)
+            s_min, s_max = action_range(n, eps, seed=seed, probes=200)
 
-        started = time.perf_counter()
-        result = wang_landau_2d_order(
-            pi0=pi0,
-            eps=eps,
-            s_min=s_min,
-            s_max=s_max,
-            n_bins=args.bins,
-            seed=args.seed + n,
-            sweep_steps=args.sweep_steps,
-            max_sweeps=max(1, args.move_budget // args.sweep_steps),
-            max_round_trips=args.target_round_trips,
-            ln_f_final=1e-12,  # never converge; we are timing traversals only
+            started = time.perf_counter()
+            result = wang_landau_2d_order(
+                pi0=pi0,
+                eps=eps,
+                s_min=s_min,
+                s_max=s_max,
+                n_bins=args.bins,
+                seed=seed,
+                sweep_steps=args.sweep_steps,
+                max_sweeps=max(1, args.move_budget // args.sweep_steps),
+                max_round_trips=args.target_round_trips,
+                ln_f_final=1e-12,  # never converge; we are timing traversals only
+            )
+            elapsed = time.perf_counter() - started
+
+            hit_budget = result.round_trips < args.target_round_trips
+            if result.round_trips > 0:
+                tau = result.moves / result.round_trips
+            else:
+                # No traversal inside the budget: tau is not measured, only
+                # bounded below. Reporting moves/0 as a number would invent a
+                # measurement that did not happen.
+                tau = float("nan")
+
+            rows.append({
+                "n_elements": n,
+                "repeat": repeat,
+                "seed": seed,
+                "eps": eps,
+                "eps_n": eps * n,
+                "moves": result.moves,
+                "round_trips": result.round_trips,
+                "tau_moves_per_round_trip": tau,
+                # A run stopped by the move budget has not measured tau -- it has
+                # only shown tau is at least this large. Mixing the two into one
+                # column and fitting through them would manufacture an exponent.
+                "tau_is_lower_bound": bool(hit_budget),
+                "wl_acceptance": result.acceptance,
+                "seconds": elapsed,
+            })
+
+            status = "LOWER BOUND" if hit_budget else "measured"
+            print(
+                f"N={n:4d} rep={repeat}  round_trips={result.round_trips:3d}  "
+                f"moves={result.moves:,}  tau={tau:,.0f}  [{status}]  "
+                f"{elapsed:.0f}s",
+                flush=True,
+            )
+
+    clean = [r for r in rows if not r["tau_is_lower_bound"] and r["round_trips"] > 0]
+
+    # Per-N spread first. The previous run fit an exponent through single noisy
+    # points and produced tau(N=50) > tau(N=60) -- a power law cannot be
+    # non-monotonic, so the scatter was larger than the signal between adjacent
+    # sizes and the fitted exponent was meaningless. Print the spread before any
+    # exponent, so that failure mode is visible rather than averaged away.
+    print("\nper-N tau (moves per round trip):", flush=True)
+    by_size: dict[int, list[float]] = {}
+    for row in clean:
+        by_size.setdefault(row["n_elements"], []).append(
+            row["tau_moves_per_round_trip"]
         )
-        elapsed = time.perf_counter() - started
-
-        hit_budget = result.round_trips < args.target_round_trips
-        if result.round_trips > 0:
-            tau = result.moves / result.round_trips
-        else:
-            # No traversal at all inside the budget: tau is not measured, only
-            # bounded below by the whole budget. Reporting moves/0 as a number
-            # would invent a measurement that did not happen.
-            tau = float("nan")
-
-        rows.append({
-            "n_elements": n,
-            "eps": eps,
-            "eps_n": eps * n,
-            "window_low": s_min,
-            "window_high": s_max,
-            "moves": result.moves,
-            "round_trips": result.round_trips,
-            "tau_moves_per_round_trip": tau,
-            # A run stopped by the move budget has not measured tau -- it has
-            # only shown tau is at least this large. Mixing the two into one
-            # column and fitting through them would manufacture an exponent.
-            "tau_is_lower_bound": bool(hit_budget),
-            "wl_acceptance": result.acceptance,
-            "seconds": elapsed,
-            "us_per_move": (
-                1e6 * elapsed / result.moves if result.moves else float("nan")
-            ),
-            "projected_moves_to_converge": (
-                tau * HALVINGS_TO_CONVERGE if np.isfinite(tau) else float("nan")
-            ),
-        })
-
-        status = "LOWER BOUND (hit move budget)" if hit_budget else "measured"
+    for n in sorted(by_size):
+        taus = np.array(by_size[n])
+        spread = taus.max() / taus.min() if taus.min() > 0 else float("inf")
         print(
-            f"N={n:4d} eps={eps:.4f}  round_trips={result.round_trips:3d}  "
-            f"moves={result.moves:,}  tau={tau:,.0f} moves/RT  [{status}]  "
-            f"{elapsed:.0f}s",
+            f"  N={n:4d}  n_runs={taus.size}  mean={taus.mean():,.0f}  "
+            f"min={taus.min():,.0f}  max={taus.max():,.0f}  "
+            f"max/min={spread:.1f}x",
             flush=True,
         )
 
-    clean = [r for r in rows if not r["tau_is_lower_bound"] and r["round_trips"] > 0]
     exponent = None
-    if len(clean) >= 2:
-        # tau ~ N^alpha  =>  log tau = alpha log N + c
+    interval = None
+    fittable = {n: v for n, v in by_size.items() if len(v) >= 1}
+    if len(fittable) >= 3:
+        # tau ~ N^alpha  =>  log tau = alpha log N + c. Fit on every run, not on
+        # per-N means, so the within-N scatter propagates into the uncertainty.
         log_n = np.log([r["n_elements"] for r in clean])
         log_tau = np.log([r["tau_moves_per_round_trip"] for r in clean])
-        exponent, intercept = np.polyfit(log_n, log_tau, 1)
-        exponent = float(exponent)
+        exponent, intercept = (float(v) for v in np.polyfit(log_n, log_tau, 1))
 
-        print(f"\ntau ~ N^{exponent:.2f}  (fit over {len(clean)} measured sizes)")
-        projected = float(
-            np.exp(intercept) * 600.0**exponent * HALVINGS_TO_CONVERGE
-        )
+        # Bootstrap the exponent over runs. A tight point estimate from noisy
+        # data is exactly what produced the bogus 2.95 before.
+        boot_rng = np.random.default_rng(0)
+        boots = []
+        for _ in range(2000):
+            pick = boot_rng.integers(0, log_n.size, log_n.size)
+            if np.unique(log_n[pick]).size < 2:
+                continue
+            boots.append(np.polyfit(log_n[pick], log_tau[pick], 1)[0])
+        if boots:
+            interval = (
+                float(np.percentile(boots, 5)),
+                float(np.percentile(boots, 95)),
+            )
+
+        print(f"\ntau ~ N^{exponent:.2f}", flush=True)
+        if interval:
+            print(
+                f"90% bootstrap interval on the exponent: "
+                f"[{interval[0]:.2f}, {interval[1]:.2f}]",
+                flush=True,
+            )
+
+        low, high = interval if interval else (exponent, exponent)
+        for label, alpha in (("low", low), ("point", exponent), ("high", high)):
+            projected = float(
+                np.exp(intercept) * 600.0**alpha * HALVINGS_TO_CONVERGE
+            )
+            print(
+                f"  N=600 converged ln_g, alpha={alpha:.2f} ({label}): "
+                f"{projected:.2e} moves = "
+                f"{projected * 135e-6 / 3600:,.0f} core-hours "
+                f"(Numba kernel at 135 us/move)",
+                flush=True,
+            )
+
         print(
-            f"extrapolated cost of a converged ln_g at N=600: "
-            f"{projected:.3e} moves "
-            f"({projected * 135e-6 / 3600:.0f} core-hours at the Numba kernel's "
-            f"135 us/move)"
-        )
-        print(
-            "\nThis extrapolation is a power-law fit over a short lever arm of "
-            "small N. It is a planning number, not a result: if the true "
-            "scaling is exponential, a power law will fit these few points and "
-            "still be badly wrong at N=600."
+            "\nThese are planning numbers, not results. The lever arm is short "
+            "(a factor of two in N) and the extrapolation to N=600 is a factor "
+            "of ten beyond it. A power law fits a few small-N points perfectly "
+            "well even when the true scaling is exponential -- in which case "
+            "every cost above is an underestimate, and not by a little.",
+            flush=True,
         )
     else:
         print(
             "\nToo few measured sizes to fit an exponent. Raise --move-budget "
-            "or lower --target-round-trips; do not fit through lower bounds."
+            "or lower --target-round-trips; do not fit through lower bounds.",
+            flush=True,
         )
 
     with open(OUT / "p7_tunneling_scaling.csv", "w", newline="") as handle:
@@ -188,10 +245,12 @@ def main() -> None:
             {
                 "eps_n": args.eps_n,
                 "target_round_trips": args.target_round_trips,
+                "repeats": args.repeats,
                 "move_budget": args.move_budget,
                 "halvings_to_converge": HALVINGS_TO_CONVERGE,
                 "fitted_exponent": exponent,
-                "measured_sizes": [r["n_elements"] for r in clean],
+                "exponent_90pct_bootstrap": interval,
+                "measured_sizes": sorted({r["n_elements"] for r in clean}),
                 "rows": rows,
                 "status": "method development; nothing frozen; no phase claim",
             },
