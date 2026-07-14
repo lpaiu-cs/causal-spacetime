@@ -221,7 +221,7 @@ def collect_p6() -> None:
     write_rows_csv(OUT / "p6b_raw_p6.csv", rows)
 
 
-def collect_p5(beta: float, seed: int) -> None:
+def collect_p5(beta: float, seed: int, accelerated: bool = False) -> None:
     constants = json.loads((FROZEN / "p5_test_constants.json").read_text())
     frozen = _read_csv(FROZEN / "p5_stage_b_all.csv")
     expected = [
@@ -239,7 +239,14 @@ def collect_p5(beta: float, seed: int) -> None:
         pi0 = bipartite_perm(600)
     else:
         pi0 = np.random.default_rng(seed * 31 + int(round(beta * 10))).permutation(600)
-    samples, acceptance, _ = mcmc_2d_order_fast(
+    sampler = mcmc_2d_order_fast
+    if accelerated:
+        from causal_spacetime_lab.positive_control.accelerated_two_orders import (
+            mcmc_2d_order_replay_accelerated,
+        )
+
+        sampler = mcmc_2d_order_replay_accelerated
+    samples, acceptance, _ = sampler(
         pi0,
         beta=beta,
         eps=0.02,
@@ -494,6 +501,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--beta", type=float)
     parser.add_argument("--seed", type=int)
+    parser.add_argument(
+        "--accelerated",
+        action="store_true",
+        help="use optional trajectory-equivalent Numba replay for P5",
+    )
     return parser.parse_args()
 
 
@@ -509,7 +521,7 @@ def main() -> None:
     elif args.source == "p5":
         if args.beta is None or args.seed is None:
             raise SystemExit("--source p5 requires --beta and --seed")
-        collect_p5(args.beta, args.seed)
+        collect_p5(args.beta, args.seed, accelerated=args.accelerated)
     elif args.source == "p6":
         collect_p6()
     else:

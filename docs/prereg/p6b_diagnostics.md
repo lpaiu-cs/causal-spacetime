@@ -56,6 +56,13 @@ seed because exact deterministic regeneration of the frozen 3M-step chains is
 long-running. Aggregation refuses to run unless all frozen source cells and
 all reference groups are present. No missing cell is silently dropped.
 
+The optional Numba replay is an implementation accelerator, not a new chain:
+it pre-generates the exact conditional RNG stream used by the validated NumPy
+sampler and applies the same accepted/rejected permutation swaps. An automated
+equivalence test requires acceptance rates and every sampled permutation to
+match the validated sampler exactly; each replayed P5 shard additionally must
+reproduce its frozen mean action before it is accepted.
+
 ## Deviations log
 
 (empty)
