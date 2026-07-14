@@ -18,6 +18,7 @@ from p6_diagnostics import (  # noqa: E402
     roc_auc,
     spearman,
 )
+from pc_common import write_rows_csv  # noqa: E402
 
 
 def test_roc_auc_handles_perfect_reverse_and_ties():
@@ -55,3 +56,11 @@ def test_legacy_short_p5_crystal_row_is_normalized():
     assert normalized["sample"] == "1"
     assert normalized["seed"] == "101"
     assert normalized["status"] == "structural_block: only 0 chains"
+
+
+def test_shared_csv_writer_uses_lf_line_endings(tmp_path):
+    path = tmp_path / "rows.csv"
+    write_rows_csv(path, [{"seed": 1.0, "status": "ok"}])
+    payload = path.read_bytes()
+    assert b"\r\n" not in payload
+    assert payload.count(b"\n") == 2

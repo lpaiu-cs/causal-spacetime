@@ -269,7 +269,7 @@ def write_rows_csv(path: Path, rows: list[dict[str, float | str]]) -> None:
             if key not in fieldnames:
                 fieldnames.append(key)
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
