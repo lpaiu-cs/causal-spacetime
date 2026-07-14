@@ -391,6 +391,82 @@ def _score_cheap(row: dict, model: dict) -> dict[str, float]:
     }
 
 
+def _rank_summary(rank_rows: list[dict], diagnostic: str) -> dict[str, float]:
+    subset = [row for row in rank_rows if row["diagnostic"] == diagnostic]
+    result: dict[str, float] = {}
+    for key in ("rho_epsilon", "rho_truth"):
+        values = np.array([row[key] for row in subset], dtype=float)
+        result[f"median_{key}"] = float(np.nanmedian(values))
+        result[f"min_{key}"] = float(np.nanmin(values))
+        result[f"max_{key}"] = float(np.nanmax(values))
+    return result
+
+
+def _write_comparison_deliverables(summary: dict) -> None:
+    table_rows = []
+    for diagnostic in RANK_DIAGNOSTICS:
+        overlap = summary["p1_h_lag_overlap"].get(diagnostic, {})
+        table_rows.append(
+            {
+                "diagnostic": diagnostic,
+                "roc_auc": summary["roc_auc"][diagnostic],
+                **summary["p1_rank_summary"][diagnostic],
+                "h_lag_false_pass_fraction": overlap.get("fraction", ""),
+                "h_lag_false_pass_count": overlap.get("n_false_pass", ""),
+                "h_lag_cell_count": overlap.get("n_h_lag", ""),
+            }
+        )
+    write_rows_csv(OUT / "p6b_diagnostics_table.csv", table_rows)
+
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    labels = ["Instrument", "MM dim.", "Abundance", "Height"]
+    colors = ["#1f2937", "#3b82f6", "#10b981", "#f59e0b"]
+    figure, axes = plt.subplots(1, 3, figsize=(11.2, 3.4))
+    axes[0].bar(
+        labels,
+        [summary["roc_auc"][name] for name in RANK_DIAGNOSTICS],
+        color=colors,
+    )
+    axes[0].axhline(0.5, color="#6b7280", linestyle="--", linewidth=1)
+    axes[0].set_ylabel("ROC AUC")
+    axes[0].set_ylim(0, 1.03)
+    axes[0].set_title("Frozen class labels")
+
+    axes[1].bar(
+        labels,
+        [
+            summary["p1_rank_summary"][name]["median_rho_epsilon"]
+            for name in RANK_DIAGNOSTICS
+        ],
+        color=colors,
+    )
+    axes[1].axhline(0, color="#6b7280", linewidth=1)
+    axes[1].set_ylabel("Median Spearman rho")
+    axes[1].set_ylim(-1.03, 1.03)
+    axes[1].set_title("P1 response vs epsilon")
+
+    cheap = RANK_DIAGNOSTICS[1:]
+    axes[2].bar(
+        labels[1:],
+        [summary["p1_h_lag_overlap"][name]["fraction"] for name in cheap],
+        color=colors[1:],
+    )
+    axes[2].set_ylabel("False-pass overlap")
+    axes[2].set_ylim(0, 1.03)
+    axes[2].set_title("P1 H-LAG cells")
+    for axis in axes:
+        axis.tick_params(axis="x", rotation=25)
+        axis.grid(axis="y", alpha=0.2)
+    figure.tight_layout()
+    figure.savefig(OUT / "p6b_diagnostics_comparison.png", dpi=180)
+    figure.savefig(OUT / "p6b_diagnostics_comparison.pdf")
+    plt.close(figure)
+
+
 def aggregate() -> None:
     required = [
         OUT / "p6b_raw_references.csv",
@@ -483,33 +559,14 @@ def aggregate() -> None:
         "roc_auc": auc,
         "reference_cutoffs": cutoffs,
         "p1_h_lag_overlap": overlap,
-        "p1_rank_medians": {
-            name: {
-                "rho_epsilon": float(
-                    np.nanmedian(
-                        [
-                            row["rho_epsilon"]
-                            for row in rank_rows
-                            if row["diagnostic"] == name
-                        ]
-                    )
-                ),
-                "rho_truth": float(
-                    np.nanmedian(
-                        [
-                            row["rho_truth"]
-                            for row in rank_rows
-                            if row["diagnostic"] == name
-                        ]
-                    )
-                ),
-            }
-            for name in diagnostics
+        "p1_rank_summary": {
+            name: _rank_summary(rank_rows, name) for name in diagnostics
         },
     }
     (OUT / "p6b_diagnostics_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
+    _write_comparison_deliverables(summary)
     print(json.dumps(summary, indent=2))
 
 
