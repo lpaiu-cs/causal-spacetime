@@ -12,7 +12,12 @@ EXPERIMENT_DIR = (
 )
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
-from p7_n600_stage_a import _binder, _group_chains_by_start, _seed  # noqa: E402
+from p7_n600_stage_a import (  # noqa: E402
+    _binder,
+    _group_chains_by_start,
+    _seed,
+    _validate_shard_contents,
+)
 
 
 def test_seed_formula_separates_beta_and_chain():
@@ -44,4 +49,52 @@ def test_start_grouping_rejects_wrong_multiplicity():
                 {"chain": 0, "start": "random"},
                 {"chain": 2, "start": "bipartite"},
             ]
+        )
+
+
+def _shard_rows(count: int, *, instrument: bool = False):
+    indices = [0, count // 2, count - 1] if instrument else range(count)
+    return [
+        {"beta": "14", "chain": "0", "start": "random", "sample": str(index)}
+        for index in indices
+    ]
+
+
+def test_shard_validation_accepts_complete_chain_and_instruments():
+    _validate_shard_contents(
+        beta=14.0,
+        chain=0,
+        start="random",
+        chain_rows=_shard_rows(45),
+        instrument_rows=_shard_rows(45, instrument=True),
+        minimum_samples=45,
+        nominal_samples=48,
+    )
+
+
+def test_shard_validation_rejects_truncated_instruments():
+    with pytest.raises(SystemExit, match="instrument.*sample indices"):
+        _validate_shard_contents(
+            beta=14.0,
+            chain=0,
+            start="random",
+            chain_rows=_shard_rows(45),
+            instrument_rows=_shard_rows(45, instrument=True)[:-1],
+            minimum_samples=45,
+            nominal_samples=48,
+        )
+
+
+def test_shard_validation_rejects_wrong_identity():
+    rows = _shard_rows(45)
+    rows[-1]["beta"] = "16"
+    with pytest.raises(SystemExit, match="identity mismatch"):
+        _validate_shard_contents(
+            beta=14.0,
+            chain=0,
+            start="random",
+            chain_rows=rows,
+            instrument_rows=_shard_rows(45, instrument=True),
+            minimum_samples=45,
+            nominal_samples=48,
         )

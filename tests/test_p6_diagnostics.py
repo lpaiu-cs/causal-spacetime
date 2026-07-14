@@ -15,6 +15,8 @@ sys.path.insert(0, str(EXPERIMENT_DIR))
 from p6_diagnostics import (  # noqa: E402
     _instrument_margin,
     _normalize_p5_row,
+    _p5_row_key,
+    _validate_expected_rows,
     roc_auc,
     spearman,
 )
@@ -82,3 +84,34 @@ def test_git_describe_is_cached(monkeypatch):
         assert calls == 1
     finally:
         git_describe.cache_clear()
+
+
+def _p5_rows(samples=(0, 1, 2)):
+    return [
+        {
+            "source": "P5",
+            "beta": "2",
+            "seed": "100",
+            "sample": str(sample),
+        }
+        for sample in samples
+    ]
+
+
+def test_p6b_row_validation_accepts_exact_frozen_keys():
+    expected = {("P5", 2.0, 100, sample) for sample in (0, 1, 2)}
+    _validate_expected_rows("P5", _p5_rows(), expected, _p5_row_key)
+
+
+def test_p6b_row_validation_rejects_truncated_shard():
+    expected = {("P5", 2.0, 100, sample) for sample in (0, 1, 2)}
+    with pytest.raises(SystemExit, match="missing=.*2"):
+        _validate_expected_rows("P5", _p5_rows((0, 1)), expected, _p5_row_key)
+
+
+def test_p6b_row_validation_rejects_duplicate_key():
+    expected = {("P5", 2.0, 100, sample) for sample in (0, 1, 2)}
+    rows = _p5_rows()
+    rows[-1] = dict(rows[0])
+    with pytest.raises(SystemExit, match="duplicates="):
+        _validate_expected_rows("P5", rows, expected, _p5_row_key)

@@ -166,6 +166,60 @@ def _instrument_score(row: dict[str, str]) -> float:
     )
 
 
+def _validate_shard_contents(
+    *,
+    beta: float,
+    chain: int,
+    start: str,
+    chain_rows: list[dict[str, str]],
+    instrument_rows: list[dict[str, str]],
+    minimum_samples: int,
+    nominal_samples: int,
+) -> None:
+    """Require one complete P7 chain and its three instrument snapshots."""
+
+    identity = (float(beta), int(chain), start)
+    for label, rows in (("chain", chain_rows), ("instrument", instrument_rows)):
+        try:
+            identities = {
+                (float(row["beta"]), int(row["chain"]), row["start"])
+                for row in rows
+            }
+        except (KeyError, TypeError, ValueError) as error:
+            raise SystemExit(
+                f"malformed P7 {label} row for beta={beta:g} chain={chain}: {error}"
+            ) from error
+        if identities != {identity}:
+            raise SystemExit(
+                f"P7 {label} identity mismatch for beta={beta:g} chain={chain}: "
+                f"observed={sorted(identities)}"
+            )
+
+    if not minimum_samples <= len(chain_rows) <= nominal_samples:
+        raise SystemExit(
+            f"P7 chain beta={beta:g} chain={chain} has {len(chain_rows)} samples; "
+            f"expected {minimum_samples}-{nominal_samples}"
+        )
+    try:
+        sample_indices = sorted(int(row["sample"]) for row in chain_rows)
+        instrument_indices = sorted(int(row["sample"]) for row in instrument_rows)
+    except (KeyError, TypeError, ValueError) as error:
+        raise SystemExit(
+            f"malformed P7 sample index for beta={beta:g} chain={chain}: {error}"
+        ) from error
+    if sample_indices != list(range(len(chain_rows))):
+        raise SystemExit(
+            f"P7 chain beta={beta:g} chain={chain} has missing or duplicate "
+            "sample indices"
+        )
+    expected_instrument = [0, len(chain_rows) // 2, len(chain_rows) - 1]
+    if instrument_indices != expected_instrument:
+        raise SystemExit(
+            f"P7 instrument beta={beta:g} chain={chain} has sample indices "
+            f"{instrument_indices}; expected {expected_instrument}"
+        )
+
+
 def _group_chains_by_start(chains: list[dict]) -> dict[str, list[dict]]:
     """Return the required two-random/one-bipartite start groups."""
 
@@ -243,6 +297,15 @@ def aggregate() -> None:
                 )
             rows = _read(chain_path)
             instrument = _read(instrument_path)
+            _validate_shard_contents(
+                beta=beta,
+                chain=chain,
+                start=config["start"],
+                chain_rows=rows,
+                instrument_rows=instrument,
+                minimum_samples=constants["minimum_sample_count"],
+                nominal_samples=constants["nominal_sample_count"],
+            )
             all_chain_rows[(beta, chain)] = rows
             all_instrument_rows[(beta, chain)] = instrument
             summary = {

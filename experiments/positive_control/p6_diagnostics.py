@@ -7,7 +7,8 @@ import csv
 import hashlib
 import json
 import math
-from collections import defaultdict
+from collections import Counter, defaultdict
+from collections.abc import Callable, Hashable
 from pathlib import Path
 
 import numpy as np
@@ -67,6 +68,82 @@ def _normalize_p5_row(row: dict[str, str]) -> dict[str, str]:
         "min_chain_len": "",
         "n_targets": "",
     }
+
+
+def _validate_expected_rows(
+    label: str,
+    rows: list[dict[str, str]],
+    expected: set[Hashable],
+    row_key: Callable[[dict[str, str]], Hashable],
+) -> None:
+    """Reject missing, duplicated, unexpected, or malformed shard rows."""
+
+    try:
+        observed = [row_key(row) for row in rows]
+    except (KeyError, TypeError, ValueError) as error:
+        raise SystemExit(
+            f"P6b {label} shard contains a malformed row: {error}"
+        ) from error
+    _validate_key_sequence(f"{label} shard", observed, expected)
+
+
+def _validate_key_sequence(
+    label: str, observed: list[Hashable], expected: set[Hashable]
+) -> None:
+    """Require a key sequence to match a frozen protocol exactly once."""
+
+    counts = Counter(observed)
+    observed_keys = set(observed)
+    duplicates = sorted((key, count) for key, count in counts.items() if count > 1)
+    missing = sorted(expected - observed_keys)
+    unexpected = sorted(observed_keys - expected)
+    if len(observed) != len(expected) or missing or unexpected or duplicates:
+        raise SystemExit(
+            f"P6b {label} incomplete: rows={len(observed)}/{len(expected)}, "
+            f"missing={missing}, unexpected={unexpected}, duplicates={duplicates}"
+        )
+
+
+def _reference_row_key(row: dict[str, str]) -> tuple[str, str, str, int]:
+    return (
+        row["source"],
+        row["condition"],
+        row["reference_group"],
+        int(float(row["seed"])),
+    )
+
+
+def _p1_row_key(row: dict[str, str]) -> tuple[str, int, float]:
+    return row["source"], int(float(row["seed"])), float(row["epsilon"])
+
+
+def _p3_row_key(row: dict[str, str]) -> tuple[str, int, float]:
+    return row["source"], int(float(row["seed"])), float(row["p"])
+
+
+def _p6_row_key(row: dict[str, str]) -> tuple[str, int, int, int]:
+    return (
+        row["source"],
+        int(float(row["seed"])),
+        int(float(row["layer_count"])),
+        int(float(row["moves"])),
+    )
+
+
+def _p5_row_key(row: dict[str, str]) -> tuple[str, float, int, int]:
+    return (
+        row["source"],
+        float(row["beta"]),
+        int(float(row["seed"])),
+        int(float(row["sample"])),
+    )
+
+
+def _nominal_sample_indices(steps: int, burn_frac: float, sample_every: int) -> range:
+    burn = int(steps * burn_frac)
+    first = ((burn + sample_every - 1) // sample_every) * sample_every
+    count = max(0, (steps - 1 - first) // sample_every + 1)
+    return range(count)
 
 
 def _float(row: dict, key: str) -> float | None:
@@ -476,23 +553,157 @@ def _write_comparison_deliverables(summary: dict) -> None:
 
 
 def aggregate() -> None:
-    required = [
-        OUT / "p6b_raw_references.csv",
-        OUT / "p6b_raw_p1.csv",
-        OUT / "p6b_raw_p3.csv",
-        OUT / "p6b_raw_p6.csv",
-    ]
+    constants = json.loads(CONSTANTS.read_text(encoding="utf-8"))
+    p1_constants = json.loads((FROZEN / "p1_test_constants.json").read_text())
+    p3_constants = json.loads((FROZEN / "p3_test_constants.json").read_text())
+    p6_constants = json.loads((FROZEN / "p6_test_constants.json").read_text())
     p5_constants = json.loads((FROZEN / "p5_test_constants.json").read_text())
     p5_cells = [(beta, seed) for beta in (2.0, 8.0) for seed in (100, 101, 102)]
     p5_cells += [(float(p5_constants["crystal_beta"]), seed) for seed in (100, 101)]
-    required += [OUT / f"p6b_raw_p5_b{beta:g}_s{seed}.csv" for beta, seed in p5_cells]
+    frozen_p1 = _read_csv(FROZEN / "p1_stage_b_epsilon_sweep.csv")
+    frozen_p3 = _read_csv(FROZEN / "p3_stage_b_dynamics.csv")
+    frozen_p6 = _read_csv(FROZEN / "p6_stage_b_layered.csv")
+    frozen_p5 = [
+        _normalize_p5_row(row) for row in _read_csv(FROZEN / "p5_stage_b_all.csv")
+    ]
+    p1_protocol = {
+        (seed, float(epsilon))
+        for seed in range(300, 320)
+        for epsilon in p1_constants["epsilon_grid"]
+    }
+    _validate_key_sequence(
+        "frozen P1 protocol",
+        [(int(float(row["seed"])), float(row["epsilon"])) for row in frozen_p1],
+        p1_protocol,
+    )
+    p3_protocol = {
+        (seed, float(p))
+        for seed in range(100, 120)
+        for p in p3_constants["p_sweep"]
+    }
+    _validate_key_sequence(
+        "frozen P3 protocol",
+        [(int(float(row["seed"])), float(row["p"])) for row in frozen_p3],
+        p3_protocol,
+    )
+    p6_protocol = {
+        (seed, int(cell["layer_count"]), int(cell["moves"]))
+        for seed in parse_seed_spec(p6_constants["confirmatory_seeds"])
+        for cell in p6_constants["layered_cells"]
+    }
+    _validate_key_sequence(
+        "frozen P6 protocol",
+        [
+            (
+                int(float(row["seed"])),
+                int(float(row["layer_count"])),
+                int(float(row["moves"])),
+            )
+            for row in frozen_p6
+        ],
+        p6_protocol,
+    )
+    p5_protocol = set()
+    for beta, seed in p5_cells:
+        crystal = beta == float(p5_constants["crystal_beta"])
+        suffix = "crystal" if crystal else "continuum"
+        samples = _nominal_sample_indices(
+            int(p5_constants[f"steps_{suffix}"]),
+            float(p5_constants["burn_frac"]),
+            int(p5_constants[f"sample_every_{suffix}"]),
+        )
+        p5_protocol.update((beta, seed, sample) for sample in samples)
+    _validate_key_sequence(
+        "frozen P5 protocol",
+        [
+            (float(row["beta"]), int(row["seed"]), int(row["sample"]))
+            for row in frozen_p5
+        ],
+        p5_protocol,
+    )
+    reference_expected = {
+        ("reference", "p1_scene", "p1_scene", seed)
+        for seed in parse_seed_spec(constants["reference_seeds_p1_scene"])
+    }
+    reference_expected.update(
+        ("reference", "p3_sprinkled", "p3_n1500", seed)
+        for seed in parse_seed_spec(constants["reference_seeds_p3_sprinkled"])
+    )
+    reference_expected.update(
+        ("reference", "p5_uniform", "orders_n600", seed)
+        for seed in parse_seed_spec(constants["reference_seeds_p5_uniform"])
+    )
+    specs: list[
+        tuple[
+            Path,
+            str,
+            set[Hashable],
+            Callable[[dict[str, str]], Hashable],
+        ]
+    ] = [
+        (
+            OUT / "p6b_raw_references.csv",
+            "references",
+            reference_expected,
+            _reference_row_key,
+        ),
+        (
+            OUT / "p6b_raw_p1.csv",
+            "P1",
+            {
+                ("P1", int(float(row["seed"])), float(row["epsilon"]))
+                for row in frozen_p1
+            },
+            _p1_row_key,
+        ),
+        (
+            OUT / "p6b_raw_p3.csv",
+            "P3",
+            {
+                ("P3", int(float(row["seed"])), float(row["p"]))
+                for row in frozen_p3
+            },
+            _p3_row_key,
+        ),
+        (
+            OUT / "p6b_raw_p6.csv",
+            "P6",
+            {
+                (
+                    "P6",
+                    int(float(row["seed"])),
+                    int(float(row["layer_count"])),
+                    int(float(row["moves"])),
+                )
+                for row in frozen_p6
+            },
+            _p6_row_key,
+        ),
+    ]
+    for beta, seed in p5_cells:
+        expected = {
+            ("P5", beta, seed, int(float(row["sample"])))
+            for row in frozen_p5
+            if float(row["beta"]) == beta and int(row["seed"]) == seed
+        }
+        specs.append(
+            (
+                OUT / f"p6b_raw_p5_b{beta:g}_s{seed}.csv",
+                f"P5 beta={beta:g} seed={seed}",
+                expected,
+                _p5_row_key,
+            )
+        )
+    required = [path for path, _, _, _ in specs]
     missing = [str(path) for path in required if not path.exists()]
     if missing:
         message = "P6b aggregation missing frozen inputs:\n" + "\n".join(missing)
         raise SystemExit(message)
     rows: list[dict] = []
-    for path in required:
-        for row in _read_csv(path):
+    for path, label, expected, row_key in specs:
+        raw_rows = _read_csv(path)
+        _validate_expected_rows(label, raw_rows, expected, row_key)
+        for row in raw_rows:
             rows.append(
                 {
                     key: (
@@ -503,7 +714,6 @@ def aggregate() -> None:
                     for key, value in row.items()
                 }
             )
-    constants = json.loads(CONSTANTS.read_text(encoding="utf-8"))
     models, cutoffs = _reference_models(
         rows, float(constants["reference_pass_quantile"])
     )
