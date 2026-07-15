@@ -436,11 +436,14 @@ P( D_i = D_j )  =  exp( - 4 lambda g )        exactly.
 ```
 
 **Claim 3 (full order).** For `n` targets with minimum adjacent gap
-`g_min`: `P(recovered order != true order) <=
-(n-1) exp( - 2 lambda g_min^2 / (L + g_min/3) )`, so order recovery
-holds w.h.p. once `g_min >~ sqrt( L log n / lambda )` — improving to
-`g_min >~ log n / (4 lambda)` on a common slice, where the per-pair
-term is the exact tie probability of Claim 2.
+`g_min`, and with the *global* length bound
+`L_all = 2 max_{m, r in {1,R}} d_{m,r}` (over all `n` targets and both
+flanking chains — the pairwise `L` above is local to one pair):
+`P(recovered order != true order) <=
+(n-1) exp( - 2 lambda g_min^2 / (L_all + g_min/3) )`, so order
+recovery holds w.h.p. once `g_min >~ sqrt( L_all log n / lambda )` —
+improving to `g_min >~ log n / (4 lambda)` on a common slice, where
+the per-pair term is the exact tie probability of Claim 2.
 
 *Proof.*
 
@@ -505,8 +508,13 @@ comparison involving target `i`), but Claim 3 needs no independence:
 sorting real numbers recovers the true order as soon as `D` is
 strictly increasing across the `n - 1` *adjacent* true pairs
 (transitivity of `<`), and the union bound over those events uses
-subadditivity of probability only. Each event is bounded by Claim 1
-at `g >= g_min`. ∎
+subadditivity of probability only. Each adjacent pair `k` has its own
+gap `g_k >= g_min` and its own local length bound `L_k <= L_all`, and
+the Claim 1 exponent `2 lambda g^2 / (L + g/3)` is increasing in `g`
+and decreasing in `L`, so every per-pair bound is dominated by the
+single displayed term with `(g_min, L_all)`:
+`g_k^2/(L_k + g_k/3) >= g_min^2/(L_k + g_min/3) >=
+g_min^2/(L_all + g_min/3)`. ∎
 
 Boundary caveat `[PROVED, crude]`: on a finite tick support,
 "`W` exists" is itself an event. Each width needs one tick on each
@@ -620,7 +628,10 @@ not `n_events`):
    within exact binomial/MC tolerances; arbitrary-time error rates are
    dominated by the Claim 1 bound; full-order failure rates are
    dominated by the Claim 3 union bound at parameters where that bound
-   is nontrivial (`< 1`). This verifies the *theorem*, not the
+   is nontrivial (`< 1`). Every simulated width's reachability flag is
+   collected and asserted (zero unreachable draws per section — a
+   nonzero count fails the check loudly instead of letting synthetic
+   widths into the statistics). This verifies the *theorem*, not the
    instrument: no code constructs Poisson chains as an instrument
    (G2), and no `rho`-scaling claim is tested here.
 
@@ -686,7 +697,9 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    partial bracket overlap: error rate `0.22` dominated by the Claim 1
    bound `0.76`, variance matching Step 2's symmetric-difference
    bookkeeping. Full order (`n = 6`, `lambda = 300`): failure rate
-   `0.000` dominated by the nontrivial union bound `0.478`.
+   `0.000` dominated by the nontrivial union bound `0.478` (computed
+   with the global `L_all`, as Claim 3 requires). Zero unreachable
+   draws in every section, asserted rather than assumed.
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are

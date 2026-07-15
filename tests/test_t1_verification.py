@@ -238,6 +238,9 @@ def test_theorem_2_holds_on_simulated_model_p():
 
     result = check_model_p_theorem2(seed=7, trials=1500, order_trials=600)
     assert result["identity_cross_check"]
+    assert result["same_slice"]["unreachable_trials"] == 0
+    assert result["general_pair"]["unreachable_trials"] == 0
+    assert result["full_order"]["unreachable_trials"] == 0
     assert result["same_slice"]["strict_inversions"] == 0
     assert result["same_slice"]["tie_rate_matches"], result["same_slice"]
     assert result["same_slice"]["mean_matches"], result["same_slice"]

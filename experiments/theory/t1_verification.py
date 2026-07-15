@@ -808,6 +808,13 @@ def check_model_p_theorem2(
     - full order (Claim 3): the empirical failure rate must be dominated
       by the (n-1)-term union bound, at parameters where that bound is
       nontrivial (< 1).
+
+    Every simulated width's reachability flag is collected and asserted
+    zero-failures per section: _width_by_identity still returns the
+    synthetic value N + 1 when the observable is undefined (an empty
+    chain gives (1, False)), so silently discarding the flag could let
+    invalid draws into the statistics under a different seed or
+    parameter set. A nonzero count fails the check loudly instead.
     """
 
     rng = np.random.default_rng(seed)
@@ -847,13 +854,16 @@ def check_model_p_theorem2(
     xi, xj, t_common = 0.04, 0.02, 0.0
     gap = xi - xj
     deltas = np.empty(trials)
+    unreachable_same = 0
     for k in range(trials):
         left = _poisson_chain(rng, lam, span)
         right = _poisson_chain(rng, lam, span)
-        wi_l, _ = _width_by_identity(left, t_common, xi - x0_left)
-        wj_l, _ = _width_by_identity(left, t_common, xj - x0_left)
-        wi_r, _ = _width_by_identity(right, t_common, x0_right - xi)
-        wj_r, _ = _width_by_identity(right, t_common, x0_right - xj)
+        wi_l, ok_a = _width_by_identity(left, t_common, xi - x0_left)
+        wj_l, ok_b = _width_by_identity(left, t_common, xj - x0_left)
+        wi_r, ok_c = _width_by_identity(right, t_common, x0_right - xi)
+        wj_r, ok_d = _width_by_identity(right, t_common, x0_right - xj)
+        if not (ok_a and ok_b and ok_c and ok_d):
+            unreachable_same += 1
         deltas[k] = (wi_l - wi_r) - (wj_l - wj_r)
 
     strict_inversions = int(np.sum(deltas < 0))
@@ -869,6 +879,7 @@ def check_model_p_theorem2(
 
     same_slice = {
         "strict_inversions": strict_inversions,
+        "unreachable_trials": unreachable_same,
         "tie_rate": tie_rate,
         "tie_exact": tie_exact,
         "mean_matches": bool(mean_ok),
@@ -892,13 +903,16 @@ def check_model_p_theorem2(
         _symdiff(ti, d_il, tj, d_jl) + _symdiff(ti, d_ir, tj, d_jr)
     )
     deltas2 = np.empty(trials)
+    unreachable_general = 0
     for k in range(trials):
         left = _poisson_chain(rng, lam, span)
         right = _poisson_chain(rng, lam, span)
-        wi_l, _ = _width_by_identity(left, ti, d_il)
-        wj_l, _ = _width_by_identity(left, tj, d_jl)
-        wi_r, _ = _width_by_identity(right, ti, d_ir)
-        wj_r, _ = _width_by_identity(right, tj, d_jr)
+        wi_l, ok_a = _width_by_identity(left, ti, d_il)
+        wj_l, ok_b = _width_by_identity(left, tj, d_jl)
+        wi_r, ok_c = _width_by_identity(right, ti, d_ir)
+        wj_r, ok_d = _width_by_identity(right, tj, d_jr)
+        if not (ok_a and ok_b and ok_c and ok_d):
+            unreachable_general += 1
         deltas2[k] = (wi_l - wi_r) - (wj_l - wj_r)
 
     claim1_bound = float(
@@ -907,6 +921,7 @@ def check_model_p_theorem2(
     error_rate = float(np.mean(deltas2 <= 0))
     general_pair = {
         "error_rate": error_rate,
+        "unreachable_trials": unreachable_general,
         "claim1_bound": claim1_bound,
         "bound_dominates": bool(error_rate <= claim1_bound),
         "mean_matches": bool(
@@ -931,19 +946,29 @@ def check_model_p_theorem2(
     union_bound = float((positions.size - 1) * per_pair)
 
     failures = 0
+    unreachable_order = 0
     for _ in range(order_trials):
         left = _poisson_chain(rng, lam_order, span)
         right = _poisson_chain(rng, lam_order, span)
         flanking = np.empty(positions.size)
+        trial_reachable = True
         for m in range(positions.size):
-            w_l, _ = _width_by_identity(left, times[m], positions[m] - x0_left)
-            w_r, _ = _width_by_identity(right, times[m], x0_right - positions[m])
+            w_l, ok_l = _width_by_identity(
+                left, times[m], positions[m] - x0_left
+            )
+            w_r, ok_r = _width_by_identity(
+                right, times[m], x0_right - positions[m]
+            )
+            trial_reachable = trial_reachable and ok_l and ok_r
             flanking[m] = w_l - w_r
+        if not trial_reachable:
+            unreachable_order += 1
         if np.any(np.diff(flanking) <= 0):
             failures += 1
 
     full_order = {
         "failure_rate": failures / order_trials,
+        "unreachable_trials": unreachable_order,
         "union_bound": union_bound,
         "bound_nontrivial": bool(union_bound < 1.0),
         "bound_dominates": bool(failures / order_trials <= union_bound),
@@ -951,6 +976,9 @@ def check_model_p_theorem2(
 
     passed = bool(
         identity_matches
+        and unreachable_same == 0
+        and unreachable_general == 0
+        and unreachable_order == 0
         and strict_inversions == 0
         and same_slice["tie_rate_matches"]
         and same_slice["mean_matches"]
