@@ -8,7 +8,7 @@ because every claim it exercises is tagged [PROVED], any violation here is a
 bug -- in the theory, in the instrument, or in this harness -- and is
 reported as a hard failure, not a statistic.
 
-The five checks, in the document's numbering:
+The checks, in the document's numbering:
 
 1. Slope/quantization (Lemma 2, Model D): every measured bracket width obeys
    W = 2|dx|/delta + 1 + theta with theta in [-1, 1), on a controlled chain
@@ -18,11 +18,19 @@ The five checks, in the document's numbering:
    left from right -- and a second, offset observer separates them.
 3. Resolution scaling (Section 5, Model D): position error is bounded by
    delta/2 and its RMSE falls like 1/K; varying the bulk sprinkling density
-   at fixed K changes nothing (the direct falsifier for any accidental
-   density dependence -- Model D's clock does not know about rho).
+   at fixed K changes nothing (the falsifier for any accidental density
+   dependence -- Model D's clock does not know about rho), asserted both on
+   a hand-built order (unit invariant) and through
+   build_positive_control_scene() itself (instrument regression).
 4. Centered residue (Lemma 3b): a pure time translation of a target moves
    the centered profile by O(1) ranks (the review's counterexample,
    reproduced exactly), and the residue never exceeds the proved bound.
+5. Edge and convention pinning: the two deterministic cases where a wrong
+   instrument would otherwise agree with every sampled check -- the
+   tick-coincident orphan (the one true band violation; the predicate must
+   reject it) and Lemma 2's null-aligned example (the one configuration
+   where the null-inclusive and strict orders give different widths; pins
+   the convention the document declares load-bearing).
 
 Usage:
     python t1_verification.py            # run all checks, write JSON summary
@@ -199,12 +207,15 @@ def check_density_invariance(
     span: float = 1.4,
     ticks: int = 96,
 ) -> dict:
-    """Check 3b (falsifier): bulk sprinkling density must not move any width.
+    """Check 3b, direct-order form: bulk density must not move any width.
 
     Model D's clock is a deterministic grid appended to the scene; the bulk
     events are causally related to targets and ticks but never enter the
-    bracket computation. If growing the bulk by 10x changed a single width,
-    the document's central claim about the instrument would be false.
+    bracket computation. This is a *unit invariant* of the order machinery:
+    it hand-builds the chain, so it holds by the pairwise nature of
+    causal_matrix_1p1() no matter what the scene builder does -- which is
+    why it cannot, by itself, catch the builder ever deriving its clock
+    from n_events. check_builder_density_invariance() covers that.
     """
 
     rng = np.random.default_rng(seed)
@@ -230,6 +241,75 @@ def check_density_invariance(
         "bulk_sizes": list(bulk_sizes),
         "identical_across_density": bool(identical),
         "passed": bool(identical),
+    }
+
+
+def check_builder_density_invariance(
+    n_targets: int = 20,
+    n_events_grid: tuple[int, ...] = (300, 900, 2700),
+    scene_seed: int = 0,
+    target_seed: int = 3,
+) -> dict:
+    """Check 3b, builder form: the scene BUILDER must not couple its clock
+    to the sprinkling density.
+
+    Scenes come from build_positive_control_scene() at a 9x density range.
+    If the builder ever started deriving ticks_per_chain, chain span, or
+    tick placement from n_events -- the instrument regression a density
+    falsifier exists to catch -- the chains below would differ and this
+    check would fail, where the direct-order form stays green by
+    construction. Asserted: (i) the builder's chain worldlines are
+    bit-identical across densities, and (ii) one fixed set of controlled
+    targets appended to each built scene measures bit-identical widths on
+    every chain.
+    """
+
+    rng = np.random.default_rng(target_seed)
+    fixed_targets = np.column_stack([
+        rng.uniform(-0.10, 0.10, size=n_targets),
+        rng.uniform(-0.25, 0.25, size=n_targets),
+    ])
+
+    chain_coords_by_density = []
+    widths_by_density = []
+    for n_events in n_events_grid:
+        # min_targets=0: the scene's own targets are drawn from the bulk and
+        # legitimately vary with density; only the builder's chains and these
+        # fixed appended targets are under test.
+        config = PositiveControlSceneConfig(
+            n_events=n_events, seed=scene_seed, min_targets=0
+        )
+        scene = build_positive_control_scene(config)
+        chain_coords_by_density.append(
+            np.vstack([scene.events[idx] for idx in scene.chain_index_arrays])
+        )
+        combined = np.vstack([scene.events, fixed_targets])
+        causal = causal_matrix_1p1(combined)
+        widths = np.full((n_targets, len(scene.chain_index_arrays)), np.nan)
+        for row in range(n_targets):
+            for column, chain in enumerate(scene.chain_index_arrays):
+                bracket = find_radar_ticks_from_order(
+                    causal, chain, len(scene.events) + row, scene.tick_ranks
+                )
+                if bracket is not None:
+                    widths[row, column] = bracket[1] - bracket[0]
+        widths_by_density.append(widths)
+
+    chains_identical = all(
+        np.array_equal(chain_coords_by_density[0], other)
+        for other in chain_coords_by_density[1:]
+    )
+    widths_identical = all(
+        np.array_equal(widths_by_density[0], other, equal_nan=True)
+        for other in widths_by_density[1:]
+    )
+    n_reachable = int(np.sum(~np.isnan(widths_by_density[0])))
+    return {
+        "n_events_grid": list(n_events_grid),
+        "chains_identical": bool(chains_identical),
+        "widths_identical": bool(widths_identical),
+        "n_reachable": n_reachable,
+        "passed": bool(chains_identical and widths_identical and n_reachable > 0),
     }
 
 
@@ -358,6 +438,63 @@ def check_coincident_tick_orphan(span: float = 1.4, ticks: int = 96) -> dict:
     }
 
 
+def check_null_aligned_tick() -> dict:
+    """The load-bearing convention, pinned: Lemma 2's null-aligned example.
+
+    The identity W = N + 1 holds under the null-inclusive order
+    (dt > 0 and dt^2 >= dx^2) and fails under the strict chronological
+    order -- and a target whose light cone passes exactly through ticks is
+    the one deterministic configuration where the two conventions measure
+    different widths. Every other check samples general-position targets,
+    where the conventions agree; the second review round demonstrated that
+    swapping causal_matrix_1p1 for the strict relation at runtime left the
+    whole suite green. This check closes that hole with the document's own
+    example: target (0, 0.5) against ticks -0.75, -0.5, ..., 0.75
+    (delta = 0.25, every coordinate exactly representable). Inclusive: the
+    null-aligned ticks at t = -/+0.5 are the radar endpoints, W = 4 = N + 1,
+    theta = -1 exactly (both interval endpoints grid-aligned -- the closed
+    edge of the band). Strict: both null ticks are orphaned, W = 6,
+    residual +1, outside the band. The strict width is also computed here
+    as an explicit counterfactual, so the discrimination gap is recorded,
+    not assumed.
+    """
+
+    span, ticks = 1.5, 7
+    delta = span / (ticks - 1)
+    abs_dx = 2.0 * delta
+    target = np.array([[0.0, abs_dx]])
+
+    width = bracket_widths_ranks(target, 0.0, span, ticks)[0]
+    residual = float(width - predicted_center(np.array([abs_dx]), delta)[0])
+    in_band = bool(residuals_in_band(np.array([residual]))[0])
+
+    chain_events, _ = make_stationary_observer_chain_1p1(span, ticks, x=0.0)
+    events = np.vstack([target, chain_events])
+    dt = events[None, :, 0] - events[:, None, 0]
+    dx = events[None, :, 1] - events[:, None, 1]
+    strict_causal = (dt > 0.0) & (dt * dt - dx * dx > 1e-12)
+    bracket = find_radar_ticks_from_order(
+        strict_causal,
+        np.arange(1, 1 + ticks),
+        0,
+        np.arange(ticks, dtype=np.float64),
+    )
+    strict_width = float(bracket[1] - bracket[0]) if bracket else float("nan")
+
+    return {
+        "width_inclusive": float(width),
+        "residual": residual,
+        "in_band": in_band,
+        "width_strict_counterfactual": strict_width,
+        "passed": bool(
+            width == 4.0
+            and residual == -1.0
+            and in_band
+            and strict_width == 6.0
+        ),
+    }
+
+
 def check_pipeline_band(seed: int = 0) -> dict:
     """Check 1 (pipeline): the band holds through the full PC-V1 scene path.
 
@@ -401,9 +538,11 @@ def main() -> None:
         "1_quantization_band_pipeline": check_pipeline_band(),
         "2_fold": check_fold(),
         "3a_resolution_scaling": check_resolution_scaling(),
-        "3b_density_invariance": check_density_invariance(),
+        "3b_density_invariance_direct": check_density_invariance(),
+        "3b_density_invariance_builder": check_builder_density_invariance(),
         "4_centered_residue": check_centered_residue(),
         "5_coincident_tick_orphan": check_coincident_tick_orphan(),
+        "5_null_aligned_tick": check_null_aligned_tick(),
     }
 
     all_passed = all(result["passed"] for result in checks.values())

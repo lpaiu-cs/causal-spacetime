@@ -20,13 +20,16 @@ import pytest
 EXPERIMENT_DIR = Path(__file__).resolve().parents[1] / "experiments" / "theory"
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
+import t1_verification  # noqa: E402
 from t1_verification import (  # noqa: E402
     BAND_TOL,
     bracket_widths_ranks,
+    check_builder_density_invariance,
     check_centered_residue,
     check_coincident_tick_orphan,
     check_density_invariance,
     check_fold,
+    check_null_aligned_tick,
     check_pipeline_band,
     check_quantization_band,
     check_resolution_scaling,
@@ -59,6 +62,57 @@ def test_band_predicate_rejects_a_true_residual_of_plus_one():
     # And directly: +1 is out, the closed lower edge -1 is in.
     assert not residuals_in_band(np.array([1.0]))[0]
     assert residuals_in_band(np.array([-1.0]))[0]
+
+
+def test_null_aligned_example_from_lemma_2_is_pinned():
+    """The document's own load-bearing example: target (0, 0.5) against
+    ticks -0.75..0.75. Null-inclusive order: W = 4 = N + 1, residual
+    exactly -1 (theta = -1, the closed band edge, in band). Strict order:
+    W = 6, residual +1, out of band. The one deterministic configuration
+    where the two conventions measure different widths."""
+
+    result = check_null_aligned_tick()
+    assert result["width_inclusive"] == 4.0
+    assert result["residual"] == -1.0
+    assert result["in_band"]
+    assert result["width_strict_counterfactual"] == 6.0
+    assert result["passed"], result
+
+
+def test_swapping_in_the_strict_order_is_detected(monkeypatch):
+    """The review's swap experiment, kept as a regression: replace
+    causal_matrix_1p1 with the strict relation dt > |dx| at runtime.
+    Before check_null_aligned_tick existed, every harness check stayed
+    green under this swap -- all sampled targets sit in general position,
+    where the conventions agree -- so the suite did not pin the convention
+    it declares load-bearing. Now at least one check must fail."""
+
+    def strict_causal_matrix(events, *, atol=1e-12):
+        events = np.asarray(events, dtype=float)
+        dt = events[None, :, 0] - events[:, None, 0]
+        dx = events[None, :, 1] - events[:, None, 1]
+        return (dt > 0.0) & (dt * dt - dx * dx > atol)
+
+    monkeypatch.setattr(t1_verification, "causal_matrix_1p1", strict_causal_matrix)
+    result = check_null_aligned_tick()
+    assert result["width_inclusive"] == 6.0  # the strict width leaks through
+    assert not result["passed"], result
+
+
+def test_builder_density_invariance_exercises_the_scene_builder():
+    """The falsifier at the level the theory doc talks about: scenes built
+    by build_positive_control_scene() at different n_events must place
+    bit-identical chains and measure bit-identical widths for one fixed
+    appended target set. The direct-order variant cannot catch a builder
+    that derives its clock from n_events; this can."""
+
+    result = check_builder_density_invariance(
+        n_targets=12, n_events_grid=(300, 900)
+    )
+    assert result["chains_identical"], result
+    assert result["widths_identical"], result
+    assert result["n_reachable"] > 0
+    assert result["passed"]
 
 
 def test_quantization_band_holds_through_the_scene_pipeline():

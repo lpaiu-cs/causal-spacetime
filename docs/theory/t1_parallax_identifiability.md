@@ -351,8 +351,7 @@ testable. Out of scope for the existing-generator harness.
 ### Execution outcome (2026-07-16 KST / 2026-07-15 UTC)
 
 The harness (`experiments/theory/t1_verification.py`, regression tests in
-`tests/test_t1_verification.py`) ran all four checks plus an end-to-end
-pipeline variant. All passed:
+`tests/test_t1_verification.py`) ran all checks below. All passed:
 
 1. Quantization band: 400 controlled targets and 240 full-pipeline
    measurements (`build_positive_control_scene` seed 0), residuals in
@@ -366,6 +365,18 @@ pipeline variant. All passed:
 4. Centered residue: the review's counterexample reproduced *exactly*
    (`t = 0` profile `[77/3, 35/3, -7/3, -49/3, -49/3, -7/3]`, matching
    the numbers quoted in the PR #4 thread); max residue 0.79 < 2.
+5. Edge and convention pinning: the tick-coincident orphan measures
+   `W = 2`, residual exactly `+1`, and the band predicate rejects it
+   (Revision note 5); Lemma 2's null-aligned example `(0, 0.5)` measures
+   `W = 4`, residual exactly `-1` (`theta = -1`, the closed band edge,
+   in band), with the strict-order counterfactual measuring `W = 6` —
+   and a meta-regression swaps the strict relation in at runtime and
+   asserts the check then fails (Revision note 6).
+6. Density falsifier, builder level: scenes built by
+   `build_positive_control_scene()` at `n_events` = 300/900/2700 place
+   bit-identical chain worldlines and measure bit-identical widths for
+   one fixed appended target set; the hand-built-order variant (item 3)
+   is kept as a unit invariant of the order machinery (Revision note 6).
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
@@ -408,6 +419,21 @@ pinned in CI as exact (non-statistical) regressions.
    excludes it; the verification harness pins the case, and its band
    predicate keeps the `[-1, 1)` upper edge genuinely open — a
    symmetric float tolerance would have admitted the true `+1`.
+6. Convention regression and builder-level density falsifier (second
+   harness review round). The reviewer swapped `causal_matrix_1p1` for
+   the strict relation at runtime and every harness check stayed green:
+   all sampled targets sit in general position, where the two
+   conventions agree, so the convention note 4 calls load-bearing was
+   asserted by the document but not pinned by the harness. The harness
+   now measures Lemma 2's own null-aligned example (`W = 4` inclusive
+   vs `6` strict, residual `-1` vs `+1`) and a meta-regression performs
+   the swap and demands failure. Separately, the density falsifier only
+   appended bulk events to hand-built chains — an invariance the
+   pairwise causal matrix guarantees no matter what the scene builder
+   does — so a builder-level check now runs
+   `build_positive_control_scene()` at three densities and asserts
+   bit-identical chains and widths for a fixed appended target set; the
+   direct-order form is kept as a unit invariant.
 
 ## 8. Relation to the frozen program
 
