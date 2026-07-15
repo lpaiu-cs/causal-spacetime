@@ -94,13 +94,21 @@ argument (v0.1 added two renewal overshoots and double-counted the
 constant; review caught it).
 
 **Identity `[PROVED]`.** Let the ticks of a chain be simple (no
-coincident times). Under the null-inclusive order of Section 2, every
-tick time `tau` falls in exactly one of three classes relative to the
-target: predecessor (`tau <= t_e - |dx|`), spacelike
+coincident times), and let no tick be *spacetime-coincident* with the
+target — automatic when `|dx| > 0`, since ticks live at `x0 != x_e`.
+Under the null-inclusive order of Section 2, every tick time `tau` then
+falls in exactly one of three classes relative to the target:
+predecessor (`tau <= t_e - |dx|`), spacelike
 (`t_e - |dx| < tau < t_e + |dx|`, the *open* radar interval), or
 successor (`tau >= t_e + |dx|`) — a partition, with no endpoint
-orphans. Let `N` count the spacelike ticks and assume at least one
-predecessor and one successor exist (reachability). The predecessor of
+orphans. (The coincidence hypothesis is not decorative: at `|dx| = 0` a
+tick exactly at `t_e` has `dt = 0` and is unrelated under `dt > 0` —
+neither predecessor, spacelike, nor successor — and then `W = N + 2`,
+residual exactly `+1`, outside the band below. Measure zero for
+sprinkled targets, but realizable by construction; the verification
+harness pins it and its band predicate rejects it.) Let `N` count the
+spacelike ticks and assume at least one predecessor and one successor
+exist (reachability). The predecessor of
 maximal rank `k` is followed in rank order by the `N` spacelike ticks
 (`k+1..k+N`) and then by the first successor at rank `k+N+1`, so
 
@@ -340,7 +348,7 @@ density-coupled tick protocol (harvested chains or Poisson-thinned
 clocks) with its own audit; only then does Theorem 2's scaling become
 testable. Out of scope for the existing-generator harness.
 
-### Execution outcome (2026-07-16)
+### Execution outcome (2026-07-16 KST / 2026-07-15 UTC)
 
 The harness (`experiments/theory/t1_verification.py`, regression tests in
 `tests/test_t1_verification.py`) ran all four checks plus an end-to-end
@@ -392,6 +400,14 @@ pinned in CI as exact (non-statistical) regressions.
    `(0, 0.5)` counterexample. The identity's partition argument, the
    open-interval count, and `theta`'s range (`[-1, 1)`) are restated
    under the shared convention.
+5. Coincidence hypothesis added to the identity (harness review round):
+   at `|dx| = 0` a tick exactly at the target's time has `dt = 0` and is
+   unrelated even under the null-inclusive order, breaking the partition
+   with `W = N + 2` and residual exactly `+1`. The hypothesis "no tick
+   spacetime-coincident with the target" (automatic for `|dx| > 0`)
+   excludes it; the verification harness pins the case, and its band
+   predicate keeps the `[-1, 1)` upper edge genuinely open — a
+   symmetric float tolerance would have admitted the true `+1`.
 
 ## 8. Relation to the frozen program
 

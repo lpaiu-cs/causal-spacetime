@@ -24,6 +24,7 @@ from t1_verification import (  # noqa: E402
     BAND_TOL,
     bracket_widths_ranks,
     check_centered_residue,
+    check_coincident_tick_orphan,
     check_density_invariance,
     check_fold,
     check_pipeline_band,
@@ -31,6 +32,7 @@ from t1_verification import (  # noqa: E402
     check_resolution_scaling,
     pc_v1_centered_profile,
     predicted_center,
+    residuals_in_band,
 )
 
 
@@ -41,7 +43,22 @@ def test_quantization_band_holds_on_a_controlled_chain():
     assert result["n_reachable"] > 0
     assert result["violations"] == 0, result
     assert result["residual_min"] >= -1.0 - BAND_TOL
-    assert result["residual_max"] < 1.0 + BAND_TOL
+    assert result["residual_max"] < 1.0
+
+
+def test_band_predicate_rejects_a_true_residual_of_plus_one():
+    """The open upper edge must stay open through float fuzz: a target
+    spacetime-coincident with a tick (dt = 0, unrelated under dt > 0)
+    genuinely produces W = 2 and residual exactly +1 -- outside [-1, 1).
+    A symmetric tolerance would have admitted it; the predicate must not."""
+
+    result = check_coincident_tick_orphan()
+    assert result["width"] == 2.0
+    assert result["residual"] == 1.0
+    assert result["band_rejects_it"], result
+    # And directly: +1 is out, the closed lower edge -1 is in.
+    assert not residuals_in_band(np.array([1.0]))[0]
+    assert residuals_in_band(np.array([-1.0]))[0]
 
 
 def test_quantization_band_holds_through_the_scene_pipeline():

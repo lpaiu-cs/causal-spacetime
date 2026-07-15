@@ -50,10 +50,28 @@ from causal_spacetime_lab.sprinkling import sprinkle_1p1_causal_diamond
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "outputs" / "theory"
 
-# Float fuzz allowance on the closed side of the proved band. The band itself
-# is exact integer arithmetic; the tolerance only covers tick times built by
+# Float fuzz allowance around the proved band [-1, 1). The band itself is
+# exact integer arithmetic; the tolerance only covers tick times built by
 # np.linspace and the atol inside the causal matrix.
 BAND_TOL = 1e-9
+
+
+def residuals_in_band(residuals: np.ndarray) -> np.ndarray:
+    """Membership test for the proved half-open band ``[-1, 1)``.
+
+    The asymmetry is deliberate. The lower edge is closed, so it gets a +tol
+    allowance against float fuzz. The upper edge is OPEN, and there exists a
+    true residual of exactly +1: a target spacetime-coincident with a tick
+    (|dx| = 0, t on the grid) leaves that tick unrelated under the dt > 0
+    convention -- neither predecessor nor successor -- so W = 2 against a
+    predicted center of 1. A symmetric ``< 1 + tol`` check would wave that
+    genuine violation through as fuzz; shaving the open edge by tol instead
+    means a true +1 can never pass, at the cost of (measure-zero) legitimate
+    theta within 1e-9 of 1.
+    """
+
+    residuals = np.asarray(residuals)
+    return (residuals >= -1.0 - BAND_TOL) & (residuals < 1.0 - BAND_TOL)
 
 
 def bracket_widths_ranks(
@@ -129,7 +147,7 @@ def check_quantization_band(
 
     abs_dx = np.abs(targets[reachable, 1] - x0)
     residuals = widths[reachable] - predicted_center(abs_dx, delta)
-    in_band = (residuals >= -1.0 - BAND_TOL) & (residuals < 1.0 + BAND_TOL)
+    in_band = residuals_in_band(residuals)
 
     return {
         "n_reachable": int(reachable.sum()),
@@ -311,6 +329,35 @@ def check_centered_residue(x: float = 0.10, t_shift: float = 0.003) -> dict:
     }
 
 
+def check_coincident_tick_orphan(span: float = 1.4, ticks: int = 96) -> dict:
+    """The one true band violation, pinned: a target spacetime-coincident
+    with a tick.
+
+    With |dx| = 0 and the target's time exactly on the grid, the coincident
+    tick has dt = 0 and is unrelated under the dt > 0 convention -- neither
+    predecessor, spacelike, nor successor -- so the partition behind
+    W = N + 1 fails: W = 2 against a predicted center of 1, residual exactly
+    +1, outside the half-open [-1, 1). Lemma 2 excludes this by hypothesis
+    (no tick coincident with the target; measure zero for sprinkled targets).
+    This check exists so the band predicate demonstrably REJECTS the case
+    rather than waving it through as float fuzz.
+    """
+
+    delta = span / (ticks - 1)
+    tick_times = np.linspace(-span / 2.0, span / 2.0, ticks)
+    target = np.array([[float(tick_times[ticks // 3]), 0.0]])
+    width = bracket_widths_ranks(target, 0.0, span, ticks)[0]
+    residual = float(width - predicted_center(np.array([0.0]), delta)[0])
+    rejected = not bool(residuals_in_band(np.array([residual]))[0])
+
+    return {
+        "width": float(width),
+        "residual": residual,
+        "band_rejects_it": rejected,
+        "passed": bool(width == 2.0 and residual == 1.0 and rejected),
+    }
+
+
 def check_pipeline_band(seed: int = 0) -> dict:
     """Check 1 (pipeline): the band holds through the full PC-V1 scene path.
 
@@ -336,7 +383,7 @@ def check_pipeline_band(seed: int = 0) -> dict:
             residuals.append(width - float(predicted_center(abs_dx, delta)))
 
     residuals = np.array(residuals)
-    in_band = (residuals >= -1.0 - BAND_TOL) & (residuals < 1.0 + BAND_TOL)
+    in_band = residuals_in_band(residuals)
     return {
         "scene_seed": seed,
         "n_measurements": int(residuals.size),
@@ -356,6 +403,7 @@ def main() -> None:
         "3a_resolution_scaling": check_resolution_scaling(),
         "3b_density_invariance": check_density_invariance(),
         "4_centered_residue": check_centered_residue(),
+        "5_coincident_tick_orphan": check_coincident_tick_orphan(),
     }
 
     all_passed = all(result["passed"] for result in checks.values())
