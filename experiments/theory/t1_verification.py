@@ -43,6 +43,16 @@ The checks, in the document's numbering:
    configurations with identical D but affinely inequivalent targets --
    is reproduced to float precision, pinning that D carries order and
    nothing metric.
+7. Theorem 2 (Model P): direct seeded simulation of the stated
+   stochastic model -- Poisson tick chains, widths via the rank-gap
+   identity, cross-checked exactly against find_radar_ticks_from_order.
+   Same-slice pairs must NEVER strictly invert (pathwise claim: one
+   inversion falsifies the theorem); tie rate / mean / variance match
+   exp(-4 lam g) / 4 lam g / 4 lam g; arbitrary-time error rates and
+   full-order failure rates are dominated by the Claim 1 / Claim 3
+   bounds at parameters where those bounds are nontrivial. Verifies the
+   THEOREM by simulation; no instrument realizes Model P (G2), and no
+   rho-scaling claim is tested.
 
 Usage:
     python t1_verification.py            # run all checks, write JSON summary
@@ -752,6 +762,214 @@ def check_d_spacing_sharpness() -> dict:
     }
 
 
+def _poisson_chain(rng: np.random.Generator, lam: float, span: float) -> np.ndarray:
+    """One realization of a rate-lam Poisson tick process on [-span/2, span/2]."""
+
+    count = rng.poisson(lam * span)
+    return np.sort(rng.uniform(-span / 2.0, span / 2.0, size=count))
+
+
+def _width_by_identity(ticks: np.ndarray, t: float, d: float) -> tuple[int, bool]:
+    """Rank-gap identity: W = N + 1, N = ticks in the open radar interval.
+
+    Returns (width, reachable). Poisson ticks a.s. avoid the interval
+    endpoints, so the open/closed distinction never binds in simulation.
+    """
+
+    lo = int(np.searchsorted(ticks, t - d, side="right"))
+    hi = int(np.searchsorted(ticks, t + d, side="left"))
+    reachable = lo > 0 and hi < ticks.size
+    return hi - lo + 1, reachable
+
+
+def check_model_p_theorem2(
+    seed: int = 7,
+    trials: int = 4000,
+    order_trials: int = 1500,
+) -> dict:
+    """Check 7: Theorem 2 by direct simulation of the stated model.
+
+    This verifies the THEOREM, not the instrument: Poisson chains are
+    simulated here precisely because no code constructs them as an
+    instrument (G2), and nothing rho-dependent is claimed. Four parts:
+
+    - identity cross-check: widths from the rank-gap identity equal
+      widths from causal_matrix_1p1 + find_radar_ticks_from_order on the
+      same Poisson draws, exactly (ties Theorem 2's W to the machinery
+      the rest of the harness uses);
+    - same-slice pair (Claim 2): strict inversions must be ZERO -- the
+      pathwise-monotonicity claim is falsified by a single one -- and
+      the tie rate / mean / variance must match exp(-4 lam g) /
+      4 lam g / 4 lam g within generous MC tolerances;
+    - arbitrary-time pair (Claim 1): the empirical error rate must be
+      dominated by exp(-2 lam g^2 / (L + g/3)), and the mean/variance
+      must match the shared-region-cancellation bookkeeping (Step 2's
+      symmetric-difference formula);
+    - full order (Claim 3): the empirical failure rate must be dominated
+      by the (n-1)-term union bound, at parameters where that bound is
+      nontrivial (< 1).
+    """
+
+    rng = np.random.default_rng(seed)
+    lam, span = 40.0, 3.0
+    x0_left, x0_right = -0.3, 0.3
+
+    # --- identity cross-check against the instrument machinery ------------
+    identity_matches = True
+    for _ in range(20):
+        ticks = _poisson_chain(rng, lam, span)
+        if ticks.size < 2:
+            continue
+        target_t = float(rng.uniform(-0.4, 0.4))
+        target_x = float(rng.uniform(-0.2, 0.2))
+        x0 = 0.25
+        events = np.vstack([
+            np.array([[target_t, target_x]]),
+            np.column_stack([ticks, np.full(ticks.size, x0)]),
+        ])
+        causal = causal_matrix_1p1(events)
+        bracket = find_radar_ticks_from_order(
+            causal,
+            np.arange(1, 1 + ticks.size),
+            0,
+            np.arange(ticks.size, dtype=np.float64),
+        )
+        width_id, reachable_id = _width_by_identity(
+            ticks, target_t, abs(target_x - x0)
+        )
+        if bracket is None:
+            if reachable_id:
+                identity_matches = False
+        elif not reachable_id or int(bracket[1] - bracket[0]) != width_id:
+            identity_matches = False
+
+    # --- Claim 2: same-slice pair ------------------------------------------
+    xi, xj, t_common = 0.04, 0.02, 0.0
+    gap = xi - xj
+    deltas = np.empty(trials)
+    for k in range(trials):
+        left = _poisson_chain(rng, lam, span)
+        right = _poisson_chain(rng, lam, span)
+        wi_l, _ = _width_by_identity(left, t_common, xi - x0_left)
+        wj_l, _ = _width_by_identity(left, t_common, xj - x0_left)
+        wi_r, _ = _width_by_identity(right, t_common, x0_right - xi)
+        wj_r, _ = _width_by_identity(right, t_common, x0_right - xj)
+        deltas[k] = (wi_l - wi_r) - (wj_l - wj_r)
+
+    strict_inversions = int(np.sum(deltas < 0))
+    tie_rate = float(np.mean(deltas == 0))
+    tie_exact = float(np.exp(-4.0 * lam * gap))
+    tie_sigma = float(np.sqrt(tie_exact * (1 - tie_exact) / trials))
+    mean_ok = abs(float(deltas.mean()) - 4 * lam * gap) < 5 * np.sqrt(
+        4 * lam * gap / trials
+    )
+    var_ok = abs(float(deltas.var()) - 4 * lam * gap) < 5 * np.sqrt(
+        2.0 / trials
+    ) * 4 * lam * gap + 0.5
+
+    same_slice = {
+        "strict_inversions": strict_inversions,
+        "tie_rate": tie_rate,
+        "tie_exact": tie_exact,
+        "mean_matches": bool(mean_ok),
+        "variance_matches": bool(var_ok),
+        "tie_rate_matches": bool(abs(tie_rate - tie_exact) < 5 * tie_sigma),
+    }
+
+    # --- Claim 1: arbitrary-time pair (partial overlap on one chain) -------
+    ti, tj = 0.31, -0.27
+    xi2, xj2 = 0.06, 0.01
+    gap2 = xi2 - xj2
+    d_il, d_jl = xi2 - x0_left, xj2 - x0_left
+    d_ir, d_jr = x0_right - xi2, x0_right - xj2
+    length_bound = 2 * max(d_il, d_jl, d_ir, d_jr)
+
+    def _symdiff(t1, d1, t2, d2):
+        overlap = max(0.0, min(t1 + d1, t2 + d2) - max(t1 - d1, t2 - d2))
+        return 2 * d1 + 2 * d2 - 2 * overlap
+
+    predicted_var = lam * (
+        _symdiff(ti, d_il, tj, d_jl) + _symdiff(ti, d_ir, tj, d_jr)
+    )
+    deltas2 = np.empty(trials)
+    for k in range(trials):
+        left = _poisson_chain(rng, lam, span)
+        right = _poisson_chain(rng, lam, span)
+        wi_l, _ = _width_by_identity(left, ti, d_il)
+        wj_l, _ = _width_by_identity(left, tj, d_jl)
+        wi_r, _ = _width_by_identity(right, ti, d_ir)
+        wj_r, _ = _width_by_identity(right, tj, d_jr)
+        deltas2[k] = (wi_l - wi_r) - (wj_l - wj_r)
+
+    claim1_bound = float(
+        np.exp(-2 * lam * gap2**2 / (length_bound + gap2 / 3.0))
+    )
+    error_rate = float(np.mean(deltas2 <= 0))
+    general_pair = {
+        "error_rate": error_rate,
+        "claim1_bound": claim1_bound,
+        "bound_dominates": bool(error_rate <= claim1_bound),
+        "mean_matches": bool(
+            abs(float(deltas2.mean()) - 4 * lam * gap2)
+            < 5 * np.sqrt(predicted_var / trials)
+        ),
+        "variance_matches": bool(
+            abs(float(deltas2.var()) - predicted_var)
+            < 5 * np.sqrt(2.0 / trials) * predicted_var
+        ),
+    }
+
+    # --- Claim 3: full order, at parameters where the bound is < 1 ---------
+    lam_order = 300.0
+    positions = np.linspace(-0.15, 0.15, 6)
+    times = rng.uniform(-0.25, 0.25, size=positions.size)
+    g_min = float(np.min(np.diff(positions)))
+    length_all = 2 * max(
+        float(np.max(positions - x0_left)), float(np.max(x0_right - positions))
+    )
+    per_pair = np.exp(-2 * lam_order * g_min**2 / (length_all + g_min / 3.0))
+    union_bound = float((positions.size - 1) * per_pair)
+
+    failures = 0
+    for _ in range(order_trials):
+        left = _poisson_chain(rng, lam_order, span)
+        right = _poisson_chain(rng, lam_order, span)
+        flanking = np.empty(positions.size)
+        for m in range(positions.size):
+            w_l, _ = _width_by_identity(left, times[m], positions[m] - x0_left)
+            w_r, _ = _width_by_identity(right, times[m], x0_right - positions[m])
+            flanking[m] = w_l - w_r
+        if np.any(np.diff(flanking) <= 0):
+            failures += 1
+
+    full_order = {
+        "failure_rate": failures / order_trials,
+        "union_bound": union_bound,
+        "bound_nontrivial": bool(union_bound < 1.0),
+        "bound_dominates": bool(failures / order_trials <= union_bound),
+    }
+
+    passed = bool(
+        identity_matches
+        and strict_inversions == 0
+        and same_slice["tie_rate_matches"]
+        and same_slice["mean_matches"]
+        and same_slice["variance_matches"]
+        and general_pair["bound_dominates"]
+        and general_pair["mean_matches"]
+        and general_pair["variance_matches"]
+        and full_order["bound_nontrivial"]
+        and full_order["bound_dominates"]
+    )
+    return {
+        "identity_cross_check": bool(identity_matches),
+        "same_slice": same_slice,
+        "general_pair": general_pair,
+        "full_order": full_order,
+        "passed": passed,
+    }
+
+
 def check_pipeline_band(seed: int = 0) -> dict:
     """Check 1 (pipeline): the band holds through the full PC-V1 scene path.
 
@@ -803,6 +1021,7 @@ def main() -> None:
         "6_unlabeled_decoding_exact": check_unlabeled_decoding_exact(),
         "6_unlabeled_decoding_pipeline": check_unlabeled_decoding_pipeline(),
         "6_d_spacing_sharpness": check_d_spacing_sharpness(),
+        "7_model_p_theorem2": check_model_p_theorem2(),
     }
 
     all_passed = all(result["passed"] for result in checks.values())
