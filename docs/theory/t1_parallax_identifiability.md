@@ -1,7 +1,8 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.3 — statements and proof programs; nothing frozen**
-(v0.3 2026-07-16 KST: G1 closed, Theorem 1 upgraded to `[PROVED]`;
+Status: **THEORY DRAFT v0.4 — statements and proof programs; nothing frozen**
+(v0.4 2026-07-16 KST: G3 closed, Theorem 2 upgraded to `[PROVED]`;
+v0.3 2026-07-16 KST: G1 closed, Theorem 1 upgraded to `[PROVED]`;
 v0.2 2026-07-16 KST / 2026-07-15 UTC; v0.1 2026-07-15 — revised after PR
 reviews, see Revision notes).
 
@@ -408,28 +409,123 @@ bulk sprinkling density, because `ticks_per_chain` does not scale with
 where*, not through the measured widths. `[PROVED, given Lemma 2
 Model D]`
 
-### Theorem 2 (Model P: order recovery with high probability)
-`[CONJECTURED, route below]`
+### Theorem 2 (Model P: order recovery with high probability) `[PROVED]`
 
-Ticks Poisson of rate `lambda`. For targets `i, j` in the hull with
-spatial separation `g = |x_i - x_j|`, the flanking profile-difference
-estimator recovers their relative order except with probability at most
+Hypotheses: each chain an independent simple Poisson process of rate
+`lambda` on its worldline, tick support containing every radar interval
+below with at least one tick on each side (reachability; boundary
+caveat at the end). Targets `i, j` in the open hull with `x_j < x_i`,
+gap `g = x_i - x_j`, *arbitrary* times. Estimator: the flanking
+difference `D_m = W[m,1] - W[m,R]`, order declared by sorting `D`.
+Write `I_{m,r}` for target `m`'s open radar interval on chain `r`
+(length `2 d_{m,r}`, `d_{m,r} = |x_m - x0_r|`) and
+`L = 2 max(d_{i,1}, d_{j,1}, d_{i,R}, d_{j,R})`.
+
+**Claim 1 (pairwise, ties counted as errors).**
 
 ```
-2 exp( - c * lambda g^2 / L ),
+P( D_i <= D_j )  <=  exp( - 2 lambda g^2 / (L + g/3) ).
 ```
 
-where `L` bounds the bracket widths involved; a union bound over pairs
-gives full order recovery w.h.p. once
-`min gap >~ sqrt( L * log(n) / lambda )`.
+**Claim 2 (same-slice refinement).** If additionally `t_i = t_j`, then
+`D_i - D_j >= 0` on *every* realization — the estimator never strictly
+inverts a same-slice pair — and
 
-*Route.* By the Lemma 2 identity, `W - 1` is a Poisson count over the
-bracket interval — no overshoot terms — so Bennett/Chernoff gives
-fluctuations `~ sqrt(lambda L)` against a signal of `4 lambda g` (slope
-2 per observer, two flanking observers). To write: independence
-bookkeeping (the same ticks enter several brackets — interval
-disjointness for well-separated targets, or negative association), and
-the boundary caveat.
+```
+P( D_i = D_j )  =  exp( - 4 lambda g )        exactly.
+```
+
+**Claim 3 (full order).** For `n` targets with minimum adjacent gap
+`g_min`, and with the *global* length bound
+`L_all = 2 max_{m, r in {1,R}} d_{m,r}` (over all `n` targets and both
+flanking chains — the pairwise `L` above is local to one pair):
+`P(recovered order != true order) <=
+(n-1) exp( - 2 lambda g_min^2 / (L_all + g_min/3) )`, so order
+recovery holds w.h.p. once `g_min >~ sqrt( L_all log n / lambda )` —
+improving to `g_min >~ log n / (4 lambda)` on a common slice, where
+the per-pair term is the exact tie probability of Claim 2.
+
+*Proof.*
+
+**Step 1 — the G3 bookkeeping: shared regions cancel.** By the
+rank-gap identity (Lemma 2; applicable a.s., since Poisson ticks are
+simple and a.s. avoid both the target's light cone and its position,
+so the null-alignment and coincidence hypotheses hold with probability
+1), `W[m,r] = N_r(I_{m,r}) + 1` with `N_r` the chain-`r` counting
+measure. On one chain,
+
+```
+N_r(I_i) - N_r(I_j) = N_r(I_i \ I_j) - N_r(I_j \ I_i):
+```
+
+the count over the shared region `I_i ∩ I_j` cancels *exactly*,
+realization by realization. What remains are counts over disjoint
+regions of one Poisson process — independent — and the two flanking
+chains are independent of each other. So with
+`A_r = I_{i,r} \ I_{j,r}`, `C_r = I_{j,r} \ I_{i,r}`,
+
+```
+Delta := D_i - D_j = N_1(A_1) - N_1(C_1) - N_R(A_R) + N_R(C_R)
+```
+
+is a signed sum of four *mutually independent* Poisson counts.
+Overlapping brackets leave no residual dependence in a pairwise
+comparison — this is the entire content of the worry G3 recorded.
+
+**Step 2 — mean and variance.** `|I_{i,r}| - |I_{j,r}| = |A_r| - |C_r|`,
+and inside the hull `d_{i,1} - d_{j,1} = g`, `d_{i,R} - d_{j,R} = -g`,
+so `E Delta = 2 lambda g - (-2 lambda g) = 4 lambda g`. Independence
+gives `Var Delta = lambda (|I_{i,1} Δ I_{j,1}| + |I_{i,R} Δ I_{j,R}|)
+<= 4 lambda L` — only the symmetric differences enter; the shared
+regions dropped out of the variance too.
+
+**Step 3 — Chernoff.** For `theta in [0, 3)`, the downward-tail factors
+obey `E exp(-theta (N(A) - lambda|A|)) = exp(lambda|A|(e^{-theta} - 1 +
+theta)) <= exp(lambda|A| theta^2/2)` and the upward ones
+`E exp(theta (N(C) - lambda|C|)) = exp(lambda|C|(e^{theta} - 1 -
+theta)) <= exp(lambda|C| theta^2 / (2(1 - theta/3)))`. The standard
+Bernstein optimization then yields, with `s = 4 lambda g` and
+`v = Var Delta`,
+
+```
+P(Delta <= 0) = P(Delta - E Delta <= -s)
+             <= exp( - s^2 / (2 (v + s/3)) )
+             <= exp( - 2 lambda g^2 / (L + g/3) ).
+```
+
+(Constants not optimized.)
+
+**Step 4 — same slice.** With `t_i = t_j` the intervals are concentric:
+`I_{j,1} ⊂ I_{i,1}` and `I_{i,R} ⊂ I_{j,R}`, so `C_1 = A_R = ∅` and
+`Delta = N_1(A_1) + N_R(C_R) >= 0` pathwise — a sum of two independent
+`Poisson(2 lambda g)` variables (`|A_1| = |C_R| = 2g`). `Delta = 0`
+iff both annuli are empty: probability `exp(-2 lambda g)^2 =
+exp(-4 lambda g)`, exactly.
+
+**Step 5 — union bound; where cross-pair dependence lives and why it
+is harmless.** Different pairs *do* share ticks (`D_i` enters every
+comparison involving target `i`), but Claim 3 needs no independence:
+sorting real numbers recovers the true order as soon as `D` is
+strictly increasing across the `n - 1` *adjacent* true pairs
+(transitivity of `<`), and the union bound over those events uses
+subadditivity of probability only. Each adjacent pair `k` has its own
+gap `g_k >= g_min` and its own local length bound `L_k <= L_all`, and
+the Claim 1 exponent `2 lambda g^2 / (L + g/3)` is increasing in `g`
+and decreasing in `L`, so every per-pair bound is dominated by the
+single displayed term with `(g_min, L_all)`:
+`g_k^2/(L_k + g_k/3) >= g_min^2/(L_k + g_min/3) >=
+g_min^2/(L_all + g_min/3)`. ∎
+
+Boundary caveat `[PROVED, crude]`: on a finite tick support,
+"`W` exists" is itself an event. Each width needs one tick on each
+side of its radar interval; if every interval sits at distance `>= m`
+from the support's ends, each one-sided failure is an empty Poisson
+segment of length `>= m`, probability `<= exp(-lambda m)`, so a union
+bound adds `2 x (number of widths involved) x exp(-lambda m)` to each
+bound above (`8 exp(-lambda m)` for the pairwise Claim 1, `4n
+exp(-lambda m)` for Claim 3). Targets failing reachability are
+excluded by the instrument's `reachable` mask rather than imputed,
+matching the code.
 
 ### The rho^{-1/2} target is conditional on future instrumentation
 
@@ -466,9 +562,18 @@ instrumentation, not as a v0.2 verification target.
   protocol (harvested chains or Poisson-thinned clocks) that would have
   to be built and audited first. Until then, Model-P results are theory
   about a future instrument.
-- **G3 — dependence between brackets.** Overlapping brackets share ticks;
-  the union bound in Theorem 2 needs the independence bookkeeping made
-  precise. `[PROVABLE, standard but fiddly]`
+- **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
+  The bookkeeping turned out cleaner than "standard but fiddly": in a
+  pairwise flanking comparison the shared interval region cancels
+  *exactly* (`N(I_i) - N(I_j) = N(I_i \ I_j) - N(I_j \ I_i)`), leaving
+  four mutually independent Poisson counts — no negative-association
+  argument needed; and the full-order union bound needs subadditivity
+  only, over the `n - 1` adjacent pairs. Bonus from the same
+  cancellation: same-slice pairs are *pathwise* monotone (the estimator
+  can tie but never strictly invert), with tie probability exactly
+  `exp(-4 lambda g)` — exponentially better in the gap than the
+  conjectured `exp(-c lambda g^2 / L)` form, which remains the correct
+  rate for arbitrary-time pairs.
 - **G4 — 1+1D only.** The roadmap's ">= 3 non-collinear observers"
   phrasing anticipates 2+1D, where the hull condition and the reflection
   group change. Out of scope for v0.1; the 1+1D statements are the ones
@@ -513,11 +618,29 @@ not `n_events`):
    Sharpness (Lemma 4f): the two same-`D` affinely-inequivalent
    configurations are pinned as a deterministic regression — `D`
    carries order, not spacings.
+7. **Theorem 2 simulation check** (Model P): direct seeded Monte Carlo
+   of the *stated stochastic model* — Poisson tick chains simulated in
+   the harness, widths via the rank-gap identity, cross-checked
+   exactly against `find_radar_ticks_from_order()` on the same draws.
+   Asserted: same-slice pairs never strictly invert (pathwise claim —
+   a single inversion falsifies Step 4); the tie rate, mean and
+   variance match `exp(-4 lambda g)` / `4 lambda g` / `4 lambda g`
+   within exact binomial/MC tolerances; arbitrary-time error rates are
+   dominated by the Claim 1 bound; full-order failure rates are
+   dominated by the Claim 3 union bound at parameters where that bound
+   is nontrivial (`< 1`). Every simulated width's reachability flag is
+   collected and asserted (zero unreachable draws per section — a
+   nonzero count fails the check loudly instead of letting synthetic
+   widths into the statistics). This verifies the *theorem*, not the
+   instrument: no code constructs Poisson chains as an instrument
+   (G2), and no `rho`-scaling claim is tested here.
 
 Future instrumentation (required before any `rho^{-1/2}` claim): a
 density-coupled tick protocol (harvested chains or Poisson-thinned
 clocks) with its own audit; only then does Theorem 2's scaling become
-testable. Out of scope for the existing-generator harness.
+testable *on the instrument* — the theorem's own mathematics is
+simulation-verified per item 7. Out of scope for the
+existing-generator harness.
 
 ### Execution outcome (2026-07-16 KST / 2026-07-15 UTC)
 
@@ -565,12 +688,24 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    full measured order, all with true separations below one tick
    spacing (max 0.0053 against `delta = 0.0147`) — the resolution
    limit, exactly where Lemma 4e permits it.
+8. Theorem 2 simulation (Model P, v0.4): rank-gap-identity widths equal
+   `find_radar_ticks_from_order()` widths exactly on shared Poisson
+   draws. Same-slice pair (`lambda = 40`, `g = 0.02`): **0 strict
+   inversions in 4000 trials** (the pathwise claim), tie rate `0.046`
+   against the exact `exp(-4 lambda g) = 0.041` (inside MC tolerance),
+   mean and variance matching `4 lambda g`. Arbitrary-time pair with
+   partial bracket overlap: error rate `0.22` dominated by the Claim 1
+   bound `0.76`, variance matching Step 2's symmetric-difference
+   bookkeeping. Full order (`n = 6`, `lambda = 300`): failure rate
+   `0.000` dominated by the nontrivial union bound `0.478` (computed
+   with the global `L_all`, as Claim 3 requires). Zero unreachable
+   draws in every section, asserted rather than assumed.
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -650,6 +785,21 @@ pinned in CI as exact (non-statistical) regressions.
    reproduced to float precision by the harness. Spacing recovery from
    unlabeled profiles (more data than `D`) is left explicitly open —
    neither claimed nor refuted.
+9. G3 closed (v0.4): Theorem 2 upgrades `[CONJECTURED] -> [PROVED]`
+   with the independence bookkeeping written out. The feared
+   dependence dissolves in two different ways at the two places it
+   could enter: pairwise, the shared interval region cancels exactly
+   inside `N(I_i) - N(I_j)`, leaving four mutually independent Poisson
+   counts (no negative-association machinery); across pairs, the
+   union bound needs only subadditivity over the `n - 1` adjacent
+   comparisons. New same-slice refinement: concentric intervals make
+   the flanking estimator pathwise monotone — ties possible
+   (probability exactly `exp(-4 lambda g)`), strict inversions
+   impossible — strengthening the conjectured `g^2/L` rate to a linear
+   `g` rate on a common slice. Boundary caveat stated with a crude
+   additive `4 exp(-lambda m)` term. The theorem is verified by direct
+   seeded simulation of the stated model (Section 7, item 7); this
+   does not touch G2 — no instrument realizes Model P.
 
 ## 8. Relation to the frozen program
 

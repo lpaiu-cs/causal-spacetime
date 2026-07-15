@@ -30,6 +30,7 @@ from t1_verification import (  # noqa: E402
     check_d_spacing_sharpness,
     check_density_invariance,
     check_fold,
+    check_model_p_theorem2,
     check_null_aligned_tick,
     check_pipeline_band,
     check_quantization_band,
@@ -222,6 +223,31 @@ def test_d_carries_order_but_not_spacings():
     assert result["max_d_difference"] < 1e-12
     assert result["affine_invariant_a"] == pytest.approx(26.0 / 51.0)
     assert result["affine_invariant_b"] == pytest.approx(0.45)
+    assert result["passed"], result
+
+
+def test_theorem_2_holds_on_simulated_model_p():
+    """Theorem 2 by direct seeded simulation of the stated Poisson model:
+    the rank-gap identity agrees exactly with the instrument machinery on
+    the same draws; same-slice pairs never strictly invert (a single
+    strict inversion falsifies Step 4's pathwise claim); tie rate and
+    moments match the exact expressions; the Claim 1 and Claim 3 bounds
+    dominate the empirical rates at parameters where the bounds are
+    nontrivial. This verifies the theorem, not the instrument -- no code
+    constructs Poisson chains as an instrument (G2)."""
+
+    result = check_model_p_theorem2(seed=7, trials=1500, order_trials=600)
+    assert result["identity_cross_check"]
+    assert result["same_slice"]["unreachable_trials"] == 0
+    assert result["general_pair"]["unreachable_trials"] == 0
+    assert result["full_order"]["unreachable_trials"] == 0
+    assert result["same_slice"]["strict_inversions"] == 0
+    assert result["same_slice"]["tie_rate_matches"], result["same_slice"]
+    assert result["same_slice"]["mean_matches"], result["same_slice"]
+    assert result["general_pair"]["bound_dominates"], result["general_pair"]
+    assert result["general_pair"]["variance_matches"], result["general_pair"]
+    assert result["full_order"]["bound_nontrivial"]
+    assert result["full_order"]["bound_dominates"], result["full_order"]
     assert result["passed"], result
 
 
