@@ -238,6 +238,16 @@ def main() -> None:
             "rmse_exponent": rmse_slope,
         }
 
+        # Clock failures are asserted, not just reported: a run with
+        # short clocks or unreachable targets must not write
+        # all_passed = true even if the broad exponent bands survive.
+        verdicts[f"{arm}_no_unreachable"] = bool(
+            all(row["unreachable"] == 0 for row in rows)
+        )
+        verdicts[f"{arm}_no_short_clocks"] = bool(
+            all(row["short_clocks"] == 0 for row in rows)
+        )
+
         if arm == "thinned":
             # PROVED corollary (Theorem 2 setup + lam = rho * ell):
             # RMSE must track sqrt(mean d / (2 lam)) and fall ~ rho^{-1/2}.

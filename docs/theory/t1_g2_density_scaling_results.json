@@ -226,11 +226,17 @@
     }
   },
   "verdicts": {
+    "thinned_no_unreachable": true,
+    "thinned_no_short_clocks": true,
     "thinned_lam_exponent_near_1": true,
     "thinned_mean_prediction_ratio_near_1": true,
     "thinned_per_density_ratios_sane": true,
     "thinned_rmse_exponent_near_minus_half": true,
+    "harvest_fixed_no_unreachable": true,
+    "harvest_fixed_no_short_clocks": true,
     "harvest_lam_exponent_near_half": true,
+    "harvest_scaled_no_unreachable": true,
+    "harvest_scaled_no_short_clocks": true,
     "harvest_scaled_lam_exponent_near_half": true,
     "harvest_scaled_rmse_shallower_than_thinned": true,
     "harvest_scaled_rmse_in_sanity_band": true
