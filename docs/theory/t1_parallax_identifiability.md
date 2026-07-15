@@ -340,6 +340,29 @@ density-coupled tick protocol (harvested chains or Poisson-thinned
 clocks) with its own audit; only then does Theorem 2's scaling become
 testable. Out of scope for the existing-generator harness.
 
+### Execution outcome (2026-07-16)
+
+The harness (`experiments/theory/t1_verification.py`, regression tests in
+`tests/test_t1_verification.py`) ran all four checks plus an end-to-end
+pipeline variant. All passed:
+
+1. Quantization band: 400 controlled targets and 240 full-pipeline
+   measurements (`build_positive_control_scene` seed 0), residuals in
+   `[-0.93, 0.99]` — inside the proved `[-1, 1)` band, zero violations.
+2. Fold: mirrored targets identical on the centered observer (`W = 14`
+   both), separated by 27 ranks on an offset observer (predicted 27.14).
+3. Resolution: RMSE log-log slope `-1.017` against target `-1` over
+   `K = 12..384`, every pointwise error within the proved `delta/2`
+   bound; widths bit-identical across bulk sizes 0/300/3000 (the density
+   falsifier — Model D's clock does not know `rho`).
+4. Centered residue: the review's counterexample reproduced *exactly*
+   (`t = 0` profile `[77/3, 35/3, -7/3, -49/3, -49/3, -7/3]`, matching
+   the numbers quoted in the PR #4 thread); max residue 0.79 < 2.
+
+The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
+verified against the instrument, and the band/fold/density assertions are
+pinned in CI as exact (non-statistical) regressions.
+
 ## Revision notes (v0.1 -> v0.2, after PR review)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
