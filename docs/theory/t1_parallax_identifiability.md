@@ -1,10 +1,11 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.4 — statements and proof programs; nothing frozen**
-(v0.4 2026-07-16 KST: G3 closed, Theorem 2 upgraded to `[PROVED]`;
-v0.3 2026-07-16 KST: G1 closed, Theorem 1 upgraded to `[PROVED]`;
-v0.2 2026-07-16 KST / 2026-07-15 UTC; v0.1 2026-07-15 — revised after PR
-reviews, see Revision notes).
+Status: **THEORY DRAFT v0.5 — statements and proof programs; nothing frozen**
+(v0.5 2026-07-16 KST: G2 instrumented, `rho^{-1/2}` shown
+protocol-dependent; v0.4 2026-07-16 KST: G3 closed, Theorem 2 upgraded
+to `[PROVED]`; v0.3 2026-07-16 KST: G1 closed, Theorem 1 upgraded to
+`[PROVED]`; v0.2 2026-07-16 KST / 2026-07-15 UTC; v0.1 2026-07-15 —
+revised after PR reviews, see Revision notes).
 
 Each claim below carries a proof-status tag:
 
@@ -55,7 +56,9 @@ counterexample). Theory and instrument must share this convention. Fix:
   - **Model P (stochastic idealization).** Tick times form a simple
     stationary point process of intensity `lambda` on the worldline
     (Poisson being the special case used for concentration bounds).
-    No code constructs such chains today (Section 6, G2).
+    Realized as theory-track instrumentation in v0.5 by
+    `make_poisson_clock_chain_1p1()` (Section 6, G2); the frozen PC-V1
+    scene still uses only Model D.
 - Targets `e_1..e_n` in `S` at coordinates `(t_j, x_j)`.
 
 Observable (PC-V1 Section 5, `find_radar_ticks_from_order`):
@@ -527,16 +530,39 @@ exp(-lambda m)` for Claim 3). Targets failing reachability are
 excluded by the instrument's `reachable` mask rather than imputed,
 matching the code.
 
-### The rho^{-1/2} target is conditional on future instrumentation
+### The rho^{-1/2} law is protocol-dependent (instrumented in v0.5)
 
 The roadmap's `error ~ 1/sqrt(rho * area)` law presumes tick statistics
-coupled to the sprinkling density (`lambda ~ rho * ell`, e.g. chains
-harvested from the sprinkling). PC-V1's chains are not that (Model D),
-so **that law is currently untestable in this codebase**: varying
-`n_events` in the existing generator does not vary the clock. Testing it
-requires a genuine density-coupled tick protocol — a harvested-chain
-constructor with its own audit — listed in Section 7 as future
-instrumentation, not as a v0.2 verification target.
+coupled to the sprinkling density as `lambda ~ rho * ell`. PC-V1's
+frozen chains are not that (Model D), but the coupling is now
+*instrumented* (`density_coupled_clocks.py`, audited) in two protocols,
+and the law turns out to hold for exactly one of them
+(`experiments/theory/t1_g2_density_scaling.py`):
+
+- **Poisson-thinned clock** (`lambda = rho * ell`, exact worldline):
+  realizes Model P with the presumed coupling. Here
+  `W - 1 ~ Poisson(2 lambda d)` by the Lemma 2 identity, so the
+  distance estimator `d_hat = (W - 1)/(2 lambda)` is unbiased with
+  `sd = sqrt( d / (2 lambda) ) ~ rho^{-1/2}` — a `[PROVED]` corollary
+  of Theorem 2's setup, and `1/sqrt(rho * area)` with `area ~ d * ell`.
+  Measured: rate exponent `+0.995`, RMSE exponent `-0.463`, per-density
+  RMSE tracking the exact prediction (grid-mean ratio within 15%,
+  intra-chain correlation accounted for).
+- **Harvested chain** (longest causal chain of *sprinkled events* in a
+  spatial tube — the order-intrinsic clock): its rate is a measurement,
+  not a choice, and it comes out `lambda ~ rho^{0.49..0.55}` — the
+  discreteness scale `sqrt(rho)`, **not** `rho`. The `rho^{-1/2}` law
+  therefore does *not* transfer: measured error exponent `-0.317` with
+  a discreteness-scaled tube (`w ~ 3/sqrt(rho)`), flattening to
+  `-0.165` with a fixed-width tube (whose position wiggle adds an
+  error floor). `[MEASURED]`
+
+Mechanism note, open: with `lambda ~ sqrt(rho)`, a Poisson-rate guess
+gives exponent `-1/4`; a maximal path is *more regular* than Poisson
+(KPZ-like concentration would suggest `-1/3`). The measured `-0.32`
+sits in that band, nearer `-1/3`, but distinguishing the fluctuation
+class needs a dedicated study — recorded in G2 as the remaining open
+question. Any density-scaling claim must name its protocol.
 
 ## 6. Known gaps (the honest list)
 
@@ -551,17 +577,27 @@ instrumentation, not as a v0.2 verification target.
   `D`-based conclusion is order-only: spacings are provably not in `D`
   (Lemma 4f counterexample), and Theorem 1's positive-affine clause
   belongs to the labeled flanking decoder.
-- **G2 — the stochastic clock model has no instrument.** (Rewritten in
-  v0.2: the v0.1 text claimed the code harvests maximal-ish paths from
-  the sprinkling with longest-path tick statistics — it does not.
-  `build_positive_control_scene()` appends *exact* vertical worldlines
-  via `make_stationary_observer_chain_1p1()` with deterministic
-  `np.linspace` ticks, `ticks_per_chain = 96` fixed regardless of
-  `n_events`.) The instrument is Model D through and through; Model P
-  and every `rho`-scaling statement hang on a density-coupled tick
-  protocol (harvested chains or Poisson-thinned clocks) that would have
-  to be built and audited first. Until then, Model-P results are theory
-  about a future instrument.
+- **G2 — the stochastic clock model has no instrument.**
+  **INSTRUMENTED (v0.5); fluctuation class open.** (History: v0.1
+  wrongly claimed the code harvests paths from the sprinkling; v0.2
+  corrected that the frozen instrument is Model D through and through —
+  `build_positive_control_scene()` appends exact `np.linspace`
+  worldlines with `ticks_per_chain = 96` fixed regardless of
+  `n_events`.) v0.5 builds the missing protocols as theory-track
+  instrumentation (`density_coupled_clocks.py`, audited: chain
+  property, containment, simplicity, determinism): a Poisson-thinned
+  clock realizing Model P with `lambda = rho * ell`, and a
+  harvested-chain constructor whose ticks are sprinkled events.
+  Outcome (Section 5): the `rho^{-1/2}` law holds for the thinned
+  protocol as a proved corollary and is measured at exponent `-0.46`;
+  harvested chains couple at the discreteness scale
+  (`lambda ~ sqrt(rho)`, measured `0.49..0.55`) and give a distinctly
+  shallower error law (measured `-0.32`), so the roadmap's law is
+  protocol-dependent. *Remaining open:* the harvested chain's
+  fluctuation class (`-1/4` Poisson-rate guess vs `-1/3` KPZ-like;
+  measurement sits between, nearer `-1/3`). The frozen PC-V1
+  instrument is unchanged; any confirmatory use of these protocols
+  would need its own prereg freeze.
 - **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
   The bookkeeping turned out cleaner than "standard but fiddly": in a
   pairwise flanking comparison the shared interval region cancels
@@ -635,12 +671,24 @@ not `n_events`):
    instrument: no code constructs Poisson chains as an instrument
    (G2), and no `rho`-scaling claim is tested here.
 
-Future instrumentation (required before any `rho^{-1/2}` claim): a
-density-coupled tick protocol (harvested chains or Poisson-thinned
-clocks) with its own audit; only then does Theorem 2's scaling become
-testable *on the instrument* — the theorem's own mathematics is
-simulation-verified per item 7. Out of scope for the
-existing-generator harness.
+8. **G2 instrumentation + density-scaling characterization**
+   (`experiments/theory/t1_g2_density_scaling.py`): audit the
+   harvested-chain constructor (chain property, tube containment,
+   simplicity, determinism — the run refuses to measure if any fails),
+   then measure `lambda(rho)` and `RMSE(rho)` exponents for three arms
+   (thinned `lambda = rho * ell`; harvested fixed tube; harvested
+   discreteness-scaled tube). The thinned arm is asserted against its
+   exact `[PROVED]` prediction (`sd = sqrt(d / 2 lambda)`), with
+   tolerances derived from the intra-chain correlation (targets on one
+   chain share its tick realization — Theorem 2 Step 1's shared
+   regions); the harvested arms are characterization with sanity bands
+   only, and the fluctuation-class question is left open, not settled
+   by a fit.
+
+The density-coupled protocols are theory-track instrumentation: no
+frozen gate consumes them, and any confirmatory use would need its own
+prereg freeze. The `rho^{-1/2}` claim itself is settled as
+protocol-dependent (Section 5).
 
 ### Execution outcome (2026-07-16 KST / 2026-07-15 UTC)
 
@@ -700,12 +748,24 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    `0.000` dominated by the nontrivial union bound `0.478` (computed
    with the global `L_all`, as Claim 3 requires). Zero unreachable
    draws in every section, asserted rather than assumed.
+9. G2 density scaling (v0.5): harvested-chain audit clean
+   (causal-chain property, containment, simplicity, determinism).
+   Thinned protocol (`lambda = rho * ell`, `ell = 0.1`,
+   `rho = 500..32000`, 16 seeds): rate exponent `+0.995`, RMSE
+   exponent `-0.463`, per-density RMSE tracking the exact
+   `sqrt(d / 2 lambda)` prediction (grid-mean ratio inside 15%; every
+   per-density ratio inside `[0.6, 1.6]`). Harvested chains: rate
+   exponents `+0.547` (fixed tube) and `+0.494` (scaled tube) — the
+   discreteness scale; RMSE exponents `-0.165` (fixed tube: wiggle
+   floor visible) and `-0.317` (scaled tube). Zero unreachable
+   measurements in all arms. Full table in
+   `outputs/theory/t1_g2_density_scaling.json`.
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -800,6 +860,21 @@ pinned in CI as exact (non-statistical) regressions.
    additive `4 exp(-lambda m)` term. The theorem is verified by direct
    seeded simulation of the stated model (Section 7, item 7); this
    does not touch G2 — no instrument realizes Model P.
+10. G2 instrumented (v0.5): the density-coupled tick protocols the gap
+   demanded now exist as theory-track instrumentation
+   (`density_coupled_clocks.py` — Poisson-thinned clock and
+   harvested-chain constructor, with a constructor audit the scaling
+   run refuses to proceed without). The headline finding is that the
+   roadmap's `rho^{-1/2}` law is *protocol-dependent*: it holds for
+   the `lambda = rho * ell` thinned clock as a proved corollary of
+   Theorem 2's setup (measured RMSE exponent `-0.463`, tracking the
+   exact prediction), while the order-intrinsic harvested chain
+   couples at the discreteness scale (`lambda ~ sqrt(rho)`, measured
+   `0.49..0.55`) and yields a distinctly shallower error law
+   (measured `-0.317`, discreteness-scaled tube). The harvested
+   chain's fluctuation class (`-1/4` vs KPZ-like `-1/3`) is the
+   remaining open question in G2. The frozen PC-V1 instrument is
+   untouched.
 
 ## 8. Relation to the frozen program
 
