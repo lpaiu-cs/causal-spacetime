@@ -35,10 +35,14 @@ The checks, in the document's numbering:
    strictly Robinson (gap-direction inner products 4 a_k b_l / R, strict
    quadrance superadditivity) and the anchor decoder recovers the spatial
    order up to reversal from D alone, including at R = 2; on the pipeline,
-   |D_measured - D_exact| < 4 and every anchor comparison with exact
-   margin above 8 is ordered correctly -- the Model-D claim at its proved
-   strength, deliberately NOT asserting full-order recovery on sprinkled
-   targets.
+   |D_measured - D_exact| < 4 (under the asserted shared-centering
+   hypothesis) and every anchor comparison with exact margin above 8 is
+   ordered correctly -- the Model-D claim at its proved strength,
+   deliberately NOT asserting full-order recovery on sprinkled targets.
+   Sharpness (Lemma 4f): the review's counterexample -- two
+   configurations with identical D but affinely inequivalent targets --
+   is reproduced to float precision, pinning that D carries order and
+   nothing metric.
 
 Usage:
     python t1_verification.py            # run all checks, write JSON summary
@@ -694,6 +698,60 @@ def check_unlabeled_decoding_pipeline(seed: int = 0) -> dict:
     }
 
 
+def check_d_spacing_sharpness() -> dict:
+    """Check 6 (sharpness, Lemma 4f): D determines order, NOT spacings.
+
+    The review's counterexample, reproduced to float precision: two
+    hypothesis-satisfying configurations (R = 6, lambda = 1) with the
+    SAME dissimilarity matrix whose target sets are affinely
+    inequivalent -- the affine invariant (x2 - x1)/(x3 - x1) differs by
+    about 0.06. The per-gap D-speeds 4 a_k b_l / R depend on the unknown
+    observer layout, which absorbs spacing information while preserving
+    every pairwise D. Pins that Theorem 1's positive-affine clause
+    belongs to the labeled flanking decoder only: any future "decoder"
+    reading D alone and emitting spacings must fail this check's premise,
+    because the spacings are demonstrably not in D.
+    """
+
+    observers_a = np.array([0.0, 0.1, 0.21, 0.34, 0.44, 0.65])
+    targets_a = np.array([0.02, 0.28, 0.53])
+    observers_b = np.array([
+        0.0, 0.02928039325682, 0.075237960253012,
+        0.300251599099648, 0.311938592558539, 0.65,
+    ])
+    targets_b = np.array([0.02, 0.241172809035204, 0.511495131189338])
+
+    d_a = exact_dissimilarity(targets_a, observers_a, lam=1.0)
+    d_b = exact_dissimilarity(targets_b, observers_b, lam=1.0)
+    max_difference = float(np.max(np.abs(d_a - d_b)))
+
+    invariant_a = float(
+        (targets_a[1] - targets_a[0]) / (targets_a[2] - targets_a[0])
+    )
+    invariant_b = float(
+        (targets_b[1] - targets_b[0]) / (targets_b[2] - targets_b[0])
+    )
+
+    hypotheses_ok = bool(
+        np.all(np.diff(observers_a) > 0)
+        and np.all(np.diff(observers_b) > 0)
+        and np.all((targets_a > observers_a[0]) & (targets_a < observers_a[-1]))
+        and np.all((targets_b > observers_b[0]) & (targets_b < observers_b[-1]))
+    )
+
+    return {
+        "max_d_difference": max_difference,
+        "affine_invariant_a": invariant_a,
+        "affine_invariant_b": invariant_b,
+        "hypotheses_satisfied": hypotheses_ok,
+        "passed": bool(
+            hypotheses_ok
+            and max_difference < 1e-12
+            and abs(invariant_a - invariant_b) > 0.05
+        ),
+    }
+
+
 def check_pipeline_band(seed: int = 0) -> dict:
     """Check 1 (pipeline): the band holds through the full PC-V1 scene path.
 
@@ -744,6 +802,7 @@ def main() -> None:
         "5_null_aligned_tick": check_null_aligned_tick(),
         "6_unlabeled_decoding_exact": check_unlabeled_decoding_exact(),
         "6_unlabeled_decoding_pipeline": check_unlabeled_decoding_pipeline(),
+        "6_d_spacing_sharpness": check_d_spacing_sharpness(),
     }
 
     all_passed = all(result["passed"] for result in checks.values())

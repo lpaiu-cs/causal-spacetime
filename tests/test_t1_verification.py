@@ -27,6 +27,7 @@ from t1_verification import (  # noqa: E402
     check_builder_density_invariance,
     check_centered_residue,
     check_coincident_tick_orphan,
+    check_d_spacing_sharpness,
     check_density_invariance,
     check_fold,
     check_null_aligned_tick,
@@ -205,6 +206,22 @@ def test_pipeline_dissimilarity_obeys_the_proved_model_d_bounds():
     assert result["max_perturbation"] < 4.0
     assert result["margin_comparisons"] > 0
     assert result["margin_violations"] == 0
+    assert result["passed"], result
+
+
+def test_d_carries_order_but_not_spacings():
+    """Lemma 4f, the review's counterexample pinned: two
+    hypothesis-satisfying configurations produce the SAME dissimilarity
+    matrix while their target sets are affinely inequivalent. Any claim
+    that a D-only decoder recovers spacings (even up to positive affine)
+    is thereby false; Theorem 1's affine clause belongs to the labeled
+    flanking decoder only."""
+
+    result = check_d_spacing_sharpness()
+    assert result["hypotheses_satisfied"], result
+    assert result["max_d_difference"] < 1e-12
+    assert result["affine_invariant_a"] == pytest.approx(26.0 / 51.0)
+    assert result["affine_invariant_b"] == pytest.approx(0.45)
     assert result["passed"], result
 
 
