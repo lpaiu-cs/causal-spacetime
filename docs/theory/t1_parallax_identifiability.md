@@ -23,7 +23,20 @@ embedding) with a finite, order-intrinsic reconstruction criterion.
 ## 2. Setup and definitions
 
 Work in the 1+1D causal diamond `M = { (t,x) : |x| + |t| < 1 }` with the
-Minkowski order `(t,x) < (t',x')` iff `t'-t > |x'-x|`. Fix:
+Minkowski *causal* order (null-inclusive):
+
+```
+(t,x) < (t',x')   iff   t' - t > 0  and  (t'-t)^2 >= (x'-x)^2.
+```
+
+This is J (causal precedence), not the strict chronological order I —
+deliberately: it is the convention `causal_matrix_minkowski()` implements
+(`dt > 0 and dt^2 >= dx^2`), and Lemma 2's rank-gap identity is exact
+*because* null-aligned ticks count as predecessor/successor. Under the
+strict order a tick exactly on the light cone would be neither, and the
+identity fails on endpoint-aligned configurations — which the
+deterministic grid of Model D can realize (review supplied the
+counterexample). Theory and instrument must share this convention. Fix:
 
 - A Poisson sprinkling `S` of density `rho` on `M`.
 - `R` observer chains `C_1..C_R` at fixed spatial coordinates `x0_r`.
@@ -68,10 +81,11 @@ For an inertial observer at spatial coordinate `x0` and an event
 proper-time width of the continuum radar bracket is `2 |dx|`, independent
 of `t_e`.
 
-*Proof.* `(t, x0) < (t_e, x_e)` iff `t_e - t > |dx|`, so the supremum of
-preceding observer times is `t_e - |dx|`; symmetrically the infimum of
-succeeding times is `t_e + |dx|`. For an inertial worldline coordinate
-time is proper time. ∎
+*Proof.* `(t, x0) < (t_e, x_e)` iff `t_e - t >= |dx|` and `t < t_e`
+(null-inclusive order), so the set of preceding observer times is the
+closed ray `t <= t_e - |dx|` and its supremum `t_e - |dx|` is attained;
+symmetrically the succeeding times are `t >= t_e + |dx|`. For an
+inertial worldline coordinate time is proper time. ∎
 
 ### Lemma 2 (rank calibration)
 
@@ -80,20 +94,34 @@ argument (v0.1 added two renewal overshoots and double-counted the
 constant; review caught it).
 
 **Identity `[PROVED]`.** Let the ticks of a chain be simple (no
-coincident times) and let the bracket interval
-`(t_e - |dx|, t_e + |dx|)` of Lemma 1 contain `N` tick times, with at
-least one tick on each side of it (reachability). If the last
-predecessor has rank `k`, the ticks inside the interval have ranks
-`k+1..k+N` and the first successor has rank `k+N+1`, so
+coincident times). Under the null-inclusive order of Section 2, every
+tick time `tau` falls in exactly one of three classes relative to the
+target: predecessor (`tau <= t_e - |dx|`), spacelike
+(`t_e - |dx| < tau < t_e + |dx|`, the *open* radar interval), or
+successor (`tau >= t_e + |dx|`) — a partition, with no endpoint
+orphans. Let `N` count the spacelike ticks and assume at least one
+predecessor and one successor exist (reachability). The predecessor of
+maximal rank `k` is followed in rank order by the `N` spacelike ticks
+(`k+1..k+N`) and then by the first successor at rank `k+N+1`, so
 
 ```
 W = N + 1        (exactly, realization by realization).
 ```
 
+The convention is load-bearing: under the *strict* (chronological)
+order, a tick lying exactly on the light cone of the target is neither
+predecessor nor successor, the three classes no longer partition, and
+`W` can exceed `N + 1` — e.g. a target `(0, 0.5)` against uniform ticks
+`-0.75, -0.5, ..., 0.75` gives `N = 3` but strict `W = 6`. The
+instrument's `causal_matrix_minkowski()` is null-inclusive and yields
+`W = 4 = N + 1` on that configuration, which is why the theory adopts
+its convention rather than the reverse.
+
 **Model D `[PROVED]`.** For the uniform grid with spacing `delta`, the
-number of grid points in a closed interval of length `L = 2|dx|` is
-`L/delta + theta` with `theta in (-1, 1]` depending on the interval's
-position relative to the grid (its *phase*). Hence
+number of grid points in the *open* interval of length `L = 2|dx|` is
+`L/delta + theta` with `theta in [-1, 1)` depending on the interval's
+position relative to the grid (its *phase*; `theta = -1` exactly when
+both endpoints are grid-aligned, the reviewer-example case). Hence
 
 ```
 W = 2|dx|/delta + 1 + theta,      |W - (2 lambda |dx| + 1)| <= 1.
@@ -332,6 +360,15 @@ testable. Out of scope for the existing-generator harness.
    the observer-dependent quantization residue that centering does NOT
    remove is stated with its bound, matching the numeric counterexample
    raised in review.
+4. Order convention aligned with the instrument (second review round):
+   Section 2 now uses the null-inclusive causal order that
+   `causal_matrix_minkowski()` implements. Under v0.1's strict
+   (chronological) order the rank-gap identity fails on ticks exactly
+   on the target's light cone — probability zero under Model P, but
+   realizable on Model D's deterministic grid, per the review's
+   `(0, 0.5)` counterexample. The identity's partition argument, the
+   open-interval count, and `theta`'s range (`[-1, 1)`) are restated
+   under the shared convention.
 
 ## 8. Relation to the frozen program
 
