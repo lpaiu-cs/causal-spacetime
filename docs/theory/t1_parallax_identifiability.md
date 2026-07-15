@@ -543,26 +543,43 @@ and the law turns out to hold for exactly one of them
   realizes Model P with the presumed coupling. Here
   `W - 1 ~ Poisson(2 lambda d)` by the Lemma 2 identity, so the
   distance estimator `d_hat = (W - 1)/(2 lambda)` is unbiased with
-  `sd = sqrt( d / (2 lambda) ) ~ rho^{-1/2}` — a `[PROVED]` corollary
-  of Theorem 2's setup, and `1/sqrt(rho * area)` with `area ~ d * ell`.
-  Measured: rate exponent `+0.995`, RMSE exponent `-0.463`, per-density
-  RMSE tracking the exact prediction (grid-mean ratio within 15%,
-  intra-chain correlation accounted for).
-- **Harvested chain** (longest causal chain of *sprinkled events* in a
-  spatial tube — the order-intrinsic clock): its rate is a measurement,
-  not a choice, and it comes out `lambda ~ rho^{0.49..0.55}` — the
-  discreteness scale `sqrt(rho)`, **not** `rho`. The `rho^{-1/2}` law
-  therefore does *not* transfer: measured error exponent `-0.317` with
-  a discreteness-scaled tube (`w ~ 3/sqrt(rho)`), flattening to
-  `-0.165` with a fixed-width tube (whose position wiggle adds an
-  error floor). `[MEASURED]`
+
+  ```
+  sd( d_hat )     = sqrt( d / (2 rho ell) )                  (absolute)
+  sd( d_hat ) / d = 1 / sqrt( 2 rho ell d )
+                  = (1/sqrt(2)) / sqrt( rho * area ),   area = ell * d
+  ```
+
+  Both are `[PROVED]` corollaries of Theorem 2's setup and both fall
+  like `rho^{-1/2}` — but they are *different laws*: the roadmap's
+  `1/sqrt(rho * area)` form is the **relative**-error law (falling
+  like `1/sqrt(d)`), while the absolute error grows like `sqrt(d)`;
+  they differ in `d`-dependence and in units, and must not be
+  presented as one expression. The experiment measures the *absolute*
+  RMSE. Measured: rate exponent `+0.995`, RMSE exponent `-0.463`,
+  per-density RMSE tracking the exact absolute prediction (grid-mean
+  ratio within 15%, intra-chain correlation accounted for).
+- **Coordinate-tube harvested chain** (longest causal chain of
+  *sprinkled events* in a spatial tube): its ticks are order elements,
+  but the tube *selection* uses embedded coordinates (`|x - x0|` and a
+  time window), so this is **not yet an order-intrinsic clock** — an
+  order-only causal set could not reproduce the harvest without extra
+  geometric data. Its rate is a measurement, not a choice, and it
+  comes out `lambda ~ rho^{0.49..0.55}` — the discreteness scale
+  `sqrt(rho)`, **not** `rho`. The `rho^{-1/2}` law therefore does
+  *not* transfer: measured error exponent `-0.317` with a
+  discreteness-scaled tube (`w ~ 3/sqrt(rho)`), flattening to `-0.165`
+  with a fixed-width tube (whose position wiggle adds an error floor).
+  `[MEASURED, for the coordinate-tube protocol]`
 
 Mechanism note, open: with `lambda ~ sqrt(rho)`, a Poisson-rate guess
 gives exponent `-1/4`; a maximal path is *more regular* than Poisson
 (KPZ-like concentration would suggest `-1/3`). The measured `-0.32`
 sits in that band, nearer `-1/3`, but distinguishing the fluctuation
-class needs a dedicated study — recorded in G2 as the remaining open
-question. Any density-scaling claim must name its protocol.
+class needs a dedicated study — recorded in G2 as an open question,
+alongside the design of a genuinely order-only harvest (tube selection
+from order-theoretic data alone). Any density-scaling claim must name
+its protocol.
 
 ## 6. Known gaps (the honest list)
 
@@ -593,11 +610,15 @@ question. Any density-scaling claim must name its protocol.
   harvested chains couple at the discreteness scale
   (`lambda ~ sqrt(rho)`, measured `0.49..0.55`) and give a distinctly
   shallower error law (measured `-0.32`), so the roadmap's law is
-  protocol-dependent. *Remaining open:* the harvested chain's
-  fluctuation class (`-1/4` Poisson-rate guess vs `-1/3` KPZ-like;
-  measurement sits between, nearer `-1/3`). The frozen PC-V1
-  instrument is unchanged; any confirmatory use of these protocols
-  would need its own prereg freeze.
+  protocol-dependent. *Remaining open, two items:* (i) the harvested
+  chain's fluctuation class (`-1/4` Poisson-rate guess vs `-1/3`
+  KPZ-like; measurement sits between, nearer `-1/3`); (ii) an
+  order-only harvest — the current constructor selects its tube by
+  embedded coordinates, so it is a *coordinate-tube* protocol, not an
+  order-intrinsic clock, and a selection rule using order-theoretic
+  data alone remains to be designed. The frozen PC-V1 instrument is
+  unchanged; any confirmatory use of these protocols would need its
+  own prereg freeze.
 - **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
   The bookkeeping turned out cleaner than "standard but fiddly": in a
   pairwise flanking comparison the shared interval region cancels
@@ -683,7 +704,9 @@ not `n_events`):
    chain share its tick realization — Theorem 2 Step 1's shared
    regions); the harvested arms are characterization with sanity bands
    only, and the fluctuation-class question is left open, not settled
-   by a fit.
+   by a fit. Clocks with fewer than four ticks count their targets as
+   unreachable instead of being silently dropped, so a clock failure
+   shows up in the assertions rather than shrinking the denominator.
 
 The density-coupled protocols are theory-track instrumentation: no
 frozen gate consumes them, and any confirmatory use would need its own
@@ -758,8 +781,11 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    exponents `+0.547` (fixed tube) and `+0.494` (scaled tube) — the
    discreteness scale; RMSE exponents `-0.165` (fixed tube: wiggle
    floor visible) and `-0.317` (scaled tube). Zero unreachable
-   measurements in all arms. Full table in
-   `outputs/theory/t1_g2_density_scaling.json`.
+   measurements and zero short clocks in all arms. Full table with the
+   run configuration committed as
+   `docs/theory/t1_g2_density_scaling_results.json` (regenerable by
+   `experiments/theory/t1_g2_density_scaling.py`; CI pins the reduced
+   two-density grid).
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
@@ -868,13 +894,26 @@ pinned in CI as exact (non-statistical) regressions.
    roadmap's `rho^{-1/2}` law is *protocol-dependent*: it holds for
    the `lambda = rho * ell` thinned clock as a proved corollary of
    Theorem 2's setup (measured RMSE exponent `-0.463`, tracking the
-   exact prediction), while the order-intrinsic harvested chain
+   exact prediction), while the coordinate-tube harvested chain
    couples at the discreteness scale (`lambda ~ sqrt(rho)`, measured
    `0.49..0.55`) and yields a distinctly shallower error law
-   (measured `-0.317`, discreteness-scaled tube). The harvested
-   chain's fluctuation class (`-1/4` vs KPZ-like `-1/3`) is the
-   remaining open question in G2. The frozen PC-V1 instrument is
-   untouched.
+   (measured `-0.317`, discreteness-scaled tube). Review caught the
+   harvest being overstated as "order-intrinsic": the tube selection
+   uses embedded coordinates, so the measured law is for a
+   *coordinate-tube* protocol, and a genuinely order-only harvest
+   joins the fluctuation class (`-1/4` vs KPZ-like `-1/3`) as G2's
+   two remaining open questions. Review also caught short clocks
+   (fewer than four ticks) being silently dropped from the scaling
+   statistics — their targets now count as unreachable, so a clock
+   failure cannot hide by shrinking the denominator; caught the
+   absolute and relative error laws being presented as one expression
+   (the roadmap's `1/sqrt(rho * area)` is the *relative* form, falling
+   like `1/sqrt(d)`, while the absolute sd grows like `sqrt(d)` — both
+   `rho^{-1/2}`, different laws, now displayed separately); and
+   required the cited full-grid table to be auditable from the
+   repository — it is now committed with its run configuration as
+   `docs/theory/t1_g2_density_scaling_results.json`. The frozen PC-V1
+   instrument is untouched.
 
 ## 8. Relation to the frozen program
 

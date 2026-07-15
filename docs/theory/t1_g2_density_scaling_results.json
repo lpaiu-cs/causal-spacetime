@@ -1,0 +1,240 @@
+{
+  "config": {
+    "rho_grid": [
+      500,
+      1000,
+      2000,
+      4000,
+      8000,
+      16000,
+      32000
+    ],
+    "seeds_per_density": 16,
+    "targets_per_scene": 30,
+    "ell": 0.1,
+    "tube_scale": 3.0,
+    "observers": [
+      -0.3,
+      0.3
+    ],
+    "tick_window": [
+      -0.6,
+      0.6
+    ],
+    "diamond_T": 2.0
+  },
+  "audit": {
+    "chains_causal": true,
+    "chains_contained": true,
+    "tick_times_strictly_increasing": true,
+    "harvest_deterministic": true,
+    "passed": true
+  },
+  "arms": {
+    "thinned": {
+      "rows": [
+        {
+          "rho": 500,
+          "lam_mean": 50.63864434216133,
+          "rmse": 0.05316373729715756,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.05477225575051661
+        },
+        {
+          "rho": 1000,
+          "lam_mean": 102.65066001999097,
+          "rmse": 0.0363860404645963,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.03872983346207417
+        },
+        {
+          "rho": 2000,
+          "lam_mean": 201.59192196460356,
+          "rmse": 0.02437442399234636,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.027386127875258306
+        },
+        {
+          "rho": 4000,
+          "lam_mean": 406.8393753898549,
+          "rmse": 0.01802344970037942,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.019364916731037084
+        },
+        {
+          "rho": 8000,
+          "lam_mean": 801.3251320949093,
+          "rmse": 0.01435301234288594,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.013693063937629153
+        },
+        {
+          "rho": 16000,
+          "lam_mean": 1608.0022978188122,
+          "rmse": 0.009038227223586569,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.009682458365518542
+        },
+        {
+          "rho": 32000,
+          "lam_mean": 3198.5421615865707,
+          "rmse": 0.008039864549813727,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0,
+          "rmse_predicted": 0.006846531968814577
+        }
+      ],
+      "lam_exponent": 0.995462676303361,
+      "rmse_exponent": -0.46279141119727935
+    },
+    "harvest_fixed": {
+      "rows": [
+        {
+          "rho": 500,
+          "lam_mean": 25.062821203839725,
+          "rmse": 0.04058301677053887,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 1000,
+          "lam_mean": 38.29895360240001,
+          "rmse": 0.026270759858228677,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 2000,
+          "lam_mean": 55.85186553344736,
+          "rmse": 0.023267642171976525,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 4000,
+          "lam_mean": 81.90650858194249,
+          "rmse": 0.019648169433681365,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 8000,
+          "lam_mean": 118.96245529873836,
+          "rmse": 0.01777999341015016,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 16000,
+          "lam_mean": 172.0593501783637,
+          "rmse": 0.02047550060782225,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 32000,
+          "lam_mean": 246.99909295585047,
+          "rmse": 0.018055641926940202,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        }
+      ],
+      "lam_exponent": 0.547447958355093,
+      "rmse_exponent": -0.1647309943884942
+    },
+    "harvest_scaled": {
+      "rows": [
+        {
+          "rho": 500,
+          "lam_mean": 26.73885466526236,
+          "rmse": 0.03935267646092036,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 1000,
+          "lam_mean": 37.90744705932963,
+          "rmse": 0.025941244094006555,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 2000,
+          "lam_mean": 52.04950055706844,
+          "rmse": 0.02389236133332874,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 4000,
+          "lam_mean": 73.15252573529543,
+          "rmse": 0.017945870326679294,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 8000,
+          "lam_mean": 104.94719376045445,
+          "rmse": 0.015530727323845375,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 16000,
+          "lam_mean": 146.3068485896716,
+          "rmse": 0.012936335019807517,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        },
+        {
+          "rho": 32000,
+          "lam_mean": 209.89214961611083,
+          "rmse": 0.009282893496363945,
+          "n_measurements": 960,
+          "unreachable": 0,
+          "short_clocks": 0
+        }
+      ],
+      "lam_exponent": 0.4938039807511976,
+      "rmse_exponent": -0.31716097725622583
+    }
+  },
+  "verdicts": {
+    "thinned_lam_exponent_near_1": true,
+    "thinned_mean_prediction_ratio_near_1": true,
+    "thinned_per_density_ratios_sane": true,
+    "thinned_rmse_exponent_near_minus_half": true,
+    "harvest_lam_exponent_near_half": true,
+    "harvest_scaled_lam_exponent_near_half": true,
+    "harvest_scaled_rmse_shallower_than_thinned": true,
+    "harvest_scaled_rmse_in_sanity_band": true
+  },
+  "all_passed": true,
+  "status": "theory-track characterization; no gate; no frozen artifact; harvested-chain fluctuation class left open"
+}

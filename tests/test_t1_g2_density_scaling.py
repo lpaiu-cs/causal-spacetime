@@ -90,6 +90,7 @@ def test_thinned_protocol_obeys_the_proved_prediction():
     assert -0.75 < fit_exponent(rows, "rmse") < -0.25
     assert 0.7 < float(np.mean(ratios)) < 1.3
     assert all(row["unreachable"] == 0 for row in rows)
+    assert all(row["short_clocks"] == 0 for row in rows)
 
 
 def test_harvested_rate_couples_at_the_discreteness_scale():
@@ -102,3 +103,4 @@ def test_harvested_rate_couples_at_the_discreteness_scale():
     assert 0.3 < fit_exponent(rows, "lam_mean") < 0.7
     assert -0.45 < fit_exponent(rows, "rmse") < -0.05
     assert all(row["unreachable"] == 0 for row in rows)
+    assert all(row["short_clocks"] == 0 for row in rows)

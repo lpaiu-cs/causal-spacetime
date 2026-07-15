@@ -10,11 +10,16 @@ sees ``rho``):
   coupling that the T1 document's ``rho^{-1/2}`` law presumes.
 - ``harvest_chain_from_sprinkling_1p1``: a longest causal chain among the
   *sprinkled events themselves* inside a spatial tube around ``x0`` — the
-  order-intrinsic clock. Its rate and fluctuation statistics are
-  properties of the sprinkling, not choices: measured, a maximal chain's
-  rate grows like ``sqrt(rho)`` (the discreteness scale), NOT like
-  ``rho``, so the two protocols scale differently and any density-scaling
-  claim must name its protocol.
+  coordinate-tube harvested clock. Its ticks are order elements, but the
+  tube SELECTION uses embedded coordinates (``|x - x0|`` and a time
+  window), so this is deliberately NOT called an order-intrinsic clock:
+  an order-only causal set could not reproduce the harvest without extra
+  geometric data, and a genuinely order-only selection rule is an open
+  design question (T1 Section 6, G2). The chain's rate and fluctuation
+  statistics are still properties of the sprinkling, not choices:
+  measured, a maximal chain's rate grows like ``sqrt(rho)`` (the
+  discreteness scale), NOT like ``rho``, so the two protocols scale
+  differently and any density-scaling claim must name its protocol.
 
 Both are theory-track instrumentation: no frozen gate consumes them.
 """

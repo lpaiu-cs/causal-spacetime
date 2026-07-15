@@ -120,6 +120,7 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
         errors: list[float] = []
         distances: list[float] = []
         unreachable = 0
+        short_clocks = 0
         for s in range(seeds):
             rng = np.random.default_rng(100_000 * s + int(rho))
             targets = _scene_targets(rng)
@@ -142,16 +143,21 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                         bulk, x0, width, TICK_WINDOW[0], TICK_WINDOW[1]
                     )
                     ticks = bulk[idx]
-                    if len(ticks) < 4:
-                        continue
+                if len(ticks) < 4:
+                    # A clock too short to measure is a clock FAILURE:
+                    # its targets count as unreachable so that sparse
+                    # settings or a harvester regression cannot hide by
+                    # shrinking the denominator of the surviving clocks.
+                    unreachable += TARGETS_PER_SCENE
+                    short_clocks += 1
+                    continue
+                if arm != "thinned":
                     # no true rate exists: the decoder estimates it
                     lam_decode = (len(ticks) - 1) / (
                         ticks[-1, 0] - ticks[0, 0]
                     )
                 lam_values.append(
                     (len(ticks) - 1) / (ticks[-1, 0] - ticks[0, 0])
-                    if len(ticks) >= 2
-                    else float("nan")
                 )
                 for t, x in targets:
                     w = bracket_width_against_worldline(ticks, float(t), float(x))
@@ -168,6 +174,7 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
             "rmse": rmse,
             "n_measurements": len(errors),
             "unreachable": unreachable,
+            "short_clocks": short_clocks,
         }
         if arm == "thinned":
             row["rmse_predicted"] = float(
@@ -191,7 +198,20 @@ def main() -> None:
     if not audit["passed"]:
         raise SystemExit("harvested-chain audit failed; no scaling is run")
 
-    results: dict = {"audit": audit, "arms": {}}
+    results: dict = {
+        "config": {
+            "rho_grid": list(RHO_GRID),
+            "seeds_per_density": SEEDS,
+            "targets_per_scene": TARGETS_PER_SCENE,
+            "ell": ELL,
+            "tube_scale": TUBE_SCALE,
+            "observers": list(OBSERVERS),
+            "tick_window": list(TICK_WINDOW),
+            "diamond_T": DIAMOND_T,
+        },
+        "audit": audit,
+        "arms": {},
+    }
     verdicts: dict[str, bool] = {}
 
     for arm in ("thinned", "harvest_fixed", "harvest_scaled"):
