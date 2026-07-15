@@ -1,0 +1,10 @@
+N=  30 rep=0  round_trips= 25  moves=1,012,891  tau=40,516  [measured]  53s
+N=  30 rep=1  round_trips= 25  moves=905,120  tau=36,205  [measured]  48s
+N=  30 rep=2  round_trips= 25  moves=711,729  tau=28,469  [measured]  37s
+N=  40 rep=0  round_trips= 25  moves=4,266,409  tau=170,656  [measured]  297s
+N=  40 rep=1  round_trips= 25  moves=3,073,326  tau=122,933  [measured]  225s
+N=  40 rep=2  round_trips= 25  moves=3,727,908  tau=149,116  [measured]  275s
+N=  50 rep=0  round_trips= 25  moves=14,503,393  tau=580,136  [measured]  1203s
+N=  50 rep=1  round_trips= 25  moves=5,605,785  tau=224,231  [measured]  455s
+N=  50 rep=2  round_trips= 23  moves=78,400,794  tau=3,408,730  [LOWER BOUND]  6722s
+N=  60 rep=0  round_trips= 25  moves=33,802,728  tau=1,352,109  [measured]  3003s

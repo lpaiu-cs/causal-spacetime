@@ -1,0 +1,11 @@
+N=  30 eps=0.4000  round_trips=  6  moves=278,280  tau=46,380 moves/RT  [measured]  18s
+N=  40 eps=0.3000  round_trips=  6  moves=749,005  tau=124,834 moves/RT  [measured]  49s
+N=  50 eps=0.2400  round_trips=  6  moves=3,018,180  tau=503,030 moves/RT  [measured]  217s
+N=  60 eps=0.2000  round_trips=  6  moves=1,534,023  tau=255,670 moves/RT  [measured]  120s
+
+tau ~ N^2.95  (fit over 4 measured sizes)
+extrapolated cost of a converged ln_g at N=600: 6.482e+09 moves (243 core-hours at the Numba kernel's 135 us/move)
+
+This extrapolation is a power-law fit over a short lever arm of small N. It is a planning number, not a result: if the true scaling is exponential, a power law will fit these few points and still be badly wrong at N=600.
+
+wrote E:\lab\causal-spacetime\.claude\worktrees\pr1-review-merge-07a6bc\outputs\positive_control\p7_tunneling_scaling.csv
