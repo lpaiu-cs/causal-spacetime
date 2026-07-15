@@ -170,6 +170,7 @@ def main() -> None:
         seed=args.seed + 1,
         sample_every=max(1, args.production_steps // 2000),
         burn_frac=0.2,
+        visited=wl.visited,
     )
     print(
         f"MUCA: samples={len(production.samples)} "

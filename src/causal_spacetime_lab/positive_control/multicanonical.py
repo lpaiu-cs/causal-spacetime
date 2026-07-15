@@ -161,9 +161,11 @@ def wang_landau_2d_order(
     failing that, after ``max_sweeps_per_stage`` sweeps. The budget matters: on
     this ensemble g(S) spans many decades, flatness almost never passes, and a
     flatness-only schedule freezes ln_f (the N=60 pilot managed one halving in
-    24M moves). Once ln_f has fallen to ``1/t``, the run switches permanently to
-    the Belardinelli-Pereyra ``ln_f = 1/t`` schedule, which has no flatness test
-    to stall on and still lets ln_g accumulate, since the harmonic sum diverges.
+    24M moves). Once ln_f has fallen to the Belardinelli-Pereyra curve
+    ``F = n_bins / updates`` (their Monte Carlo time is trial moves *per
+    energy bin*, PRE 75, 046701), the run switches permanently to that
+    schedule, which has no flatness test to stall on and still lets ln_g
+    accumulate, since the harmonic sum diverges.
 
     The run converges when ln_f falls below ``ln_f_final``; if ``max_sweeps``
     is hit first, ``converged`` is False and the result must not be used for
@@ -229,13 +231,16 @@ def wang_landau_2d_order(
             visited[current] = True
 
             if one_over_t:
-                # Belardinelli-Pereyra: once the flatness schedule has driven
-                # ln_f below 1/t, keep it pinned there. The 1/t decay is slow
-                # enough to preserve detailed balance asymptotically and fast
-                # enough to terminate, and -- the reason it is here -- it does
-                # not depend on a flatness test that a rugged density of states
-                # may never satisfy.
-                ln_f = 1.0 / updates
+                # Belardinelli-Pereyra: once the schedule has driven ln_f down
+                # to F(t) = 1/t, keep it pinned there. Their Monte Carlo time
+                # is t = j / N_E (trial moves per energy bin, PRE 75, 046701),
+                # so F = n_bins / updates -- the unnormalized 1/updates would
+                # make the tail and the ln_f_final stopping rule 24-60x
+                # smaller here and non-comparable across bin counts. The decay
+                # is slow enough to preserve detailed balance asymptotically,
+                # fast enough to terminate, and does not depend on a flatness
+                # test that a rugged density of states may never satisfy.
+                ln_f = n_bins / updates
 
             if current <= low_zone:
                 if last_end == 1:
@@ -292,7 +297,7 @@ def wang_landau_2d_order(
         # Hand over to 1/t once it decays at least as fast as halving would.
         # Beyond this point there is no flatness test left to stall on, and the
         # harmonic sum still diverges, so ln_g keeps accumulating corrections.
-        if ln_f <= 1.0 / updates:
+        if ln_f <= n_bins / updates:
             one_over_t = True
 
     if visited.any():
@@ -322,6 +327,7 @@ def multicanonical_2d_order(
     seed: int,
     sample_every: int = 1000,
     burn_frac: float = 0.5,
+    visited: np.ndarray | None = None,
 ) -> MulticanonicalResult:
     """Production run at fixed multicanonical weights ``W(S) = exp(-ln_g(S))``.
 
@@ -330,6 +336,15 @@ def multicanonical_2d_order(
     samples are usable for :func:`reweight_to_beta`. Every sample carries the
     ln_g value at its own action, which is exactly the log-weight that has to
     be divided out when reweighting.
+
+    ``visited`` must be the Wang-Landau run's visited mask. A reachable bin the
+    WL walker never entered has no ln_g estimate at all -- after the output
+    shift its entry is 0.0, indistinguishable from the *lowest-density* visited
+    bins, so without the mask a production move into it would be accepted
+    freely and then reweighted as if its density were known, silently
+    corrupting the beta table. Such moves are rejected like out-of-window ones.
+    ``None`` (all bins trusted) is only for ln_g obtained by other means, e.g.
+    exact enumeration in tests.
     """
 
     rng = np.random.default_rng(seed)
@@ -338,6 +353,10 @@ def multicanonical_2d_order(
     current = _bin_index(action, bin_edges)
     if current < 0:
         raise ValueError("initial action lies outside the multicanonical window")
+    if visited is not None and not visited[current]:
+        raise ValueError(
+            "initial action falls in a bin the Wang-Landau run never visited"
+        )
 
     n_bins = bin_edges.size - 1
     low_zone = n_bins // 5
@@ -358,7 +377,7 @@ def multicanonical_2d_order(
         state.swap(i, j)
         proposed_action = state.action()
         candidate = _bin_index(proposed_action, bin_edges)
-        if candidate < 0:
+        if candidate < 0 or (visited is not None and not visited[candidate]):
             state.swap(i, j)
         elif np.log(rng.uniform()) < ln_g[current] - ln_g[candidate]:
             action = proposed_action

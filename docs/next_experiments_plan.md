@@ -32,8 +32,8 @@ Execution update (2026-07-15):
 - Wang-Landau / multicanonical sampling was built, validated against exact
   enumeration at N=6, and shown to tunnel the N=600-blocking action barrier
   at N <= 80 -- then eliminated at N=600 by a measured tunneling exponent,
-  tau ~ N^5.79 with 90% CI [5.36, 6.19]: even the optimistic end costs
-  ~205,000 core-hours for a single converged ln g(S). Details and data in
+  tau ~ N^5.88 with 90% CI [5.44, 6.38]: even the optimistic end costs
+  ~278,000 core-hours for a single converged ln g(S). Details and data in
   `docs/p7_enhanced_sampling.md`. This closes the third quantified
   elimination for the N=600 barrier (after local Metropolis and the replica
   ladder arithmetic).

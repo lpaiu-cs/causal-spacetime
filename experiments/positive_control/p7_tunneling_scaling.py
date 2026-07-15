@@ -114,12 +114,24 @@ def _measure_one(task: dict) -> dict:
     elapsed = time.perf_counter() - started
 
     hit_budget = result.round_trips < task["target_round_trips"]
-    if result.round_trips > 0:
-        tau = result.moves / result.round_trips
-    else:
-        # No traversal inside the budget: tau is not measured, only bounded
-        # below. Reporting moves/0 as a number would invent a measurement.
+    if hit_budget:
+        # A censored run has NOT measured tau. moves/completed_trips is not
+        # even a lower bound on it: the budget M includes time spent inside
+        # the unfinished next traversal, so if that traversal completed
+        # immediately the target average would fall below M/r. The valid
+        # run-level bound divides by the *target*: the remaining traversals
+        # take >= 0 moves, hence mean over the target count > M/target.
         tau = float("nan")
+        tau_bound = result.moves / task["target_round_trips"]
+    else:
+        tau = result.moves / result.round_trips
+        tau_bound = float("nan")
+
+    # A window that action_range() drew too narrow silently rejects every
+    # proposal beyond its edges, so the walker round-trips over a truncated
+    # interval and reports an artificially cheap tau. The edge-bin visit flag
+    # is the only witness; a flagged run must not enter the exponent fit.
+    edge_touched = bool(result.visited[[0, -1]].any())
 
     return {
         "n_elements": n,
@@ -131,9 +143,11 @@ def _measure_one(task: dict) -> dict:
         "round_trips": result.round_trips,
         "tau_moves_per_round_trip": tau,
         # A run stopped by the move budget has not measured tau -- it has only
-        # shown tau is at least this large. Mixing the two into one column and
-        # fitting through them would manufacture an exponent.
+        # bounded it. Mixing the two into one column and fitting through them
+        # would manufacture an exponent.
         "tau_is_lower_bound": bool(hit_budget),
+        "tau_lower_bound": tau_bound,
+        "edge_touched": edge_touched,
         "wl_acceptance": result.acceptance,
         "seconds": elapsed,
     }
@@ -207,13 +221,19 @@ def main() -> None:
         for future in as_completed(futures):
             row = future.result()
             rows.append(row)
-            status = "LOWER BOUND" if row["tau_is_lower_bound"] else "measured"
-            tau = row["tau_moves_per_round_trip"]
+            if row["tau_is_lower_bound"]:
+                status = "CENSORED"
+                tau_text = f"tau > {row['tau_lower_bound']:,.0f}"
+            else:
+                status = "measured"
+                tau_text = f"tau={row['tau_moves_per_round_trip']:,.0f}"
+            if row["edge_touched"]:
+                status += ", EDGE-TOUCHED (window too narrow; excluded)"
             done = len(rows)
             print(
                 f"[{done:2d}/{len(tasks)}] N={row['n_elements']:4d} "
                 f"rep={row['repeat']}  round_trips={row['round_trips']:3d}  "
-                f"moves={row['moves']:,}  tau={tau:,.0f}  [{status}]  "
+                f"moves={row['moves']:,}  {tau_text}  [{status}]  "
                 f"({row['seconds']:.0f}s in-worker)",
                 flush=True,
             )
@@ -222,7 +242,13 @@ def main() -> None:
     wall = time.perf_counter() - wall_start
     print(f"\nall runs done in {wall:.0f}s wall", flush=True)
 
-    clean = [r for r in rows if not r["tau_is_lower_bound"] and r["round_trips"] > 0]
+    clean = [
+        r
+        for r in rows
+        if not r["tau_is_lower_bound"]
+        and r["round_trips"] > 0
+        and not r["edge_touched"]
+    ]
 
     # Per-N spread first. The previous run fit an exponent through single noisy
     # points and produced tau(N=50) > tau(N=60) -- a power law cannot be
@@ -259,7 +285,7 @@ def main() -> None:
         # data is exactly what produced the bogus 2.95 before.
         boot_rng = np.random.default_rng(0)
         boots = []
-        for _ in range(2000):
+        for _ in range(10_000):
             pick = boot_rng.integers(0, log_n.size, log_n.size)
             if np.unique(log_n[pick]).size < 2:
                 continue
@@ -280,8 +306,13 @@ def main() -> None:
 
         low, high = interval if interval else (exponent, exponent)
         for label, alpha in (("low", low), ("point", exponent), ("high", high)):
+            # Refit the intercept for each alpha (least squares given the fixed
+            # slope). Slope and intercept are strongly anticorrelated over this
+            # short lever arm, so carrying the point-fit intercept to the
+            # interval endpoints misstates the endpoint costs by factors.
+            refit_intercept = float(np.mean(log_tau - alpha * log_n))
             projected = float(
-                np.exp(intercept) * 600.0**alpha * HALVINGS_TO_CONVERGE
+                np.exp(refit_intercept) * 600.0**alpha * HALVINGS_TO_CONVERGE
             )
             print(
                 f"  N=600 converged ln_g, alpha={alpha:.2f} ({label}): "

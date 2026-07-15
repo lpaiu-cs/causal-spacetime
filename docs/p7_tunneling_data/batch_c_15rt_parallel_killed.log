@@ -1,0 +1,7 @@
+dispatching 18 runs over 12 workers (sizes [30, 40, 50, 60, 70, 80], 3 seeds each)
+[ 1/18] N=  30 rep=2  round_trips= 15  moves=394,591  tau=26,306  [measured]  (39s in-worker)
+[ 2/18] N=  30 rep=1  round_trips= 15  moves=479,681  tau=31,979  [measured]  (48s in-worker)
+[ 3/18] N=  30 rep=0  round_trips= 15  moves=595,352  tau=39,690  [measured]  (60s in-worker)
+[ 4/18] N=  40 rep=1  round_trips= 15  moves=1,458,567  tau=97,238  [measured]  (163s in-worker)
+[ 5/18] N=  40 rep=0  round_trips= 15  moves=1,957,904  tau=130,527  [measured]  (216s in-worker)
+[ 6/18] N=  40 rep=2  round_trips= 15  moves=2,323,985  tau=154,932  [measured]  (253s in-worker)

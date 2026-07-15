@@ -137,7 +137,10 @@ def test_wang_landau_escapes_the_flatness_stall_via_one_over_t():
         sweep_steps=2000,
         flatness=1.0,  # unsatisfiable: only the stage budget can drive ln_f down
         max_sweeps_per_stage=5,
-        ln_f_final=1e-6,
+        # The normalized Belardinelli-Pereyra tail decays as n_bins/updates, so
+        # reaching ln_f_final needs >= n_bins/ln_f_final updates: 240k here,
+        # comfortably inside the 2.4M-update budget.
+        ln_f_final=1e-4,
         max_sweeps=1200,
     )
 
@@ -147,7 +150,7 @@ def test_wang_landau_escapes_the_flatness_stall_via_one_over_t():
     assert result.converged, (
         f"1/t failed to drive ln_f to target: stalled at {result.final_ln_f:.2e}"
     )
-    assert result.final_ln_f <= 1e-6
+    assert result.final_ln_f <= 1e-4
 
 
 def test_wang_landau_ln_g_matches_exact_enumeration(wl, window):
@@ -177,6 +180,7 @@ def test_reweighted_canonical_means_match_exact_gibbs(wl, beta):
         seed=11,
         sample_every=20,
         burn_frac=0.2,
+        visited=wl.visited,
     )
     assert production.round_trips > 0
 
@@ -241,10 +245,62 @@ def test_reweighting_ess_decays_away_from_flat_support(wl):
         seed=13,
         sample_every=20,
         burn_frac=0.2,
+        visited=wl.visited,
     )
     near = effective_sample_size(production.samples, 0.0)
     far = effective_sample_size(production.samples, 6.0)
     assert far < near
+
+
+def test_production_rejects_bins_the_wang_landau_run_never_visited(wl):
+    """Regression: an unvisited bin has NO ln_g estimate, not a low one.
+
+    After the output shift its ln_g entry is 0.0 -- indistinguishable from the
+    lowest-density visited bins -- so without the visited mask a production
+    move into it is accepted freely and reweighted as if its density were
+    known. The mask must make such bins behave like out-of-window states.
+    """
+
+    visited = wl.visited.copy()
+    initial_bin = _bin_index(
+        float(_IncrementalState(np.arange(N), EPS).action()), wl.bin_edges
+    )
+    # Poke a hole in some visited interior bin that is not the starting bin.
+    candidates = [
+        b for b in np.flatnonzero(visited) if b != initial_bin
+    ]
+    hole = candidates[len(candidates) // 2]
+    visited[hole] = False
+
+    production = multicanonical_2d_order(
+        pi0=np.arange(N),
+        eps=EPS,
+        ln_g=wl.ln_g,
+        bin_edges=wl.bin_edges,
+        steps=150_000,
+        seed=17,
+        sample_every=20,
+        burn_frac=0.1,
+        visited=visited,
+    )
+    assert production.samples, "production produced no samples"
+    for row in production.samples:
+        assert _bin_index(row["S"], wl.bin_edges) != hole
+
+    # And a start inside a hole must refuse outright rather than walk on a
+    # weight that does not exist.
+    bad_visited = wl.visited.copy()
+    bad_visited[initial_bin] = False
+    with pytest.raises(ValueError, match="never visited"):
+        multicanonical_2d_order(
+            pi0=np.arange(N),
+            eps=EPS,
+            ln_g=wl.ln_g,
+            bin_edges=wl.bin_edges,
+            steps=1000,
+            seed=19,
+            visited=bad_visited,
+        )
 
 
 def test_action_range_brackets_the_extreme_orders_not_just_random_ones():

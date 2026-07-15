@@ -1,0 +1,31 @@
+dispatching 12 runs over 12 workers (sizes [50, 60, 70, 80], 3 seeds each)
+[ 1/12] N=  50 rep=1  round_trips= 15  moves=3,143,769  tau=209,585  [measured]  (334s in-worker)
+[ 2/12] N=  50 rep=2  round_trips= 15  moves=6,475,823  tau=431,722  [measured]  (699s in-worker)
+[ 3/12] N=  50 rep=0  round_trips= 15  moves=9,995,823  tau=666,388  [measured]  (1066s in-worker)
+[ 4/12] N=  60 rep=0  round_trips= 15  moves=17,566,023  tau=1,171,068  [measured]  (2048s in-worker)
+[ 5/12] N=  60 rep=2  round_trips= 15  moves=29,207,359  tau=1,947,157  [measured]  (3477s in-worker)
+[ 6/12] N=  70 rep=2  round_trips= 15  moves=34,578,532  tau=2,305,235  [measured]  (4453s in-worker)
+[ 7/12] N=  60 rep=1  round_trips= 15  moves=66,978,893  tau=4,465,260  [measured]  (7759s in-worker)
+[ 8/12] N=  70 rep=1  round_trips= 15  moves=84,015,284  tau=5,601,019  [measured]  (10924s in-worker)
+[ 9/12] N=  70 rep=0  round_trips= 15  moves=90,172,809  tau=6,011,521  [measured]  (11799s in-worker)
+[10/12] N=  80 rep=1  round_trips= 15  moves=157,785,013  tau=10,519,001  [measured]  (21955s in-worker)
+[11/12] N=  80 rep=2  round_trips= 13  moves=197,498,045  tau=15,192,157  [LOWER BOUND]  (28714s in-worker)
+[12/12] N=  80 rep=0  round_trips= 14  moves=197,499,534  tau=14,107,110  [LOWER BOUND]  (28747s in-worker)
+
+all runs done in 28747s wall
+
+per-N tau (moves per round trip):
+  N=  50  n_runs=3  mean=435,898  min=209,585  max=666,388  max/min=3.2x
+  N=  60  n_runs=3  mean=2,527,828  min=1,171,068  max=4,465,260  max/min=3.8x
+  N=  70  n_runs=3  mean=4,639,258  min=2,305,235  max=6,011,521  max/min=2.6x
+  N=  80  n_runs=1  mean=10,519,001  min=10,519,001  max=10,519,001  max/min=1.0x
+
+tau ~ N^6.94
+90% bootstrap interval on the exponent: [5.31, 8.61]
+  N=600 converged ln_g, alpha=5.31 (low): 6.85e+09 moves = 257 core-hours (Numba kernel at 135 us/move)
+  N=600 converged ln_g, alpha=6.94 (point): 2.42e+14 moves = 9,062,648 core-hours (Numba kernel at 135 us/move)
+  N=600 converged ln_g, alpha=8.61 (high): 1.02e+19 moves = 381,444,828,832 core-hours (Numba kernel at 135 us/move)
+
+These are planning numbers, not results. The lever arm is short (a factor of two in N) and the extrapolation to N=600 is a factor of ten beyond it. A power law fits a few small-N points perfectly well even when the true scaling is exponential -- in which case every cost above is an underestimate, and not by a little.
+
+wrote E:\lab\causal-spacetime\.claude\worktrees\pr1-review-merge-07a6bc\outputs\positive_control\p7_tunneling_scaling.csv
