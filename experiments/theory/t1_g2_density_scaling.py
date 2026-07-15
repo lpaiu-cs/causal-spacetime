@@ -48,7 +48,12 @@ from causal_spacetime_lab.density_coupled_clocks import (
 from causal_spacetime_lab.sprinkling import sprinkle_1p1_causal_diamond
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "outputs" / "theory"
+# The full-grid table is a TRACKED artifact (committed evidence for the
+# doc's execution-outcome numbers), so the writer targets the committed
+# path directly: a rerun after any parameter or code change shows up as
+# a git diff on the cited file instead of going stale beside a fresh
+# copy in the ignored outputs/ tree.
+RESULTS_PATH = ROOT / "docs" / "theory" / "t1_g2_density_scaling_results.json"
 
 DIAMOND_T = 2.0
 DIAMOND_AREA = DIAMOND_T * DIAMOND_T / 2.0
@@ -191,7 +196,6 @@ def fit_exponent(rows: list[dict], key: str) -> float:
 
 
 def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
 
     audit = audit_harvested_chains()
     print("[AUDIT]", json.dumps(audit))
@@ -284,12 +288,12 @@ def main() -> None:
         "harvested-chain fluctuation class left open"
     )
 
-    (OUT / "t1_g2_density_scaling.json").write_text(
+    RESULTS_PATH.write_text(
         json.dumps(results, indent=2), encoding="utf-8"
     )
     print(f"\nverdicts: {json.dumps(verdicts, indent=2)}")
     print(f"all_passed = {all_passed}")
-    print(f"wrote {OUT / 't1_g2_density_scaling.json'}")
+    print(f"wrote {RESULTS_PATH}")
     if not all_passed:
         raise SystemExit(1)
 
