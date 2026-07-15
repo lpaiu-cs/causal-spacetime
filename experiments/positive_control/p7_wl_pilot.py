@@ -123,15 +123,6 @@ def main() -> None:
         f"ln_f={wl.final_ln_f:.2e} time={wl_seconds:.1f}s",
         flush=True,
     )
-    # Edge pile-up check: action_range is a heuristic bracket, and a window that
-    # clips reachable states rejects moves into them silently.
-    if wl.visited[[0, -1]].any():
-        print(
-            "WARNING: the walker reached an edge bin. The action window may be "
-            "truncating reachable states -- widen it before trusting ln_g.",
-            flush=True,
-        )
-
     # Refuse, loudly, rather than emit reweighted numbers from weights that were
     # still moving. An unconverged ln_g does not flatten the action landscape,
     # so the production chain never leaves the entropic bulk -- and then every
@@ -149,6 +140,17 @@ def main() -> None:
         fatal.append(
             "Zero Wang-Landau round trips: the walker never crossed the action "
             "barrier, which is the one thing this sampler exists to do."
+        )
+    if wl.visited[[0, -1]].any():
+        # action_range is a heuristic bracket, and a window that clips reachable
+        # states rejects every move beyond it silently -- ln_g over a truncated
+        # interval reweights to a beta table that looks supported and is not.
+        # The scaling sweep excludes such runs from its fit; a warning here
+        # would let the pilot archive exactly what the sweep refuses.
+        fatal.append(
+            "The walker reached an edge bin: the action window is truncating "
+            "reachable states. Widen the window; ln_g over a clipped interval "
+            "must not be reweighted."
         )
     if fatal:
         for line in fatal:
