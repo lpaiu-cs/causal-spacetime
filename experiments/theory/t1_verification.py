@@ -31,6 +31,14 @@ The checks, in the document's numbering:
    reject it) and Lemma 2's null-aligned example (the one configuration
    where the null-inclusive and strict orders give different widths; pins
    the convention the document declares load-bearing).
+6. Unlabeled decoding (Lemma 4): the exact-model dissimilarity D is
+   strictly Robinson (gap-direction inner products 4 a_k b_l / R, strict
+   quadrance superadditivity) and the anchor decoder recovers the spatial
+   order up to reversal from D alone, including at R = 2; on the pipeline,
+   |D_measured - D_exact| < 4 and every anchor comparison with exact
+   margin above 8 is ordered correctly -- the Model-D claim at its proved
+   strength, deliberately NOT asserting full-order recovery on sprinkled
+   targets.
 
 Usage:
     python t1_verification.py            # run all checks, write JSON summary
@@ -46,6 +54,9 @@ import numpy as np
 from causal_spacetime_lab.causal import causal_matrix_1p1
 from causal_spacetime_lab.discrete_radar import find_radar_ticks_from_order
 from causal_spacetime_lab.observer import make_stationary_observer_chain_1p1
+from causal_spacetime_lab.positive_control.dissimilarity import (
+    profile_dissimilarity_matrix,
+)
 from causal_spacetime_lab.positive_control.echo_profiles import (
     measure_bracket_echo_profiles,
 )
@@ -495,6 +506,183 @@ def check_null_aligned_tick() -> dict:
     }
 
 
+def exact_centered_profiles(
+    positions: np.ndarray,
+    chain_positions: np.ndarray,
+    lam: float,
+) -> np.ndarray:
+    """Lemma 2 expectation profiles, parallax-centered: phi(x) of Lemma 4a."""
+
+    widths = (
+        2.0 * lam * np.abs(positions[:, None] - chain_positions[None, :]) + 1.0
+    )
+    return widths - widths.mean(axis=1, keepdims=True)
+
+
+def exact_dissimilarity(
+    positions: np.ndarray,
+    chain_positions: np.ndarray,
+    lam: float,
+) -> np.ndarray:
+    """Exact-model D(i,j): RMS over columns of centered-profile differences."""
+
+    profiles = exact_centered_profiles(positions, chain_positions, lam)
+    diffs = profiles[:, None, :] - profiles[None, :, :]
+    return np.sqrt(np.mean(diffs * diffs, axis=2))
+
+
+def anchor_decode(dissimilarity: np.ndarray) -> tuple[np.ndarray, tuple[int, int]]:
+    """Lemma 4c decoder: argmax pair anchors, one anchor row sorts.
+
+    Returns (order, anchor_pair) where order[k] is the index of the k-th
+    target counted from the first anchor. Uses D alone -- no labels, no
+    coordinates, no profile access.
+    """
+
+    matrix = np.asarray(dissimilarity, dtype=float)
+    i, j = np.unravel_index(np.nanargmax(matrix), matrix.shape)
+    return np.argsort(matrix[i], kind="stable"), (int(i), int(j))
+
+
+def check_unlabeled_decoding_exact(
+    seed: int = 5,
+    n_targets: int = 18,
+) -> dict:
+    """Check 6 (exact model): Lemma 4 end to end, at R = 2, 3 and 6.
+
+    Three assertions per observer count: (a) the gap-direction inner
+    products match 4 a_k b_l / R exactly (finite differences across gap
+    midpoints); (b) D is strictly Robinson -- quadrance superadditivity
+    D(x,z)^2 > D(x,y)^2 + D(y,z)^2 on every ordered triple; (c) the anchor
+    decoder returns the true spatial order up to global reversal, with the
+    argmax pair equal to the extreme pair. R = 2 is deliberately included:
+    v0.2 expected R >= 3 to be the clean hypothesis, and the proof showed
+    R >= 2 suffices -- a claim worth pinning, not just stating.
+    """
+
+    rng = np.random.default_rng(seed)
+    observer_sets = {
+        2: np.array([-0.25, 0.25]),
+        3: np.array([-0.25, 0.0, 0.25]),
+        6: np.array([-0.25, -0.15, -0.05, 0.05, 0.15, 0.25]),
+    }
+    lam = 95.0 / 1.4  # the PC-V1 rate; any positive value proves the same
+    results = {}
+    all_ok = True
+    for count, observers in sorted(observer_sets.items()):
+        positions = np.sort(
+            rng.uniform(observers[0] + 0.01, observers[-1] - 0.01, size=n_targets)
+        )
+
+        # (a) gap-direction inner products, by finite differences.
+        eps = 1e-7
+        gap_mids = (observers[:-1] + observers[1:]) / 2.0
+        directions = []
+        for mid in gap_mids:
+            pair = exact_centered_profiles(
+                np.array([mid - eps, mid + eps]), observers, lam
+            )
+            directions.append((pair[1] - pair[0]) / (2.0 * eps * 2.0 * lam))
+        formula_ok = True
+        for k in range(len(directions)):
+            for line in range(k, len(directions)):
+                a_k, b_l = k + 1, count - (line + 1)
+                got = float(np.dot(directions[k], directions[line]))
+                if abs(got - 4.0 * a_k * b_l / count) > 1e-5:
+                    formula_ok = False
+
+        # (b) strict Robinson on every ordered triple.
+        matrix = exact_dissimilarity(positions, observers, lam)
+        robinson_ok = True
+        for i in range(n_targets):
+            for j in range(i + 1, n_targets):
+                for k in range(j + 1, n_targets):
+                    lhs = matrix[i, k] ** 2
+                    rhs = matrix[i, j] ** 2 + matrix[j, k] ** 2
+                    if lhs <= rhs + 1e-9:
+                        robinson_ok = False
+
+        # (c) decoder: anchors are the extremes, order exact up to reversal.
+        order, anchor_pair = anchor_decode(matrix)
+        anchors_ok = sorted(anchor_pair) == [0, n_targets - 1]
+        forward = np.array_equal(order, np.arange(n_targets))
+        reverse = np.array_equal(order, np.arange(n_targets)[::-1])
+
+        ok = formula_ok and robinson_ok and anchors_ok and (forward or reverse)
+        all_ok = all_ok and ok
+        results[f"R={count}"] = {
+            "inner_product_formula": formula_ok,
+            "strictly_robinson": robinson_ok,
+            "anchors_are_extremes": anchors_ok,
+            "order_recovered_up_to_reversal": bool(forward or reverse),
+        }
+
+    return {**results, "passed": bool(all_ok)}
+
+
+def check_unlabeled_decoding_pipeline(seed: int = 0) -> dict:
+    """Check 6 (pipeline): the Model-D decoding claim at its proved strength.
+
+    Measured D comes from the real instrument path
+    (build_positive_control_scene -> measure_bracket_echo_profiles ->
+    profile_dissimilarity_matrix); exact D from the targets' true
+    coordinates and the Lemma 2 expectations. Asserted, per Lemma 4e:
+    (i) |D_measured - D_exact| < 4 on every defined pair; (ii) every
+    anchor-row comparison whose exact-model margin exceeds 8 is ordered
+    correctly by the measured decoder. Full-order recovery is NOT
+    asserted: sprinkled targets may sit closer than the decodable
+    separation, and on this scene a few sub-delta pairs do invert --
+    that is the resolution limit, not a failure of the lemma.
+    """
+
+    config = PositiveControlSceneConfig(seed=seed)
+    scene = build_positive_control_scene(config)
+    profiles = measure_bracket_echo_profiles(scene)
+    measured = profile_dissimilarity_matrix(profiles)
+
+    lam = (config.ticks_per_chain - 1) / config.chain_span
+    positions = scene.target_coords[:, 1]
+    exact = exact_dissimilarity(
+        positions, np.asarray(config.chain_positions), lam
+    )
+
+    defined = np.isfinite(measured)
+    perturbation = float(np.max(np.abs(measured[defined] - exact[defined])))
+
+    order, anchor_pair = anchor_decode(measured)
+    anchor = anchor_pair[0]
+    rank = np.empty(len(positions), dtype=int)
+    rank[order] = np.arange(len(positions))
+
+    margin_comparisons = 0
+    violations = 0
+    for i in range(len(positions)):
+        for j in range(len(positions)):
+            if i == j:
+                continue
+            if exact[anchor, j] - exact[anchor, i] > 8.0:
+                margin_comparisons += 1
+                if rank[j] <= rank[i]:
+                    violations += 1
+
+    return {
+        "n_targets": int(len(positions)),
+        "max_perturbation": perturbation,
+        "perturbation_bound": 4.0,
+        "margin_comparisons": margin_comparisons,
+        "margin_violations": violations,
+        "anchors_are_true_extremes": bool(
+            sorted(anchor_pair)
+            == sorted([int(np.argmin(positions)), int(np.argmax(positions))])
+        ),
+        "passed": bool(
+            perturbation < 4.0
+            and margin_comparisons > 0
+            and violations == 0
+        ),
+    }
+
+
 def check_pipeline_band(seed: int = 0) -> dict:
     """Check 1 (pipeline): the band holds through the full PC-V1 scene path.
 
@@ -543,6 +731,8 @@ def main() -> None:
         "4_centered_residue": check_centered_residue(),
         "5_coincident_tick_orphan": check_coincident_tick_orphan(),
         "5_null_aligned_tick": check_null_aligned_tick(),
+        "6_unlabeled_decoding_exact": check_unlabeled_decoding_exact(),
+        "6_unlabeled_decoding_pipeline": check_unlabeled_decoding_pipeline(),
     }
 
     all_passed = all(result["passed"] for result in checks.values())
