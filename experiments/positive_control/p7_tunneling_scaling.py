@@ -43,12 +43,31 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import time
-from pathlib import Path
+import os
 
-import numpy as np
+# Each (N, seed) run is an independent Wang-Landau walk, so the sweep is
+# embarrassingly parallel across cores. But the inner loop calls small NumPy
+# matmuls, and if their BLAS spawns threads while a dozen worker processes are
+# already running, the machine oversubscribes and every worker slows down. Pin
+# BLAS to one thread per worker; parallelism comes from processes, not threads.
+# This must run before NumPy is imported (in every spawned child too, which
+# re-executes this module), so it sits at the very top.
+for _var in (
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+):
+    os.environ.setdefault(_var, "1")
 
-from causal_spacetime_lab.positive_control.multicanonical import (
+import time  # noqa: E402
+from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: E402
+from pathlib import Path  # noqa: E402
+
+import numpy as np  # noqa: E402
+
+from causal_spacetime_lab.positive_control.multicanonical import (  # noqa: E402
     action_range,
     wang_landau_2d_order,
 )
@@ -61,6 +80,63 @@ EPS_N = 12.0
 # Convergence to ln_f = 1e-5 needs ~17 halvings, and the N=60 pilot showed the
 # schedule spends exactly one round trip per halving.
 HALVINGS_TO_CONVERGE = 17
+
+
+def _measure_one(task: dict) -> dict:
+    """One independent tau measurement, sized to run in a worker process.
+
+    Returns a plain dict (picklable) with the move count, round trips, and the
+    tau estimate -- or a NaN tau and a lower-bound flag if the walker never
+    completed the target number of traversals inside the move budget.
+    """
+
+    n = task["n"]
+    eps = task["eps"]
+    seed = task["seed"]
+
+    rng = np.random.default_rng(seed)
+    pi0 = rng.permutation(n)
+    s_min, s_max = action_range(n, eps, seed=seed, probes=200)
+
+    started = time.perf_counter()
+    result = wang_landau_2d_order(
+        pi0=pi0,
+        eps=eps,
+        s_min=s_min,
+        s_max=s_max,
+        n_bins=task["bins"],
+        seed=seed,
+        sweep_steps=task["sweep_steps"],
+        max_sweeps=max(1, task["move_budget"] // task["sweep_steps"]),
+        max_round_trips=task["target_round_trips"],
+        ln_f_final=1e-12,  # never converge; we are timing traversals only
+    )
+    elapsed = time.perf_counter() - started
+
+    hit_budget = result.round_trips < task["target_round_trips"]
+    if result.round_trips > 0:
+        tau = result.moves / result.round_trips
+    else:
+        # No traversal inside the budget: tau is not measured, only bounded
+        # below. Reporting moves/0 as a number would invent a measurement.
+        tau = float("nan")
+
+    return {
+        "n_elements": n,
+        "repeat": task["repeat"],
+        "seed": seed,
+        "eps": eps,
+        "eps_n": eps * n,
+        "moves": result.moves,
+        "round_trips": result.round_trips,
+        "tau_moves_per_round_trip": tau,
+        # A run stopped by the move budget has not measured tau -- it has only
+        # shown tau is at least this large. Mixing the two into one column and
+        # fitting through them would manufacture an exponent.
+        "tau_is_lower_bound": bool(hit_budget),
+        "wl_acceptance": result.acceptance,
+        "seconds": elapsed,
+    }
 
 
 def main() -> None:
@@ -90,67 +166,61 @@ def main() -> None:
     parser.add_argument("--bins", type=int, default=60)
     parser.add_argument("--sweep-steps", type=int, default=8000)
     parser.add_argument("--seed", type=int, default=20260715)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=max(1, (os.cpu_count() or 2) - 4),
+        help="parallel worker processes; each (N, seed) run is independent",
+    )
     args = parser.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
+
+    tasks = [
+        {
+            "n": n,
+            "repeat": repeat,
+            "seed": args.seed + 1000 * repeat + n,
+            "eps": args.eps_n / n,
+            "bins": args.bins,
+            "sweep_steps": args.sweep_steps,
+            "move_budget": args.move_budget,
+            "target_round_trips": args.target_round_trips,
+        }
+        for n in args.sizes
+        for repeat in range(args.repeats)
+    ]
+
+    print(
+        f"dispatching {len(tasks)} runs over {args.workers} workers "
+        f"(sizes {args.sizes}, {args.repeats} seeds each)",
+        flush=True,
+    )
+
+    # Results arrive out of order -- the small-N runs finish in seconds while a
+    # heavy-tailed large-N draw can take an hour -- so print each as it lands
+    # and sort only at the end.
     rows = []
-
-    for n in args.sizes:
-        eps = args.eps_n / n
-        for repeat in range(args.repeats):
-            seed = args.seed + 1000 * repeat + n
-            rng = np.random.default_rng(seed)
-            pi0 = rng.permutation(n)
-            s_min, s_max = action_range(n, eps, seed=seed, probes=200)
-
-            started = time.perf_counter()
-            result = wang_landau_2d_order(
-                pi0=pi0,
-                eps=eps,
-                s_min=s_min,
-                s_max=s_max,
-                n_bins=args.bins,
-                seed=seed,
-                sweep_steps=args.sweep_steps,
-                max_sweeps=max(1, args.move_budget // args.sweep_steps),
-                max_round_trips=args.target_round_trips,
-                ln_f_final=1e-12,  # never converge; we are timing traversals only
-            )
-            elapsed = time.perf_counter() - started
-
-            hit_budget = result.round_trips < args.target_round_trips
-            if result.round_trips > 0:
-                tau = result.moves / result.round_trips
-            else:
-                # No traversal inside the budget: tau is not measured, only
-                # bounded below. Reporting moves/0 as a number would invent a
-                # measurement that did not happen.
-                tau = float("nan")
-
-            rows.append({
-                "n_elements": n,
-                "repeat": repeat,
-                "seed": seed,
-                "eps": eps,
-                "eps_n": eps * n,
-                "moves": result.moves,
-                "round_trips": result.round_trips,
-                "tau_moves_per_round_trip": tau,
-                # A run stopped by the move budget has not measured tau -- it has
-                # only shown tau is at least this large. Mixing the two into one
-                # column and fitting through them would manufacture an exponent.
-                "tau_is_lower_bound": bool(hit_budget),
-                "wl_acceptance": result.acceptance,
-                "seconds": elapsed,
-            })
-
-            status = "LOWER BOUND" if hit_budget else "measured"
+    wall_start = time.perf_counter()
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        futures = [pool.submit(_measure_one, task) for task in tasks]
+        for future in as_completed(futures):
+            row = future.result()
+            rows.append(row)
+            status = "LOWER BOUND" if row["tau_is_lower_bound"] else "measured"
+            tau = row["tau_moves_per_round_trip"]
+            done = len(rows)
             print(
-                f"N={n:4d} rep={repeat}  round_trips={result.round_trips:3d}  "
-                f"moves={result.moves:,}  tau={tau:,.0f}  [{status}]  "
-                f"{elapsed:.0f}s",
+                f"[{done:2d}/{len(tasks)}] N={row['n_elements']:4d} "
+                f"rep={row['repeat']}  round_trips={row['round_trips']:3d}  "
+                f"moves={row['moves']:,}  tau={tau:,.0f}  [{status}]  "
+                f"({row['seconds']:.0f}s in-worker)",
                 flush=True,
             )
+
+    rows.sort(key=lambda r: (r["n_elements"], r["repeat"]))
+    wall = time.perf_counter() - wall_start
+    print(f"\nall runs done in {wall:.0f}s wall", flush=True)
 
     clean = [r for r in rows if not r["tau_is_lower_bound"] and r["round_trips"] > 0]
 
