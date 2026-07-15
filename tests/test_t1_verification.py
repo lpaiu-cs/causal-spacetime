@@ -190,13 +190,18 @@ def test_unlabeled_decoding_holds_in_the_exact_model_even_at_r_2():
 
 
 def test_pipeline_dissimilarity_obeys_the_proved_model_d_bounds():
-    """Lemma 4e at proved strength on the real instrument: the measured
-    D deviates from the exact-model D by less than 4 ranks, and every
-    anchor comparison with exact margin above 8 sorts correctly. Full
-    order recovery is deliberately NOT asserted -- sub-delta pairs may
-    invert, which is the resolution limit, not a lemma failure."""
+    """Lemma 4e at proved strength on the real instrument: the
+    shared-centering hypothesis holds (every chain reaches every
+    target -- without it the bound is structurally false, since
+    per-target centering over unequal reachable sets shifts row means
+    at coordinate scale), the measured D deviates from the exact-model
+    D by less than 4 ranks, and every anchor comparison with exact
+    margin above 8 sorts correctly. Full order recovery is deliberately
+    NOT asserted -- sub-delta pairs may invert, which is the resolution
+    limit, not a lemma failure."""
 
     result = check_unlabeled_decoding_pipeline(seed=0)
+    assert result["shared_centering_hypothesis"], result
     assert result["max_perturbation"] < 4.0
     assert result["margin_comparisons"] > 0
     assert result["margin_violations"] == 0

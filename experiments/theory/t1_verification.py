@@ -627,6 +627,12 @@ def check_unlabeled_decoding_pipeline(seed: int = 0) -> dict:
     (build_positive_control_scene -> measure_bracket_echo_profiles ->
     profile_dissimilarity_matrix); exact D from the targets' true
     coordinates and the Lemma 2 expectations. Asserted, per Lemma 4e:
+    (0) the shared-centering hypothesis -- every chain reaches every
+    target, so the measured per-target centering uses the same column
+    set as the exact comparison. PC-V1 guarantees this via scene
+    validity (min_bracketing_chains = R), but the bound below is FALSE
+    without it (unequal reachable sets shift row means at coordinate
+    scale, not rank scale), so the check fails rather than assumes;
     (i) |D_measured - D_exact| < 4 on every defined pair; (ii) every
     anchor-row comparison whose exact-model margin exceeds 8 is ordered
     correctly by the measured decoder. Full-order recovery is NOT
@@ -639,6 +645,9 @@ def check_unlabeled_decoding_pipeline(seed: int = 0) -> dict:
     scene = build_positive_control_scene(config)
     profiles = measure_bracket_echo_profiles(scene)
     measured = profile_dissimilarity_matrix(profiles)
+
+    # Lemma 4e's shared-centering hypothesis, asserted rather than assumed.
+    all_reachable = bool(np.asarray(profiles.reachable).all())
 
     lam = (config.ticks_per_chain - 1) / config.chain_span
     positions = scene.target_coords[:, 1]
@@ -667,6 +676,7 @@ def check_unlabeled_decoding_pipeline(seed: int = 0) -> dict:
 
     return {
         "n_targets": int(len(positions)),
+        "shared_centering_hypothesis": all_reachable,
         "max_perturbation": perturbation,
         "perturbation_bound": 4.0,
         "margin_comparisons": margin_comparisons,
@@ -676,7 +686,8 @@ def check_unlabeled_decoding_pipeline(seed: int = 0) -> dict:
             == sorted([int(np.argmin(positions)), int(np.argmax(positions))])
         ),
         "passed": bool(
-            perturbation < 4.0
+            all_reachable
+            and perturbation < 4.0
             and margin_comparisons > 0
             and violations == 0
         ),

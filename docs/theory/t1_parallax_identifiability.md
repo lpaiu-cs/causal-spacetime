@@ -315,14 +315,29 @@ instrument's `D` is computed over common *reachable* columns
 (`min_common_columns = 4` in PC-V1), so extra observers keep pairs
 comparable when reachability drops columns.
 
-**(e) Model D version `[PROVED, constants not optimized]`.** Each
-measured width carries `theta in [-1, 1)` (Lemma 2, Model D); centering
-moves each entry by less than 2, the difference of two targets' centered
-errors is below 4 per entry, and the RMS is a norm, so
+**(e) Model D version `[PROVED, constants not optimized]`.**
+*Shared-centering hypothesis:* both targets are centered over the same
+observer set that the exact comparison uses — e.g. every chain reaches
+every target. PC-V1 enforces this by construction: scene validity
+requires `min_bracketing_chains = 6 = R`, so on the instrument the
+hypothesis holds for every admitted target, and the harness asserts it
+rather than assuming it. Under the hypothesis: each measured width
+carries `theta in [-1, 1)` (Lemma 2, Model D); centering moves each
+entry by less than 2, the difference of two targets' centered errors is
+below 4 per entry, and the RMS is a norm, so
 
 ```
-| D_measured(i,j) - D_exact(i,j) |  <  4       uniformly.
+| D_measured(i,j) - D_exact(i,j) |  <  4.
 ```
+
+The hypothesis is not decorative: `profile_dissimilarity_matrix()`
+centers each target over its *own* reachable columns, and two targets
+with different reachable sets pick up a row-mean shift of order
+`lambda` times the spread of the dropped `|dx|` values — a
+coordinate-scale error, not a rank-scale one, even at zero quantization
+error. Lemma 4d's redundancy remark is about keeping pairs
+*comparable* when columns drop; this quantitative bound additionally
+needs the centering masks to agree.
 
 Hence every strict comparison in (c) survives measurement whenever its
 exact-model margin exceeds 8 — this margin-level statement is the
@@ -458,6 +473,10 @@ not `n_events`):
    is ordered correctly by the measured decoder (the Model-D claim at
    its proved strength — full-order recovery is *not* asserted, since
    sprinkled targets may sit closer than the decodable separation).
+   The shared-centering hypothesis of Lemma 4e is asserted, not
+   assumed: the check fails unless every chain reaches every target,
+   because with unequal reachable sets the per-target centering shifts
+   row means at coordinate scale and the `< 4` bound does not apply.
 
 Future instrumentation (required before any `rho^{-1/2}` claim): a
 density-coupled tick protocol (harvested chains or Poisson-thinned
@@ -498,8 +517,10 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    superadditivity holds on every triple, and the anchor decoder
    recovers the order up to reversal at `R = 2, 3, 6` (the `R = 2`
    sufficiency of Lemma 4c pinned explicitly). Pipeline (seed-0 scene,
-   40 targets) — `max |D_measured - D_exact| = 0.998 < 4`, and all 515
-   anchor comparisons with exact margin above 8 sort correctly, zero
+   40 targets) — the shared-centering hypothesis holds and is asserted
+   (all 40 targets reachable on all 6 chains, per scene validity);
+   `max |D_measured - D_exact| = 0.998 < 4`, and all 515 anchor
+   comparisons with exact margin above 8 sort correctly, zero
    violations. Diagnostic, not asserted: the measured argmax pair *is*
    the true extreme pair, and only 4 of 780 target pairs invert in the
    full measured order, all with true separations below one tick
@@ -571,7 +592,14 @@ pinned in CI as exact (non-statistical) regressions.
    and quantized arguments written out. The Model-D decoding bound is
    stated at margin level (exact margin > 8 survives measurement) with
    an explicitly loose position-level corollary; the harness pins the
-   margin-level form.
+   margin-level form. Review (PR #6 round) caught a missing hypothesis
+   in the Model-D bound: `profile_dissimilarity_matrix()` centers each
+   target over its own reachable columns, so with unequal reachable
+   sets the row-mean shift is coordinate-scale, not rank-scale, and
+   `< 4` fails structurally. The shared-centering hypothesis is now
+   stated in Lemma 4e (PC-V1 satisfies it by scene validity,
+   `min_bracketing_chains = R`) and asserted by the harness instead of
+   assumed.
 
 ## 8. Relation to the frozen program
 
