@@ -1,7 +1,7 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.1 — statements and proof programs; nothing frozen**
-(2026-07-15).
+Status: **THEORY DRAFT v0.2 — statements and proof programs; nothing frozen**
+(2026-07-16; v0.1 2026-07-15, revised after PR review — see Revision notes).
 
 Each claim below carries a proof-status tag:
 
@@ -26,11 +26,20 @@ Work in the 1+1D causal diamond `M = { (t,x) : |x| + |t| < 1 }` with the
 Minkowski order `(t,x) < (t',x')` iff `t'-t > |x'-x|`. Fix:
 
 - A Poisson sprinkling `S` of density `rho` on `M`.
-- `R` observer chains `C_1..C_R`: for T1 v0.1 an observer is an inertial
-  worldline at fixed spatial coordinate `x0_r` (the code's chains are
-  sprinkled-point paths hugging such a worldline; the gap between the two
-  models is addressed in Section 6, G2). Ticks are the chain's elements,
-  indexed by rank; rank is the only clock.
+- `R` observer chains `C_1..C_R` at fixed spatial coordinates `x0_r`.
+  Ticks are the chain's elements, indexed by rank; rank is the only clock.
+  Two *clock models* for how tick times arise:
+  - **Model D (the instrument).** What PC-V1 actually constructs:
+    `build_positive_control_scene()` calls
+    `make_stationary_observer_chain_1p1()`, which appends an exact
+    vertical worldline whose tick times are a deterministic uniform grid
+    (`np.linspace`, `ticks_per_chain = 96` by default), *independent of
+    the sprinkling and of rho*. Tick spacing is `delta = T/(K-1)` for `K`
+    ticks over time span `T`; write `lambda = 1/delta` for the tick rate.
+  - **Model P (stochastic idealization).** Tick times form a simple
+    stationary point process of intensity `lambda` on the worldline
+    (Poisson being the special case used for concentration bounds).
+    No code constructs such chains today (Section 6, G2).
 - Targets `e_1..e_n` in `S` at coordinates `(t_j, x_j)`.
 
 Observable (PC-V1 Section 5, `find_radar_ticks_from_order`):
@@ -64,46 +73,88 @@ preceding observer times is `t_e - |dx|`; symmetrically the infimum of
 succeeding times is `t_e + |dx|`. For an inertial worldline coordinate
 time is proper time. ∎
 
-### Lemma 2 (rank calibration) `[PROVABLE]`
+### Lemma 2 (rank calibration)
 
-If ticks along `C_r` form a one-dimensional Poisson process of rate
-`lambda_r` in proper time (or any renewal process with mean spacing
-`1/lambda_r`), then conditional on reachability and away from the diamond
-boundary,
+The engine is a deterministic rank-gap identity, not an overshoot
+argument (v0.1 added two renewal overshoots and double-counted the
+constant; review caught it).
 
-```
-E[ W[j,r] ] = 2 lambda_r |x_j - x0_r| + O(1),
-```
-
-with the `O(1)` a boundary/overshoot term bounded uniformly in `|dx|`.
-In particular `E W` is affine in `|dx|`, hence strictly increasing.
-
-*Route.* The bracket rank count is the number of ticks in the proper-time
-interval of Lemma 1, plus the two overshoot terms of a renewal process
-(inspection paradox gives the `O(1)`; for Poisson it is exactly `+1` in
-expectation on each side). Boundary truncation only shrinks brackets and is
-excluded by the reachability condition. Details to write: the exact
-overshoot constant and uniformity of the `O(1)`.
-
-### Lemma 3 (centering removes the common mode) `[PROVED]`
-
-Suppose every chain shares tick rate `lambda` (protocol invariance) and
-some mechanism adds to each target an arbitrary per-target scalar `c_j`
-common across observers, i.e. `W'[j,r] = W[j,r] + c_j`. Then
-`P'[j,r] = P[j,r]`: the centered profile is invariant, and in continuum
-expectation
+**Identity `[PROVED]`.** Let the ticks of a chain be simple (no
+coincident times) and let the bracket interval
+`(t_e - |dx|, t_e + |dx|)` of Lemma 1 contain `N` tick times, with at
+least one tick on each side of it (reachability). If the last
+predecessor has rank `k`, the ticks inside the interval have ranks
+`k+1..k+N` and the first successor has rank `k+N+1`, so
 
 ```
-E P[j,r] = 2 lambda ( |x_j - x0_r| - mean_{r'} |x_j - x0_r'| ),
+W = N + 1        (exactly, realization by realization).
 ```
 
-which depends on `x_j` only — no temporal quantity survives.
+**Model D `[PROVED]`.** For the uniform grid with spacing `delta`, the
+number of grid points in a closed interval of length `L = 2|dx|` is
+`L/delta + theta` with `theta in (-1, 1]` depending on the interval's
+position relative to the grid (its *phase*). Hence
 
-*Proof.* Immediate from linearity of the row mean and Lemma 2. ∎
+```
+W = 2|dx|/delta + 1 + theta,      |W - (2 lambda |dx| + 1)| <= 1.
+```
 
-This operationalizes the underdetermination principle: a single shared
-scalar across observers is not distance structure, and centering removes
-exactly that gauge.
+`W` is deterministic given the target, affine in `|dx|` up to a bounded
+quantization term -- but `theta` depends on `t_e` and on `|dx|` through
+the phase, so it is *observer-dependent* and does not cancel across
+chains. This is not hypothetical: in the actual fixed-rank PC-V1 grid,
+moving a target at `x = 0.10` from `t = 0` to `t = 0.003` shifts the
+centered six-chain profile entries by about one third of a rank.
+
+**Model P `[PROVED]`.** For any simple *stationary* tick point process
+of intensity `lambda` on an (effectively) infinite worldline, Campbell's
+formula gives `E[N] = 2 lambda |dx|` exactly, so with the identity above
+
+```
+E[ W ] = 2 lambda |dx| + 1        (exactly; no O(1), no moment condition).
+```
+
+Stationarity is what Model D lacks (its grid has a fixed phase), which
+is precisely where the `theta` term comes from; averaging `theta` over a
+uniform random phase recovers the stationary answer. For the *Poisson*
+case additionally `N ~ Poisson(2 lambda |dx|)`, which is the variance
+input Theorem 2 needs -- stationarity alone fixes the mean, not the
+fluctuations.
+
+Boundary caveat (both models): near the diamond boundary the bracket
+interval may leave the chain's tick support; those targets fail
+reachability and are excluded, matching the code's `reachable` mask.
+
+### Lemma 3 (what centering does and does not remove)
+
+Two claims of different strength, previously conflated (review caught
+the conflation).
+
+**3a — gauge invariance `[PROVED]`.** If some mechanism adds to each
+target an arbitrary per-target scalar `c_j` common across observers,
+i.e. `W'[j,r] = W[j,r] + c_j`, then `P'[j,r] = P[j,r]` identically:
+centering removes exactly the shared-scalar gauge. Immediate from
+linearity of the row mean. This operationalizes the underdetermination
+principle: a single shared scalar across observers is not distance
+structure. (The `+1` of Lemma 2 is such a common mode and cancels.)
+
+**3b — expectation profile, per clock model.** Under Model P with equal
+rates `lambda` across chains (protocol invariance),
+
+```
+E P[j,r] = 2 lambda ( |x_j - x0_r| - mean_{r'} |x_j - x0_r'| )
+```
+
+*exactly*, by Lemma 2 (Model P) and linearity `[PROVED conditional on
+the Model P hypotheses]`. Under Model D — the instrument — the same
+display holds only up to a *centered quantization residue*
+`theta[j,r] - mean_{r'} theta[j,r']`, bounded by 2 ranks but
+observer-dependent and `t_j`-dependent: equal rates alone do not make
+the phase terms common across observers, so centering does not cancel
+them. "No temporal quantity survives" is therefore true only up to this
+O(1) residue; the numeric example in Lemma 2 (profile shift of ~1/3
+rank under a pure time translation of the target) is that residue in
+the flesh. Any consumer of `P` on Model D data must budget for it.
 
 ## 4. Identifiability
 
@@ -141,6 +192,15 @@ and right of the observer — two targets symmetric about `x0_1` have
 identical profiles. One observer is never enough; the roadmap's "parallax"
 is exactly the second observer breaking the fold.
 
+Model D refinement `[PROVABLE]`: on the instrument's deterministic grid
+the flanking difference carries a quantization error of at most 2 ranks
+(Lemma 2, Model D), while its slope is `2 lambda` per unit position for
+each of the two flanking observers. Order decoding is therefore
+guaranteed once the spatial gap exceeds one tick spacing,
+`|x_i - x_j| > delta`; below that the quantization phase can invert a
+comparison. Identifiability on the instrument is resolution-limited,
+not noise-limited.
+
 ### Corollary (what "up to reflection and scale" means here)
 
 Reflection = global reversal of the recovered order (line isometry);
@@ -148,58 +208,73 @@ scale = the unknown `2 lambda` rank-per-length factor. Both are gauge:
 no order-intrinsic observable in this setup can fix them, so Theorem 1's
 conclusion is the strongest possible of its type.
 
-## 5. Stability under sprinkling `[CONJECTURED, route below]`
+## 5. Stability, per clock model
 
-### Theorem 2 (order recovery with high probability)
+The error law depends on where the randomness lives, and the two clock
+models put it in different places.
 
-Same geometry, ticks Poisson of rate `lambda` per unit proper time.
-There exist constants such that for any two targets `i, j` in the hull
-with spatial separation `g = |x_i - x_j|`, the profile-difference
+### Model D (the instrument): resolution-limited, not noise-limited
+
+On the deterministic grid, `W[j,r]` is a *function* of the target
+coordinates — zero sampling noise. The entire position uncertainty is
+the quantization of Lemma 2 (Model D): at most 2 ranks, i.e. a
+positional error `<= delta = 1/lambda`, decreasing like `1/K` in the
+tick count `K`, **not** like any `rho^{-1/2}` — and unaffected by the
+bulk sprinkling density, because `ticks_per_chain` does not scale with
+`n_events`. The sprinkling enters only through *which targets exist and
+where*, not through the measured widths. `[PROVED, given Lemma 2
+Model D]`
+
+### Theorem 2 (Model P: order recovery with high probability)
+`[CONJECTURED, route below]`
+
+Ticks Poisson of rate `lambda`. For targets `i, j` in the hull with
+spatial separation `g = |x_i - x_j|`, the flanking profile-difference
 estimator recovers their relative order except with probability at most
 
 ```
-2 exp( - c * lambda^2 g^2 / (lambda * L) )  =  2 exp( - c * lambda g^2 / L ),
+2 exp( - c * lambda g^2 / L ),
 ```
 
-where `L` bounds the bracket widths involved; and a union bound over all
-pairs gives full order recovery w.h.p. once
+where `L` bounds the bracket widths involved; a union bound over pairs
+gives full order recovery w.h.p. once
+`min gap >~ sqrt( L * log(n) / lambda )`.
 
-```
-min gap  >~  sqrt( L * log(n) / lambda ).
-```
+*Route.* By the Lemma 2 identity, `W - 1` is a Poisson count over the
+bracket interval — no overshoot terms — so Bennett/Chernoff gives
+fluctuations `~ sqrt(lambda L)` against a signal of `4 lambda g` (slope
+2 per observer, two flanking observers). To write: independence
+bookkeeping (the same ticks enter several brackets — interval
+disjointness for well-separated targets, or negative association), and
+the boundary caveat.
 
-With `lambda ~ rho * ell` for chains harvested from a sprinkling of
-density `rho` (Section 6, G2), the positional standard error scales as
-`1 / sqrt(rho * area)`, matching the roadmap's target bound.
+### The rho^{-1/2} target is conditional on future instrumentation
 
-*Route.* `W[j,r]` is a Poisson count over the Lemma 1 interval plus O(1)
-overshoot; Poisson concentration (Bennett/Chernoff) gives fluctuations
-`~ sqrt(lambda L)`. The signal separating the order of `i` and `j` in the
-flanking-difference statistic is `4 lambda g` (slope 2 per observer, two
-observers). Chernoff + union bound. To write: independence bookkeeping
-(the same ticks enter several brackets — use the interval-disjointness of
-brackets for well-separated targets, or a negative-association argument),
-and the boundary-truncation caveat.
-
-### What must NOT be claimed
-
-Theorem 2 with its constants is a concentration statement about the
-*idealized* tick process. It becomes a statement about the code's scenes
-only after G2 (below) is closed. Until then, the numerical harness
-(Section 7) tests the *scaling*, not the constants.
+The roadmap's `error ~ 1/sqrt(rho * area)` law presumes tick statistics
+coupled to the sprinkling density (`lambda ~ rho * ell`, e.g. chains
+harvested from the sprinkling). PC-V1's chains are not that (Model D),
+so **that law is currently untestable in this codebase**: varying
+`n_events` in the existing generator does not vary the clock. Testing it
+requires a genuine density-coupled tick protocol — a harvested-chain
+constructor with its own audit — listed in Section 7 as future
+instrumentation, not as a v0.2 verification target.
 
 ## 6. Known gaps (the honest list)
 
 - **G1 — unlabeled decoding.** Theorem 1's last step (order from `D`
   alone, without observer labels) needs its own small argument; `R >= 3`
   expected to be the clean hypothesis. `[PROVABLE, to write]`
-- **G2 — chains are not inertial worldlines.** The code's observer chains
-  are maximal-ish paths in the sprinkled order near a worldline, not
-  exact worldlines; their tick process is not exactly Poisson in proper
-  time (path fluctuates in space, spacing follows longest-path statistics
-  with the Myrheim-Meyer constant). Needed: either a coupling bounding
-  the discrepancy, or restate Lemma 2 for harvested chains directly.
-  This is the main modelling gap between theory and instrument.
+- **G2 — the stochastic clock model has no instrument.** (Rewritten in
+  v0.2: the v0.1 text claimed the code harvests maximal-ish paths from
+  the sprinkling with longest-path tick statistics — it does not.
+  `build_positive_control_scene()` appends *exact* vertical worldlines
+  via `make_stationary_observer_chain_1p1()` with deterministic
+  `np.linspace` ticks, `ticks_per_chain = 96` fixed regardless of
+  `n_events`.) The instrument is Model D through and through; Model P
+  and every `rho`-scaling statement hang on a density-coupled tick
+  protocol (harvested chains or Poisson-thinned clocks) that would have
+  to be built and audited first. Until then, Model-P results are theory
+  about a future instrument.
 - **G3 — dependence between brackets.** Overlapping brackets share ticks;
   the union bound in Theorem 2 needs the independence bookkeeping made
   precise. `[PROVABLE, standard but fiddly]`
@@ -208,22 +283,55 @@ only after G2 (below) is closed. Until then, the numerical harness
   group change. Out of scope for v0.1; the 1+1D statements are the ones
   the existing instrument exercises.
 
-## 7. Numerical verification plan (existing generators, no new physics)
+## 7. Numerical verification plan
 
-1. **Monotonicity/slope check** (Lemma 2): scenes from the PC-V1
-   generator over a density ladder; regress measured `W[j,r]` on
-   `|x_j - x0_r|`; confirm affine fit, slope ratio `2 lambda`, and the
-   `O(1)` intercept.
+With existing generators (Model D — the right knob is `ticks_per_chain`,
+not `n_events`):
+
+1. **Slope/quantization check** (Lemma 2, Model D): regress measured
+   `W[j,r]` on `|x_j - x0_r|`; confirm slope `2 lambda`, intercept
+   `1 + theta`, and that every residual is within the proved +/-1 band.
 2. **Fold demonstration** (Theorem 1 sharpness): single-observer profiles
-   for mirrored target pairs — must be statistically indistinguishable;
-   two observers must separate them.
-3. **Error scaling** (Theorem 2): order-recovery error rate and positional
-   RMSE vs `rho` on a log-log axis; target slope `-1/2` in
-   `sqrt(rho * area)`. Any systematic deviation flags G2 as material
-   rather than technical.
-4. Reuse `measure_bracket_echo_profiles` / `PositiveControlScene`
+   for mirrored target pairs must coincide (exactly, on Model D, up to
+   quantization); two observers must separate them.
+3. **Resolution scaling** (Section 5, Model D): positional RMSE and
+   order-recovery error vs `ticks_per_chain` on a log-log axis; target
+   slope `-1` in `K` (quantization law). Varying `n_events` at fixed
+   `K` must leave the width errors unchanged — a direct falsifier for
+   any accidental density dependence.
+4. **Centered-residue exhibit** (Lemma 3b): reproduce the reviewer-class
+   example — pure time translations of a target moving the centered
+   profile by O(1) ranks — and check the residue never exceeds the
+   proved bound.
+5. Reuse `measure_bracket_echo_profiles` / `PositiveControlScene`
    unchanged; the harness is analysis-only and carries no gate — it
    verifies theory, it does not certify the instrument.
+
+Future instrumentation (required before any `rho^{-1/2}` claim): a
+density-coupled tick protocol (harvested chains or Poisson-thinned
+clocks) with its own audit; only then does Theorem 2's scaling become
+testable. Out of scope for the existing-generator harness.
+
+## Revision notes (v0.1 -> v0.2, after PR review)
+
+1. G2 rewritten: the v0.1 description of the observer chains was wrong
+   about the code — PC-V1 appends deterministic uniform-grid worldlines
+   (`ticks_per_chain` fixed, independent of `rho`); it does not harvest
+   paths from the sprinkling. Consequently the `rho^{-1/2}` law was
+   untestable as planned; Sections 5 and 7 now separate the
+   deterministic instrument (resolution law `1/K`) from the stochastic
+   idealization (conditional on future instrumentation).
+2. Lemma 2's overshoot argument double-counted the Poisson constant.
+   Replaced by the reviewer's direct rank-gap identity `W = N + 1`,
+   which is exact realization-by-realization; the Poisson expectation is
+   `2 lambda |dx| + 1` exactly, and the statement strengthens to any
+   simple stationary tick process via Campbell's formula (the renewal
+   hypothesis and its unproven uniformity are gone).
+3. Lemma 3 split: the gauge-invariance algebra (proved) is now separate
+   from the expectation display (conditional on the clock model), and
+   the observer-dependent quantization residue that centering does NOT
+   remove is stated with its bound, matching the numeric counterexample
+   raised in review.
 
 ## 8. Relation to the frozen program
 
