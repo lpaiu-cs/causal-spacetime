@@ -1,9 +1,9 @@
 # Next experiments plan — post Paper B v0.5
 
-Date: 2026-07-14. Status: **P6 COMPLETE; P7 N=600 STAGE A COMPLETE; T1 NOT
-STARTED.** This remains a roadmap rather than a preregistration. Frozen
-protocols and outcomes live in the experiment-specific `docs/prereg/p*.md`
-files.
+Date: 2026-07-15. Status: **P6 COMPLETE; P7 FROZEN AT N=600
+CHARACTERIZATION; T1 ACTIVE.** This remains a roadmap rather than a
+preregistration. Frozen protocols and outcomes live in the
+experiment-specific `docs/prereg/p*.md` files.
 
 Execution update (2026-07-14):
 
@@ -26,6 +26,23 @@ Execution update (2026-07-14):
   sampling method with overlap/convergence evidence must precede scaling;
   ordinary local chains or a coarse replica ladder do not resolve the observed
   action barrier.
+
+Execution update (2026-07-15):
+
+- Wang-Landau / multicanonical sampling was built, validated against exact
+  enumeration at N=6, and shown to tunnel the N=600-blocking action barrier
+  at N <= 80 -- then eliminated at N=600 by a measured tunneling exponent,
+  tau ~ N^5.79 with 90% CI [5.36, 6.19]: even the optimistic end costs
+  ~205,000 core-hours for a single converged ln g(S). Details and data in
+  `docs/p7_enhanced_sampling.md`. This closes the third quantified
+  elimination for the N=600 barrier (after local Metropolis and the replica
+  ladder arithmetic).
+- **Decision: P7 is frozen at its N=600 characterization.** No further P7
+  compute until either a qualitatively different sampler (nonlocal/cluster
+  moves) is found, or the FSS axis is re-scoped to the demonstrably
+  samplable range N <= ~120 under a fresh prereg freeze. Neither choice is
+  made now.
+- **T1 (parallax identifiability, theory) is the active track.**
 
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
