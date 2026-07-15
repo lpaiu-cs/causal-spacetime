@@ -1,7 +1,9 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.2 — statements and proof programs; nothing frozen**
-(2026-07-16; v0.1 2026-07-15, revised after PR review — see Revision notes).
+Status: **THEORY DRAFT v0.3 — statements and proof programs; nothing frozen**
+(v0.3 2026-07-16 KST: G1 closed, Theorem 1 upgraded to `[PROVED]`;
+v0.2 2026-07-16 KST / 2026-07-15 UTC; v0.1 2026-07-15 — revised after PR
+reviews, see Revision notes).
 
 Each claim below carries a proof-status tag:
 
@@ -194,7 +196,7 @@ the flesh. Any consumer of `P` on Model D data must budget for it.
 
 ## 4. Identifiability
 
-### Theorem 1 (spatial order from exact profiles) `[PROVABLE]`
+### Theorem 1 (spatial order from exact profiles) `[PROVED]`
 
 Let `R >= 2` observers have distinct positions `x0_1 < ... < x0_R`, all
 targets lie in the open hull `(x0_1, x0_R)`, and profiles equal their
@@ -206,43 +208,188 @@ x  |->  ( E W[.,1], ..., E W[.,R] )
 
 restricted to `(x0_1, x0_R)` is injective, and the difference
 `E W[j,1] - E W[j,R] = 2 lambda ( |x_j - x0_1| - |x_j - x0_R| )`
-is strictly increasing in `x_j` on the hull. Consequently the target
-order along the slice is decodable from profile differences alone; from
-*unlabeled* profiles (or from the dissimilarity `D` of PC-V1 Section 6)
-the order is determined up to global reversal, and positions up to a
-positive affine map (scale `1/(2 lambda)` unknown by construction).
+is strictly increasing in `x_j` on the hull. Consequently, from
+*labeled* profiles the target order along the slice is decodable from
+the flanking difference alone, and positions follow up to a positive
+affine map (the flanking difference is affine in `x_j` with positive
+slope `4 lambda`; slope and origin unknown by construction). From
+*unlabeled* profiles (or from the dissimilarity `D` of PC-V1
+Section 6) the order is determined up to global reversal — and nothing
+metric: `D` alone provably does not determine spacings, even up to a
+positive affine map (Lemma 4f).
 
-*Route.* On `[x0_1, x0_R]` the function
+*Proof.* On `[x0_1, x0_R]` the function
 `f(x) = |x - x0_1| - |x - x0_R|` equals `2x - x0_1 - x0_R`: strictly
 increasing with slope 2 (this is where "targets inside the hull" is
 needed — outside the hull `f` is constant and order is NOT identifiable
-from these two observers). Injectivity and order-decoding follow;
-reversal ambiguity is the isometry group of the line acting on unlabeled
-configurations. Details to write: the unlabeled-profile step (recovering
-order from `D` rather than from labeled columns), which is where
-`R >= 3` earns its keep as redundancy and as a check that the profile
-geometry is one-dimensional.
+from these two observers). Strict monotonicity of the flanking
+difference gives injectivity of the labeled map and order decoding by
+sorting that difference. The unlabeled step — order from `D` alone,
+without observer labels — is Lemma 4(c) below. Reversal ambiguity is
+the isometry group of the line acting on unlabeled configurations, and
+the positive-affine position ambiguity is the unknown rank-per-length
+scale `2 lambda` together with the unknown origin (Corollary). ∎
 
 Sharpness `[PROVED by example]`: with `R = 1`, `|x - x0_1|` folds left
 and right of the observer — two targets symmetric about `x0_1` have
 identical profiles. One observer is never enough; the roadmap's "parallax"
 is exactly the second observer breaking the fold.
 
-Model D refinement `[PROVABLE]`: on the instrument's deterministic grid
-the flanking difference carries a quantization error of at most 2 ranks
-(Lemma 2, Model D), while its slope is `2 lambda` per unit position for
-each of the two flanking observers. Order decoding is therefore
-guaranteed once the spatial gap exceeds one tick spacing,
-`|x_i - x_j| > delta`; below that the quantization phase can invert a
-comparison. Identifiability on the instrument is resolution-limited,
-not noise-limited.
+Model D refinement `[PROVED]`: on the instrument's deterministic grid
+the flanking difference carries a quantization error of less than 2
+ranks (Lemma 2, Model D: each width carries `theta in [-1, 1)`, so
+`theta_1 - theta_R in (-2, 2)`), while its slope is `2 lambda` per unit
+position for each of the two flanking observers. Comparing two targets
+`i, j`, the signal is `4 lambda (x_i - x_j)` against a total error
+below 4 ranks, so order decoding is guaranteed once the spatial gap
+exceeds one tick spacing, `|x_i - x_j| > delta`; below that the
+quantization phase can invert a comparison. Identifiability on the
+instrument is resolution-limited, not noise-limited.
+
+### Lemma 4 (unlabeled decoding: seriation from `D` alone) `[PROVED]`
+
+This closes G1. Data model: the decoder receives only the dissimilarity
+
+```
+D(i,j) = RMS_r ( P[i,r] - P[j,r] )
+```
+
+over the columns common to both targets (all `R` in the exact model) —
+the exact-model counterpart of `profile_dissimilarity_matrix()`. `D` is
+invariant under any single column permutation applied to all targets at
+once, so "decodable from `D`" implies "decodable from unlabeled
+profiles" a fortiori: `D` is the weaker data. Throughout, `R >= 2`
+observers at distinct positions, targets at distinct positions in the
+open hull, profiles equal to their Lemma 2 expectations.
+
+**(a) Gap geometry.** Write `phi(x)` for the centered profile vector of
+a target at position `x`: `phi_r(x) = 2 lambda ( |x - x0_r| - h(x) )`
+with `h(x)` the mean of `|x - x0_r|` over `r`. `phi` is piecewise
+linear in `x` with kinks exactly at the interior observer positions.
+On the gap `G_k = (x0_k, x0_{k+1})` its direction (per unit `x`, in
+units of `2 lambda`) is the vector `u_k` with entries `+2 b_k / R` on
+the `a_k` observers to the left of `G_k` (moving right increases their
+distances) and `-2 a_k / R` on the `b_k = R - a_k` observers to the
+right. For gaps `k <= l` the entries multiply in three blocks (left of
+`G_k`; between; right of `G_l`):
+
+```
+u_k . u_l = (4/R^2) [ a_k b_k b_l  -  (a_l - a_k) a_k b_l  +  a_k a_l b_l ]
+          = (4/R^2) a_k b_l ( b_k + a_k )
+          = 4 a_k b_l / R   >  0        on the hull (a_k >= 1, b_l >= 1).
+```
+
+The hull condition is exactly the positivity condition: outside
+`[x0_1, x0_R]` one of the counts vanishes and with it the direction
+(`|u_k|^2 = 4 a_k b_k / R = 0`) — the fold again.
+
+**(b) Strict Robinson property.** For `x < y < z` in the hull,
+`phi(y) - phi(x)` and `phi(z) - phi(y)` are nonnegative combinations of
+the gap directions (with the traversed lengths as coefficients, not all
+zero), so their inner product is strictly positive by (a), and with
+`D = |.| / sqrt(R)`:
+
+```
+D(x,z)^2  >  D(x,y)^2 + D(y,z)^2      (strictly),
+```
+
+in particular `D(x,z) > max( D(x,y), D(y,z) )`, and `D(x,y) > 0` for
+`x != y`. So `D` is a *strictly Robinson* dissimilarity in the true
+spatial order — the seriation structure: every row increases strictly
+moving away from the diagonal.
+
+**(c) Decoding.** Finite target set. (i) The pair maximizing `D` is
+unique and equals the extreme pair `{x_min, x_max}`: any other pair is
+dominated through a strict (b)-chain. (ii) Anchored at either extreme
+`a`, the map `x -> D(a, x)` is strictly monotone in position by (b), so
+sorting the anchor row of `D` recovers the spatial order; anchoring at
+the other extreme yields exactly the reversal. No observer labels, no
+coordinates, no access to the profiles themselves — `D` alone, and
+`R >= 2` suffices. ∎
+
+**(d) What `R >= 3` actually buys.** Not decodability — (c) holds at
+`R = 2`, where the expectation in v0.2's G1 that `R >= 3` would be the
+clean hypothesis turned out pessimistic. Two real benefits remain.
+*Falsifiability:* centering confines profiles to the sum-zero
+hyperplane, dimension `R - 1`; at `R = 2` the geometry is automatically
+one-dimensional and (b) tests nothing, while at `R >= 3` the strict
+quadrance superadditivity is a nontrivial signature that fails for
+configurations not lying on a monotone curve. *Redundancy:* the
+instrument's `D` is computed over common *reachable* columns
+(`min_common_columns = 4` in PC-V1), so extra observers keep pairs
+comparable when reachability drops columns.
+
+**(e) Model D version `[PROVED, constants not optimized]`.**
+*Shared-centering hypothesis:* both targets are centered over the same
+observer set that the exact comparison uses — e.g. every chain reaches
+every target. PC-V1 enforces this by construction: scene validity
+requires `min_bracketing_chains = 6 = R`, so on the instrument the
+hypothesis holds for every admitted target, and the harness asserts it
+rather than assuming it. Under the hypothesis: each measured width
+carries `theta in [-1, 1)` (Lemma 2, Model D); centering moves each
+entry by less than 2, the difference of two targets' centered errors is
+below 4 per entry, and the RMS is a norm, so
+
+```
+| D_measured(i,j) - D_exact(i,j) |  <  4.
+```
+
+The hypothesis is not decorative: `profile_dissimilarity_matrix()`
+centers each target over its *own* reachable columns, and two targets
+with different reachable sets pick up a row-mean shift of order
+`lambda` times the spread of the dropped `|dx|` values — a
+coordinate-scale error, not a rank-scale one, even at zero quantization
+error. Lemma 4d's redundancy remark is about keeping pairs
+*comparable* when columns drop; this quantitative bound additionally
+needs the centering masks to agree.
+
+**(f) Sharpness: `D` determines order, not spacings `[PROVED by
+example]`.** With unknown observer positions, nothing metric survives
+in `D`. Two hypothesis-satisfying configurations (`R = 6`,
+`lambda = 1`) — observers `[0, .1, .21, .34, .44, .65]` with targets
+`[.02, .28, .53]`, versus observers
+`[0, .0292803932..., .0752379602..., .3002515990..., .3119385925...,
+.65]` with targets `[.02, .2411728090..., .5114951311...]` — produce
+the *same* dissimilarity matrix (entrywise to float precision, max
+difference `~1e-15`), while their affine invariants
+`(x_2 - x_1)/(x_3 - x_1)` differ: `0.5098...` versus `0.45`. No
+positive affine map relates the two target sets, so no decoder reading
+`D` alone can output spacings. The mechanism is (a) itself: the
+per-gap speeds `4 a_k b_l / R` depend on the unknown observer layout,
+which an adversary can re-tune to absorb spacing information while
+preserving every pairwise `D`. Order up to reversal (c) is therefore
+the exact content of the `D`-based claim — Theorem 1's positive-affine
+clause belongs to the *labeled* flanking decoder only. For unlabeled
+profiles (more data than `D`) spacing recovery is neither claimed nor
+refuted here. (Review supplied the counterexample; the harness
+reproduces it to float precision.)
+
+Hence every strict comparison in (c) survives measurement whenever its
+exact-model margin exceeds 8 — this margin-level statement is the
+primary Model-D claim, and the one the harness pins. A position-level
+sufficient condition follows via (b): since all `u_k . u_l >= 4/R` on
+the hull (`a_k b_l >= 1`), any chord obeys `D(y,z) >= (4 lambda / R) g`,
+and the anchor-row gap obeys
+`D(a,z) - D(a,y) > D(y,z)^2 / (2 D_max) >= (4 lambda g / R)^2 / (2 D_max)`,
+so gaps `g > R sqrt(D_max) / lambda` always decode correctly. That
+constant is loose twice over (the uniform `a_k b_l >= 1` and the
+chord-to-margin step) and quadratically worse than the labeled flanking
+decoder's `g > delta` (Theorem 1, Model D refinement): the anchor
+decoder compares long chords, where quantization has more room to hide.
+On the actual PC-V1 scene the measured perturbation is about 1 rank,
+far below the worst-case 4 (Section 7).
 
 ### Corollary (what "up to reflection and scale" means here)
 
 Reflection = global reversal of the recovered order (line isometry);
 scale = the unknown `2 lambda` rank-per-length factor. Both are gauge:
-no order-intrinsic observable in this setup can fix them, so Theorem 1's
-conclusion is the strongest possible of its type.
+no order-intrinsic observable in this setup can fix them. For the
+*labeled* decoder the conclusion — order plus positions up to a
+positive affine map — is the strongest possible of its type. For the
+`D`-only decoder the strongest possible conclusion is order up to
+reversal: Lemma 4f exhibits two configurations with identical `D` and
+affinely inequivalent target sets, so spacings are genuinely not in
+`D`.
 
 ## 5. Stability, per clock model
 
@@ -297,9 +444,17 @@ instrumentation, not as a v0.2 verification target.
 
 ## 6. Known gaps (the honest list)
 
-- **G1 — unlabeled decoding.** Theorem 1's last step (order from `D`
-  alone, without observer labels) needs its own small argument; `R >= 3`
-  expected to be the clean hypothesis. `[PROVABLE, to write]`
+- **G1 — unlabeled decoding.** **CLOSED (v0.3, Lemma 4).** Order from
+  `D` alone is proved for `R >= 2` — the expected `R >= 3` hypothesis
+  turned out unnecessary in the exact model. The mechanism is the strict
+  Robinson (seriation) structure of `D`: gap-direction inner products
+  `4 a_k b_l / R > 0` on the hull make `D` strictly increasing away from
+  the diagonal, so the max pair identifies the extremes and one anchor
+  row sorts the rest. What `R >= 3` actually buys is falsifiability of
+  the Robinson signature and reachability redundancy (Lemma 4(d)). The
+  `D`-based conclusion is order-only: spacings are provably not in `D`
+  (Lemma 4f counterexample), and Theorem 1's positive-affine clause
+  belongs to the labeled flanking decoder.
 - **G2 — the stochastic clock model has no instrument.** (Rewritten in
   v0.2: the v0.1 text claimed the code harvests maximal-ish paths from
   the sprinkling with longest-path tick statistics — it does not.
@@ -342,6 +497,22 @@ not `n_events`):
 5. Reuse `measure_bracket_echo_profiles` / `PositiveControlScene`
    unchanged; the harness is analysis-only and carries no gate — it
    verifies theory, it does not certify the instrument.
+6. **Unlabeled decoding check** (Lemma 4): exact-model `D` on random
+   hull configurations at `R = 2, 3, 6` — gap-direction inner products
+   match `4 a_k b_l / R`, strict quadrance superadditivity on every
+   triple, anchor decoder recovers the order up to reversal (including
+   at `R = 2`). Pipeline: `|D_measured - D_exact| < 4` on the PC-V1
+   scene, and every anchor comparison with exact-model margin above 8
+   is ordered correctly by the measured decoder (the Model-D claim at
+   its proved strength — full-order recovery is *not* asserted, since
+   sprinkled targets may sit closer than the decodable separation).
+   The shared-centering hypothesis of Lemma 4e is asserted, not
+   assumed: the check fails unless every chain reaches every target,
+   because with unequal reachable sets the per-target centering shifts
+   row means at coordinate scale and the `< 4` bound does not apply.
+   Sharpness (Lemma 4f): the two same-`D` affinely-inequivalent
+   configurations are pinned as a deterministic regression — `D`
+   carries order, not spacings.
 
 Future instrumentation (required before any `rho^{-1/2}` claim): a
 density-coupled tick protocol (harvested chains or Poisson-thinned
@@ -377,12 +548,29 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    bit-identical chain worldlines and measure bit-identical widths for
    one fixed appended target set; the hand-built-order variant (item 3)
    is kept as a unit invariant of the order machinery (Revision note 6).
+7. Unlabeled decoding (Lemma 4, v0.3): exact model — gap-direction
+   inner products match `4 a_k b_l / R`, strict quadrance
+   superadditivity holds on every triple, and the anchor decoder
+   recovers the order up to reversal at `R = 2, 3, 6` (the `R = 2`
+   sufficiency of Lemma 4c pinned explicitly). Pipeline (seed-0 scene,
+   40 targets) — the shared-centering hypothesis holds and is asserted
+   (all 40 targets reachable on all 6 chains, per scene validity);
+   `max |D_measured - D_exact| = 0.998 < 4`, and all 515 anchor
+   comparisons with exact margin above 8 sort correctly, zero
+   violations. Sharpness (Lemma 4f) — the review's same-`D`
+   counterexample reproduced: max entrywise difference `~1.4e-15`
+   between the two configurations' dissimilarity matrices, affine
+   invariants `0.5098` vs `0.45`. Diagnostic, not asserted: the measured argmax pair *is*
+   the true extreme pair, and only 4 of 780 target pairs invert in the
+   full measured order, all with true separations below one tick
+   spacing (max 0.0053 against `delta = 0.0147`) — the resolution
+   limit, exactly where Lemma 4e permits it.
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (v0.1 -> v0.2, after PR review)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -434,6 +622,34 @@ pinned in CI as exact (non-statistical) regressions.
    `build_positive_control_scene()` at three densities and asserts
    bit-identical chains and widths for a fixed appended target set; the
    direct-order form is kept as a unit invariant.
+7. G1 closed (v0.3): Lemma 4 proves unlabeled decoding from `D` alone
+   via the strict Robinson structure, with `R >= 2` sufficient — v0.2's
+   expectation that `R >= 3` would be the clean hypothesis was
+   pessimistic; `R >= 3`'s real roles (signature falsifiability,
+   reachability redundancy) are stated as Lemma 4(d). Theorem 1 and its
+   Model D refinement upgrade `[PROVABLE] -> [PROVED]` with the labeled
+   and quantized arguments written out. The Model-D decoding bound is
+   stated at margin level (exact margin > 8 survives measurement) with
+   an explicitly loose position-level corollary; the harness pins the
+   margin-level form. Review (PR #6 round) caught a missing hypothesis
+   in the Model-D bound: `profile_dissimilarity_matrix()` centers each
+   target over its own reachable columns, so with unequal reachable
+   sets the row-mean shift is coordinate-scale, not rank-scale, and
+   `< 4` fails structurally. The shared-centering hypothesis is now
+   stated in Lemma 4e (PC-V1 satisfies it by scene validity,
+   `min_bracketing_chains = R`) and asserted by the harness instead of
+   assumed.
+8. Theorem 1's `D`-clause narrowed to order-only (PR #6 review round
+   2). The v0.2 statement let "positions up to a positive affine map"
+   attach to the unlabeled/`D` conclusion; the review exhibited two
+   hypothesis-satisfying configurations with identical `D` and affinely
+   inequivalent target sets, so that reading is false. The affine
+   clause now belongs explicitly to the *labeled* flanking decoder
+   (where it is proved), the `D`-only conclusion is order up to
+   reversal, and the counterexample is recorded as Lemma 4f and
+   reproduced to float precision by the harness. Spacing recovery from
+   unlabeled profiles (more data than `D`) is left explicitly open —
+   neither claimed nor refuted.
 
 ## 8. Relation to the frozen program
 

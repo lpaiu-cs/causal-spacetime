@@ -27,12 +27,15 @@ from t1_verification import (  # noqa: E402
     check_builder_density_invariance,
     check_centered_residue,
     check_coincident_tick_orphan,
+    check_d_spacing_sharpness,
     check_density_invariance,
     check_fold,
     check_null_aligned_tick,
     check_pipeline_band,
     check_quantization_band,
     check_resolution_scaling,
+    check_unlabeled_decoding_exact,
+    check_unlabeled_decoding_pipeline,
     pc_v1_centered_profile,
     predicted_center,
     residuals_in_band,
@@ -169,6 +172,57 @@ def test_review_counterexample_is_reproduced_exactly():
     reviewer_shifted = [76 / 3, 34 / 3, -8 / 3, -47 / 3, -47 / 3, -8 / 3]
     assert result["profile_t0"] == pytest.approx(reviewer_t0)
     assert result["profile_shifted"] == pytest.approx(reviewer_shifted)
+
+
+def test_unlabeled_decoding_holds_in_the_exact_model_even_at_r_2():
+    """Lemma 4: gap-direction inner products 4 a_k b_l / R, strict
+    quadrance superadditivity (Robinson), and anchor decoding up to
+    reversal -- at R = 2, 3 and 6. R = 2 is the pinned surprise: v0.2
+    expected R >= 3 to be the clean hypothesis; the proof needs only
+    R >= 2, and this test keeps that claim honest."""
+
+    result = check_unlabeled_decoding_exact(seed=5, n_targets=12)
+    for key in ("R=2", "R=3", "R=6"):
+        assert result[key]["inner_product_formula"], result[key]
+        assert result[key]["strictly_robinson"], result[key]
+        assert result[key]["anchors_are_extremes"], result[key]
+        assert result[key]["order_recovered_up_to_reversal"], result[key]
+    assert result["passed"]
+
+
+def test_pipeline_dissimilarity_obeys_the_proved_model_d_bounds():
+    """Lemma 4e at proved strength on the real instrument: the
+    shared-centering hypothesis holds (every chain reaches every
+    target -- without it the bound is structurally false, since
+    per-target centering over unequal reachable sets shifts row means
+    at coordinate scale), the measured D deviates from the exact-model
+    D by less than 4 ranks, and every anchor comparison with exact
+    margin above 8 sorts correctly. Full order recovery is deliberately
+    NOT asserted -- sub-delta pairs may invert, which is the resolution
+    limit, not a lemma failure."""
+
+    result = check_unlabeled_decoding_pipeline(seed=0)
+    assert result["shared_centering_hypothesis"], result
+    assert result["max_perturbation"] < 4.0
+    assert result["margin_comparisons"] > 0
+    assert result["margin_violations"] == 0
+    assert result["passed"], result
+
+
+def test_d_carries_order_but_not_spacings():
+    """Lemma 4f, the review's counterexample pinned: two
+    hypothesis-satisfying configurations produce the SAME dissimilarity
+    matrix while their target sets are affinely inequivalent. Any claim
+    that a D-only decoder recovers spacings (even up to positive affine)
+    is thereby false; Theorem 1's affine clause belongs to the labeled
+    flanking decoder only."""
+
+    result = check_d_spacing_sharpness()
+    assert result["hypotheses_satisfied"], result
+    assert result["max_d_difference"] < 1e-12
+    assert result["affine_invariant_a"] == pytest.approx(26.0 / 51.0)
+    assert result["affine_invariant_b"] == pytest.approx(0.45)
+    assert result["passed"], result
 
 
 def test_widths_are_integers_in_rank_units():
