@@ -66,7 +66,9 @@ def stage_a() -> None:
     # Gate V1: exact Gibbs at N=6 (720 permutations).
     n, beta, eps = 6, 0.4, 0.3
     perms = [np.array(p) for p in permutations(range(n))]
-    actions = np.array([smeared_action_2d(perm_to_causal_matrix(p), eps) for p in perms])
+    actions = np.array(
+        [smeared_action_2d(perm_to_causal_matrix(p), eps) for p in perms]
+    )
     weights = np.exp(-beta * (actions - actions.min()))
     target = weights / weights.sum()
     index = {p.tobytes(): k for k, p in enumerate(perms)}
@@ -168,8 +170,10 @@ def stage_b(betas: list[float], seeds: list[int]) -> None:
                 rows.append(row)
                 print(
                     f"beta={beta:g} {start} seed={seed}: S={mean_obs['S']:+.1f} "
-                    f"n0={mean_obs['n0']:.0f} n12={mean_obs['n1'] + mean_obs['n2']:.0f} "
-                    f"h={mean_obs['height']:.1f} acc={acceptance:.3f} -> {row['class']}",
+                    f"n0={mean_obs['n0']:.0f} "
+                    f"n12={mean_obs['n1'] + mean_obs['n2']:.0f} "
+                    f"h={mean_obs['height']:.1f} acc={acceptance:.3f} "
+                    f"-> {row['class']}",
                     flush=True,
                 )
     with open(OUT / f"p4_stage_b_{tag}.csv", "w", newline="") as fh:
@@ -198,7 +202,9 @@ def verdicts() -> None:
         chains = by_beta[beta]
         classes = [c["class"] for c in chains]
         mean_s = {
-            start: float(np.mean([float(c["S"]) for c in chains if c["start"] == start]))
+            start: float(
+                np.mean([float(c["S"]) for c in chains if c["start"] == start])
+            )
             for start in ("R", "X")
         }
         gap = abs(mean_s["R"] - mean_s["X"])

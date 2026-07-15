@@ -356,7 +356,8 @@ def figure_emergence_chain() -> None:
     cal5 = [r for r in _rows("p5_stage_a_calibration.csv")
             if r.get("status") == "ok"]
     n_blocked = len(p5) - len(ok5)
-    groups = [("0\n(uniform cal.)", cal5), ("2", [r for r in ok5 if _num(r, "beta") == 2.0]),
+    groups = [("0\n(uniform cal.)", cal5),
+              ("2", [r for r in ok5 if _num(r, "beta") == 2.0]),
               ("8", [r for r in ok5 if _num(r, "beta") == 8.0])]
     ax_c.axhline(0.10, color=MUTED, linestyle="--", linewidth=1.2, zorder=2)
     ax_c.annotate("gate 0.10", (3.5, 0.112), fontsize=7.5, color=MUTED,
