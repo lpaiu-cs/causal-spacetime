@@ -54,9 +54,10 @@ Execution update (2026-07-16):
 - **The P7 FSS re-scope route is now closed** (fourth quantified
   elimination): reconnaissance showed the sampler-feasible window
   (N <= ~120) and the instrument-operable window (N >= ~500 for the
-  frozen protocol — envelope-blocked below N ~ 156, where even one
-  25-tick chain typically does not exist; N >= ~160 marginal for the
-  most permissive re-scoped spec) are disjoint. The compute budget was
+  protocol as frozen, greedy selector included — an optimal selector
+  could lower that boundary but not below the ~156 envelope, under
+  which even one 25-tick chain typically does not exist; N >= ~160
+  marginal for the most permissive re-scoped spec) are disjoint. The compute budget was
   not the binding constraint. Details and dual-criterion verdict in
   `docs/p7_fss_rescope_recon.md`; probe and tracked results committed.
   P7 reopens only with a sampler reaching N >= 500 or a qualitatively

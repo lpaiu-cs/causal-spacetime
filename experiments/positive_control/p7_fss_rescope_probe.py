@@ -16,7 +16,11 @@ instrument must score G ~ 1):
    An envelope argument says it cannot begin early: the expected longest
    increasing subsequence of a uniform permutation is ~ 2 sqrt(N), so for
    N <= (25/2)^2 ~ 156 even ONE 25-tick chain typically does not exist,
-   let alone six disjoint ones.
+   let alone six disjoint ones -- a selector-independent block. Above
+   the envelope the blocks measured here are properties of the frozen
+   protocol's GREEDY selector (Greene's theorem permits six disjoint
+   25-chains at N = 200..400), so the boundary reported is that of the
+   instrument AS FROZEN, not a selector-independent bound.
 2. Re-scoped small-N candidate specs (fewer/shorter chains, fewer
    targets and constraints) across N = 100..160: does ANY of them pass
    its own positive control reliably?

@@ -20,9 +20,12 @@ The frozen protocol requires six disjoint 25-tick chains plus >= 20
 bracketed targets: at least ~170 elements before statistics are even
 considered. Sharper: the expected longest increasing subsequence of a
 uniform permutation is ~ `2 sqrt(N)`, so for `N <= (25/2)^2 ~ 156` even
-**one** 25-tick chain typically does not exist. The frozen instrument is
-envelope-blocked across the entire samplable range — no selector, greedy
-or optimal, can extract what is not there.
+**one** 25-tick chain typically does not exist. Across the entire
+samplable range (N <= ~120, comfortably below the ~156 envelope) the
+frozen instrument is therefore envelope-blocked in the
+selector-independent sense: no extractor, greedy or optimal, can find a
+chain that typically is not there. Above the envelope the story changes
+— see the selector note under the table.
 
 ## Measured windows (uniform ensemble = the positive control, G must ~ 1)
 
@@ -30,8 +33,21 @@ Frozen protocol (6 x 25, >= 20 targets), 6 seeds per N:
 
 | N | outcome |
 |---|---|
-| 200, 300, 400 | structurally blocked (chain extraction), 6/6 |
+| 200, 300, 400 | greedy chain extraction fails, 6/6 (selector-dependent — see note) |
 | 500 | operates: 4/6 evaluate, all 4 pass, G median 0.858 |
+
+Selector note. The N = 200–400 failures are properties of the frozen
+protocol's *greedy* selector, not of the orders themselves: by Greene's
+theorem a uniform permutation at these sizes can contain six disjoint
+25-chains (the RSK shape's sixth row is still near `2 sqrt(N)` there),
+and `select_disjoint_chains` consumes its longest chain whole, so an
+optimal multi-chain selector could plausibly operate somewhere below
+500. That would, however, be a *different instrument* — the greedy
+selector is part of the frozen protocol — so N ~ 500 is the measured
+operability boundary of the instrument **as frozen**, not a
+selector-independent bound. None of this touches the conclusion: the
+samplable window lies entirely below the ~156 envelope, where the
+impossibility *is* selector-independent.
 
 Re-scoped candidate specs (3-4 chains x 8-10 ticks, 20-30 targets,
 scaled constraint counts), 8 seeds per cell, N = 100..160 — best cells:
@@ -89,9 +105,11 @@ priced at ~278,000 core-hours.
 re-scope route:** after (1) local Metropolis, (2) the replica-ladder
 arithmetic, and (3) the Wang-Landau tunneling exponent at N = 600, the
 FSS-at-samplable-N alternative fails because the sampler-feasible
-window (N <= ~120) and the instrument-operable window (N >= ~500
-frozen; N >= ~160 for the most permissive re-scoped spec probed, and
-only marginally) are disjoint. P7 remains frozen at its N = 600
+window (N <= ~120) and the instrument-operable window (N >= ~500 for
+the protocol as frozen, greedy selector included — an optimal selector
+could lower that boundary, but not below the ~156 envelope;
+N >= ~160 for the most permissive re-scoped spec probed, and only
+marginally) are disjoint. P7 remains frozen at its N = 600
 characterization.
 
 What would reopen the route (either suffices):
@@ -108,10 +126,12 @@ What would reopen the route (either suffices):
 ## Deviations / scope notes
 
 - Reconnaissance only: seeds fixed in the probe, 6-8 per cell; enough
-  to establish window disjointness at the reported magnitudes (blocked
-  cells are deterministic-structural; the marginal cells fail the
-  calibration bar by construction, not by a close call), not to
-  estimate pass rates precisely.
+  to establish window disjointness at the reported magnitudes, not to
+  estimate pass rates precisely. Within the samplable range the blocks
+  are envelope-typical (selector-independent); the N = 200-400 blocks
+  are measured failures of the frozen greedy selector (see the selector
+  note), and the marginal small-N cells fail the calibration bar by a
+  wide margin, not a close call.
 - The re-scoped specs alter constraint counts alongside chain specs;
   all such changes were made once, before any results were read, and
   are recorded in the probe's committed configuration block.

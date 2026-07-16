@@ -36,10 +36,14 @@ from causal_spacetime_lab.positive_control.two_orders import (  # noqa: E402
 )
 
 
-def test_frozen_protocol_is_envelope_blocked_in_the_samplable_range():
-    """LIS ~ 2 sqrt(N) < 25 for N <= ~156: the frozen six-25-tick-chain
-    protocol cannot even begin below the envelope, and stays blocked at
-    N = 300 (measured, not just asymptotic)."""
+def test_frozen_protocol_blocks_below_its_measured_boundary():
+    """Two different kinds of block, both pinned: at N = 120 (inside the
+    samplable range) the block is envelope-typical and
+    selector-independent -- LIS ~ 2 sqrt(N) < 25, no extractor can find
+    a 25-tick chain that typically is not there. At N = 300 the block is
+    a measured property of the frozen protocol's GREEDY selector (an
+    optimal selector could succeed there, per Greene's theorem, but
+    would be a different instrument)."""
 
     for n in (120, 300):
         for seed in (0, 1):
