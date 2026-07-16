@@ -53,6 +53,20 @@ or by a proved, CI-pinned statement in
   at the chain-extraction stage, before any geometry gate). Emergence
   content: reconstructable geometry *survives* action weighting below beta_c
   and is *destroyed* above it.
+- **Rejection happens at the geometry gates, not only at chain
+  extraction**: eight preregistered chain-rich layered cells (N = 600,
+  seeds 100-119) all met their frozen expectation — every seed reached
+  the numerical gates (no structural blocks) and >= 16/20 per cell
+  blocked there (149/160 total; P6a). The proposed local-shuffle family
+  was retired by construction audit (coordinate remapping, not geometry
+  destruction: original-coordinate gate 0/10 vs current-coordinate
+  10/10 at 600 moves).
+- **On identical data the instrument has the highest ROC AUC** (0.993 on
+  362 labelled orders across P1/P3/P5/P6; height 0.967, MM 0.939,
+  abundance 0.933), and MM dimension false-passes 25/27 of the P1
+  false-pass window (P6b, all labels/metrics frozen before computation).
+  NOT claimed: superiority over height as a ranking statistic on P1 —
+  height is marginally more monotone there (median rho 0.994 vs 0.976).
 - **The profile observable's identifiability is settled (1+1D)**: spatial
   order up to global reversal is decodable from the parallax dissimilarity
   alone (strict Robinson structure; already for two observers) — exactly

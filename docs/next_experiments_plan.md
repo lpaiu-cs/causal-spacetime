@@ -70,7 +70,9 @@ only with one "A-tier lever" completed. It also identified two validity gaps
 that are cheap to close: the crystal control is structurally easy (blocks at
 chain extraction, never exercising the geometry gates), and the discriminator
 has not been compared head-to-head with existing manifoldlikeness diagnostics
-on the same data. Both are recorded as future work in manuscript Section 10.
+on the same data. Both gaps are now closed and integrated into the
+manuscript as Paper B v0.6 Sections 7.5-7.6 (P6a hard negatives, P6b
+same-data head-to-head).
 
 ## P6 — hard negatives and diagnostics head-to-head
 

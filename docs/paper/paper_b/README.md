@@ -6,7 +6,7 @@ ensemble.**
 
 Status: DRAFT v0.6 (2026-07-16). Empirical prose grounded entirely in the
 frozen preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1,
-P2/P2-v2, P3, P4, P5); the Section 8 theory results are analysis-only and
+P2/P2-v2, P3, P4, P5, P6a/P6b); the Section 8 theory results are analysis-only and
 grounded in the committed, CI-pinned theory artifacts (`docs/theory/`,
 nothing frozen there by design). No number in the manuscript is from
 memory; each traces to a committed registry, CSV, or tracked theory
@@ -36,7 +36,17 @@ This paper reports the validated-instrument line of the program:
    continuum phase with a hysteretic crystallization transition; and
    post-burn-in samples of that continuum phase pass the full discriminator
    (18/18) while the crystal control blocks structurally (4/4).
-5. **The identifiability theory (T1, new in v0.6)** proves what the profile
+5. **Validity hardening (P6a/P6b, new in v0.6)** closes the two review
+   validity gaps: constructed chain-rich layered negatives block at the
+   geometry gates themselves (8/8 preregistered cells, 149/160 fresh
+   seeds; the local-shuffle candidate was retired by construction audit
+   as coordinate remapping), and a preregistered same-data head-to-head
+   gives the instrument the highest ROC AUC (0.993 vs height 0.967,
+   MM 0.939, abundance 0.933), with MM dimension false-passing 25/27 of
+   the P1 false-pass window — while height stays slightly more monotone
+   on P1, so no blanket superiority is claimed. Manuscript Sections
+   7.5-7.6.
+6. **The identifiability theory (T1, new in v0.6)** proves what the profile
    observable can and cannot identify: spatial order up to global reversal
    is decodable from the parallax dissimilarity alone (already for two
    observers; margin-qualified on measured data), spacings provably are not

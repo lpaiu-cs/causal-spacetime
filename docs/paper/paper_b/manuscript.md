@@ -34,7 +34,15 @@ ensemble, however, the action-weighted measure has a continuum phase with a
 hysteretic crystallization transition, and post-burn-in samples of that phase
 pass the full discriminator (18/18 across beta = 2 and 8, recovering true
 lightcone position at truth-order error ~ 0.14 against 0.5 chance) while the
-crystal control blocks structurally (4/4). An identifiability theory for
+crystal control blocks structurally (4/4). Constructed chain-rich layered
+negatives close the remaining control gap — eight preregistered cells all
+block at the geometry gates themselves (149/160 fresh seeds) — and a
+preregistered head-to-head on identical data gives the instrument the
+highest ROC AUC (0.993, against 0.967/0.939/0.933 for height,
+Myrheim-Meyer dimension, and interval abundance), with the dimension
+estimator false-passing 25/27 of the dilution false-pass window while
+height, an excellent cheap screen here, remains slightly more monotone
+than the instrument on the dilution sweep. An identifiability theory for
 the profile observable closes the loop: we prove that the parallax
 dissimilarity determines target order up to global reversal — and, by
 explicit counterexample, nothing metric — with matching resolution and
@@ -97,7 +105,10 @@ preregistered null on a geometry-free growth dynamics, an exact obstruction
 to action weighting on unrestricted orders, a preregistered phase structure
 for the action-weighted restricted ensemble, and the instrument-level
 verdict that its continuum phase supports genuine order-intrinsic geometry
-reconstruction while its crystal phase does not; and (6) an identifiability
+reconstruction while its crystal phase does not — hardened by chain-rich
+hard negatives that block at the geometry gates rather than at chain
+extraction, and by a preregistered same-data comparison against standard
+manifoldlikeness diagnostics; and (6) an identifiability
 and stability theory for the profile observable (Section 8) — order up to
 reversal is exactly what the parallax dissimilarity carries (spacing
 recovery is provably impossible from it), with a deterministic resolution
@@ -133,9 +144,12 @@ ways: it is validated end-to-end against matched positive and negative
 controls before use (sensitivity and specificity, with frozen gates); it
 requires truth recovery, not only a favorable statistic, wherever ground
 truth exists; and it is preregistered, so its verdicts on new ensembles
-(Section 7) are decided by rules fixed in advance. Section 7.2 shows why
-this matters in practice: a bipartite crystal defeats the Myrheim-Meyer
-estimator but not the discriminator. On the theory side, recent work proves
+(Section 7) are decided by rules fixed in advance. Sections 7.2 and 7.6
+show why this matters in practice: a bipartite crystal defeats the
+Myrheim-Meyer estimator but not the discriminator, and the preregistered
+same-data comparison quantifies it — the dimension estimator false-passes
+25/27 of the dilution false-pass window, exactly the regime where a
+diagnostic is most needed. On the theory side, recent work proves
 a quantitative embedding-uniqueness (Hauptvermutung-type) result for causal
 sets admitting well-conditioned embeddings [@madsen2026]; this is
 complementary — it says recovered geometry is essentially unique when it
@@ -594,8 +608,8 @@ its states cannot furnish a single 25-tick chain. The crystal rejection is
 therefore a property of the protocol's chain-extraction stage, which the
 crystal fails before any geometry gate is reached: the protocol structurally
 rejects the crystal, an easy control for the instrument. A chain-rich hard
-negative — partially layered states, or states just below beta_c — would
-exercise the geometry gates themselves and is future work (Section 11). On
+negative — one that reaches the geometry gates and blocks *there* — is
+exactly what P6a supplies (Section 7.5). On
 the positive side, the continuum-phase configurations' gate statistics lie
 within the range of the uniform-ensemble calibration (a range check, not a
 formal equivalence test): under the frozen protocol, action weighting within
@@ -616,7 +630,82 @@ the frozen protocol, not as certified equilibrium draws; a formal ESS
 analysis would sharpen the confidence statement but cannot change a
 verdict that is unanimous at chain level under frozen expectations.
 
-### 7.5 What the chain establishes
+### 7.5 P6a: hard negatives that reach the geometry gates
+
+The crystal control is structurally easy, so it leaves a gap: nothing in
+Sections 4-7.4 shows the *geometry gates themselves* rejecting a
+non-manifoldlike order. P6a closes it with constructed chain-rich hard
+negatives: partially layered permutations at N = 600 — k contiguous
+descending blocks (k in {25, 40, 60}) softened by windowed transpositions
+— chain-rich by construction, non-manifoldlike by design. Stage A
+calibrated twelve (k, moves) cells on seeds 0-9 (all chain-rich, 10/10); a
+mechanical 8/10 eligibility rule selected eight cells, which were frozen
+with their expected verdicts before any confirmatory seed was run. On
+fresh seeds 100-119 **all eight frozen expectations were met**: every cell
+reached the numerical gates on 20/20 seeds — no structural blocks; these
+negatives are genuinely chain-rich — and blocked at the geometry gates on
+20, 20, 16, 17, 20, 19, 18, and 19 of 20 respectively (11/160 gate passes
+in total, against the >= 16/20 blocking rule frozen in advance; the
+strongest clean cells, (k, moves) = (25, 100) and (40, 100), blocked
+20/20). The discriminator rejects these non-manifoldlike orders at its
+numerical geometry gates, not merely at chain extraction.
+
+The preregistration also *retired* a proposed second family by
+construction audit rather than by expensive regeneration: locally shuffled
+continuum states. A permutation after any number of transpositions still
+defines an exact 2D order with new lightcone coordinates, and the audit
+found that at 600 windowed transpositions the fitted embedding fails the
+truth gate against the original coordinates on 0/10 seeds while passing
+against the current exact coordinates on 10/10 (median truth error 0.473
+versus 0.144). Local shuffling remaps geometry relative to an externally
+retained label; it does not destroy intrinsic geometry, so it is not a
+hard negative. This is the PC-V1 lesson recurring at the level of
+controls: a candidate control must itself be audited before it can
+certify anything.
+
+### 7.6 P6b: the discriminator against standard diagnostics on identical data
+
+Section 2 named the natural comparators; P6b compares against them under
+a preregistered freeze (labels, diagnostics, normalizations, and metrics
+fixed before any confirmatory number was computed). Inputs are the frozen P1 sweep, P3
+orders, P5 configurations, and the confirmed P6a negatives — 442 orders,
+of which 362 carry frozen class labels (58 geometric, 304 non-geometric;
+intermediate P1 cells are report-only for ROC). Comparators are
+Myrheim-Meyer dimension, interval-abundance profile distance, and order
+height, each standardized against its own deterministic geometric
+reference; the instrument enters as its minimum normalized gate margin
+(structural blocks scored at -5).
+
+| diagnostic | ROC AUC | P1 median Spearman rho vs epsilon | H-LAG false-pass |
+| --- | --- | --- | --- |
+| instrument margin | **0.993** | 0.976 | (defines the window) |
+| height distance | 0.967 | **0.994** | 0/27 |
+| MM-dimension distance | 0.939 | 0.012 | **25/27** |
+| abundance distance | 0.933 | 0.786 | 0/27 |
+
+Three findings. First, the instrument has the highest AUC, and the
+false-pass window of Section 5 is quantitatively where Myrheim-Meyer
+dimension is unsafe: it calls 25/27 of the H-LAG cells geometric — the
+bipartite crystal of Section 7.2 was not an isolated failure but an
+instance of a systematic one. Second, no blanket superiority is claimed:
+order height is marginally *more* monotone than the instrument on the P1
+sweep (median rho 0.994 against 0.976) and is clean on the H-LAG window —
+on these families a cheap scalar does most of the ranking work, and an
+honest comparison says so. Third, what the instrument adds is not rank
+correlation but the character of the verdict. Descriptively, in the
+frozen per-row table the layered family — built chain-rich, with heights
+34-112 straddling the geometric reference — places 14/160 rows inside
+height's own 95th-percentile reference band, a similar row-level rate to
+the instrument's 11/160 numerical-gate passes; the difference is that the
+instrument's verdict is a validated, preregistered claim about
+*reconstructability* (with cell-level expectations that all held), while
+a scalar distance certifies resemblance to a reference along one axis
+and can be matched by construction. The comparison's practical summary:
+height is an excellent cheap screen on these families; MM dimension is
+unsafe precisely in the regime where a screen is most needed; and the
+instrument is the only comparator whose pass has a validated meaning.
+
+### 7.7 What the chain establishes
 
 Figure 4 collects the three quantitative legs of the chain; the table
 summarizes the design.
@@ -644,6 +733,8 @@ point is read from the frozen CSVs.*
 | exploratory | unrestricted | raw / smeared BD | no geometric window found (exact bipartite obstruction) |
 | P4 | restricted (2D orders) | smeared BD | continuum phase, hysteretic crystallization |
 | P5 | restricted, post-burn-in samples | smeared BD | **continuum passes (18/18); crystal blocked structurally (4/4)** |
+| P6a | constructed layered (chain-rich) | none | **blocked at the geometry gates (8/8 frozen cells, 149/160 seeds)** |
+| P6b | all of the above, identical data | — | instrument AUC 0.993; MM dimension false-passes 25/27 of the H-LAG window |
 
 At this scale and in this family, geometry in a causal order is not produced
 by the growth dynamics we tested and not selected by unrestricted action
@@ -863,6 +954,16 @@ geometry where the discriminator does not: the bipartite crystal sits at
 Myrheim-Meyer dimension ~ 2, and percolated orders at moderate density embed
 their profiles as well as anything does — it is the null gap, the truth
 check, and the structural chain requirement that carry the verdict. The
+preregistered head-to-head (Section 7.6) turns those anecdotes into
+measurements: the dimension estimator false-passes 25/27 of the
+false-pass window, while the instrument holds the highest AUC on 362
+labelled orders spanning four generator families — and the same
+comparison keeps the claim honest, since order height out-ranks the
+instrument on dilution monotonicity and no blanket superiority over
+every scalar is asserted. The P6a layered negatives close the last
+validation gap on the negative side: rejection of non-manifoldlike order
+happens at the geometry gates themselves, on chain-rich states expressly
+built to survive extraction. The
 positive result is correspondingly stronger for being instrument-relative:
 "the continuum phase has geometry" here means that configurations drawn from
 it support the same order-intrinsic reconstruction, at the same gates, that
@@ -898,7 +999,15 @@ one tick) with a 1/K resolution law, order recovery under Poisson
 clocks concentrates at the stated exponential rates, and the
 inverse-root density law for the error holds for density-thinned
 clocks while failing to transfer to sprinkling-harvested clocks at
-their measured discreteness-scale coupling.
+their measured discreteness-scale coupling. Additionally (g):
+constructed chain-rich layered orders, judged by the frozen instrument
+under preregistered per-cell expectations, block at the numerical
+geometry gates (8/8 cells, 149/160 fresh seeds), so rejection of
+non-manifoldlike order is not an artifact of chain extraction; and on
+identical data spanning four generator families, the instrument margin
+has the highest ROC AUC (0.993) among {Myrheim-Meyer distance,
+abundance distance, height distance}, with the dimension estimator
+false-passing 25/27 of the P1 false-pass window.
 
 We do not claim: continuum spacetime emergence; that causal order alone
 yields metric scale, signed coordinates, or a manifold; a continuum limit; or
@@ -906,7 +1015,12 @@ that these finite results establish any physical theory. Claim (f) is
 1+1D and instrument-relative: the concentration statements describe a
 Poisson idealization no frozen instrument realizes, the density-scaling
 statements name their clock protocols, and no inverse-root law is
-claimed for harvested-chain clocks. Claim (e) is about
+claimed for harvested-chain clocks. Claim (g) asserts no superiority of
+the instrument over order height as a *ranking* statistic on the P1
+sweep — height is marginally more monotone there — only the highest
+aggregate AUC, the dimension estimator's specific unsafety in the
+false-pass window, and the validated character of the instrument's
+verdict. Claim (e) is about
 one restricted ensemble family in 1+1 effective dimensions at N <= 600, whose
 beta = 0 measure is already sprinkling-equivalent: the emergence content is
 that reconstructable geometry *survives* action weighting up to the
@@ -943,16 +1057,13 @@ checks; manifoldlike-targeting growth dynamics beyond percolation, judged by
 the same frozen instrument; complex or quantum weights on the restricted
 ensemble; formal autocorrelation/effective-sample-size analysis of the
 equilibrium chains (Section 7.4 reports chain-level sensitivity instead);
-a chain-rich hard negative — partially layered states, or states just below
-beta_c, which would exercise the geometry gates rather than the structural
-chain-extraction gate that blocks the crystal; robustness of the verdict to
-the chain-selection rule (number of chains, tick threshold, non-greedy
-extraction) and to the observer congruence; a head-to-head comparison of
-the discriminator against existing manifoldlikeness diagnostics —
-Myrheim-Meyer dimension, interval abundances, spacelike-distance and
-homology constructions — on the same frozen dilution and emergence data,
-with ROC and truth-rank-correlation summaries (Section 7.2 gives the
-qualitative version: MM dimension alone false-passes the crystal); and
+chain-rich negatives from *equilibrium states just below beta_c* (the
+constructed layered family is done — Section 7.5 — but near-critical
+states would probe the same gap dynamically); robustness of the verdict
+to the chain-selection rule (number of chains, tick threshold, non-greedy
+extraction) and to the observer congruence; extending the diagnostics
+head-to-head of Section 7.6 to the heavier comparators outside its
+frozen primary set (spacelike-distance and homology constructions); and
 instrument-level judgment of the 2D-orders phase diagram across
 (beta, eps, N), including a continuous geometry score and its finite-size
 behavior near beta_c.
@@ -987,10 +1098,20 @@ confirmatory `0ec57fd`. The emergence chain (Section 7): P3 skeleton
 2D-orders modules with their validation tests `d2295d5` (the exact bipartite
 identity and the eps = 1 reduction are unit tests in `tests/test_action.py`);
 P4 freeze `4bb05b5`, confirmatory `c3363c3`; incremental sampler `e3d557a`;
-P5 freeze `546bc63`, confirmatory `f9badc7`. Preregistrations:
-`docs/prereg/p3_dynamics_emergence.md`, `p4_action_emergence.md`, and
-`p5_two_orders_emergence.md` (all FROZEN, each with its decision registry and
-per-run CSV under `docs/prereg/frozen/`). The unrestricted-ensemble
+P5 freeze `546bc63`, confirmatory `f9badc7`; P6a calibration `1df2ff1`,
+freeze `d0d2220`, confirmatory `db3f0eb`; P6b freeze `ba90aa8`,
+deterministic P5 replay acceleration `c704a9b`, outcome `4507002`.
+Preregistrations: `docs/prereg/p3_dynamics_emergence.md`,
+`p4_action_emergence.md`, `p5_two_orders_emergence.md`,
+`p6_hard_negatives.md`, and `p6b_diagnostics.md` (all FROZEN, each with
+its decision registry and per-run CSV under `docs/prereg/frozen/`). The
+P6b aggregate metrics are in `p6b_diagnostics_summary.json`; the
+descriptive row-level statements in Section 7.6 (layered-family heights,
+per-row reference-band counts) recompute deterministically from the
+frozen `p6b_scored_rows.csv` with the frozen reference cutoffs and are
+labeled descriptive, not confirmatory. The local-shuffle retirement is
+recorded in the P6 preregistration's deviations log with its audit CSV
+(`p6_stage_a_local_shuffle_audit.csv`). The unrestricted-ensemble
 obstruction (Section 7.2) is exploratory rather than preregistered; its
 load-bearing content is the exact closed form, which is test-locked, and its
 consequence is tested by the preregistered P4/P5. Calibration runs are
