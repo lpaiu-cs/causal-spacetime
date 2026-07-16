@@ -731,20 +731,35 @@ truth gate scores recovered *order* against true order (Section 3.3), and
 that is exactly the identifiable content of the observable: a gate
 demanding coordinate or spacing agreement would demand what the
 dissimilarity provably does not carry, and a weaker gate would under-use
-it. Conversely, a pass now means more than "the fitter recovered it":
-any consistent decoder of these profiles must recover the spatial order
-up to reversal, because the order is the invariant content of the data.
+it. Conversely, a pass now means more than "the fitter recovered it" —
+with the model stated carefully. For *exact* profiles the order is the
+invariant content of the data: any consistent decoder must recover it,
+up to reversal. For *measured* Model-D profiles the same conclusion is
+proved at the observable's resolution: for every labeled flanking
+comparison whose spatial gap exceeds one tick spacing, and for every
+D-only anchor comparison whose exact-model margin exceeds the proved
+perturbation bound (eight ranks), while pairs below resolution may
+legitimately invert — the instrument check records exactly such
+sub-resolution inversions and only those (Section 8.3). A pass
+therefore certifies recovery of everything the observable resolves,
+not uniqueness of the raw measured data and not a metric the
+dissimilarity provably does not carry.
 
 ### 8.3 Stability: resolution-limited on the instrument, concentration in the idealization
 
-On Model D the widths are deterministic, so the entire position
-uncertainty is quantization: the estimator (W - 1) delta / 2 errs by at
-most delta / 2 pointwise, RMSE falls like 1/K (measured log-log slope
--1.017 over K = 12..384, every pointwise error within the proved bound),
-and order decoding between two targets is guaranteed once their gap
-exceeds one tick spacing. Identifiability on the instrument is
-resolution-limited, not noise-limited; the sprinkling density enters
-only through which targets exist.
+On Model D the widths are deterministic, so the entire uncertainty is
+quantization. One observer's width estimates the *unsigned radial
+distance* |x - x0|: the estimator (W - 1) delta / 2 errs by at most
+delta / 2 pointwise, with RMSE falling like 1/K (measured log-log slope
+-1.017 over K = 12..384, every pointwise error within the proved
+bound). A single observer cannot sign that distance — that is the fold
+of Section 8.2 — so *position* is recovered from flanking width
+differences, which accumulate two quantization phases: positional
+error is bounded by one tick spacing, and order decoding between two
+targets is guaranteed once their gap exceeds one tick spacing.
+Identifiability on the instrument is resolution-limited, not
+noise-limited; the sprinkling density enters only through which
+targets exist.
 
 On Model P the same identity yields concentration. In a pairwise
 flanking comparison the shared bracket regions cancel exactly, leaving
@@ -760,7 +775,10 @@ general and ~ log n / (4 lambda) on a common slice. These statements are
 verified by direct seeded simulation of the stated model (including
 zero strict inversions in 4000 same-slice trials and exact agreement
 between the identity-computed and pipeline-computed widths on shared
-draws); no instrument realizes Model P, and no claim here says one does.
+draws). No *frozen* instrument realizes Model P — the Poisson-thinned
+clock of Section 8.4 realizes it as unfrozen theory-track
+instrumentation — and no claim here attaches Model P statistics to the
+frozen pipeline.
 
 ### 8.4 Density scaling is protocol-dependent
 
@@ -858,14 +876,16 @@ has a continuum phase, at both scales tested, whose post-burn-in samples
 pass the full discriminator — including exact truth recovery — while its
 crystal phase is structurally blocked by the same protocol; and (f) for
 the profile observable itself, in 1+1D: spatial order (up to global
-reversal) is decodable from the parallax dissimilarity alone, spacings
-are provably not, position error on the instrument's deterministic clock
-is bounded by half a tick spacing with a 1/K resolution law, order
-recovery under Poisson clocks concentrates at the stated exponential
-rates, and the inverse-root density law for the error holds for
-density-thinned clocks while failing to transfer to
-sprinkling-harvested clocks at their measured discreteness-scale
-coupling.
+reversal) is decodable from the parallax dissimilarity alone — exactly
+for exact profiles, and on measured Model-D data for every comparison
+above the proved resolution/margin bounds — spacings are provably not,
+radial-distance error on the instrument's deterministic clock is
+bounded by half a tick spacing (position, via flanking differences, by
+one tick) with a 1/K resolution law, order recovery under Poisson
+clocks concentrates at the stated exponential rates, and the
+inverse-root density law for the error holds for density-thinned
+clocks while failing to transfer to sprinkling-harvested clocks at
+their measured discreteness-scale coupling.
 
 We do not claim: continuum spacetime emergence; that causal order alone
 yields metric scale, signed coordinates, or a manifold; a continuum limit; or
@@ -1007,8 +1027,8 @@ position, while its crystal phase is structurally blocked by the same
 protocol. The identifiability theory closes the loop between measurement
 and meaning: the truth gate asks for spatial order because spatial order
 — up to reversal, and nothing metric — is provably all that the profile
-observable carries, so a pass certifies recovery of everything there was
-to recover. The pattern of the results is the point: geometry appears exactly
+observable carries, so a pass certifies recovery of everything the
+observable resolves. The pattern of the results is the point: geometry appears exactly
 when entropy is controlled and coupling is bounded, each direction certified
 by its own control. We offer the discriminator methodology — validate, then
 preregister, then judge — as a transferable standard for order-first

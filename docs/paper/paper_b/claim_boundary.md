@@ -55,10 +55,14 @@ or by a proved, CI-pinned statement in
   and is *destroyed* above it.
 - **The profile observable's identifiability is settled (1+1D)**: spatial
   order up to global reversal is decodable from the parallax dissimilarity
-  alone (strict Robinson structure; already for two observers); spacings
+  alone (strict Robinson structure; already for two observers) — exactly
+  for exact profiles, and on measured Model-D data for every comparison
+  above the proved resolution/margin bounds (sub-resolution pairs may
+  invert, and the instrument check records exactly those); spacings
   are provably NOT decodable from it (same-dissimilarity counterexample
-  with affinely inequivalent targets); position error on the instrument's
-  deterministic clock is bounded by half a tick spacing with a 1/K RMSE
+  with affinely inequivalent targets); radial-distance error on the
+  instrument's deterministic clock is bounded by half a tick spacing
+  (position, via flanking differences, by one tick) with a 1/K RMSE
   law (measured slope -1.017); Poisson-clock order recovery concentrates
   at exponential rates (same-slice pairs never strictly invert, pathwise).
   Every proved statement is a deterministic CI regression against the

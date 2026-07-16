@@ -36,9 +36,10 @@ This paper reports the validated-instrument line of the program:
 5. **The identifiability theory (T1, new in v0.6)** proves what the profile
    observable can and cannot identify: spatial order up to global reversal
    is decodable from the parallax dissimilarity alone (already for two
-   observers), spacings provably are not (explicit same-dissimilarity
-   counterexample), position error on the instrument's deterministic clock
-   is resolution-limited (delta/2 pointwise, 1/K RMSE law), Poisson-clock
+   observers; margin-qualified on measured data), spacings provably are not
+   (explicit same-dissimilarity counterexample), radial-distance error on
+   the instrument's deterministic clock is resolution-limited (delta/2
+   pointwise; position via flanking differences, one tick), Poisson-clock
    order recovery concentrates at exponential rates, and the inverse-root
    density law for the error is protocol-dependent (holds for thinned
    clocks, fails for sprinkling-harvested clocks). Every proved statement
