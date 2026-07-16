@@ -4,10 +4,13 @@ Working title: **A validated discriminator for latent geometry in discrete
 causal order: dilution response and survival in an action-weighted
 ensemble.**
 
-Status: DRAFT v0.6 (2026-07-16). Prose grounded entirely in the frozen
-preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1, P2/P2-v2,
-P3, P4, P5). No number in the manuscript is from memory; each traces to a
-committed registry or CSV.
+Status: DRAFT v0.6 (2026-07-16). Empirical prose grounded entirely in the
+frozen preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1,
+P2/P2-v2, P3, P4, P5); the Section 8 theory results are analysis-only and
+grounded in the committed, CI-pinned theory artifacts (`docs/theory/`,
+nothing frozen there by design). No number in the manuscript is from
+memory; each traces to a committed registry, CSV, or tracked theory
+artifact.
 
 ## Scope
 

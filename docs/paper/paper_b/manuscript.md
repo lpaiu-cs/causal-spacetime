@@ -1,7 +1,9 @@
 # A validated discriminator for latent geometry in discrete causal order: dilution response and survival in an action-weighted ensemble
 
-**Draft v0.6.** Causal Spacetime Lab. All quantitative results trace to frozen
-preregistration artifacts (`docs/prereg/frozen/`); see Section 12.
+**Draft v0.6.** Causal Spacetime Lab. All preregistered empirical results
+trace to frozen artifacts (`docs/prereg/frozen/`); the Section 8 theory
+results are analysis-only and trace to committed, CI-pinned theory
+artifacts (`docs/theory/`, no frozen artifact touched); see Section 12.
 
 ## Abstract
 
