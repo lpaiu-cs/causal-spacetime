@@ -79,8 +79,10 @@ or by a proved, CI-pinned statement in
   (position, via flanking differences, by one tick) with a 1/K RMSE
   law (measured slope -1.017); Poisson-clock order recovery concentrates
   at exponential rates (same-slice pairs never strictly invert, pathwise).
-  Every proved statement is a deterministic CI regression against the
-  instrument itself.
+  Every proved statement is a deterministic CI regression -- Model-D
+  claims checked against the instrument itself, Model-P claims by direct
+  seeded simulation of the stated model (no frozen instrument realizes
+  Model P).
 - **The inverse-root density law is protocol-dependent**: it holds for
   Poisson-thinned clocks (lambda ~ rho, proved corollary; measured RMSE
   exponent -0.463) and fails to transfer to sprinkling-harvested clocks,

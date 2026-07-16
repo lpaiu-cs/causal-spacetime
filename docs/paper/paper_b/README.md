@@ -56,7 +56,9 @@ This paper reports the validated-instrument line of the program:
    order recovery concentrates at exponential rates, and the inverse-root
    density law for the error is protocol-dependent (holds for thinned
    clocks, fails for sprinkling-harvested clocks). Every proved statement
-   is a CI regression; source: `docs/theory/t1_parallax_identifiability.md`
+   is a CI regression — Model-D claims against the instrument itself,
+   Model-P claims by direct seeded simulation of the stated model;
+   source: `docs/theory/t1_parallax_identifiability.md`
    (v0.5) and manuscript Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime

@@ -47,8 +47,10 @@ the profile observable closes the loop: we prove that the parallax
 dissimilarity determines target order up to global reversal — and, by
 explicit counterexample, nothing metric — with matching resolution and
 concentration laws for the instrument's deterministic clock and its
-Poisson idealization, verify every proved statement against the
-instrument itself as CI regressions, and show that the presumed
+Poisson idealization, pin every proved statement as a CI regression
+(deterministic-clock claims verified against the instrument itself,
+Poisson-idealization claims by direct seeded simulation of the stated
+model), and show that the presumed
 inverse-root density law for the error is protocol-dependent: it holds
 for density-thinned clocks and fails to transfer to chains harvested
 from the sprinkling, whose rate couples at the discreteness scale.
@@ -114,7 +116,8 @@ reversal is exactly what the parallax dissimilarity carries (spacing
 recovery is provably impossible from it), with a deterministic resolution
 law for the instrument's clock, concentration bounds for its Poisson
 idealization, and a protocol-dependence result for density scaling — every
-proved statement verified against the instrument in CI.
+proved statement pinned in CI, Model-D claims against the instrument
+itself and Model-P claims by direct simulation of the stated model.
 
 ## 2. Related work and positioning
 
@@ -759,7 +762,12 @@ proofs, and proof-status tags are in
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
-theory and the code fails the build. All statements are 1+1D and
+theory and the code fails the build. The verification mode differs by
+clock model: Model-D statements are checked against the instrument
+itself (the frozen scene pipeline end to end), while Model-P statements
+are checked by direct seeded simulation of the stated stochastic model
+— they cannot be checked against an instrument, since no frozen
+instrument realizes Model P (Section 8.3). All statements are 1+1D and
 instrument-relative.
 
 ### 8.1 The rank-gap identity and the quantization band
