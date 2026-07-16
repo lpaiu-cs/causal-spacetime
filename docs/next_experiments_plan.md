@@ -44,6 +44,25 @@ Execution update (2026-07-15):
   made now.
 - **T1 (parallax identifiability, theory) is the active track.**
 
+Execution update (2026-07-16):
+
+- T1 completed through v0.5: Theorems 1-2 and Lemmas 1-4 all [PROVED]
+  and pinned in CI (PRs #5-#7); G1/G3 closed; G2 instrumented with the
+  rho^{-1/2} law shown protocol-dependent (PR #8). Remaining T1 items
+  are open questions (harvested-chain fluctuation class, order-only
+  harvest design) and G4 (2+1D), not blockers.
+- **The P7 FSS re-scope route is now closed** (fourth quantified
+  elimination): reconnaissance showed the sampler-feasible window
+  (N <= ~120) and the instrument-operable window (N >= ~500 for the
+  protocol as frozen, greedy selector included — an optimal selector
+  could lower that boundary but not below the ~156 envelope, under
+  which even one 25-tick chain typically does not exist; N >= ~160
+  marginal for the most permissive re-scoped spec) are disjoint. The compute budget was
+  not the binding constraint. Details and dual-criterion verdict in
+  `docs/p7_fss_rescope_recon.md`; probe and tracked results committed.
+  P7 reopens only with a sampler reaching N >= 500 or a qualitatively
+  new small-N geometry instrument (own calibration + freeze).
+
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
 CQG / SciPost Physics Core as-is, and a defensible SciPost Physics submission
