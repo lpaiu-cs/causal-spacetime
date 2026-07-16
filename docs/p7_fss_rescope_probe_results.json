@@ -1,0 +1,272 @@
+{
+  "frozen_spec": {
+    "chain_count": 6,
+    "min_length": 25,
+    "max_targets": 44,
+    "min_targets": 20,
+    "train_c": 3000,
+    "held_c": 800,
+    "steps": 1500,
+    "restarts": 5,
+    "min_cols": 4
+  },
+  "soft_specs": {
+    "3x8_t30": {
+      "chain_count": 3,
+      "min_length": 8,
+      "max_targets": 30,
+      "min_targets": 10,
+      "train_c": 600,
+      "held_c": 200,
+      "steps": 1000,
+      "restarts": 3,
+      "min_cols": 3
+    },
+    "4x8_t30": {
+      "chain_count": 4,
+      "min_length": 8,
+      "max_targets": 30,
+      "min_targets": 10,
+      "train_c": 600,
+      "held_c": 200,
+      "steps": 1000,
+      "restarts": 3,
+      "min_cols": 3
+    },
+    "4x10_t20": {
+      "chain_count": 4,
+      "min_length": 10,
+      "max_targets": 20,
+      "min_targets": 8,
+      "train_c": 800,
+      "held_c": 250,
+      "steps": 1000,
+      "restarts": 3,
+      "min_cols": 3
+    }
+  },
+  "frozen_scan": [
+    {
+      "n_elements": 200,
+      "seeds": 6,
+      "ok": 0,
+      "blocks": {
+        "block_chains": 6
+      }
+    },
+    {
+      "n_elements": 300,
+      "seeds": 6,
+      "ok": 0,
+      "blocks": {
+        "block_chains": 6
+      }
+    },
+    {
+      "n_elements": 400,
+      "seeds": 6,
+      "ok": 0,
+      "blocks": {
+        "block_chains": 6
+      }
+    },
+    {
+      "n_elements": 500,
+      "seeds": 6,
+      "ok": 4,
+      "blocks": {
+        "block_chains": 2
+      },
+      "positive_pass": 4,
+      "g_median": 0.8577044025157232,
+      "heldout_median": 0.04625,
+      "null_gap_median": 0.18375,
+      "truth_median": 0.1952155505382547
+    }
+  ],
+  "soft_scan": {
+    "3x8_t30": [
+      {
+        "n_elements": 100,
+        "seeds": 8,
+        "ok": 7,
+        "blocks": {
+          "block_targets": 1
+        },
+        "positive_pass": 2,
+        "g_median": 0.0,
+        "heldout_median": 0.09,
+        "null_gap_median": 0.010000000000000009,
+        "truth_median": 0.23461321287408243
+      },
+      {
+        "n_elements": 120,
+        "seeds": 8,
+        "ok": 8,
+        "blocks": {},
+        "positive_pass": 4,
+        "g_median": 0.4000000000000001,
+        "heldout_median": 0.0925,
+        "null_gap_median": 0.09000000000000001,
+        "truth_median": 0.24969556197804926
+      },
+      {
+        "n_elements": 140,
+        "seeds": 8,
+        "ok": 8,
+        "blocks": {},
+        "positive_pass": 1,
+        "g_median": 0.3749999999999999,
+        "heldout_median": 0.0875,
+        "null_gap_median": 0.0875,
+        "truth_median": 0.2615166802744264
+      },
+      {
+        "n_elements": 160,
+        "seeds": 8,
+        "ok": 8,
+        "blocks": {},
+        "positive_pass": 3,
+        "g_median": 0.24999999999999992,
+        "heldout_median": 0.0675,
+        "null_gap_median": 0.09999999999999999,
+        "truth_median": 0.24644410682872223
+      }
+    ],
+    "4x8_t30": [
+      {
+        "n_elements": 100,
+        "seeds": 8,
+        "ok": 4,
+        "blocks": {
+          "block_targets": 4
+        },
+        "positive_pass": 2,
+        "g_median": 0.475,
+        "heldout_median": 0.0225,
+        "null_gap_median": 0.0975,
+        "truth_median": 0.17889922219819127
+      },
+      {
+        "n_elements": 120,
+        "seeds": 8,
+        "ok": 3,
+        "blocks": {
+          "block_targets": 5
+        },
+        "positive_pass": 1,
+        "g_median": 0.0,
+        "heldout_median": 0.07,
+        "null_gap_median": 0.010000000000000002,
+        "truth_median": 0.15315315315315314
+      },
+      {
+        "n_elements": 140,
+        "seeds": 8,
+        "ok": 8,
+        "blocks": {},
+        "positive_pass": 3,
+        "g_median": 0.07499999999999998,
+        "heldout_median": 0.04,
+        "null_gap_median": 0.0575,
+        "truth_median": 0.18666624911429397
+      },
+      {
+        "n_elements": 160,
+        "seeds": 8,
+        "ok": 7,
+        "blocks": {
+          "block_targets": 1
+        },
+        "positive_pass": 4,
+        "g_median": 0.5,
+        "heldout_median": 0.08,
+        "null_gap_median": 0.10999999999999999,
+        "truth_median": 0.19465541490857946
+      }
+    ],
+    "4x10_t20": [
+      {
+        "n_elements": 100,
+        "seeds": 8,
+        "ok": 3,
+        "blocks": {
+          "block_chains": 4,
+          "block_targets": 1
+        },
+        "positive_pass": 1,
+        "g_median": 0.0,
+        "heldout_median": 0.084,
+        "null_gap_median": 0.039999999999999994,
+        "truth_median": 0.20675374323032814
+      },
+      {
+        "n_elements": 120,
+        "seeds": 8,
+        "ok": 4,
+        "blocks": {
+          "block_targets": 3,
+          "block_chains": 1
+        },
+        "positive_pass": 1,
+        "g_median": 0.0,
+        "heldout_median": 0.022,
+        "null_gap_median": 0.004,
+        "truth_median": 0.21295582464740953
+      },
+      {
+        "n_elements": 140,
+        "seeds": 8,
+        "ok": 8,
+        "blocks": {},
+        "positive_pass": 1,
+        "g_median": 0.0,
+        "heldout_median": 0.09,
+        "null_gap_median": 0.017999999999999995,
+        "truth_median": 0.189669734696436
+      },
+      {
+        "n_elements": 160,
+        "seeds": 8,
+        "ok": 7,
+        "blocks": {
+          "block_targets": 1
+        },
+        "positive_pass": 5,
+        "g_median": 0.94,
+        "heldout_median": 0.044,
+        "null_gap_median": 0.16,
+        "truth_median": 0.16905766526019692
+      }
+    ]
+  },
+  "crystal_control": [
+    {
+      "n_elements": 100,
+      "chains_extracted": 0
+    },
+    {
+      "n_elements": 120,
+      "chains_extracted": 0
+    },
+    {
+      "n_elements": 160,
+      "chains_extracted": 0
+    },
+    {
+      "n_elements": 500,
+      "chains_extracted": 0
+    }
+  ],
+  "verdict": {
+    "crystal_blocks_everywhere": true,
+    "frozen_operable_from_generous": 500,
+    "frozen_operable_from_calibration_grade": 500,
+    "soft_operable_from_generous": 100,
+    "soft_operable_from_calibration_grade": null,
+    "windows_overlap_generous": true,
+    "windows_overlap_calibration_grade": false
+  },
+  "status": "reconnaissance; nothing frozen; no G(beta) measured; no MCMC run",
+  "elapsed_seconds": 24.5
+}
