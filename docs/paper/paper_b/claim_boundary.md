@@ -65,6 +65,10 @@ or by a proved, CI-pinned statement in
   362 labelled orders across P1/P3/P5/P6; height 0.967, MM 0.939,
   abundance 0.933), and MM dimension false-passes 25/27 of the P1
   false-pass window (P6b, all labels/metrics frozen before computation).
+  The frozen margin is truth-assisted where coordinates exist; with the
+  truth term removed (order-only gates, descriptive recomputation from
+  the frozen rows) the AUC is 0.9931 -- the ranking does not rest on
+  truth assistance.
   NOT claimed: superiority over height as a ranking statistic on P1 —
   height is marginally more monotone there (median rho 0.994 vs 0.976).
 - **The profile observable's identifiability is settled (1+1D)**: spatial

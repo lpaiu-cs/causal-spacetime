@@ -42,7 +42,8 @@ This paper reports the validated-instrument line of the program:
    seeds; the local-shuffle candidate was retired by construction audit
    as coordinate remapping), and a preregistered same-data head-to-head
    gives the instrument the highest ROC AUC (0.993 vs height 0.967,
-   MM 0.939, abundance 0.933), with MM dimension false-passing 25/27 of
+   MM 0.939, abundance 0.933; unchanged with the margin's truth term
+   removed), with MM dimension false-passing 25/27 of
    the P1 false-pass window — while height stays slightly more monotone
    on P1, so no blanket superiority is claimed. Manuscript Sections
    7.5-7.6.

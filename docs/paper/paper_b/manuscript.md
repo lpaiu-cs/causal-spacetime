@@ -39,7 +39,9 @@ negatives close the remaining control gap — eight preregistered cells all
 block at the geometry gates themselves (149/160 fresh seeds) — and a
 preregistered head-to-head on identical data gives the instrument the
 highest ROC AUC (0.993, against 0.967/0.939/0.933 for height,
-Myrheim-Meyer dimension, and interval abundance), with the dimension
+Myrheim-Meyer dimension, and interval abundance; unchanged at 0.993
+when the margin's truth term is removed so the comparison is
+order-only), with the dimension
 estimator false-passing 25/27 of the dilution false-pass window while
 height, an excellent cheap screen here, remains slightly more monotone
 than the instrument on the dilution sweep. An identifiability theory for
@@ -686,6 +688,17 @@ reference; the instrument enters as its minimum normalized gate margin
 | MM-dimension distance | 0.939 | 0.012 | **25/27** |
 | abundance distance | 0.933 | 0.786 | 0/27 |
 
+One fairness caveat is required before reading the table. The frozen
+instrument margin incorporates the truth gate wherever generator
+coordinates exist (mandatorily for P1, and for P5/P6), which the three
+comparators never see — so the frozen AUC is truth-assisted, and a
+judgment of unlabeled causal order would not have that term.
+Recomputing the margin from the frozen per-row table with the truth
+term removed (order-only gates: held-out violation and null gap;
+descriptive, deterministic) gives AUC 0.9931 against the frozen 0.9934,
+with 10/362 individual pass/block signs changing: the aggregate
+comparison does not rest on truth assistance.
+
 Three findings. First, the instrument has the highest AUC, and the
 false-pass window of Section 5 is quantitatively where Myrheim-Meyer
 dimension is unsafe: it calls 25/27 of the H-LAG cells geometric — the
@@ -1022,9 +1035,11 @@ under preregistered per-cell expectations, block at the numerical
 geometry gates (8/8 cells, 149/160 fresh seeds), so rejection of
 non-manifoldlike order is not an artifact of chain extraction; and on
 identical data spanning four generator families, the instrument margin
-has the highest ROC AUC (0.993) among {Myrheim-Meyer distance,
-abundance distance, height distance}, with the dimension estimator
-false-passing 25/27 of the P1 false-pass window.
+has the highest ROC AUC (0.993; 0.9931 with the truth term removed
+from the margin, so the ranking does not rest on truth assistance)
+among {Myrheim-Meyer distance, abundance distance, height distance},
+with the dimension estimator false-passing 25/27 of the P1 false-pass
+window.
 
 We do not claim: continuum spacetime emergence; that causal order alone
 yields metric scale, signed coordinates, or a manifold; a continuum limit; or
@@ -1124,9 +1139,10 @@ Preregistrations: `docs/prereg/p3_dynamics_emergence.md`,
 its decision registry and per-run CSV under `docs/prereg/frozen/`). The
 P6b aggregate metrics are in `p6b_diagnostics_summary.json`; the
 descriptive row-level statements in Section 7.6 (layered-family heights,
-per-row reference-band counts) recompute deterministically from the
-frozen `p6b_scored_rows.csv` with the frozen reference cutoffs and are
-labeled descriptive, not confirmatory. The local-shuffle retirement is
+per-row reference-band counts, and the order-only-margin AUC of 0.9931
+with the truth term removed) recompute deterministically from the
+frozen `p6b_scored_rows.csv` with the frozen reference cutoffs and gate
+constants, and are labeled descriptive, not confirmatory. The local-shuffle retirement is
 recorded in the P6 preregistration's deviations log with its audit CSV
 (`p6_stage_a_local_shuffle_audit.csv`). The unrestricted-ensemble
 obstruction (Section 7.2) is exploratory rather than preregistered; its
