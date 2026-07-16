@@ -4,10 +4,13 @@ Working title: **A validated discriminator for latent geometry in discrete
 causal order: dilution response and survival in an action-weighted
 ensemble.**
 
-Status: DRAFT v0.5 (2026-07-14). Prose grounded entirely in the frozen
-preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1, P2/P2-v2,
-P3, P4, P5). No number in the manuscript is from memory; each traces to a
-committed registry or CSV.
+Status: DRAFT v0.6 (2026-07-16). Empirical prose grounded entirely in the
+frozen preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1,
+P2/P2-v2, P3, P4, P5, P6a/P6b); the Section 8 theory results are analysis-only and
+grounded in the committed, CI-pinned theory artifacts (`docs/theory/`,
+nothing frozen there by design). No number in the manuscript is from
+memory; each traces to a committed registry, CSV, or tracked theory
+artifact.
 
 ## Scope
 
@@ -33,18 +36,44 @@ This paper reports the validated-instrument line of the program:
    continuum phase with a hysteretic crystallization transition; and
    post-burn-in samples of that continuum phase pass the full discriminator
    (18/18) while the crystal control blocks structurally (4/4).
+5. **Validity hardening (P6a/P6b, new in v0.6)** closes the two review
+   validity gaps: constructed chain-rich layered negatives block at the
+   geometry gates themselves (8/8 preregistered cells, 149/160 fresh
+   seeds; the local-shuffle candidate was retired by construction audit
+   as coordinate remapping), and a preregistered same-data head-to-head
+   gives the instrument the highest ROC AUC (0.993 vs height 0.967,
+   MM 0.939, abundance 0.933; unchanged with the margin's truth term
+   removed), with MM dimension false-passing 25/27 of
+   the P1 false-pass window — while height stays slightly more monotone
+   on P1, so no blanket superiority is claimed. Manuscript Sections
+   7.5-7.6.
+6. **The identifiability theory (T1, new in v0.6)** proves what the profile
+   observable can and cannot identify: spatial order up to global reversal
+   is decodable from the parallax dissimilarity alone (already for two
+   observers; margin-qualified on measured data), spacings provably are not
+   (explicit same-dissimilarity counterexample), radial-distance error on
+   the instrument's deterministic clock is resolution-limited (delta/2
+   pointwise; position via flanking differences, one tick), Poisson-clock
+   order recovery concentrates at exponential rates, and the inverse-root
+   density law for the error is protocol-dependent (holds for thinned
+   clocks, fails for sprinkling-harvested clocks). Every proved statement
+   is a CI regression — Model-D claims against the instrument itself,
+   Model-P claims by direct seeded simulation of the stated model;
+   source: `docs/theory/t1_parallax_identifiability.md`
+   (v0.5) and manuscript Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
 of reconstructable geometry with each necessity backed by a controlled null.
-See `manuscript.md` Section 9 (claim boundary).
+See `manuscript.md` Section 10 (claim boundary).
 
 ## Files
 
-- `manuscript.md` — the v0.5 draft (all sections incl. the Section 7 emergence chain, a Conclusion, and Appendix tables;
-  reproducibility in Section 11). Inline citations are pandoc keys matching the
-  bibliography.
-- `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 9).
+- `manuscript.md` — the v0.6 draft (all sections incl. the Section 7 emergence
+  chain and the Section 8 identifiability theory, a Conclusion, and Appendix
+  tables; reproducibility in Section 12). Inline citations are pandoc keys
+  matching the bibliography.
+- `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 10).
 - `figures/make_figures.py` — regenerates every figure from the frozen CSVs
   (and, for Fig 5, from `confound_data.csv`).
 - `figures/compute_confound_data.py` — recomputes the Fig 5 confound data (raw

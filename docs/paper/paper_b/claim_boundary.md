@@ -1,7 +1,9 @@
 # Paper B claim boundary
 
-A crisp checklist complementing manuscript Section 9. Every claim below is
-backed by a frozen artifact under `docs/prereg/frozen/`.
+A crisp checklist complementing manuscript Section 10. Every claim below is
+backed by a frozen artifact under `docs/prereg/frozen/` (empirical claims)
+or by a proved, CI-pinned statement in
+`docs/theory/t1_parallax_identifiability.md` (theory claims, Section 8).
 
 ## Claimed (supported)
 
@@ -51,6 +53,46 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   at the chain-extraction stage, before any geometry gate). Emergence
   content: reconstructable geometry *survives* action weighting below beta_c
   and is *destroyed* above it.
+- **Rejection happens at the geometry gates, not only at chain
+  extraction**: eight preregistered chain-rich layered cells (N = 600,
+  seeds 100-119) all met their frozen expectation — every seed reached
+  the numerical gates (no structural blocks) and >= 16/20 per cell
+  blocked there (149/160 total; P6a). The proposed local-shuffle family
+  was retired by construction audit (coordinate remapping, not geometry
+  destruction: original-coordinate gate 0/10 vs current-coordinate
+  10/10 at 600 moves).
+- **On identical data the instrument has the highest ROC AUC** (0.993 on
+  362 labelled orders across P1/P3/P5/P6; height 0.967, MM 0.939,
+  abundance 0.933), and MM dimension false-passes 25/27 of the P1
+  false-pass window (P6b, all labels/metrics frozen before computation).
+  The frozen margin is truth-assisted where coordinates exist; with the
+  truth term removed (order-only gates, descriptive recomputation from
+  the frozen rows) the AUC is 0.9931 -- the ranking does not rest on
+  truth assistance.
+  NOT claimed: superiority over height as a ranking statistic on P1 —
+  height is marginally more monotone there (median rho 0.994 vs 0.976).
+- **The profile observable's identifiability is settled (1+1D)**: spatial
+  order up to global reversal is decodable from the parallax dissimilarity
+  alone (strict Robinson structure; already for two observers) — exactly
+  for exact profiles, and on measured Model-D data for every comparison
+  above the proved resolution/margin bounds (sub-resolution pairs may
+  invert, and the instrument check records exactly those); spacings
+  are provably NOT decodable from it (same-dissimilarity counterexample
+  with affinely inequivalent targets); radial-distance error on the
+  instrument's deterministic clock is bounded by half a tick spacing
+  (position, via flanking differences, by one tick) with a 1/K RMSE
+  law (measured slope -1.017); Poisson-clock order recovery concentrates
+  at exponential rates (same-slice pairs never strictly invert, pathwise).
+  Every proved statement is a deterministic CI regression -- Model-D
+  claims checked against the instrument itself, Model-P claims by direct
+  seeded simulation of the stated model (no frozen instrument realizes
+  Model P).
+- **The inverse-root density law is protocol-dependent**: it holds for
+  Poisson-thinned clocks (lambda ~ rho, proved corollary; measured RMSE
+  exponent -0.463) and fails to transfer to sprinkling-harvested clocks,
+  whose rate couples at the discreteness scale (lambda ~ sqrt(rho),
+  measured; error exponent -0.32). Any density-scaling statement must name
+  its clock protocol.
 
 ## NOT claimed
 
@@ -75,3 +117,9 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   dilution family; the emergence chain is one dynamics, one action family,
   one restricted ensemble at N <= 600. No curvature, quantum, or matter
   claim; beta_c and hysteresis strength are scale- and eps-dependent.
+- Theory claims are 1+1D and instrument-relative. The Poisson-clock
+  concentration statements describe an idealization no frozen instrument
+  realizes; no inverse-root density law is claimed for harvested-chain
+  clocks; the harvested protocol's tube selection reads embedded
+  coordinates (coordinate-tube, not order-intrinsic), and its fluctuation
+  class is an open question, not a result.
