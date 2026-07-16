@@ -852,9 +852,18 @@ comparison whose spatial gap exceeds one tick spacing, and for every
 D-only anchor comparison whose exact-model margin exceeds the proved
 perturbation bound (eight ranks), while pairs below resolution may
 legitimately invert — the instrument check records exactly such
-sub-resolution inversions and only those (Section 8.3). A pass
-therefore certifies recovery of everything the observable resolves,
-not uniqueness of the raw measured data and not a metric the
+sub-resolution inversions and only those (Section 8.3). The theorems
+and the gate then play distinct roles, and a pass should be read
+accordingly. The theorems certify *identifiability*: above resolution,
+the measured data determine the order, decoder-independently. The
+frozen gate certifies *achieved agreement within a threshold*: its
+pass criteria tolerate bounded held-out violation and bounded truth
+discordance, so a passing scene may still invert some individual
+margin-qualified comparisons. A pass is therefore evidence that the
+fitted representation is compatible with the recovery the theory
+guarantees above resolution — on data that provably carried that
+content — not a certificate of every resolvable relation, not
+uniqueness of the raw measured data, and not a metric the
 dissimilarity provably does not carry.
 
 ### 8.3 Stability: resolution-limited on the instrument, concentration in the idealization
@@ -1170,8 +1179,8 @@ protocol. The identifiability theory closes the loop between measurement
 and meaning: the profile observable provably carries spatial order up to
 reversal and nothing metric — which is what makes the distance-order
 truth gate satisfiable far below chance, and its threshold form
-necessary rather than conservative — so a pass certifies recovery of
-everything the observable resolves. The pattern of the results is the point: geometry appears exactly
+necessary rather than conservative — so a pass is threshold-verified
+agreement with exactly the content the data provably carry. The pattern of the results is the point: geometry appears exactly
 when entropy is controlled and coupling is bounded, each direction certified
 by its own control. We offer the discriminator methodology — validate, then
 preregister, then judge — as a transferable standard for order-first
