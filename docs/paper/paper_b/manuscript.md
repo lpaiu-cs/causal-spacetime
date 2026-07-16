@@ -728,12 +728,23 @@ dissimilarity matrix with affinely inequivalent target sets, so **D
 carries order and nothing metric** — no decoder reading D can output
 spacings, even up to a positive affine map.
 
-This pair of results is the interpretation upgrade for Sections 4-7. The
-truth gate scores recovered *order* against true order (Section 3.3), and
-that is exactly the identifiable content of the observable: a gate
-demanding coordinate or spacing agreement would demand what the
-dissimilarity provably does not carry, and a weaker gate would under-use
-it. Conversely, a pass now means more than "the fitter recovered it" —
+This pair of results is the interpretation upgrade for Sections 4-7,
+provided the gate's actual content is stated carefully. The truth gate
+(Section 3.3) scores sign discordance between fitted and true *pair
+distances* — distance order, which is strictly more than target order,
+and the counterexample shows the excess is real: its two same-D triples
+have adjacent-gap ratios 0.5098 and 0.45, so the ordering of the two
+adjacent pair distances reverses between realizations the observable
+cannot distinguish, and no decoder of D can score that comparison
+correctly on both. The theory therefore brackets the frozen gate from
+both sides. From below, the identifiable content is what makes the gate
+satisfiable far below chance: recovering the target order fixes every
+distance-order comparison that order determines — the bulk of them,
+which is why measured truth error sits near 0.13-0.14 against 0.5.
+From above, exact distance-order recovery is provably impossible from
+D, so a threshold gate is the only satisfiable form: an exactness
+demand would fail on realizations the data cannot separate.
+Conversely, a pass now means more than "the fitter recovered it" —
 with the model stated carefully. For *exact* profiles the order is the
 invariant content of the data: any consistent decoder must recover it,
 up to reversal. For *measured* Model-D profiles the same conclusion is
@@ -1027,10 +1038,11 @@ instrument-level positive — post-burn-in samples of the action-weighted
 2D-orders continuum phase support genuine order-intrinsic reconstruction of
 position, while its crystal phase is structurally blocked by the same
 protocol. The identifiability theory closes the loop between measurement
-and meaning: the truth gate asks for spatial order because spatial order
-— up to reversal, and nothing metric — is provably all that the profile
-observable carries, so a pass certifies recovery of everything the
-observable resolves. The pattern of the results is the point: geometry appears exactly
+and meaning: the profile observable provably carries spatial order up to
+reversal and nothing metric — which is what makes the distance-order
+truth gate satisfiable far below chance, and its threshold form
+necessary rather than conservative — so a pass certifies recovery of
+everything the observable resolves. The pattern of the results is the point: geometry appears exactly
 when entropy is controlled and coupling is bounded, each direction certified
 by its own control. We offer the discriminator methodology — validate, then
 preregister, then judge — as a transferable standard for order-first
