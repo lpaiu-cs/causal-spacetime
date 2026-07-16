@@ -1,9 +1,10 @@
 # Citation verification report
 
-All 24 references in `references.bib` were verified (13 on 2026-07-09, 11 on
-2026-07-14 for the emergence section and related-work coverage) against
-authoritative sources (APS, AIP, Cambridge Core, Springer, PMLR, arXiv, CERN
-CDS, NASA ADS, MIT DSpace). Each entry was cross-checked on author list, year,
+All 28 references in `references.bib` were verified (13 on 2026-07-09, 11 on
+2026-07-14 for the emergence section and related-work coverage, 4 on
+2026-07-17 for the theory section's named results) against authoritative
+sources (APS, AIP, Cambridge Core, Springer, PMLR, arXiv, CERN CDS, NASA ADS,
+MIT DSpace, OUP, JSTOR). Each entry was cross-checked on author list, year,
 venue, and volume/page (or article number). No field was fabricated.
 
 | key | confirmed via | correction vs first draft |
@@ -32,6 +33,10 @@ venue, and volume/page (or article number). No field was fabricated.
 | rideout2009 | IOP doi 10.1088/0264-9381/26/15/155013; arXiv:0810.1768 | new entry (2026-07-14) |
 | glaser2018 | IOP doi 10.1088/1361-6382/aa9540 (CQG 35, issue 4); arXiv:1706.06432 | new entry; article number not captured, omitted |
 | madsen2026 | arXiv abs page 2607.05840 (preprint, no journal) | new entry (2026-07-14) |
+| campbell1909 | Internet Archive full text of Proc. Camb. Phil. Soc. vol. 15 (1908--10); pages 117--136 per the standard citation across the Campbell's-theorem literature | new entry (2026-07-17); pre-DOI journal, DOI omitted |
+| robinson1951 | Cambridge Core `S0002731600008532`; JSTOR issue `i212276` (Am. Antiquity 16(4), Apr. 1951); doi 10.2307/276978 | new entry (2026-07-17) |
+| daleyverejones2003 | Springer book page doi 10.1007/b97277 (Vol. I, 2nd ed., 2003, New York) | new entry (2026-07-17) |
+| boucheron2013 | OUP Academic book 26549; global.oup.com ISBN 978-0-19-953525-5; doi 10.1093/acprof:oso/9780199535255.001.0001 (Bernstein's inequality is its Section 2.8) | new entry (2026-07-17) |
 
 ## Residual judgment calls
 

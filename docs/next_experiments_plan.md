@@ -63,6 +63,23 @@ Execution update (2026-07-16):
   P7 reopens only with a sampler reaching N >= 500 or a qualitatively
   new small-N geometry instrument (own calibration + freeze).
 
+Execution update (2026-07-17):
+
+- Paper B pre-packaging quality pass completed: Figure 4 (P6b ROC +
+  H-LAG safety — the "one table + one figure" deliverable promised
+  below) and Figure 6 (T1 band / 1/K law / density scaling) added with
+  deterministic, self-asserting generation; figures renumbered to
+  placement order; the three named-without-citation results (Campbell,
+  Robinson 1951 seriation, Bernstein) verified and wired into the
+  bibliography.
+- The Section 11 chain-selection robustness item is closed
+  descriptively: an 8-variant selector sweep (chain count, tick
+  threshold, non-greedy anchored selector) at N = 600 over uniform
+  positives, the frozen P6a layered cells, the crystal, and the
+  replayed frozen P5 samples produced **zero verdict flips**
+  (docs/selector_robustness_probe.md). Observer-congruence robustness
+  remains open.
+
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
 CQG / SciPost Physics Core as-is, and a defensible SciPost Physics submission
