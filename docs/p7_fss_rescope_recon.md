@@ -34,7 +34,7 @@ Frozen protocol (6 x 25, >= 20 targets), 6 seeds per N:
 | N | outcome |
 |---|---|
 | 200, 300, 400 | greedy chain extraction fails, 6/6 (selector-dependent — see note) |
-| 500 | operates: 4/6 evaluate, all 4 pass, G median 0.858 |
+| 500 | operates: 4/6 evaluate, all 4 pass, G median 0.852 |
 
 Selector note. The N = 200–400 failures are properties of the frozen
 protocol's *greedy* selector, not of the orders themselves: by Greene's

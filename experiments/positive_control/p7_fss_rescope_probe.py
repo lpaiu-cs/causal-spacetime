@@ -78,22 +78,29 @@ FROZEN_SPEC = {
     "chain_count": 6, "min_length": 25, "max_targets": 44,
     "min_targets": 20, "train_c": 3000, "held_c": 800,
     "steps": 1500, "restarts": 5, "min_cols": 4,
+    # the frozen P3 pipeline evaluates the truth gate with 8000 pair
+    # comparisons (p3_dynamics.py); the probe must match it exactly to
+    # call its result a measurement of the frozen instrument
+    "truth_comparisons": 8000,
 }
 SOFT_SPECS = {
     "3x8_t30": {
         "chain_count": 3, "min_length": 8, "max_targets": 30,
         "min_targets": 10, "train_c": 600, "held_c": 200,
         "steps": 1000, "restarts": 3, "min_cols": 3,
+        "truth_comparisons": 4000,
     },
     "4x8_t30": {
         "chain_count": 4, "min_length": 8, "max_targets": 30,
         "min_targets": 10, "train_c": 600, "held_c": 200,
         "steps": 1000, "restarts": 3, "min_cols": 3,
+        "truth_comparisons": 4000,
     },
     "4x10_t20": {
         "chain_count": 4, "min_length": 10, "max_targets": 20,
         "min_targets": 8, "train_c": 800, "held_c": 250,
         "steps": 1000, "restarts": 3, "min_cols": 3,
+        "truth_comparisons": 4000,
     },
 }
 
@@ -150,7 +157,7 @@ def evaluate(pi: np.ndarray, spec: dict, seed: int) -> dict:
         return {"status": f"block_fit: {str(error)[:40]}"}
     truth = embedding_distance_order_error(
         coords_fit, xcoords[targets].reshape(-1, 1),
-        num_pair_comparisons=4000, seed=seed + 9,
+        num_pair_comparisons=spec["truth_comparisons"], seed=seed + 9,
     )
     return {
         "status": "ok",
@@ -235,7 +242,7 @@ def main() -> None:
     #    still far weaker than the P7 design's frozen calibration
     #    requirement, "G ~ 1 on the uniform ensemble"
     #    (docs/next_experiments_plan.md), which the N = 600 instrument
-    #    meets (G median 0.858 here, all ok runs passing).
+    #    meets (G median 0.852 here, all ok runs passing).
     # The samplable boundary (N ~ 120) comes from the measured tunneling
     # exponent (docs/p7_enhanced_sampling.md), not from this probe.
     def _generous(row: dict) -> bool:

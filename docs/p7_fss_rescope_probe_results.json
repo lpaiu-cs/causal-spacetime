@@ -8,7 +8,8 @@
     "held_c": 800,
     "steps": 1500,
     "restarts": 5,
-    "min_cols": 4
+    "min_cols": 4,
+    "truth_comparisons": 8000
   },
   "soft_specs": {
     "3x8_t30": {
@@ -20,7 +21,8 @@
       "held_c": 200,
       "steps": 1000,
       "restarts": 3,
-      "min_cols": 3
+      "min_cols": 3,
+      "truth_comparisons": 4000
     },
     "4x8_t30": {
       "chain_count": 4,
@@ -31,7 +33,8 @@
       "held_c": 200,
       "steps": 1000,
       "restarts": 3,
-      "min_cols": 3
+      "min_cols": 3,
+      "truth_comparisons": 4000
     },
     "4x10_t20": {
       "chain_count": 4,
@@ -42,7 +45,8 @@
       "held_c": 250,
       "steps": 1000,
       "restarts": 3,
-      "min_cols": 3
+      "min_cols": 3,
+      "truth_comparisons": 4000
     }
   },
   "frozen_scan": [
@@ -78,10 +82,10 @@
         "block_chains": 2
       },
       "positive_pass": 4,
-      "g_median": 0.8577044025157232,
+      "g_median": 0.8522727272727272,
       "heldout_median": 0.04625,
       "null_gap_median": 0.18375,
-      "truth_median": 0.1952155505382547
+      "truth_median": 0.20119617224880382
     }
   ],
   "soft_scan": {
@@ -268,5 +272,5 @@
     "windows_overlap_calibration_grade": false
   },
   "status": "reconnaissance; nothing frozen; no G(beta) measured; no MCMC run",
-  "elapsed_seconds": 24.5
+  "elapsed_seconds": 24.0
 }
