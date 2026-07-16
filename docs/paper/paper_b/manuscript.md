@@ -1,7 +1,7 @@
 # A validated discriminator for latent geometry in discrete causal order: dilution response and survival in an action-weighted ensemble
 
-**Draft v0.5.** Causal Spacetime Lab. All quantitative results trace to frozen
-preregistration artifacts (`docs/prereg/frozen/`); see Section 11.
+**Draft v0.6.** Causal Spacetime Lab. All quantitative results trace to frozen
+preregistration artifacts (`docs/prereg/frozen/`); see Section 12.
 
 ## Abstract
 
@@ -32,12 +32,22 @@ ensemble, however, the action-weighted measure has a continuum phase with a
 hysteretic crystallization transition, and post-burn-in samples of that phase
 pass the full discriminator (18/18 across beta = 2 and 8, recovering true
 lightcone position at truth-order error ~ 0.14 against 0.5 chance) while the
-crystal control blocks structurally (4/4). Embeddability alone is an unsafe
+crystal control blocks structurally (4/4). An identifiability theory for
+the profile observable closes the loop: we prove that the parallax
+dissimilarity determines target order up to global reversal — and, by
+explicit counterexample, nothing metric — with matching resolution and
+concentration laws for the instrument's deterministic clock and its
+Poisson idealization, verify every proved statement against the
+instrument itself as CI regressions, and show that the presumed
+inverse-root density law for the error is protocol-dependent: it holds
+for density-thinned clocks and fails to transfer to chains harvested
+from the sprinkling, whose rate couples at the discreteness scale.
+Embeddability alone is an unsafe
 indicator of geometry; on this family, reconstructable geometry is not
 explained by global relation density and survives action weighting exactly
 where entropy is restricted and the coupling stays below crystallization. We
 make no claim of continuum spacetime emergence: all statements are
-finite-scale, instrument-relative, and bounded in Section 9.
+finite-scale, instrument-relative, and bounded in Section 10.
 
 ## 1. Introduction
 
@@ -85,7 +95,13 @@ preregistered null on a geometry-free growth dynamics, an exact obstruction
 to action weighting on unrestricted orders, a preregistered phase structure
 for the action-weighted restricted ensemble, and the instrument-level
 verdict that its continuum phase supports genuine order-intrinsic geometry
-reconstruction while its crystal phase does not.
+reconstruction while its crystal phase does not; and (6) an identifiability
+and stability theory for the profile observable (Section 8) — order up to
+reversal is exactly what the parallax dissimilarity carries (spacing
+recovery is provably impossible from it), with a deterministic resolution
+law for the instrument's clock, concentration bounds for its Poisson
+idealization, and a protocol-dependence result for density scaling — every
+proved statement verified against the instrument in CI.
 
 ## 2. Related work and positioning
 
@@ -122,7 +138,10 @@ a quantitative embedding-uniqueness (Hauptvermutung-type) result for causal
 sets admitting well-conditioned embeddings [@madsen2026]; this is
 complementary — it says recovered geometry is essentially unique when it
 exists in the high-density limit, while our instrument decides, at finite
-scale, whether it exists.
+scale, whether it exists. Section 8 supplies the finite-scale
+identifiability counterpart for our own observable: what the profile
+dissimilarity determines (spatial order, up to reversal), what it
+provably does not (spacings), and at what resolution and confidence.
 
 For the emergence chain (Section 7) the relevant background is dynamical and
 statistical: classical sequential growth and its simplest member, transitive
@@ -177,7 +196,9 @@ P[j, r] = W[j, r] - mean_r W[j, r], keeping only the cross-observer *parallax*.
 This operationalizes a simple principle: a single scalar shared across
 observers is not a distance structure; only cross-observer disagreement is.
 The profile dissimilarity is the RMS parallax difference over common reachable
-chains, D[i, j] = RMS_r (P[i, r] - P[j, r]).
+chains, D[i, j] = RMS_r (P[i, r] - P[j, r]). Section 8 proves exactly what
+this observable can and cannot identify: spatial order up to global
+reversal is decodable from D alone, and spacings provably are not.
 
 ### 3.3 Representability gates
 
@@ -249,7 +270,7 @@ density but percolated under transitive closure to a near-complete order
 post-closure density by bisection. Both are logged as pre-freeze repairs; the
 frozen thresholds derive only from the post-repair calibration.
 
-The first confound is quantified in Figure 5 (Section 8): under raw
+The first confound is quantified in Figure 5 (Section 9): under raw
 dissimilarity the geometry-free control sits at the gate (mean held-out 0.056;
 4 of 9 seeds fall below 0.05 and would false-pass), whereas parallax centering
 lifts every seed decisively into blocking (mean 0.238).
@@ -572,7 +593,7 @@ therefore a property of the protocol's chain-extraction stage, which the
 crystal fails before any geometry gate is reached: the protocol structurally
 rejects the crystal, an easy control for the instrument. A chain-rich hard
 negative — partially layered states, or states just below beta_c — would
-exercise the geometry gates themselves and is future work (Section 10). On
+exercise the geometry gates themselves and is future work (Section 11). On
 the positive side, the continuum-phase configurations' gate statistics lie
 within the range of the uniform-ensemble calibration (a range check, not a
 formal equivalence test): under the frozen protocol, action weighting within
@@ -633,7 +654,137 @@ controlled null, and the positive claim is backed by the validated
 discriminator rather than by embeddability or a dimension estimator, both of
 which Section 7.2 shows would over-report geometry here too.
 
-## 8. Discussion
+## 8. What a pass identifies: theory of the profile observable
+
+The experiments establish empirically what the instrument distinguishes.
+This section states what its observable can identify *in principle* —
+proved for an exact model of the instrument and then verified against the
+instrument itself — which turns the truth-recovery gate from a plausible
+check into the strongest check the observable admits. Full statements,
+proofs, and proof-status tags are in
+`docs/theory/t1_parallax_identifiability.md` (v0.5); every statement
+quoted as proved below is additionally pinned as a deterministic CI
+regression by a verification harness
+(`experiments/theory/t1_verification.py`), so a divergence between the
+theory and the code fails the build. All statements are 1+1D and
+instrument-relative.
+
+### 8.1 The rank-gap identity and the quantization band
+
+Two clock models bracket the instrument. *Model D* is what the scene
+builder actually constructs (Section 3.1): a deterministic uniform tick
+grid of K ticks and spacing delta appended to the scene, independent of
+the sprinkling. *Model P* is the stochastic idealization: tick times form
+a simple stationary (in the strongest case Poisson) process of intensity
+lambda on the worldline. Under the null-inclusive causal order that the
+code implements (dt > 0 and dt^2 >= dx^2) — and the convention is
+load-bearing, not cosmetic — every tick falls into exactly one of
+predecessor / spacelike / successor relative to a target, and the bracket
+width obeys a rank-gap identity, exact realization by realization:
+
+    W = N + 1,
+
+where N counts ticks in the open radar interval of length 2|dx| centered
+on the target's time (hypotheses: simple ticks, none spacetime-coincident
+with the target — automatic off the worldline and pinned as an edge-case
+regression on it). On Model D this gives a deterministic quantization
+band, W = 2|dx|/delta + 1 + theta with theta in [-1, 1); for any simple
+stationary tick process, E W = 2 lambda |dx| + 1 exactly, by Campbell's
+formula, with no moment conditions. Instrument verification: the band
+holds with zero violations across 400 controlled targets and 240
+end-to-end measurements through the frozen scene pipeline; the order
+convention itself is pinned (substituting the strict order flips a
+null-aligned example from W = 4 to W = 6 and fails CI); and widths are
+bit-identical when the bulk sprinkling density is varied at fixed grid,
+asserted both on hand-built orders and through the scene builder — the
+Model-D clock does not know the density.
+
+### 8.2 Identifiability: what profiles determine, and what they provably do not
+
+With R >= 2 observers at distinct positions and targets inside their open
+hull, the *labeled* flanking width difference is an affine function of
+target position with positive slope 4 lambda, so expected profiles
+determine the spatial order, and positions up to a positive affine map
+(scale and origin are gauge). One observer is never enough: targets
+mirrored about a lone observer produce identical widths exactly — the
+"parallax" in the method's name is the second observer breaking that
+fold, and the harness pins the fold as an integer-equality regression.
+
+The stronger statement concerns the *unlabeled* case, which is the one
+the pipeline actually inhabits: the parallax dissimilarity D of
+Section 3.2 discards observer labels by construction. For exact
+profiles, D is strictly Robinson (a seriation structure) in the true
+spatial order: the centered-profile map is piecewise linear with
+gap-direction inner products exactly 4 a_k b_l / R > 0 on the hull
+(a_k, b_l count observers flanking the gaps), which forces
+D(x,z)^2 > D(x,y)^2 + D(y,z)^2 for x < y < z. Consequently the largest
+entry of D identifies the extreme pair and either anchor row sorts the
+rest: **target order is decodable from D alone, up to global reversal,
+already for R = 2.** The converse is proved by counterexample: two
+configurations satisfying every hypothesis produce the *same*
+dissimilarity matrix with affinely inequivalent target sets, so **D
+carries order and nothing metric** — no decoder reading D can output
+spacings, even up to a positive affine map.
+
+This pair of results is the interpretation upgrade for Sections 4-7. The
+truth gate scores recovered *order* against true order (Section 3.3), and
+that is exactly the identifiable content of the observable: a gate
+demanding coordinate or spacing agreement would demand what the
+dissimilarity provably does not carry, and a weaker gate would under-use
+it. Conversely, a pass now means more than "the fitter recovered it":
+any consistent decoder of these profiles must recover the spatial order
+up to reversal, because the order is the invariant content of the data.
+
+### 8.3 Stability: resolution-limited on the instrument, concentration in the idealization
+
+On Model D the widths are deterministic, so the entire position
+uncertainty is quantization: the estimator (W - 1) delta / 2 errs by at
+most delta / 2 pointwise, RMSE falls like 1/K (measured log-log slope
+-1.017 over K = 12..384, every pointwise error within the proved bound),
+and order decoding between two targets is guaranteed once their gap
+exceeds one tick spacing. Identifiability on the instrument is
+resolution-limited, not noise-limited; the sprinkling density enters
+only through which targets exist.
+
+On Model P the same identity yields concentration. In a pairwise
+flanking comparison the shared bracket regions cancel exactly, leaving
+four mutually independent Poisson counts — overlapping brackets create
+no residual dependence — and a Bernstein bound gives pairwise order
+error at most exp(-2 lambda g^2 / (L + g/3)) for gap g and bracket-length
+bound L. Same-slice pairs are stronger: their brackets are concentric,
+so the flanking estimator is *pathwise monotone* — it can tie (with
+probability exactly exp(-4 lambda g)) but can never strictly invert —
+and full order recovery follows from the n - 1 adjacent pairs by
+subadditivity alone, at minimum gaps ~ sqrt(L log n / lambda) in
+general and ~ log n / (4 lambda) on a common slice. These statements are
+verified by direct seeded simulation of the stated model (including
+zero strict inversions in 4000 same-slice trials and exact agreement
+between the identity-computed and pipeline-computed widths on shared
+draws); no instrument realizes Model P, and no claim here says one does.
+
+### 8.4 Density scaling is protocol-dependent
+
+A natural stability target reads "error ~ 1/sqrt(rho x area)", which
+presumes tick statistics coupled to the sprinkling density as
+lambda ~ rho x ell. Both density-coupled protocols now exist as
+theory-track instrumentation (`density_coupled_clocks`, audited), and
+the target holds for exactly one of them. A Poisson-thinned clock with
+lambda = rho x ell realizes the presumed coupling, and the inverse-root
+law follows from Section 8.3 as a proved corollary (measured RMSE
+exponent -0.463, tracking the exact prediction per density; the
+inverse-root-in-area form is the *relative*-error law). A chain
+*harvested* from the sprinkling itself — ticks are sprinkled events in a
+coordinate tube — has a rate that is a measurement, not a choice, and it
+couples at the discreteness scale: lambda ~ sqrt(rho) (measured
+exponents 0.49-0.55), yielding a distinctly shallower error law
+(measured exponent -0.32). Any density-scaling claim must therefore
+name its clock protocol. The frozen PC-V1 instrument uses Model D
+clocks and is untouched by this; the open questions — the harvested
+chain's fluctuation class, and a selection rule using order-theoretic
+data alone (the current harvest reads embedded coordinates) — are
+recorded in the theory document, not resolved here.
+
+## 9. Discussion
 
 On this controlled family at finite scale, effective metric representability of
 observer-relative distance order responds monotonically to the amount of
@@ -691,7 +842,7 @@ tested also matters practically: near beta_c, profile observables mix
 slowly, and only the frozen-gate protocol prevented partially crystallized
 chains from being read as a new phase.
 
-## 9. Claim boundary
+## 10. Claim boundary
 
 We claim: (a) the described pipeline is, on 1+1D Minkowski causal sets at the
 stated scale, a discriminator that passes on geometric order and blocks on
@@ -702,14 +853,27 @@ recovery/specificity check is required; (d) transitive percolation, judged by
 the validated order-intrinsic instrument at the stated scale, produces no
 reconstructable geometry, and action weighting of unrestricted orders has an
 exact crystalline low-action obstruction, with no geometric window found in
-exploratory sampling; and (e) the smeared-action-weighted 2D-orders ensemble
+exploratory sampling; (e) the smeared-action-weighted 2D-orders ensemble
 has a continuum phase, at both scales tested, whose post-burn-in samples
 pass the full discriminator — including exact truth recovery — while its
-crystal phase is structurally blocked by the same protocol.
+crystal phase is structurally blocked by the same protocol; and (f) for
+the profile observable itself, in 1+1D: spatial order (up to global
+reversal) is decodable from the parallax dissimilarity alone, spacings
+are provably not, position error on the instrument's deterministic clock
+is bounded by half a tick spacing with a 1/K resolution law, order
+recovery under Poisson clocks concentrates at the stated exponential
+rates, and the inverse-root density law for the error holds for
+density-thinned clocks while failing to transfer to
+sprinkling-harvested clocks at their measured discreteness-scale
+coupling.
 
 We do not claim: continuum spacetime emergence; that causal order alone
 yields metric scale, signed coordinates, or a manifold; a continuum limit; or
-that these finite results establish any physical theory. Claim (e) is about
+that these finite results establish any physical theory. Claim (f) is
+1+1D and instrument-relative: the concentration statements describe a
+Poisson idealization no frozen instrument realizes, the density-scaling
+statements name their clock protocols, and no inverse-root law is
+claimed for harvested-chain clocks. Claim (e) is about
 one restricted ensemble family in 1+1 effective dimensions at N <= 600, whose
 beta = 0 measure is already sprinkling-equivalent: the emergence content is
 that reconstructable geometry *survives* action weighting up to the
@@ -721,7 +885,7 @@ means the representability gate is satisfiable by the measured order, and
 "block" is the expected outcome on geometry-free or crystalline order, not a
 falsification of any theory.
 
-## 10. Limitations and future work
+## 11. Limitations and future work
 
 The core study (PC-V1, P1) is 1+1D, single diamond geometry, a fixed
 observer-chain layout, and a single dilution family (covering-edge rewiring at
@@ -760,7 +924,19 @@ instrument-level judgment of the 2D-orders phase diagram across
 (beta, eps, N), including a continuous geometry score and its finite-size
 behavior near beta_c.
 
-## 11. Reproducibility
+The theory of Section 8 has its own boundaries and open ends. All
+statements are 1+1D (the hull condition and the reflection group both
+change in 2+1D); the concentration results describe the Poisson
+idealization, which no frozen instrument realizes; and two questions are
+recorded open in the theory document rather than resolved: the
+fluctuation class of harvested-chain clocks (whose measured error
+exponent sits between the Poisson-rate and KPZ-like guesses), and a
+harvest selection rule using order-theoretic data alone — the present
+harvested protocol reads embedded coordinates for its tube, so its
+measured density law is a statement about a coordinate-tube clock, not
+an order-intrinsic one.
+
+## 12. Reproducibility
 
 All results derive from frozen artifacts under `docs/prereg/frozen/`:
 PC-V1 thresholds and Stage A/B/C registries; P1 test constants and P1-A/P1-B
@@ -800,7 +976,23 @@ commits with the recorded seeds regenerates them. Section 6 reports P2-v2 (the r
 run); P2 §12 records the initial 2+1D run that missed its sensitivity bar for a
 scene-generation reason and motivated the preregistered remediation.
 
-## 12. Conclusion
+The theory of Section 8 has a parallel audit trail, analysis-only (no
+gate, no frozen artifact touched). Statements, proofs, proof-status
+tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
+(v0.5). Verification: `experiments/theory/t1_verification.py` (13
+deterministic checks, from the quantization band through the
+same-dissimilarity counterexample and the Model P simulation) and
+`experiments/theory/t1_g2_density_scaling.py` (protocol audit plus
+density-scaling characterization), with their regression tests run in
+CI on every push; the full-grid density-scaling table is committed with
+its run configuration as
+`docs/theory/t1_g2_density_scaling_results.json`, and rerunning the
+scaling script reproduces it byte-identically. Development history,
+including the review rounds that added hypotheses (tick coincidence,
+shared centering) and narrowed claims (order-only content of the
+dissimilarity), is in the repository's pull requests #4-#8.
+
+## 13. Conclusion
 
 A measurement pipeline from causal order to geometry verdicts is only as
 meaningful as its validation, and validating it changes what can be asked.
@@ -812,7 +1004,11 @@ weighting (with no geometric window found in exploratory sampling), and an
 instrument-level positive — post-burn-in samples of the action-weighted
 2D-orders continuum phase support genuine order-intrinsic reconstruction of
 position, while its crystal phase is structurally blocked by the same
-protocol. The pattern of the results is the point: geometry appears exactly
+protocol. The identifiability theory closes the loop between measurement
+and meaning: the truth gate asks for spatial order because spatial order
+— up to reversal, and nothing metric — is provably all that the profile
+observable carries, so a pass certifies recovery of everything there was
+to recover. The pattern of the results is the point: geometry appears exactly
 when entropy is controlled and coupling is bounded, each direction certified
 by its own control. We offer the discriminator methodology — validate, then
 preregister, then judge — as a transferable standard for order-first

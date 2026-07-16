@@ -1,7 +1,9 @@
 # Paper B claim boundary
 
-A crisp checklist complementing manuscript Section 9. Every claim below is
-backed by a frozen artifact under `docs/prereg/frozen/`.
+A crisp checklist complementing manuscript Section 10. Every claim below is
+backed by a frozen artifact under `docs/prereg/frozen/` (empirical claims)
+or by a proved, CI-pinned statement in
+`docs/theory/t1_parallax_identifiability.md` (theory claims, Section 8).
 
 ## Claimed (supported)
 
@@ -51,6 +53,22 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   at the chain-extraction stage, before any geometry gate). Emergence
   content: reconstructable geometry *survives* action weighting below beta_c
   and is *destroyed* above it.
+- **The profile observable's identifiability is settled (1+1D)**: spatial
+  order up to global reversal is decodable from the parallax dissimilarity
+  alone (strict Robinson structure; already for two observers); spacings
+  are provably NOT decodable from it (same-dissimilarity counterexample
+  with affinely inequivalent targets); position error on the instrument's
+  deterministic clock is bounded by half a tick spacing with a 1/K RMSE
+  law (measured slope -1.017); Poisson-clock order recovery concentrates
+  at exponential rates (same-slice pairs never strictly invert, pathwise).
+  Every proved statement is a deterministic CI regression against the
+  instrument itself.
+- **The inverse-root density law is protocol-dependent**: it holds for
+  Poisson-thinned clocks (lambda ~ rho, proved corollary; measured RMSE
+  exponent -0.463) and fails to transfer to sprinkling-harvested clocks,
+  whose rate couples at the discreteness scale (lambda ~ sqrt(rho),
+  measured; error exponent -0.32). Any density-scaling statement must name
+  its clock protocol.
 
 ## NOT claimed
 
@@ -75,3 +93,9 @@ backed by a frozen artifact under `docs/prereg/frozen/`.
   dilution family; the emergence chain is one dynamics, one action family,
   one restricted ensemble at N <= 600. No curvature, quantum, or matter
   claim; beta_c and hysteresis strength are scale- and eps-dependent.
+- Theory claims are 1+1D and instrument-relative. The Poisson-clock
+  concentration statements describe an idealization no frozen instrument
+  realizes; no inverse-root density law is claimed for harvested-chain
+  clocks; the harvested protocol's tube selection reads embedded
+  coordinates (coordinate-tube, not order-intrinsic), and its fluctuation
+  class is an open question, not a result.
