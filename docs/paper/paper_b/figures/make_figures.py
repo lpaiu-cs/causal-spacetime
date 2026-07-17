@@ -619,10 +619,18 @@ def figure_theory() -> None:
     ax_c.loglog(rho, [row["rmse_predicted"] for row in thinned], color=BLUE,
                 linestyle="--", linewidth=1.2, zorder=2,
                 label="thinned: exact prediction")
+    # order-only wandering identification (Section 8.4): asserted so the
+    # figure cannot drift from the quoted KPZ classification
+    recorded = density["order_only_recorded_expectations"]["outcomes"]
+    assert (
+        recorded["nearest_wandering_candidate"] == "kpz_wandering_-1/6"
+    ), recorded
+    assert abs(recorded["transverse_rms_exponent"] + 1.0 / 6.0) < 0.05, recorded
     for key, color, marker, label in (
         ("thinned", BLUE, "o", "thinned clock, lam = rho*ell"),
         ("harvest_scaled", VERM, "s", "harvested chain, scaled tube"),
         ("harvest_fixed", ORANGE, "^", "harvested chain, fixed tube"),
+        ("harvest_order_only", GREEN, "D", "harvested chain, order-only"),
     ):
         rows = arms[key]["rows"]
         exponent = float(arms[key]["rmse_exponent"])

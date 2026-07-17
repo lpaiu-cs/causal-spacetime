@@ -23,6 +23,30 @@ Three arms, same estimator (``d_hat = (W - 1) / (2 lam)``):
   exponent is asserted beyond a sanity band -- distinguishing the
   Poisson-rate guess (-1/4, from lam ~ sqrt(rho)) from a KPZ-like -1/3
   needs a dedicated study and is recorded as an open question.
+- ``harvest_order_only``: longest chain between two DESIGNATED anchor
+  events (nearest sprinkled events to the window endpoints on the
+  observer line -- a coordinate-assisted DESIGNATION, made once, like
+  placing observers). The SELECTION rule then reads order data alone,
+  answering the order-only design question the tube protocol left open.
+  The chain is pinned at the anchors but otherwise free to wander
+  transversally; the arm therefore also measures the wandering, as the
+  pooled transverse RMS of tick positions about the anchor line.
+
+Pre-stated expectations for the order-only arm (written before the
+grid was run; recorded as outcomes in the results table, and NOT gates
+except where marked):
+
+- E1 (gate, sanity band): the chain rate couples at the discreteness
+  scale, lam-exponent in (0.35, 0.70), as for the tube arms.
+- E2 (gate, same form as the scaled tube): the RMSE law is distinctly
+  shallower than the thinned clock's rho^{-1/2}.
+- E3 (recorded, directional): with the tube constraint removed, the
+  chain wanders. If longest-chain wandering is KPZ-class (wandering
+  exponent 2/3), the transverse RMS scales like rho^{-1/6} and, where
+  it dominates, drags the RMSE exponent shallower than the scaled
+  tube's; a diffusive alternative predicts rho^{-1/4}. The outcome
+  reports the fitted transverse exponent and which candidate is
+  nearer.
 
 Deliberately NOT done here: no frozen gate, no confirmatory claim, no
 pooling with any preregistered artifact. This is theory-track
@@ -39,11 +63,14 @@ from pathlib import Path
 
 import numpy as np
 
+from causal_spacetime_lab.causal import causal_matrix_1p1
 from causal_spacetime_lab.density_coupled_clocks import (
     bracket_width_against_worldline,
     chain_is_causal,
     harvest_chain_from_sprinkling_1p1,
+    harvest_order_only_chain_1p1,
     make_poisson_clock_chain_1p1,
+    nearest_event_index,
 )
 from causal_spacetime_lab.sprinkling import sprinkle_1p1_causal_diamond
 
@@ -109,6 +136,87 @@ def audit_harvested_chains(seed: int = 11, scenes: int = 5) -> dict:
     }
 
 
+def audit_order_only_chains(seed: int = 13, scenes: int = 5) -> dict:
+    """Constructor audit for the order-only harvest: chain property,
+    anchor endpoints, interval containment, determinism, REFLECTION
+    invariance (a spatial reflection preserves the labelled order and
+    must preserve the harvested chain exactly -- the tie-break reads
+    labels, not coordinates), and -- at low density, where the matrix
+    is affordable -- longest-chain LENGTH equality against an
+    independent causal-matrix DP (the patience-sorting implementation
+    must reproduce the order-theoretic optimum, not just some
+    chain)."""
+
+    rng = np.random.default_rng(seed)
+    all_causal = True
+    endpoints_ok = True
+    contained = True
+    all_simple = True
+    deterministic = True
+    reflection_invariant = True
+    dp_lengths_match = True
+    dp_checks = 0
+    for _ in range(scenes):
+        rho = float(rng.choice([500, 1000, 2000]))
+        bulk = sprinkle_1p1_causal_diamond(
+            rng.poisson(rho * DIAMOND_AREA), T=DIAMOND_T, seed=rng
+        )
+        x0 = float(rng.choice(OBSERVERS))
+        bottom = nearest_event_index(bulk, TICK_WINDOW[0], x0)
+        top = nearest_event_index(bulk, TICK_WINDOW[1], x0)
+        idx = harvest_order_only_chain_1p1(bulk, bottom, top)
+        idx_again = harvest_order_only_chain_1p1(bulk, bottom, top)
+        deterministic = deterministic and np.array_equal(idx, idx_again)
+        reflected = bulk.copy()
+        reflected[:, 1] = -reflected[:, 1]
+        idx_reflected = harvest_order_only_chain_1p1(reflected, bottom, top)
+        reflection_invariant = reflection_invariant and np.array_equal(
+            idx, idx_reflected
+        )
+        chain = bulk[idx]
+        all_causal = all_causal and chain_is_causal(chain)
+        endpoints_ok = endpoints_ok and bool(
+            idx[0] == bottom and idx[-1] == top
+        )
+        # membership predicate identical to the constructor's: causally
+        # between the anchors under the null-inclusive relation
+        dt_b = bulk[:, 0] - bulk[bottom, 0]
+        iv_b = dt_b * dt_b - (bulk[:, 1] - bulk[bottom, 1]) ** 2
+        dt_t = bulk[top, 0] - bulk[:, 0]
+        iv_t = dt_t * dt_t - (bulk[top, 1] - bulk[:, 1]) ** 2
+        inside = (dt_b > 0) & (iv_b >= -1e-12) & (dt_t > 0) & (iv_t >= -1e-12)
+        inside[bottom] = False
+        inside[top] = False
+        interior = idx[1:-1]
+        contained = contained and bool(np.all(inside[interior]))
+        all_simple = all_simple and bool(np.all(np.diff(chain[:, 0]) > 0))
+        sub = bulk[np.flatnonzero(inside)]
+        sub = sub[np.argsort(sub[:, 0], kind="stable")]
+        causal = causal_matrix_1p1(sub)
+        best = np.ones(sub.shape[0], dtype=int)
+        for j in range(sub.shape[0]):
+            preds = np.flatnonzero(causal[:, j])
+            if preds.size:
+                best[j] = best[preds].max() + 1
+        dp_len = (int(best.max()) if sub.shape[0] else 0) + 2
+        dp_lengths_match = dp_lengths_match and dp_len == idx.size
+        dp_checks += 1
+    return {
+        "chains_causal": all_causal,
+        "anchor_endpoints": endpoints_ok,
+        "interval_contained": contained,
+        "tick_times_strictly_increasing": all_simple,
+        "harvest_deterministic": deterministic,
+        "reflection_invariant": reflection_invariant,
+        "dp_length_checks": dp_checks,
+        "dp_lengths_match": dp_lengths_match,
+        "passed": bool(
+            all_causal and endpoints_ok and contained and all_simple
+            and deterministic and reflection_invariant and dp_lengths_match
+        ),
+    }
+
+
 def _scene_targets(rng: np.random.Generator) -> np.ndarray:
     return np.column_stack([
         rng.uniform(-0.05, 0.05, size=TARGETS_PER_SCENE),
@@ -124,6 +232,7 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
         lam_values: list[float] = []
         errors: list[float] = []
         distances: list[float] = []
+        transverse_sq: list[float] = []
         unreachable = 0
         short_clocks = 0
         for s in range(seeds):
@@ -139,6 +248,28 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                         TICK_WINDOW[0], TICK_WINDOW[1], lam_true, x0, seed=rng
                     )
                     lam_decode = lam_true  # known by construction (proved arm)
+                elif arm == "harvest_order_only":
+                    bottom = nearest_event_index(bulk, TICK_WINDOW[0], x0)
+                    top = nearest_event_index(bulk, TICK_WINDOW[1], x0)
+                    try:
+                        idx = harvest_order_only_chain_1p1(bulk, bottom, top)
+                    except ValueError:
+                        # anchors not causally related: a clock FAILURE,
+                        # counted like a short clock, never silently skipped
+                        unreachable += TARGETS_PER_SCENE
+                        short_clocks += 1
+                        continue
+                    ticks = bulk[idx]
+                    # the anchors are sprinkled events, so the nominal
+                    # worldline is the (generally tilted) segment BETWEEN
+                    # them: wandering is measured about that anchor line,
+                    # not about x0 -- otherwise anchor placement and
+                    # endpoint slope would contaminate the observable
+                    t_b, x_b = bulk[bottom]
+                    t_t, x_t = bulk[top]
+                    nominal_x = x_b + (ticks[:, 0] - t_b) * (
+                        (x_t - x_b) / (t_t - t_b)
+                    )
                 else:
                     width = (
                         ELL if arm == "harvest_fixed"
@@ -148,6 +279,7 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                         bulk, x0, width, TICK_WINDOW[0], TICK_WINDOW[1]
                     )
                     ticks = bulk[idx]
+                    nominal_x = x0  # the tube's nominal worldline
                 if len(ticks) < 4:
                     # A clock too short to measure is a clock FAILURE:
                     # its targets count as unreachable so that sparse
@@ -160,6 +292,9 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                     # no true rate exists: the decoder estimates it
                     lam_decode = (len(ticks) - 1) / (
                         ticks[-1, 0] - ticks[0, 0]
+                    )
+                    transverse_sq.extend(
+                        np.square(ticks[:, 1] - nominal_x).tolist()
                     )
                 lam_values.append(
                     (len(ticks) - 1) / (ticks[-1, 0] - ticks[0, 0])
@@ -185,6 +320,12 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
             row["rmse_predicted"] = float(
                 np.sqrt(np.mean(np.asarray(distances) / (2 * rho * ELL)))
             )
+        else:
+            # pooled transverse RMS of tick positions about the nominal
+            # worldline: the wandering observable of expectation E3
+            row["transverse_rms"] = float(
+                np.sqrt(np.mean(transverse_sq))
+            )
         rows.append(row)
     return rows
 
@@ -201,6 +342,10 @@ def main() -> None:
     print("[AUDIT]", json.dumps(audit))
     if not audit["passed"]:
         raise SystemExit("harvested-chain audit failed; no scaling is run")
+    audit_order_only = audit_order_only_chains()
+    print("[AUDIT order-only]", json.dumps(audit_order_only))
+    if not audit_order_only["passed"]:
+        raise SystemExit("order-only-chain audit failed; no scaling is run")
 
     results: dict = {
         "config": {
@@ -214,21 +359,26 @@ def main() -> None:
             "diamond_T": DIAMOND_T,
         },
         "audit": audit,
+        "audit_order_only": audit_order_only,
         "arms": {},
     }
     verdicts: dict[str, bool] = {}
 
-    for arm in ("thinned", "harvest_fixed", "harvest_scaled"):
+    for arm in (
+        "thinned", "harvest_fixed", "harvest_scaled", "harvest_order_only"
+    ):
         rows = run_arm(arm)
         lam_slope = fit_exponent(rows, "lam_mean")
         rmse_slope = fit_exponent(rows, "rmse")
         print(f"\n[{arm}] lam(rho) exponent = {lam_slope:+.3f}, "
               f"rmse(rho) exponent = {rmse_slope:+.3f}")
         for row in rows:
-            extra = (
-                f"  predicted={row['rmse_predicted']:.5f}"
-                if "rmse_predicted" in row else ""
-            )
+            if "rmse_predicted" in row:
+                extra = f"  predicted={row['rmse_predicted']:.5f}"
+            elif "transverse_rms" in row:
+                extra = f"  trans_rms={row['transverse_rms']:.5f}"
+            else:
+                extra = ""
             print(f"  rho={row['rho']:6d}  lam={row['lam_mean']:8.2f}  "
                   f"rmse={row['rmse']:.5f}{extra}  "
                   f"unreachable={row['unreachable']}")
@@ -276,7 +426,7 @@ def main() -> None:
             verdicts["harvest_lam_exponent_near_half"] = bool(
                 0.35 < lam_slope < 0.70
             )
-        else:
+        elif arm == "harvest_scaled":
             verdicts["harvest_scaled_lam_exponent_near_half"] = bool(
                 0.35 < fit_exponent(rows, "lam_mean") < 0.70
             )
@@ -289,13 +439,62 @@ def main() -> None:
             verdicts["harvest_scaled_rmse_in_sanity_band"] = bool(
                 -0.45 < rmse_slope < -0.10
             )
+        else:
+            # Order-only arm gates (E1, E2 of the header): discreteness-
+            # scale rate coupling; RMSE distinctly shallower than the
+            # thinned clock's proved rho^{-1/2}; plus a wide instrument-
+            # sanity bound. The wandering class itself (E3) is recorded,
+            # not gated -- see order_only_recorded_expectations.
+            verdicts["order_only_lam_exponent_near_half"] = bool(
+                0.35 < lam_slope < 0.70
+            )
+            verdicts["order_only_rmse_shallower_than_thinned"] = bool(
+                rmse_slope > results["arms"]["thinned"]["rmse_exponent"] + 0.10
+            )
+            verdicts["order_only_rmse_in_wide_sanity_bound"] = bool(
+                -0.50 < rmse_slope < 0.02
+            )
+
+    order_rows = results["arms"]["harvest_order_only"]["rows"]
+    transverse_slope = fit_exponent(order_rows, "transverse_rms")
+    scaled_rmse = results["arms"]["harvest_scaled"]["rmse_exponent"]
+    order_rmse = results["arms"]["harvest_order_only"]["rmse_exponent"]
+    candidates = {"kpz_wandering_-1/6": -1.0 / 6.0, "diffusive_-1/4": -0.25}
+    nearest = min(
+        candidates, key=lambda name: abs(candidates[name] - transverse_slope)
+    )
+    results["order_only_recorded_expectations"] = {
+        "gating": False,
+        "stated_before_run": {
+            "E3_wandering": (
+                "KPZ-class wandering predicts transverse RMS ~ rho^{-1/6} "
+                "and, where it dominates, an RMSE exponent shallower than "
+                "the scaled tube's; diffusive predicts rho^{-1/4}"
+            ),
+        },
+        "outcomes": {
+            "transverse_rms_exponent": transverse_slope,
+            "nearest_wandering_candidate": nearest,
+            "rmse_exponent_order_only": order_rmse,
+            "rmse_exponent_scaled_tube": scaled_rmse,
+            "order_only_shallower_than_scaled_tube": bool(
+                order_rmse > scaled_rmse
+            ),
+        },
+    }
+    print(
+        "\n[order-only E3] transverse exponent "
+        f"{transverse_slope:+.3f} (nearest: {nearest}); "
+        f"rmse {order_rmse:+.3f} vs scaled tube {scaled_rmse:+.3f}"
+    )
 
     results["verdicts"] = verdicts
     all_passed = all(verdicts.values())
     results["all_passed"] = bool(all_passed)
     results["status"] = (
         "theory-track characterization; no gate; no frozen artifact; "
-        "harvested-chain fluctuation class left open"
+        "order-only harvest measured (wandering exponent recorded); "
+        "harvested-chain count-fluctuation class left open"
     )
 
     RESULTS_PATH.write_text(

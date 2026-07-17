@@ -56,11 +56,13 @@ This paper reports the validated-instrument line of the program:
    pointwise; position via flanking differences, one tick), Poisson-clock
    order recovery concentrates at exponential rates, and the inverse-root
    density law for the error is protocol-dependent (holds for thinned
-   clocks, fails for sprinkling-harvested clocks). Every proved statement
+   clocks, fails for sprinkling-harvested clocks; the order-only
+   anchored harvest is measured wandering-dominated at the KPZ exponent
+   -1/6, closing the order-only design question). Every proved statement
    is a CI regression — Model-D claims against the instrument itself,
    Model-P claims by direct seeded simulation of the stated model;
    source: `docs/theory/t1_parallax_identifiability.md`
-   (v0.5) and manuscript Section 8.
+   (v0.6) and manuscript Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
