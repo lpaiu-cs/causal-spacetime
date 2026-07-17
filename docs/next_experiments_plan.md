@@ -83,7 +83,7 @@ Execution update (2026-07-17):
   longest chain between two designated anchor events — selection reads
   order data alone — was built, audited (causal-matrix DP
   cross-check), and measured on the same rho grid. Pre-stated KPZ test
-  met: transverse RMS exponent -0.172 vs the KPZ wandering value -1/6
+  met: transverse RMS exponent -0.168 vs the KPZ wandering value -1/6
   (diffusive -1/4 excluded); the free clock's RMSE (-0.155) is
   wandering-dominated at every density, and the fixed tube's -0.165 is
   thereby explained as a mixture artifact. Remaining open in G2: the

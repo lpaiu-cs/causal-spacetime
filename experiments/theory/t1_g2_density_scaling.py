@@ -178,15 +178,18 @@ def audit_order_only_chains(seed: int = 13, scenes: int = 5) -> dict:
         endpoints_ok = endpoints_ok and bool(
             idx[0] == bottom and idx[-1] == top
         )
-        u = bulk[:, 0] + bulk[:, 1]
-        v = bulk[:, 0] - bulk[:, 1]
+        # membership predicate identical to the constructor's: causally
+        # between the anchors under the null-inclusive relation
+        dt_b = bulk[:, 0] - bulk[bottom, 0]
+        iv_b = dt_b * dt_b - (bulk[:, 1] - bulk[bottom, 1]) ** 2
+        dt_t = bulk[top, 0] - bulk[:, 0]
+        iv_t = dt_t * dt_t - (bulk[top, 1] - bulk[:, 1]) ** 2
+        inside = (dt_b > 0) & (iv_b >= -1e-12) & (dt_t > 0) & (iv_t >= -1e-12)
+        inside[bottom] = False
+        inside[top] = False
         interior = idx[1:-1]
-        contained = contained and bool(
-            np.all(u[interior] > u[bottom]) and np.all(v[interior] > v[bottom])
-            and np.all(u[interior] < u[top]) and np.all(v[interior] < v[top])
-        )
+        contained = contained and bool(np.all(inside[interior]))
         all_simple = all_simple and bool(np.all(np.diff(chain[:, 0]) > 0))
-        inside = (u > u[bottom]) & (v > v[bottom]) & (u < u[top]) & (v < v[top])
         sub = bulk[np.flatnonzero(inside)]
         sub = sub[np.argsort(sub[:, 0], kind="stable")]
         causal = causal_matrix_1p1(sub)
@@ -257,6 +260,16 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                         short_clocks += 1
                         continue
                     ticks = bulk[idx]
+                    # the anchors are sprinkled events, so the nominal
+                    # worldline is the (generally tilted) segment BETWEEN
+                    # them: wandering is measured about that anchor line,
+                    # not about x0 -- otherwise anchor placement and
+                    # endpoint slope would contaminate the observable
+                    t_b, x_b = bulk[bottom]
+                    t_t, x_t = bulk[top]
+                    nominal_x = x_b + (ticks[:, 0] - t_b) * (
+                        (x_t - x_b) / (t_t - t_b)
+                    )
                 else:
                     width = (
                         ELL if arm == "harvest_fixed"
@@ -266,6 +279,7 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                         bulk, x0, width, TICK_WINDOW[0], TICK_WINDOW[1]
                     )
                     ticks = bulk[idx]
+                    nominal_x = x0  # the tube's nominal worldline
                 if len(ticks) < 4:
                     # A clock too short to measure is a clock FAILURE:
                     # its targets count as unreachable so that sparse
@@ -280,7 +294,7 @@ def run_arm(arm: str, rho_grid=RHO_GRID, seeds=SEEDS) -> list[dict]:
                         ticks[-1, 0] - ticks[0, 0]
                     )
                     transverse_sq.extend(
-                        np.square(ticks[:, 1] - x0).tolist()
+                        np.square(ticks[:, 1] - nominal_x).tolist()
                     )
                 lam_values.append(
                     (len(ticks) - 1) / (ticks[-1, 0] - ticks[0, 0])

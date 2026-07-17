@@ -155,20 +155,27 @@ def harvest_order_only_chain_1p1(
 
     Implementation notes. Every ingredient of the selection is a
     function of the labelled order alone: interval membership (causal
-    comparability with the anchors), the per-element longest-chain
-    lengths ``B(x)`` = length of a longest chain from ``x`` to the top
-    anchor (an order invariant, computed in O(k log k) by patience
-    sorting on lightcone coordinates -- the coordinates enter only as
-    the machine representation of the order relation, and the computed
-    lengths do not depend on that representation), and, among the
-    typically many maximum chains, a greedy **minimal-label** choice:
-    the chain is built bottom-up, at each step taking the candidate
-    with ``B`` one less than the current element's that is above the
-    current element and has the smallest bulk index. Ties therefore
-    break by element LABELS, never by coordinates: relabelling can
-    change the representative, but coordinate presentations of the
-    same labelled order (e.g. a spatial reflection) cannot -- asserted
-    as a reflection-invariance audit and regression.
+    comparability with both anchors, evaluated by exactly the
+    null-inclusive predicate of ``causal_matrix_minkowski`` -- ``dt >
+    0`` and ``dt^2 >= dx^2`` with its float guard -- so events exactly
+    on a null boundary of the interval are candidates, as the
+    project's order convention requires), the per-element longest-
+    chain lengths ``B(x)`` = length of a longest chain from ``x`` to
+    the top anchor (an order invariant, computed in O(k log k) by
+    patience sorting on lightcone coordinates under the NON-strict
+    product order -- distinct events with ``u`` and ``v`` both
+    non-decreasing are null-inclusively causal -- with the
+    coordinates entering only as the machine representation of the
+    relation), and, among the typically many maximum chains, a greedy
+    **minimal-label** choice: the chain is built bottom-up, at each
+    step taking the candidate with ``B`` one less than the current
+    element's that is causally above the current element and has the
+    smallest bulk index. Ties therefore break by element LABELS,
+    never by coordinates: relabelling can change the representative,
+    but coordinate presentations of the same labelled order (e.g. a
+    spatial reflection) cannot -- asserted as a reflection-invariance
+    audit and regression. Events are assumed pairwise distinct (a.s.
+    for sprinklings).
     """
 
     events = np.asarray(events, dtype=float)
@@ -181,22 +188,25 @@ def harvest_order_only_chain_1p1(
     if not (dt > 0 and dt * dt - dx * dx >= -1e-12):
         raise ValueError("anchors must satisfy bottom -> top causally")
 
-    u = events[:, 0] + events[:, 1]
-    v = events[:, 0] - events[:, 1]
-    inside = (
-        (u > u[bottom]) & (v > v[bottom]) & (u < u[top]) & (v < v[top])
-    )
+    # null-inclusive interval membership, the causal-matrix predicate
+    dt_b = events[:, 0] - events[bottom, 0]
+    iv_b = dt_b * dt_b - (events[:, 1] - events[bottom, 1]) ** 2
+    dt_t = events[top, 0] - events[:, 0]
+    iv_t = dt_t * dt_t - (events[top, 1] - events[:, 1]) ** 2
+    inside = (dt_b > 0) & (iv_b >= -1e-12) & (dt_t > 0) & (iv_t >= -1e-12)
     inside[bottom] = False
     inside[top] = False
     candidates = np.flatnonzero(inside)
     if candidates.size == 0:
         return np.array([bottom, top], dtype=int)
 
+    u = events[:, 0] + events[:, 1]
+    v = events[:, 0] - events[:, 1]
     su = u[candidates]
     sv = v[candidates]
     # B[i] = longest-chain length among candidates STARTING at i: an
     # order invariant (ends-at lengths of the reversed order)
-    b_len = _strict_chain_lengths_ending_at(-su, -sv)
+    b_len = _chain_lengths_ending_at(-su, -sv)
     m = int(b_len.max())
 
     # greedy minimal-label reconstruction of one maximum chain: at each
@@ -208,7 +218,7 @@ def harvest_order_only_chain_1p1(
     for need in range(m, 0, -1):
         pool = np.flatnonzero(b_len == need)
         if cur >= 0:
-            pool = pool[(su[pool] > su[cur]) & (sv[pool] > sv[cur])]
+            pool = pool[(su[pool] >= su[cur]) & (sv[pool] >= sv[cur])]
         pick = int(pool[np.argmin(candidates[pool])])
         chain_local.append(pick)
         cur = pick
@@ -216,23 +226,25 @@ def harvest_order_only_chain_1p1(
     return np.concatenate(([bottom], interior, [top])).astype(int)
 
 
-def _strict_chain_lengths_ending_at(
+def _chain_lengths_ending_at(
     a: NDArray[np.float64], b: NDArray[np.float64]
 ) -> NDArray[np.int_]:
-    """Length of the longest strict product-order chain ending at each
-    element (``x < y`` iff ``a_x < a_y`` and ``b_x < b_y``), by patience
-    sorting in O(k log k). The returned lengths are order invariants of
-    the input point set; the sort is internal machinery only."""
+    """Length of the longest product-order chain ending at each element
+    (``x <= y`` iff ``a_x <= a_y`` and ``b_x <= b_y``; distinct points
+    with both coordinates non-decreasing are null-inclusively causal),
+    by patience sorting in O(k log k). The returned lengths are order
+    invariants of the input point set; the sort is internal machinery
+    only."""
 
-    order = np.lexsort((-b, a))  # a ascending, b descending: no same-a chains
+    order = np.lexsort((b, a))  # a ascending, then b ascending
     lengths = np.zeros(a.size, dtype=int)
     tails: list[float] = []
     for i in order:
         value = float(b[i])
         lo, hi = 0, len(tails)
-        while lo < hi:  # bisect_left: first tail >= value (strict chains)
+        while lo < hi:  # bisect_right: first tail > value (chains may tie)
             mid = (lo + hi) // 2
-            if tails[mid] < value:
+            if tails[mid] <= value:
                 lo = mid + 1
             else:
                 hi = mid

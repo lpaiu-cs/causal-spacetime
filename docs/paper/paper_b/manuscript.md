@@ -981,7 +981,7 @@ grid ran, directionally for the fluctuation mechanism: freed from the
 tube, the chain wanders, and KPZ-class wandering predicts a transverse
 RMS about the anchor line falling like rho^{-1/6} against a diffusive
 rho^{-1/4}. Measured: rate exponent +0.516 (discreteness scale, as for
-the tube arms); transverse RMS exponent **-0.172**, within 0.01 of the
+the tube arms); transverse RMS exponent **-0.168**, within 0.002 of the
 KPZ value -1/6 and clearly excluding -1/4; and RMSE exponent -0.155
 with the RMSE approximately equal to the transverse RMS at every
 density — the free harvested clock's error is wandering-dominated end

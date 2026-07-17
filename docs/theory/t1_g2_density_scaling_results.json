@@ -258,7 +258,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.09639169647709697
+          "transverse_rms": 0.09514631867485697
         },
         {
           "rho": 1000,
@@ -267,7 +267,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.08109660772356087
+          "transverse_rms": 0.08058047696281839
         },
         {
           "rho": 2000,
@@ -276,7 +276,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.07549045023711998
+          "transverse_rms": 0.07503960925385349
         },
         {
           "rho": 4000,
@@ -285,7 +285,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.06358024973474675
+          "transverse_rms": 0.06247414278998375
         },
         {
           "rho": 8000,
@@ -294,7 +294,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.05768916110676344
+          "transverse_rms": 0.05781185377626705
         },
         {
           "rho": 16000,
@@ -303,7 +303,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.05027990536588804
+          "transverse_rms": 0.05035350480341823
         },
         {
           "rho": 32000,
@@ -312,7 +312,7 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.047564897285503734
+          "transverse_rms": 0.047784238294815005
         }
       ],
       "lam_exponent": 0.5160522463856559,
@@ -325,7 +325,7 @@
       "E3_wandering": "KPZ-class wandering predicts transverse RMS ~ rho^{-1/6} and, where it dominates, an RMSE exponent shallower than the scaled tube's; diffusive predicts rho^{-1/4}"
     },
     "outcomes": {
-      "transverse_rms_exponent": -0.17229814155651382,
+      "transverse_rms_exponent": -0.16835008295566645,
       "nearest_wandering_candidate": "kpz_wandering_-1/6",
       "rmse_exponent_order_only": -0.15546497263990913,
       "rmse_exponent_scaled_tube": -0.31716097725622583,

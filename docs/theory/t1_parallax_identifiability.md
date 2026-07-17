@@ -581,8 +581,10 @@ and the law turns out to hold for exactly one of them
   **selection rule** then reads order data alone — an order-only
   causal set with the two anchors labelled reproduces the harvest
   exactly. This answers G2's order-only design question. Audited as
-  the tube arms are (chain property, anchor endpoints, interval
-  containment, determinism), plus an independent causal-matrix DP
+  the tube arms are (chain property, anchor endpoints, null-inclusive
+  interval containment, determinism, reflection invariance — ties
+  break by labels, so coordinate presentations of the same labelled
+  order harvest the same chain), plus an independent causal-matrix DP
   cross-check that the patience-sorting implementation returns an
   order-theoretic *longest* chain. Pre-stated expectations (frozen in
   the experiment header before the grid ran): discreteness-scale rate;
@@ -590,7 +592,7 @@ and the law turns out to hold for exactly one of them
   longest-chain wandering is KPZ-class the transverse RMS about the
   anchor line falls like `rho^{-1/6}` (diffusive alternative:
   `rho^{-1/4}`). Measured: rate exponent `+0.516`; **transverse RMS
-  exponent `-0.172`, within `0.01` of the KPZ wandering value `-1/6`
+  exponent `-0.168`, within `0.002` of the KPZ wandering value `-1/6`
   and clearly excluding `-1/4`**; RMSE exponent `-0.155` with RMSE
   approximately equal to the transverse RMS at *every* density — the
   free clock's error is wandering-dominated end to end.
@@ -608,7 +610,7 @@ now separate the mechanisms.
   nearer `-1/3`, still not sharply distinguished — the one item left
   open.
 - The **order-only chain** frees the wandering, and the wandering wins:
-  transverse RMS `~ rho^{-0.172}` (KPZ `-1/6`), RMSE locked to it.
+  transverse RMS `~ rho^{-0.168}` (KPZ `-1/6`), RMSE locked to it.
 - The **fixed tube**'s `-0.165` is thereby *explained as a mixture
   artifact*: its transverse RMS is flat in `rho` (a constant-width
   wiggle floor), so its shallow exponent comes from mixing a decaying
@@ -653,7 +655,7 @@ Any density-scaling claim must name its clock protocol.
   designated anchor events; selection reads order data alone once the
   anchors are labelled) is built, audited with a causal-matrix DP
   cross-check, and measured — rate exponent `+0.516`; transverse RMS
-  exponent `-0.172`, identifying the wandering as KPZ-class (`-1/6`,
+  exponent `-0.168`, identifying the wandering as KPZ-class (`-1/6`,
   with the diffusive `-1/4` excluded); RMSE exponent `-0.155`,
   wandering-dominated at every density. What remains non-order data in
   that protocol is the anchor *designation* alone. *Remaining open,
@@ -838,13 +840,15 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    `experiments/theory/t1_g2_density_scaling.py`; CI pins the reduced
    two-density grid).
 10. G2 order-only harvest (v0.6, 2026-07-17 KST): constructor audit
-    clean including the causal-matrix DP longest-chain cross-check
-    (5/5 scenes). Same grid and seeds as item 9, fourth arm: rate
+    clean including reflection invariance and the causal-matrix DP
+    longest-chain cross-check (5/5 scenes); the transverse RMS is
+    measured about the interpolated anchor segment (see Revision
+    note 11). Same grid and seeds as item 9, fourth arm: rate
     exponent `+0.516` (discreteness scale, expectation E1 met);
     RMSE exponent `-0.155`, distinctly shallower than the thinned
     `-0.463` (E2 met) and shallower than the scaled tube's `-0.317`
-    (directional E3 met); transverse RMS exponent `-0.172` — within
-    `0.01` of the KPZ wandering value `-1/6` and clearly excluding
+    (directional E3 met); transverse RMS exponent `-0.168` — within
+    `0.002` of the KPZ wandering value `-1/6` and clearly excluding
     the diffusive `-1/4` — with RMSE approximately equal to the
     transverse RMS at every density (wandering-dominated error). The
     pre-existing arms' rows are unchanged to the digit by the
@@ -996,7 +1000,7 @@ pinned in CI as exact (non-statistical) regressions.
     the directional KPZ test — with the tube constraint removed, the
     chain's transverse RMS about the anchor line should fall like
     `rho^{-1/6}` if longest-chain wandering is KPZ-class, `rho^{-1/4}`
-    if diffusive. Measured: `-0.172`, within `0.01` of `-1/6`,
+    if diffusive. Measured: `-0.168`, within `0.002` of `-1/6`,
     excluding `-1/4`; and the RMSE tracks the transverse RMS at every
     density, so the free harvested clock's error is
     wandering-dominated. This also *explains* the fixed tube's
@@ -1007,7 +1011,29 @@ pinned in CI as exact (non-statistical) regressions.
     Section 5 gains the third harvest bullet and the updated mechanism
     note; Section 6's G2 entry and obligation 8 record the new
     constructor, its audit, and the recorded (non-gating) expectation
-    outcomes.
+    outcomes. Review hardened the protocol in three ways, each now
+    pinned. (i) The choice AMONG maximum chains originally leaned on
+    the `(u, v)` sort — left-right embedding structure a labelled
+    order does not carry, so a spatial reflection could change the
+    representative; ties now break by element *labels* (greedy
+    minimal-label reconstruction over the order-invariant lengths
+    `B(x)`), with reflection- and boost-invariance asserted in the
+    audit and tests. (ii) Interval membership originally used strict
+    lightcone inequalities, silently dropping events exactly on the
+    anchors' null boundary; membership now applies the null-inclusive
+    causal-matrix predicate — the load-bearing convention of Section 2
+    — pinned by an exact null-ray example. (iii) The transverse RMS
+    was originally pooled about `x = x0`, contaminating the wandering
+    observable with anchor placement and endpoint slope; it is now
+    measured about the actual anchor segment (interpolated per tick).
+    Numerically: (i) changed the realized representatives, moving the
+    measured numbers slightly (transverse `-0.176 -> -0.172`, RMSE
+    `-0.162 -> -0.155`); (iii) purified the wandering observable,
+    moving the transverse exponent to `-0.168` — *closer* to the KPZ
+    value, as removing a faster-decaying additive contamination
+    should; (ii) is a semantics fix invisible on generic sprinkled
+    data; and the chain length is a tie-invariant, so the rate
+    exponent is unchanged to the digit (`+0.516`) throughout.
 
 ## 8. Relation to the frozen program
 

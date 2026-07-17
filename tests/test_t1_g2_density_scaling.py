@@ -144,6 +144,22 @@ def test_order_only_anchor_validation_rejects_non_causal_pairs():
     assert list(idx) == [0, 2]
 
 
+def test_order_only_harvest_includes_null_boundary_elements():
+    """The project's causal order is null-inclusive, and so is the
+    harvest's interval membership: an event exactly on the anchors'
+    null boundary is a valid chain element (review example -- anchors
+    (0,0) and (1,1), intermediate (0.5, 0.5) on the shared null ray
+    must yield the length-three chain, not the bare anchor pair)."""
+
+    events = np.array([[0.0, 0.0], [0.5, 0.5], [1.0, 1.0]])
+    assert list(harvest_order_only_chain_1p1(events, 0, 2)) == [0, 1, 2]
+
+    # mixed case: the null ray beats a timelike interior detour that
+    # cannot reach the top anchor causally
+    events = np.array([[0.0, 0.0], [0.5, 0.5], [0.6, 0.2], [1.0, 1.0]])
+    assert list(harvest_order_only_chain_1p1(events, 0, 3)) == [0, 1, 3]
+
+
 def test_order_only_harvest_is_invariant_under_order_preserving_maps():
     """The review's counterexample class, pinned: a spatial reflection
     (and a boost) preserves the labelled causal order and the anchors,
