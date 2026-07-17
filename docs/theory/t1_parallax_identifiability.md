@@ -590,8 +590,8 @@ and the law turns out to hold for exactly one of them
   longest-chain wandering is KPZ-class the transverse RMS about the
   anchor line falls like `rho^{-1/6}` (diffusive alternative:
   `rho^{-1/4}`). Measured: rate exponent `+0.516`; **transverse RMS
-  exponent `-0.176`, within `0.01` of the KPZ wandering value `-1/6`
-  and clearly excluding `-1/4`**; RMSE exponent `-0.162` with RMSE
+  exponent `-0.172`, within `0.01` of the KPZ wandering value `-1/6`
+  and clearly excluding `-1/4`**; RMSE exponent `-0.155` with RMSE
   approximately equal to the transverse RMS at *every* density — the
   free clock's error is wandering-dominated end to end.
   `[MEASURED, for the order-only protocol]`
@@ -608,11 +608,11 @@ now separate the mechanisms.
   nearer `-1/3`, still not sharply distinguished — the one item left
   open.
 - The **order-only chain** frees the wandering, and the wandering wins:
-  transverse RMS `~ rho^{-0.176}` (KPZ `-1/6`), RMSE locked to it.
+  transverse RMS `~ rho^{-0.172}` (KPZ `-1/6`), RMSE locked to it.
 - The **fixed tube**'s `-0.165` is thereby *explained as a mixture
   artifact*: its transverse RMS is flat in `rho` (a constant-width
   wiggle floor), so its shallow exponent comes from mixing a decaying
-  count term with a floor — numerically near the order-only `-0.162`,
+  count term with a floor — numerically near the order-only `-0.155`,
   but by a different mechanism entirely. Two nearly equal exponents,
   two distinct origins: exponents alone do not identify mechanisms.
 
@@ -653,8 +653,8 @@ Any density-scaling claim must name its clock protocol.
   designated anchor events; selection reads order data alone once the
   anchors are labelled) is built, audited with a causal-matrix DP
   cross-check, and measured — rate exponent `+0.516`; transverse RMS
-  exponent `-0.176`, identifying the wandering as KPZ-class (`-1/6`,
-  with the diffusive `-1/4` excluded); RMSE exponent `-0.162`,
+  exponent `-0.172`, identifying the wandering as KPZ-class (`-1/6`,
+  with the diffusive `-1/4` excluded); RMSE exponent `-0.155`,
   wandering-dominated at every density. What remains non-order data in
   that protocol is the anchor *designation* alone. *Remaining open,
   one item:* the harvested chain's **count**-fluctuation class
@@ -841,9 +841,9 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
     clean including the causal-matrix DP longest-chain cross-check
     (5/5 scenes). Same grid and seeds as item 9, fourth arm: rate
     exponent `+0.516` (discreteness scale, expectation E1 met);
-    RMSE exponent `-0.162`, distinctly shallower than the thinned
+    RMSE exponent `-0.155`, distinctly shallower than the thinned
     `-0.463` (E2 met) and shallower than the scaled tube's `-0.317`
-    (directional E3 met); transverse RMS exponent `-0.176` — within
+    (directional E3 met); transverse RMS exponent `-0.172` — within
     `0.01` of the KPZ wandering value `-1/6` and clearly excluding
     the diffusive `-1/4` — with RMSE approximately equal to the
     transverse RMS at every density (wandering-dominated error). The
@@ -992,11 +992,11 @@ pinned in CI as exact (non-statistical) regressions.
     DP so the output is an order-theoretic longest chain, not merely
     some chain. Expectations were stated in the experiment header
     before the grid ran: discreteness-scale rate (met, `+0.516`);
-    error distinctly shallower than `rho^{-1/2}` (met, `-0.162`); and
+    error distinctly shallower than `rho^{-1/2}` (met, `-0.155`); and
     the directional KPZ test — with the tube constraint removed, the
     chain's transverse RMS about the anchor line should fall like
     `rho^{-1/6}` if longest-chain wandering is KPZ-class, `rho^{-1/4}`
-    if diffusive. Measured: `-0.176`, within `0.01` of `-1/6`,
+    if diffusive. Measured: `-0.172`, within `0.01` of `-1/6`,
     excluding `-1/4`; and the RMSE tracks the transverse RMS at every
     density, so the free harvested clock's error is
     wandering-dominated. This also *explains* the fixed tube's

@@ -153,17 +153,22 @@ def harvest_order_only_chain_1p1(
     itself (made once by the caller, e.g. via ``nearest_event_index``)
     and nothing else.
 
-    Implementation notes. In the 1+1D diamond the (generic) causal
-    order is the strict product order on lightcone coordinates
-    ``(u, v) = (t + x, t - x)``, so a longest chain is a longest
-    strictly-increasing-in-``v`` subsequence of the interior candidates
-    sorted by ``(u ascending, v descending)`` -- computed by patience
-    sorting in O(k log k). The coordinates enter only as an algorithm
-    for evaluating the order relation; the OUTPUT depends on the order
-    (plus the deterministic tie rule of that sort), so the harvest is a
-    pure function of its inputs. Among the typically many longest
-    chains this returns one canonical representative; that residual
-    choice is a tie-break, not extra geometric data.
+    Implementation notes. Every ingredient of the selection is a
+    function of the labelled order alone: interval membership (causal
+    comparability with the anchors), the per-element longest-chain
+    lengths ``B(x)`` = length of a longest chain from ``x`` to the top
+    anchor (an order invariant, computed in O(k log k) by patience
+    sorting on lightcone coordinates -- the coordinates enter only as
+    the machine representation of the order relation, and the computed
+    lengths do not depend on that representation), and, among the
+    typically many maximum chains, a greedy **minimal-label** choice:
+    the chain is built bottom-up, at each step taking the candidate
+    with ``B`` one less than the current element's that is above the
+    current element and has the smallest bulk index. Ties therefore
+    break by element LABELS, never by coordinates: relabelling can
+    change the representative, but coordinate presentations of the
+    same labelled order (e.g. a spatial reflection) cannot -- asserted
+    as a reflection-invariance audit and regression.
     """
 
     events = np.asarray(events, dtype=float)
@@ -187,35 +192,56 @@ def harvest_order_only_chain_1p1(
     if candidates.size == 0:
         return np.array([bottom, top], dtype=int)
 
-    sort = candidates[np.lexsort((-v[candidates], u[candidates]))]
-    vs = v[sort]
-    n = sort.size
-    parent = np.full(n, -1, dtype=int)
-    tails_v: list[float] = []
-    tails_pos: list[int] = []
-    for i in range(n):
-        lo, hi = 0, len(tails_v)
-        while lo < hi:  # bisect_left: first tail >= vs[i] (strict LIS)
+    su = u[candidates]
+    sv = v[candidates]
+    # B[i] = longest-chain length among candidates STARTING at i: an
+    # order invariant (ends-at lengths of the reversed order)
+    b_len = _strict_chain_lengths_ending_at(-su, -sv)
+    m = int(b_len.max())
+
+    # greedy minimal-label reconstruction of one maximum chain: at each
+    # step the feasible pool is nonempty by the exchange argument
+    # (any successor of the current element on a maximum chain has B
+    # exactly one less), and the pick reads labels only
+    chain_local: list[int] = []
+    cur = -1
+    for need in range(m, 0, -1):
+        pool = np.flatnonzero(b_len == need)
+        if cur >= 0:
+            pool = pool[(su[pool] > su[cur]) & (sv[pool] > sv[cur])]
+        pick = int(pool[np.argmin(candidates[pool])])
+        chain_local.append(pick)
+        cur = pick
+    interior = candidates[np.array(chain_local, dtype=int)]
+    return np.concatenate(([bottom], interior, [top])).astype(int)
+
+
+def _strict_chain_lengths_ending_at(
+    a: NDArray[np.float64], b: NDArray[np.float64]
+) -> NDArray[np.int_]:
+    """Length of the longest strict product-order chain ending at each
+    element (``x < y`` iff ``a_x < a_y`` and ``b_x < b_y``), by patience
+    sorting in O(k log k). The returned lengths are order invariants of
+    the input point set; the sort is internal machinery only."""
+
+    order = np.lexsort((-b, a))  # a ascending, b descending: no same-a chains
+    lengths = np.zeros(a.size, dtype=int)
+    tails: list[float] = []
+    for i in order:
+        value = float(b[i])
+        lo, hi = 0, len(tails)
+        while lo < hi:  # bisect_left: first tail >= value (strict chains)
             mid = (lo + hi) // 2
-            if tails_v[mid] < vs[i]:
+            if tails[mid] < value:
                 lo = mid + 1
             else:
                 hi = mid
-        if lo == len(tails_v):
-            tails_v.append(float(vs[i]))
-            tails_pos.append(i)
+        if lo == len(tails):
+            tails.append(value)
         else:
-            tails_v[lo] = float(vs[i])
-            tails_pos[lo] = i
-        parent[i] = tails_pos[lo - 1] if lo > 0 else -1
-
-    chain_local: list[int] = []
-    j = tails_pos[-1]
-    while j >= 0:
-        chain_local.append(j)
-        j = int(parent[j])
-    interior = sort[np.array(chain_local[::-1], dtype=int)]
-    return np.concatenate(([bottom], interior, [top])).astype(int)
+            tails[lo] = value
+        lengths[i] = lo + 1
+    return lengths
 
 
 def chain_is_causal(chain_events: NDArray[np.float64]) -> bool:

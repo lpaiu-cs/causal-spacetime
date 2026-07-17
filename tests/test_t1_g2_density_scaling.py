@@ -144,6 +144,36 @@ def test_order_only_anchor_validation_rejects_non_causal_pairs():
     assert list(idx) == [0, 2]
 
 
+def test_order_only_harvest_is_invariant_under_order_preserving_maps():
+    """The review's counterexample class, pinned: a spatial reflection
+    (and a boost) preserves the labelled causal order and the anchors,
+    so the harvested chain -- whose tie-break among maximum chains
+    reads element labels, never coordinates -- must be identical
+    index-by-index across these coordinate presentations."""
+
+    for seed in (7, 21):
+        bulk = sprinkle_1p1_causal_diamond(2000, T=2.0, seed=seed)
+        bottom = nearest_event_index(bulk, -0.6, -0.3)
+        top = nearest_event_index(bulk, 0.6, -0.3)
+        idx = harvest_order_only_chain_1p1(bulk, bottom, top)
+
+        reflected = bulk.copy()
+        reflected[:, 1] = -reflected[:, 1]
+        assert np.array_equal(
+            idx, harvest_order_only_chain_1p1(reflected, bottom, top)
+        )
+
+        k = 1.7  # boost: (u, v) -> (k u, v / k) preserves the order
+        u = bulk[:, 0] + bulk[:, 1]
+        v = bulk[:, 0] - bulk[:, 1]
+        boosted = np.column_stack(
+            [(k * u + v / k) / 2.0, (k * u - v / k) / 2.0]
+        )
+        assert np.array_equal(
+            idx, harvest_order_only_chain_1p1(boosted, bottom, top)
+        )
+
+
 def test_order_only_audit_passes_with_dp_cross_validation():
     """The audit includes an independent causal-matrix DP length check:
     patience sorting must return an order-theoretic LONGEST chain."""

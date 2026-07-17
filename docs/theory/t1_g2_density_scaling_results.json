@@ -36,6 +36,7 @@
     "interval_contained": true,
     "tick_times_strictly_increasing": true,
     "harvest_deterministic": true,
+    "reflection_invariant": true,
     "dp_length_checks": 5,
     "dp_lengths_match": true,
     "passed": true
@@ -253,69 +254,69 @@
         {
           "rho": 500,
           "lam_mean": 28.48838995002527,
-          "rmse": 0.10197956883580966,
+          "rmse": 0.09328010134557782,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.1056123790380841
+          "transverse_rms": 0.09639169647709697
         },
         {
           "rho": 1000,
           "lam_mean": 41.95613119550548,
-          "rmse": 0.07500957810179494,
+          "rmse": 0.07863899690077496,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.07948254773574571
+          "transverse_rms": 0.08109660772356087
         },
         {
           "rho": 2000,
           "lam_mean": 59.33668613303713,
-          "rmse": 0.07069669414187565,
+          "rmse": 0.06953018683160266,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.07633096421702042
+          "transverse_rms": 0.07549045023711998
         },
         {
           "rho": 4000,
           "lam_mean": 84.78399059470868,
-          "rmse": 0.06411467412082121,
+          "rmse": 0.0636571811227234,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.065641187922077
+          "transverse_rms": 0.06358024973474675
         },
         {
           "rho": 8000,
           "lam_mean": 120.46254554086119,
-          "rmse": 0.056636510762432604,
+          "rmse": 0.055714561138611056,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.05974874357106322
+          "transverse_rms": 0.05768916110676344
         },
         {
           "rho": 16000,
           "lam_mean": 172.28222375798987,
-          "rmse": 0.05481639441080047,
+          "rmse": 0.052252058808345304,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.05428514636814348
+          "transverse_rms": 0.05027990536588804
         },
         {
           "rho": 32000,
           "lam_mean": 247.23059713199115,
-          "rmse": 0.04746955451574459,
+          "rmse": 0.04824109478356233,
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.04725428355186881
+          "transverse_rms": 0.047564897285503734
         }
       ],
       "lam_exponent": 0.5160522463856559,
-      "rmse_exponent": -0.16194508327141202
+      "rmse_exponent": -0.15546497263990913
     }
   },
   "order_only_recorded_expectations": {
@@ -324,9 +325,9 @@
       "E3_wandering": "KPZ-class wandering predicts transverse RMS ~ rho^{-1/6} and, where it dominates, an RMSE exponent shallower than the scaled tube's; diffusive predicts rho^{-1/4}"
     },
     "outcomes": {
-      "transverse_rms_exponent": -0.17622525207539588,
+      "transverse_rms_exponent": -0.17229814155651382,
       "nearest_wandering_candidate": "kpz_wandering_-1/6",
-      "rmse_exponent_order_only": -0.16194508327141202,
+      "rmse_exponent_order_only": -0.15546497263990913,
       "rmse_exponent_scaled_tube": -0.31716097725622583,
       "order_only_shallower_than_scaled_tube": true
     }

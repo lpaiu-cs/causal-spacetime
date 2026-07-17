@@ -138,11 +138,14 @@ def audit_harvested_chains(seed: int = 11, scenes: int = 5) -> dict:
 
 def audit_order_only_chains(seed: int = 13, scenes: int = 5) -> dict:
     """Constructor audit for the order-only harvest: chain property,
-    anchor endpoints, interval containment, determinism, and -- at low
-    density, where the matrix is affordable -- longest-chain LENGTH
-    equality against an independent causal-matrix DP (the patience-
-    sorting implementation must reproduce the order-theoretic optimum,
-    not just some chain)."""
+    anchor endpoints, interval containment, determinism, REFLECTION
+    invariance (a spatial reflection preserves the labelled order and
+    must preserve the harvested chain exactly -- the tie-break reads
+    labels, not coordinates), and -- at low density, where the matrix
+    is affordable -- longest-chain LENGTH equality against an
+    independent causal-matrix DP (the patience-sorting implementation
+    must reproduce the order-theoretic optimum, not just some
+    chain)."""
 
     rng = np.random.default_rng(seed)
     all_causal = True
@@ -150,6 +153,7 @@ def audit_order_only_chains(seed: int = 13, scenes: int = 5) -> dict:
     contained = True
     all_simple = True
     deterministic = True
+    reflection_invariant = True
     dp_lengths_match = True
     dp_checks = 0
     for _ in range(scenes):
@@ -163,6 +167,12 @@ def audit_order_only_chains(seed: int = 13, scenes: int = 5) -> dict:
         idx = harvest_order_only_chain_1p1(bulk, bottom, top)
         idx_again = harvest_order_only_chain_1p1(bulk, bottom, top)
         deterministic = deterministic and np.array_equal(idx, idx_again)
+        reflected = bulk.copy()
+        reflected[:, 1] = -reflected[:, 1]
+        idx_reflected = harvest_order_only_chain_1p1(reflected, bottom, top)
+        reflection_invariant = reflection_invariant and np.array_equal(
+            idx, idx_reflected
+        )
         chain = bulk[idx]
         all_causal = all_causal and chain_is_causal(chain)
         endpoints_ok = endpoints_ok and bool(
@@ -194,11 +204,12 @@ def audit_order_only_chains(seed: int = 13, scenes: int = 5) -> dict:
         "interval_contained": contained,
         "tick_times_strictly_increasing": all_simple,
         "harvest_deterministic": deterministic,
+        "reflection_invariant": reflection_invariant,
         "dp_length_checks": dp_checks,
         "dp_lengths_match": dp_lengths_match,
         "passed": bool(
             all_causal and endpoints_ok and contained and all_simple
-            and deterministic and dp_lengths_match
+            and deterministic and reflection_invariant and dp_lengths_match
         ),
     }
 
