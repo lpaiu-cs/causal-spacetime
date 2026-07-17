@@ -1,6 +1,6 @@
 """Density-coupled tick protocols (T1 Section 5 / gap G2 instrumentation).
 
-Two constructors whose tick statistics are coupled to the sprinkling
+Three constructors whose tick statistics are coupled to the sprinkling
 density, unlike ``make_stationary_observer_chain_1p1`` (whose grid never
 sees ``rho``):
 
@@ -14,14 +14,19 @@ sees ``rho``):
   tube SELECTION uses embedded coordinates (``|x - x0|`` and a time
   window), so this is deliberately NOT called an order-intrinsic clock:
   an order-only causal set could not reproduce the harvest without extra
-  geometric data, and a genuinely order-only selection rule is an open
-  design question (T1 Section 6, G2). The chain's rate and fluctuation
-  statistics are still properties of the sprinkling, not choices:
-  measured, a maximal chain's rate grows like ``sqrt(rho)`` (the
-  discreteness scale), NOT like ``rho``, so the two protocols scale
-  differently and any density-scaling claim must name its protocol.
+  geometric data. The chain's rate and fluctuation statistics are still
+  properties of the sprinkling, not choices: measured, a maximal chain's
+  rate grows like ``sqrt(rho)`` (the discreteness scale), NOT like
+  ``rho``, so the protocols scale differently and any density-scaling
+  claim must name its protocol.
+- ``harvest_order_only_chain_1p1``: a longest causal chain between two
+  DESIGNATED anchor events — the answer to the order-only design
+  question the tube protocol left open (T1 Section 6, G2). Given the
+  order and the two anchor labels, the selection reads order data
+  alone; the chain is free to wander transversally, and that wandering
+  is part of the protocol's physics, not an error to be corrected.
 
-Both are theory-track instrumentation: no frozen gate consumes them.
+All are theory-track instrumentation: no frozen gate consumes them.
 """
 
 from __future__ import annotations
@@ -107,6 +112,110 @@ def harvest_chain_from_sprinkling_1p1(
         chain.append(j)
         j = int(parent[j])
     return order[np.array(chain[::-1], dtype=int)]
+
+
+def nearest_event_index(
+    events: NDArray[np.float64],
+    t: float,
+    x: float,
+) -> int:
+    """Index of the sprinkled event nearest (Euclidean in ``(t, x)``) to a
+    point.
+
+    A SETUP helper for designating harvest anchors: the designation is
+    coordinate-assisted by intent (like placing observers), and is not
+    part of any order-only selection rule.
+    """
+
+    events = np.asarray(events, dtype=float)
+    if events.shape[0] == 0:
+        raise ValueError("no events to select an anchor from")
+    d2 = (events[:, 0] - t) ** 2 + (events[:, 1] - x) ** 2
+    return int(np.argmin(d2))
+
+
+def harvest_order_only_chain_1p1(
+    events: NDArray[np.float64],
+    bottom_index: int,
+    top_index: int,
+) -> NDArray[np.int_]:
+    """Return bulk indices of one longest causal chain between two
+    designated anchor events -- the order-only harvest of T1's G2.
+
+    Given the causal order and TWO DESIGNATED ELEMENTS (the anchors),
+    the selection rule reads order data alone: candidates are the
+    elements causally between the anchors, and the harvest is a longest
+    chain from the bottom anchor to the top anchor. An order-only
+    causal set with the two anchors labelled can reproduce this harvest
+    exactly -- the upgrade over ``harvest_chain_from_sprinkling_1p1``,
+    whose tube membership cannot be expressed without embedded
+    coordinates. What remains non-order data is the anchor DESIGNATION
+    itself (made once by the caller, e.g. via ``nearest_event_index``)
+    and nothing else.
+
+    Implementation notes. In the 1+1D diamond the (generic) causal
+    order is the strict product order on lightcone coordinates
+    ``(u, v) = (t + x, t - x)``, so a longest chain is a longest
+    strictly-increasing-in-``v`` subsequence of the interior candidates
+    sorted by ``(u ascending, v descending)`` -- computed by patience
+    sorting in O(k log k). The coordinates enter only as an algorithm
+    for evaluating the order relation; the OUTPUT depends on the order
+    (plus the deterministic tie rule of that sort), so the harvest is a
+    pure function of its inputs. Among the typically many longest
+    chains this returns one canonical representative; that residual
+    choice is a tie-break, not extra geometric data.
+    """
+
+    events = np.asarray(events, dtype=float)
+    bottom = int(bottom_index)
+    top = int(top_index)
+    if bottom == top:
+        raise ValueError("anchors must be distinct events")
+    dt = events[top, 0] - events[bottom, 0]
+    dx = events[top, 1] - events[bottom, 1]
+    if not (dt > 0 and dt * dt - dx * dx >= -1e-12):
+        raise ValueError("anchors must satisfy bottom -> top causally")
+
+    u = events[:, 0] + events[:, 1]
+    v = events[:, 0] - events[:, 1]
+    inside = (
+        (u > u[bottom]) & (v > v[bottom]) & (u < u[top]) & (v < v[top])
+    )
+    inside[bottom] = False
+    inside[top] = False
+    candidates = np.flatnonzero(inside)
+    if candidates.size == 0:
+        return np.array([bottom, top], dtype=int)
+
+    sort = candidates[np.lexsort((-v[candidates], u[candidates]))]
+    vs = v[sort]
+    n = sort.size
+    parent = np.full(n, -1, dtype=int)
+    tails_v: list[float] = []
+    tails_pos: list[int] = []
+    for i in range(n):
+        lo, hi = 0, len(tails_v)
+        while lo < hi:  # bisect_left: first tail >= vs[i] (strict LIS)
+            mid = (lo + hi) // 2
+            if tails_v[mid] < vs[i]:
+                lo = mid + 1
+            else:
+                hi = mid
+        if lo == len(tails_v):
+            tails_v.append(float(vs[i]))
+            tails_pos.append(i)
+        else:
+            tails_v[lo] = float(vs[i])
+            tails_pos[lo] = i
+        parent[i] = tails_pos[lo - 1] if lo > 0 else -1
+
+    chain_local: list[int] = []
+    j = tails_pos[-1]
+    while j >= 0:
+        chain_local.append(j)
+        j = int(parent[j])
+    interior = sort[np.array(chain_local[::-1], dtype=int)]
+    return np.concatenate(([bottom], interior, [top])).astype(int)
 
 
 def chain_is_causal(chain_events: NDArray[np.float64]) -> bool:
