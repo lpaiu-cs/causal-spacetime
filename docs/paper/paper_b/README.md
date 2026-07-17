@@ -4,7 +4,7 @@ Working title: **A validated discriminator for latent geometry in discrete
 causal order: dilution response and survival in an action-weighted
 ensemble.**
 
-Status: DRAFT v0.6 (2026-07-16). Empirical prose grounded entirely in the
+Status: DRAFT v0.6 (2026-07-17). Empirical prose grounded entirely in the
 frozen preregistration artifacts under `docs/prereg/frozen/` (PC-V1, P1,
 P2/P2-v2, P3, P4, P5, P6a/P6b); the Section 8 theory results are analysis-only and
 grounded in the committed, CI-pinned theory artifacts (`docs/theory/`,
@@ -74,15 +74,19 @@ See `manuscript.md` Section 10 (claim boundary).
   tables; reproducibility in Section 12). Inline citations are pandoc keys
   matching the bibliography.
 - `claim_boundary.md` — crisp claim/non-claim checklist (complements Section 10).
-- `figures/make_figures.py` — regenerates every figure from the frozen CSVs
-  (and, for Fig 5, from `confound_data.csv`).
-- `figures/compute_confound_data.py` — recomputes the Fig 5 confound data (raw
+- `figures/make_figures.py` — regenerates every figure from committed
+  artifacts: the frozen CSVs and summaries (Figs 1-5, 7; Fig 7 also reads
+  `confound_data.csv`) and the two tracked theory tables (Fig 6). It
+  asserts the frozen registry AUCs, the order-only AUC, the zero band
+  violations, and the slope window at read time.
+- `figures/compute_confound_data.py` — recomputes the Fig 7 confound data (raw
   vs parallax dissimilarity on the Stage C seeds); the parallax column
   reproduces the frozen Stage C registry exactly.
 - `figures/*.png` — generated figures (committed for convenience). Fig 1
   discriminator separation, Fig 2 dose-response, Fig 3 2+1D dimension
-  selection, Fig 4 emergence chain (P3 | P4 | P5), Fig 5 shared-scalar
-  confound.
+  selection, Fig 4 P6b diagnostics head-to-head (ROC + H-LAG safety),
+  Fig 5 emergence chain (P3 | P4 | P5), Fig 6 theory (quantization band,
+  1/K law, density scaling by protocol), Fig 7 shared-scalar confound.
 - `citations/references.bib` — verified bibliography (every entry confirmed
   against an authoritative source; no fabricated field).
 - `citations/citation_verification_report.md` — per-entry source + corrections.
