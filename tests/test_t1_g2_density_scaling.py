@@ -160,6 +160,22 @@ def test_order_only_harvest_includes_null_boundary_elements():
     assert list(harvest_order_only_chain_1p1(events, 0, 3)) == [0, 1, 3]
 
 
+def test_order_only_harvest_respects_the_causal_tolerance():
+    """Near-null pairs inside the causal-matrix 1e-12 tolerance are
+    chain edges (review example): the edge (0.5, 0.5000000000001) ->
+    (1, 0) is tolerantly causal though the exact lightcone product
+    order rejects it, so the harvest must detect the sliver and return
+    the four-element chain via the tolerant fallback."""
+
+    events = np.array([
+        [0.0, 0.0],
+        [0.5, 0.5000000000001],
+        [1.0, 0.0],
+        [2.0, 0.0],
+    ])
+    assert list(harvest_order_only_chain_1p1(events, 0, 3)) == [0, 1, 2, 3]
+
+
 def test_order_only_harvest_is_invariant_under_order_preserving_maps():
     """The review's counterexample class, pinned: a spatial reflection
     (and a boost) preserves the labelled causal order and the anchors,
