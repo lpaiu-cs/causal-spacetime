@@ -120,6 +120,10 @@ or by a proved, CI-pinned statement in
 - Theory claims are 1+1D and instrument-relative. The Poisson-clock
   concentration statements describe an idealization no frozen instrument
   realizes; no inverse-root density law is claimed for harvested-chain
-  clocks; the harvested protocol's tube selection reads embedded
-  coordinates (coordinate-tube, not order-intrinsic), and its fluctuation
-  class is an open question, not a result.
+  clocks. The tube protocol's selection reads embedded coordinates
+  (coordinate-tube, not order-intrinsic); the order-only harvest reads
+  order data alone given two designated anchor events, but the anchor
+  designation is coordinate-assisted setup, and its KPZ-class wandering
+  identification is descriptive theory-track characterization, not a
+  frozen claim. The harvested chain's count-fluctuation class is an open
+  question, not a result.

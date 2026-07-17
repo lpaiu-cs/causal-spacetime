@@ -1,11 +1,13 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.5 — statements and proof programs; nothing frozen**
-(v0.5 2026-07-16 KST: G2 instrumented, `rho^{-1/2}` shown
-protocol-dependent; v0.4 2026-07-16 KST: G3 closed, Theorem 2 upgraded
-to `[PROVED]`; v0.3 2026-07-16 KST: G1 closed, Theorem 1 upgraded to
-`[PROVED]`; v0.2 2026-07-16 KST / 2026-07-15 UTC; v0.1 2026-07-15 —
-revised after PR reviews, see Revision notes).
+Status: **THEORY DRAFT v0.6 — statements and proof programs; nothing frozen**
+(v0.6 2026-07-17 KST: G2's order-only harvest designed and measured,
+wandering identified as KPZ-class; v0.5 2026-07-16 KST: G2
+instrumented, `rho^{-1/2}` shown protocol-dependent; v0.4 2026-07-16
+KST: G3 closed, Theorem 2 upgraded to `[PROVED]`; v0.3 2026-07-16 KST:
+G1 closed, Theorem 1 upgraded to `[PROVED]`; v0.2 2026-07-16 KST /
+2026-07-15 UTC; v0.1 2026-07-15 — revised after PR reviews, see
+Revision notes).
 
 Each claim below carries a proof-status tag:
 
@@ -562,7 +564,7 @@ and the law turns out to hold for exactly one of them
 - **Coordinate-tube harvested chain** (longest causal chain of
   *sprinkled events* in a spatial tube): its ticks are order elements,
   but the tube *selection* uses embedded coordinates (`|x - x0|` and a
-  time window), so this is **not yet an order-intrinsic clock** — an
+  time window), so this is **not an order-intrinsic clock** — an
   order-only causal set could not reproduce the harvest without extra
   geometric data. Its rate is a measurement, not a choice, and it
   comes out `lambda ~ rho^{0.49..0.55}` — the discreteness scale
@@ -571,15 +573,50 @@ and the law turns out to hold for exactly one of them
   discreteness-scaled tube (`w ~ 3/sqrt(rho)`), flattening to `-0.165`
   with a fixed-width tube (whose position wiggle adds an error floor).
   `[MEASURED, for the coordinate-tube protocol]`
+- **Order-only harvested chain** (v0.6,
+  `harvest_order_only_chain_1p1`): a longest causal chain between two
+  *designated anchor events* (the sprinkled events nearest the window
+  endpoints on the observer line). The anchor **designation** is
+  coordinate-assisted setup, made once, like placing observers; the
+  **selection rule** then reads order data alone — an order-only
+  causal set with the two anchors labelled reproduces the harvest
+  exactly. This answers G2's order-only design question. Audited as
+  the tube arms are (chain property, anchor endpoints, interval
+  containment, determinism), plus an independent causal-matrix DP
+  cross-check that the patience-sorting implementation returns an
+  order-theoretic *longest* chain. Pre-stated expectations (frozen in
+  the experiment header before the grid ran): discreteness-scale rate;
+  error distinctly shallower than `rho^{-1/2}`; and, directionally, if
+  longest-chain wandering is KPZ-class the transverse RMS about the
+  anchor line falls like `rho^{-1/6}` (diffusive alternative:
+  `rho^{-1/4}`). Measured: rate exponent `+0.516`; **transverse RMS
+  exponent `-0.176`, within `0.01` of the KPZ wandering value `-1/6`
+  and clearly excluding `-1/4`**; RMSE exponent `-0.162` with RMSE
+  approximately equal to the transverse RMS at *every* density — the
+  free clock's error is wandering-dominated end to end.
+  `[MEASURED, for the order-only protocol]`
 
-Mechanism note, open: with `lambda ~ sqrt(rho)`, a Poisson-rate guess
+Mechanism note (updated at v0.6; the count class remains open): with
+`lambda ~ sqrt(rho)`, a Poisson-rate guess for the *count* fluctuations
 gives exponent `-1/4`; a maximal path is *more regular* than Poisson
-(KPZ-like concentration would suggest `-1/3`). The measured `-0.32`
-sits in that band, nearer `-1/3`, but distinguishing the fluctuation
-class needs a dedicated study — recorded in G2 as an open question,
-alongside the design of a genuinely order-only harvest (tube selection
-from order-theoretic data alone). Any density-scaling claim must name
-its protocol.
+(KPZ-like concentration would suggest `-1/3`). The three harvest arms
+now separate the mechanisms.
+
+- The **scaled tube** suppresses wandering by construction (its
+  transverse RMS falls like the tube width, `~ rho^{-1/2}`), so its
+  `-0.317` isolates the *count* class: in the `[-1/4, -1/3]` band,
+  nearer `-1/3`, still not sharply distinguished — the one item left
+  open.
+- The **order-only chain** frees the wandering, and the wandering wins:
+  transverse RMS `~ rho^{-0.176}` (KPZ `-1/6`), RMSE locked to it.
+- The **fixed tube**'s `-0.165` is thereby *explained as a mixture
+  artifact*: its transverse RMS is flat in `rho` (a constant-width
+  wiggle floor), so its shallow exponent comes from mixing a decaying
+  count term with a floor — numerically near the order-only `-0.162`,
+  but by a different mechanism entirely. Two nearly equal exponents,
+  two distinct origins: exponents alone do not identify mechanisms.
+
+Any density-scaling claim must name its clock protocol.
 
 ## 6. Known gaps (the honest list)
 
@@ -595,12 +632,13 @@ its protocol.
   (Lemma 4f counterexample), and Theorem 1's positive-affine clause
   belongs to the labeled flanking decoder.
 - **G2 — the stochastic clock model has no instrument.**
-  **INSTRUMENTED (v0.5); fluctuation class open.** (History: v0.1
-  wrongly claimed the code harvests paths from the sprinkling; v0.2
-  corrected that the frozen instrument is Model D through and through —
+  **INSTRUMENTED (v0.5); order-only harvest designed and measured
+  (v0.6); count-fluctuation class open.** (History: v0.1 wrongly
+  claimed the code harvests paths from the sprinkling; v0.2 corrected
+  that the frozen instrument is Model D through and through —
   `build_positive_control_scene()` appends exact `np.linspace`
   worldlines with `ticks_per_chain = 96` fixed regardless of
-  `n_events`.) v0.5 builds the missing protocols as theory-track
+  `n_events`.) v0.5 built the missing protocols as theory-track
   instrumentation (`density_coupled_clocks.py`, audited: chain
   property, containment, simplicity, determinism): a Poisson-thinned
   clock realizing Model P with `lambda = rho * ell`, and a
@@ -610,15 +648,21 @@ its protocol.
   harvested chains couple at the discreteness scale
   (`lambda ~ sqrt(rho)`, measured `0.49..0.55`) and give a distinctly
   shallower error law (measured `-0.32`), so the roadmap's law is
-  protocol-dependent. *Remaining open, two items:* (i) the harvested
-  chain's fluctuation class (`-1/4` Poisson-rate guess vs `-1/3`
-  KPZ-like; measurement sits between, nearer `-1/3`); (ii) an
-  order-only harvest — the current constructor selects its tube by
-  embedded coordinates, so it is a *coordinate-tube* protocol, not an
-  order-intrinsic clock, and a selection rule using order-theoretic
-  data alone remains to be designed. The frozen PC-V1 instrument is
-  unchanged; any confirmatory use of these protocols would need its
-  own prereg freeze.
+  protocol-dependent. v0.6 closed the *design* item: the order-only
+  harvest (`harvest_order_only_chain_1p1`, longest chain between two
+  designated anchor events; selection reads order data alone once the
+  anchors are labelled) is built, audited with a causal-matrix DP
+  cross-check, and measured — rate exponent `+0.516`; transverse RMS
+  exponent `-0.176`, identifying the wandering as KPZ-class (`-1/6`,
+  with the diffusive `-1/4` excluded); RMSE exponent `-0.162`,
+  wandering-dominated at every density. What remains non-order data in
+  that protocol is the anchor *designation* alone. *Remaining open,
+  one item:* the harvested chain's **count**-fluctuation class
+  (`-1/4` Poisson-rate guess vs `-1/3` KPZ-like; the scaled-tube
+  measurement `-0.317` — where wandering is suppressed — sits between,
+  nearer `-1/3`). The frozen PC-V1 instrument is unchanged; any
+  confirmatory use of these protocols would need its own prereg
+  freeze.
 - **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
   The bookkeeping turned out cleaner than "standard but fiddly": in a
   pairwise flanking comparison the shared interval region cancels
@@ -694,19 +738,26 @@ not `n_events`):
 
 8. **G2 instrumentation + density-scaling characterization**
    (`experiments/theory/t1_g2_density_scaling.py`): audit the
-   harvested-chain constructor (chain property, tube containment,
-   simplicity, determinism — the run refuses to measure if any fails),
-   then measure `lambda(rho)` and `RMSE(rho)` exponents for three arms
+   harvested-chain constructors (chain property, tube containment or
+   anchor-interval containment, simplicity, determinism, and for the
+   order-only constructor an independent causal-matrix DP longest-chain
+   length cross-check — the run refuses to measure if any fails), then
+   measure `lambda(rho)` and `RMSE(rho)` exponents for four arms
    (thinned `lambda = rho * ell`; harvested fixed tube; harvested
-   discreteness-scaled tube). The thinned arm is asserted against its
-   exact `[PROVED]` prediction (`sd = sqrt(d / 2 lambda)`), with
-   tolerances derived from the intra-chain correlation (targets on one
-   chain share its tick realization — Theorem 2 Step 1's shared
-   regions); the harvested arms are characterization with sanity bands
-   only, and the fluctuation-class question is left open, not settled
-   by a fit. Clocks with fewer than four ticks count their targets as
-   unreachable instead of being silently dropped, so a clock failure
-   shows up in the assertions rather than shrinking the denominator.
+   discreteness-scaled tube; order-only anchored chain, which also
+   reports the pooled transverse RMS about the anchor line). The
+   thinned arm is asserted against its exact `[PROVED]` prediction
+   (`sd = sqrt(d / 2 lambda)`), with tolerances derived from the
+   intra-chain correlation (targets on one chain share its tick
+   realization — Theorem 2 Step 1's shared regions); the harvested
+   arms are characterization with sanity bands only. The order-only
+   arm's directional wandering expectations were stated in the
+   experiment header before the grid ran and are recorded as outcomes,
+   not gates; the count-fluctuation-class question is left open, not
+   settled by a fit. Clocks with fewer than four ticks count their
+   targets as unreachable instead of being silently dropped, so a
+   clock failure shows up in the assertions rather than shrinking the
+   denominator.
 
 The density-coupled protocols are theory-track instrumentation: no
 frozen gate consumes them, and any confirmatory use would need its own
@@ -786,12 +837,28 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
    `docs/theory/t1_g2_density_scaling_results.json` (regenerable by
    `experiments/theory/t1_g2_density_scaling.py`; CI pins the reduced
    two-density grid).
+10. G2 order-only harvest (v0.6, 2026-07-17 KST): constructor audit
+    clean including the causal-matrix DP longest-chain cross-check
+    (5/5 scenes). Same grid and seeds as item 9, fourth arm: rate
+    exponent `+0.516` (discreteness scale, expectation E1 met);
+    RMSE exponent `-0.162`, distinctly shallower than the thinned
+    `-0.463` (E2 met) and shallower than the scaled tube's `-0.317`
+    (directional E3 met); transverse RMS exponent `-0.176` — within
+    `0.01` of the KPZ wandering value `-1/6` and clearly excluding
+    the diffusive `-1/4` — with RMSE approximately equal to the
+    transverse RMS at every density (wandering-dominated error). The
+    pre-existing arms' rows are unchanged to the digit by the
+    extension (verified against the previous committed table). Zero
+    unreachable measurements and zero short clocks. Same tracked
+    table, regenerated in place; the pre-stated expectations and their
+    outcomes are recorded in the table under
+    `order_only_recorded_expectations`.
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -914,6 +981,33 @@ pinned in CI as exact (non-statistical) regressions.
    repository — it is now committed with its run configuration as
    `docs/theory/t1_g2_density_scaling_results.json`. The frozen PC-V1
    instrument is untouched.
+11. v0.6 (order-only harvest): G2's remaining *design* question is
+    closed. `harvest_order_only_chain_1p1` takes the causal order and
+    two designated anchor events and returns a longest chain between
+    them — the selection reads order data alone once the anchors are
+    labelled; the anchor designation (nearest sprinkled events to the
+    window endpoints, chosen once at setup) is the only non-order
+    input, and the lightcone-coordinate patience-sorting
+    implementation is validated against an independent causal-matrix
+    DP so the output is an order-theoretic longest chain, not merely
+    some chain. Expectations were stated in the experiment header
+    before the grid ran: discreteness-scale rate (met, `+0.516`);
+    error distinctly shallower than `rho^{-1/2}` (met, `-0.162`); and
+    the directional KPZ test — with the tube constraint removed, the
+    chain's transverse RMS about the anchor line should fall like
+    `rho^{-1/6}` if longest-chain wandering is KPZ-class, `rho^{-1/4}`
+    if diffusive. Measured: `-0.176`, within `0.01` of `-1/6`,
+    excluding `-1/4`; and the RMSE tracks the transverse RMS at every
+    density, so the free harvested clock's error is
+    wandering-dominated. This also *explains* the fixed tube's
+    `-0.165` as a mixture artifact (flat wiggle floor plus decaying
+    count noise) — numerically near the order-only exponent by
+    coincidence, not mechanism. The count-fluctuation class (scaled
+    tube, `-0.317`, `-1/4` vs `-1/3`) remains the one open G2 item.
+    Section 5 gains the third harvest bullet and the updated mechanism
+    note; Section 6's G2 entry and obligation 8 record the new
+    constructor, its audit, and the recorded (non-gating) expectation
+    outcomes.
 
 ## 8. Relation to the frozen program
 

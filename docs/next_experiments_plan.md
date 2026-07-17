@@ -79,6 +79,16 @@ Execution update (2026-07-17):
   replayed frozen P5 samples produced **zero verdict flips**
   (docs/selector_robustness_probe.md). Observer-congruence robustness
   remains open.
+- T1's order-only harvest question is closed (theory doc v0.6): a
+  longest chain between two designated anchor events — selection reads
+  order data alone — was built, audited (causal-matrix DP
+  cross-check), and measured on the same rho grid. Pre-stated KPZ test
+  met: transverse RMS exponent -0.176 vs the KPZ wandering value -1/6
+  (diffusive -1/4 excluded); the free clock's RMSE (-0.162) is
+  wandering-dominated at every density, and the fixed tube's -0.165 is
+  thereby explained as a mixture artifact. Remaining open in G2: the
+  count-fluctuation class only (-1/4 vs -1/3; scaled tube measures
+  -0.32).
 
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
