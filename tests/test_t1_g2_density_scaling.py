@@ -324,3 +324,48 @@ def test_count_class_status_is_recorded_and_never_gating():
     ] == pytest.approx(1 / 12)
     assert status["why_open"].startswith("OPEN for systematic")
     assert "0.110" in status["why_open"] and "0.22-0.88" in status["why_open"]
+    assert "poisson_rate_-1/4" not in status["why_open"]
+
+
+@pytest.mark.parametrize(
+    ("ci95", "expected_phrase", "must_not_contain"),
+    [
+        ([-0.40, -0.20], "admits poisson_rate_-1/4, kpz_like_-1/3", None),
+        ([-0.90, -0.80], "admits none of", "kpz_like_-1/3,"),
+    ],
+)
+def test_count_class_status_reports_only_candidates_inside_the_interval(
+    ci95, expected_phrase, must_not_contain
+):
+    """The message must follow the recorded map, including when the
+    interval admits both candidates or -- a rerun that lands outside
+    the whole candidate set -- neither."""
+
+    results = {
+        "arms": {
+            "thinned": {
+                "exponent_uncertainty": {
+                    "rmse": {"slope": -0.46, "ci95": [-0.52, -0.40],
+                             "half_split_spread": 0.11}
+                }
+            },
+            "harvest_scaled": {
+                "exponent_uncertainty": {
+                    "rmse": {"slope": sum(ci95) / 2, "ci95": ci95}
+                },
+                "rows": [{"wandering_share_indicative": 0.5}],
+            },
+        }
+    }
+    status = _count_class_status(results)
+
+    assert status["why_open"].startswith("OPEN")
+    assert expected_phrase in status["why_open"]
+    if must_not_contain is not None:
+        assert must_not_contain not in status["why_open"]
+    inside = status["candidates_inside_ci95"]
+    for name, is_inside in inside.items():
+        listed = f"{name}," in status["why_open"] or status[
+            "why_open"
+        ].endswith(name)
+        assert listed == is_inside or "admits none of" in status["why_open"]

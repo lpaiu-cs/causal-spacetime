@@ -461,23 +461,28 @@ def _count_class_status(results: dict) -> dict:
             f"the grid, so its slope is a drifting mixture rather than the "
             f"count exponent alone"
         )
+    survivors = [name for name, ok in inside.items() if ok]
     if resolved_statistically and reasons:
         why = (
             "OPEN for systematic, not statistical, reasons: the residual "
-            "interval alone would keep only "
-            + ", ".join(n for n, ok in inside.items() if ok)
+            "interval alone would keep only " + survivors[0]
             + ", but " + "; and ".join(reasons) + "."
         )
     elif resolved_statistically:
         why = (
-            "the residual interval keeps only "
-            + ", ".join(n for n, ok in inside.items() if ok)
+            "the residual interval keeps only " + survivors[0]
             + " and no systematic of comparable size was found"
+        )
+    elif not survivors:
+        why = (
+            "OPEN, and the measurement now sits outside every candidate: "
+            "the residual interval admits none of "
+            + ", ".join(inside) + " -- the candidate set itself needs review"
         )
     else:
         why = (
             "OPEN statistically as well: the residual interval admits "
-            + ", ".join(n for n, ok in inside.items() if ok or True)
+            + ", ".join(survivors)
         )
     return {
         "gating": False,
