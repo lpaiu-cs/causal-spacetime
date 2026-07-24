@@ -1,7 +1,10 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.7 — statements and proof programs; nothing frozen**
-(v0.7 2026-07-17 KST: scaling exponents carry residual-based intervals
+Status: **THEORY DRAFT v0.8 — statements and proof programs; nothing frozen**
+(v0.8 2026-07-18 KST: G4a closed — the dimension-independent statements
+proved and verified in 2+1D on the frozen scene builder, labeled
+identifiability recast as multilateration, G4b left open with its
+reason; v0.7 2026-07-17 KST: scaling exponents carry residual-based intervals
 and split-half checks; the open count-class item re-diagnosed as
 systematic rather than statistical; v0.6 2026-07-17 KST: G2's
 order-only harvest designed and measured, wandering identified as
@@ -674,6 +677,104 @@ to a criterion would be a post-hoc gate.
 
 Any density-scaling claim must name its clock protocol.
 
+## 5b. Spatial dimension: what transfers, and what does not (G4a)
+
+Everything in Sections 3-5 was stated in 1+1D. The dimension enters
+those proofs in exactly one place: `|dx|`, the observer-to-target
+spatial separation. Read it as a Euclidean norm on `R^d` and the
+arguments are unchanged, because every step after it is a statement
+about *times along one worldline* — how many ticks fall before, inside,
+and after the open radar interval — and that is blind to how many
+spatial dimensions produced the separation.
+
+**Transfers verbatim `[PROVED]`, verified in 2+1D.**
+
+- **Lemma 1.** The past and future radar points are `t_e -+ |dx|` for
+  any `d`; the continuum bracket width is `2|dx|`.
+- **Lemma 2.** The tick partition (predecessor / spacelike / successor)
+  is still exhaustive under the null-inclusive order, so the rank-gap
+  identity `W = N + 1` holds realization by realization; Model D's band
+  `W = 2|dx|/delta + 1 + theta`, `theta in [-1, 1)`, and Model P's
+  `E[W] = 2 lambda |dx| + 1` by Campbell's formula follow unchanged.
+- **Lemma 3.** The centering algebra is dimension-free, and the
+  observer-dependent quantization residue survives for the same reason.
+- **Theorem 2.** The shared-region cancellation, the four independent
+  Poisson counts, and the Bernstein bound are all statements about
+  interval counts. Same-slice pairs (equal time, different *radial*
+  distance) still have concentric brackets, so the estimator remains
+  pathwise monotone: ties are possible, strict inversions are not. The
+  tie constant counts **observers**, not dimensions — one observer's
+  two annular regions have measure `2g`, giving `exp(-2 lambda g)`,
+  and the `exp(-4 lambda g)` quoted in Section 5 is the two-observer
+  flanking estimator.
+
+**Changes form, still provable `[PROVED]`, verified in 2+1D.**
+
+*Theorem 1', labeled identifiability in `d` spatial dimensions.* With
+`R` observers at positions `p_1..p_R` and `d_r = |x - p_r|`,
+
+```
+d_r^2 - d_1^2 = -2 x . (p_r - p_1) + |p_r|^2 - |p_1|^2,
+```
+
+so the squared-distance differences are **linear** in the unknown `x`:
+`A x = b` with rows `A_r = 2 (p_r - p_1)^T` and
+`b_r = |p_r|^2 - |p_1|^2 - (d_r^2 - d_1^2)`. `A` has rank `d` exactly
+when the observers are affinely independent — `>= 3` non-collinear in
+2+1D, the roadmap's phrasing, now with its geometric reason. Then `x`
+is determined. Feeding measured distances, Lemma 2's band gives
+`|d_hat_r - d_r| <= delta / 2`, hence
+
+```
+|b_hat_r - b_r| <= delta (d_r + d_1) + delta^2 / 2,
+|x_hat - x|     <= || A^+ ||_2  || b_hat - b ||_2 = O(delta).
+```
+
+Positional recovery in 2+1D is therefore **resolution-limited exactly
+as in 1+1D**, but with a constant set by the observer geometry through
+`||A^+||`. That factor has no 1+1D analogue (there, two flanking
+observers always give slope `4 lambda`), and it makes "non-collinear"
+quantitative rather than a genericity clause.
+
+*The fold is bigger.* In 1+1D one observer confuses a mirror pair. In
+2+1D one observer confuses an entire **circle** of equal radius, and
+two observers still confuse the pair mirrored across the line joining
+them; three non-collinear observers separate them. The `R >= 2` of
+Lemma 4c is a 1+1D fact, not a general one.
+
+**Does not transfer — G4b, deliberately open.** Lemma 4 recovers the
+spatial *order* from the parallax dissimilarity `D` alone, and its
+engine is the strict Robinson (seriation) structure. "Order" is a
+one-dimensional notion: in the plane there is no linear order to
+recover, so the statement itself must be replaced, not ported. The
+natural 2+1D counterpart is "`D` determines the target configuration
+up to similarity", which is a distance-geometry / rigidity question,
+and the 1+1D proof gives no help with it: the centered-profile map is
+piecewise **linear** in 1D precisely because `|x - x0|` is, whereas in
+the plane it is conic. Lemma 4f (the same-`D` counterexample) is a 1D
+construction for the same reason. Consequently the *unlabeled*
+statements — the ones that upgrade a pipeline pass from "our fitter
+recovered it" to "any consistent decoder must" — remain 1+1D only.
+
+**Verification (2+1D).** `experiments/theory/t1_g4_2plus1d.py`, run
+against the **frozen** P2/P2-v2 scene builder (`build_scene_2plus1d`,
+eight stationary chains on a non-collinear ring, 96-tick grids) used
+unmodified; regressions in `tests/test_t1_g4_2plus1d.py`; full table
+tracked at `docs/theory/t1_g4_2plus1d_results.json`. All eight checks
+pass: band residuals in `[-1, 1)` with **zero violations** over 3200
+controlled and 272 end-to-end pipeline measurements; resolution law
+slope `-1.007` with every pointwise error inside the proved `delta/2`;
+Model-D density invariance bit-identical both on hand-built scenes and
+through the builder; the circle fold exact (12 targets, identical
+integer widths) with the mirror pair also exact on two observers and a
+`24`-rank separation from a third; multilateration median positional
+error `0.0031` with **every** target inside its proved bound, against
+`0.0916` (a `29x` degradation, still inside its own larger bound) for a
+near-collinear layout whose `||A^+||` is `140` instead of `1.63`; and
+Model-P same-slice ties at `0.206` against `exp(-2 lambda g) = 0.202`
+(one observer) and `0.043` against `exp(-4 lambda g) = 0.041` (two),
+with zero strict inversions in either.
+
 ## 6. Known gaps (the honest list)
 
 - **G1 — unlabeled decoding.** **CLOSED (v0.3, Lemma 4).** Order from
@@ -740,10 +841,25 @@ Any density-scaling claim must name its clock protocol.
   `exp(-4 lambda g)` — exponentially better in the gap than the
   conjectured `exp(-c lambda g^2 / L)` form, which remains the correct
   rate for arbitrary-time pairs.
-- **G4 — 1+1D only.** The roadmap's ">= 3 non-collinear observers"
-  phrasing anticipates 2+1D, where the hull condition and the reflection
-  group change. Out of scope for v0.1; the 1+1D statements are the ones
-  the existing instrument exercises.
+- **G4 — spatial dimension.** **G4a CLOSED (v0.8, Section 5b); G4b
+  open.** The dimension-independent half is settled: Lemmas 1-3 and
+  Theorem 2 transfer verbatim once `|dx|` is read as a Euclidean norm
+  (their proofs are statements about tick times on one worldline), and
+  Theorem 1's labeled clause becomes multilateration — the
+  squared-distance differences are linear in the target position, so
+  `>= d + 1` affinely independent observers determine it, with an
+  `O(delta)` error bound whose constant is `||A^+||`. All of this is
+  verified in 2+1D against the *frozen* P2/P2-v2 scene builder, used
+  unmodified (8/8 checks). Two things genuinely change: the fold is a
+  circle rather than a mirror pair (so the roadmap's ">= 3
+  non-collinear observers" is the right condition, and Lemma 4c's
+  `R >= 2` is 1+1D-specific), and "non-collinear" becomes quantitative
+  through the conditioning factor. **G4b — the unlabeled statements —
+  remains open by design:** Lemma 4's Robinson/seriation engine has no
+  2D analogue, because "spatial order" is one-dimensional and the
+  piecewise linearity that drove the proof becomes conic in the plane.
+  Its counterpart ("`D` determines the configuration up to
+  similarity") is a distance-geometry / rigidity problem, not a port.
 
 ## 7. Numerical verification plan
 
@@ -949,7 +1065,7 @@ The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -1156,6 +1272,39 @@ pinned in CI as exact (non-statistical) regressions.
     and the same standard was applied back to the order-only KPZ
     reading, which is now stated as *consistent with* KPZ rather than
     a three-digit determination.
+
+13. v0.8 (G4a, spatial dimension): the gap list carried "G4 — 1+1D
+    only" since v0.1 as a single undifferentiated item. Working through
+    the proofs shows it was two items with very different prices, and
+    the cheap one is now closed. Lemmas 1-3 and Theorem 2 never used
+    the dimension -- they are claims about how many ticks fall before,
+    inside and after an interval on one worldline -- so reading `|dx|`
+    as a Euclidean norm carries them over verbatim; Theorem 1's labeled
+    clause becomes multilateration, provable in any dimension from the
+    linearity of squared-distance differences, with the error still
+    `O(delta)`. Section 5b states all of this and the 2+1D verification
+    exercises it against the frozen P2/P2-v2 builder rather than a new
+    instrument, so nothing had to be built or re-frozen to check it.
+
+    Two findings were not anticipated by the roadmap phrasing. First,
+    the observer configuration enters the 2+1D bound through
+    `||A^+||`, so "non-collinear" is a quantitative condition: a
+    near-collinear layout with `||A^+|| = 140` degrades positional
+    recovery `29x` against a ring's `1.63`, both still inside their own
+    proved bounds. There is no 1+1D analogue -- two flanking observers
+    always give slope `4 lambda`. Second, the tie constant in
+    Theorem 2 counts observers rather than dimensions: the `exp(-4
+    lambda g)` of Section 5 is the two-observer flanking value, and a
+    single observer gives `exp(-2 lambda g)`. The 2+1D check verifies
+    both, which also corrects a reading of Section 5 that the 1+1D text
+    left ambiguous.
+
+    G4b (the unlabeled statements) is left open deliberately, with the
+    obstruction named: Lemma 4's engine is seriation, "order" is a 1D
+    notion, and the piecewise linearity it rests on is conic in the
+    plane. That is the half that would upgrade a 2+1D pipeline pass the
+    way Lemma 4 upgrades a 1+1D one, and it needs a distance-geometry
+    argument rather than a port.
 
 ## 8. Relation to the frozen program
 

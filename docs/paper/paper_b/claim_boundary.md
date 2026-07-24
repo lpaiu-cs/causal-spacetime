@@ -87,6 +87,20 @@ or by a proved, CI-pinned statement in
   claims checked against the instrument itself, Model-P claims by direct
   seeded simulation of the stated model (no frozen instrument realizes
   Model P).
+- **The dimension-independent half of that carries to 2+1D**: the
+  rank-gap identity, quantization band, resolution law and Poisson
+  concentration are claims about tick counts on one worldline, so they
+  hold for any spatial dimension once |dx| is a Euclidean norm --
+  verified against the frozen P2/P2-v2 scene builder used unmodified
+  (8/8 checks: zero band violations over 3200 controlled and 272
+  end-to-end measurements, resolution slope -1.007 inside the proved
+  delta/2, same-slice ties matching exp(-2 lambda g) for one observer
+  and exp(-4 lambda g) for two). Labeled identifiability in 2+1D is
+  multilateration: >= 3 non-collinear observers determine the target
+  position with an O(delta) error whose constant is the layout's
+  conditioning (a near-collinear layout degrades recovery 29x, each
+  inside its own proved bound). The unlabeled decoding result does NOT
+  carry -- see the non-claims.
 - **The inverse-root density law is protocol-dependent**: it holds for
   Poisson-thinned clocks (lambda ~ rho, proved corollary; measured RMSE
   exponent -0.463) and fails to transfer to sprinkling-harvested clocks,
@@ -117,7 +131,18 @@ or by a proved, CI-pinned statement in
   dilution family; the emergence chain is one dynamics, one action family,
   one restricted ensemble at N <= 600. No curvature, quantum, or matter
   claim; beta_c and hysteresis strength are scale- and eps-dependent.
-- Theory claims are 1+1D and instrument-relative. The Poisson-clock
+- Theory claims are instrument-relative, and their dimensional reach is
+  split (manuscript Section 8.5): the observable's rank-gap identity,
+  quantization band, resolution law and concentration results hold in
+  any spatial dimension and are verified in 2+1D against the frozen
+  P2/P2-v2 scene builder, and labeled identifiability there is
+  multilateration from >= 3 non-collinear observers with an O(delta)
+  bound whose constant is the layout's conditioning. Decodability of
+  spatial order from the dissimilarity alone is claimed in **1+1D
+  only** — the seriation argument has no analogue where no linear
+  spatial order exists, so Section 6's 2+1D results are NOT backed by
+  a decoder-independence claim.
+- The Poisson-clock
   concentration statements describe an idealization no frozen instrument
   realizes; no inverse-root density law is claimed for harvested-chain
   clocks. The tube protocol's selection reads embedded coordinates

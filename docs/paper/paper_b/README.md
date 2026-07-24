@@ -63,9 +63,14 @@ This paper reports the validated-instrument line of the program:
    Model-P claims by direct seeded simulation of the stated model;
    every fitted scaling exponent carries a residual-based interval and
    a split-half check, and the one open question (the count-fluctuation
-   class) is documented as open on systematics rather than statistics;
-   source: `docs/theory/t1_parallax_identifiability.md`
-   (v0.7) and manuscript Section 8.
+   class) is documented as open on systematics rather than statistics.
+   Its dimensional reach is split and stated (Section 8.5): the
+   identity, band, resolution law and concentration hold in any spatial
+   dimension and are verified in 2+1D on the frozen P2/P2-v2 scene
+   builder, labeled identifiability there is multilateration from three
+   non-collinear observers, and only the unlabeled decoding result is
+   1+1D-specific. Source: `docs/theory/t1_parallax_identifiability.md`
+   (v0.8) and manuscript Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
