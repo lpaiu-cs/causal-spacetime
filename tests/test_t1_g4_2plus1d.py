@@ -25,7 +25,10 @@ from t1_g4_2plus1d import (  # noqa: E402
     check_multilateration,
     check_pipeline_band,
     measure_widths,
+    measure_widths_full_order,
     multilaterate,
+    multilateration_matrix,
+    multilateration_pinv_norm,
     radial_distances,
     residuals_in_band,
 )
@@ -76,25 +79,31 @@ def test_multilateration_recovers_position_within_the_proved_bound():
     assert good["max_position_error"] < 0.05
 
 
-def test_near_collinear_observers_degrade_exactly_as_the_bound_says():
-    """'Non-collinear' is quantitative in 2+1D: the error scales with
-    ||A^+||, so a nearly degenerate layout is measurably worse while
-    still respecting its own (much larger) bound. This has no 1+1D
-    analogue."""
+def test_near_collinear_observers_stay_inside_their_own_larger_bound():
+    """'Non-collinear' is quantitative in 2+1D: the bound scales with
+    ||A^+||, so a nearly degenerate layout gets a much larger bound and
+    must still respect it. The degradation RATIO is recorded, not
+    asserted -- the bound is an upper bound, so theory does not predict
+    how much worse the layout actually performs."""
 
     result = check_multilateration(seed=7, n_targets=40)
     good, bad = result["non_collinear"], result["near_collinear"]
 
     assert bad["pinv_norm"] > 10.0 * good["pinv_norm"]
-    assert bad["median_position_error"] > 10.0 * good["median_position_error"]
     assert bad["all_within_proved_bound"]
+    assert bad["max_proved_bound"] > good["max_proved_bound"]
+
+    recorded = result["conditioning_recorded"]
+    assert recorded["gating"] is False
+    assert recorded["median_error_ratio"] > 1.0
 
 
 def test_multilateration_is_exact_without_quantization():
     """Sanity on the solver itself: fed exact distances (delta -> 0 in
     the estimator), the linear system returns the true position to
     machine precision, so the measured error is quantization, not a
-    reconstruction defect."""
+    reconstruction defect. Also: passing the prebuilt design matrix must
+    not change the answer."""
 
     positions = _ring(3, 0.25)
     truth = np.array([0.07, -0.11])
@@ -103,9 +112,41 @@ def test_multilateration_is_exact_without_quantization():
     delta = 0.01
     widths = 2.0 * distances / delta + 1.0
 
-    estimate, pinv_norm = multilaterate(widths, positions, delta)
+    estimate = multilaterate(widths, positions, delta)
     assert np.allclose(estimate, truth, atol=1e-12)
-    assert pinv_norm > 0.0
+
+    matrix = multilateration_matrix(positions)
+    assert np.allclose(
+        estimate, multilaterate(widths, positions, delta, matrix), atol=0.0
+    )
+    assert multilateration_pinv_norm(matrix) > 0.0
+
+
+def test_fast_and_library_width_paths_agree_exactly():
+    """measure_widths evaluates only the target-to-tick block; the
+    library path builds the full causal matrix and calls
+    find_radar_ticks_from_order. They must agree entry for entry,
+    including which entries are unreachable -- otherwise the cheap path
+    is measuring something else."""
+
+    rng = np.random.default_rng(3)
+    positions = _ring(4, 0.25)
+    targets = _sample_targets(rng, 25, 0.10, 0.22)
+    bulk = np.column_stack((
+        rng.uniform(-0.5, 0.5, size=200),
+        rng.uniform(-0.3, 0.3, size=200),
+        rng.uniform(-0.3, 0.3, size=200),
+    ))
+
+    for extra in (None, bulk):
+        fast = measure_widths(targets, positions, 96, extra_events=extra)
+        library = measure_widths_full_order(
+            targets, positions, 96, extra_events=extra
+        )
+        assert np.array_equal(np.isnan(fast), np.isnan(library))
+        assert np.array_equal(
+            np.nan_to_num(fast, nan=-1.0), np.nan_to_num(library, nan=-1.0)
+        )
 
 
 def test_same_slice_pairs_stay_pathwise_monotone_in_2plus1d():
@@ -116,9 +157,22 @@ def test_same_slice_pairs_stay_pathwise_monotone_in_2plus1d():
     result = check_model_p_same_slice(trials=1500)
     for block in ("single_observer", "two_observer_flanking"):
         assert result[block]["strict_inversions"] == 0
+        # no draw may enter the statistics without a real bracket
+        assert result[block]["unreachable_trials"] == 0
         assert abs(
             result[block]["tie_rate"] - result[block]["tie_rate_predicted"]
         ) < 0.04
+
+
+def test_unbracketed_draws_are_counted_not_silently_used():
+    """The reachability guard must actually bite: at a rate low enough
+    that draws routinely have no tick outside the radar interval, the
+    check must report unreachable trials and fail rather than feeding
+    fabricated widths into the tie statistics."""
+
+    result = check_model_p_same_slice(lam=0.4, gap=0.02, trials=300)
+    assert result["single_observer"]["unreachable_trials"] > 0
+    assert not result["passed"]
 
 
 def test_frozen_2plus1d_builder_keeps_the_clock_independent_of_density():

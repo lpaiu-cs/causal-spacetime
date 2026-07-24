@@ -70,6 +70,17 @@ from pathlib import Path
 
 import numpy as np
 
+# The 1+1D harness owns the band predicate, the Poisson clock and the
+# rank-gap width-with-reachability helper. They are dimension-free, so
+# this file imports them rather than keeping second copies: one
+# definition of the half-open band edge, one Model-P sampler.
+from t1_verification import (
+    BAND_TOL,
+    _poisson_chain,
+    _width_by_identity,
+    residuals_in_band,
+)
+
 from causal_spacetime_lab.causal import causal_matrix_minkowski
 from causal_spacetime_lab.discrete_radar import find_radar_ticks_from_order
 from causal_spacetime_lab.positive_control.scene_2d import (
@@ -80,18 +91,7 @@ from causal_spacetime_lab.positive_control.scene_2d import (
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS_PATH = ROOT / "docs" / "theory" / "t1_g4_2plus1d_results.json"
 
-BAND_TOL = 1e-9
-DIAMOND_T = 2.0
 CHAIN_SPAN = 1.4
-
-
-def residuals_in_band(residuals: np.ndarray) -> np.ndarray:
-    """The proved half-open band ``[-1, 1)``; the upper edge stays open
-    for the same reason as in 1+1D (a tick spacetime-coincident with the
-    target realizes residual exactly +1 and must NOT pass)."""
-
-    residuals = np.asarray(residuals)
-    return (residuals >= -1.0 - BAND_TOL) & (residuals < 1.0 - BAND_TOL)
 
 
 def chain_events(position: np.ndarray, ticks: int, span: float = CHAIN_SPAN):
@@ -104,6 +104,31 @@ def chain_events(position: np.ndarray, ticks: int, span: float = CHAIN_SPAN):
     )
 
 
+def _scene_blocks(
+    targets: np.ndarray,
+    positions: np.ndarray,
+    ticks: int,
+    span: float,
+    extra_events: np.ndarray | None,
+) -> tuple[np.ndarray, list[np.ndarray]]:
+    """Assemble the event array (targets, then chains, then bulk) and the
+    per-chain index arrays. Targets come first so both target and chain
+    indices are stable when bulk events are appended."""
+
+    targets = np.asarray(targets, dtype=float)
+    blocks = [targets]
+    chain_slices: list[np.ndarray] = []
+    start = targets.shape[0]
+    for position in positions:
+        block = chain_events(np.asarray(position, dtype=float), ticks, span)
+        blocks.append(block)
+        chain_slices.append(np.arange(start, start + block.shape[0], dtype=int))
+        start += block.shape[0]
+    if extra_events is not None and len(extra_events):
+        blocks.append(np.asarray(extra_events, dtype=float))
+    return np.vstack(blocks), chain_slices
+
+
 def measure_widths(
     targets: np.ndarray,
     positions: np.ndarray,
@@ -113,29 +138,64 @@ def measure_widths(
 ) -> np.ndarray:
     """Bracket widths ``W[j, r]`` of 2+1D targets against stationary chains.
 
-    Targets come first in the event array and chains after them, so
-    target and chain indices are stable when ``extra_events`` (bulk
-    sprinkling that must not matter) is appended at the end.
+    The observable reads only target-to-tick causal relations, so this
+    evaluates exactly that rectangular block with the null-inclusive
+    predicate of ``causal_matrix_minkowski`` rather than materializing
+    the full square matrix over every event pair.
+    ``measure_widths_full_order`` computes the same quantity through the
+    library path; a regression pins the two to agree exactly.
     """
 
-    targets = np.asarray(targets, dtype=float)
-    blocks = [targets]
-    chain_slices = []
-    start = targets.shape[0]
-    for position in positions:
-        block = chain_events(np.asarray(position, dtype=float), ticks, span)
-        blocks.append(block)
-        chain_slices.append(np.arange(start, start + block.shape[0], dtype=int))
-        start += block.shape[0]
-    if extra_events is not None and len(extra_events):
-        blocks.append(np.asarray(extra_events, dtype=float))
+    events, chain_slices = _scene_blocks(
+        targets, positions, ticks, span, extra_events
+    )
+    n_targets = np.asarray(targets, dtype=float).shape[0]
+    target_events = events[:n_targets]
 
-    events = np.vstack(blocks)
+    widths = np.full((n_targets, len(chain_slices)), np.nan)
+    for r, chain in enumerate(chain_slices):
+        tick_events = events[chain]
+        dt = target_events[:, 0][:, None] - tick_events[:, 0][None, :]
+        dx = target_events[:, 1][:, None] - tick_events[:, 1][None, :]
+        dy = target_events[:, 2][:, None] - tick_events[:, 2][None, :]
+        interval = dt * dt - (dx * dx + dy * dy)
+        # tick precedes target / target precedes tick, null-inclusive
+        precedes = (dt > 0.0) & (interval >= -1e-12)
+        succeeds = (dt < 0.0) & (interval >= -1e-12)
+        both = precedes.any(axis=1) & succeeds.any(axis=1)
+        # ranks are tick indices, so the bracket is (last predecessor,
+        # first successor) in index order -- the rank-gap of Lemma 2
+        last_pred = np.where(both, (precedes.shape[1] - 1)
+                             - np.argmax(precedes[:, ::-1], axis=1), 0)
+        first_succ = np.where(both, np.argmax(succeeds, axis=1), 0)
+        widths[both, r] = (first_succ - last_pred)[both]
+    return widths
+
+
+def measure_widths_full_order(
+    targets: np.ndarray,
+    positions: np.ndarray,
+    ticks: int,
+    span: float = CHAIN_SPAN,
+    extra_events: np.ndarray | None = None,
+) -> np.ndarray:
+    """The same widths through the shared library path: build the full
+    causal matrix and call ``find_radar_ticks_from_order``.
+
+    Quadratic in the total event count, so it is used where the full
+    order genuinely has to be present (the density falsifier) and as the
+    reference the fast path is checked against.
+    """
+
+    events, chain_slices = _scene_blocks(
+        targets, positions, ticks, span, extra_events
+    )
     causal = causal_matrix_minkowski(events)
     ranks = np.arange(ticks, dtype=np.float64)
+    n_targets = np.asarray(targets, dtype=float).shape[0]
 
-    widths = np.full((targets.shape[0], len(chain_slices)), np.nan)
-    for j in range(targets.shape[0]):
+    widths = np.full((n_targets, len(chain_slices)), np.nan)
+    for j in range(n_targets):
         for r, chain in enumerate(chain_slices):
             bracket = find_radar_ticks_from_order(causal, chain, j, ranks)
             if bracket is not None:
@@ -184,6 +244,13 @@ def check_band(seed: int = 0, n_targets: int = 400, ticks: int = 96) -> dict:
     distances = radial_distances(targets, positions)
 
     reachable = ~np.isnan(widths)
+    if not reachable.any():
+        return {
+            "n_measurements": 0,
+            "n_unreachable": int(reachable.size),
+            "passed": False,
+            "note": "no target was bracketed by any chain",
+        }
     residuals = widths[reachable] - (2.0 * distances[reachable] / delta + 1.0)
     in_band = residuals_in_band(residuals)
     return {
@@ -221,6 +288,10 @@ def check_resolution_scaling(
             "ticks": ticks,
             "delta": delta,
             "n_measurements": int(reachable.sum()),
+            # unreachable targets must FAIL the rung, not silently shrink
+            # the sample: otherwise each rung fits a different,
+            # self-selected target set (check_band applies the same rule)
+            "all_reachable": bool(reachable.all()),
             "max_error": float(errors.max()),
             "rmse": float(np.sqrt(np.mean(errors**2))),
             "bound_delta_over_2": delta / 2.0,
@@ -236,23 +307,35 @@ def check_resolution_scaling(
         "ladder": rows,
         "rmse_loglog_slope": slope,
         "passed": bool(
-            all(row["within_bound"] for row in rows) and -1.3 < slope < -0.7
+            all(row["within_bound"] for row in rows)
+            and all(row["all_reachable"] for row in rows)
+            and -1.3 < slope < -0.7
         ),
     }
 
 
 def check_density_invariance(seed: int = 5, ticks: int = 96) -> dict:
-    """Check 3: the Model-D clock does not know the sprinkling density,
-    in 2+1D as in 1+1D -- widths must be bit-identical when bulk events
-    are added at a fixed tick grid."""
+    """Check 3: the Model-D clock does not know the sprinkling density.
+
+    Scope note, so this is not read as stronger than it is. On the
+    hand-built path the invariance is *structural*: the observable
+    consults only target-to-tick relations, so bulk events cannot enter
+    a width no matter how many are added. What is worth measuring is
+    that the shared library path -- full causal matrix over every event
+    pair, then ``find_radar_ticks_from_order`` -- agrees, since that is
+    where an index-ordering or matrix-assembly coupling to the event
+    count could hide. That is what runs here. The empirical falsifier
+    for tick *placement* is check 4, through the frozen builder.
+    """
 
     rng = np.random.default_rng(seed)
     positions = _ring(4, 0.25)
     targets = _sample_targets(rng, 40, 0.08, 0.18)
 
-    reference = measure_widths(targets, positions, ticks)
+    reference = measure_widths_full_order(targets, positions, ticks)
+    bulk_sizes = (300, 900, 2700)
     identical = True
-    for n_bulk in (300, 900, 2700):
+    for n_bulk in bulk_sizes:
         bulk_rng = np.random.default_rng(1000 + n_bulk)
         angle = bulk_rng.uniform(0.0, 2.0 * np.pi, size=n_bulk)
         radius = 0.4 * np.sqrt(bulk_rng.uniform(0.0, 1.0, size=n_bulk))
@@ -260,15 +343,21 @@ def check_density_invariance(seed: int = 5, ticks: int = 96) -> dict:
         bulk = np.column_stack(
             (t, radius * np.cos(angle), radius * np.sin(angle))
         )
-        widths = measure_widths(targets, positions, ticks, extra_events=bulk)
+        widths = measure_widths_full_order(
+            targets, positions, ticks, extra_events=bulk
+        )
         identical = identical and bool(
             np.array_equal(
                 np.nan_to_num(widths, nan=-1.0),
                 np.nan_to_num(reference, nan=-1.0),
             )
         )
-    return {"bulk_sizes": [300, 900, 2700], "bit_identical": identical,
-            "passed": identical}
+    return {
+        "bulk_sizes": list(bulk_sizes),
+        "path": "full causal matrix + find_radar_ticks_from_order",
+        "bit_identical": identical,
+        "passed": identical,
+    }
 
 
 def check_builder_density_invariance(ticks_seed: int = 0) -> dict:
@@ -350,27 +439,46 @@ def check_fold_structure(ticks: int = 96) -> dict:
     }
 
 
-def multilaterate(
-    widths: np.ndarray, positions: np.ndarray, delta: float
-) -> tuple[np.ndarray, float]:
-    """Solve ``A x = b`` from measured widths; also return ``||A^+||_2``.
+def multilateration_matrix(positions: np.ndarray) -> np.ndarray:
+    """The design matrix ``A`` of the module docstring: rows
+    ``2 (p_r - p_1)^T``. Depends only on the observer layout, so callers
+    build it once per layout rather than once per target."""
 
-    The linear system of the module docstring, using the anchor
-    observer ``r = 1``. Least squares handles ``R > 3``.
+    positions = np.asarray(positions, dtype=float)
+    return 2.0 * (positions[1:] - positions[0])
+
+
+def multilateration_pinv_norm(matrix: np.ndarray) -> float:
+    """``||A^+||_2`` -- the factor by which the layout amplifies the
+    measured-distance error in the position bound."""
+
+    return float(np.linalg.norm(np.linalg.pinv(matrix), 2))
+
+
+def multilaterate(
+    widths: np.ndarray,
+    positions: np.ndarray,
+    delta: float,
+    matrix: np.ndarray | None = None,
+) -> np.ndarray:
+    """Solve ``A x = b`` from measured widths, anchored at observer 1.
+
+    Least squares handles ``R > 3``. ``matrix`` may be supplied to skip
+    rebuilding the layout-only design matrix per target.
     """
 
     positions = np.asarray(positions, dtype=float)
     estimates = (np.asarray(widths, dtype=float) - 1.0) * delta / 2.0
     anchor, rest = positions[0], positions[1:]
-    matrix = 2.0 * (rest - anchor)
+    if matrix is None:
+        matrix = multilateration_matrix(positions)
     rhs = (
         np.sum(rest * rest, axis=1)
         - float(anchor @ anchor)
         - (estimates[1:] ** 2 - estimates[0] ** 2)
     )
     solution, *_ = np.linalg.lstsq(matrix, rhs, rcond=None)
-    pinv_norm = float(np.linalg.norm(np.linalg.pinv(matrix), 2))
-    return solution, pinv_norm
+    return solution
 
 
 def check_multilateration(
@@ -399,11 +507,15 @@ def check_multilateration(
     for name, positions in layouts.items():
         widths = measure_widths(targets, positions, ticks)
         distances = radial_distances(targets, positions)
+        # the design matrix and its pseudo-inverse depend only on the
+        # layout, so they are built once, not once per target
+        matrix = multilateration_matrix(positions)
+        pinv_norm = multilateration_pinv_norm(matrix)
         errors, bounds = [], []
         for j in range(targets.shape[0]):
             if np.isnan(widths[j]).any():
                 continue
-            estimate, pinv_norm = multilaterate(widths[j], positions, delta)
+            estimate = multilaterate(widths[j], positions, delta, matrix)
             errors.append(float(np.linalg.norm(estimate - truth[j])))
             # ||b_hat - b||_2 bound from the docstring, per component
             per_component = (
@@ -414,13 +526,17 @@ def check_multilateration(
             )
         errors_arr = np.asarray(errors)
         bounds_arr = np.asarray(bounds)
+        if errors_arr.size == 0:
+            report[name] = {
+                "n_solved": 0,
+                "pinv_norm": pinv_norm,
+                "all_within_proved_bound": False,
+                "note": "no target was bracketed by every observer",
+            }
+            continue
         report[name] = {
             "n_solved": int(errors_arr.size),
-            "pinv_norm": float(
-                np.linalg.norm(
-                    np.linalg.pinv(2.0 * (positions[1:] - positions[0])), 2
-                )
-            ),
+            "pinv_norm": pinv_norm,
             "max_position_error": float(errors_arr.max()),
             "median_position_error": float(np.median(errors_arr)),
             "max_proved_bound": float(bounds_arr.max()),
@@ -428,19 +544,32 @@ def check_multilateration(
                 np.all(errors_arr <= bounds_arr + BAND_TOL)
             ),
         }
+    # Gating on the PROVED statement only: every solved target inside its
+    # own bound, for both layouts. The degradation ratio below is
+    # recorded, never gating -- it was computed after the measurement
+    # existed, so promoting it to a criterion would be a post-hoc gate of
+    # the kind this project refuses elsewhere (see count_class_status in
+    # t1_g2_density_scaling.py).
+    good, bad = report["non_collinear"], report["near_collinear"]
+    report["conditioning_recorded"] = {
+        "gating": False,
+        "pinv_norm_ratio": (
+            bad["pinv_norm"] / good["pinv_norm"] if good["pinv_norm"] else None
+        ),
+        "median_error_ratio": (
+            bad["median_position_error"] / good["median_position_error"]
+            if good.get("median_position_error") else None
+        ),
+        "reading": (
+            "the bound scales with ||A^+||, so a near-degenerate layout "
+            "should be worse; how much worse is not predicted, since the "
+            "bound is an upper bound rather than an equality"
+        ),
+    }
     report["passed"] = bool(
-        report["non_collinear"]["all_within_proved_bound"]
-        and report["near_collinear"]["all_within_proved_bound"]
-        # the layout that is nearly degenerate must be measurably worse
-        and report["near_collinear"]["median_position_error"]
-        > 10.0 * report["non_collinear"]["median_position_error"]
+        good["all_within_proved_bound"] and bad["all_within_proved_bound"]
     )
     return report
-
-
-def _poisson_ticks(rng: np.random.Generator, lam: float, span: float):
-    count = rng.poisson(lam * span)
-    return np.sort(rng.uniform(-span / 2.0, span / 2.0, size=count))
 
 
 def check_model_p_same_slice(
@@ -461,6 +590,12 @@ def check_model_p_same_slice(
     with a symmetric 2+1D layout that makes both radial gaps exactly
     ``g`` (observers at ``(-a, 0)`` and ``(a, 0)``, targets on the
     ``y`` axis, so each target is equidistant from both).
+
+    Widths come from ``_width_by_identity``, the same 1+1D helper, which
+    returns a reachability flag alongside ``W = N + 1``. Draws without a
+    predecessor AND a successor tick have no bracket at all; they are
+    counted and must be zero, so a synthetic width can never enter the
+    statistics unnoticed (the guard the 1+1D Theorem-2 check applies).
     """
 
     rng = np.random.default_rng(seed)
@@ -468,19 +603,21 @@ def check_model_p_same_slice(
 
     # --- one observer: radial distances near / near + gap -------------
     near, far = 0.10, 0.10 + gap
-    inversions = ties = 0
+    inversions = ties = unreachable = 0
     for _ in range(trials):
-        ticks = _poisson_ticks(rng, lam, span)
-        # widths from the rank-gap identity: W = N + 1 with N the count
-        # of ticks strictly inside the open radar interval
-        w_near = int(np.sum((ticks > -near) & (ticks < near))) + 1
-        w_far = int(np.sum((ticks > -far) & (ticks < far))) + 1
+        ticks = _poisson_chain(rng, lam, span)
+        w_near, ok_near = _width_by_identity(ticks, 0.0, near)
+        w_far, ok_far = _width_by_identity(ticks, 0.0, far)
+        if not (ok_near and ok_far):
+            unreachable += 1
+            continue
         if w_far < w_near:
             inversions += 1
         elif w_far == w_near:
             ties += 1
     single = {
         "strict_inversions": inversions,
+        "unreachable_trials": unreachable,
         "tie_rate": ties / trials,
         "tie_rate_predicted": float(np.exp(-2.0 * lam * gap)),
     }
@@ -491,14 +628,19 @@ def check_model_p_same_slice(
     d_near = float(np.hypot(a, y_near))
     d_far = d_near + gap
     y_far = float(np.sqrt(d_far**2 - a**2))
-    inversions2 = ties2 = 0
+    inversions2 = ties2 = unreachable2 = 0
     for _ in range(trials):
-        ticks_1 = _poisson_ticks(rng, lam, span)
-        ticks_2 = _poisson_ticks(rng, lam, span)
-        total_near = total_far = 0
-        for ticks in (ticks_1, ticks_2):
-            total_near += int(np.sum((ticks > -d_near) & (ticks < d_near))) + 1
-            total_far += int(np.sum((ticks > -d_far) & (ticks < d_far))) + 1
+        chains = (_poisson_chain(rng, lam, span), _poisson_chain(rng, lam, span))
+        widths = [
+            (_width_by_identity(ticks, 0.0, d_near),
+             _width_by_identity(ticks, 0.0, d_far))
+            for ticks in chains
+        ]
+        if not all(ok for pair in widths for _, ok in pair):
+            unreachable2 += 1
+            continue
+        total_near = sum(pair[0][0] for pair in widths)
+        total_far = sum(pair[1][0] for pair in widths)
         if total_far < total_near:
             inversions2 += 1
         elif total_far == total_near:
@@ -509,6 +651,7 @@ def check_model_p_same_slice(
         "y_near": y_near,
         "y_far": y_far,
         "strict_inversions": inversions2,
+        "unreachable_trials": unreachable2,
         "tie_rate": ties2 / trials,
         "tie_rate_predicted": float(np.exp(-4.0 * lam * gap)),
     }
@@ -526,6 +669,8 @@ def check_model_p_same_slice(
         "passed": bool(
             single["strict_inversions"] == 0
             and flanking["strict_inversions"] == 0
+            and single["unreachable_trials"] == 0
+            and flanking["unreachable_trials"] == 0
             and _agrees(single)
             and _agrees(flanking)
         ),
@@ -536,8 +681,12 @@ def check_pipeline_band(seed: int = 0) -> dict:
     """Check 8: the band end to end through the frozen 2+1D builder --
     every target, every chain, real sprinkled scene."""
 
-    scene = build_scene_2plus1d(Scene2DConfig(seed=seed))
-    delta = CHAIN_SPAN / (Scene2DConfig().ticks_per_chain - 1)
+    # one config object: the tick spacing must come from the scene that
+    # was actually built, never from a module constant that happens to
+    # match the builder's current defaults
+    config = Scene2DConfig(seed=seed)
+    scene = build_scene_2plus1d(config)
+    delta = config.chain_span / (config.ticks_per_chain - 1)
     positions = np.array([
         scene.events[chain[0]][1:3] for chain in scene.chain_index_arrays
     ])
@@ -555,10 +704,18 @@ def check_pipeline_band(seed: int = 0) -> dict:
             width = bracket[1] - bracket[0]
             residuals.append(width - (2.0 * distances[j, r] / delta + 1.0))
     residuals_arr = np.asarray(residuals)
+    if residuals_arr.size == 0:
+        return {
+            "n_targets": int(scene.target_indices.size),
+            "n_measurements": 0,
+            "passed": False,
+            "note": "no target was bracketed by any chain",
+        }
     in_band = residuals_in_band(residuals_arr)
     return {
         "n_targets": int(scene.target_indices.size),
         "n_measurements": int(residuals_arr.size),
+        "delta": delta,
         "residual_min": float(residuals_arr.min()),
         "residual_max": float(residuals_arr.max()),
         "violations": int((~in_band).sum()),
