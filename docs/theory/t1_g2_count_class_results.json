@@ -1,0 +1,310 @@
+{
+  "scope": "G2 close-out: the count-fluctuation class measured directly from chain lengths, with no distance estimator and hence no wandering admixture. Theory-track; nothing frozen.",
+  "candidates": {
+    "poisson_rate_1/2": 0.5,
+    "kpz_like_1/3": 0.3333333333333333
+  },
+  "config": {
+    "rho_grid": [
+      500,
+      1000,
+      2000,
+      4000,
+      8000,
+      16000,
+      32000,
+      64000
+    ],
+    "trials_per_density": 300,
+    "tick_window": [
+      -0.6,
+      0.6
+    ],
+    "ell": 0.1,
+    "tube_scale": 3.0,
+    "observer_x": 0.3
+  },
+  "checks": {
+    "calibration_thinned_is_one_half": {
+      "rows": [
+        {
+          "rho": 500,
+          "trials": 300,
+          "mean_length": 60.58,
+          "sd_length": 7.424779987281223
+        },
+        {
+          "rho": 1000,
+          "trials": 300,
+          "mean_length": 118.71666666666667,
+          "sd_length": 11.707259370241008
+        },
+        {
+          "rho": 2000,
+          "trials": 300,
+          "mean_length": 240.79,
+          "sd_length": 15.091002657345646
+        },
+        {
+          "rho": 4000,
+          "trials": 300,
+          "mean_length": 481.0133333333333,
+          "sd_length": 21.296595317780724
+        },
+        {
+          "rho": 8000,
+          "trials": 300,
+          "mean_length": 964.2766666666666,
+          "sd_length": 30.51048598003669
+        },
+        {
+          "rho": 16000,
+          "trials": 300,
+          "mean_length": 1917.4866666666667,
+          "sd_length": 42.55545061224936
+        },
+        {
+          "rho": 32000,
+          "trials": 300,
+          "mean_length": 3846.96,
+          "sd_length": 60.570849639797494
+        },
+        {
+          "rho": 64000,
+          "trials": 300,
+          "mean_length": 7680.66,
+          "sd_length": 88.0236233114132
+        }
+      ],
+      "clock_failures": 0,
+      "fit": {
+        "theta": 0.49808854148379705,
+        "stderr": 0.008840183668523469,
+        "dof": 6,
+        "n_points": 8,
+        "ci95": [
+          0.47645661204692014,
+          0.519720470920674
+        ],
+        "halves": {
+          "low": 0.4936375007499667,
+          "high": 0.5102508035983844
+        },
+        "half_split_spread": 0.016613302848417666,
+        "candidates_inside_ci95": {
+          "poisson_rate_1/2": true,
+          "kpz_like_1/3": false
+        },
+        "t_against": {
+          "poisson_rate_1/2": -0.21622384645795573,
+          "kpz_like_1/3": 18.63707976307035
+        }
+      },
+      "bias_vs_one_half": -0.0019114585162029463,
+      "ci_covers_one_half": true,
+      "passed": true
+    },
+    "order_only_is_kpz": {
+      "rows": [
+        {
+          "rho": 500,
+          "trials": 300,
+          "mean_length": 35.583333333333336,
+          "sd_length": 2.355465193221319
+        },
+        {
+          "rho": 1000,
+          "trials": 300,
+          "mean_length": 50.79666666666667,
+          "sd_length": 2.7042618826564953
+        },
+        {
+          "rho": 2000,
+          "trials": 300,
+          "mean_length": 72.48,
+          "sd_length": 3.232816678831289
+        },
+        {
+          "rho": 4000,
+          "trials": 300,
+          "mean_length": 103.12666666666667,
+          "sd_length": 3.5702161981070994
+        },
+        {
+          "rho": 8000,
+          "trials": 300,
+          "mean_length": 146.87,
+          "sd_length": 3.801042807099741
+        },
+        {
+          "rho": 16000,
+          "trials": 300,
+          "mean_length": 209.46666666666667,
+          "sd_length": 4.367968948072622
+        },
+        {
+          "rho": 32000,
+          "trials": 300,
+          "mean_length": 296.51,
+          "sd_length": 4.814613346078873
+        },
+        {
+          "rho": 64000,
+          "trials": 300,
+          "mean_length": 420.87333333333333,
+          "sd_length": 5.317726607910297
+        }
+      ],
+      "clock_failures": 0,
+      "fit": {
+        "theta": 0.3221364236130544,
+        "stderr": 0.013919198998843122,
+        "dof": 6,
+        "n_points": 8,
+        "ci95": [
+          0.28807614366288525,
+          0.3561967035632235
+        ],
+        "halves": {
+          "low": 0.3485926197361514,
+          "high": 0.3151989890150863
+        },
+        "half_split_spread": 0.033393630721065104,
+        "candidates_inside_ci95": {
+          "poisson_rate_1/2": false,
+          "kpz_like_1/3": true
+        },
+        "t_against": {
+          "poisson_rate_1/2": -12.778291078511668,
+          "kpz_like_1/3": -0.8044219873003858
+        }
+      },
+      "passed": true
+    },
+    "tube_is_poisson": {
+      "rows": [
+        {
+          "rho": 500,
+          "trials": 300,
+          "mean_length": 31.676666666666666,
+          "sd_length": 2.909813097623148
+        },
+        {
+          "rho": 1000,
+          "trials": 300,
+          "mean_length": 45.16,
+          "sd_length": 3.6061634344160085
+        },
+        {
+          "rho": 2000,
+          "trials": 300,
+          "mean_length": 63.37,
+          "sd_length": 4.203012934283276
+        },
+        {
+          "rho": 4000,
+          "trials": 300,
+          "mean_length": 88.95333333333333,
+          "sd_length": 5.113215439361024
+        },
+        {
+          "rho": 8000,
+          "trials": 300,
+          "mean_length": 126.79666666666667,
+          "sd_length": 5.852877595055092
+        },
+        {
+          "rho": 16000,
+          "trials": 300,
+          "mean_length": 179.50666666666666,
+          "sd_length": 6.8892302812760144
+        },
+        {
+          "rho": 32000,
+          "trials": 300,
+          "mean_length": 252.37,
+          "sd_length": 7.912128195071844
+        },
+        {
+          "rho": 64000,
+          "trials": 300,
+          "mean_length": 355.71,
+          "sd_length": 9.916333946059193
+        }
+      ],
+      "clock_failures": 0,
+      "fit": {
+        "theta": 0.48698652692355754,
+        "stderr": 0.0116283658165872,
+        "dof": 6,
+        "n_points": 8,
+        "ci95": [
+          0.45853191577036867,
+          0.5154411380767464
+        ],
+        "halves": {
+          "low": 0.506022706227347,
+          "high": 0.5007066205103761
+        },
+        "half_split_spread": 0.005316085716970953,
+        "candidates_inside_ci95": {
+          "poisson_rate_1/2": true,
+          "kpz_like_1/3": false
+        },
+        "t_against": {
+          "poisson_rate_1/2": -1.1191145240614535,
+          "kpz_like_1/3": 13.213653235009748
+        }
+      },
+      "passed": true
+    },
+    "confinement_crossover": {
+      "rows": [
+        {
+          "tube": "w = 3.0 rho^-1/2 (shipped)",
+          "width_exponent": 0.5,
+          "theta": 0.46266019274400116,
+          "ci95": [
+            0.3701793421859338,
+            0.5551410433020685
+          ],
+          "nearer": "poisson_rate_1/2"
+        },
+        {
+          "tube": "w = 1.0 rho^-1/3",
+          "width_exponent": 0.3333333333333333,
+          "theta": 0.38952733525645455,
+          "ci95": [
+            0.3201336503054443,
+            0.45892102020746484
+          ],
+          "nearer": "kpz_like_1/3"
+        },
+        {
+          "tube": "w = 1.0 rho^-1/6 (~ wandering)",
+          "width_exponent": 0.16666666666666666,
+          "theta": 0.33960830850751433,
+          "ci95": [
+            0.30618319020501117,
+            0.3730334268100175
+          ],
+          "nearer": "kpz_like_1/3"
+        }
+      ],
+      "theta_moves_toward_kpz_as_tube_widens": true,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "headline": {
+    "count_class_is_protocol_dependent": true,
+    "order_only": 0.3221364236130544,
+    "tube": 0.48698652692355754,
+    "calibration_thinned": 0.49808854148379705,
+    "implied_error_exponents": {
+      "order_only_count_term": -0.3333333333333333,
+      "tube_count_term": -0.25
+    },
+    "retired_reading": "the scaled tube's -0.317 is NOT its count exponent: that arm's counts are Poisson (-1/4), and -0.317 is the mixture with its residual rho^{-1/2} wandering that the v0.7 systematics flagged"
+  }
+}
