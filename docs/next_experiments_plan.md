@@ -95,9 +95,20 @@ Execution update (2026-07-17):
   transfer verbatim once |dx| is a Euclidean norm; Theorem 1's labeled
   clause becomes multilateration (>= 3 non-collinear observers, O(delta)
   error with the layout's conditioning as the constant -- a
-  near-collinear layout degrades 29x). G4b (unlabeled recovery of the
-  configuration from D alone) stays open with its obstruction named:
-  the seriation engine has no 2D analogue. Manuscript Section 8.5.
+  near-collinear layout degrades 29x). G4b (unlabeled recovery from D
+  alone) was left open here with its obstruction named -- superseded
+  the same week by the next entry. Manuscript Section 8.5.
+- **G4b settled** (theory doc v0.9), opposite to the direction G4a
+  expected. The seriation obstruction is real, but the 2+1D
+  replacement is metric and stronger: for R >= 4 observers with enough
+  targets (n >= 11 at R=4, n >= 9 at R=5,8, n >= 8 at R=6) the
+  unlabeled dissimilarity determines targets AND observers up to
+  Euclidean congruence, absolute scale included. R = 3 provably fails
+  -- 6 flexes at every n from 6 to 34, plus an explicit non-congruent
+  scene matching D to 8e-17. The 1+1D control is never rigid, so the
+  observable is strictly more informative in 2+1D. Scope:
+  infinitesimal rigidity, exact model, numerical -- global uniqueness
+  and the measured-data perturbation remain open.
 - Scaling exponents now carry residual-based intervals and split-half
   checks (theory doc v0.7), matching the uncertainty treatment P7
   already applied to its tunneling exponent. This re-diagnosed the

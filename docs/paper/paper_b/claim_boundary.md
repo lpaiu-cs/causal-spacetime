@@ -99,8 +99,22 @@ or by a proved, CI-pinned statement in
   multilateration: >= 3 non-collinear observers determine the target
   position with an O(delta) error whose constant is the layout's
   conditioning (a near-collinear layout degrades recovery 29x, each
-  inside its own proved bound). The unlabeled decoding result does NOT
-  carry -- see the non-claims.
+  inside its own proved bound). The unlabeled result does not carry in
+  its 1+1D ordinal form but is replaced by a stronger metric one --
+  next bullet.
+- **In 2+1D the unlabeled dissimilarity determines the scene metrically,
+  for >= 4 observers** (characterization, not a proved theorem): with
+  enough targets (measured n >= 11 at R = 4, n >= 9 at R = 5 and 8,
+  n >= 8 at R = 6) the flex count drops to exactly the 3 dimensions of
+  rigid motion, so D fixes targets AND observers up to Euclidean
+  congruence including absolute scale (D is homogeneous of degree 1).
+  With R = 3 it does not: 6 flexes survive at every target count from 6
+  to 34, and an explicit non-congruent scene reproduces D to 8e-17
+  while differing in shape by 97% of the configuration size. The 1+1D
+  control is never rigid, so the unlabeled observable is strictly more
+  informative in 2+1D. Scope: INFINITESIMAL rigidity in the exact
+  model, verified numerically -- not global uniqueness, not a written
+  proof, not extended to measured data.
 - **The inverse-root density law is protocol-dependent**: it holds for
   Poisson-thinned clocks (lambda ~ rho, proved corollary; measured RMSE
   exponent -0.463) and fails to transfer to sprinkling-harvested clocks,
@@ -138,10 +152,17 @@ or by a proved, CI-pinned statement in
   P2/P2-v2 scene builder, and labeled identifiability there is
   multilateration from >= 3 non-collinear observers with an O(delta)
   bound whose constant is the layout's conditioning. Decodability of
-  spatial order from the dissimilarity alone is claimed in **1+1D
+  spatial *order* from the dissimilarity alone is claimed in **1+1D
   only** — the seriation argument has no analogue where no linear
-  spatial order exists, so Section 6's 2+1D results are NOT backed by
-  a decoder-independence claim.
+  spatial order exists. Its 2+1D replacement is metric and is reported
+  as characterization, not as a proved theorem: with >= 4 observers and
+  enough targets the dissimilarity is measured to determine the whole
+  scene up to Euclidean congruence (absolute scale included), and with
+  3 observers it provably does not (explicit same-dissimilarity,
+  non-congruent scene). That is INFINITESIMAL rigidity in the exact
+  model, established numerically -- NOT global uniqueness, NOT a
+  written proof, and NOT extended to measured data. Section 6's 2+1D
+  results are not claimed to rest on it.
 - The Poisson-clock
   concentration statements describe an idealization no frozen instrument
   realizes; no inverse-root density law is claimed for harvested-chain

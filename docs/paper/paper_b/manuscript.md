@@ -807,7 +807,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v0.7); every statement
+`docs/theory/t1_parallax_identifiability.md` (v0.9); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -1056,21 +1056,55 @@ by a factor 29 against a ring, each still inside its own proved bound.
 There is no 1+1D analogue, where two flanking observers always give
 slope 4 lambda.
 
-Section 8.2's *unlabeled* clause does not transfer, and the
-obstruction is structural. Its engine is the strict Robinson
-(seriation) structure of the dissimilarity, and "spatial order" is a
-one-dimensional notion: in the plane there is no linear order to
-recover, so the statement must be replaced rather than ported, and the
-piecewise linearity the proof rests on becomes conic. The 2+1D
-counterpart would read "the dissimilarity determines the configuration
-up to similarity" — a distance-geometry question, recorded open. The
-consequence for this paper is stated plainly: the interpretation
-upgrade of Section 8.2, which turns a pass from "our fitter recovered
-it" into "any consistent decoder must", backs Sections 4-7 in 1+1D and
-does **not** yet back the 2+1D results of Section 6. What backs
-Section 6 is the observable's identity, band, resolution law and
-concentration, plus labeled identifiability — which is what this
-subsection establishes.
+Section 8.2's *unlabeled* clause changes character rather than
+transferring. Its engine is the strict Robinson (seriation) structure
+of the dissimilarity, and "spatial order" is a one-dimensional notion:
+in the plane there is no linear order to recover, so the 1+1D
+statement must be replaced rather than ported. What replaces it is
+metric, and it is stronger. Writing the dissimilarity as the distance
+between centered profiles, the question becomes whether that data
+determines the scene, and the answer turns on how many observers there
+are.
+
+With three observers it does not, and the failure is not the fold one
+expects. Centering might be thought to cost an observer, since two
+targets share a centered profile exactly when their distances to every
+observer differ by a common constant — the condition behind
+three-receiver ambiguity in hyperbolic positioning — but for targets
+in the hull that never happens, and the labeled centered profile
+already fixes the target. What defeats three observers is dimensional:
+three centered profiles span only a two-dimensional space, so the
+profile surface fills its ambient and the dissimilarity collapses to
+the distance matrix of coplanar points, leaving six continuous
+degrees of freedom beyond rigid motion at *every* target count from 6
+to 34. Flowing along one of them produces an explicit second scene
+whose dissimilarity agrees to 8e-17 while its shape differs by 97% of
+the configuration's own size, the observer triangle passing from
+equilateral to scalene — the 2+1D counterpart of the
+same-dissimilarity counterexample of Section 8.2.
+
+With four or more observers and enough targets it does. The profile
+surface is then genuinely curved inside a larger ambient space, and
+the flex count drops to exactly the three dimensions of rigid motion:
+the dissimilarity determines targets *and* observers up to Euclidean
+congruence, absolute scale included, since it is homogeneous of degree
+one in the scene. Measured thresholds are n >= 11 targets at four
+observers, n >= 9 at five and eight, n >= 8 at six; the frozen 2+1D
+instrument, with eight chains and 34 selected targets, sits inside
+that regime with margin. So the unlabeled observable is *more*
+informative in 2+1D than in 1+1D, not less — in 1+1D it yields an
+order and provably no metric, and flatness is precisely what limits
+it.
+
+Two scope conditions travel with that result and are not optional.
+The rigidity established is infinitesimal — local uniqueness
+generically, not global — and it lives in the exact model, as the
+1+1D identifiability results do; the measured-data perturbation
+counterpart of Section 8.3 has not been carried out for it. It is
+therefore verified numerically rather than proved, and Section 6's
+2+1D results are backed by the observable's identity, band, resolution
+law, concentration and labeled identifiability, with the unlabeled
+statement standing as characterization at that stated strength.
 
 ![Figure 6](figures/fig6_theory.png)
 
@@ -1277,12 +1311,15 @@ dimensional reach is uneven and Section 8.5 states where the line
 falls: the observable's identity, quantization band, resolution law
 and concentration results hold in any spatial dimension and are
 verified in 2+1D, and labeled identifiability becomes multilateration
-there — but the *unlabeled* decoding result, the one that makes a pass
-decoder-independent, is 1+1D only, because its seriation engine has no
-analogue where there is no linear spatial order to recover. Closing
-that would upgrade Section 6 the way the present theory upgrades
-Sections 4-7, and it is a distance-geometry problem rather than an
-extension. The concentration results describe the Poisson
+there. The *unlabeled* result changes character rather than
+transferring — seriation has no analogue where there is no linear
+spatial order, but the metric statement that replaces it is stronger,
+and it holds for four or more observers while failing outright for
+three. That result is characterization at a stated strength, not a
+proved theorem: it establishes infinitesimal rigidity in the exact
+model, verified numerically, so global uniqueness and the
+measured-data perturbation both remain open, and Section 6's results
+do not rest on it. The concentration results describe the Poisson
 idealization, which no frozen instrument realizes; and one question is
 recorded open in the theory document rather than resolved: the
 *count*-fluctuation class of harvested-chain clocks (Poisson-rate -1/4
@@ -1355,13 +1392,18 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v0.8). Verification: `experiments/theory/t1_verification.py` (13
+(v0.9). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
 split: eight checks run against the frozen 2+1D scene builder used
 unmodified, with its table tracked at
-`docs/theory/t1_g4_2plus1d_results.json`), and
+`docs/theory/t1_g4_2plus1d_results.json`),
+`experiments/theory/t1_g4b_unlabeled_2plus1d.py` (the unlabeled
+2+1D result of Section 8.5: seven checks, the Jacobian taken by
+complex-step differentiation and the rigid-motion gauge asserted
+before any verdict, table tracked at
+`docs/theory/t1_g4b_unlabeled_results.json`), and
 `experiments/theory/t1_g2_density_scaling.py` (protocol audits plus
 density-scaling characterization; every fitted exponent reported with
 a residual-based interval and a split-half check, and the recorded

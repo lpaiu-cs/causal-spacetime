@@ -1,7 +1,10 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.8 — statements and proof programs; nothing frozen**
-(v0.8 2026-07-18 KST: G4a closed — the dimension-independent statements
+Status: **THEORY DRAFT v0.9 — statements and proof programs; nothing frozen**
+(v0.9 2026-07-25 KST: G4b settled — in 2+1D the unlabeled dissimilarity
+determines the whole scene up to congruence for R >= 4, and provably
+not for R = 3; the v0.8 expectation that it "remains 1+1D only" is
+corrected; v0.8 2026-07-18 KST: G4a closed — the dimension-independent statements
 proved and verified in 2+1D on the frozen scene builder, labeled
 identifiability recast as multilateration, G4b left open with its
 reason; v0.7 2026-07-17 KST: scaling exponents carry residual-based intervals
@@ -742,19 +745,65 @@ two observers still confuse the pair mirrored across the line joining
 them; three non-collinear observers separate them. The `R >= 2` of
 Lemma 4c is a 1+1D fact, not a general one.
 
-**Does not transfer — G4b, deliberately open.** Lemma 4 recovers the
-spatial *order* from the parallax dissimilarity `D` alone, and its
-engine is the strict Robinson (seriation) structure. "Order" is a
-one-dimensional notion: in the plane there is no linear order to
-recover, so the statement itself must be replaced, not ported. The
-natural 2+1D counterpart is "`D` determines the target configuration
-up to similarity", which is a distance-geometry / rigidity question,
-and the 1+1D proof gives no help with it: the centered-profile map is
-piecewise **linear** in 1D precisely because `|x - x0|` is, whereas in
-the plane it is conic. Lemma 4f (the same-`D` counterexample) is a 1D
-construction for the same reason. Consequently the *unlabeled*
-statements — the ones that upgrade a pipeline pass from "our fitter
-recovered it" to "any consistent decoder must" — remain 1+1D only.
+**Changes character entirely — G4b, settled in v0.9.** Lemma 4
+recovers the spatial *order* from the parallax dissimilarity `D` alone,
+and its engine is the strict Robinson (seriation) structure. "Order" is
+a one-dimensional notion: in the plane there is no linear order to
+recover, so the statement itself must be replaced, not ported, and the
+1+1D proof gives no help — the centered-profile map is piecewise
+**linear** in 1D precisely because `|x - x0|` is, whereas in the plane
+it is conic. Lemma 4f (the same-`D` counterexample) is a 1D
+construction for the same reason.
+
+That diagnosis of the *obstruction* stands. The conclusion v0.8 drew
+from it — that the unlabeled statements "remain 1+1D only" — was
+wrong, and in the informative direction. The right 2+1D counterpart is
+metric rather than ordinal, and it is **stronger** than the 1+1D
+statement it replaces. Write `Phi~` for the centered profile map and
+recall that the pipeline sees only `D(j,k) = ||Phi~(x_j) - Phi~(x_k)||
+/ sqrt(R)`, an `n x n` matrix carrying no observer labels and no
+observer positions. Then, in the exact model:
+
+- The centering fold is *not* the obstruction. `Phi~(x') = Phi~(x)`
+  is the TDOA condition `|x'-p_r| - |x-p_r| = c`, and three-receiver
+  TDOA is famously two-valued — so one expects centering to cost an
+  observer. It does not, for targets in the hull: a dense scan finds
+  no second zero and `d(Phi~)/dx` has full rank `d` throughout, so the
+  *labeled* centered profile already determines the target.
+- `R = 3` nevertheless fails, and not by a fold but by a **continuous
+  flex**. Three centered profiles span the 2-dimensional mean-zero
+  subspace of `R^3`, so the profile surface fills its ambient space
+  and has no extrinsic curvature to be rigid against; `D` degenerates
+  to the distance matrix of `n` coplanar points, invariant under any
+  isometry of that plane, and the freedom is realizable by moving the
+  observers. Measured: exactly `6` flexes beyond the rigid-motion
+  gauge, unchanged from `n = 6` to `n = 34`. Adding targets never
+  helps. `[MEASURED]`
+- `R >= 4` with enough targets is **rigid**: the profile surface is a
+  curved 2-surface in a `>= 3`-dimensional subspace, and the nullity
+  drops to exactly `d(d+1)/2 = 3`, the rigid-motion gauge. So `D`
+  determines targets *and* observers up to Euclidean congruence —
+  including the **absolute scale**, since `D` is homogeneous of degree
+  1 in the scene (`J theta = D`, Euler). Measured thresholds: `R = 4`
+  needs `n >= 11`; `R = 5` and `R = 8` need `n >= 9`; `R = 6` needs
+  `n >= 8`. `[MEASURED]`
+
+So the unlabeled observable is *more* informative in 2+1D than in
+1+1D, not less: 1+1D yields an order and provably no metric, while
+2+1D with `R >= 4` yields the metric configuration up to congruence.
+Curvature of the profile surface is what rigidifies, and flatness is
+exactly what 1+1D has too much of.
+
+Scope, since this is the kind of claim that invites over-reading. The
+rigidity established is **infinitesimal** — local uniqueness
+generically, not global; rank is lower semicontinuous, so full rank at
+a sampled configuration does give full rank on a dense open set, which
+is why the thresholds are reported as generic, but a global-uniqueness
+statement needs a separate argument. Everything is in the exact model,
+as Lemma 4 is; the measured-data counterpart (what Lemma 4e does for
+Lemma 4) is **not** attempted. And these are computations, not written
+proofs, which is why the tags read `[MEASURED]` rather than
+`[PROVED]`.
 
 **Verification (2+1D).** `experiments/theory/t1_g4_2plus1d.py`, run
 against the **frozen** P2/P2-v2 scene builder (`build_scene_2plus1d`,
@@ -855,11 +904,21 @@ with zero strict inversions in either.
   non-collinear observers" is the right condition, and Lemma 4c's
   `R >= 2` is 1+1D-specific), and "non-collinear" becomes quantitative
   through the conditioning factor. **G4b — the unlabeled statements —
-  remains open by design:** Lemma 4's Robinson/seriation engine has no
-  2D analogue, because "spatial order" is one-dimensional and the
-  piecewise linearity that drove the proof becomes conic in the plane.
-  Its counterpart ("`D` determines the configuration up to
-  similarity") is a distance-geometry / rigidity problem, not a port.
+  is settled in v0.9, opposite to the direction v0.8 expected.**
+  Lemma 4's Robinson/seriation engine indeed has no 2D analogue, and
+  that obstruction is real; but the 2+1D counterpart is metric rather
+  than ordinal, and it is *stronger* than the statement it replaces.
+  For `R >= 4` observers and enough targets (measured: `n >= 11` at
+  `R = 4`, `n >= 9` at `R = 5, 8`, `n >= 8` at `R = 6`), `D` alone
+  determines targets AND observers up to Euclidean congruence,
+  absolute scale included. For `R = 3` it determines nothing of the
+  sort: `6` flexes beyond the gauge survive at every target count, and
+  an explicit same-`D` non-congruent scene is exhibited. The dividing
+  line is the ambient dimension of the centered-profile subspace —
+  with `R = 3` the profile surface fills its 2-dimensional ambient and
+  cannot curve, which is the same flatness that limits 1+1D. Section
+  5b carries the statements and their scope; the work is
+  `[MEASURED]` (infinitesimal rigidity, exact model), not `[PROVED]`.
 
 ## 7. Numerical verification plan
 
@@ -1061,11 +1120,34 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
     the `count_class_status` block, which are descriptive and never
     gating.
 
+12. G4b unlabeled identifiability (v0.9, 2026-07-25 KST):
+    `experiments/theory/t1_g4b_unlabeled_2plus1d.py`, 7/7 checks,
+    tracked table `docs/theory/t1_g4b_unlabeled_results.json`,
+    regressions `tests/test_t1_g4b_unlabeled.py`. The Jacobian is taken
+    by complex-step differentiation, so the rank decision rests on an
+    eleven-order spectral gap rather than on finite-difference noise,
+    and the instrument is validated before use: the three rigid-motion
+    directions are null to `8.8e-16` while the scale direction returns
+    `J theta = D` exactly (`1.0000`), confirming the gauge is `3` and
+    the absolute scale is recoverable. Control: 1+1D keeps extra
+    flexes at every `(n, R)` tested (`2, 3, 4, 3` at
+    `(6,3), (10,4), (16,6), (24,8)`) — Lemma 4f through this
+    instrument. `R = 3`: extra flexes exactly `6` at
+    `n = 6, 10, 14, 20, 34`, and the explicit counterexample flows
+    along one flex to a scene whose `D` differs by `8.3e-17` while its
+    shape differs by `0.243` against a configuration spread of `0.251`
+    — the observer triangle goes from equilateral (`0.433` three
+    times) to scalene (`0.373, 0.325, 0.234`). `R >= 4` reaches nullity
+    `3` from `n = 11 (R=4)`, `9 (R=5)`, `8 (R=6)`, `9 (R=8)`. The
+    frozen 2+1D instrument's own configuration (8 chains, 34 selected
+    targets) has nullity exactly `3` with smallest nonzero singular
+    value `1.3e-2`, so it sits inside the rigid regime with margin.
+
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8, note 14 is v0.9)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -1305,6 +1387,42 @@ pinned in CI as exact (non-statistical) regressions.
     plane. That is the half that would upgrade a 2+1D pipeline pass the
     way Lemma 4 upgrades a 1+1D one, and it needs a distance-geometry
     argument rather than a port.
+
+14. v0.9 (G4b): v0.8 recorded the unlabeled clause as "does not
+    transfer" and left it open on the grounds that seriation has no 2D
+    analogue. The premise was right and the conclusion was wrong, so
+    the entry is rewritten rather than extended. Seriation really does
+    not survive — there is no linear spatial order in the plane to
+    recover — but that says the 1+1D *statement* must be replaced, not
+    that nothing replaces it. The replacement is metric: for `R >= 4`
+    the dissimilarity determines the entire scene, targets and
+    observers together, up to Euclidean congruence including absolute
+    scale, which is strictly more than the order-only conclusion of
+    Lemma 4.
+
+    Two things went into getting this right, and both were initially
+    guessed wrong. First, the expected obstruction — that centering
+    costs an observer, since `Phi~(x') = Phi~(x)` is a TDOA condition
+    and three-receiver TDOA is two-valued — does not occur on the
+    hull; a dense scan finds no twin and the differential has full
+    rank. Second, the working assumption that scale is a gauge is
+    false: `D` is homogeneous of degree 1, so a global rescaling
+    multiplies it instead of preserving it, and the gauge is
+    `d(d+1)/2` rather than one more. Both errors would have inflated
+    the expected nullity and turned a rigid configuration into an
+    apparently flexible one; the harness now asserts the gauge
+    directions and the scale response before reporting any verdict.
+
+    What actually defeats `R = 3` is dimensional, not a fold: three
+    centered profiles span only the 2-dimensional mean-zero subspace
+    of `R^3`, so the profile surface fills its ambient space and `D`
+    collapses to the distance matrix of `n` coplanar points. That is
+    the same flatness that limits 1+1D, where `Phi~` is piecewise
+    linear — which is why the 1+1D control is never rigid either. From
+    `R >= 4` the surface curves inside a larger ambient and rigidity
+    follows. Reported as `[MEASURED]`: infinitesimal rigidity in the
+    exact model, verified numerically, with global uniqueness and the
+    measured-data perturbation both left open.
 
 ## 8. Relation to the frozen program
 
