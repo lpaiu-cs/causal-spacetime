@@ -34,9 +34,9 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 
-from causal_spacetime_lab.causal import causal_matrix_1p1
+from causal_spacetime_lab.causal import DEFAULT_CAUSAL_ATOL, causal_matrix_1p1
 
-_ATOL = 1e-12  # the causal_matrix_minkowski default interval tolerance
+_ATOL = DEFAULT_CAUSAL_ATOL  # the shared causal-predicate tolerance
 
 
 def make_poisson_clock_chain_1p1(

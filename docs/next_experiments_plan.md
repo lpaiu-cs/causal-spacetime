@@ -89,6 +89,15 @@ Execution update (2026-07-17):
   thereby explained as a mixture artifact. Remaining open in G2: the
   count-fluctuation class only (-1/4 vs -1/3; scaled tube measures
   -0.32).
+- **G4a closed** (theory doc v0.8): the dimension-independent half of
+  T1 is proved and verified in 2+1D against the frozen P2/P2-v2 scene
+  builder, used unmodified (8/8 checks). Lemmas 1-3 and Theorem 2
+  transfer verbatim once |dx| is a Euclidean norm; Theorem 1's labeled
+  clause becomes multilateration (>= 3 non-collinear observers, O(delta)
+  error with the layout's conditioning as the constant -- a
+  near-collinear layout degrades 29x). G4b (unlabeled recovery of the
+  configuration from D alone) stays open with its obstruction named:
+  the seriation engine has no 2D analogue. Manuscript Section 8.5.
 - Scaling exponents now carry residual-based intervals and split-half
   checks (theory doc v0.7), matching the uncertainty treatment P7
   already applied to its tunneling exponent. This re-diagnosed the

@@ -1020,6 +1020,58 @@ wandering is eliminated rather than suppressed, or a wider density
 range — not more seeds. Details are recorded in the theory document
 and in the tracked table, descriptively and without any gate.
 
+### 8.5 What the theory says in 2+1D
+
+Sections 8.1-8.4 are 1+1D, matching the core experiments, while
+Section 6 extends the discriminator to 2+1D. The theory's reach across
+that gap is uneven in a way worth stating precisely, because the split
+is structural rather than a matter of effort.
+
+The dimension enters Sections 8.1 and 8.3 in one place only: the
+observer-to-target separation |dx|, read as a Euclidean norm instead of
+an absolute value. Everything downstream is a statement about *times
+along one worldline* — how many ticks fall before, inside, and after
+the open radar interval — and is blind to how many spatial dimensions
+produced that separation. So the rank-gap identity, the quantization
+band, Campbell's formula, the resolution law, and the whole
+concentration argument of Section 8.3 hold in any spatial dimension.
+Verified in 2+1D against the *frozen* P2/P2-v2 scene builder used
+unmodified: zero band violations over 3200 controlled and 272
+end-to-end measurements, resolution slope -1.007 with every pointwise
+error inside the proved delta/2, density invariance bit-identical, and
+same-slice pairs pathwise monotone with the predicted tie rates (the
+tie constant counts observers, not dimensions: exp(-2 lambda g) for
+one, exp(-4 lambda g) for the two-observer flanking estimator).
+
+Section 8.2's *labeled* clause changes form and stays provable. In
+2+1D the widths give radial distances, and the differences of squared
+distances are linear in the target position, so the position is
+determined by any d + 1 affinely independent observers — three
+non-collinear in the plane — with error still O(delta). What is new is
+that the observer configuration enters the bound through the
+conditioning of that linear system, so "non-collinear" is a
+quantitative condition rather than a genericity clause: measured on
+the same targets, a near-collinear layout degrades positional recovery
+by a factor 29 against a ring, each still inside its own proved bound.
+There is no 1+1D analogue, where two flanking observers always give
+slope 4 lambda.
+
+Section 8.2's *unlabeled* clause does not transfer, and the
+obstruction is structural. Its engine is the strict Robinson
+(seriation) structure of the dissimilarity, and "spatial order" is a
+one-dimensional notion: in the plane there is no linear order to
+recover, so the statement must be replaced rather than ported, and the
+piecewise linearity the proof rests on becomes conic. The 2+1D
+counterpart would read "the dissimilarity determines the configuration
+up to similarity" — a distance-geometry question, recorded open. The
+consequence for this paper is stated plainly: the interpretation
+upgrade of Section 8.2, which turns a pass from "our fitter recovered
+it" into "any consistent decoder must", backs Sections 4-7 in 1+1D and
+does **not** yet back the 2+1D results of Section 6. What backs
+Section 6 is the observable's identity, band, resolution law and
+concentration, plus labeled identifiability — which is what this
+subsection establishes.
+
 ![Figure 6](figures/fig6_theory.png)
 
 *Figure 6. The theory of Section 8 on its verified data. Left: the
@@ -1135,7 +1187,13 @@ one tick) with a 1/K resolution law, order recovery under Poisson
 clocks concentrates at the stated exponential rates, and the
 inverse-root density law for the error holds for density-thinned
 clocks while failing to transfer to sprinkling-harvested clocks at
-their measured discreteness-scale coupling. Additionally (g):
+their measured discreteness-scale coupling. Of (f), the parts that are
+statements about tick counts on one worldline — the identity, the
+band, the resolution law and the concentration results — hold in any
+spatial dimension and are verified in 2+1D, where labeled
+identifiability additionally becomes multilateration from any three
+non-collinear observers; the decodability of order from the
+dissimilarity alone is claimed in 1+1D only. Additionally (g):
 constructed chain-rich layered orders, judged by the frozen instrument
 under preregistered per-cell expectations, block at the numerical
 geometry gates (8/8 cells, 149/160 fresh seeds), so rejection of
@@ -1150,7 +1208,11 @@ window.
 We do not claim: continuum spacetime emergence; that causal order alone
 yields metric scale, signed coordinates, or a manifold; a continuum limit; or
 that these finite results establish any physical theory. Claim (f) is
-1+1D and instrument-relative: the concentration statements describe a
+instrument-relative, and its unlabeled half is 1+1D: we do not claim
+that the parallax dissimilarity determines the target configuration in
+2+1D, only that the observable's identity, band, resolution law and
+concentration transfer there and that labeled profiles multilaterate.
+The concentration statements describe a
 Poisson idealization no frozen instrument realizes, the density-scaling
 statements name their clock protocols, and no inverse-root law is
 claimed for harvested-chain clocks (the order-only harvest's wandering
@@ -1210,9 +1272,17 @@ instrument-level judgment of the 2D-orders phase diagram across
 (beta, eps, N), including a continuous geometry score and its finite-size
 behavior near beta_c.
 
-The theory of Section 8 has its own boundaries and open ends. All
-statements are 1+1D (the hull condition and the reflection group both
-change in 2+1D); the concentration results describe the Poisson
+The theory of Section 8 has its own boundaries and open ends. Its
+dimensional reach is uneven and Section 8.5 states where the line
+falls: the observable's identity, quantization band, resolution law
+and concentration results hold in any spatial dimension and are
+verified in 2+1D, and labeled identifiability becomes multilateration
+there — but the *unlabeled* decoding result, the one that makes a pass
+decoder-independent, is 1+1D only, because its seriation engine has no
+analogue where there is no linear spatial order to recover. Closing
+that would upgrade Section 6 the way the present theory upgrades
+Sections 4-7, and it is a distance-geometry problem rather than an
+extension. The concentration results describe the Poisson
 idealization, which no frozen instrument realizes; and one question is
 recorded open in the theory document rather than resolved: the
 *count*-fluctuation class of harvested-chain clocks (Poisson-rate -1/4
@@ -1285,9 +1355,13 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v0.7). Verification: `experiments/theory/t1_verification.py` (13
+(v0.8). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
-same-dissimilarity counterexample and the Model P simulation) and
+same-dissimilarity counterexample and the Model P simulation),
+`experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
+split: eight checks run against the frozen 2+1D scene builder used
+unmodified, with its table tracked at
+`docs/theory/t1_g4_2plus1d_results.json`), and
 `experiments/theory/t1_g2_density_scaling.py` (protocol audits plus
 density-scaling characterization; every fitted exponent reported with
 a residual-based interval and a split-half check, and the recorded
