@@ -1,0 +1,147 @@
+{
+  "scope": "G4a: T1 statements whose proofs never used the spatial dimension, verified in 2+1D on the frozen scene builder, plus labeled multilateration. G4b (unlabeled recovery of the configuration from D alone) is NOT addressed: Lemma 4's Robinson/seriation engine has no 2D analogue.",
+  "checks": {
+    "band": {
+      "n_measurements": 3200,
+      "n_unreachable": 0,
+      "residual_min": -0.9748610465457048,
+      "residual_max": 0.9855291492043747,
+      "violations": 0,
+      "passed": true
+    },
+    "resolution_scaling": {
+      "ladder": [
+        {
+          "ticks": 12,
+          "delta": 0.12727272727272726,
+          "n_measurements": 600,
+          "max_error": 0.06162364622653721,
+          "rmse": 0.02739193675942588,
+          "bound_delta_over_2": 0.06363636363636363,
+          "within_bound": true
+        },
+        {
+          "ticks": 24,
+          "delta": 0.0608695652173913,
+          "n_measurements": 600,
+          "max_error": 0.029315540084879133,
+          "rmse": 0.01224394355811643,
+          "bound_delta_over_2": 0.03043478260869565,
+          "within_bound": true
+        },
+        {
+          "ticks": 48,
+          "delta": 0.02978723404255319,
+          "n_measurements": 600,
+          "max_error": 0.014496520390796075,
+          "rmse": 0.0058663050575055165,
+          "bound_delta_over_2": 0.014893617021276595,
+          "within_bound": true
+        },
+        {
+          "ticks": 96,
+          "delta": 0.014736842105263158,
+          "n_measurements": 600,
+          "max_error": 0.007004516906099073,
+          "rmse": 0.002916441826325907,
+          "bound_delta_over_2": 0.007368421052631579,
+          "within_bound": true
+        },
+        {
+          "ticks": 192,
+          "delta": 0.007329842931937172,
+          "n_measurements": 600,
+          "max_error": 0.003381041824677966,
+          "rmse": 0.0014831554608251433,
+          "bound_delta_over_2": 0.003664921465968586,
+          "within_bound": true
+        },
+        {
+          "ticks": 384,
+          "delta": 0.0036553524804177544,
+          "n_measurements": 600,
+          "max_error": 0.0017804168147177446,
+          "rmse": 0.0007572455016008993,
+          "bound_delta_over_2": 0.0018276762402088772,
+          "within_bound": true
+        }
+      ],
+      "rmse_loglog_slope": -1.0070351192130091,
+      "passed": true
+    },
+    "density_invariance": {
+      "bulk_sizes": [
+        300,
+        900,
+        2700
+      ],
+      "bit_identical": true,
+      "passed": true
+    },
+    "builder_density_invariance": {
+      "n_events_grid": [
+        2600,
+        3000,
+        3600
+      ],
+      "chain_worldlines_bit_identical": true,
+      "passed": true
+    },
+    "fold_structure": {
+      "circle_targets": 12,
+      "single_observer_folds_the_circle": true,
+      "two_observers_fold_the_mirror_pair": true,
+      "third_observer_width_gap": 24.0,
+      "passed": true
+    },
+    "multilateration": {
+      "non_collinear": {
+        "n_solved": 200,
+        "pinv_norm": 1.6329931618554523,
+        "max_position_error": 0.008801463432764839,
+        "median_position_error": 0.0031468232118279553,
+        "max_proved_bound": 0.021910249886246125,
+        "all_within_proved_bound": true
+      },
+      "near_collinear": {
+        "n_solved": 200,
+        "pinv_norm": 139.75496416296718,
+        "max_position_error": 0.48807056235134194,
+        "median_position_error": 0.09164035099862863,
+        "max_proved_bound": 1.6857126643138949,
+        "all_within_proved_bound": true
+      },
+      "passed": true
+    },
+    "model_p_same_slice": {
+      "trials": 4000,
+      "lam": 40.0,
+      "gap": 0.02,
+      "single_observer": {
+        "strict_inversions": 0,
+        "tie_rate": 0.20625,
+        "tie_rate_predicted": 0.20189651799465538
+      },
+      "two_observer_flanking": {
+        "observer_offset": 0.25,
+        "radial_gap": 0.020000000000000018,
+        "y_near": 0.1,
+        "y_far": 0.14550027358829618,
+        "strict_inversions": 0,
+        "tie_rate": 0.043,
+        "tie_rate_predicted": 0.04076220397836621
+      },
+      "passed": true
+    },
+    "pipeline_band": {
+      "n_targets": 34,
+      "n_measurements": 272,
+      "residual_min": -0.9698427975384725,
+      "residual_max": 0.926955705495363,
+      "violations": 0,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "status": "theory-track verification; no gate; no frozen artifact modified (the 2+1D scene builder is used unchanged)"
+}
