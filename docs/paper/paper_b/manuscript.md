@@ -807,7 +807,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v0.9); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.0); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -996,29 +996,33 @@ near the order-only exponent, by a different mechanism entirely. Any
 density-scaling claim must therefore name its clock protocol; the
 frozen PC-V1 instrument uses Model D clocks and is untouched by this.
 
-The one remaining open question — the harvested chain's
-*count*-fluctuation class, Poisson-rate -1/4 against KPZ-like -1/3 —
-is open on *systematics*, not on statistics, and the distinction is
-worth stating because the arithmetic points the other way. The
-scaled tube is the arm meant to measure that class, and its interval
-[-0.371, -0.263] is stable across split halves (-0.352 / -0.312) and
-leave-one-out; taken at face value it puts -1/4 3.2 standard errors
-outside and keeps only -1/3. Two measured systematics are larger than
-that interval. First, the scaled tube suppresses wandering but does
-not remove it: the indicative wandering share of its error falls from
-0.88 to 0.22 across the grid, so its slope is a drifting mixture of a
-rho^{-1/2} wandering term and the count term rather than the count
-exponent itself, and removing the wandering in quadrature flips which
-candidate survives. Second, calibrating on the thinned arm, whose
-exponent is proved, this grid returns -0.463 for a true -1/2 with a
-split-half spread of 0.110 — wider than the 0.083 separation between
-the candidates. A seven-point grid of this construction therefore
-cannot resolve them, and the same caution applies to the wandering
-reading above: it is consistent with KPZ and favours it, not a
-three-digit determination. Closing the item needs a harvest whose
-wandering is eliminated rather than suppressed, or a wider density
-range — not more seeds. Details are recorded in the theory document
-and in the tracked table, descriptively and without any gate.
+The count-fluctuation class behind these error laws is
+protocol-dependent too, and measuring it exposes what the error
+exponents alone could not say. Read off the *distance* error the
+question is unanswerable: the arm meant to isolate the count term
+still carries a wandering admixture whose weight slides from 0.88 to
+0.22 across the density grid, and the fitting design's own wobble,
+calibrated where the exponent is proved, is 0.110 against a 0.083
+separation between the candidates. Measured instead from the chains'
+tick counts — where no distance estimator, and therefore no wandering,
+enters — the separation doubles to 0.167 and the design's wobble drops
+to 0.005-0.033. The counts then decide cleanly, and they decide
+differently for the two harvests: the order-only anchored chain
+fluctuates like a longest chain should (Tracy-Widom, exponent 1/3,
+with Poisson excluded by 12.8 standard errors), while the
+tube-confined chain fluctuates like a Poisson process (exponent 1/2,
+Tracy-Widom excluded by 13.2), against a thinned clock that returns
+its constructed 1/2 as calibration. The mechanism is confinement:
+Tracy-Widom fluctuations come from a longest chain's freedom to
+optimize a transverse path, and the tube is rho^{-1/2} wide against a
+natural wandering of rho^{-1/6}, so it suppresses precisely that
+freedom — widening the tube to the wandering scale restores the 1/3
+exponent monotonically. The consequence for the error laws above is
+that neither arm's error exponent measures its own count class: the
+tube's is contaminated by the wandering it failed to remove, and the
+order-only chain's is swamped by the wandering it deliberately allows.
+All of this is theory-track characterization, recorded in the theory
+document and its tracked table without any gate.
 
 ### 8.5 What the theory says in 2+1D
 
@@ -1320,16 +1324,12 @@ proved theorem: it establishes infinitesimal rigidity in the exact
 model, verified numerically, so global uniqueness and the
 measured-data perturbation both remain open, and Section 6's results
 do not rest on it. The concentration results describe the Poisson
-idealization, which no frozen instrument realizes; and one question is
-recorded open in the theory document rather than resolved: the
-*count*-fluctuation class of harvested-chain clocks (Poisson-rate -1/4
-vs KPZ-like -1/3). That item is open on systematics rather than
-statistics — the arm that measures it carries a residual wandering
-admixture whose weight slides across the density grid, and the
-fitting design's own wobble, calibrated where the exponent is proved,
-exceeds the separation between the two candidates (Section 8.4). It
-closes with a wandering-free harvest or a wider density range, not
-with more seeds. The order-only harvest question is closed
+idealization, which no frozen instrument realizes. The theory
+document's gap list now has no open item: the last one, the
+count-fluctuation class of harvested-chain clocks, closed once it was
+measured from the chains' tick counts rather than from their distance
+error, and the answer was that the class is protocol-dependent rather
+than single (Section 8.4). The order-only harvest question is closed
 at the design level: a selection rule reading order data alone, given
 two designated anchor events, is built, audited against an independent
 longest-chain computation, and measured — its transverse wandering
@@ -1392,7 +1392,7 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v0.9). Verification: `experiments/theory/t1_verification.py` (13
+(v1.0). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
@@ -1404,11 +1404,15 @@ unmodified, with its table tracked at
 complex-step differentiation and the rigid-motion gauge asserted
 before any verdict, table tracked at
 `docs/theory/t1_g4b_unlabeled_results.json`), and
+`experiments/theory/t1_g2_count_class.py` (the count-fluctuation
+class of Section 8.4, measured from chain lengths with no distance
+estimator, table tracked at
+`docs/theory/t1_g2_count_class_results.json`), and
 `experiments/theory/t1_g2_density_scaling.py` (protocol audits plus
 density-scaling characterization; every fitted exponent reported with
 a residual-based interval and a split-half check, and the recorded
 `count_class_status` block assembling the systematic case for leaving
-the count-fluctuation class open), with their regression tests run in
+the count-fluctuation class open at the time), with their regression tests run in
 CI on every push; the full-grid density-scaling table is committed with
 its run configuration as
 `docs/theory/t1_g2_density_scaling_results.json`, and rerunning the

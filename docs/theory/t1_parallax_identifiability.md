@@ -1,7 +1,11 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.9 — statements and proof programs; nothing frozen**
-(v0.9 2026-07-25 KST: G4b settled — in 2+1D the unlabeled dissimilarity
+Status: **THEORY DRAFT v1.0 — statements and proof programs; nothing frozen.
+No gap in Section 6 is open.**
+(v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
+it directly from chain lengths rather than from the distance error —
+protocol-dependent, KPZ for the order-only chain and Poisson for the
+tube-confined one; v0.9 2026-07-25 KST: G4b settled — in 2+1D the unlabeled dissimilarity
 determines the whole scene up to congruence for R >= 4, and provably
 not for R = 3; the v0.8 expectation that it "remains 1+1D only" is
 corrected; v0.8 2026-07-18 KST: G4a closed — the dimension-independent statements
@@ -619,8 +623,10 @@ and the law turns out to hold for exactly one of them
   determination of the wandering exponent.**
   `[MEASURED, for the order-only protocol]`
 
-Mechanism note (updated at v0.7; the count class remains open, for a
-*systematic* reason now stated with numbers): with `lambda ~
+Mechanism note (written at v0.7, when the count class was still open
+for a *systematic* reason stated here with numbers; settled at v1.0 --
+see the count-class subsection below, which corrects this note's
+attribution of the tube's exponent): with `lambda ~
 sqrt(rho)`, a Poisson-rate guess for the *count* fluctuations gives
 exponent `-1/4`; a maximal path is *more regular* than Poisson
 (KPZ-like concentration would suggest `-1/3`). The three harvest arms
@@ -642,7 +648,10 @@ separate the mechanisms only partially.
   negligible: the indicative share of the error runs `0.88` at the
   sparse end down to `0.22` at the dense end. Its `-0.317` is
   therefore a *drifting* mixture of a wandering term (steeper) and the
-  count term, not the count exponent itself.
+  count term, not the count exponent itself. **v1.0 identifies what
+  that count term actually is, and it is not what this note guessed:**
+  the tube's counts are Poisson (`-1/4`), not KPZ-like -- see the
+  count-class subsection below.
 
 Statistics versus systematics, for the one open item. Fitting the
 scaled tube's RMSE with a residual-based interval gives slope
@@ -670,13 +679,82 @@ uncertainty, and the item stays open on systematics:**
    demonstrated wobble of the measurement design where the answer is
    known. A `7`-point grid of this construction cannot resolve them.
 
-What would close it: a harvest whose wandering is eliminated rather
-than suppressed (so the estimand is the count term), or a density
-range wide enough that the count term dominates the mixture, with the
-proved arm re-calibrated over the same range. Recorded in the tracked
-table under `count_class_status`, which is descriptive and never
-gating — it is computed after the measurements exist, so promoting it
-to a criterion would be a post-hoc gate.
+What closed it (v1.0) was neither of the two routes this note
+proposed. Both -- a wandering-free harvest, or a wider density range --
+still read the class off the *distance* error, and the distance error
+is exactly where the wandering enters. The count class is instead a
+property of the chain's tick times alone, so it can be measured with
+no distance estimator at all:
+
+```
+sd(chain length) ~ mean(chain length)^theta
+    theta = 1/2  ->  Poisson counts     ->  error exponent -1/4
+    theta = 1/3  ->  KPZ / Tracy-Widom  ->  error exponent -1/3
+```
+
+The candidates are then separated by `1/6 = 0.167`, twice the `0.083`
+the distance route could not resolve, with no wandering admixture
+whatever. See the count-class subsection below. The
+`count_class_status` block in the density-scaling table stands as
+recorded -- descriptive, never gating; it identified the systematics
+correctly, and v1.0 supersedes its *attribution*.
+
+### The count-fluctuation class (v1.0): protocol-dependent, like everything else here
+
+Measured directly from the chains' tick counts, with no distance
+estimator in the loop (`experiments/theory/t1_g2_count_class.py`,
+tracked table `docs/theory/t1_g2_count_class_results.json`,
+regressions `tests/test_t1_g2_count_class.py`):
+
+| clock | `theta` | 95% CI | half-split | verdict |
+|---|---|---|---|---|
+| thinned Poisson (calibration) | `+0.4981` | `[0.4765, 0.5197]` | `0.017` | `1/2`, as constructed |
+| **order-only anchored chain** | `+0.3221` | `[0.2881, 0.3562]` | `0.033` | **KPZ `1/3`** (Poisson excluded, `12.8` se) |
+| **tube-confined chain** | `+0.4870` | `[0.4585, 0.5154]` | `0.005` | **Poisson `1/2`** (KPZ excluded, `13.2` se) |
+
+`[MEASURED]`. The calibration arm returns `1/2` with bias `-0.0019`,
+which is what licenses the other two rows; and the design's wobble
+here (half-split spreads `0.005..0.033`) is five to thirty times
+*smaller* than the `0.167` separation, exactly inverting the situation
+that blocked the distance route, where a `0.110` wobble faced a
+`0.083` separation.
+
+**There is no single count class**, which is why asking for "the"
+class never converged. The two harvests sit on opposite sides of the
+gap, and the mechanism is confinement. A longest chain's Tracy-Widom
+fluctuations come from its freedom to optimize a transverse path; the
+shipped tube is `~ rho^{-1/2}` wide while the chain's natural
+wandering is `~ rho^{-1/6}` (Section 5's order-only measurement), so
+asymptotically the tube is *far* narrower than the excursions KPZ
+scaling wants. Confine the chain below that scale and the optimization
+is destroyed, leaving counts that fluctuate like a Poisson process.
+Widening the tube restores it, monotonically:
+
+| tube half-width | `theta` | nearer |
+|---|---|---|
+| `3.0 rho^{-1/2}` (shipped) | `+0.463` | Poisson |
+| `1.0 rho^{-1/3}` | `+0.390` | KPZ |
+| `1.0 rho^{-1/6}` (matches the wandering) | `+0.340` | KPZ (within `0.006` of `1/3`) |
+
+Consequences, stated so the earlier text is not left standing:
+
+- The scaled tube's error exponent `-0.317` is **not** its count
+  exponent, and the v0.5-v0.7 reading of it as "the count class,
+  nearer `-1/3`" is **retired**. That arm's counts are Poisson, whose
+  count term predicts `-1/4`; the measured `-0.317` is the mixture
+  with its residual `rho^{-1/2}` wandering that the v0.7 systematics
+  flagged. The flag was right and the attribution was wrong.
+- The order-only chain's counts are KPZ, predicting a `-1/3` count
+  term — but its *total* error is wandering-dominated at `-0.155`,
+  because the wandering (`rho^{-0.168}`) decays more slowly than the
+  count term (`rho^{-1/3}`) and wins at every density measured.
+- So neither arm's error exponent measures its own count class, for
+  opposite reasons: the tube's is contaminated by the wandering it
+  failed to remove, the order-only chain's is swamped by the wandering
+  it deliberately allows. Reading a mechanism off a total error
+  exponent was the error common to both.
+
+With this, **G2 has no open items.**
 
 Any density-scaling claim must name its clock protocol.
 
@@ -838,8 +916,9 @@ with zero strict inversions in either.
   (Lemma 4f counterexample), and Theorem 1's positive-affine clause
   belongs to the labeled flanking decoder.
 - **G2 — the stochastic clock model has no instrument.**
-  **INSTRUMENTED (v0.5); order-only harvest designed and measured
-  (v0.6); count-fluctuation class open on systematics (v0.7).**
+  **CLOSED (v1.0).** (INSTRUMENTED v0.5; order-only harvest designed
+  and measured v0.6; count class open on systematics v0.7; count class
+  settled v1.0.)
   (History: v0.1 wrongly
   claimed the code harvests paths from the sprinkling; v0.2 corrected
   that the frozen instrument is Model D through and through —
@@ -866,16 +945,19 @@ with zero strict inversions in either.
   that protocol is the anchor *designation* alone. *Remaining open,
   one item, and v0.7 sharpens why:* the harvested chain's
   **count**-fluctuation class (`-1/4` Poisson-rate guess vs `-1/3`
-  KPZ-like). Its residual-based interval — scaled tube, `-0.3172`,
-  95% CI `[-0.3714, -0.2629]`, stable across split halves — would by
-  itself exclude `-1/4`. It stays open because the *systematics* are
-  larger than that interval: the scaled tube only partially
-  suppresses wandering (indicative share `0.22..0.88`, sliding across
-  the grid, so the slope is a drifting mixture, not the count
-  exponent), and the design's own wobble measured on the `[PROVED]`
-  thinned arm (`0.110` between split halves, bias `+0.037`) exceeds
-  the `0.083` separation between the candidates. Closing it needs a
-  wandering-free harvest or a wider density range, not more seeds.
+  KPZ-like) — **settled in v1.0, and the answer is that there is no
+  single class**. Measured directly from chain lengths, with no
+  distance estimator and therefore no wandering admixture, the
+  order-only anchored chain is KPZ (`theta = 0.322`, Poisson excluded
+  by `12.8` se) and the tube-confined chain is Poisson
+  (`theta = 0.487`, KPZ excluded by `13.2` se), with the thinned clock
+  returning its constructed `1/2` as calibration. The mechanism is
+  confinement: the tube is `rho^{-1/2}` wide against a natural
+  wandering of `rho^{-1/6}`, which destroys the transverse
+  optimization that produces Tracy-Widom fluctuations; widening the
+  tube to the wandering scale restores `theta -> 1/3` monotonically.
+  This retires the v0.5-v0.7 reading of the scaled tube's `-0.317` as
+  its count exponent.
   The frozen PC-V1 instrument is unchanged; any confirmatory use of
   these protocols would need its own prereg freeze.
 - **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
@@ -1143,11 +1225,32 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
     targets) has nullity exactly `3` with smallest nonzero singular
     value `1.3e-2`, so it sits inside the rigid regime with margin.
 
+13. G2 count class (v1.0, 2026-07-25 KST):
+    `experiments/theory/t1_g2_count_class.py`, 4/4 checks, tracked
+    table `docs/theory/t1_g2_count_class_results.json`, regressions
+    `tests/test_t1_g2_count_class.py`. Chain lengths over
+    `rho = 500..64000`, 300 realizations per density; the exponent is
+    fitted as `sd ~ mean^theta` with the same residual interval and
+    split-half treatment the other exponents carry. Calibration
+    (thinned Poisson clock, `theta = 1/2` by construction):
+    `+0.4981`, bias `-0.0019`, CI `[0.4765, 0.5197]`. Order-only
+    anchored chain: `+0.3221`, CI `[0.2881, 0.3562]`, KPZ `1/3` inside
+    at `-0.8` se and Poisson `1/2` excluded at `-12.8` se.
+    Tube-confined chain: `+0.4870`, CI `[0.4585, 0.5154]`, Poisson
+    inside at `-1.1` se and KPZ excluded at `+13.2` se. Confinement
+    crossover, tube half-width from `3 rho^{-1/2}` through
+    `rho^{-1/3}` to `rho^{-1/6}`: `theta = +0.463, +0.390, +0.340`,
+    monotone toward `1/3` as the tube reaches the natural wandering
+    scale. Half-split spreads `0.005..0.033` against a `0.167`
+    separation — the design resolves this question by a factor of five
+    to thirty, where the distance-based route faced a `0.110` wobble
+    against `0.083`.
+
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8, note 14 is v0.9)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8, note 14 is v0.9, note 15 is v1.0)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -1423,6 +1526,44 @@ pinned in CI as exact (non-statistical) regressions.
     follows. Reported as `[MEASURED]`: infinitesimal rigidity in the
     exact model, verified numerically, with global uniqueness and the
     measured-data perturbation both left open.
+
+15. v1.0 (G2 count class): closed, and by a route neither of the two
+    that v0.7 proposed. Both of those -- a wandering-free harvest, or a
+    wider density range -- would still have read the class off the
+    *distance* error, which is precisely where the wandering enters.
+    The fix was to stop using the distance error at all: the count
+    class is a property of the chain's tick times, so
+    `sd(length) ~ mean(length)^theta` measures it with nothing else in
+    the loop. That also doubles the separation being tested, from the
+    `0.083` between the two error exponents to the `0.167` between the
+    two count exponents, while the design's wobble drops to
+    `0.005..0.033`.
+
+    The answer is that the question presupposed something false. There
+    is no single count class for "the harvested chain": the order-only
+    anchored chain is KPZ and the tube-confined chain is Poisson, each
+    decided against the other candidate by more than twelve standard
+    errors. The mechanism is confinement -- Tracy-Widom fluctuations
+    come from a longest chain's freedom to optimize its transverse
+    path, and the shipped tube is `rho^{-1/2}` wide against a natural
+    wandering of `rho^{-1/6}`, so it suppresses exactly that freedom.
+    Widening the tube to the wandering scale restores `theta -> 1/3`
+    monotonically, which is the mechanism test rather than the two
+    endpoints alone.
+
+    Two earlier statements are retired by this. The scaled tube's
+    `-0.317` was described from v0.5 as the count class "nearer
+    `-1/3`"; it is not a count exponent at all, since that arm's counts
+    are Poisson (`-1/4` count term) and `-0.317` is the mixture with
+    the residual `rho^{-1/2}` wandering. And v0.7's systematics note,
+    while correct that the slope was a drifting mixture, still framed
+    the open item as "which of the two classes" rather than "whose".
+    Neither arm's *error* exponent measures its own count class -- the
+    tube's is contaminated by wandering it failed to remove, the
+    order-only chain's is swamped by wandering it deliberately allows.
+    Reading a mechanism off a total error exponent was the common
+    error, and it is the reason this item stayed open for four
+    revisions.
 
 ## 8. Relation to the frozen program
 

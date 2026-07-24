@@ -120,7 +120,15 @@ or by a proved, CI-pinned statement in
   exponent -0.463) and fails to transfer to sprinkling-harvested clocks,
   whose rate couples at the discreteness scale (lambda ~ sqrt(rho),
   measured; error exponent -0.32). Any density-scaling statement must name
-  its clock protocol.
+  its clock protocol. The underlying count-fluctuation class is
+  protocol-dependent as well, measured from chain lengths rather than
+  from the distance error: the order-only anchored chain is
+  Tracy-Widom (exponent 1/3, Poisson excluded by 12.8 se), the
+  tube-confined chain is Poisson (1/2, Tracy-Widom excluded by 13.2),
+  with a thinned clock returning its constructed 1/2 as calibration.
+  NOT claimed: that either arm's measured error exponent identifies
+  its own count class -- neither does, and that was the error that
+  kept the question open.
 
 ## NOT claimed
 

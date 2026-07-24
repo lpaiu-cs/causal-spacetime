@@ -120,6 +120,18 @@ Execution update (2026-07-17):
   statistical, reasons, and closes only with a wandering-free harvest
   or a wider density range.
 
+- **G2 closed** (theory doc v1.0): the count-fluctuation class was
+  settled by measuring it from chain lengths (sd ~ mean^theta) instead
+  of from the distance error, which doubled the separation under test
+  (0.167 vs 0.083) and removed the wandering admixture entirely. The
+  answer is that there is no single class: the order-only anchored
+  chain is KPZ (theta = 0.322) and the tube-confined chain is Poisson
+  (theta = 0.487), each excluding the other candidate by >12 se, with
+  a thinned clock returning its constructed 1/2 as calibration.
+  Mechanism confirmed by a monotone confinement crossover. This
+  retires the earlier reading of the scaled tube's -0.317 as its count
+  exponent. **T1's gap list (G1-G4) is now empty.**
+
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
 CQG / SciPost Physics Core as-is, and a defensible SciPost Physics submission
