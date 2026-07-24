@@ -807,7 +807,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v0.5); every statement
+`docs/theory/t1_parallax_identifiability.md` (v0.7); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -962,13 +962,17 @@ theory-track instrumentation (`density_coupled_clocks`, audited), and
 the target holds for exactly one of them. A Poisson-thinned clock with
 lambda = rho x ell realizes the presumed coupling, and the inverse-root
 law follows from Section 8.3 as a proved corollary (measured RMSE
-exponent -0.463, tracking the exact prediction per density; the
-inverse-root-in-area form is the *relative*-error law). A chain
-*harvested* from the sprinkling itself — ticks are sprinkled events in a
-coordinate tube — has a rate that is a measurement, not a choice, and it
-couples at the discreteness scale: lambda ~ sqrt(rho) (measured
-exponents 0.49-0.55), yielding a distinctly shallower error law
-(measured exponent -0.32; Figure 6, right).
+exponent -0.463, 95% CI [-0.521, -0.404], tracking the exact prediction
+per density; the inverse-root-in-area form is the *relative*-error
+law). Every exponent quoted here carries a residual-based interval and
+a split-half stability check, and this arm — the only one whose
+exponent is known in advance — doubles as the calibration of that
+fitting design. A chain *harvested* from the sprinkling itself — ticks
+are sprinkled events in a coordinate tube — has a rate that is a
+measurement, not a choice, and it couples at the discreteness scale:
+lambda ~ sqrt(rho) (measured exponents 0.49-0.55), yielding a
+distinctly shallower error law (measured exponent -0.317, 95% CI
+[-0.371, -0.263]; Figure 6, right).
 
 The third protocol closes the order-only design question the tube
 protocol left open. Given two *designated anchor events* (the sprinkled
@@ -981,19 +985,40 @@ grid ran, directionally for the fluctuation mechanism: freed from the
 tube, the chain wanders, and KPZ-class wandering predicts a transverse
 RMS about the anchor line falling like rho^{-1/6} against a diffusive
 rho^{-1/4}. Measured: rate exponent +0.516 (discreteness scale, as for
-the tube arms); transverse RMS exponent **-0.168**, within 0.002 of the
-KPZ value -1/6 and clearly excluding -1/4; and RMSE exponent -0.155
-with the RMSE approximately equal to the transverse RMS at every
-density — the free harvested clock's error is wandering-dominated end
-to end. This also explains the fixed tube's -0.165 as a mixture
-artifact (a flat, width-set wiggle floor mixed with decaying count
-noise): numerically near the order-only exponent, by a different
-mechanism entirely. Any density-scaling claim must therefore name its
-clock protocol. The frozen PC-V1 instrument uses Model D clocks and is
-untouched by this; the one remaining open question — the harvested
-chain's *count*-fluctuation class (Poisson-rate -1/4 vs KPZ-like -1/3;
-the wandering-suppressed scaled tube measures -0.32, nearer -1/3) — is
-recorded in the theory document, not resolved here.
+the tube arms); transverse RMS exponent **-0.168** (95% CI
+[-0.192, -0.144]), within 0.002 of the KPZ value -1/6 and favouring it
+over -1/4; and RMSE exponent -0.155 (95% CI [-0.180, -0.131]) with the
+RMSE approximately equal to the transverse RMS at every density — the
+free harvested clock's error is wandering-dominated end to end. This
+also explains the fixed tube's -0.165 as a mixture artifact (a flat,
+width-set wiggle floor mixed with decaying count noise): numerically
+near the order-only exponent, by a different mechanism entirely. Any
+density-scaling claim must therefore name its clock protocol; the
+frozen PC-V1 instrument uses Model D clocks and is untouched by this.
+
+The one remaining open question — the harvested chain's
+*count*-fluctuation class, Poisson-rate -1/4 against KPZ-like -1/3 —
+is open on *systematics*, not on statistics, and the distinction is
+worth stating because the arithmetic points the other way. The
+scaled tube is the arm meant to measure that class, and its interval
+[-0.371, -0.263] is stable across split halves (-0.352 / -0.312) and
+leave-one-out; taken at face value it puts -1/4 3.2 standard errors
+outside and keeps only -1/3. Two measured systematics are larger than
+that interval. First, the scaled tube suppresses wandering but does
+not remove it: the indicative wandering share of its error falls from
+0.88 to 0.22 across the grid, so its slope is a drifting mixture of a
+rho^{-1/2} wandering term and the count term rather than the count
+exponent itself, and removing the wandering in quadrature flips which
+candidate survives. Second, calibrating on the thinned arm, whose
+exponent is proved, this grid returns -0.463 for a true -1/2 with a
+split-half spread of 0.110 — wider than the 0.083 separation between
+the candidates. A seven-point grid of this construction therefore
+cannot resolve them, and the same caution applies to the wandering
+reading above: it is consistent with KPZ and favours it, not a
+three-digit determination. Closing the item needs a harvest whose
+wandering is eliminated rather than suppressed, or a wider density
+range — not more seeds. Details are recorded in the theory document
+and in the tracked table, descriptively and without any gate.
 
 ![Figure 6](figures/fig6_theory.png)
 
@@ -1009,10 +1034,13 @@ thinned clock (lambda = rho ell) tracks the exact rho^{-1/2} prediction
 (dashed; measured exponent -0.46), while sprinkling-harvested chains
 scale distinctly shallower (scaled tube -0.32; fixed tube -0.16, at a
 wiggle floor; order-only anchored chain -0.16, wandering-dominated at
-the KPZ exponent -1/6 — Section 8.4). Data: the two tracked theory
-tables, each regenerated byte-identically by its committed script
-(Section 12); the plotting script asserts the band, slope, and
-density-exponent claims at read time.*
+the KPZ exponent -1/6 — Section 8.4). Legend exponents carry
+residual-based 95% intervals; the thinned interval covers the proved
+-1/2, which calibrates the fit, and Section 8.4 explains why the
+scaled tube's interval does not settle the count-fluctuation class.
+Data: the two tracked theory tables, each regenerated byte-identically
+by its committed script (Section 12); the plotting script asserts the
+band, slope, and density-exponent claims at read time.*
 
 ## 9. Discussion
 
@@ -1188,14 +1216,20 @@ change in 2+1D); the concentration results describe the Poisson
 idealization, which no frozen instrument realizes; and one question is
 recorded open in the theory document rather than resolved: the
 *count*-fluctuation class of harvested-chain clocks (Poisson-rate -1/4
-vs KPZ-like -1/3; the wandering-suppressed scaled-tube exponent -0.32
-sits between, nearer -1/3). The order-only harvest question is closed
+vs KPZ-like -1/3). That item is open on systematics rather than
+statistics — the arm that measures it carries a residual wandering
+admixture whose weight slides across the density grid, and the
+fitting design's own wobble, calibrated where the exponent is proved,
+exceeds the separation between the two candidates (Section 8.4). It
+closes with a wandering-free harvest or a wider density range, not
+with more seeds. The order-only harvest question is closed
 at the design level: a selection rule reading order data alone, given
 two designated anchor events, is built, audited against an independent
-longest-chain computation, and measured — identifying the free chain's
-transverse wandering as KPZ-class (Section 8.4). The anchor
+longest-chain computation, and measured — its transverse wandering
+consistent with the KPZ exponent (Section 8.4). The anchor
 designation itself remains coordinate-assisted setup, and the wandering
-classification is descriptive characterization, not a frozen claim.
+classification is descriptive characterization at that same
+design resolution, not a frozen claim.
 
 ## 12. Reproducibility
 
@@ -1251,11 +1285,14 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v0.5). Verification: `experiments/theory/t1_verification.py` (13
+(v0.7). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation) and
-`experiments/theory/t1_g2_density_scaling.py` (protocol audit plus
-density-scaling characterization), with their regression tests run in
+`experiments/theory/t1_g2_density_scaling.py` (protocol audits plus
+density-scaling characterization; every fitted exponent reported with
+a residual-based interval and a split-half check, and the recorded
+`count_class_status` block assembling the systematic case for leaving
+the count-fluctuation class open), with their regression tests run in
 CI on every push; the full-grid density-scaling table is committed with
 its run configuration as
 `docs/theory/t1_g2_density_scaling_results.json`, and rerunning the

@@ -626,6 +626,16 @@ def figure_theory() -> None:
         recorded["nearest_wandering_candidate"] == "kpz_wandering_-1/6"
     ), recorded
     assert abs(recorded["transverse_rms_exponent"] + 1.0 / 6.0) < 0.05, recorded
+    # the count-class reading quoted in Section 8.4: the residual interval
+    # alone would keep only the KPZ-like candidate, and the proved arm's
+    # interval must cover its proved exponent (calibration of the machinery)
+    status = density["count_class_status"]
+    assert status["candidates_inside_ci95"] == {
+        "poisson_rate_-1/4": False,
+        "kpz_like_-1/3": True,
+    }, status
+    thinned_ci = arms["thinned"]["exponent_uncertainty"]["rmse"]["ci95"]
+    assert thinned_ci[0] <= -0.5 <= thinned_ci[1], thinned_ci
     for key, color, marker, label in (
         ("thinned", BLUE, "o", "thinned clock, lam = rho*ell"),
         ("harvest_scaled", VERM, "s", "harvested chain, scaled tube"),
@@ -634,9 +644,12 @@ def figure_theory() -> None:
     ):
         rows = arms[key]["rows"]
         exponent = float(arms[key]["rmse_exponent"])
+        low, high = arms[key]["exponent_uncertainty"]["rmse"]["ci95"]
         ax_c.loglog([row["rho"] for row in rows], [row["rmse"] for row in rows],
                     color=color, marker=marker, markersize=5, linewidth=1.8,
-                    zorder=3, label=f"{label} (exp {exponent:.2f})")
+                    zorder=3,
+                    label=f"{label}\n    exp {exponent:.2f} "
+                          f"[{low:.2f}, {high:.2f}]")
     ax_c.set_xlabel("sprinkling density rho", fontsize=9.5, color=INK)
     ax_c.set_ylabel("radial-distance RMSE", fontsize=9.5, color=INK)
     ax_c.legend(loc="lower left", fontsize=8, frameon=False)

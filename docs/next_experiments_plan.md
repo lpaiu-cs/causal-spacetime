@@ -89,6 +89,16 @@ Execution update (2026-07-17):
   thereby explained as a mixture artifact. Remaining open in G2: the
   count-fluctuation class only (-1/4 vs -1/3; scaled tube measures
   -0.32).
+- Scaling exponents now carry residual-based intervals and split-half
+  checks (theory doc v0.7), matching the uncertainty treatment P7
+  already applied to its tunneling exponent. This re-diagnosed the
+  count-class item: statistically the scaled tube's interval
+  [-0.371, -0.263] would already exclude -1/4, but the arm carries a
+  0.22-0.88 wandering admixture (so its slope is a drifting mixture)
+  and the design's wobble measured on the proved arm (0.110) exceeds
+  the 0.083 candidate separation. It stays open for systematic, not
+  statistical, reasons, and closes only with a wandering-free harvest
+  or a wider density range.
 
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for

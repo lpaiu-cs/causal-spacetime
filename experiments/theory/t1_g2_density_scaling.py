@@ -336,6 +336,160 @@ def fit_exponent(rows: list[dict], key: str) -> float:
     return float(np.polyfit(log_rho, log_val, 1)[0])
 
 
+# Two-sided Student-t critical values, dof -> t. The project has no
+# scipy; beyond the table the normal limit is used (the error there is
+# under 2%, and no fit here reaches it).
+_T_TWO_SIDED = {
+    0.95: {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447,
+           7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228, 12: 2.179, 15: 2.131,
+           20: 2.086, 30: 2.042},
+    0.90: {1: 6.314, 2: 2.920, 3: 2.353, 4: 2.132, 5: 2.015, 6: 1.943,
+           7: 1.895, 8: 1.860, 9: 1.833, 10: 1.812, 12: 1.782, 15: 1.753,
+           20: 1.725, 30: 1.697},
+}
+
+
+def _t_critical(level: float, dof: int) -> float:
+    table = _T_TWO_SIDED[level]
+    if dof in table:
+        return table[dof]
+    smaller = [d for d in table if d < dof]
+    if not smaller:
+        raise ValueError("a slope interval needs at least 3 points")
+    return table[max(smaller)] if dof < 30 else (1.960 if level == 0.95 else 1.645)
+
+
+def fit_exponent_with_uncertainty(rows: list[dict], key: str) -> dict:
+    """Log-log slope with a residual-based interval and a split-half
+    stability check.
+
+    The interval is the textbook OLS one: ``se = sqrt(s^2 / Sxx)`` on
+    the residual variance ``s^2`` with ``n - 2`` degrees of freedom.
+    It quantifies only the scatter of these grid points about a single
+    power law -- it is not a systematic-error budget, and the split
+    halves are reported precisely because a power law that drifts
+    across the range fails in a way no residual interval can see.
+    (P7 quotes a 90% bootstrap interval on its tunneling exponent;
+    this is the analytic counterpart for a 7-point grid, with both
+    conventional levels recorded.)
+    """
+
+    x = np.log(np.asarray([row["rho"] for row in rows], dtype=float))
+    y = np.log(np.asarray([row[key] for row in rows], dtype=float))
+    if x.size < 3:
+        raise ValueError("a slope interval needs at least 3 points")
+    slope, intercept = np.polyfit(x, y, 1)
+    residuals = y - (slope * x + intercept)
+    dof = int(x.size - 2)
+    variance = float(residuals @ residuals) / dof
+    stderr = float(np.sqrt(variance / float(((x - x.mean()) ** 2).sum())))
+    result = {
+        "slope": float(slope),
+        "stderr": stderr,
+        "dof": dof,
+        "n_points": int(x.size),
+    }
+    for level, name in ((0.95, "ci95"), (0.90, "ci90")):
+        half = _t_critical(level, dof) * stderr
+        result[name] = [float(slope - half), float(slope + half)]
+    if x.size >= 6:  # split halves overlapping in the middle point
+        cut = x.size // 2
+        result["halves"] = {
+            "low": fit_exponent(rows[: cut + 1], key),
+            "high": fit_exponent(rows[cut:], key),
+        }
+        result["half_split_spread"] = abs(
+            result["halves"]["low"] - result["halves"]["high"]
+        )
+    return result
+
+
+_COUNT_CANDIDATES = {"poisson_rate_-1/4": -0.25, "kpz_like_-1/3": -1.0 / 3.0}
+_THINNED_PROVED_EXPONENT = -0.5
+
+
+def _count_class_status(results: dict) -> dict:
+    """Is the count-fluctuation class decided by these measurements?
+
+    The scaled tube is the arm that is supposed to measure it: its
+    tube suppresses wandering, so what is left should be count noise.
+    This assembles the evidence for and against reading its exponent
+    that way -- the residual interval, the split halves, the residual
+    wandering admixture, and a design-level calibration taken from the
+    one arm whose exponent is PROVED. Recorded, never gating: it is
+    computed after the measurements exist, so promoting any of it to a
+    pass/fail criterion would be exactly the post-hoc gate this
+    project refuses.
+    """
+
+    scaled = results["arms"]["harvest_scaled"]
+    fit = scaled["exponent_uncertainty"]["rmse"]
+    low, high = fit["ci95"]
+    inside = {
+        name: bool(low <= value <= high)
+        for name, value in _COUNT_CANDIDATES.items()
+    }
+    shares = [row["wandering_share_indicative"] for row in scaled["rows"]]
+    thinned = results["arms"]["thinned"]["exponent_uncertainty"]["rmse"]
+    separation = abs(
+        _COUNT_CANDIDATES["poisson_rate_-1/4"]
+        - _COUNT_CANDIDATES["kpz_like_-1/3"]
+    )
+    calibration = {
+        "proved_exponent": _THINNED_PROVED_EXPONENT,
+        "measured_slope": thinned["slope"],
+        "bias_vs_proved": thinned["slope"] - _THINNED_PROVED_EXPONENT,
+        "half_split_spread": thinned.get("half_split_spread"),
+        "candidate_separation": separation,
+    }
+    wobble = max(
+        abs(calibration["bias_vs_proved"]),
+        calibration["half_split_spread"] or 0.0,
+    )
+    resolved_statistically = sum(inside.values()) == 1
+    reasons = []
+    if wobble >= separation:
+        reasons.append(
+            f"the design's own systematic wobble ({wobble:.3f}, measured on "
+            f"the arm whose exponent is proved) is at least as large as the "
+            f"separation between the candidates ({separation:.3f})"
+        )
+    if min(shares) > 0.1:
+        reasons.append(
+            f"the scaled tube's error still carries an indicative wandering "
+            f"share of {min(shares):.2f}-{max(shares):.2f} that falls across "
+            f"the grid, so its slope is a drifting mixture rather than the "
+            f"count exponent alone"
+        )
+    if resolved_statistically and reasons:
+        why = (
+            "OPEN for systematic, not statistical, reasons: the residual "
+            "interval alone would keep only "
+            + ", ".join(n for n, ok in inside.items() if ok)
+            + ", but " + "; and ".join(reasons) + "."
+        )
+    elif resolved_statistically:
+        why = (
+            "the residual interval keeps only "
+            + ", ".join(n for n, ok in inside.items() if ok)
+            + " and no systematic of comparable size was found"
+        )
+    else:
+        why = (
+            "OPEN statistically as well: the residual interval admits "
+            + ", ".join(n for n, ok in inside.items() if ok or True)
+        )
+    return {
+        "gating": False,
+        "scaled_tube_rmse": fit,
+        "candidates": _COUNT_CANDIDATES,
+        "candidates_inside_ci95": inside,
+        "wandering_share_indicative_range": [min(shares), max(shares)],
+        "design_calibration_on_proved_arm": calibration,
+        "why_open": why,
+    }
+
+
 def main() -> None:
 
     audit = audit_harvested_chains()
@@ -370,13 +524,31 @@ def main() -> None:
         rows = run_arm(arm)
         lam_slope = fit_exponent(rows, "lam_mean")
         rmse_slope = fit_exponent(rows, "rmse")
+        uncertainty = {
+            key: fit_exponent_with_uncertainty(rows, key)
+            for key in ("lam_mean", "rmse")
+            + (("transverse_rms",) if "transverse_rms" in rows[0] else ())
+        }
+        rmse_ci = uncertainty["rmse"]["ci95"]
         print(f"\n[{arm}] lam(rho) exponent = {lam_slope:+.3f}, "
-              f"rmse(rho) exponent = {rmse_slope:+.3f}")
+              f"rmse(rho) exponent = {rmse_slope:+.3f} "
+              f"95% CI [{rmse_ci[0]:+.3f}, {rmse_ci[1]:+.3f}]")
         for row in rows:
             if "rmse_predicted" in row:
                 extra = f"  predicted={row['rmse_predicted']:.5f}"
             elif "transverse_rms" in row:
-                extra = f"  trans_rms={row['transverse_rms']:.5f}"
+                # indicative wandering share of the error variance: the
+                # quadrature reading (transverse / rmse)^2. It is a
+                # diagnostic ratio, NOT a decomposition -- for the fixed
+                # tube it exceeds 1, where a constant-width wiggle does
+                # not map into distance error one-for-one.
+                row["wandering_share_indicative"] = float(
+                    (row["transverse_rms"] / row["rmse"]) ** 2
+                )
+                extra = (
+                    f"  trans_rms={row['transverse_rms']:.5f}"
+                    f"  wander_share~{row['wandering_share_indicative']:.2f}"
+                )
             else:
                 extra = ""
             print(f"  rho={row['rho']:6d}  lam={row['lam_mean']:8.2f}  "
@@ -386,6 +558,7 @@ def main() -> None:
             "rows": rows,
             "lam_exponent": lam_slope,
             "rmse_exponent": rmse_slope,
+            "exponent_uncertainty": uncertainty,
         }
 
         # Clock failures are asserted, not just reported: a run with
@@ -487,6 +660,17 @@ def main() -> None:
         f"{transverse_slope:+.3f} (nearest: {nearest}); "
         f"rmse {order_rmse:+.3f} vs scaled tube {scaled_rmse:+.3f}"
     )
+
+    results["count_class_status"] = _count_class_status(results)
+    status = results["count_class_status"]
+    print(
+        "\n[count class] scaled-tube RMSE exponent "
+        f"{status['scaled_tube_rmse']['slope']:+.4f} 95% CI "
+        f"[{status['scaled_tube_rmse']['ci95'][0]:+.4f}, "
+        f"{status['scaled_tube_rmse']['ci95'][1]:+.4f}]; "
+        f"candidates inside: {status['candidates_inside_ci95']}"
+    )
+    print(f"  {status['why_open']}")
 
     results["verdicts"] = verdicts
     all_passed = all(verdicts.values())

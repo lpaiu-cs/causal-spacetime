@@ -61,8 +61,11 @@ This paper reports the validated-instrument line of the program:
    -1/6, closing the order-only design question). Every proved statement
    is a CI regression — Model-D claims against the instrument itself,
    Model-P claims by direct seeded simulation of the stated model;
+   every fitted scaling exponent carries a residual-based interval and
+   a split-half check, and the one open question (the count-fluctuation
+   class) is documented as open on systematics rather than statistics;
    source: `docs/theory/t1_parallax_identifiability.md`
-   (v0.6) and manuscript Section 8.
+   (v0.7) and manuscript Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
