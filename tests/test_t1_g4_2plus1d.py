@@ -95,6 +95,7 @@ def test_near_collinear_observers_stay_inside_their_own_larger_bound():
 
     recorded = result["conditioning_recorded"]
     assert recorded["gating"] is False
+    assert recorded["median_error_ratio_status"] == "ok"
     assert recorded["median_error_ratio"] > 1.0
 
 
@@ -147,6 +148,63 @@ def test_fast_and_library_width_paths_agree_exactly():
         assert np.array_equal(
             np.nan_to_num(fast, nan=-1.0), np.nan_to_num(library, nan=-1.0)
         )
+
+
+def test_width_paths_agree_on_events_exactly_on_the_light_cone():
+    """The case random sprinkling never produces, and the only one where
+    the two paths could disagree: a target placed EXACTLY on a tick's
+    light cone.
+
+    Both paths must classify it the same way, which under the
+    null-inclusive convention means counting that tick as a relation.
+    Random targets miss this set (it has measure zero), so without this
+    test a future tolerance change in one path would go unnoticed.
+    """
+
+    ticks, span = 96, 1.4
+    clock = np.linspace(-span / 2.0, span / 2.0, ticks)
+    observer = np.array([0.0, 0.0])
+
+    # target at spatial distance d from the observer, timed so that tick
+    # k sits exactly on its past light cone: dt = d, |dx| = d, so the
+    # interval is 0 to within one float rounding -- deep inside the
+    # tolerance band, where the classification must not depend on it
+    built = []
+    for k, d in ((20, 0.11), (48, 0.23), (70, 0.05)):
+        built.append([clock[k] + d, d, 0.0])
+        # and the mirrored case: tick k exactly on the FUTURE light cone
+        built.append([clock[k] - d, 0.0, d])
+    boundary_targets = np.array(built)
+
+    fast = measure_widths(boundary_targets, [observer], ticks, span)
+    library = measure_widths_full_order(
+        boundary_targets, [observer], ticks, span
+    )
+
+    assert np.array_equal(np.isnan(fast), np.isnan(library))
+    assert np.array_equal(
+        np.nan_to_num(fast, nan=-1.0), np.nan_to_num(library, nan=-1.0)
+    )
+    # the construction must actually be measuring something
+    assert not np.isnan(fast).all()
+
+
+def test_fast_width_path_is_dimension_agnostic():
+    """measure_widths must accept any spatial dimension, like the library
+    path it is pinned against -- not just the 2+1D (t, x, y) layout it
+    was written for."""
+
+    ticks, span = 48, 1.4
+    for spatial_dim in (1, 2, 3):
+        observer = np.zeros(spatial_dim)
+        target = np.zeros((1, spatial_dim + 1))
+        target[0, 0] = 0.0
+        target[0, 1] = 0.09  # offset along the first spatial axis
+
+        fast = measure_widths(target, [observer], ticks, span)
+        library = measure_widths_full_order(target, [observer], ticks, span)
+        assert not np.isnan(fast[0, 0]), spatial_dim
+        assert fast[0, 0] == library[0, 0], spatial_dim
 
 
 def test_same_slice_pairs_stay_pathwise_monotone_in_2plus1d():

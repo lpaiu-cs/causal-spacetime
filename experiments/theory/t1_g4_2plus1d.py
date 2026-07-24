@@ -81,7 +81,10 @@ from t1_verification import (
     residuals_in_band,
 )
 
-from causal_spacetime_lab.causal import causal_matrix_minkowski
+from causal_spacetime_lab.causal import (
+    DEFAULT_CAUSAL_ATOL,
+    causal_matrix_minkowski,
+)
 from causal_spacetime_lab.discrete_radar import find_radar_ticks_from_order
 from causal_spacetime_lab.positive_control.scene_2d import (
     Scene2DConfig,
@@ -95,13 +98,18 @@ CHAIN_SPAN = 1.4
 
 
 def chain_events(position: np.ndarray, ticks: int, span: float = CHAIN_SPAN):
-    """A stationary 2+1D worldline: uniform tick grid at fixed (x, y)."""
+    """A stationary worldline: uniform tick grid at a fixed position.
+
+    ``position`` may have any spatial dimension; the returned events are
+    ``(t, x_1, ..., x_d)``. Nothing below the observable cares about
+    ``d`` -- that is the content of Section 5b -- so this helper does
+    not either.
+    """
 
     clock = np.linspace(-span / 2.0, span / 2.0, ticks)
-    px, py = float(position[0]), float(position[1])
-    return np.column_stack(
-        (clock, np.full(clock.size, px), np.full(clock.size, py))
-    )
+    position = np.asarray(position, dtype=float).ravel()
+    spatial = np.broadcast_to(position, (clock.size, position.size))
+    return np.column_stack((clock, spatial))
 
 
 def _scene_blocks(
@@ -136,14 +144,18 @@ def measure_widths(
     span: float = CHAIN_SPAN,
     extra_events: np.ndarray | None = None,
 ) -> np.ndarray:
-    """Bracket widths ``W[j, r]`` of 2+1D targets against stationary chains.
+    """Bracket widths ``W[j, r]`` of targets against stationary chains.
 
     The observable reads only target-to-tick causal relations, so this
-    evaluates exactly that rectangular block with the null-inclusive
-    predicate of ``causal_matrix_minkowski`` rather than materializing
-    the full square matrix over every event pair.
+    evaluates exactly that rectangular block rather than materializing
+    the full square matrix over every event pair. The predicate is the
+    one ``causal_matrix_minkowski`` implements, term for term: ``dt > 0``
+    and ``dt^2 - ||dx||^2 >= -DEFAULT_CAUSAL_ATOL``, summed over ALL
+    spatial axes, so this path is dimension-agnostic exactly as the
+    library one is and the two cannot disagree on near-null pairs.
     ``measure_widths_full_order`` computes the same quantity through the
-    library path; a regression pins the two to agree exactly.
+    library; regressions pin the two to agree, including on events
+    placed exactly on a tick's light cone.
     """
 
     events, chain_slices = _scene_blocks(
@@ -156,12 +168,17 @@ def measure_widths(
     for r, chain in enumerate(chain_slices):
         tick_events = events[chain]
         dt = target_events[:, 0][:, None] - tick_events[:, 0][None, :]
-        dx = target_events[:, 1][:, None] - tick_events[:, 1][None, :]
-        dy = target_events[:, 2][:, None] - tick_events[:, 2][None, :]
-        interval = dt * dt - (dx * dx + dy * dy)
+        spatial_squared = np.zeros_like(dt)
+        for axis in range(1, events.shape[1]):
+            step = (
+                target_events[:, axis][:, None]
+                - tick_events[:, axis][None, :]
+            )
+            spatial_squared += step * step
+        interval = dt * dt - spatial_squared
         # tick precedes target / target precedes tick, null-inclusive
-        precedes = (dt > 0.0) & (interval >= -1e-12)
-        succeeds = (dt < 0.0) & (interval >= -1e-12)
+        precedes = (dt > 0.0) & (interval >= -DEFAULT_CAUSAL_ATOL)
+        succeeds = (dt < 0.0) & (interval >= -DEFAULT_CAUSAL_ATOL)
         both = precedes.any(axis=1) & succeeds.any(axis=1)
         # ranks are tick indices, so the bracket is (last predecessor,
         # first successor) in index order -- the rank-gap of Lemma 2
@@ -205,11 +222,12 @@ def measure_widths_full_order(
 
 def radial_distances(targets: np.ndarray, positions: np.ndarray) -> np.ndarray:
     """Euclidean spatial separations ``|x_j - p_r|`` -- the only place the
-    spatial dimension enters Lemmas 1-3."""
+    spatial dimension enters Lemmas 1-3, and read here for whatever
+    dimension the events carry."""
 
     targets = np.asarray(targets, dtype=float)
-    positions = np.asarray(positions, dtype=float)
-    delta = targets[:, None, 1:3] - positions[None, :, :]
+    positions = np.atleast_2d(np.asarray(positions, dtype=float))
+    delta = targets[:, None, 1:] - positions[None, :, :]
     return np.sqrt(np.sum(delta * delta, axis=2))
 
 
@@ -481,6 +499,26 @@ def multilaterate(
     return solution
 
 
+def _recorded_ratio(
+    numerator: dict, denominator: dict, key: str
+) -> tuple[float | None, str]:
+    """A recorded ratio between two layouts, with WHY it is absent.
+
+    A bare ``None`` would conflate three different situations: a layout
+    that solved no target (so the metric does not exist), a denominator
+    of exactly zero (perfect recovery -- the ratio diverges, and JSON
+    cannot carry an infinity), and a genuine value. The status string
+    keeps them apart, so a reader of the tracked table is never left
+    guessing whether a null means "not computed" or "undefined".
+    """
+
+    if key not in numerator or key not in denominator:
+        return None, "layout_unsolved"
+    if denominator[key] == 0.0:
+        return None, "denominator_zero"
+    return float(numerator[key]) / float(denominator[key]), "ok"
+
+
 def check_multilateration(
     seed: int = 7, n_targets: int = 200, ticks: int = 96
 ) -> dict:
@@ -551,15 +589,16 @@ def check_multilateration(
     # the kind this project refuses elsewhere (see count_class_status in
     # t1_g2_density_scaling.py).
     good, bad = report["non_collinear"], report["near_collinear"]
+    pinv_ratio, pinv_status = _recorded_ratio(bad, good, "pinv_norm")
+    error_ratio, error_status = _recorded_ratio(
+        bad, good, "median_position_error"
+    )
     report["conditioning_recorded"] = {
         "gating": False,
-        "pinv_norm_ratio": (
-            bad["pinv_norm"] / good["pinv_norm"] if good["pinv_norm"] else None
-        ),
-        "median_error_ratio": (
-            bad["median_position_error"] / good["median_position_error"]
-            if good.get("median_position_error") else None
-        ),
+        "pinv_norm_ratio": pinv_ratio,
+        "pinv_norm_ratio_status": pinv_status,
+        "median_error_ratio": error_ratio,
+        "median_error_ratio_status": error_status,
         "reading": (
             "the bound scales with ||A^+||, so a near-degenerate layout "
             "should be worse; how much worse is not predicted, since the "

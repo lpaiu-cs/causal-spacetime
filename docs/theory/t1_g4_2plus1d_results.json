@@ -121,7 +121,9 @@
       "conditioning_recorded": {
         "gating": false,
         "pinv_norm_ratio": 85.58208780505468,
+        "pinv_norm_ratio_status": "ok",
         "median_error_ratio": 29.12154411921849,
+        "median_error_ratio_status": "ok",
         "reading": "the bound scales with ||A^+||, so a near-degenerate layout should be worse; how much worse is not predicted, since the bound is an upper bound rather than an equality"
       },
       "passed": true

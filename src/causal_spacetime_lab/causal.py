@@ -5,6 +5,15 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
+#: Interval tolerance of the causal predicate: an event pair counts as
+#: causal when ``dt > 0`` and ``dt^2 - ||dx||^2 >= -DEFAULT_CAUSAL_ATOL``.
+#: Named because the null-inclusive convention is load-bearing (T1
+#: Section 2) and code that evaluates the same relation without going
+#: through this module -- vectorized fast paths, interval-membership
+#: tests -- must use the SAME tolerance or it silently disagrees on
+#: near-null pairs.
+DEFAULT_CAUSAL_ATOL = 1e-12
+
 
 def _as_event_array(events: ArrayLike) -> NDArray[np.float64]:
     array = np.asarray(events, dtype=float)
@@ -16,7 +25,7 @@ def _as_event_array(events: ArrayLike) -> NDArray[np.float64]:
 def causal_matrix_minkowski(
     events: ArrayLike,
     *,
-    atol: float = 1e-12,
+    atol: float = DEFAULT_CAUSAL_ATOL,
 ) -> NDArray[np.bool_]:
     """Return the Minkowski causal precedence matrix for events ``(t, x...)``.
 
@@ -40,7 +49,7 @@ def causal_matrix_minkowski(
 def causal_matrix_1p1(
     events: ArrayLike,
     *,
-    atol: float = 1e-12,
+    atol: float = DEFAULT_CAUSAL_ATOL,
 ) -> NDArray[np.bool_]:
     """Return the 1+1D causal precedence matrix for events ``(t, x)``."""
 
