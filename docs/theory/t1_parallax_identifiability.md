@@ -1,8 +1,11 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.6 — statements and proof programs; nothing frozen**
-(v0.6 2026-07-17 KST: G2's order-only harvest designed and measured,
-wandering identified as KPZ-class; v0.5 2026-07-16 KST: G2
+Status: **THEORY DRAFT v0.7 — statements and proof programs; nothing frozen**
+(v0.7 2026-07-17 KST: scaling exponents carry residual-based intervals
+and split-half checks; the open count-class item re-diagnosed as
+systematic rather than statistical; v0.6 2026-07-17 KST: G2's
+order-only harvest designed and measured, wandering identified as
+KPZ-class; v0.5 2026-07-16 KST: G2
 instrumented, `rho^{-1/2}` shown protocol-dependent; v0.4 2026-07-16
 KST: G3 closed, Theorem 2 upgraded to `[PROVED]`; v0.3 2026-07-16 KST:
 G1 closed, Theorem 1 upgraded to `[PROVED]`; v0.2 2026-07-16 KST /
@@ -558,9 +561,12 @@ and the law turns out to hold for exactly one of them
   like `1/sqrt(d)`), while the absolute error grows like `sqrt(d)`;
   they differ in `d`-dependence and in units, and must not be
   presented as one expression. The experiment measures the *absolute*
-  RMSE. Measured: rate exponent `+0.995`, RMSE exponent `-0.463`,
+  RMSE. Measured: rate exponent `+0.995`, RMSE exponent `-0.463`
+  (95% CI `[-0.521, -0.404]`, which covers the proved `-1/2`),
   per-density RMSE tracking the exact absolute prediction (grid-mean
-  ratio within 15%, intra-chain correlation accounted for).
+  ratio within 15%, intra-chain correlation accounted for). This arm
+  doubles as the calibration of the fitting design: it is the only
+  one whose exponent is known in advance.
 - **Coordinate-tube harvested chain** (longest causal chain of
   *sprinkled events* in a spatial tube): its ticks are order elements,
   but the tube *selection* uses embedded coordinates (`|x - x0|` and a
@@ -569,10 +575,11 @@ and the law turns out to hold for exactly one of them
   geometric data. Its rate is a measurement, not a choice, and it
   comes out `lambda ~ rho^{0.49..0.55}` — the discreteness scale
   `sqrt(rho)`, **not** `rho`. The `rho^{-1/2}` law therefore does
-  *not* transfer: measured error exponent `-0.317` with a
-  discreteness-scaled tube (`w ~ 3/sqrt(rho)`), flattening to `-0.165`
-  with a fixed-width tube (whose position wiggle adds an error floor).
-  `[MEASURED, for the coordinate-tube protocol]`
+  *not* transfer: measured error exponent `-0.317` (95% CI
+  `[-0.371, -0.263]`) with a discreteness-scaled tube
+  (`w ~ 3/sqrt(rho)`), flattening to `-0.165` (95% CI
+  `[-0.281, -0.048]`) with a fixed-width tube (whose position wiggle
+  adds an error floor). `[MEASURED, for the coordinate-tube protocol]`
 - **Order-only harvested chain** (v0.6,
   `harvest_order_only_chain_1p1`): a longest causal chain between two
   *designated anchor events* (the sprinkled events nearest the window
@@ -592,31 +599,78 @@ and the law turns out to hold for exactly one of them
   longest-chain wandering is KPZ-class the transverse RMS about the
   anchor line falls like `rho^{-1/6}` (diffusive alternative:
   `rho^{-1/4}`). Measured: rate exponent `+0.516`; **transverse RMS
-  exponent `-0.168`, within `0.002` of the KPZ wandering value `-1/6`
-  and clearly excluding `-1/4`**; RMSE exponent `-0.155` with RMSE
+  exponent `-0.168` (95% CI `[-0.192, -0.144]`), within `0.002` of the
+  KPZ wandering value `-1/6` and excluding `-1/4` by `8.8 se`**; RMSE
+  exponent `-0.155` (95% CI `[-0.180, -0.131]`) with RMSE
   approximately equal to the transverse RMS at *every* density — the
-  free clock's error is wandering-dominated end to end.
+  free clock's error is wandering-dominated end to end. Honest
+  strength of that reading: the split halves are `-0.192` / `-0.136`
+  (spread `0.056`), both covering `-1/6`, but the sparse half's own
+  interval `[-0.285, -0.100]` still admits `-1/4`, and the separation
+  at issue (`0.083`) is comparable to this design's calibrated wobble
+  (`~0.11`; mechanism note below). So: **consistent with KPZ, and
+  favouring it over the diffusive value, but not a three-digit
+  determination of the wandering exponent.**
   `[MEASURED, for the order-only protocol]`
 
-Mechanism note (updated at v0.6; the count class remains open): with
-`lambda ~ sqrt(rho)`, a Poisson-rate guess for the *count* fluctuations
-gives exponent `-1/4`; a maximal path is *more regular* than Poisson
+Mechanism note (updated at v0.7; the count class remains open, for a
+*systematic* reason now stated with numbers): with `lambda ~
+sqrt(rho)`, a Poisson-rate guess for the *count* fluctuations gives
+exponent `-1/4`; a maximal path is *more regular* than Poisson
 (KPZ-like concentration would suggest `-1/3`). The three harvest arms
-now separate the mechanisms.
+separate the mechanisms only partially.
 
-- The **scaled tube** suppresses wandering by construction (its
-  transverse RMS falls like the tube width, `~ rho^{-1/2}`), so its
-  `-0.317` isolates the *count* class: in the `[-1/4, -1/3]` band,
-  nearer `-1/3`, still not sharply distinguished — the one item left
-  open.
-- The **order-only chain** frees the wandering, and the wandering wins:
-  transverse RMS `~ rho^{-0.168}` (KPZ `-1/6`), RMSE locked to it.
-- The **fixed tube**'s `-0.165` is thereby *explained as a mixture
-  artifact*: its transverse RMS is flat in `rho` (a constant-width
-  wiggle floor), so its shallow exponent comes from mixing a decaying
-  count term with a floor — numerically near the order-only `-0.155`,
-  but by a different mechanism entirely. Two nearly equal exponents,
-  two distinct origins: exponents alone do not identify mechanisms.
+- The **order-only chain** frees the wandering, and the wandering
+  wins: transverse RMS `~ rho^{-0.168}` (KPZ `-1/6`), RMSE locked to
+  it (indicative wandering share `0.93..1.17` — i.e. essentially all
+  of the error).
+- The **fixed tube**'s `-0.165` is a *mixture artifact*: its
+  transverse RMS is flat in `rho` (a constant-width wiggle floor), so
+  its shallow exponent comes from mixing a decaying count term with a
+  floor — numerically near the order-only `-0.155`, but by a
+  different mechanism entirely. Two nearly equal exponents, two
+  distinct origins: exponents alone do not identify mechanisms.
+- The **scaled tube** was intended to isolate the count class, and it
+  does so only partially. Its transverse RMS does fall like the tube
+  width (`-0.498`, tightly), but the residual wandering is never
+  negligible: the indicative share of the error runs `0.88` at the
+  sparse end down to `0.22` at the dense end. Its `-0.317` is
+  therefore a *drifting* mixture of a wandering term (steeper) and the
+  count term, not the count exponent itself.
+
+Statistics versus systematics, for the one open item. Fitting the
+scaled tube's RMSE with a residual-based interval gives slope
+`-0.3172`, 95% CI `[-0.3714, -0.2629]` (`se = 0.0211`, `dof = 5`),
+which is *stable* against range: split halves `-0.352` / `-0.312`,
+leave-one-out spread `0.040`. Taken at face value that interval
+excludes the Poisson-rate `-1/4` (`3.2 se` away) and contains the
+KPZ-like `-1/3` (`0.8 se`). **The interval is not the binding
+uncertainty, and the item stays open on systematics:**
+
+1. *The estimand is not the count exponent.* The `0.22..0.88`
+   wandering share above means the fitted slope mixes in a
+   `rho^{-1/2}` term with sliding weight, biasing it steeper than the
+   count exponent. Subtracting the wandering in quadrature — crude,
+   since the two terms are comparable — moves the implied count-only
+   slope to about `-0.12` with a 95% interval that *contains* `-1/4`
+   and *excludes* `-1/3`, the opposite verdict. Nothing here settles
+   the class; what it shows is that the raw interval answers a
+   different question.
+2. *The design's own wobble exceeds the separation to be resolved.*
+   Calibrate on the one arm whose exponent is `[PROVED]`: the thinned
+   clock must give `-1/2`, and on this grid it measures `-0.463`
+   (bias `+0.037`) with a split-half spread of `0.110`. The gap
+   between the two candidates is `0.083` — smaller than the
+   demonstrated wobble of the measurement design where the answer is
+   known. A `7`-point grid of this construction cannot resolve them.
+
+What would close it: a harvest whose wandering is eliminated rather
+than suppressed (so the estimand is the count term), or a density
+range wide enough that the count term dominates the mixture, with the
+proved arm re-calibrated over the same range. Recorded in the tracked
+table under `count_class_status`, which is descriptive and never
+gating — it is computed after the measurements exist, so promoting it
+to a criterion would be a post-hoc gate.
 
 Any density-scaling claim must name its clock protocol.
 
@@ -635,7 +689,8 @@ Any density-scaling claim must name its clock protocol.
   belongs to the labeled flanking decoder.
 - **G2 — the stochastic clock model has no instrument.**
   **INSTRUMENTED (v0.5); order-only harvest designed and measured
-  (v0.6); count-fluctuation class open.** (History: v0.1 wrongly
+  (v0.6); count-fluctuation class open on systematics (v0.7).**
+  (History: v0.1 wrongly
   claimed the code harvests paths from the sprinkling; v0.2 corrected
   that the frozen instrument is Model D through and through —
   `build_positive_control_scene()` appends exact `np.linspace`
@@ -655,16 +710,24 @@ Any density-scaling claim must name its clock protocol.
   designated anchor events; selection reads order data alone once the
   anchors are labelled) is built, audited with a causal-matrix DP
   cross-check, and measured — rate exponent `+0.516`; transverse RMS
-  exponent `-0.168`, identifying the wandering as KPZ-class (`-1/6`,
-  with the diffusive `-1/4` excluded); RMSE exponent `-0.155`,
+  exponent `-0.168`, consistent with KPZ-class wandering (`-1/6`) and
+  favouring it over the diffusive `-1/4`; RMSE exponent `-0.155`,
   wandering-dominated at every density. What remains non-order data in
   that protocol is the anchor *designation* alone. *Remaining open,
-  one item:* the harvested chain's **count**-fluctuation class
-  (`-1/4` Poisson-rate guess vs `-1/3` KPZ-like; the scaled-tube
-  measurement `-0.317` — where wandering is suppressed — sits between,
-  nearer `-1/3`). The frozen PC-V1 instrument is unchanged; any
-  confirmatory use of these protocols would need its own prereg
-  freeze.
+  one item, and v0.7 sharpens why:* the harvested chain's
+  **count**-fluctuation class (`-1/4` Poisson-rate guess vs `-1/3`
+  KPZ-like). Its residual-based interval — scaled tube, `-0.3172`,
+  95% CI `[-0.3714, -0.2629]`, stable across split halves — would by
+  itself exclude `-1/4`. It stays open because the *systematics* are
+  larger than that interval: the scaled tube only partially
+  suppresses wandering (indicative share `0.22..0.88`, sliding across
+  the grid, so the slope is a drifting mixture, not the count
+  exponent), and the design's own wobble measured on the `[PROVED]`
+  thinned arm (`0.110` between split halves, bias `+0.037`) exceeds
+  the `0.083` separation between the candidates. Closing it needs a
+  wandering-free harvest or a wider density range, not more seeds.
+  The frozen PC-V1 instrument is unchanged; any confirmatory use of
+  these protocols would need its own prereg freeze.
 - **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
   The bookkeeping turned out cleaner than "standard but fiddly": in a
   pairwise flanking comparison the shared interval region cancels
@@ -752,11 +815,19 @@ not `n_events`):
    (`sd = sqrt(d / 2 lambda)`), with tolerances derived from the
    intra-chain correlation (targets on one chain share its tick
    realization — Theorem 2 Step 1's shared regions); the harvested
-   arms are characterization with sanity bands only. The order-only
+   arms are characterization with sanity bands only. Every fitted
+   exponent is reported with a residual-based interval (95% and 90%,
+   the analytic counterpart to P7's bootstrap interval on its
+   tunneling exponent) and a split-half stability check, so a power
+   law that drifts across the range is visible rather than hidden
+   inside a point estimate; the harvest arms additionally report an
+   indicative wandering share of the error. The order-only
    arm's directional wandering expectations were stated in the
    experiment header before the grid ran and are recorded as outcomes,
    not gates; the count-fluctuation-class question is left open, not
-   settled by a fit. Clocks with fewer than four ticks count their
+   settled by a fit, and the evidence for keeping it open is assembled
+   in the recorded (never gating) `count_class_status` block.
+   Clocks with fewer than four ticks count their
    targets as unreachable instead of being silently dropped, so a
    clock failure shows up in the assertions rather than shrinking the
    denominator.
@@ -848,7 +919,7 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
     RMSE exponent `-0.155`, distinctly shallower than the thinned
     `-0.463` (E2 met) and shallower than the scaled tube's `-0.317`
     (directional E3 met); transverse RMS exponent `-0.168` — within
-    `0.002` of the KPZ wandering value `-1/6` and clearly excluding
+    `0.002` of the KPZ wandering value `-1/6` and favouring it over
     the diffusive `-1/4` — with RMSE approximately equal to the
     transverse RMS at every density (wandering-dominated error). The
     pre-existing arms' rows are unchanged to the digit by the
@@ -857,12 +928,28 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
     table, regenerated in place; the pre-stated expectations and their
     outcomes are recorded in the table under
     `order_only_recorded_expectations`.
+11. Exponent uncertainty (v0.7, 2026-07-17 KST): every fitted exponent
+    now carries a residual-based interval and a split-half check, on
+    the same measurements (all rows, exponents and verdicts unchanged
+    to the digit — the addition is derived quantities only). 95%
+    intervals: thinned RMSE `-0.463 [-0.521, -0.404]` — covering the
+    `[PROVED]` `-1/2`, which calibrates the fitting design; scaled
+    tube `-0.317 [-0.371, -0.263]`; fixed tube `-0.165
+    [-0.281, -0.048]`; order-only `-0.155 [-0.180, -0.131]` with
+    transverse `-0.168 [-0.192, -0.144]`. Split-half spreads:
+    `0.110` (thinned), `0.040` (scaled tube, also leave-one-out
+    stable), `0.056` (order-only transverse). Recorded consequence:
+    the count-class item is *statistically* decided by these numbers
+    (`-1/4` sits `3.2 se` outside the scaled-tube interval) but
+    *systematically* undecided — see the Section 5 mechanism note and
+    the `count_class_status` block, which are descriptive and never
+    gating.
 
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -1034,6 +1121,41 @@ pinned in CI as exact (non-statistical) regressions.
     should; (ii) is a semantics fix invisible on generic sprinkled
     data; and the chain length is a tie-invariant, so the rate
     exponent is unchanged to the digit (`+0.516`) throughout.
+
+12. v0.7 (exponent uncertainty): a reader observed that `fit_exponent`
+    returned a bare `np.polyfit` slope while the same project attaches
+    a 90% bootstrap interval to P7's tunneling exponent -- an
+    inconsistency in how much the two measurements were made to say
+    about themselves. Fixed: every fitted exponent now carries a
+    residual-based interval (95% and 90%) and a split-half stability
+    check, and the harvest arms report an indicative wandering share
+    of their error. The arithmetic changed no measurement: all rows,
+    exponents and verdicts are unchanged to the digit, and the
+    additions are derived quantities.
+
+    The diagnosis it produced matters more than the error bars. Taken
+    at face value, the scaled tube's interval
+    (`-0.3172`, 95% CI `[-0.3714, -0.2629]`, stable across split
+    halves and leave-one-out) *excludes* the Poisson-rate `-1/4` and
+    keeps only the KPZ-like `-1/3`, which would close G2's last open
+    item on statistics alone. It does not, for two measured reasons.
+    (i) The scaled tube does not isolate the count class as the v0.6
+    text asserted: its residual wandering share runs `0.88` down to
+    `0.22` across the grid, so the fitted slope is a *drifting
+    mixture* of a `rho^{-1/2}` wandering term and the count term,
+    biased steeper than the count exponent; subtracting the wandering
+    in quadrature flips which candidate survives, which shows the raw
+    interval is answering a different question rather than settling
+    this one. (ii) Calibrating on the one arm whose exponent is
+    `[PROVED]`, the thinned clock measures `-0.463` for a true `-1/2`
+    with a split-half spread of `0.110` -- larger than the `0.083`
+    separation between the two candidates, so this grid cannot
+    resolve them even where the answer is known. The item therefore
+    stays open, and the reason is now named: systematic, not
+    statistical. Section 5's mechanism note was corrected accordingly,
+    and the same standard was applied back to the order-only KPZ
+    reading, which is now stated as *consistent with* KPZ rather than
+    a three-digit determination.
 
 ## 8. Relation to the frozen program
 

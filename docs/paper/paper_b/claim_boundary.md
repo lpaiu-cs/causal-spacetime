@@ -125,5 +125,8 @@ or by a proved, CI-pinned statement in
   order data alone given two designated anchor events, but the anchor
   designation is coordinate-assisted setup, and its KPZ-class wandering
   identification is descriptive theory-track characterization, not a
-  frozen claim. The harvested chain's count-fluctuation class is an open
-  question, not a result.
+  frozen claim, and it is stated at the resolution the fitting design
+  supports (residual intervals plus split-half checks; the design's
+  calibrated wobble is comparable to the separations at issue). The
+  harvested chain's count-fluctuation class is an open question, not a
+  result — open on systematics, not on statistics.

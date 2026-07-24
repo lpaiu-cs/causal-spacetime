@@ -109,7 +109,47 @@
         }
       ],
       "lam_exponent": 0.995462676303361,
-      "rmse_exponent": -0.46279141119727935
+      "rmse_exponent": -0.46279141119727935,
+      "exponent_uncertainty": {
+        "lam_mean": {
+          "slope": 0.995462676303361,
+          "stderr": 0.0019209349273724228,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            0.9905239526050865,
+            1.0004014000016355
+          ],
+          "ci90": [
+            0.9915919924247056,
+            0.9993333601820165
+          ],
+          "halves": {
+            "low": 0.9992140808287965,
+            "high": 0.9929459677968703
+          },
+          "half_split_spread": 0.0062681130319262035
+        },
+        "rmse": {
+          "slope": -0.46279141119727935,
+          "stderr": 0.022743199643640973,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.5212641774810803,
+            -0.4043186449134784
+          ],
+          "ci90": [
+            -0.5086189584792159,
+            -0.4169638639153428
+          ],
+          "halves": {
+            "low": -0.525971900790965,
+            "high": -0.41611380300274414
+          },
+          "half_split_spread": 0.10985809778822087
+        }
+      }
     },
     "harvest_fixed": {
       "rows": [
@@ -120,7 +160,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.026149797029642256
+          "transverse_rms": 0.026149797029642256,
+          "wandering_share_indicative": 0.41519105612729107
         },
         {
           "rho": 1000,
@@ -129,7 +170,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.02604075086959359
+          "transverse_rms": 0.02604075086959359,
+          "wandering_share_indicative": 0.9825660096339819
         },
         {
           "rho": 2000,
@@ -138,7 +180,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.02448356938354745
+          "transverse_rms": 0.02448356938354745,
+          "wandering_share_indicative": 1.107247510622228
         },
         {
           "rho": 4000,
@@ -147,7 +190,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.02492839693443755
+          "transverse_rms": 0.02492839693443755,
+          "wandering_share_indicative": 1.6096984041393942
         },
         {
           "rho": 8000,
@@ -156,7 +200,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.02346725026524011
+          "transverse_rms": 0.02346725026524011,
+          "wandering_share_indicative": 1.7420524167879077
         },
         {
           "rho": 16000,
@@ -165,7 +210,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.024123317624968204
+          "transverse_rms": 0.024123317624968204,
+          "wandering_share_indicative": 1.3880496880906998
         },
         {
           "rho": 32000,
@@ -174,11 +220,71 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.02349129173846125
+          "transverse_rms": 0.02349129173846125,
+          "wandering_share_indicative": 1.692730930918212
         }
       ],
       "lam_exponent": 0.547447958355093,
-      "rmse_exponent": -0.1647309943884942
+      "rmse_exponent": -0.1647309943884942,
+      "exponent_uncertainty": {
+        "lam_mean": {
+          "slope": 0.547447958355093,
+          "stderr": 0.00539759244290285,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            0.5335707481843898,
+            0.5613251685257962
+          ],
+          "ci90": [
+            0.5365718095826437,
+            0.5583241071275422
+          ],
+          "halves": {
+            "low": 0.5669588324703811,
+            "high": 0.5309767187240455
+          },
+          "half_split_spread": 0.03598211374633564
+        },
+        "rmse": {
+          "slope": -0.1647309943884942,
+          "stderr": 0.04527222158660216,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.2811258760876484,
+            -0.048336112689340044
+          ],
+          "ci90": [
+            -0.2559545208854975,
+            -0.07350746789149085
+          ],
+          "halves": {
+            "low": -0.3314576525688166,
+            "high": -0.016219164616761296
+          },
+          "half_split_spread": 0.3152384879520553
+        },
+        "transverse_rms": {
+          "slope": -0.02663827261519834,
+          "stderr": 0.005884899614886363,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.041768349525071184,
+            -0.0115081957053255
+          ],
+          "ci90": [
+            -0.03849634533919436,
+            -0.01478019989120232
+          ],
+          "halves": {
+            "low": -0.02959860625276317,
+            "high": -0.021721266790037122
+          },
+          "half_split_spread": 0.007877339462726049
+        }
+      }
     },
     "harvest_scaled": {
       "rows": [
@@ -189,7 +295,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.034605336571058916
+          "transverse_rms": 0.034605336571058916,
+          "wandering_share_indicative": 0.7732814729832558
         },
         {
           "rho": 1000,
@@ -198,7 +305,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.024336587878858774
+          "transverse_rms": 0.024336587878858774,
+          "wandering_share_indicative": 0.880111660695564
         },
         {
           "rho": 2000,
@@ -207,7 +315,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.01705679768767537
+          "transverse_rms": 0.01705679768767537,
+          "wandering_share_indicative": 0.5096556560751475
         },
         {
           "rho": 4000,
@@ -216,7 +325,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.012294345124555019
+          "transverse_rms": 0.012294345124555019,
+          "wandering_share_indicative": 0.46933371167120275
         },
         {
           "rho": 8000,
@@ -225,7 +335,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.00857723136958809
+          "transverse_rms": 0.00857723136958809,
+          "wandering_share_indicative": 0.30500760001071053
         },
         {
           "rho": 16000,
@@ -234,7 +345,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.006200435937086716
+          "transverse_rms": 0.006200435937086716,
+          "wandering_share_indicative": 0.22973223673505858
         },
         {
           "rho": 32000,
@@ -243,11 +355,71 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.004321512600397677
+          "transverse_rms": 0.004321512600397677,
+          "wandering_share_indicative": 0.21672291411441336
         }
       ],
       "lam_exponent": 0.4938039807511976,
-      "rmse_exponent": -0.31716097725622583
+      "rmse_exponent": -0.31716097725622583,
+      "exponent_uncertainty": {
+        "lam_mean": {
+          "slope": 0.4938039807511976,
+          "stderr": 0.003396649221039114,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            0.485071195603906,
+            0.5025367658984892
+          ],
+          "ci90": [
+            0.48695973257080377,
+            0.5006482289315914
+          ],
+          "halves": {
+            "low": 0.4813313041807503,
+            "high": 0.5041339590368348
+          },
+          "half_split_spread": 0.02280265485608446
+        },
+        "rmse": {
+          "slope": -0.31716097725622583,
+          "stderr": 0.021097789054876234,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.37140339291631264,
+            -0.262918561596139
+          ],
+          "ci90": [
+            -0.3596730222018014,
+            -0.27464893231065024
+          ],
+          "halves": {
+            "low": -0.35171278293168573,
+            "high": -0.31167127085027174
+          },
+          "half_split_spread": 0.04004151208141399
+        },
+        "transverse_rms": {
+          "slope": -0.4979032988174855,
+          "stderr": 0.002552751428243691,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.5044664227395,
+            -0.491340174895471
+          ],
+          "ci90": [
+            -0.5030470929453965,
+            -0.49275950468957447
+          ],
+          "halves": {
+            "low": -0.4991779033805275,
+            "high": -0.4993302237249935
+          },
+          "half_split_spread": 0.00015232034446605036
+        }
+      }
     },
     "harvest_order_only": {
       "rows": [
@@ -258,7 +430,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.09514631867485697
+          "transverse_rms": 0.09514631867485697,
+          "wandering_share_indicative": 1.0404134564700347
         },
         {
           "rho": 1000,
@@ -267,7 +440,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.08058047696281839
+          "transverse_rms": 0.08058047696281839,
+          "wandering_share_indicative": 1.049986552967674
         },
         {
           "rho": 2000,
@@ -276,7 +450,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.07503960925385349
+          "transverse_rms": 0.07503960925385349,
+          "wandering_share_indicative": 1.1647543340046898
         },
         {
           "rho": 4000,
@@ -285,7 +460,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.06247414278998375
+          "transverse_rms": 0.06247414278998375,
+          "wandering_share_indicative": 0.9631763389253013
         },
         {
           "rho": 8000,
@@ -294,7 +470,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.05781185377626705
+          "transverse_rms": 0.05781185377626705,
+          "wandering_share_indicative": 1.076704091029948
         },
         {
           "rho": 16000,
@@ -303,7 +480,8 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.05035350480341823
+          "transverse_rms": 0.05035350480341823,
+          "wandering_share_indicative": 0.9286511378271182
         },
         {
           "rho": 32000,
@@ -312,11 +490,71 @@
           "n_measurements": 960,
           "unreachable": 0,
           "short_clocks": 0,
-          "transverse_rms": 0.047784238294815005
+          "transverse_rms": 0.047784238294815005,
+          "wandering_share_indicative": 0.9811491338562834
         }
       ],
       "lam_exponent": 0.5160522463856559,
-      "rmse_exponent": -0.15546497263990913
+      "rmse_exponent": -0.15546497263990913,
+      "exponent_uncertainty": {
+        "lam_mean": {
+          "slope": 0.5160522463856559,
+          "stderr": 0.002671530079779767,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            0.5091837425505421,
+            0.5229207502207698
+          ],
+          "ci90": [
+            0.5106691132748997,
+            0.5214353794964122
+          ],
+          "halves": {
+            "low": 0.522029605608278,
+            "high": 0.5148169771881337
+          },
+          "half_split_spread": 0.0072126284201443625
+        },
+        "rmse": {
+          "slope": -0.15546497263990913,
+          "stderr": 0.009580129143095896,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.1800954846668087,
+            -0.13083446061300957
+          ],
+          "ci90": [
+            -0.17476893286324735,
+            -0.13616101241657091
+          ],
+          "halves": {
+            "low": -0.18313437027125257,
+            "high": -0.12927484199535
+          },
+          "half_split_spread": 0.05385952827590257
+        },
+        "transverse_rms": {
+          "slope": -0.16835008295566645,
+          "stderr": 0.00930177003078935,
+          "dof": 5,
+          "n_points": 7,
+          "ci95": [
+            -0.19226493370482586,
+            -0.14443523220650703
+          ],
+          "ci90": [
+            -0.18709314956770698,
+            -0.14960701634362591
+          ],
+          "halves": {
+            "low": -0.19234439398824374,
+            "high": -0.13594462741795366
+          },
+          "half_split_spread": 0.05639976657029008
+        }
+      }
     }
   },
   "order_only_recorded_expectations": {
@@ -331,6 +569,48 @@
       "rmse_exponent_scaled_tube": -0.31716097725622583,
       "order_only_shallower_than_scaled_tube": true
     }
+  },
+  "count_class_status": {
+    "gating": false,
+    "scaled_tube_rmse": {
+      "slope": -0.31716097725622583,
+      "stderr": 0.021097789054876234,
+      "dof": 5,
+      "n_points": 7,
+      "ci95": [
+        -0.37140339291631264,
+        -0.262918561596139
+      ],
+      "ci90": [
+        -0.3596730222018014,
+        -0.27464893231065024
+      ],
+      "halves": {
+        "low": -0.35171278293168573,
+        "high": -0.31167127085027174
+      },
+      "half_split_spread": 0.04004151208141399
+    },
+    "candidates": {
+      "poisson_rate_-1/4": -0.25,
+      "kpz_like_-1/3": -0.3333333333333333
+    },
+    "candidates_inside_ci95": {
+      "poisson_rate_-1/4": false,
+      "kpz_like_-1/3": true
+    },
+    "wandering_share_indicative_range": [
+      0.21672291411441336,
+      0.880111660695564
+    ],
+    "design_calibration_on_proved_arm": {
+      "proved_exponent": -0.5,
+      "measured_slope": -0.46279141119727935,
+      "bias_vs_proved": 0.037208588802720655,
+      "half_split_spread": 0.10985809778822087,
+      "candidate_separation": 0.08333333333333331
+    },
+    "why_open": "OPEN for systematic, not statistical, reasons: the residual interval alone would keep only kpz_like_-1/3, but the design's own systematic wobble (0.110, measured on the arm whose exponent is proved) is at least as large as the separation between the candidates (0.083); and the scaled tube's error still carries an indicative wandering share of 0.22-0.88 that falls across the grid, so its slope is a drifting mixture rather than the count exponent alone."
   },
   "verdicts": {
     "thinned_no_unreachable": true,

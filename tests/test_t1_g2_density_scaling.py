@@ -20,9 +20,11 @@ sys.path.insert(0, str(EXPERIMENT_DIR))
 
 import pytest  # noqa: E402
 from t1_g2_density_scaling import (  # noqa: E402
+    _count_class_status,
     audit_harvested_chains,
     audit_order_only_chains,
     fit_exponent,
+    fit_exponent_with_uncertainty,
     run_arm,
 )
 
@@ -226,3 +228,144 @@ def test_order_only_rate_couples_at_the_discreteness_scale():
     assert all(row["unreachable"] == 0 for row in rows)
     assert all(row["short_clocks"] == 0 for row in rows)
     assert all(row["transverse_rms"] > 0 for row in rows)
+
+
+def test_slope_interval_matches_the_analytic_ols_answer():
+    """Exact check of the interval machinery on constructed data.
+
+    With log-densities 0, 1, 2, 3 and residuals (+d, -d, -d, +d) --
+    orthogonal to both the constant and the regressor, so OLS returns
+    the planted slope and exactly those residuals -- the textbook
+    values are s^2 = 4 d^2 / (n - 2), Sxx = 5, hence
+    se = d sqrt(2/5), and the 95% half-width is t(0.975, 2) se.
+    """
+
+    d, slope = 0.1, -0.3
+    log_rho = np.array([0.0, 1.0, 2.0, 3.0])
+    resid = np.array([d, -d, -d, d])
+    rows = [
+        {"rho": float(np.exp(x)), "v": float(np.exp(slope * x + r))}
+        for x, r in zip(log_rho, resid, strict=True)
+    ]
+
+    fit = fit_exponent_with_uncertainty(rows, "v")
+    expected_se = d * np.sqrt(2.0 / 5.0)
+    assert fit["slope"] == pytest.approx(slope, abs=1e-12)
+    assert fit["stderr"] == pytest.approx(expected_se, rel=1e-12)
+    assert fit["dof"] == 2 and fit["n_points"] == 4
+    half95 = 4.303 * expected_se
+    assert fit["ci95"][0] == pytest.approx(slope - half95, rel=1e-9)
+    assert fit["ci95"][1] == pytest.approx(slope + half95, rel=1e-9)
+    assert fit["ci90"][1] - fit["ci90"][0] < fit["ci95"][1] - fit["ci95"][0]
+    assert "halves" not in fit  # four points is too few to split
+
+    # a perfect power law has no residual scatter: the interval collapses
+    exact = [{"rho": r, "v": 2.0 * r**-0.25} for r in (1, 10, 100, 1000)]
+    exact_fit = fit_exponent_with_uncertainty(exact, "v")
+    assert exact_fit["slope"] == pytest.approx(-0.25)
+    assert exact_fit["stderr"] == pytest.approx(0.0, abs=1e-12)
+    assert exact_fit["ci95"][0] == pytest.approx(exact_fit["ci95"][1])
+
+
+def test_slope_interval_agrees_with_the_scalar_fit_and_splits_halves():
+    """The dict API must not drift from the scalar one that the
+    verdicts use, and a seven-point grid must report split halves."""
+
+    rows = [{"rho": r, "v": r**-0.4} for r in (500, 1000, 2000, 4000, 8000)]
+    rows += [{"rho": 16000, "v": 16000**-0.4}, {"rho": 32000, "v": 3e-2}]
+    fit = fit_exponent_with_uncertainty(rows, "v")
+    assert fit["slope"] == pytest.approx(fit_exponent(rows, "v"))
+    assert fit["halves"]["low"] == pytest.approx(fit_exponent(rows[:4], "v"))
+    assert fit["halves"]["high"] == pytest.approx(fit_exponent(rows[3:], "v"))
+    assert fit["half_split_spread"] == pytest.approx(
+        abs(fit["halves"]["low"] - fit["halves"]["high"])
+    )
+
+    with pytest.raises(ValueError):
+        fit_exponent_with_uncertainty(rows[:2], "v")
+
+
+def test_count_class_status_is_recorded_and_never_gating():
+    """The status block reports the systematic case; it must stay
+    non-gating, and it must report a systematic reason whenever the
+    proved arm's own wobble covers the candidate separation."""
+
+    results = {
+        "arms": {
+            "thinned": {
+                "exponent_uncertainty": {
+                    "rmse": {
+                        "slope": -0.46,
+                        "ci95": [-0.52, -0.40],
+                        "half_split_spread": 0.11,
+                    }
+                }
+            },
+            "harvest_scaled": {
+                "exponent_uncertainty": {
+                    "rmse": {"slope": -0.317, "ci95": [-0.371, -0.263]}
+                },
+                "rows": [
+                    {"wandering_share_indicative": 0.88},
+                    {"wandering_share_indicative": 0.22},
+                ],
+            },
+        }
+    }
+    status = _count_class_status(results)
+
+    assert status["gating"] is False
+    assert status["candidates_inside_ci95"] == {
+        "poisson_rate_-1/4": False,
+        "kpz_like_-1/3": True,
+    }
+    assert status["design_calibration_on_proved_arm"][
+        "candidate_separation"
+    ] == pytest.approx(1 / 12)
+    assert status["why_open"].startswith("OPEN for systematic")
+    assert "0.110" in status["why_open"] and "0.22-0.88" in status["why_open"]
+    assert "poisson_rate_-1/4" not in status["why_open"]
+
+
+@pytest.mark.parametrize(
+    ("ci95", "expected_phrase", "must_not_contain"),
+    [
+        ([-0.40, -0.20], "admits poisson_rate_-1/4, kpz_like_-1/3", None),
+        ([-0.90, -0.80], "admits none of", "kpz_like_-1/3,"),
+    ],
+)
+def test_count_class_status_reports_only_candidates_inside_the_interval(
+    ci95, expected_phrase, must_not_contain
+):
+    """The message must follow the recorded map, including when the
+    interval admits both candidates or -- a rerun that lands outside
+    the whole candidate set -- neither."""
+
+    results = {
+        "arms": {
+            "thinned": {
+                "exponent_uncertainty": {
+                    "rmse": {"slope": -0.46, "ci95": [-0.52, -0.40],
+                             "half_split_spread": 0.11}
+                }
+            },
+            "harvest_scaled": {
+                "exponent_uncertainty": {
+                    "rmse": {"slope": sum(ci95) / 2, "ci95": ci95}
+                },
+                "rows": [{"wandering_share_indicative": 0.5}],
+            },
+        }
+    }
+    status = _count_class_status(results)
+
+    assert status["why_open"].startswith("OPEN")
+    assert expected_phrase in status["why_open"]
+    if must_not_contain is not None:
+        assert must_not_contain not in status["why_open"]
+    inside = status["candidates_inside_ci95"]
+    for name, is_inside in inside.items():
+        listed = f"{name}," in status["why_open"] or status[
+            "why_open"
+        ].endswith(name)
+        assert listed == is_inside or "admits none of" in status["why_open"]
