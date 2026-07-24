@@ -1,7 +1,14 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v0.8 — statements and proof programs; nothing frozen**
-(v0.8 2026-07-18 KST: G4a closed — the dimension-independent statements
+Status: **THEORY DRAFT v1.0 — statements and proof programs; nothing frozen.
+No gap in Section 6 is open.**
+(v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
+it directly from chain lengths rather than from the distance error —
+protocol-dependent, KPZ for the order-only chain and Poisson for the
+tube-confined one; v0.9 2026-07-25 KST: G4b settled — in 2+1D the unlabeled dissimilarity
+determines the whole scene up to congruence for R >= 4, and provably
+not for R = 3; the v0.8 expectation that it "remains 1+1D only" is
+corrected; v0.8 2026-07-18 KST: G4a closed — the dimension-independent statements
 proved and verified in 2+1D on the frozen scene builder, labeled
 identifiability recast as multilateration, G4b left open with its
 reason; v0.7 2026-07-17 KST: scaling exponents carry residual-based intervals
@@ -616,8 +623,10 @@ and the law turns out to hold for exactly one of them
   determination of the wandering exponent.**
   `[MEASURED, for the order-only protocol]`
 
-Mechanism note (updated at v0.7; the count class remains open, for a
-*systematic* reason now stated with numbers): with `lambda ~
+Mechanism note (written at v0.7, when the count class was still open
+for a *systematic* reason stated here with numbers; settled at v1.0 --
+see the count-class subsection below, which corrects this note's
+attribution of the tube's exponent): with `lambda ~
 sqrt(rho)`, a Poisson-rate guess for the *count* fluctuations gives
 exponent `-1/4`; a maximal path is *more regular* than Poisson
 (KPZ-like concentration would suggest `-1/3`). The three harvest arms
@@ -639,7 +648,10 @@ separate the mechanisms only partially.
   negligible: the indicative share of the error runs `0.88` at the
   sparse end down to `0.22` at the dense end. Its `-0.317` is
   therefore a *drifting* mixture of a wandering term (steeper) and the
-  count term, not the count exponent itself.
+  count term, not the count exponent itself. **v1.0 identifies what
+  that count term actually is, and it is not what this note guessed:**
+  the tube's counts are Poisson (`-1/4`), not KPZ-like -- see the
+  count-class subsection below.
 
 Statistics versus systematics, for the one open item. Fitting the
 scaled tube's RMSE with a residual-based interval gives slope
@@ -667,13 +679,82 @@ uncertainty, and the item stays open on systematics:**
    demonstrated wobble of the measurement design where the answer is
    known. A `7`-point grid of this construction cannot resolve them.
 
-What would close it: a harvest whose wandering is eliminated rather
-than suppressed (so the estimand is the count term), or a density
-range wide enough that the count term dominates the mixture, with the
-proved arm re-calibrated over the same range. Recorded in the tracked
-table under `count_class_status`, which is descriptive and never
-gating — it is computed after the measurements exist, so promoting it
-to a criterion would be a post-hoc gate.
+What closed it (v1.0) was neither of the two routes this note
+proposed. Both -- a wandering-free harvest, or a wider density range --
+still read the class off the *distance* error, and the distance error
+is exactly where the wandering enters. The count class is instead a
+property of the chain's tick times alone, so it can be measured with
+no distance estimator at all:
+
+```
+sd(chain length) ~ mean(chain length)^theta
+    theta = 1/2  ->  Poisson counts     ->  error exponent -1/4
+    theta = 1/3  ->  KPZ / Tracy-Widom  ->  error exponent -1/3
+```
+
+The candidates are then separated by `1/6 = 0.167`, twice the `0.083`
+the distance route could not resolve, with no wandering admixture
+whatever. See the count-class subsection below. The
+`count_class_status` block in the density-scaling table stands as
+recorded -- descriptive, never gating; it identified the systematics
+correctly, and v1.0 supersedes its *attribution*.
+
+### The count-fluctuation class (v1.0): protocol-dependent, like everything else here
+
+Measured directly from the chains' tick counts, with no distance
+estimator in the loop (`experiments/theory/t1_g2_count_class.py`,
+tracked table `docs/theory/t1_g2_count_class_results.json`,
+regressions `tests/test_t1_g2_count_class.py`):
+
+| clock | `theta` | 95% CI | half-split | verdict |
+|---|---|---|---|---|
+| thinned Poisson (calibration) | `+0.4981` | `[0.4765, 0.5197]` | `0.017` | `1/2`, as constructed |
+| **order-only anchored chain** | `+0.3221` | `[0.2881, 0.3562]` | `0.033` | **KPZ `1/3`** (Poisson excluded, `12.8` se) |
+| **tube-confined chain** | `+0.4870` | `[0.4585, 0.5154]` | `0.005` | **Poisson `1/2`** (KPZ excluded, `13.2` se) |
+
+`[MEASURED]`. The calibration arm returns `1/2` with bias `-0.0019`,
+which is what licenses the other two rows; and the design's wobble
+here (half-split spreads `0.005..0.033`) is five to thirty times
+*smaller* than the `0.167` separation, exactly inverting the situation
+that blocked the distance route, where a `0.110` wobble faced a
+`0.083` separation.
+
+**There is no single count class**, which is why asking for "the"
+class never converged. The two harvests sit on opposite sides of the
+gap, and the mechanism is confinement. A longest chain's Tracy-Widom
+fluctuations come from its freedom to optimize a transverse path; the
+shipped tube is `~ rho^{-1/2}` wide while the chain's natural
+wandering is `~ rho^{-1/6}` (Section 5's order-only measurement), so
+asymptotically the tube is *far* narrower than the excursions KPZ
+scaling wants. Confine the chain below that scale and the optimization
+is destroyed, leaving counts that fluctuate like a Poisson process.
+Widening the tube restores it, monotonically:
+
+| tube half-width | `theta` | nearer |
+|---|---|---|
+| `3.0 rho^{-1/2}` (shipped) | `+0.463` | Poisson |
+| `1.0 rho^{-1/3}` | `+0.390` | KPZ |
+| `1.0 rho^{-1/6}` (matches the wandering) | `+0.340` | KPZ (within `0.006` of `1/3`) |
+
+Consequences, stated so the earlier text is not left standing:
+
+- The scaled tube's error exponent `-0.317` is **not** its count
+  exponent, and the v0.5-v0.7 reading of it as "the count class,
+  nearer `-1/3`" is **retired**. That arm's counts are Poisson, whose
+  count term predicts `-1/4`; the measured `-0.317` is the mixture
+  with its residual `rho^{-1/2}` wandering that the v0.7 systematics
+  flagged. The flag was right and the attribution was wrong.
+- The order-only chain's counts are KPZ, predicting a `-1/3` count
+  term — but its *total* error is wandering-dominated at `-0.155`,
+  because the wandering (`rho^{-0.168}`) decays more slowly than the
+  count term (`rho^{-1/3}`) and wins at every density measured.
+- So neither arm's error exponent measures its own count class, for
+  opposite reasons: the tube's is contaminated by the wandering it
+  failed to remove, the order-only chain's is swamped by the wandering
+  it deliberately allows. Reading a mechanism off a total error
+  exponent was the error common to both.
+
+With this, **G2 has no open items.**
 
 Any density-scaling claim must name its clock protocol.
 
@@ -742,19 +823,65 @@ two observers still confuse the pair mirrored across the line joining
 them; three non-collinear observers separate them. The `R >= 2` of
 Lemma 4c is a 1+1D fact, not a general one.
 
-**Does not transfer — G4b, deliberately open.** Lemma 4 recovers the
-spatial *order* from the parallax dissimilarity `D` alone, and its
-engine is the strict Robinson (seriation) structure. "Order" is a
-one-dimensional notion: in the plane there is no linear order to
-recover, so the statement itself must be replaced, not ported. The
-natural 2+1D counterpart is "`D` determines the target configuration
-up to similarity", which is a distance-geometry / rigidity question,
-and the 1+1D proof gives no help with it: the centered-profile map is
-piecewise **linear** in 1D precisely because `|x - x0|` is, whereas in
-the plane it is conic. Lemma 4f (the same-`D` counterexample) is a 1D
-construction for the same reason. Consequently the *unlabeled*
-statements — the ones that upgrade a pipeline pass from "our fitter
-recovered it" to "any consistent decoder must" — remain 1+1D only.
+**Changes character entirely — G4b, settled in v0.9.** Lemma 4
+recovers the spatial *order* from the parallax dissimilarity `D` alone,
+and its engine is the strict Robinson (seriation) structure. "Order" is
+a one-dimensional notion: in the plane there is no linear order to
+recover, so the statement itself must be replaced, not ported, and the
+1+1D proof gives no help — the centered-profile map is piecewise
+**linear** in 1D precisely because `|x - x0|` is, whereas in the plane
+it is conic. Lemma 4f (the same-`D` counterexample) is a 1D
+construction for the same reason.
+
+That diagnosis of the *obstruction* stands. The conclusion v0.8 drew
+from it — that the unlabeled statements "remain 1+1D only" — was
+wrong, and in the informative direction. The right 2+1D counterpart is
+metric rather than ordinal, and it is **stronger** than the 1+1D
+statement it replaces. Write `Phi~` for the centered profile map and
+recall that the pipeline sees only `D(j,k) = ||Phi~(x_j) - Phi~(x_k)||
+/ sqrt(R)`, an `n x n` matrix carrying no observer labels and no
+observer positions. Then, in the exact model:
+
+- The centering fold is *not* the obstruction. `Phi~(x') = Phi~(x)`
+  is the TDOA condition `|x'-p_r| - |x-p_r| = c`, and three-receiver
+  TDOA is famously two-valued — so one expects centering to cost an
+  observer. It does not, for targets in the hull: a dense scan finds
+  no second zero and `d(Phi~)/dx` has full rank `d` throughout, so the
+  *labeled* centered profile already determines the target.
+- `R = 3` nevertheless fails, and not by a fold but by a **continuous
+  flex**. Three centered profiles span the 2-dimensional mean-zero
+  subspace of `R^3`, so the profile surface fills its ambient space
+  and has no extrinsic curvature to be rigid against; `D` degenerates
+  to the distance matrix of `n` coplanar points, invariant under any
+  isometry of that plane, and the freedom is realizable by moving the
+  observers. Measured: exactly `6` flexes beyond the rigid-motion
+  gauge, unchanged from `n = 6` to `n = 34`. Adding targets never
+  helps. `[MEASURED]`
+- `R >= 4` with enough targets is **rigid**: the profile surface is a
+  curved 2-surface in a `>= 3`-dimensional subspace, and the nullity
+  drops to exactly `d(d+1)/2 = 3`, the rigid-motion gauge. So `D`
+  determines targets *and* observers up to Euclidean congruence —
+  including the **absolute scale**, since `D` is homogeneous of degree
+  1 in the scene (`J theta = D`, Euler). Measured thresholds: `R = 4`
+  needs `n >= 11`; `R = 5` and `R = 8` need `n >= 9`; `R = 6` needs
+  `n >= 8`. `[MEASURED]`
+
+So the unlabeled observable is *more* informative in 2+1D than in
+1+1D, not less: 1+1D yields an order and provably no metric, while
+2+1D with `R >= 4` yields the metric configuration up to congruence.
+Curvature of the profile surface is what rigidifies, and flatness is
+exactly what 1+1D has too much of.
+
+Scope, since this is the kind of claim that invites over-reading. The
+rigidity established is **infinitesimal** — local uniqueness
+generically, not global; rank is lower semicontinuous, so full rank at
+a sampled configuration does give full rank on a dense open set, which
+is why the thresholds are reported as generic, but a global-uniqueness
+statement needs a separate argument. Everything is in the exact model,
+as Lemma 4 is; the measured-data counterpart (what Lemma 4e does for
+Lemma 4) is **not** attempted. And these are computations, not written
+proofs, which is why the tags read `[MEASURED]` rather than
+`[PROVED]`.
 
 **Verification (2+1D).** `experiments/theory/t1_g4_2plus1d.py`, run
 against the **frozen** P2/P2-v2 scene builder (`build_scene_2plus1d`,
@@ -789,8 +916,9 @@ with zero strict inversions in either.
   (Lemma 4f counterexample), and Theorem 1's positive-affine clause
   belongs to the labeled flanking decoder.
 - **G2 — the stochastic clock model has no instrument.**
-  **INSTRUMENTED (v0.5); order-only harvest designed and measured
-  (v0.6); count-fluctuation class open on systematics (v0.7).**
+  **CLOSED (v1.0).** (INSTRUMENTED v0.5; order-only harvest designed
+  and measured v0.6; count class open on systematics v0.7; count class
+  settled v1.0.)
   (History: v0.1 wrongly
   claimed the code harvests paths from the sprinkling; v0.2 corrected
   that the frozen instrument is Model D through and through —
@@ -817,16 +945,19 @@ with zero strict inversions in either.
   that protocol is the anchor *designation* alone. *Remaining open,
   one item, and v0.7 sharpens why:* the harvested chain's
   **count**-fluctuation class (`-1/4` Poisson-rate guess vs `-1/3`
-  KPZ-like). Its residual-based interval — scaled tube, `-0.3172`,
-  95% CI `[-0.3714, -0.2629]`, stable across split halves — would by
-  itself exclude `-1/4`. It stays open because the *systematics* are
-  larger than that interval: the scaled tube only partially
-  suppresses wandering (indicative share `0.22..0.88`, sliding across
-  the grid, so the slope is a drifting mixture, not the count
-  exponent), and the design's own wobble measured on the `[PROVED]`
-  thinned arm (`0.110` between split halves, bias `+0.037`) exceeds
-  the `0.083` separation between the candidates. Closing it needs a
-  wandering-free harvest or a wider density range, not more seeds.
+  KPZ-like) — **settled in v1.0, and the answer is that there is no
+  single class**. Measured directly from chain lengths, with no
+  distance estimator and therefore no wandering admixture, the
+  order-only anchored chain is KPZ (`theta = 0.322`, Poisson excluded
+  by `12.8` se) and the tube-confined chain is Poisson
+  (`theta = 0.487`, KPZ excluded by `13.2` se), with the thinned clock
+  returning its constructed `1/2` as calibration. The mechanism is
+  confinement: the tube is `rho^{-1/2}` wide against a natural
+  wandering of `rho^{-1/6}`, which destroys the transverse
+  optimization that produces Tracy-Widom fluctuations; widening the
+  tube to the wandering scale restores `theta -> 1/3` monotonically.
+  This retires the v0.5-v0.7 reading of the scaled tube's `-0.317` as
+  its count exponent.
   The frozen PC-V1 instrument is unchanged; any confirmatory use of
   these protocols would need its own prereg freeze.
 - **G3 — dependence between brackets.** **CLOSED (v0.4, Theorem 2).**
@@ -855,11 +986,21 @@ with zero strict inversions in either.
   non-collinear observers" is the right condition, and Lemma 4c's
   `R >= 2` is 1+1D-specific), and "non-collinear" becomes quantitative
   through the conditioning factor. **G4b — the unlabeled statements —
-  remains open by design:** Lemma 4's Robinson/seriation engine has no
-  2D analogue, because "spatial order" is one-dimensional and the
-  piecewise linearity that drove the proof becomes conic in the plane.
-  Its counterpart ("`D` determines the configuration up to
-  similarity") is a distance-geometry / rigidity problem, not a port.
+  is settled in v0.9, opposite to the direction v0.8 expected.**
+  Lemma 4's Robinson/seriation engine indeed has no 2D analogue, and
+  that obstruction is real; but the 2+1D counterpart is metric rather
+  than ordinal, and it is *stronger* than the statement it replaces.
+  For `R >= 4` observers and enough targets (measured: `n >= 11` at
+  `R = 4`, `n >= 9` at `R = 5, 8`, `n >= 8` at `R = 6`), `D` alone
+  determines targets AND observers up to Euclidean congruence,
+  absolute scale included. For `R = 3` it determines nothing of the
+  sort: `6` flexes beyond the gauge survive at every target count, and
+  an explicit same-`D` non-congruent scene is exhibited. The dividing
+  line is the ambient dimension of the centered-profile subspace —
+  with `R = 3` the profile surface fills its 2-dimensional ambient and
+  cannot curve, which is the same flatness that limits 1+1D. Section
+  5b carries the statements and their scope; the work is
+  `[MEASURED]` (infinitesimal rigidity, exact model), not `[PROVED]`.
 
 ## 7. Numerical verification plan
 
@@ -1061,11 +1202,55 @@ The harness (`experiments/theory/t1_verification.py`, regression tests in
     the `count_class_status` block, which are descriptive and never
     gating.
 
+12. G4b unlabeled identifiability (v0.9, 2026-07-25 KST):
+    `experiments/theory/t1_g4b_unlabeled_2plus1d.py`, 7/7 checks,
+    tracked table `docs/theory/t1_g4b_unlabeled_results.json`,
+    regressions `tests/test_t1_g4b_unlabeled.py`. The Jacobian is taken
+    by complex-step differentiation, so the rank decision rests on an
+    eleven-order spectral gap rather than on finite-difference noise,
+    and the instrument is validated before use: the three rigid-motion
+    directions are null to `8.8e-16` while the scale direction returns
+    `J theta = D` exactly (`1.0000`), confirming the gauge is `3` and
+    the absolute scale is recoverable. Control: 1+1D keeps extra
+    flexes at every `(n, R)` tested (`2, 3, 4, 3` at
+    `(6,3), (10,4), (16,6), (24,8)`) — Lemma 4f through this
+    instrument. `R = 3`: extra flexes exactly `6` at
+    `n = 6, 10, 14, 20, 34`, and the explicit counterexample flows
+    along one flex to a scene whose `D` differs by `8.3e-17` while its
+    shape differs by `0.243` against a configuration spread of `0.251`
+    — the observer triangle goes from equilateral (`0.433` three
+    times) to scalene (`0.373, 0.325, 0.234`). `R >= 4` reaches nullity
+    `3` from `n = 11 (R=4)`, `9 (R=5)`, `8 (R=6)`, `9 (R=8)`. The
+    frozen 2+1D instrument's own configuration (8 chains, 34 selected
+    targets) has nullity exactly `3` with smallest nonzero singular
+    value `1.3e-2`, so it sits inside the rigid regime with margin.
+
+13. G2 count class (v1.0, 2026-07-25 KST):
+    `experiments/theory/t1_g2_count_class.py`, 4/4 checks, tracked
+    table `docs/theory/t1_g2_count_class_results.json`, regressions
+    `tests/test_t1_g2_count_class.py`. Chain lengths over
+    `rho = 500..64000`, 300 realizations per density; the exponent is
+    fitted as `sd ~ mean^theta` with the same residual interval and
+    split-half treatment the other exponents carry. Calibration
+    (thinned Poisson clock, `theta = 1/2` by construction):
+    `+0.4981`, bias `-0.0019`, CI `[0.4765, 0.5197]`. Order-only
+    anchored chain: `+0.3221`, CI `[0.2881, 0.3562]`, KPZ `1/3` inside
+    at `-0.8` se and Poisson `1/2` excluded at `-12.8` se.
+    Tube-confined chain: `+0.4870`, CI `[0.4585, 0.5154]`, Poisson
+    inside at `-1.1` se and KPZ excluded at `+13.2` se. Confinement
+    crossover, tube half-width from `3 rho^{-1/2}` through
+    `rho^{-1/3}` to `rho^{-1/6}`: `theta = +0.463, +0.390, +0.340`,
+    monotone toward `1/3` as the tube reaches the natural wandering
+    scale. Half-split spreads `0.005..0.033` against a `0.167`
+    separation — the design resolves this question by a factor of five
+    to thirty, where the distance-based route faced a `0.110` wobble
+    against `0.083`.
+
 The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8, note 14 is v0.9, note 15 is v1.0)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -1305,6 +1490,80 @@ pinned in CI as exact (non-statistical) regressions.
     plane. That is the half that would upgrade a 2+1D pipeline pass the
     way Lemma 4 upgrades a 1+1D one, and it needs a distance-geometry
     argument rather than a port.
+
+14. v0.9 (G4b): v0.8 recorded the unlabeled clause as "does not
+    transfer" and left it open on the grounds that seriation has no 2D
+    analogue. The premise was right and the conclusion was wrong, so
+    the entry is rewritten rather than extended. Seriation really does
+    not survive — there is no linear spatial order in the plane to
+    recover — but that says the 1+1D *statement* must be replaced, not
+    that nothing replaces it. The replacement is metric: for `R >= 4`
+    the dissimilarity determines the entire scene, targets and
+    observers together, up to Euclidean congruence including absolute
+    scale, which is strictly more than the order-only conclusion of
+    Lemma 4.
+
+    Two things went into getting this right, and both were initially
+    guessed wrong. First, the expected obstruction — that centering
+    costs an observer, since `Phi~(x') = Phi~(x)` is a TDOA condition
+    and three-receiver TDOA is two-valued — does not occur on the
+    hull; a dense scan finds no twin and the differential has full
+    rank. Second, the working assumption that scale is a gauge is
+    false: `D` is homogeneous of degree 1, so a global rescaling
+    multiplies it instead of preserving it, and the gauge is
+    `d(d+1)/2` rather than one more. Both errors would have inflated
+    the expected nullity and turned a rigid configuration into an
+    apparently flexible one; the harness now asserts the gauge
+    directions and the scale response before reporting any verdict.
+
+    What actually defeats `R = 3` is dimensional, not a fold: three
+    centered profiles span only the 2-dimensional mean-zero subspace
+    of `R^3`, so the profile surface fills its ambient space and `D`
+    collapses to the distance matrix of `n` coplanar points. That is
+    the same flatness that limits 1+1D, where `Phi~` is piecewise
+    linear — which is why the 1+1D control is never rigid either. From
+    `R >= 4` the surface curves inside a larger ambient and rigidity
+    follows. Reported as `[MEASURED]`: infinitesimal rigidity in the
+    exact model, verified numerically, with global uniqueness and the
+    measured-data perturbation both left open.
+
+15. v1.0 (G2 count class): closed, and by a route neither of the two
+    that v0.7 proposed. Both of those -- a wandering-free harvest, or a
+    wider density range -- would still have read the class off the
+    *distance* error, which is precisely where the wandering enters.
+    The fix was to stop using the distance error at all: the count
+    class is a property of the chain's tick times, so
+    `sd(length) ~ mean(length)^theta` measures it with nothing else in
+    the loop. That also doubles the separation being tested, from the
+    `0.083` between the two error exponents to the `0.167` between the
+    two count exponents, while the design's wobble drops to
+    `0.005..0.033`.
+
+    The answer is that the question presupposed something false. There
+    is no single count class for "the harvested chain": the order-only
+    anchored chain is KPZ and the tube-confined chain is Poisson, each
+    decided against the other candidate by more than twelve standard
+    errors. The mechanism is confinement -- Tracy-Widom fluctuations
+    come from a longest chain's freedom to optimize its transverse
+    path, and the shipped tube is `rho^{-1/2}` wide against a natural
+    wandering of `rho^{-1/6}`, so it suppresses exactly that freedom.
+    Widening the tube to the wandering scale restores `theta -> 1/3`
+    monotonically, which is the mechanism test rather than the two
+    endpoints alone.
+
+    Two earlier statements are retired by this. The scaled tube's
+    `-0.317` was described from v0.5 as the count class "nearer
+    `-1/3`"; it is not a count exponent at all, since that arm's counts
+    are Poisson (`-1/4` count term) and `-0.317` is the mixture with
+    the residual `rho^{-1/2}` wandering. And v0.7's systematics note,
+    while correct that the slope was a drifting mixture, still framed
+    the open item as "which of the two classes" rather than "whose".
+    Neither arm's *error* exponent measures its own count class -- the
+    tube's is contaminated by wandering it failed to remove, the
+    order-only chain's is swamped by wandering it deliberately allows.
+    Reading a mechanism off a total error exponent was the common
+    error, and it is the reason this item stayed open for four
+    revisions.
 
 ## 8. Relation to the frozen program
 

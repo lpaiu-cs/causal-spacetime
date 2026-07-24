@@ -1,0 +1,435 @@
+{
+  "scope": "G4b: what D determines in 2+1D. Exact model, infinitesimal rigidity, numerical -- not written proofs, and not global uniqueness. Nothing frozen; no gate consumes this.",
+  "checks": {
+    "machinery": {
+      "gauge_residuals": [
+        8.752945757428761e-16,
+        5.571495699023698e-16,
+        1.1630679582354566e-16
+      ],
+      "gauge_directions_are_null": true,
+      "scale_response": 1.0,
+      "scale_is_not_a_gauge": true,
+      "passed": true
+    },
+    "labeled_centered_map_injective": {
+      "rows": [
+        {
+          "R": 3,
+          "twins_found": 0,
+          "min_differential_rank": 2
+        },
+        {
+          "R": 4,
+          "twins_found": 0,
+          "min_differential_rank": 2
+        },
+        {
+          "R": 8,
+          "twins_found": 0,
+          "min_differential_rank": 2
+        }
+      ],
+      "passed": true
+    },
+    "control_1p1d_never_rigid": {
+      "rows": [
+        {
+          "n": 6,
+          "R": 3,
+          "nullity": 3,
+          "gauge": 1,
+          "extra_flexes": 2
+        },
+        {
+          "n": 10,
+          "R": 4,
+          "nullity": 4,
+          "gauge": 1,
+          "extra_flexes": 3
+        },
+        {
+          "n": 16,
+          "R": 6,
+          "nullity": 5,
+          "gauge": 1,
+          "extra_flexes": 4
+        },
+        {
+          "n": 24,
+          "R": 8,
+          "nullity": 4,
+          "gauge": 1,
+          "extra_flexes": 3
+        }
+      ],
+      "always_has_extra_flexes": true,
+      "passed": true
+    },
+    "r3_never_rigid": {
+      "rows": [
+        {
+          "n": 6,
+          "nullity": 9,
+          "extra_flexes": 6
+        },
+        {
+          "n": 10,
+          "nullity": 9,
+          "extra_flexes": 6
+        },
+        {
+          "n": 14,
+          "nullity": 9,
+          "extra_flexes": 6
+        },
+        {
+          "n": 20,
+          "nullity": 9,
+          "extra_flexes": 6
+        },
+        {
+          "n": 34,
+          "nullity": 9,
+          "extra_flexes": 6
+        }
+      ],
+      "extra_flexes_constant_at_6": true,
+      "passed": true
+    },
+    "r3_explicit_counterexample": {
+      "n": 12,
+      "arc_length": 2.0000000000000013,
+      "max_D_drift": 8.326672684688674e-17,
+      "scene_shape_gap": 0.24264885614863263,
+      "target_spread": 0.25097251556566147,
+      "observer_triangle_before": [
+        0.43301270189221924,
+        0.43301270189221935,
+        0.4330127018922193
+      ],
+      "observer_triangle_after": [
+        0.37248830591322185,
+        0.3250847828465928,
+        0.23382587958178772
+      ],
+      "scene_before": [
+        -0.04244723625365366,
+        0.01976994722560721,
+        -0.06656614053799224,
+        -0.04038932907014449,
+        -0.010934031700883098,
+        -0.1428043180721362,
+        0.11749942441001654,
+        -0.033124513378503036,
+        -0.010467764597322387,
+        0.04795955739671983,
+        -0.06266870761120404,
+        -0.08462081751197602,
+        -0.03671522729190092,
+        -0.10447825284387849,
+        -0.016959627010567847,
+        0.06165782404830411,
+        0.13712595210408426,
+        0.001283875237038627,
+        0.053196172600476876,
+        -0.008953822125115078,
+        -0.02996789187248742,
+        0.09548490526469537,
+        -0.04500470072473684,
+        0.10584481842671269,
+        0.2484890244891742,
+        0.027444575209293703,
+        -0.148012211571908,
+        0.20147552016459155,
+        -0.10047681291726616,
+        -0.2289200953738852
+      ],
+      "scene_after": [
+        -0.052504507047423585,
+        0.020760171746593753,
+        -0.09426872573833509,
+        -0.046824439632773655,
+        -0.10604940727361029,
+        -0.2776087940601338,
+        0.1185149545601486,
+        0.026287739928750147,
+        -0.01202643209309261,
+        0.057032499979043395,
+        -0.09334624303180049,
+        -0.1004720194642912,
+        -0.04111529054007404,
+        -0.09593272563502339,
+        -0.020838329892366666,
+        0.06733706747564544,
+        0.1508877407812068,
+        0.09091119251738733,
+        0.057704578890971844,
+        0.02530767540828844,
+        -0.04100564616032628,
+        0.09354523939320583,
+        -0.08638495582623665,
+        0.12440331041001523,
+        0.28816352117499483,
+        -0.03419874808948812,
+        -0.05972771913685105,
+        0.0989148235566347,
+        -0.021913317153376147,
+        -0.13183311893653002
+      ],
+      "passed": true
+    },
+    "rigidity_thresholds": {
+      "rows": [
+        {
+          "R": 4,
+          "first_rigid_n": 11,
+          "detail": [
+            {
+              "n": 6,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 7,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 8,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        },
+        {
+          "R": 5,
+          "first_rigid_n": 9,
+          "detail": [
+            {
+              "n": 6,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 7,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 8,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        },
+        {
+          "R": 6,
+          "first_rigid_n": 8,
+          "detail": [
+            {
+              "n": 6,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 7,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 8,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        },
+        {
+          "R": 8,
+          "first_rigid_n": 9,
+          "detail": [
+            {
+              "n": 6,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 7,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 8,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        }
+      ],
+      "all_reached_rigidity": true,
+      "passed": true
+    },
+    "frozen_scene_rigid": {
+      "n_targets": 34,
+      "n_observers": 8,
+      "nullity": 3,
+      "gauge": 3,
+      "extra_flexes": 0,
+      "smallest_nonzero_singular_value": 0.012746333800712809,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "headline": {
+    "r3_not_identifiable": true,
+    "r3_extra_flexes": 6,
+    "first_rigid_n_by_R": {
+      "4": 11,
+      "5": 9,
+      "6": 8,
+      "8": 9
+    },
+    "recovered_up_to": "Euclidean congruence of the whole scene, absolute scale included (D is homogeneous of degree 1)",
+    "contrast_with_1p1d": "1+1D keeps extra flexes at every (n, R) tested -- Lemma 4f through the same instrument -- so the unlabeled observable is strictly more informative in 2+1D than in 1+1D"
+  }
+}

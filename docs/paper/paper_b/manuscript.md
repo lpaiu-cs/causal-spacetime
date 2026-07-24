@@ -807,7 +807,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v0.7); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.0); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -996,29 +996,33 @@ near the order-only exponent, by a different mechanism entirely. Any
 density-scaling claim must therefore name its clock protocol; the
 frozen PC-V1 instrument uses Model D clocks and is untouched by this.
 
-The one remaining open question — the harvested chain's
-*count*-fluctuation class, Poisson-rate -1/4 against KPZ-like -1/3 —
-is open on *systematics*, not on statistics, and the distinction is
-worth stating because the arithmetic points the other way. The
-scaled tube is the arm meant to measure that class, and its interval
-[-0.371, -0.263] is stable across split halves (-0.352 / -0.312) and
-leave-one-out; taken at face value it puts -1/4 3.2 standard errors
-outside and keeps only -1/3. Two measured systematics are larger than
-that interval. First, the scaled tube suppresses wandering but does
-not remove it: the indicative wandering share of its error falls from
-0.88 to 0.22 across the grid, so its slope is a drifting mixture of a
-rho^{-1/2} wandering term and the count term rather than the count
-exponent itself, and removing the wandering in quadrature flips which
-candidate survives. Second, calibrating on the thinned arm, whose
-exponent is proved, this grid returns -0.463 for a true -1/2 with a
-split-half spread of 0.110 — wider than the 0.083 separation between
-the candidates. A seven-point grid of this construction therefore
-cannot resolve them, and the same caution applies to the wandering
-reading above: it is consistent with KPZ and favours it, not a
-three-digit determination. Closing the item needs a harvest whose
-wandering is eliminated rather than suppressed, or a wider density
-range — not more seeds. Details are recorded in the theory document
-and in the tracked table, descriptively and without any gate.
+The count-fluctuation class behind these error laws is
+protocol-dependent too, and measuring it exposes what the error
+exponents alone could not say. Read off the *distance* error the
+question is unanswerable: the arm meant to isolate the count term
+still carries a wandering admixture whose weight slides from 0.88 to
+0.22 across the density grid, and the fitting design's own wobble,
+calibrated where the exponent is proved, is 0.110 against a 0.083
+separation between the candidates. Measured instead from the chains'
+tick counts — where no distance estimator, and therefore no wandering,
+enters — the separation doubles to 0.167 and the design's wobble drops
+to 0.005-0.033. The counts then decide cleanly, and they decide
+differently for the two harvests: the order-only anchored chain
+fluctuates like a longest chain should (Tracy-Widom, exponent 1/3,
+with Poisson excluded by 12.8 standard errors), while the
+tube-confined chain fluctuates like a Poisson process (exponent 1/2,
+Tracy-Widom excluded by 13.2), against a thinned clock that returns
+its constructed 1/2 as calibration. The mechanism is confinement:
+Tracy-Widom fluctuations come from a longest chain's freedom to
+optimize a transverse path, and the tube is rho^{-1/2} wide against a
+natural wandering of rho^{-1/6}, so it suppresses precisely that
+freedom — widening the tube to the wandering scale restores the 1/3
+exponent monotonically. The consequence for the error laws above is
+that neither arm's error exponent measures its own count class: the
+tube's is contaminated by the wandering it failed to remove, and the
+order-only chain's is swamped by the wandering it deliberately allows.
+All of this is theory-track characterization, recorded in the theory
+document and its tracked table without any gate.
 
 ### 8.5 What the theory says in 2+1D
 
@@ -1056,21 +1060,55 @@ by a factor 29 against a ring, each still inside its own proved bound.
 There is no 1+1D analogue, where two flanking observers always give
 slope 4 lambda.
 
-Section 8.2's *unlabeled* clause does not transfer, and the
-obstruction is structural. Its engine is the strict Robinson
-(seriation) structure of the dissimilarity, and "spatial order" is a
-one-dimensional notion: in the plane there is no linear order to
-recover, so the statement must be replaced rather than ported, and the
-piecewise linearity the proof rests on becomes conic. The 2+1D
-counterpart would read "the dissimilarity determines the configuration
-up to similarity" — a distance-geometry question, recorded open. The
-consequence for this paper is stated plainly: the interpretation
-upgrade of Section 8.2, which turns a pass from "our fitter recovered
-it" into "any consistent decoder must", backs Sections 4-7 in 1+1D and
-does **not** yet back the 2+1D results of Section 6. What backs
-Section 6 is the observable's identity, band, resolution law and
-concentration, plus labeled identifiability — which is what this
-subsection establishes.
+Section 8.2's *unlabeled* clause changes character rather than
+transferring. Its engine is the strict Robinson (seriation) structure
+of the dissimilarity, and "spatial order" is a one-dimensional notion:
+in the plane there is no linear order to recover, so the 1+1D
+statement must be replaced rather than ported. What replaces it is
+metric, and it is stronger. Writing the dissimilarity as the distance
+between centered profiles, the question becomes whether that data
+determines the scene, and the answer turns on how many observers there
+are.
+
+With three observers it does not, and the failure is not the fold one
+expects. Centering might be thought to cost an observer, since two
+targets share a centered profile exactly when their distances to every
+observer differ by a common constant — the condition behind
+three-receiver ambiguity in hyperbolic positioning — but for targets
+in the hull that never happens, and the labeled centered profile
+already fixes the target. What defeats three observers is dimensional:
+three centered profiles span only a two-dimensional space, so the
+profile surface fills its ambient and the dissimilarity collapses to
+the distance matrix of coplanar points, leaving six continuous
+degrees of freedom beyond rigid motion at *every* target count from 6
+to 34. Flowing along one of them produces an explicit second scene
+whose dissimilarity agrees to 8e-17 while its shape differs by 97% of
+the configuration's own size, the observer triangle passing from
+equilateral to scalene — the 2+1D counterpart of the
+same-dissimilarity counterexample of Section 8.2.
+
+With four or more observers and enough targets it does. The profile
+surface is then genuinely curved inside a larger ambient space, and
+the flex count drops to exactly the three dimensions of rigid motion:
+the dissimilarity determines targets *and* observers up to Euclidean
+congruence, absolute scale included, since it is homogeneous of degree
+one in the scene. Measured thresholds are n >= 11 targets at four
+observers, n >= 9 at five and eight, n >= 8 at six; the frozen 2+1D
+instrument, with eight chains and 34 selected targets, sits inside
+that regime with margin. So the unlabeled observable is *more*
+informative in 2+1D than in 1+1D, not less — in 1+1D it yields an
+order and provably no metric, and flatness is precisely what limits
+it.
+
+Two scope conditions travel with that result and are not optional.
+The rigidity established is infinitesimal — local uniqueness
+generically, not global — and it lives in the exact model, as the
+1+1D identifiability results do; the measured-data perturbation
+counterpart of Section 8.3 has not been carried out for it. It is
+therefore verified numerically rather than proved, and Section 6's
+2+1D results are backed by the observable's identity, band, resolution
+law, concentration and labeled identifiability, with the unlabeled
+statement standing as characterization at that stated strength.
 
 ![Figure 6](figures/fig6_theory.png)
 
@@ -1277,22 +1315,21 @@ dimensional reach is uneven and Section 8.5 states where the line
 falls: the observable's identity, quantization band, resolution law
 and concentration results hold in any spatial dimension and are
 verified in 2+1D, and labeled identifiability becomes multilateration
-there — but the *unlabeled* decoding result, the one that makes a pass
-decoder-independent, is 1+1D only, because its seriation engine has no
-analogue where there is no linear spatial order to recover. Closing
-that would upgrade Section 6 the way the present theory upgrades
-Sections 4-7, and it is a distance-geometry problem rather than an
-extension. The concentration results describe the Poisson
-idealization, which no frozen instrument realizes; and one question is
-recorded open in the theory document rather than resolved: the
-*count*-fluctuation class of harvested-chain clocks (Poisson-rate -1/4
-vs KPZ-like -1/3). That item is open on systematics rather than
-statistics — the arm that measures it carries a residual wandering
-admixture whose weight slides across the density grid, and the
-fitting design's own wobble, calibrated where the exponent is proved,
-exceeds the separation between the two candidates (Section 8.4). It
-closes with a wandering-free harvest or a wider density range, not
-with more seeds. The order-only harvest question is closed
+there. The *unlabeled* result changes character rather than
+transferring — seriation has no analogue where there is no linear
+spatial order, but the metric statement that replaces it is stronger,
+and it holds for four or more observers while failing outright for
+three. That result is characterization at a stated strength, not a
+proved theorem: it establishes infinitesimal rigidity in the exact
+model, verified numerically, so global uniqueness and the
+measured-data perturbation both remain open, and Section 6's results
+do not rest on it. The concentration results describe the Poisson
+idealization, which no frozen instrument realizes. The theory
+document's gap list now has no open item: the last one, the
+count-fluctuation class of harvested-chain clocks, closed once it was
+measured from the chains' tick counts rather than from their distance
+error, and the answer was that the class is protocol-dependent rather
+than single (Section 8.4). The order-only harvest question is closed
 at the design level: a selection rule reading order data alone, given
 two designated anchor events, is built, audited against an independent
 longest-chain computation, and measured — its transverse wandering
@@ -1355,18 +1392,27 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v0.8). Verification: `experiments/theory/t1_verification.py` (13
+(v1.0). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
 split: eight checks run against the frozen 2+1D scene builder used
 unmodified, with its table tracked at
-`docs/theory/t1_g4_2plus1d_results.json`), and
+`docs/theory/t1_g4_2plus1d_results.json`),
+`experiments/theory/t1_g4b_unlabeled_2plus1d.py` (the unlabeled
+2+1D result of Section 8.5: seven checks, the Jacobian taken by
+complex-step differentiation and the rigid-motion gauge asserted
+before any verdict, table tracked at
+`docs/theory/t1_g4b_unlabeled_results.json`), and
+`experiments/theory/t1_g2_count_class.py` (the count-fluctuation
+class of Section 8.4, measured from chain lengths with no distance
+estimator, table tracked at
+`docs/theory/t1_g2_count_class_results.json`), and
 `experiments/theory/t1_g2_density_scaling.py` (protocol audits plus
 density-scaling characterization; every fitted exponent reported with
 a residual-based interval and a split-half check, and the recorded
 `count_class_status` block assembling the systematic case for leaving
-the count-fluctuation class open), with their regression tests run in
+the count-fluctuation class open at the time), with their regression tests run in
 CI on every push; the full-grid density-scaling table is committed with
 its run configuration as
 `docs/theory/t1_g2_density_scaling_results.json`, and rerunning the

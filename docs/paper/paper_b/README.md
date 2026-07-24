@@ -62,15 +62,21 @@ This paper reports the validated-instrument line of the program:
    is a CI regression — Model-D claims against the instrument itself,
    Model-P claims by direct seeded simulation of the stated model;
    every fitted scaling exponent carries a residual-based interval and
-   a split-half check, and the one open question (the count-fluctuation
-   class) is documented as open on systematics rather than statistics.
+   a split-half check. The last open question, the count-fluctuation
+   class, is closed: measured from chain lengths rather than from the
+   distance error it comes out protocol-dependent -- Tracy-Widom for
+   the order-only chain, Poisson for the tube-confined one.
    Its dimensional reach is split and stated (Section 8.5): the
    identity, band, resolution law and concentration hold in any spatial
    dimension and are verified in 2+1D on the frozen P2/P2-v2 scene
-   builder, labeled identifiability there is multilateration from three
-   non-collinear observers, and only the unlabeled decoding result is
-   1+1D-specific. Source: `docs/theory/t1_parallax_identifiability.md`
-   (v0.8) and manuscript Section 8.
+   builder, and labeled identifiability there is multilateration from
+   three non-collinear observers. The unlabeled result changes
+   character with dimension: ordinal in 1+1D, metric in 2+1D, where
+   four or more observers make the dissimilarity determine the whole
+   scene up to congruence while three provably do not (characterization
+   at stated strength -- infinitesimal rigidity, exact model). Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.0) and manuscript
+   Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
