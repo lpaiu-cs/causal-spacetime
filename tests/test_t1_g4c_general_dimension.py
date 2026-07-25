@@ -20,9 +20,9 @@ sys.path.insert(0, str(EXPERIMENT_DIR))
 from t1_g4b_unlabeled_2plus1d import (  # noqa: E402
     flatten,
     gauge_dimension,
+    nullity,
     rigid_motion_gauge,
     scene,
-    nullity,
 )
 from t1_g4c_general_dimension import (  # noqa: E402
     affine_rank,
@@ -120,7 +120,7 @@ def test_five_observers_in_three_dimensions_reach_rigidity():
 
 def _is_rigid(n: int, R: int, d: int, seed: int, shell_variant: int = 0) -> bool:
     X, P = scene(n, R, seed=seed, d=d, shell_variant=shell_variant)
-    null, _ = nullity(flatten(X, P), n, R, d, )
+    null, _ = nullity(flatten(X, P), n, R, d)
     return null == gauge_dimension(d)
 
 
