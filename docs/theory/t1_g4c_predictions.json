@@ -1,0 +1,94 @@
+{
+  "scope": "G4c preregistration. What the general-dimension reading of the G4b mechanism predicts, written down BEFORE any measurement outside d = 2 was run. Theory-track; nothing frozen in the prereg sense, but this file is committed ahead of the harness so that a post-hoc fit is not available as an option.",
+  "written": "2026-07-25 KST",
+  "parent_commit": "a33e582",
+  "state_of_evidence_when_written": {
+    "d=1": "measured (G4b control): extra flexes at every (n, R) tested; never rigid",
+    "d=2": "measured (G4b): R = 3 gives nullity 9 = gauge 3 + 6 extra, constant over n = 6..34; R >= 4 reaches nullity = gauge 3; R = 2 NOT tested",
+    "d>=3": "no measurement of any kind"
+  },
+
+  "mechanism": {
+    "statement": "The centered profile map x -> Phi~(x) sends R^d into the (R-1)-dimensional mean-zero subspace of R^R. Its image is a d-dimensional surface. Everything follows from the sign of (R-1) - d.",
+    "regimes": {
+      "under_observed": {
+        "condition": "R - 1 < d",
+        "mechanism": "the map is a submersion with fibres of dimension d - R + 1; a target slides along its fibre without changing Phi~ at all",
+        "signature": "nullity grows linearly in n, with slope d - R + 1"
+      },
+      "saturated": {
+        "condition": "R - 1 == d",
+        "mechanism": "the surface fills its ambient space, so D is merely the distance matrix of n points in R^d and the freedom is realizable by moving the observers",
+        "signature": "nullity constant in n, above the gauge"
+      },
+      "curved": {
+        "condition": "R - 1 > d, i.e. R >= d + 2",
+        "mechanism": "the surface is a genuinely curved d-surface in a >= (d+1)-dimensional ambient; curvature rigidifies",
+        "signature": "nullity == gauge == d(d+1)/2 once n is large enough"
+      }
+    },
+    "why_d_equals_1_is_exempt_from_the_curved_regime": "|x - p| is piecewise linear in one dimension, so the profile 'surface' is a polyline of exactly zero curvature and the rigidifying mechanism is absent at every R. This exemption is specific to d = 1 and is not expected to recur at d >= 2.",
+    "calibration": "This reading reproduces the measured d = 2 numbers: R = 3 is the saturated regime (R - 1 == d) and R >= 4 is the curved regime, which is exactly where the measured threshold sits."
+  },
+
+  "predictions": [
+    {
+      "id": "P1",
+      "target": "d = 3, R = 3",
+      "regime": "under_observed",
+      "claim": "nullity grows linearly in n with slope 1 (fibre dimension d - R + 1 = 1)",
+      "falsified_if": "nullity is constant in n, or the fitted slope is not 1",
+      "confidence": "strong",
+      "basis": "pure dimension count of a submersion; no free parameter"
+    },
+    {
+      "id": "P2",
+      "target": "d = 3, R = 4",
+      "regime": "saturated",
+      "claim": "nullity == 18 and extra flexes == 12, constant in n",
+      "law": "nullity = d*R + d(d+1)/2, extra = d*R",
+      "falsified_if": "nullity is not 18, or varies with n",
+      "confidence": "medium",
+      "basis": "counting heuristic calibrated on a SINGLE measured point (nullity 9 at d = 2, R = 3 = 2*3 + 3). The regime assignment is strong; the specific number is the weakest prediction in this file and is the one most worth being wrong."
+    },
+    {
+      "id": "P3",
+      "target": "d = 3, R >= 5, n large enough",
+      "regime": "curved",
+      "claim": "nullity == 6 == gauge, extra flexes == 0",
+      "falsified_if": "extra flexes remain positive at every n tested",
+      "confidence": "strong",
+      "basis": "the same curvature argument that already produced the measured R >= 4 threshold at d = 2"
+    },
+    {
+      "id": "P4",
+      "target": "d = 3, R = 5, first rigid n",
+      "claim": "the observed threshold exceeds the naive constraint-counting bound n >= 9",
+      "counting_bound": {
+        "inequality": "n(n-1)/2 >= d(n+R) - d(d+1)/2",
+        "d3_R5": 9,
+        "d2_R4_for_reference": 7,
+        "d2_R4_measured": 11
+      },
+      "falsified_if": "the observed threshold equals 9",
+      "confidence": "directional",
+      "basis": "the bound was not tight at d = 2 (7 predicted, 11 measured), so tightness at d = 3 would be a surprise"
+    },
+    {
+      "id": "P5",
+      "target": "d = 2, R = 2",
+      "regime": "under_observed",
+      "claim": "nullity grows linearly in n with slope 1 (fibre dimension d - R + 1 = 1)",
+      "falsified_if": "nullity is constant in n",
+      "confidence": "strong",
+      "basis": "a retro-check in the ALREADY understood dimension. The regime law implies an under-observed regime at d = 2 too, at R = 2, which G4b never tested. If this fails the law is wrong before d = 3 is reached."
+    }
+  ],
+
+  "what_this_does_not_predict": [
+    "global uniqueness -- every prediction here is about infinitesimal rigidity, i.e. the rank of one Jacobian",
+    "anything about noisy or delta-quantized D; the model is exact",
+    "anything about D harvested through the instrument from a measured causal set",
+    "the d >= 4 case, which the mechanism covers but which is not measured here"
+  ]
+}

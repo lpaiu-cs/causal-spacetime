@@ -1,8 +1,13 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.0 — statements and proof programs; nothing frozen.
-No gap in Section 6 is open.**
-(v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
+Status: **THEORY DRAFT v1.1 — statements and proof programs; nothing frozen.
+One gap in Section 6 is open, and it was opened deliberately: G4c asks
+whether the G4b mechanism is a general-dimension law, and its predictions
+are written down in `t1_g4c_predictions.json` ahead of the measurement.**
+(v1.1 2026-07-25 KST: G4c opened with preregistered predictions — the
+regime law `sign((R-1) - d)`, the `R >= d + 2` rigidity threshold, and a
+retro-check at `d = 2, R = 2` that G4b never ran;
+v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
 it directly from chain lengths rather than from the distance error —
 protocol-dependent, KPZ for the order-only chain and Poisson for the
 tube-confined one; v0.9 2026-07-25 KST: G4b settled — in 2+1D the unlabeled dissimilarity
@@ -1001,6 +1006,30 @@ with zero strict inversions in either.
   cannot curve, which is the same flatness that limits 1+1D. Section
   5b carries the statements and their scope; the work is
   `[MEASURED]` (infinitesimal rigidity, exact model), not `[PROVED]`.
+- **G4c — is the G4b mechanism a general-dimension law?** **OPEN
+  (v1.1), opened deliberately and with its predictions preregistered in
+  `t1_g4c_predictions.json`.** G4b's argument is stated in terms of one
+  comparison and no dimension: the centered profile map sends `R^d` into
+  the `(R-1)`-dimensional mean-zero subspace of `R^R`, so its image is a
+  `d`-surface, and everything follows from the sign of `(R-1) - d` —
+  fibres and an `n`-growing flex count when `R - 1 < d`, a filled ambient
+  and a constant flex count when `R - 1 = d`, curvature and rigidity when
+  `R >= d + 2`. That reading reproduces the measured `d = 2` numbers
+  exactly, and it explains why `d = 1` is exempt at every `R` (there
+  `Phi~` is piecewise linear, so the "surface" is a polyline with zero
+  curvature and the rigidifying mechanism is simply absent — an
+  exemption specific to one dimension, not expected to recur).
+  Two things make this worth doing as a *proof* target rather than as
+  another numerical arm. First, a general-`d` theorem would close
+  `3 + 1` and every higher dimension at once, whereas measuring `d = 3`
+  adds one more `[MEASURED]` data point at unchanged strength. Second,
+  `d = 3` is not merely confirmatory: it exposes the under-observed
+  regime (`R - 1 < d`, reachable at `R = 3`) that `d = 2` could only
+  have shown at `R = 2`, which G4b never ran. The prediction file
+  therefore also carries that `d = 2, R = 2` retro-check, which can
+  falsify the law in the already-understood dimension before `d = 3` is
+  reached. Nothing here may be cited: `[CONJECTURED]` until measured,
+  and `[MEASURED]` is the ceiling even then.
 
 ## 7. Numerical verification plan
 
