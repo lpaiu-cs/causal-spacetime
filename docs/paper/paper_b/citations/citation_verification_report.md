@@ -94,3 +94,24 @@ Both corrections were applied to `docs/theory/citations/t1_references.bib`
 as well. No field was fabricated and no unverified entry was added; in
 particular Bombelli-Noldus-Tafoya (arXiv:1212.0601) is deliberately absent,
 having been withdrawn by its authors.
+
+
+### Post-hoc verification of the two load-bearing theorem statements
+
+The manuscript's Section 8.4 states the content of the theorems it cites,
+which is more exposure than citing them. The statements were verified
+against the published abstracts during code review of the positioning PR
+(2026-07-25) — after the prose was written, recorded here so the order of
+operations is on the record:
+
+- `deyjosephpeled2024` (arXiv:1808.08407 / Israel J. Math. 262): the
+  abstract states that the maximal increasing path in `[0,n]^2` restricted
+  to a strip of width `n^gamma`, `gamma < 2/3`, has expectation
+  `2n - n^{1-gamma+o(1)}`, **variance `n^{1-gamma/2+o(1)}`**, and converges
+  to the **Gaussian** distribution after scaling. At `gamma = 0` that is
+  `sd ~ n^{1/2}` against mean `~ 2n`, i.e. `theta = 1/2`, as the
+  manuscript asserts.
+- `bdj1999` (J. AMS 12): expectation `2n - n^{1/3}(c_1+o(1))`, variance
+  `n^{2/3}(c_2+o(1))`, Tracy-Widom limit — `theta = 1/3`, as asserted.
+
+Both match the manuscript's usage exactly; no edit was needed.

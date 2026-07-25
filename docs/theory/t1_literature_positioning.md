@@ -436,6 +436,16 @@ the prior-art hypothesis:
 
 ### 9.4 What remains open, stated plainly
 
+- **The per-paper protocol of the work order was not followed.** The
+  handoff specified recording, for each paper, four answers (receivers
+  unknown? labeled? theorem or solver? any general-`d` statement?). This
+  section answers those questions at the corpus level instead, from
+  search-result summaries and abstracts. Where 9.3 says "searched", read
+  "engaged at search-result level"; `crocco2012`, `elbadawy2023` and the
+  EUSIPCO papers were **not read through**. The corpus-level answers are
+  believed correct — and 9.2 does not depend on them — but the itemized
+  table the work order asked for does not exist and should be built by
+  hand before submission.
 - `ferranti2021`'s tables were **not** fully extracted. PDF text extraction
   failed here as it did for the original audit; the 2D entries above came
   through, the 3D ones did not. This sub-item is not closed, and the
@@ -444,6 +454,9 @@ the prior-art hypothesis:
   contents were not extracted.
 - Patent-adjacent and conference-only material remains unswept by
   construction.
+- The revised residual-risk figure of ~10% is a **judgment, not a
+  quantitative estimate** — as the original ~40% was. What is quantitative
+  is 9.2, which does not move with either number.
 
 None of these can plausibly overturn 9.2, which is an algebraic identity
 rather than a search result: whatever those tables contain, they are counts
