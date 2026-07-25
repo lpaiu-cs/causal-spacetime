@@ -1,6 +1,7 @@
 # P10: does the emergent geometry deepen toward a continuum?
 
-Status: **DESIGN; STAGE 0 PILOT IN PROGRESS; NOTHING FROZEN** (2026-07-26).
+Status: **STAGE 0 COMPLETE; STAGE A GRID FROZEN BELOW, NOT YET RUN**
+(2026-07-26).
 
 This is the first experiment of the post-T1 programme, and it is aimed at
 the programme's founding question rather than at the instrument. It is
@@ -135,6 +136,51 @@ measured feasible), with `N = 1800` only if Stage 0 shows fast mixing.
   Stage A shows the design can resolve it. The P8/P9 lesson is applied
   in advance: the decision rule will be *paired within size* (E vs S
   through the same instrument), not an absolute gate.
+
+## 6b. Stage 0 outcome (factual record, 2026-07-26)
+
+Dual-start 500k-step chains at `beta = 2`, `eps N = 12`, seeds
+9001/9002/9101, `n0` retained every 25k steps.
+
+| `N` | melt (bipartite -> continuum band) | tails agree | acceptance | wall |
+|---|---|---|---|---|
+| 900 | **<= 50k steps** (crystal 202500 -> ~4850 by the 2nd sample) | yes, band [4777, 4956] | 0.985 / 0.987 | 93 min |
+| 1200 | **<= 50k steps** (360000 -> ~6900 by the 2nd sample) | yes, band [6696, 6926] | 0.989 / 0.991 | 168 min |
+
+Post-melt lag-1 autocorrelation of `n0` at 25k-step spacing: `+0.014`
+(N=900) and `-0.153` (N=1200), both indistinguishable from zero at
+`n = 19` (se ~ 0.23). So 25k-step spacing already decorrelates `n0`
+deep in the phase, and the melt is roughly `N`-independent in steps —
+an order of magnitude below P5's 400k-step recon budget.
+
+## 6c. Stage A grid (frozen before any Stage A chain runs)
+
+Per `N` in `{600, 900, 1200}`:
+
+- **Arm E**: two chains at `beta = 2`, `eps = 12/N` — one random start,
+  one bipartite start. Burn **100k** steps (twice the observed melt),
+  then **10 retained samples per chain at 50k-step spacing** (twice the
+  decorrelated spacing) -> 1.1M steps per chain, **20 discriminator
+  samples per `N`**.
+- **Arm S**: 20 uniform permutations, direct sampling.
+- Every sample judged by the frozen P3 discriminator via
+  `order_inputs` (heldout, null_gap, truth, and P7's frozen `G`).
+- **Seeds**: arm E chains `820 + 10*k` (k indexing the six chains);
+  arm S `900-959` split by `N`. Fresh with respect to every
+  confirmatory range in the programme (0-9, 100-119, 400-419, 500-519,
+  P5's 100-102) and to Stage 0's 9001/9002/9101.
+- **Mixing screen (inherited from P7, applied per chain)**: the
+  bipartite chain's first retained sample must sit inside the random
+  chain's tail band on `n0`, and post-hoc ESS over the retained `n0`
+  must be `>= 10` per chain; a failing chain is reported and its
+  samples excluded, never pooled.
+- **Deliverable**: per-sample rows CSV; per-`N` medians with bootstrap
+  intervals for both arms; the two error-vs-`N` curves side by side.
+  **No gate, no hypothesis verdict** — characterization, per Section 6.
+
+Estimated cost from the measured rates: `2.2 / 4.4 / 6.1` hours of MCMC
+per `N` respectively (discriminator time negligible), run as six
+parallel chains.
 
 ## 7. What this can and cannot answer
 
