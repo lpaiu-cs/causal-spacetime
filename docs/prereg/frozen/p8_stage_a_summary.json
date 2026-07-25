@@ -1,0 +1,22 @@
+{
+  "stage": "P8-A",
+  "code_version": "9f6e495",
+  "chain_count": 12,
+  "seed_count": 20,
+  "valid_seed_count": 20,
+  "median_d2_truth": 0.17124792623223134,
+  "median_d3_truth": 0.12373387397393062,
+  "median_d4_truth": 0.1258837504131573,
+  "median_d3_heldout": 0.069,
+  "median_control_d3_heldout": 0.1575,
+  "control_block_count": 20,
+  "clusters_overlap": true,
+  "d2_truth_min": 0.1328362910847422,
+  "d3_truth_max": 0.13946898940077657,
+  "d3_heldout_max": 0.099,
+  "control_heldout_min": 0.095,
+  "cluster_gap_truth": -0.006632698316034358,
+  "proposed_gate_truth": null,
+  "proposed_gate_heldout": null,
+  "note": "pass and fail truth clusters overlap; no gate placed (prereg Section 6)"
+}

@@ -1,9 +1,15 @@
 # P8: 3+1D robustness and dimension selection
 
-Status: **DESIGN COMPLETE; NOT FROZEN, NOT RUN** (2026-07-25).
+Status: **STAGE A RUN; NO GATE PLACED; NOT FROZEN** (2026-07-25).
+Stage A produced no gate because the pass and fail clusters overlap --
+the outcome Section 6 named in advance as admissible. P8-B has not run
+and cannot until a versioned amendment re-calibrates on fresh seeds.
+See Section 12.
 
-This document is the preregistration. Stage A has not been run and no
-gate value appears anywhere below — only the rule that will produce one.
+This document is the preregistration. Sections 1-11 were written before
+Stage A ran and are unedited since; Section 12 is the factual record of
+what Stage A produced. No gate value appears anywhere, because none was
+placed.
 The scene was chosen from an exploratory sweep whose numbers are recorded
 in Section 4 and are not permitted to become thresholds.
 
@@ -214,6 +220,68 @@ carrying the gates and their provenance block.
   nothing was changed in response, but the fact belongs on the record
   rather than in a commit message.
 
-## 12. Confirmatory outcome (post-freeze factual record)
+## 12. Stage A outcome (factual record)
 
-Not yet run.
+**Run 2026-07-25 at commit `9f6e495`, seeds 100-119, all 20 valid.**
+**No gate was placed. P8 is not frozen and P8-B has not run.**
+
+Section 6 named this outcome in advance and it is the one that occurred:
+both cluster pairs overlap at their extremes, so the midpoint rule has no
+interval to place a gate in.
+
+| | pass cluster | fail cluster | overlap |
+|---|---|---|---|
+| truth | `d = 3`: 0.1097 - **0.1395** | `d = 2`: **0.1328** - 0.1998 | 0.0066 |
+| held-out | `d = 3`: 0.0270 - **0.0990** | control: **0.0950** - 0.2490 | 0.0040 |
+
+Artifacts: `docs/prereg/frozen/p8_stage_a_calibration.csv` and
+`p8_stage_a_summary.json`. There is deliberately **no
+`p8_test_constants.json`** — its absence is the record, and the P8-B
+guard refuses to run without it.
+
+### What kind of failure this is
+
+The instrument is not indifferent to dimension. **`d = 3` truth error is
+below `d = 2` truth error in 20 of 20 seeds**, without exception, and the
+medians are cleanly apart (0.1237 against 0.1712). What fails is the
+*decision rule*, which places one absolute gate across seeds and
+therefore needs the two populations to separate — not merely the
+within-seed comparison to come out right. In 2+1D the populations did
+separate; in 3+1D they interleave at the edges. Three seeds carry it:
+105 (`d2 = 0.153`, `d3 = 0.136`), 111 (`d3 = 0.139`), 114
+(`d2 = 0.133`).
+
+This is recorded as a description of the failure, not as a proposal. A
+paired or within-seed rule would very likely pass on this data, and that
+is exactly why adopting one now is not available: it would be a decision
+rule chosen after seeing the numbers it is applied to. A different rule
+needs its own preregistration and its own fresh seeds.
+
+### What is and is not concluded
+
+- **Not concluded:** that the discriminator fails in 3+1D. It orders
+  every seed correctly.
+- **Concluded:** that the P2 decision procedure, transplanted to 3+1D at
+  this configuration, does not yield a gate. The design note in Section 4
+  predicted a margin about half P2's from four exploratory seeds; twenty
+  seeds show the margin is not merely thin but absent under a min/max
+  cluster rule.
+- **Also on the record:** the held-out clusters overlap too, at 0.0040.
+  The ceiling of 0.10 was never reached — `d = 3` held-out topped out at
+  0.0990 — so H-SENS-3D's anticipated failure mode did not materialise;
+  a different one did.
+
+### Permitted next steps
+
+Section 8 allows exactly one repair route before a freeze: a **versioned
+amendment**, stating what changes and why, re-running Stage A on **fresh
+seeds**. Candidate amendments, none of which may be adopted without that:
+
+1. More observers (`R = 16`), the only lever the design sweep showed
+   still moving in the right direction.
+2. A within-seed decision rule, preregistered as such, with its own
+   calibration seeds.
+3. Reporting P8 as a negative result at this configuration and stopping.
+
+The choice is a decision for the programme, not a repair to be made
+quietly.
