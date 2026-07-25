@@ -1,12 +1,18 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.2 — statements and proof programs; nothing frozen.
+Status: **THEORY DRAFT v1.3 — statements and proof programs; nothing frozen.
 The G4b threshold is a general-dimension law: `R >= d + 2` observers,
-measured and confirmed across `d = 1..5` against 13 predictions
-preregistered in three rounds. Physical `3 + 1` therefore needs five
-observers, from 19 targets. What remains open is a written proof, not
-another dimension.**
-(v1.2 2026-07-25 KST: G4c measured — the regime law `sign((R-1) - d)`
+measured across `d = 1..6` against 20 predictions preregistered in four
+rounds, and now largely *derived* (`t1_g4c_proof.md`). Physical `3 + 1`
+needs five observers, from 19 targets. The regimes and the necessity of
+the target-count threshold are theorems; that the threshold is attained
+is the one open step, and `d = 1` proves counting alone cannot close
+it.**
+(v1.3 2026-07-25 KST: G4c derived — the flex condition reduced to
+infinitesimal rigidity of the centered profile cloud, giving closed
+forms for both regimes with no free parameter, plus 7/7 out-of-sample
+confirmations at `d = 6` and at non-exact divisions;
+v1.2 2026-07-25 KST: G4c measured — the regime law `sign((R-1) - d)`
 confirmed at `d = 3, 4, 5`, slope `d - R + 1` separated from "slope 1"
 out of sample, and the `R = d + 2` thresholds `11, 19, 29, 41` shown
 robust to observer placement;
@@ -1053,16 +1059,44 @@ with zero strict inversions in either.
      shell from a different seed and leaves the `d = 3` threshold at
      `19`, so the thresholds are not artifacts of one placement.
 
+  **The derivation is now written (`t1_g4c_proof.md`, v1.3), and most
+  of the law is a theorem.** The observable satisfies
+  `R * D(j,k)^2 = ||w_j - w_k||^2` for the centered profile cloud
+  `w_j = M Phi(x_j)`, so a flex of `D` is *exactly* an infinitesimal
+  isometry of that cloud in the `(R-1)`-dimensional mean-zero subspace
+  (Lemma A). With `L` the derivative of scene-to-cloud and `F` the
+  cloud's flex space, `nullity = dim ker L + dim(Im L ∩ F)` (Lemma C),
+  and the classical complete-graph count gives
+  `dim F = n(m-q) + q(q+1)/2` (Lemma B). Two closed forms follow, both
+  with no free parameter:
+
+  - **Theorem 1 `[PROVED]`** (`R <= d+1`): `L` is onto, so
+    `nullity = dR + n(d - R + 1) + R(R-1)/2`. The saturated counting
+    law is its `m = d` case — and the "coincidence" that the flex count
+    there looked like the scene gauge is just `m(m+1)/2` with `m = d`.
+    It is the gauge of the *profile* space, and the two agree in that
+    regime only.
+  - **Theorem 2a `[PROVED]`** (necessity): rigidity requires
+    `n >= ceil([dR + m(m+1)/2 - d(d+1)/2]/(m-d))`. At `R = d+2` this
+    collapses to `d^2 + 3d + 1` — which retires round 3's
+    `[speculative]` tag on that quadratic: it was the `m - d = 1` case
+    of the count, not a curve fit.
+  - **Theorem 2b `[CONJECTURED]`** (sufficiency): that the count is
+    *attained*. It is, exactly and with no slack, in all 15 `(d,R)`
+    cells ever run, 5 of them preregistered in round 4 including two
+    with non-exact divisions. But it is **false at `d = 1`**, where the
+    count permits rigidity and the configuration is never rigid, because
+    `Phi~` is piecewise linear there. So curvature is not decoration in
+    the argument — it is the entire content of the open step, and
+    counting alone provably cannot close it.
+
   Scope is unchanged from G4b and is not improved by any of this:
-  `[MEASURED]`, infinitesimal rigidity in the exact model. Not global
-  uniqueness, not noisy or `delta`-quantized `D`, not `D` harvested
-  through the instrument from a measured causal set. The counting law
-  `nullity = dR + d(d+1)/2` has four confirmations and no derivation;
-  the threshold formula has one out-of-sample hit and no derivation at
-  all. **G4c-proof — a written general-`d` theorem — is the open
-  item**, and it is worth more than a sixth dimension would be: it
-  would close every `d` at once and lift the whole line from
-  `[MEASURED]` to `[PROVED]`.
+  infinitesimal rigidity in the exact model. Not global uniqueness, not
+  noisy or `delta`-quantized `D`, not `D` harvested through the
+  instrument from a measured causal set. **Theorem 2b is the one open
+  item**, and it is not a matter of more measurement — `d = 1` already
+  shows counting is not self-sufficient, so a proof must use the
+  curvature of the profile surface.
 
 ## 7. Numerical verification plan
 

@@ -82,16 +82,24 @@ This paper reports the validated-instrument line of the program:
    (Section 8.6): the observable rigidifies exactly from `R >= d + 2`
    observers, so physical 3+1 needs five, from 19 targets, and 1+1D is
    the lone exception because its profile surface is a polyline of zero
-   curvature. Measured across spatial dimensions one through five
-   against 13 predictions preregistered in three rounds and never
-   amended afterwards, 13/13 -- including the two that carry
+   curvature. Measured across spatial dimensions one through six
+   against 20 predictions preregistered in four rounds and never
+   amended afterwards, 20/20 -- including the two that carry
    information: a fibre slope of 2 where every prior measurement had
    slope 1, and the `R = d + 2` threshold formula carried out of sample
-   to `d = 5` (predicted 41, measured 41). Scope is unchanged by the
-   extra dimensions, and a written general-`d` proof -- which would
-   close every dimension at once -- is the open item. Source:
-   `docs/theory/t1_parallax_identifiability.md` (v1.2),
-   `docs/theory/t1_g4c_predictions{,_round2,_round3}.json`, and manuscript
+   to `d = 5` (predicted 41, measured 41). Most of that law is now
+   *derived* rather than observed: the flex condition reduces exactly to
+   infinitesimal rigidity of the centered profile cloud, which yields a
+   closed form below the threshold and a proved lower bound above it,
+   both with no free parameter and both reproducing every measured cell.
+   The bound is attained with no slack in all 15 observer counts tried
+   across six spatial dimensions. What remains open is that attainment,
+   and `d = 1` shows the gap is real -- there the count permits rigidity
+   and the configuration is never rigid, because its profile surface has
+   zero curvature. Scope is unchanged by either the extra dimensions or
+   the derivation. Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.3),
+   `docs/theory/t1_g4c_predictions{,_round2,_round3,_round4}.json`, and manuscript
    Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
