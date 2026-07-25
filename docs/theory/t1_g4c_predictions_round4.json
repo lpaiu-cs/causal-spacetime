@@ -1,0 +1,88 @@
+{
+  "scope": "G4c round 4: out-of-sample tests of the DERIVED formulas. Rounds 1-3 measured a law; the proof program (t1_g4c_proof.md) now derives it, and a derivation that only reproduces what was already measured has not yet been tested. These cells have never been run at any point.",
+  "written": "2026-07-25 KST",
+  "parent_commit": "ce0885a",
+
+  "what_changed_since_round_3": {
+    "the_reduction": "D(j,k)^2 * R = ||w_j - w_k||^2 with w_j = M Phi(x_j) and M = I - (1/R) 1 1^T, so the flex condition is EXACTLY that the profile cloud {w_j} moves as an infinitesimal isometry of V = ker(1^T) ~ R^(R-1). Every regime then follows from linear algebra rather than from inspection.",
+    "the_decomposition": "nullity = dim ker L + dim(Im L cap Flex), where L is the derivative of the scene -> profile-cloud map. Verified exactly on 15 previously-measured cells.",
+    "closed_forms_now_derived": {
+      "R <= d+1": "L is surjective, so nullity = dR + n(d - R + 1) + R(R-1)/2",
+      "R >= d+2": "threshold n >= [dR + m(m+1)/2 - d(d+1)/2] / (m - d) with m = R-1",
+      "at R = d+2": "m - d = 1, and the count collapses to n = d^2 + 3d + 1"
+    },
+    "honest_status_of_that_agreement": "The closed forms reproduce all 8 previously-measured nullity cells and all 10 previously-measured thresholds exactly. That is post-hoc agreement, NOT preregistration -- but the formulas carry zero free parameters, which is what distinguishes a derivation reproducing data from a fit absorbing it. Round 4 is the part that is preregistered.",
+    "the_p11_correction": "Round 3 labelled n = d^2 + 3d + 1 speculative, a three-point quadratic with no derivation behind it. It has one: it is the R = d + 2 case of the dimension count, where m - d = 1 makes the division trivial. The tag was right at the time and is now superseded."
+  },
+
+  "predictions": [
+    {
+      "id": "P14",
+      "target": "d = 6, R = 4",
+      "regime": "under_observed",
+      "claim": "nullity = 3n + 30, i.e. slope 3",
+      "law": "dR + n(d - R + 1) + R(R-1)/2 = 24 + 3n + 6",
+      "falsified_if": "the slope is not 3, or the intercept is not 30",
+      "confidence": "strong",
+      "basis": "the first slope-3 cell ever run. Round 2 separated slope 1 from slope d - R + 1 by exhibiting a 2; this separates a hypothetical 'slope is 1 or 2' from the formula. It also tests the INTERCEPT, which rounds 1-3 never did in an under-observed cell."
+    },
+    {
+      "id": "P15",
+      "target": "d = 6, R = 7",
+      "regime": "saturated",
+      "claim": "nullity == 63, constant in n",
+      "law": "dR + 0 + R(R-1)/2 = 42 + 21",
+      "falsified_if": "nullity is not 63, or varies with n",
+      "confidence": "strong",
+      "basis": "the counting law at a fifth dimension, now with a derivation rather than a calibration behind it"
+    },
+    {
+      "id": "P16",
+      "target": "d = 2, R = 7, first rigid n",
+      "claim": "8",
+      "confidence": "strong",
+      "basis": "derived count, m - d = 4 -- the largest surplus tested, where the division is least trivial"
+    },
+    {
+      "id": "P17",
+      "target": "d = 3, R = 7, first rigid n",
+      "claim": "12",
+      "confidence": "strong",
+      "basis": "derived count, m - d = 3, and the division is exact (36/3) so no rounding is involved"
+    },
+    {
+      "id": "P18",
+      "target": "d = 4, R = 7, first rigid n",
+      "claim": "20",
+      "confidence": "strong",
+      "basis": "derived count, m - d = 2 with a NON-exact division (39/2 -> 20). Rounding up is a claim in its own right: it says the bound is attained at the first integer above it, not merely somewhere above it."
+    },
+    {
+      "id": "P19",
+      "target": "d = 5, R = 8, first rigid n",
+      "claim": "27",
+      "confidence": "strong",
+      "basis": "derived count, m - d = 2, non-exact division (53/2 -> 27)"
+    },
+    {
+      "id": "P20",
+      "target": "d = 6, R = 8, first rigid n",
+      "claim": "55",
+      "confidence": "strong",
+      "basis": "the R = d + 2 closed form at a dimension beyond every measurement so far, where it reads 36 + 18 + 1 = 55. The largest scene in the series."
+    }
+  ],
+
+  "what_a_miss_would_mean": {
+    "P14_or_P15": "the closed form for R <= d+1 is wrong, which would mean either the reduction or the surjectivity of L fails somewhere it was not checked",
+    "P16_to_P20": "the dimension count is necessary but not sufficient -- generic rank is not attained at the counting bound. That would leave the regime law standing and demote the threshold formula to a lower bound.",
+    "any_of_them": "the reduction itself (Lemma A) is verified directly on 15 cells and would survive; what would fall is the step from the reduction to a closed form"
+  },
+
+  "still_not_claimed": [
+    "global uniqueness -- the whole programme is about the rank of one Jacobian",
+    "noisy or delta-quantized D",
+    "D harvested through the instrument from a measured causal set",
+    "that the generic-rank step is rigorous; it is the one gap the proof document flags as open"
+  ]
+}
