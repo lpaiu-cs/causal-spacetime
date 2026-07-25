@@ -1,0 +1,43 @@
+{
+  "scope": "G4c round 3: the THRESHOLD conjecture, plus a construction-robustness control. Written after rounds 1 and 2 came back 10/10 and before any d = 5 measurement or any change of observer geometry.",
+  "written": "2026-07-25 KST",
+  "parent_commit": "78ffdfa",
+
+  "the_observation_that_prompted_this": {
+    "measured_thresholds_at_R_equals_d_plus_2": {"d=2": 11, "d=3": 19, "d=4": 29},
+    "fitted_form": "n = d^2 + 3d + 1",
+    "checks": {"d=2": "4 + 6 + 1 = 11", "d=3": "9 + 9 + 1 = 19", "d=4": "16 + 12 + 1 = 29"},
+    "why_this_is_not_evidence": "Three points determine a quadratic exactly. The fit has zero residual because it has zero degrees of freedom, not because it is right. Reporting it as a finding would be reporting an interpolation as a law. It becomes evidence only out of sample, which is what P11 is for.",
+    "how_it_differs_from_the_regime_law": "The regime law is a statement about ranks and is construction-independent by nature. A threshold is a statement about WHERE a rank transition happens, and could easily depend on how observers and targets are placed. That is the point of P12."
+  },
+
+  "predictions": [
+    {
+      "id": "P11",
+      "target": "d = 5, R = 7 (= d + 2), first rigid n",
+      "claim": "the threshold is exactly 41",
+      "law": "n = d^2 + 3d + 1, i.e. 25 + 15 + 1",
+      "falsified_if": "the threshold is any other integer, or is not reached in the scan",
+      "confidence": "speculative",
+      "basis": "a three-point quadratic interpolation with no derivation behind it. This is the weakest prediction anywhere in the G4c series and is written down mainly so that a miss is on the record rather than quietly dropped. A miss falsifies the threshold FORMULA and says nothing about the regime law."
+    },
+    {
+      "id": "P12",
+      "target": "d = 3, R = 5, observer shell drawn from a different seed",
+      "claim": "the threshold stays 19",
+      "falsified_if": "a different observer shell moves the threshold",
+      "confidence": "medium",
+      "basis": "control. If the threshold moves when only the observer placement changes, then P11 was fitting an artifact of one arbitrary construction and the whole threshold line should be reported as construction-dependent. The regime verdicts (rank constant / growing / equal to gauge) would be unaffected either way."
+    },
+    {
+      "id": "P13",
+      "target": "d = 5, R = 7, the regime itself",
+      "claim": "nullity == 15 == gauge d(d+1)/2 once rigid; and d = 5, R = 6 is saturated at nullity = d*R + gauge = 30 + 15 = 45, constant in n",
+      "falsified_if": "either number differs",
+      "confidence": "strong",
+      "basis": "the regime law and the counting law at a fourth dimension. Unlike P11 these follow from the stated mechanism rather than from a curve fit."
+    }
+  ],
+
+  "note_on_scope": "Rounds 1 and 2 are not amended. A perfect scorecard across all three rounds still leaves G4c [MEASURED] -- infinitesimal rigidity in the exact model -- and does not touch global uniqueness, noisy D, or D harvested through the instrument."
+}
