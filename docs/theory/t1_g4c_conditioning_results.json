@@ -1,0 +1,356 @@
+{
+  "scope": "A1: finite-resolution cost of the exact-model rigidity results. DESCRIPTIVE -- no preregistration, no gate, nothing frozen. Linearised inverse; the error model is the instrument's own delta/2 readout bound, applied per profile entry.",
+  "checks": {
+    "frozen_instrument": {
+      "n_targets": 34,
+      "n_observers": 8,
+      "scene_diameter": 0.5,
+      "sigma_min": 0.012746333800712809,
+      "rows": [
+        {
+          "ticks": 12,
+          "delta": 0.12727272727272726,
+          "delta_over_2L": 0.12727272727272726,
+          "position_error_over_L": 0.4798731133835172,
+          "amp": 3.770431605156207
+        },
+        {
+          "ticks": 24,
+          "delta": 0.0608695652173913,
+          "delta_over_2L": 0.0608695652173913,
+          "position_error_over_L": 0.16694834495040714,
+          "amp": 2.742722809899546
+        },
+        {
+          "ticks": 48,
+          "delta": 0.02978723404255319,
+          "delta_over_2L": 0.02978723404255319,
+          "position_error_over_L": 0.06868393936957085,
+          "amp": 2.3058179645498784
+        },
+        {
+          "ticks": 96,
+          "delta": 0.014736842105263158,
+          "delta_over_2L": 0.014736842105263158,
+          "position_error_over_L": 0.03181779888448995,
+          "amp": 2.159064924304675
+        },
+        {
+          "ticks": 192,
+          "delta": 0.007329842931937172,
+          "delta_over_2L": 0.007329842931937172,
+          "position_error_over_L": 0.015472342084262404,
+          "amp": 2.1108695272100855
+        },
+        {
+          "ticks": 384,
+          "delta": 0.0036553524804177544,
+          "delta_over_2L": 0.0036553524804177544,
+          "position_error_over_L": 0.007654961687806587,
+          "amp": 2.094178804592802
+        },
+        {
+          "ticks": 768,
+          "delta": 0.0018252933507170795,
+          "delta_over_2L": 0.0018252933507170795,
+          "position_error_over_L": 0.0038109146255562738,
+          "amp": 2.0878367984297586
+        }
+      ],
+      "amp_at_the_instruments_own_resolution": 2.159064924304675,
+      "relative_spread_of_amp_over_the_fine_half": 0.034115753649177134,
+      "response_is_linear_in_delta": true,
+      "passed": true
+    },
+    "amplification_tracks_sigma_min": {
+      "rows": [
+        {
+          "corner": "2+1D frozen-like",
+          "d": 2,
+          "R": 8,
+          "n": 34,
+          "sigma_min": 0.005661556572883472,
+          "amp_by_relative_delta": {
+            "1e-02": 4.064992564489414,
+            "1e-03": 4.059476865145279,
+            "1e-04": 4.061813978607436
+          },
+          "amp_times_sigma_min": 0.022996189628414897,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 0.020324962822447067,
+          "coarse_delta_outside_the_linear_regime": false
+        },
+        {
+          "corner": "2+1D minimum R",
+          "d": 2,
+          "R": 4,
+          "n": 48,
+          "sigma_min": 0.004871771506539495,
+          "amp_by_relative_delta": {
+            "1e-02": 6.363699306216626,
+            "1e-03": 6.291440359660964,
+            "1e-04": 6.28597023019611
+          },
+          "amp_times_sigma_min": 0.030623810658424917,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 0.03181849653108313,
+          "coarse_delta_outside_the_linear_regime": false
+        },
+        {
+          "corner": "2+1D many observers",
+          "d": 2,
+          "R": 16,
+          "n": 48,
+          "sigma_min": 0.00011008254312430479,
+          "amp_by_relative_delta": {
+            "1e-02": 124.64888347196108,
+            "1e-03": 90.32362372423691,
+            "1e-04": 89.12486265626215
+          },
+          "amp_times_sigma_min": 0.00981109153680572,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 0.6232444173598054,
+          "coarse_delta_outside_the_linear_regime": true
+        },
+        {
+          "corner": "2+1D very many observers",
+          "d": 2,
+          "R": 24,
+          "n": 48,
+          "sigma_min": 9.021383112759069e-07,
+          "amp_by_relative_delta": {
+            "1e-02": 5892.370626570251,
+            "1e-03": 4074.834003274997,
+            "1e-04": 4062.4257268275824
+          },
+          "amp_times_sigma_min": 0.0036648698848840335,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 29.461853132851257,
+          "coarse_delta_outside_the_linear_regime": true
+        },
+        {
+          "corner": "3+1D minimum R",
+          "d": 3,
+          "R": 5,
+          "n": 48,
+          "sigma_min": 0.0002466852681280051,
+          "amp_by_relative_delta": {
+            "1e-02": 45.58369272020953,
+            "1e-03": 45.42391625942695,
+            "1e-04": 45.45892518382262
+          },
+          "amp_times_sigma_min": 0.011214047147782208,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 0.22791846360104764,
+          "coarse_delta_outside_the_linear_regime": true
+        },
+        {
+          "corner": "3+1D more observers",
+          "d": 3,
+          "R": 8,
+          "n": 48,
+          "sigma_min": 0.0009349040548584304,
+          "amp_by_relative_delta": {
+            "1e-02": 12.990645816310758,
+            "1e-03": 12.44624500893602,
+            "1e-04": 12.413525254489471
+          },
+          "amp_times_sigma_min": 0.011605455095509736,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 0.06495322908155379,
+          "coarse_delta_outside_the_linear_regime": false
+        },
+        {
+          "corner": "4+1D minimum R",
+          "d": 4,
+          "R": 6,
+          "n": 60,
+          "sigma_min": 0.00034203300541560974,
+          "amp_by_relative_delta": {
+            "1e-02": 64.76358666106867,
+            "1e-03": 64.58688100036649,
+            "1e-04": 64.59341787535833
+          },
+          "amp_times_sigma_min": 0.022093080845975176,
+          "linear_across_the_fine_pair": true,
+          "predicted_displacement_over_L_at_coarse_delta": 0.32381793330534336,
+          "coarse_delta_outside_the_linear_regime": true
+        }
+      ],
+      "product_range": [
+        0.0036648698848840335,
+        0.030623810658424917
+      ],
+      "product_within_one_order_of_magnitude": true,
+      "all_linear_across_the_fine_pair": true,
+      "corners_that_leave_the_linear_regime": [
+        "2+1D many observers",
+        "2+1D very many observers",
+        "3+1D minimum R",
+        "4+1D minimum R"
+      ],
+      "passed": true
+    },
+    "observer_count_optimum": {
+      "rows": [
+        {
+          "d": 2,
+          "n": 48,
+          "by_R": [
+            {
+              "R": 4,
+              "sigma_min": 0.006821258127016485
+            },
+            {
+              "R": 5,
+              "sigma_min": 0.007993652121031973
+            },
+            {
+              "R": 6,
+              "sigma_min": 0.007734971209621189
+            },
+            {
+              "R": 8,
+              "sigma_min": 0.008061998030877758
+            },
+            {
+              "R": 10,
+              "sigma_min": 0.0018086669117728335
+            },
+            {
+              "R": 12,
+              "sigma_min": 0.0005748247589090212
+            },
+            {
+              "R": 16,
+              "sigma_min": 0.00011832802143326438
+            },
+            {
+              "R": 20,
+              "sigma_min": 1.1179577675874596e-05
+            }
+          ],
+          "best_conditioned_R": 8,
+          "best_sigma_min": 0.008061998030877758,
+          "worst_R": 20,
+          "worst_sigma_min": 1.1179577675874596e-05,
+          "spread_factor": 721.1361882010498,
+          "optimum_is_interior": true
+        },
+        {
+          "d": 3,
+          "n": 48,
+          "by_R": [
+            {
+              "R": 5,
+              "sigma_min": 0.00022400028888142166
+            },
+            {
+              "R": 6,
+              "sigma_min": 0.00042969552504084474
+            },
+            {
+              "R": 7,
+              "sigma_min": 0.0020528503298944244
+            },
+            {
+              "R": 8,
+              "sigma_min": 0.0015543090633151123
+            },
+            {
+              "R": 10,
+              "sigma_min": 0.0016193352811090607
+            },
+            {
+              "R": 12,
+              "sigma_min": 0.002597841263112125
+            },
+            {
+              "R": 14,
+              "sigma_min": 0.0013585577151045347
+            }
+          ],
+          "best_conditioned_R": 12,
+          "best_sigma_min": 0.002597841263112125,
+          "worst_R": 5,
+          "worst_sigma_min": 0.00022400028888142166,
+          "spread_factor": 11.59749068219879,
+          "optimum_is_interior": true
+        }
+      ],
+      "every_dimension_has_an_interior_optimum": true,
+      "passed": true
+    },
+    "threshold_penalty": {
+      "rows": [
+        {
+          "d": 2,
+          "n": 48,
+          "at_minimum_R": {
+            "R": 4,
+            "sigma_min": 0.006531289566405266,
+            "amp": 5.798430361770698
+          },
+          "at_R_plus_three": {
+            "R": 7,
+            "sigma_min": 0.013797910773986056,
+            "amp": 2.2884983258770792
+          },
+          "amp_penalty_for_sitting_at_the_threshold": 2.5337271590742447
+        },
+        {
+          "d": 3,
+          "n": 48,
+          "at_minimum_R": {
+            "R": 5,
+            "sigma_min": 0.00015108118460785842,
+            "amp": 82.19706277514018
+          },
+          "at_R_plus_three": {
+            "R": 8,
+            "sigma_min": 0.0013410220454431205,
+            "amp": 12.116311104845344
+          },
+          "amp_penalty_for_sitting_at_the_threshold": 6.784000680064196
+        },
+        {
+          "d": 4,
+          "n": 60,
+          "at_minimum_R": {
+            "R": 6,
+            "sigma_min": 0.00011053537240673735,
+            "amp": 97.14830220026897
+          },
+          "at_R_plus_three": {
+            "R": 9,
+            "sigma_min": 0.0005275507079086471,
+            "amp": 18.25235171487126
+          },
+          "amp_penalty_for_sitting_at_the_threshold": 5.322508776834305
+        }
+      ],
+      "threshold_is_always_worse": true,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "headline": {
+    "frozen_2plus1d_amp": 2.159064924304675,
+    "frozen_2plus1d_position_error_over_L_at_96_ticks": 0.03181779888448995,
+    "response_linear_in_delta": true,
+    "best_conditioned_R_by_dimension": {
+      "2": 8,
+      "3": 12
+    },
+    "conditioning_spread_across_R": {
+      "2": 721.1361882010498,
+      "3": 11.59749068219879
+    },
+    "amp_penalty_at_R_equals_d_plus_2": {
+      "2": 2.5337271590742447,
+      "3": 6.784000680064196,
+      "4": 5.322508776834305
+    },
+    "reading": "The instrument's own configuration is comfortable. The proved threshold R = d + 2 is not a good place to operate, and gets worse with dimension; nor is a large observer count, which lowers the threshold while collapsing the margin. The exact model says how few observers are possible and nothing about how many are wise."
+  }
+}

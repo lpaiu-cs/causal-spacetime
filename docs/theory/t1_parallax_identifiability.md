@@ -1,13 +1,19 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.4 — statements and proof programs; nothing frozen.
+Status: **THEORY DRAFT v1.5 — statements and proof programs; nothing frozen.
 The G4b threshold is a general-dimension law: `R >= d + 2` observers.
 Measured across `d = 1..6` against 20 predictions preregistered in four
 rounds, and now *proved* (`t1_g4c_proof.md`) up to one explicit
 finite-dimensional hypothesis. **For physical `3 + 1` the answer is
 pinned: five observers and 19 targets, both theorems.** What remains is
-hypothesis (G3) and the sharpness of the threshold for `R > d + 2`.**
-(v1.4 2026-07-25 KST: G4c sufficiency closed — the profile surface's
+hypothesis (G3) and the sharpness of the threshold for `R > d + 2`.
+Section 5c adds the operating conditions: at the instrument's own
+configuration a `delta/2` readout costs about `2 delta` in position and
+falls linearly, but `R = d + 2` — the corner that is pinned — is the
+worst place to operate, and crowding observers destroys the margin.**
+(v1.5 2026-07-25 KST: A1 — finite-resolution cost measured; the exact-model
+threshold and the usable operating point are different numbers;
+v1.4 2026-07-25 KST: G4c sufficiency closed — the profile surface's
 conical singularities forbid any continuous ambient symmetry, which
 brackets the threshold from above and pins it exactly at `R = d + 2`;
 v1.3 2026-07-25 KST: G4c derived — the flex condition reduced to
@@ -919,6 +925,71 @@ near-collinear layout whose `||A^+||` is `140` instead of `1.63`; and
 Model-P same-slice ties at `0.206` against `exp(-2 lambda g) = 0.202`
 (one observer) and `0.043` against `exp(-4 lambda g) = 0.041` (two),
 with zero strict inversions in either.
+
+## 5c. Conditioning: what the exact model does not say (A1)
+
+Everything in 5b and in G4b/G4c is exact-model. The instrument reads the
+profile at finite resolution — the band theorem bounds each radial
+readout by `delta/2` — and none of the rigidity statements say what that
+costs. `[MEASURED]`, **descriptive**: nothing preregistered, nothing
+frozen, no gate. Source `experiments/theory/t1_g4c_conditioning.py`,
+table `docs/theory/t1_g4c_conditioning_results.json`.
+
+The quantity is
+
+    amp := (rms position error / L) / (delta / 2L)
+
+for a scene of diameter `L`: how many multiples of one readout's own
+error bound end up in the reconstructed positions. The error model is the
+instrument's — uniform on `[-delta/2, delta/2]` per profile entry, pushed
+through `Phi -> Phi~ -> D`, then inverted linearly.
+
+**A methodological trap first, because this note fell into it.** `J` is
+homogeneous of degree zero, so `sigma_min` is scale-free, while `delta`
+is a length. Comparing them without dividing by the scene size is
+meaningless. And isotropic noise on `D` overstates the damage several-fold
+relative to the real error model, because quantization cannot produce the
+directions in `D`-space that hurt most. Both mistakes point the same way —
+toward alarm — and both are wrong.
+
+**Finding 1: the frozen 2+1D instrument is comfortable.** `amp = 2.16`,
+and the response is linear in `delta` across three decades — no floor, no
+threshold. At its own `K = 96` ticks that is **3.2% of the scene
+diameter**, halving with every doubling of the tick count. The Section
+8.6 metric claim is usable at the resolution the pipeline actually runs
+at, not only in the exact model.
+
+**Finding 2: `sigma_min` is the error budget, not a formality.** Across
+four decades of `sigma_min`, `amp * sigma_min` stays within one order of
+magnitude (`0.0037` to `0.031`). So the exact-model margin is exactly
+what one pays with.
+
+**Finding 3, and the one that changes what you would do.** The margin
+moves in a way the exact-model results hide completely:
+
+| | exact model says | conditioning says |
+|---|---|---|
+| more observers | threshold falls monotonically | margin collapses past an optimum — `d = 2` spans a factor of **721** over `R = 4..20`, best at `R = 8`; `d = 3` best at `R = 12` |
+| `R = d + 2` | the proved minimum, and pinned exactly | the **worst** place to operate: `amp` penalty **2.5x** at `d = 2`, **6.8x** at `d = 3`, **5.3x** at `d = 4` versus `R = d + 5` |
+
+Crowding observers into a fixed shell produces nearly duplicate profile
+columns, and the margin goes with them. At `R = 24, d = 2` the margin is
+`9e-7` and `amp` exceeds `4000`.
+
+**Finding 4: at the bad corners the linearisation itself stops applying.**
+A linearised inverse describes anything only while the displacement it
+predicts is small against the scene. At `delta/L = 1e-2` four of the seven
+corners tested — including **`3+1D` and `4+1D` at their minimum observer
+count** — predict displacements above 10% of the scene diameter, and the
+response visibly departs from linear. There the reconstruction is not
+merely imprecise; it has left the regime in which "determined up to
+Euclidean congruence" asserts anything.
+
+**The reading.** G4c says how *few* observers are possible. It says
+nothing about how many are *wise*, and the two answers differ — most
+sharply in `3 + 1`, the case the result was aimed at. A statement of the
+form "five observers and 19 targets suffice" is correct and should not be
+operated on.
 
 ## 6. Known gaps (the honest list)
 

@@ -105,8 +105,16 @@ This paper reports the validated-instrument line of the program:
    `d = 1` is exempt in the proof for the same reason it was exempt in
    the measurements: its cone degenerates to two rays. Scope is
    unchanged by the extra dimensions, the derivation, or the proof.
-   Source:
-   `docs/theory/t1_parallax_identifiability.md` (v1.4),
+   Section 8.7 adds the operating conditions, measured rather than
+   assumed: at the pipeline's own configuration a half-tick readout
+   bound costs about two of itself in position and falls linearly, so
+   the metric result survives finite resolution -- but the Jacobian
+   margin IS the error budget, crowding observers destroys it, and
+   `R = d + 2`, the corner whose threshold is pinned, is the worst place
+   to operate, worst of all in 3+1D. The theorem bounds how few
+   observers are possible, not how many are wise. Descriptive: nothing
+   preregistered there and no gate consumes it. Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.5),
    `docs/theory/t1_g4c_predictions{,_round2,_round3,_round4}.json`, and manuscript
    Section 8.
 
