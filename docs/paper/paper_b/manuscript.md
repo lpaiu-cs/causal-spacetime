@@ -842,7 +842,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v1.4); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.5); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -1239,7 +1239,64 @@ The scope conditions of Section 8.5 travel with this unchanged and are
 not relaxed by the extra dimensions, the derivation, or the proof:
 infinitesimal rigidity in the exact model, with global uniqueness, noisy
 dissimilarity, and dissimilarity harvested through the instrument all
-outside what is claimed.
+outside what is claimed. Section 8.7 narrows the second of those and does
+not remove it: it measures one error model, propagated through one
+linearised inverse, and reports what that costs.
+
+### 8.7 What the exact model does not say: operating conditions
+
+All of the above is exact-model, while the instrument reads each radial
+distance to within half a tick. We measured what that costs, propagating a
+readout error through to the reconstructed positions and expressing the
+result as a multiple of the readout bound itself. These are descriptive
+measurements: nothing preregistered, nothing frozen, no gate consumes
+them.
+
+What is assumed matters here more than usual, because two of the three
+inputs are choices rather than consequences. Only the *support* of the
+readout error is proved — half a tick either way, by the band theorem.
+That it is uniform on that interval is an assumption. That it is
+independent across target–observer pairs is a second assumption, and a
+load-bearing one: the parallax step subtracts the observer mean, so any
+error component shared by all observers of a target is annihilated before
+the dissimilarity is formed. Measured on the frozen scene, the same
+readout bound costs about two of itself under independence and *nothing
+at all* under perfect common-mode error. Independence is the most
+pessimistic of the correlation structures we tried, so the figures below
+are conservative in that respect, but they are conservative by choice
+rather than by derivation. The inverse is likewise the linearised,
+minimum-norm one, which is optimistic: a nonlinear solver has no
+guarantee of finding the smallest displacement consistent with the data.
+
+At the configuration the pipeline actually uses, the answer is
+reassuring. The reconstruction costs about two readout bounds in
+position, falls linearly as ticks are added with no floor and no
+threshold, and lands at roughly three percent of the scene diameter at
+the instrument's own tick count. The 2+1D metric result is therefore
+usable at the resolution the pipeline runs at, not merely true in the
+idealisation.
+
+The margin that makes rigidity work is also the error budget: across four
+decades, the amplification tracks the reciprocal of the Jacobian's
+smallest nonzero singular value to within one order of magnitude. That
+margin then behaves in a way none of the rigidity statements can see.
+More observers lower the target-count threshold monotonically, but they
+do not improve the budget monotonically — beyond an interior optimum they
+destroy it, since observers crowded into a fixed region produce nearly
+duplicate profile columns; across the observer counts we swept in two
+dimensions the margin varied by a factor of several hundred. And the
+minimum workable observer count, d + 2, which is precisely the case whose
+threshold is pinned exactly, is the worst place to operate, by a factor
+that grows with dimension and is largest in three spatial dimensions.
+At the coarsest resolutions the minimum-observer configurations in three
+and four spatial dimensions leave the linear regime altogether, so there
+the reconstruction is not merely imprecise but outside the range in which
+"determined up to congruence" asserts anything.
+
+The practical reading is that the theorem gives a lower bound on
+observers and not an operating point, and that the two differ most in the
+case the result was aimed at. A claim that five observers and 19 targets
+suffice in 3+1 is correct as stated and should not be built on.
 
 ![Figure 6](figures/fig6_theory.png)
 
@@ -1535,7 +1592,7 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v1.4). Verification: `experiments/theory/t1_verification.py` (13
+(v1.5). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
@@ -1565,7 +1622,12 @@ affine span, and the decomposition on rigid cells as well as flexible
 ones — together with the round-4 out-of-sample cells frozen in
 `docs/theory/t1_g4c_predictions_round4.json`; statements and proof-status
 tags in `docs/theory/t1_g4c_proof.md`, table tracked at
-`docs/theory/t1_g4c_proof_check_results.json`), and
+`docs/theory/t1_g4c_proof_check_results.json`),
+`experiments/theory/t1_g4c_conditioning.py` (the operating conditions of
+Section 8.7: four descriptive checks propagating the instrument's own
+readout bound to reconstructed positions, table tracked at
+`docs/theory/t1_g4c_conditioning_results.json`; descriptive, not
+preregistered, and no gate consumes it), and
 `experiments/theory/t1_g2_count_class.py` (the count-fluctuation
 class of Section 8.4, measured from chain lengths with no distance
 estimator, table tracked at
