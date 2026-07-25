@@ -38,10 +38,11 @@ crystal control blocks structurally (4/4). Constructed chain-rich layered
 negatives close the remaining control gap — eight preregistered cells all
 block at the geometry gates themselves (149/160 fresh seeds) — and a
 preregistered head-to-head on identical data gives the instrument the
-highest ROC AUC (0.993, against 0.967/0.939/0.933 for height,
-Myrheim-Meyer dimension, and interval abundance; unchanged at 0.993
-when the margin's truth term is removed so the comparison is
-order-only), with the dimension
+highest ROC AUC (0.990, against 0.967/0.939/0.933 for height,
+Myrheim-Meyer dimension, and interval abundance; removing the margin's
+truth term so the comparison is order-only lowers it to 0.968, which
+ties height's 0.967 in point estimate — the aggregate ranking does
+depend on truth assistance), with the dimension
 estimator false-passing 25/27 of the dilution false-pass window while
 height, an excellent cheap screen here, remains slightly more monotone
 than the instrument on the dilution sweep. An identifiability theory for
@@ -683,30 +684,61 @@ reference; the instrument enters as its minimum normalized gate margin
 
 | diagnostic | ROC AUC | P1 median Spearman rho vs epsilon | H-LAG false-pass |
 | --- | --- | --- | --- |
-| instrument margin | **0.993** | 0.976 | (defines the window) |
+| instrument margin | **0.990** | 0.970 | (defines the window) |
+| instrument margin, order-only | 0.968 | 0.786 | 26/27 |
 | height distance | 0.967 | **0.994** | 0/27 |
 | MM-dimension distance | 0.939 | 0.012 | **25/27** |
 | abundance distance | 0.933 | 0.786 | 0/27 |
 
-One fairness caveat is required before reading the table. The frozen
-instrument margin incorporates the truth gate wherever generator
-coordinates exist (mandatorily for P1, and for P5/P6), which the three
-comparators never see — so the frozen AUC is truth-assisted, and a
-judgment of unlabeled causal order would not have that term.
-Recomputing the margin from the frozen per-row table with the truth
-term removed (order-only gates: held-out violation and null gap;
-descriptive, deterministic) gives AUC 0.9931 against the frozen 0.9934,
-with 10/362 individual pass/block signs changing: the aggregate
-comparison does not rest on truth assistance.
+Two things must be said before reading that table, and the second
+withdraws a claim this paper previously made.
+
+First, the margins quoted here are *gate-complete*, which the frozen
+P6b proxy was not. P1's preregistered decision is the conjunction of
+three gates — held-out violation, truth-order error, and
+restart-order disagreement — and the frozen proxy's P1 formula omitted
+restart stability. That is a specification inconsistency rather than a
+discrepancy in the executed rows, so nothing frozen was regenerated;
+the correction is a deterministic join of the frozen scored rows back
+to the frozen P1 sweep on (seed, epsilon), dated and hashed in
+`figures/p6b_margin_correction.json`. The historical proxy value,
+0.9934, is reported only as that: a proxy. Adding the missing gate
+changes no labelled pass/block decision, but it does change ranks, and
+ranks are what an AUC reads.
+
+Second, the fairness caveat. The instrument margin incorporates the
+truth gate wherever generator coordinates exist (mandatorily for P1,
+and for P5/P6), which the three comparators never see, so a judgment
+of unlabeled causal order would not have that term. Removing only the
+truth term — and keeping restart stability, which is computed from
+repeated fits to the order data and needs no coordinates — gives AUC
+0.968 against the gate-complete 0.990. That is a tie with height's
+0.967 in point estimate. **An earlier version of this paper reported
+0.9931 here and concluded that the aggregate ranking does not rest on
+truth assistance; that recomputation had itself dropped the
+restart-stability gate, and the conclusion is withdrawn.** On this
+aggregate, the instrument's margin over the cheap comparators is
+carried by the truth term.
+
+The H-LAG column makes the same point mechanically rather than
+aggregately: in the 27 cells where profiles embed but no longer
+recover true space, the order-only margin is nonnegative for 26. That
+is a statement about what the truth gate is doing rather than
+independent evidence for it — the window is *defined* by truth error
+above its gate, so the full margin is negative on all 27 by
+construction, and the 26 counts the cells whose restart stability also
+stays inside its gate.
 
 Figure 4 shows the ROC curves and the safety check on the false-pass
-window. Three findings. First, the instrument has the highest AUC, and the
+window. Three findings. First, the instrument has the highest AUC with
+its full gate set, though not with the truth term removed, and the
 false-pass window of Section 5 is quantitatively where Myrheim-Meyer
 dimension is unsafe: it calls 25/27 of the H-LAG cells geometric — the
 bipartite crystal of Section 7.2 was not an isolated failure but an
 instance of a systematic one. Second, no blanket superiority is claimed:
 order height is marginally *more* monotone than the instrument on the P1
-sweep (median rho 0.994 against 0.976) and is clean on the H-LAG window —
+sweep (median rho 0.994 against 0.970, and against 0.786 for the
+order-only margin) and is clean on the H-LAG window —
 on these families a cheap scalar does most of the ranking work, and an
 honest comparison says so. Third, what the instrument adds is not rank
 correlation but the character of the verdict. Descriptively, in the
@@ -725,17 +757,20 @@ instrument is the only comparator whose pass has a validated meaning.
 ![Figure 4](figures/fig4_p6b_comparison.png)
 
 *Figure 4. P6b head-to-head on identical data. Left: ROC curves over the
-362 frozen-labelled orders (58 geometric, 304 non-geometric) — frozen
-instrument margin AUC 0.9934, order height 0.9668, MM dimension 0.9388,
-interval abundance 0.9326; the dashed curve is the order-only instrument
-margin with the truth-gate term removed (AUC 0.9931, the descriptive
-recomputation behind the fairness caveat above — the aggregate
-comparison does not rest on truth assistance). Right: of the 27 P1 H-LAG
-cells (embeddable but not true space; a window only the instrument
-defines), MM dimension calls 25 geometric while height and abundance
-call none. Both panels are computed from the frozen per-row table and
-frozen summary, and the plotting script asserts every AUC against the
-frozen registry values.*
+362 frozen-labelled orders (58 geometric, 304 non-geometric) —
+gate-complete instrument margin AUC 0.990, order height 0.967, MM
+dimension 0.939, interval abundance 0.933; the dashed curve is the
+order-only instrument margin, which removes the truth-coordinate term
+and keeps restart stability (AUC 0.968, tied with height in point
+estimate — see the withdrawal above). Right: of the 27 P1 H-LAG cells
+(embeddable but not true space; a window only the instrument defines),
+the order-only margin is nonnegative for 26 and MM dimension calls 25
+geometric, while height and abundance call none. Both panels are
+computed from the frozen per-row table joined to the frozen P1 sweep
+for restart stability; the plotting script asserts every AUC against
+the dated correction table and additionally re-derives the historical
+frozen proxy from its own column, so neither the corrected values nor
+the provenance of the underlying CSV can drift unnoticed.*
 
 ### 7.7 What the chain establishes
 
@@ -807,7 +842,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v0.7); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.0); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -996,29 +1031,33 @@ near the order-only exponent, by a different mechanism entirely. Any
 density-scaling claim must therefore name its clock protocol; the
 frozen PC-V1 instrument uses Model D clocks and is untouched by this.
 
-The one remaining open question — the harvested chain's
-*count*-fluctuation class, Poisson-rate -1/4 against KPZ-like -1/3 —
-is open on *systematics*, not on statistics, and the distinction is
-worth stating because the arithmetic points the other way. The
-scaled tube is the arm meant to measure that class, and its interval
-[-0.371, -0.263] is stable across split halves (-0.352 / -0.312) and
-leave-one-out; taken at face value it puts -1/4 3.2 standard errors
-outside and keeps only -1/3. Two measured systematics are larger than
-that interval. First, the scaled tube suppresses wandering but does
-not remove it: the indicative wandering share of its error falls from
-0.88 to 0.22 across the grid, so its slope is a drifting mixture of a
-rho^{-1/2} wandering term and the count term rather than the count
-exponent itself, and removing the wandering in quadrature flips which
-candidate survives. Second, calibrating on the thinned arm, whose
-exponent is proved, this grid returns -0.463 for a true -1/2 with a
-split-half spread of 0.110 — wider than the 0.083 separation between
-the candidates. A seven-point grid of this construction therefore
-cannot resolve them, and the same caution applies to the wandering
-reading above: it is consistent with KPZ and favours it, not a
-three-digit determination. Closing the item needs a harvest whose
-wandering is eliminated rather than suppressed, or a wider density
-range — not more seeds. Details are recorded in the theory document
-and in the tracked table, descriptively and without any gate.
+The count-fluctuation class behind these error laws is
+protocol-dependent too, and measuring it exposes what the error
+exponents alone could not say. Read off the *distance* error the
+question is unanswerable: the arm meant to isolate the count term
+still carries a wandering admixture whose weight slides from 0.88 to
+0.22 across the density grid, and the fitting design's own wobble,
+calibrated where the exponent is proved, is 0.110 against a 0.083
+separation between the candidates. Measured instead from the chains'
+tick counts — where no distance estimator, and therefore no wandering,
+enters — the separation doubles to 0.167 and the design's wobble drops
+to 0.005-0.033. The counts then decide cleanly, and they decide
+differently for the two harvests: the order-only anchored chain
+fluctuates like a longest chain should (Tracy-Widom, exponent 1/3,
+with Poisson excluded by 12.8 standard errors), while the
+tube-confined chain fluctuates like a Poisson process (exponent 1/2,
+Tracy-Widom excluded by 13.2), against a thinned clock that returns
+its constructed 1/2 as calibration. The mechanism is confinement:
+Tracy-Widom fluctuations come from a longest chain's freedom to
+optimize a transverse path, and the tube is rho^{-1/2} wide against a
+natural wandering of rho^{-1/6}, so it suppresses precisely that
+freedom — widening the tube to the wandering scale restores the 1/3
+exponent monotonically. The consequence for the error laws above is
+that neither arm's error exponent measures its own count class: the
+tube's is contaminated by the wandering it failed to remove, and the
+order-only chain's is swamped by the wandering it deliberately allows.
+All of this is theory-track characterization, recorded in the theory
+document and its tracked table without any gate.
 
 ### 8.5 What the theory says in 2+1D
 
@@ -1056,21 +1095,55 @@ by a factor 29 against a ring, each still inside its own proved bound.
 There is no 1+1D analogue, where two flanking observers always give
 slope 4 lambda.
 
-Section 8.2's *unlabeled* clause does not transfer, and the
-obstruction is structural. Its engine is the strict Robinson
-(seriation) structure of the dissimilarity, and "spatial order" is a
-one-dimensional notion: in the plane there is no linear order to
-recover, so the statement must be replaced rather than ported, and the
-piecewise linearity the proof rests on becomes conic. The 2+1D
-counterpart would read "the dissimilarity determines the configuration
-up to similarity" — a distance-geometry question, recorded open. The
-consequence for this paper is stated plainly: the interpretation
-upgrade of Section 8.2, which turns a pass from "our fitter recovered
-it" into "any consistent decoder must", backs Sections 4-7 in 1+1D and
-does **not** yet back the 2+1D results of Section 6. What backs
-Section 6 is the observable's identity, band, resolution law and
-concentration, plus labeled identifiability — which is what this
-subsection establishes.
+Section 8.2's *unlabeled* clause changes character rather than
+transferring. Its engine is the strict Robinson (seriation) structure
+of the dissimilarity, and "spatial order" is a one-dimensional notion:
+in the plane there is no linear order to recover, so the 1+1D
+statement must be replaced rather than ported. What replaces it is
+metric, and it is stronger. Writing the dissimilarity as the distance
+between centered profiles, the question becomes whether that data
+determines the scene, and the answer turns on how many observers there
+are.
+
+With three observers it does not, and the failure is not the fold one
+expects. Centering might be thought to cost an observer, since two
+targets share a centered profile exactly when their distances to every
+observer differ by a common constant — the condition behind
+three-receiver ambiguity in hyperbolic positioning — but for targets
+in the hull that never happens, and the labeled centered profile
+already fixes the target. What defeats three observers is dimensional:
+three centered profiles span only a two-dimensional space, so the
+profile surface fills its ambient and the dissimilarity collapses to
+the distance matrix of coplanar points, leaving six continuous
+degrees of freedom beyond rigid motion at *every* target count from 6
+to 34. Flowing along one of them produces an explicit second scene
+whose dissimilarity agrees to 8e-17 while its shape differs by 97% of
+the configuration's own size, the observer triangle passing from
+equilateral to scalene — the 2+1D counterpart of the
+same-dissimilarity counterexample of Section 8.2.
+
+With four or more observers and enough targets it does. The profile
+surface is then genuinely curved inside a larger ambient space, and
+the flex count drops to exactly the three dimensions of rigid motion:
+the dissimilarity determines targets *and* observers up to Euclidean
+congruence, absolute scale included, since it is homogeneous of degree
+one in the scene. Measured thresholds are n >= 11 targets at four
+observers, n >= 9 at five and eight, n >= 8 at six; the frozen 2+1D
+instrument, with eight chains and 34 selected targets, sits inside
+that regime with margin. So the unlabeled observable is *more*
+informative in 2+1D than in 1+1D, not less — in 1+1D it yields an
+order and provably no metric, and flatness is precisely what limits
+it.
+
+Two scope conditions travel with that result and are not optional.
+The rigidity established is infinitesimal — local uniqueness
+generically, not global — and it lives in the exact model, as the
+1+1D identifiability results do; the measured-data perturbation
+counterpart of Section 8.3 has not been carried out for it. It is
+therefore verified numerically rather than proved, and Section 6's
+2+1D results are backed by the observable's identity, band, resolution
+law, concentration and labeled identifiability, with the unlabeled
+statement standing as characterization at that stated strength.
 
 ![Figure 6](figures/fig6_theory.png)
 
@@ -1199,9 +1272,8 @@ under preregistered per-cell expectations, block at the numerical
 geometry gates (8/8 cells, 149/160 fresh seeds), so rejection of
 non-manifoldlike order is not an artifact of chain extraction; and on
 identical data spanning four generator families, the instrument margin
-has the highest ROC AUC (0.993; 0.9931 with the truth term removed
-from the margin, so the ranking does not rest on truth assistance)
-among {Myrheim-Meyer distance, abundance distance, height distance},
+has the highest ROC AUC with its full gate set (0.990) among
+{Myrheim-Meyer distance, abundance distance, height distance},
 with the dimension estimator false-passing 25/27 of the P1 false-pass
 window.
 
@@ -1220,9 +1292,13 @@ classification is descriptive characterization on the theory track,
 not a frozen claim). Claim (g) asserts no superiority of
 the instrument over order height as a *ranking* statistic on the P1
 sweep — height is marginally more monotone there — only the highest
-aggregate AUC, the dimension estimator's specific unsafety in the
-false-pass window, and the validated character of the instrument's
-verdict. Claim (e) is about
+aggregate AUC with the full gate set, the dimension estimator's
+specific unsafety in the false-pass window, and the validated
+character of the instrument's verdict. It explicitly does **not**
+claim that the aggregate ranking survives removing the truth term: the
+order-only margin scores 0.968 against height's 0.967, a tie in point
+estimate, and an earlier version of this paper claimed otherwise on a
+recomputation that had dropped a second, truth-independent gate. Claim (e) is about
 one restricted ensemble family in 1+1 effective dimensions at N <= 600, whose
 beta = 0 measure is already sprinkling-equivalent: the emergence content is
 that reconstructable geometry *survives* action weighting up to the
@@ -1277,22 +1353,21 @@ dimensional reach is uneven and Section 8.5 states where the line
 falls: the observable's identity, quantization band, resolution law
 and concentration results hold in any spatial dimension and are
 verified in 2+1D, and labeled identifiability becomes multilateration
-there — but the *unlabeled* decoding result, the one that makes a pass
-decoder-independent, is 1+1D only, because its seriation engine has no
-analogue where there is no linear spatial order to recover. Closing
-that would upgrade Section 6 the way the present theory upgrades
-Sections 4-7, and it is a distance-geometry problem rather than an
-extension. The concentration results describe the Poisson
-idealization, which no frozen instrument realizes; and one question is
-recorded open in the theory document rather than resolved: the
-*count*-fluctuation class of harvested-chain clocks (Poisson-rate -1/4
-vs KPZ-like -1/3). That item is open on systematics rather than
-statistics — the arm that measures it carries a residual wandering
-admixture whose weight slides across the density grid, and the
-fitting design's own wobble, calibrated where the exponent is proved,
-exceeds the separation between the two candidates (Section 8.4). It
-closes with a wandering-free harvest or a wider density range, not
-with more seeds. The order-only harvest question is closed
+there. The *unlabeled* result changes character rather than
+transferring — seriation has no analogue where there is no linear
+spatial order, but the metric statement that replaces it is stronger,
+and it holds for four or more observers while failing outright for
+three. That result is characterization at a stated strength, not a
+proved theorem: it establishes infinitesimal rigidity in the exact
+model, verified numerically, so global uniqueness and the
+measured-data perturbation both remain open, and Section 6's results
+do not rest on it. The concentration results describe the Poisson
+idealization, which no frozen instrument realizes. The theory
+document's gap list now has no open item: the last one, the
+count-fluctuation class of harvested-chain clocks, closed once it was
+measured from the chains' tick counts rather than from their distance
+error, and the answer was that the class is protocol-dependent rather
+than single (Section 8.4). The order-only harvest question is closed
 at the design level: a selection rule reading order data alone, given
 two designated anchor events, is built, audited against an independent
 longest-chain computation, and measured — its transverse wandering
@@ -1328,10 +1403,19 @@ Preregistrations: `docs/prereg/p3_dynamics_emergence.md`,
 its decision registry and per-run CSV under `docs/prereg/frozen/`). The
 P6b aggregate metrics are in `p6b_diagnostics_summary.json`; the
 descriptive row-level statements in Section 7.6 (layered-family heights,
-per-row reference-band counts, and the order-only-margin AUC of 0.9931
-with the truth term removed) recompute deterministically from the
-frozen `p6b_scored_rows.csv` with the frozen reference cutoffs and gate
-constants, and are labeled descriptive, not confirmatory. The local-shuffle retirement is
+per-row reference-band counts, and the gate-complete margins) recompute
+deterministically from the frozen `p6b_scored_rows.csv` with the frozen
+reference cutoffs and gate constants, and are labeled descriptive, not
+confirmatory. The gate-complete margins additionally join the frozen P1
+sweep on (seed, epsilon) to recover the restart-stability value that
+the historical P6b run did not carry into its scored table; that
+correction is dated and hashed in
+`docs/paper/paper_b/figures/p6b_margin_correction.json` and declared in
+`docs/prereg/p6b_diagnostics.md`, and it regenerates no frozen
+artifact. `p6_diagnostics.py` now carries `restart_order_disagreement`
+forward, so a future regeneration needs no join -- at the cost of one
+added column relative to the frozen snapshot, with no existing value
+changed. The local-shuffle retirement is
 recorded in the P6 preregistration's deviations log with its audit CSV
 (`p6_stage_a_local_shuffle_audit.csv`). The unrestricted-ensemble
 obstruction (Section 7.2) is exploratory rather than preregistered; its
@@ -1355,18 +1439,27 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v0.8). Verification: `experiments/theory/t1_verification.py` (13
+(v1.0). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
 split: eight checks run against the frozen 2+1D scene builder used
 unmodified, with its table tracked at
-`docs/theory/t1_g4_2plus1d_results.json`), and
+`docs/theory/t1_g4_2plus1d_results.json`),
+`experiments/theory/t1_g4b_unlabeled_2plus1d.py` (the unlabeled
+2+1D result of Section 8.5: seven checks, the Jacobian taken by
+complex-step differentiation and the rigid-motion gauge asserted
+before any verdict, table tracked at
+`docs/theory/t1_g4b_unlabeled_results.json`), and
+`experiments/theory/t1_g2_count_class.py` (the count-fluctuation
+class of Section 8.4, measured from chain lengths with no distance
+estimator, table tracked at
+`docs/theory/t1_g2_count_class_results.json`), and
 `experiments/theory/t1_g2_density_scaling.py` (protocol audits plus
 density-scaling characterization; every fitted exponent reported with
 a residual-based interval and a split-half check, and the recorded
 `count_class_status` block assembling the systematic case for leaving
-the count-fluctuation class open), with their regression tests run in
+the count-fluctuation class open at the time), with their regression tests run in
 CI on every push; the full-grid density-scaling table is committed with
 its run configuration as
 `docs/theory/t1_g2_density_scaling_results.json`, and rerunning the
@@ -1381,10 +1474,12 @@ CSVs and summaries for Figures 1-5 and 7, and the two tracked theory
 tables for Figure 6 (`docs/theory/t1_figure_data.json`, regenerated
 byte-identically by `experiments/theory/t1_figure_data.py` from the
 CI-pinned check configurations, and the density-scaling table above).
-The plotting script asserts the frozen registry AUC values, the
-order-only AUC, the zero band violations, and the slope window at read
-time, so a figure cannot silently disagree with the registries it
-depicts.
+The plotting script asserts the gate-complete and order-only AUCs
+against the dated P6b correction table, re-derives the historical
+frozen proxy from its own column, and checks the zero band violations
+and the slope window at read time, so a figure cannot silently
+disagree either with the registries it depicts or with the correction
+that supersedes them.
 
 The selector-robustness check of Section 7.7 is likewise descriptive,
 not preregistered:

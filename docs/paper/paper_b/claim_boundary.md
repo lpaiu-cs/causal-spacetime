@@ -61,16 +61,21 @@ or by a proved, CI-pinned statement in
   was retired by construction audit (coordinate remapping, not geometry
   destruction: original-coordinate gate 0/10 vs current-coordinate
   10/10 at 600 moves).
-- **On identical data the instrument has the highest ROC AUC** (0.993 on
-  362 labelled orders across P1/P3/P5/P6; height 0.967, MM 0.939,
-  abundance 0.933), and MM dimension false-passes 25/27 of the P1
-  false-pass window (P6b, all labels/metrics frozen before computation).
-  The frozen margin is truth-assisted where coordinates exist; with the
-  truth term removed (order-only gates, descriptive recomputation from
-  the frozen rows) the AUC is 0.9931 -- the ranking does not rest on
-  truth assistance.
+- **On identical data the instrument has the highest ROC AUC with its
+  full gate set** (0.990 on 362 labelled orders across P1/P3/P5/P6;
+  height 0.967, MM 0.939, abundance 0.933), and MM dimension
+  false-passes 25/27 of the P1 false-pass window (P6b, all
+  labels/metrics frozen before computation). Margins are gate-complete:
+  the frozen P6b proxy omitted P1's preregistered restart-stability
+  gate, corrected by a dated join to the frozen P1 sweep that
+  regenerates no frozen artifact (0.9934 is the historical proxy).
+  NOT claimed, and withdrawn from an earlier version: that the ranking
+  survives removing truth assistance. The order-only margin (truth term
+  removed, restart stability kept) is 0.968, tied with height's 0.967
+  in point estimate; the earlier 0.9931 came from a recomputation that
+  had itself dropped the stability gate.
   NOT claimed: superiority over height as a ranking statistic on P1 —
-  height is marginally more monotone there (median rho 0.994 vs 0.976).
+  height is marginally more monotone there (median rho 0.994 vs 0.970).
 - **The profile observable's identifiability is settled (1+1D)**: spatial
   order up to global reversal is decodable from the parallax dissimilarity
   alone (strict Robinson structure; already for two observers) — exactly
@@ -99,14 +104,36 @@ or by a proved, CI-pinned statement in
   multilateration: >= 3 non-collinear observers determine the target
   position with an O(delta) error whose constant is the layout's
   conditioning (a near-collinear layout degrades recovery 29x, each
-  inside its own proved bound). The unlabeled decoding result does NOT
-  carry -- see the non-claims.
+  inside its own proved bound). The unlabeled result does not carry in
+  its 1+1D ordinal form but is replaced by a stronger metric one --
+  next bullet.
+- **In 2+1D the unlabeled dissimilarity determines the scene metrically,
+  for >= 4 observers** (characterization, not a proved theorem): with
+  enough targets (measured n >= 11 at R = 4, n >= 9 at R = 5 and 8,
+  n >= 8 at R = 6) the flex count drops to exactly the 3 dimensions of
+  rigid motion, so D fixes targets AND observers up to Euclidean
+  congruence including absolute scale (D is homogeneous of degree 1).
+  With R = 3 it does not: 6 flexes survive at every target count from 6
+  to 34, and an explicit non-congruent scene reproduces D to 8e-17
+  while differing in shape by 97% of the configuration size. The 1+1D
+  control is never rigid, so the unlabeled observable is strictly more
+  informative in 2+1D. Scope: INFINITESIMAL rigidity in the exact
+  model, verified numerically -- not global uniqueness, not a written
+  proof, not extended to measured data.
 - **The inverse-root density law is protocol-dependent**: it holds for
   Poisson-thinned clocks (lambda ~ rho, proved corollary; measured RMSE
   exponent -0.463) and fails to transfer to sprinkling-harvested clocks,
   whose rate couples at the discreteness scale (lambda ~ sqrt(rho),
   measured; error exponent -0.32). Any density-scaling statement must name
-  its clock protocol.
+  its clock protocol. The underlying count-fluctuation class is
+  protocol-dependent as well, measured from chain lengths rather than
+  from the distance error: the order-only anchored chain is
+  Tracy-Widom (exponent 1/3, Poisson excluded by 12.8 se), the
+  tube-confined chain is Poisson (1/2, Tracy-Widom excluded by 13.2),
+  with a thinned clock returning its constructed 1/2 as calibration.
+  NOT claimed: that either arm's measured error exponent identifies
+  its own count class -- neither does, and that was the error that
+  kept the question open.
 
 ## NOT claimed
 
@@ -138,10 +165,17 @@ or by a proved, CI-pinned statement in
   P2/P2-v2 scene builder, and labeled identifiability there is
   multilateration from >= 3 non-collinear observers with an O(delta)
   bound whose constant is the layout's conditioning. Decodability of
-  spatial order from the dissimilarity alone is claimed in **1+1D
+  spatial *order* from the dissimilarity alone is claimed in **1+1D
   only** — the seriation argument has no analogue where no linear
-  spatial order exists, so Section 6's 2+1D results are NOT backed by
-  a decoder-independence claim.
+  spatial order exists. Its 2+1D replacement is metric and is reported
+  as characterization, not as a proved theorem: with >= 4 observers and
+  enough targets the dissimilarity is measured to determine the whole
+  scene up to Euclidean congruence (absolute scale included), and with
+  3 observers it provably does not (explicit same-dissimilarity,
+  non-congruent scene). That is INFINITESIMAL rigidity in the exact
+  model, established numerically -- NOT global uniqueness, NOT a
+  written proof, and NOT extended to measured data. Section 6's 2+1D
+  results are not claimed to rest on it.
 - The Poisson-clock
   concentration statements describe an idealization no frozen instrument
   realizes; no inverse-root density law is claimed for harvested-chain

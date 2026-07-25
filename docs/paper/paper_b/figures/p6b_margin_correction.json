@@ -1,0 +1,67 @@
+{
+  "status": "analysis-only correction; historical frozen artifacts are unchanged",
+  "date": "2026-07-17",
+  "reason": "The historical P6b proxy omitted P1 restart-order stability. The historical no-truth figure variant also removed that order-only gate.",
+  "join": "p6b_scored_rows.csv LEFT JOIN p1_stage_b_epsilon_sweep.csv ON (seed, epsilon) for source=P1",
+  "n_labelled": 362,
+  "class_counts": {
+    "geometric": 58,
+    "nongeometric": 304
+  },
+  "source_sha256": {
+    "p6b_scored_rows.csv": "901c008a7559dcb5e48f2eb98b18d79f95af704f7c1ae017c005e9a51d95cf61",
+    "p1_stage_b_epsilon_sweep.csv": "a657f938bf4d87d5f49aee58669d9d6fbdb8b229bf0602523b18cfe1d09f1401",
+    "p6b_diagnostics_summary.json": "6da0db4a97f6eef42171c1317d44762607fb37942264269e8ec0aa9b58c024b2"
+  },
+  "roc_auc": {
+    "historical_frozen_proxy": 0.9934494101633394,
+    "gate_complete_full": 0.9897629310344828,
+    "historical_incomplete_order_only": 0.9931091197822142,
+    "gate_complete_order_only": 0.9679559891107078,
+    "height_distance": 0.9667649727767695,
+    "mm_distance": 0.93880444646098,
+    "abundance_distance": 0.9325657894736842
+  },
+  "labelled_sign_changes": {
+    "historical_full_vs_gate_complete_full": 0,
+    "historical_incomplete_order_only_vs_gate_complete_order_only": 0
+  },
+  "p1_rank_and_h_lag": {
+    "gate_complete_full_median_rho_epsilon": 0.9702380952380953,
+    "gate_complete_order_only_median_rho_epsilon": 0.7857142857142858,
+    "h_lag_count": 27,
+    "gate_complete_order_only_pass_count": 26
+  },
+  "within_reference_group_auc": {
+    "p1_scene": {
+      "n": 80,
+      "gate_complete_full": 1.0,
+      "gate_complete_order_only": 1.0,
+      "height_distance": 1.0
+    },
+    "orders_n600": {
+      "n": 182,
+      "gate_complete_full": 0.9991531165311653,
+      "gate_complete_order_only": 0.997289972899729,
+      "height_distance": 0.9684959349593496
+    },
+    "p3_n1500": {
+      "n": 100,
+      "note": "negative-only; within-group AUC is undefined"
+    }
+  },
+  "selected_family_pair_auc": {
+    "p1_positive_vs_p1_negative": {
+      "gate_complete_order_only": 1.0,
+      "height_distance": 1.0
+    },
+    "p1_positive_vs_p6_negative": {
+      "gate_complete_order_only": 0.91296875,
+      "height_distance": 0.93796875
+    },
+    "p5_positive_vs_p6_negative": {
+      "gate_complete_order_only": 0.9972222222222222,
+      "height_distance": 0.9677083333333333
+    }
+  }
+}

@@ -41,12 +41,15 @@ This paper reports the validated-instrument line of the program:
    geometry gates themselves (8/8 preregistered cells, 149/160 fresh
    seeds; the local-shuffle candidate was retired by construction audit
    as coordinate remapping), and a preregistered same-data head-to-head
-   gives the instrument the highest ROC AUC (0.993 vs height 0.967,
-   MM 0.939, abundance 0.933; unchanged with the margin's truth term
-   removed), with MM dimension false-passing 25/27 of
-   the P1 false-pass window — while height stays slightly more monotone
-   on P1, so no blanket superiority is claimed. Manuscript Sections
-   7.5-7.6.
+   gives the instrument the highest ROC AUC with its full gate set
+   (0.990 vs height 0.967, MM 0.939, abundance 0.933), with MM
+   dimension false-passing 25/27 of the P1 false-pass window — while
+   height stays slightly more monotone on P1, so no blanket superiority
+   is claimed. Removing the margin's truth term drops it to 0.968, a
+   tie with height: the aggregate ranking *does* depend on truth
+   assistance, correcting an earlier claim that rested on a
+   recomputation which had dropped a second, truth-independent gate.
+   Manuscript Sections 7.5-7.6.
 6. **The identifiability theory (T1, new in v0.6)** proves what the profile
    observable can and cannot identify: spatial order up to global reversal
    is decodable from the parallax dissimilarity alone (already for two
@@ -62,15 +65,21 @@ This paper reports the validated-instrument line of the program:
    is a CI regression — Model-D claims against the instrument itself,
    Model-P claims by direct seeded simulation of the stated model;
    every fitted scaling exponent carries a residual-based interval and
-   a split-half check, and the one open question (the count-fluctuation
-   class) is documented as open on systematics rather than statistics.
+   a split-half check. The last open question, the count-fluctuation
+   class, is closed: measured from chain lengths rather than from the
+   distance error it comes out protocol-dependent -- Tracy-Widom for
+   the order-only chain, Poisson for the tube-confined one.
    Its dimensional reach is split and stated (Section 8.5): the
    identity, band, resolution law and concentration hold in any spatial
    dimension and are verified in 2+1D on the frozen P2/P2-v2 scene
-   builder, labeled identifiability there is multilateration from three
-   non-collinear observers, and only the unlabeled decoding result is
-   1+1D-specific. Source: `docs/theory/t1_parallax_identifiability.md`
-   (v0.8) and manuscript Section 8.
+   builder, and labeled identifiability there is multilateration from
+   three non-collinear observers. The unlabeled result changes
+   character with dimension: ordinal in 1+1D, metric in 2+1D, where
+   four or more observers make the dissimilarity determine the whole
+   scene up to congruence while three provably do not (characterization
+   at stated strength -- infinitesimal rigidity, exact model). Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.0) and manuscript
+   Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime
 emergence or quantum dynamics; the emergence claims are survival/destruction
@@ -87,8 +96,9 @@ See `manuscript.md` Section 10 (claim boundary).
 - `figures/make_figures.py` — regenerates every figure from committed
   artifacts: the frozen CSVs and summaries (Figs 1-5, 7; Fig 7 also reads
   `confound_data.csv`) and the two tracked theory tables (Fig 6). It
-  asserts the frozen registry AUCs, the order-only AUC, the zero band
-  violations, and the slope window at read time.
+  asserts the gate-complete and order-only AUCs against the dated P6b
+  correction table, re-derives the historical frozen proxy, and checks
+  the zero band violations and the slope window at read time.
 - `figures/compute_confound_data.py` — recomputes the Fig 7 confound data (raw
   vs parallax dissimilarity on the Stage C seeds); the parallax column
   reproduces the frozen Stage C registry exactly.

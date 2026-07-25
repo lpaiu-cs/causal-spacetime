@@ -12,6 +12,7 @@ EXPERIMENT_DIR = (
 )
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
+from p1_epsilon_sweep import _p1_gate_pass  # noqa: E402
 from p6_diagnostics import (  # noqa: E402
     _instrument_margin,
     _normalize_p5_row,
@@ -21,6 +22,10 @@ from p6_diagnostics import (  # noqa: E402
     spearman,
 )
 from pc_common import git_describe, write_rows_csv  # noqa: E402
+
+from causal_spacetime_lab.positive_control.p6b_margin import (  # noqa: E402
+    p6b_instrument_margin,
+)
 
 
 def test_roc_auc_handles_perfect_reverse_and_ties():
@@ -35,13 +40,97 @@ def test_spearman_uses_average_tie_ranks():
     assert spearman([0.0, 1.0, 2.0, 3.0], [0.0, 1.0, 1.0, 2.0]) > 0.9
 
 
-def test_p1_instrument_margin_accepts_frozen_column_names():
+def test_historical_p1_proxy_remains_a_faithful_frozen_replayer():
+    row = {
+        "status": "ok",
+        "heldout_violation": "0.025",
+        "truth_order_error": "0.075",
+        "restart_order_disagreement": "0.12",
+    }
+    assert _instrument_margin("P1", row) == pytest.approx(0.5)
+    assert p6b_instrument_margin("P1", row) == pytest.approx(0.2)
+
+
+def test_p1_endpoint_gate_includes_restart_stability():
+    common = {
+        "truth": 0.05,
+        "heldout": 0.01,
+        "truth_max": 0.15,
+        "heldout_max": 0.05,
+        "stability_max": 0.15,
+    }
+    assert _p1_gate_pass(stability=0.15, **common)
+    assert not _p1_gate_pass(stability=0.151, **common)
+
+
+def test_p1_order_only_margin_retains_restart_stability():
+    row = {
+        "status": "ok",
+        "heldout_violation": "0.01",
+        "truth_order_error": "0.75",
+        "restart_order_disagreement": "0.12",
+    }
+    assert p6b_instrument_margin(
+        "P1", row, include_truth=False
+    ) == pytest.approx(0.2)
+
+
+def test_p1_margin_rejects_missing_declared_stability_gate():
     row = {
         "status": "ok",
         "heldout_violation": "0.025",
         "truth_order_error": "0.075",
     }
-    assert _instrument_margin("P1", row) == pytest.approx(0.5)
+    with pytest.raises(ValueError, match="restart-stability"):
+        p6b_instrument_margin("P1", row)
+
+
+def test_p5_full_margin_requires_truth_but_order_only_does_not():
+    row = {
+        "status": "ok",
+        "heldout": "0.05",
+        "null_gap": "0.20",
+    }
+    with pytest.raises(ValueError, match="P5 row has no truth-order"):
+        p6b_instrument_margin("P5", row)
+    assert p6b_instrument_margin(
+        "P5", row, include_truth=False
+    ) == pytest.approx(0.5)
+
+
+def test_p3_has_no_truth_gate_in_either_variant():
+    row = {
+        "status": "ok",
+        "heldout": "0.05",
+        "null_gap": "0.20",
+    }
+    assert p6b_instrument_margin("P3", row) == pytest.approx(
+        p6b_instrument_margin("P3", row, include_truth=False)
+    )
+
+
+def test_valid_p3_row_requires_its_declared_null_gap():
+    row = {"status": "ok", "heldout": "0.05"}
+    with pytest.raises(ValueError, match="P3 row has no null-gap"):
+        p6b_instrument_margin("P3", row)
+
+
+def test_p6b_margin_rejects_unknown_source():
+    row = {"status": "ok", "heldout": "0.01"}
+    with pytest.raises(ValueError, match="unsupported P6b source"):
+        p6b_instrument_margin("unknown", row)
+
+
+def test_p6b_margin_validates_source_before_structural_block():
+    row = {"status": "structural_block: no chains"}
+    with pytest.raises(ValueError, match="unsupported P6b source"):
+        p6b_instrument_margin("unknown", row)
+    assert p6b_instrument_margin("P3", row) == -5.0
+
+
+def test_p6b_margin_rejects_missing_status():
+    with pytest.raises(ValueError, match="P3 row has no valid status"):
+        p6b_instrument_margin("P3", {"heldout": "0.01", "null_gap": "0.20"})
 
 
 def test_legacy_short_p5_crystal_row_is_normalized():

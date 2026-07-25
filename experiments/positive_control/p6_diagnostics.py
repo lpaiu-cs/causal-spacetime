@@ -1,4 +1,10 @@
-"""P6b same-data comparison of the frozen instrument and cheap diagnostics."""
+"""Historical P6b same-data comparison replayer.
+
+This script preserves the frozen proxy formula and artifact names. The
+gate-complete post-analysis correction is deliberately separate; see
+``causal_spacetime_lab.positive_control.p6b_margin`` and Paper B's correction
+audit.
+"""
 
 from __future__ import annotations
 
@@ -156,6 +162,13 @@ def _digest(array: np.ndarray) -> str:
 
 
 def _instrument_margin(source: str, row: dict) -> float:
+    """Reproduce the historical frozen P6b proxy, including its P1 omission.
+
+    This experiment writes the historical frozen artifact names and must remain
+    a faithful replayer. The gate-complete post-analysis correction lives in
+    ``positive_control.p6b_margin`` and Paper B's correction audit.
+    """
+
     if row["status"] != "ok":
         return -5.0
     heldout = _float(row, "heldout")
@@ -261,6 +274,19 @@ def collect_p1() -> None:
                     "status": old["status"],
                     "heldout": old.get("heldout_violation", ""),
                     "truth": old.get("truth_order_error", ""),
+                    # P1's preregistered decision is a THREE-gate
+                    # conjunction and restart stability is the third.
+                    # The historical run dropped it here, which is why
+                    # the gate-complete correction has to join back to
+                    # p1_stage_b_epsilon_sweep.csv on (seed, epsilon);
+                    # carrying it forward retires that join for any
+                    # future regeneration. Existing columns and values
+                    # are untouched -- a regenerated table differs from
+                    # the frozen snapshot by this one added column and
+                    # nothing else.
+                    "restart_order_disagreement": old.get(
+                        "restart_order_disagreement", ""
+                    ),
                     "instrument_margin": _instrument_margin("P1", old),
                     "achieved_density": density,
                 }

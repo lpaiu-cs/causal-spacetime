@@ -95,9 +95,20 @@ Execution update (2026-07-17):
   transfer verbatim once |dx| is a Euclidean norm; Theorem 1's labeled
   clause becomes multilateration (>= 3 non-collinear observers, O(delta)
   error with the layout's conditioning as the constant -- a
-  near-collinear layout degrades 29x). G4b (unlabeled recovery of the
-  configuration from D alone) stays open with its obstruction named:
-  the seriation engine has no 2D analogue. Manuscript Section 8.5.
+  near-collinear layout degrades 29x). G4b (unlabeled recovery from D
+  alone) was left open here with its obstruction named -- superseded
+  the same week by the next entry. Manuscript Section 8.5.
+- **G4b settled** (theory doc v0.9), opposite to the direction G4a
+  expected. The seriation obstruction is real, but the 2+1D
+  replacement is metric and stronger: for R >= 4 observers with enough
+  targets (n >= 11 at R=4, n >= 9 at R=5,8, n >= 8 at R=6) the
+  unlabeled dissimilarity determines targets AND observers up to
+  Euclidean congruence, absolute scale included. R = 3 provably fails
+  -- 6 flexes at every n from 6 to 34, plus an explicit non-congruent
+  scene matching D to 8e-17. The 1+1D control is never rigid, so the
+  observable is strictly more informative in 2+1D. Scope:
+  infinitesimal rigidity, exact model, numerical -- global uniqueness
+  and the measured-data perturbation remain open.
 - Scaling exponents now carry residual-based intervals and split-half
   checks (theory doc v0.7), matching the uncertainty treatment P7
   already applied to its tunneling exponent. This re-diagnosed the
@@ -108,6 +119,18 @@ Execution update (2026-07-17):
   the 0.083 candidate separation. It stays open for systematic, not
   statistical, reasons, and closes only with a wandering-free harvest
   or a wider density range.
+
+- **G2 closed** (theory doc v1.0): the count-fluctuation class was
+  settled by measuring it from chain lengths (sd ~ mean^theta) instead
+  of from the distance error, which doubled the separation under test
+  (0.167 vs 0.083) and removed the wandering admixture entirely. The
+  answer is that there is no single class: the order-only anchored
+  chain is KPZ (theta = 0.322) and the tube-confined chain is Poisson
+  (theta = 0.487), each excluding the other candidate by >12 se, with
+  a thinned clock returning its constructed 1/2 as calibration.
+  Mechanism confirmed by a monotone confinement crossover. This
+  retires the earlier reading of the scaled tube's -0.317 as its count
+  exponent. **T1's gap list (G1-G4) is now empty.**
 
 Context: the second external review judged the current Paper B arXiv-ready
 after claim calibration (done, v0.5) and packaging, a strong candidate for
