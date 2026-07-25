@@ -100,6 +100,19 @@ of the plateau. It is also where the conditioning study independently put
 the margin optimum for three spatial dimensions, which is corroboration
 and not evidence — that study measured a different quantity.
 
+**Post-hoc caveat on this table (recorded after Stage A; the table above
+is unedited).** The gap statistic here is a four-seed min/max. Stage A
+then measured the same statistic at the chosen `R = 12` on twenty seeds
+and got **−0.0066** — not merely smaller than the tabled 0.035 but of the
+opposite sign. So it is not only that four seeds cannot separate 12 from
+16: **the four-seed min/max gap is not a reliable estimator of the
+twenty-seed one at all**, and the "step of about two" between `R <= 8`
+and `R >= 12` should be read as unconfirmed. The scene choice this table
+motivated stands (nothing may change post hoc), but its evidential basis
+is weaker than the table suggests, and any successor design — P9
+included, which inherits this scene — should treat the R-sweep as a
+rough screen rather than an estimate.
+
 Two levers that did not work, recorded so they are not retried:
 
 - Doubling ticks per chain to 192: separation `0.035 -> 0.034`. The

@@ -146,6 +146,85 @@ def sweep_seed(config, policy, code_version, stage) -> dict:
     return row
 
 
+def propose_gates(ok: list[dict]) -> dict:
+    """The Stage A gate proposal, extracted so it is testable.
+
+    Same midpoint rule as P2: each gate sits between its pass cluster
+    (the geometric fit at the gate dimension) and its fail cluster
+    (d = 2 truth for the truth gate; the geometry-free control for the
+    held-out gate), so both sides keep margin. The grid is finer than
+    P2's because the gap it discretises is about four times narrower.
+
+    Two guards, each of which was missing in the first version and each
+    of which is pinned by a regression:
+
+    * Each axis gets its OWN overlap check and suppresses its own gate.
+      Keying both gates on the truth overlap alone would let a run whose
+      truth clusters separated while its held-out clusters overlapped
+      emit a held-out gate from the midpoint of two overlapping clusters
+      -- a nonsense gate, with no flag. This Stage A overlapped on both
+      axes, which is what hid it.
+    * The programme-wide 0.10 held-out ceiling can pull the gate below
+      the pass cluster's own maximum, in which case EVERY seed fails
+      H-SENS. That may be the correct outcome -- the ceiling is a
+      standard, not a knob -- but it must never be silent.
+    """
+
+    def rnd(value):
+        return float(round(value / GATE_GRID) * GATE_GRID)
+
+    d3_truth_max = max(r["d3_truth"] for r in ok)
+    d2_truth_min = min(r["d2_truth"] for r in ok)
+    d3_heldout_max = max(r["d3_heldout"] for r in ok)
+    control_vals = [
+        r["control_d3_heldout"]
+        for r in ok
+        if r["control_status"] == "ok"
+        and not math.isnan(r["control_d3_heldout"])
+    ]
+    control_heldout_min = min(control_vals) if control_vals else 0.15
+
+    truth_overlap = d3_truth_max >= d2_truth_min
+    heldout_overlap = d3_heldout_max >= control_heldout_min
+    out = {
+        "clusters_overlap_truth": truth_overlap,
+        "clusters_overlap_heldout": heldout_overlap,
+        "d2_truth_min": d2_truth_min,
+        "d3_truth_max": d3_truth_max,
+        "d3_heldout_max": d3_heldout_max,
+        "control_heldout_min": control_heldout_min,
+        "cluster_gap_truth": d2_truth_min - d3_truth_max,
+        "cluster_gap_heldout": control_heldout_min - d3_heldout_max,
+    }
+
+    notes = []
+    if truth_overlap:
+        # Preregistration Section 6: no gate is placed, and that is a
+        # reportable outcome rather than grounds for changing the scene.
+        out["proposed_gate_truth"] = None
+        notes.append("truth clusters overlap; no truth gate placed")
+    else:
+        out["proposed_gate_truth"] = min(
+            0.20, rnd(0.5 * (d3_truth_max + d2_truth_min))
+        )
+    if heldout_overlap:
+        out["proposed_gate_heldout"] = None
+        notes.append("held-out clusters overlap; no held-out gate placed")
+    else:
+        gate = min(0.10, rnd(0.5 * (d3_heldout_max + control_heldout_min)))
+        out["proposed_gate_heldout"] = gate
+        if d3_heldout_max > gate:
+            out["heldout_ceiling_excludes_pass_cluster"] = True
+            notes.append(
+                "held-out gate capped at 0.10 BELOW the pass cluster "
+                f"max {d3_heldout_max:.3f}; every seed would fail "
+                "H-SENS-3D at this gate"
+            )
+    if notes:
+        out["note"] = "; ".join(notes) + " (prereg Section 6)"
+    return out
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", choices=["a", "b"], default="a")
@@ -223,47 +302,7 @@ def main() -> None:
         ),
     }
     if stage == "a" and ok:
-        def rnd(value):
-            return float(round(value / GATE_GRID) * GATE_GRID)
-
-        # Same midpoint rule as P2: the gate sits between the pass cluster
-        # (the geometric fit at the gate dimension) and the fail cluster
-        # (d = 2 truth for the truth gate; the geometry-free control for the
-        # held-out gate), so both sides keep margin. The grid is finer than
-        # P2's because the gap it discretises is about four times narrower.
-        d3_truth_max = max(r["d3_truth"] for r in ok)
-        d2_truth_min = min(r["d2_truth"] for r in ok)
-        d3_heldout_max = max(r["d3_heldout"] for r in ok)
-        control_vals = [
-            r["control_d3_heldout"]
-            for r in ok
-            if r["control_status"] == "ok"
-            and not math.isnan(r["control_d3_heldout"])
-        ]
-        control_heldout_min = min(control_vals) if control_vals else 0.15
-        clusters_overlap = d3_truth_max >= d2_truth_min
-        summary["clusters_overlap"] = clusters_overlap
-        summary["d2_truth_min"] = d2_truth_min
-        summary["d3_truth_max"] = d3_truth_max
-        summary["d3_heldout_max"] = d3_heldout_max
-        summary["control_heldout_min"] = control_heldout_min
-        summary["cluster_gap_truth"] = d2_truth_min - d3_truth_max
-        if clusters_overlap:
-            # Preregistration Section 6: no gate is placed, and that is a
-            # reportable outcome rather than grounds for changing the scene.
-            summary["proposed_gate_truth"] = None
-            summary["proposed_gate_heldout"] = None
-            summary["note"] = (
-                "pass and fail truth clusters overlap; no gate placed "
-                "(prereg Section 6)"
-            )
-        else:
-            summary["proposed_gate_truth"] = min(
-                0.20, rnd(0.5 * (d3_truth_max + d2_truth_min))
-            )
-            summary["proposed_gate_heldout"] = min(
-                0.10, rnd(0.5 * (d3_heldout_max + control_heldout_min))
-            )
+        summary.update(propose_gates(ok))
     (args.output_dir / f"p8_summary_{stage}{suffix}.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
