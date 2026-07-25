@@ -93,12 +93,20 @@ This paper reports the validated-instrument line of the program:
    closed form below the threshold and a proved lower bound above it,
    both with no free parameter and both reproducing every measured cell.
    The bound is attained with no slack in all 15 observer counts tried
-   across six spatial dimensions. What remains open is that attainment,
-   and `d = 1` shows the gap is real -- there the count permits rigidity
-   and the configuration is never rigid, because its profile surface has
-   zero curvature. Scope is unchanged by either the extra dimensions or
-   the derivation. Source:
-   `docs/theory/t1_parallax_identifiability.md` (v1.3),
+   across six spatial dimensions. Attainment is proved too, by way of
+   the profile surface's conical singularities -- one per observer,
+   which no continuous ambient symmetry can permute, and which span
+   because the un-squared observer distance matrix is nonsingular. That
+   brackets the threshold from above, and the bracket closes exactly at
+   `R = d + 2`: **physical 3+1 is pinned at five observers and 19
+   targets, both theorems**, modulo one explicit rank hypothesis on
+   observer configurations (verified 18/18 across `d = 2..7`).
+   Sharpness for `R > d + 2` stays open, though rigidity there does not.
+   `d = 1` is exempt in the proof for the same reason it was exempt in
+   the measurements: its cone degenerates to two rays. Scope is
+   unchanged by the extra dimensions, the derivation, or the proof.
+   Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.4),
    `docs/theory/t1_g4c_predictions{,_round2,_round3,_round4}.json`, and manuscript
    Section 8.
 

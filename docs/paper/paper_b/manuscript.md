@@ -842,7 +842,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v1.3); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.4); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -1207,20 +1207,39 @@ advance. It also explains the quadratic of the paragraph above: at
 R = d + 2 the bound collapses to d^2 + 3d + 1, so what had looked like a
 three-point curve fit was a dimension count.
 
-What is not derived is that the bound is *attained*, and one dimension
-shows why that gap is real rather than clerical. At d = 1 the count
-permits rigidity comfortably and the configuration is never rigid at any
-observer count, because there the profile surface is a polyline of
-exactly zero curvature. Curvature is thus not a heuristic gloss on the
-argument but its entire remaining content, and no amount of counting can
-supply it.
+That the bound is *attained* does not follow from counting, and one
+dimension shows why the gap is real rather than clerical: at d = 1 the
+count permits rigidity comfortably and the configuration is never rigid
+at any observer count. What closes it is that the profile surface is not
+smooth. The distance to an observer is not differentiable at the
+observer, so the surface carries one conical singular point per
+observer; a connected group of ambient isometries cannot permute a
+finite set, so any continuous symmetry would have to fix all of them. It
+cannot: those cone points are the centered rows of the observer distance
+matrix — the un-squared one, which unlike its squared counterpart is
+generically nonsingular — so they span, while a nonzero infinitesimal
+isometry vanishes on a subspace two dimensions short of spanning. The
+surface therefore admits no continuous symmetry, a nested chain of
+candidate flexes must terminate, and rigidity follows once the target
+count exceeds an explicit bound. One dimension is exempt in the proof
+for the same reason it was exempt in the measurements: there the cone
+degenerates to two rays and the argument has nothing to grip.
+
+The lower bound from counting and this upper bound coincide exactly when
+there are d + 2 observers, the fewest that work. **So in 3+1 spacetime
+the answer is pinned rather than measured: five observers and 19
+targets, both of them theorems**, subject to one remaining hypothesis —
+that the map sending observer positions to the mutual distances of those
+cone points is an immersion modulo congruence, which is verified at
+exact rank in every configuration tried across six spatial dimensions.
+For more than d + 2 observers the two bounds separate and sharpness is
+still open, though rigidity itself is not.
 
 The scope conditions of Section 8.5 travel with this unchanged and are
-not relaxed by either the extra dimensions or the derivation:
+not relaxed by the extra dimensions, the derivation, or the proof:
 infinitesimal rigidity in the exact model, with global uniqueness, noisy
 dissimilarity, and dissimilarity harvested through the instrument all
-outside what is claimed. The open item is the attainment step, and it is
-not a matter of measuring a seventh dimension.
+outside what is claimed.
 
 ![Figure 6](figures/fig6_theory.png)
 
@@ -1516,7 +1535,7 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v1.3). Verification: `experiments/theory/t1_verification.py` (13
+(v1.4). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension

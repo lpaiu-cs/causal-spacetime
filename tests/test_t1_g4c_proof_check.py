@@ -24,6 +24,7 @@ from t1_g4b_unlabeled_2plus1d import (  # noqa: E402
     gauge_dimension,
     jacobian,
     nullity,
+    observer_shell,
     scene,
 )
 from t1_g4c_general_dimension import nullity_by_n  # noqa: E402
@@ -33,8 +34,12 @@ from t1_g4c_proof_check import (  # noqa: E402
     cloud_flex_space,
     intersection_dim,
     null_basis,
+    observer_edm,
     operator_L,
     rank_of,
+    singular_gap_jacobian,
+    singular_points,
+    sufficiency_upper_bound,
     threshold_count,
 )
 
@@ -155,6 +160,73 @@ def test_round4_threshold_at_six_dimensions():
         X, P = scene(n, 8, seed=2000 + 100 * 6 + 8 + n, d=6)
         null, _ = nullity(flatten(X, P), n, 8, 6)
         assert (null == gauge_dimension(6)) is expect_rigid, (n, null)
+
+
+def test_lemma_e_the_observer_distance_matrix_is_nonsingular():
+    """The whole sufficiency argument turns on this one fact.
+
+    SQUARED distance matrices have rank at most d + 2 -- if that were the
+    relevant matrix, the cone points would span far too little and Lemma
+    E would collapse. The profile uses the un-squared distance, whose
+    matrix is generically nonsingular.
+    """
+
+    for d in range(2, 8):
+        for R in range(d + 2, d + 5):
+            P = observer_shell(R, d)
+            assert rank_of(observer_edm(P)) == R, (d, R)
+            squared = observer_edm(P) ** 2
+            assert rank_of(squared) <= d + 2, (d, R)
+
+
+def test_lemma_e_cone_points_leave_no_room_for_a_symmetry():
+    """The cone points span V, so their affine span is at least m - 1;
+    a nonzero infinitesimal isometry of R^m vanishes on at most m - 2
+    dimensions. No nonzero (A, b) fits."""
+
+    for d in range(2, 8):
+        for R in range(d + 2, d + 5):
+            m = R - 1
+            span = rank_of(singular_points(observer_shell(R, d)))
+            assert span == m, (d, R, span)
+            assert (span - 1) > (m - 2), (d, R)
+
+
+def test_g3_observer_gap_map_is_an_immersion_modulo_congruence():
+    """The single unproved input to sufficiency. Rank exactly
+    dR - d(d+1)/2 means the only observer motions preserving the cone
+    points' mutual distances are the rigid ones."""
+
+    for d in range(2, 8):
+        for R in range(d + 2, d + 5):
+            rank = rank_of(singular_gap_jacobian(observer_shell(R, d)))
+            assert rank == d * R - d * (d + 1) // 2, (d, R, rank)
+
+
+def test_bounds_pin_the_threshold_exactly_when_r_is_d_plus_two():
+    """Theorem 2a from below, Theorem 2b' from above. They meet iff
+    m - d = 1, and there the threshold is proved rather than measured."""
+
+    for d in range(2, 8):
+        for R in range(d + 2, d + 5):
+            lower, upper = threshold_count(d, R), sufficiency_upper_bound(d, R)
+            assert lower <= upper, (d, R)
+            assert (lower == upper) is (R == d + 2), (d, R, lower, upper)
+        assert threshold_count(d, d + 2) == d * d + 3 * d + 1
+
+
+def test_every_measured_threshold_lies_inside_the_proved_bracket():
+    for (d, R), measured in MEASURED_THRESHOLDS.items():
+        assert threshold_count(d, R) <= measured, (d, R)
+        assert measured <= sufficiency_upper_bound(d, R), (d, R)
+
+
+def test_the_physical_case_is_pinned_at_five_observers_and_nineteen_targets():
+    """3+1 spacetime: spatial d = 3, R = d + 2 = 5, threshold 19, with
+    the lower and upper bounds coinciding."""
+
+    assert threshold_count(3, 5) == sufficiency_upper_bound(3, 5) == 19
+    assert MEASURED_THRESHOLDS[(3, 5)] == 19
 
 
 def test_round4_non_exact_divisions_round_up_and_are_attained():

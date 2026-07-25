@@ -49,6 +49,7 @@ from t1_g4b_unlabeled_2plus1d import (  # noqa: E402
     gauge_dimension,
     jacobian,
     nullity,
+    observer_shell,
     scene,
 )
 from t1_g4c_general_dimension import (  # noqa: E402
@@ -143,6 +144,55 @@ def intersection_dim(first: np.ndarray, second: np.ndarray) -> int:
         return 0
     return (rank_of(first) + rank_of(second)
             - rank_of(np.hstack([first, second])))
+
+
+def observer_edm(P: np.ndarray) -> np.ndarray:
+    """The NON-squared observer distance matrix. Squared EDMs have rank
+    at most d + 2; this one is generically full rank, which is the whole
+    input to Lemma E."""
+    return np.linalg.norm(P[:, None, :] - P[None, :, :], axis=2)
+
+
+def singular_points(P: np.ndarray) -> np.ndarray:
+    """w(p_r) = M E_r -- the conical singularities of Sigma_P.
+
+    Phi is not differentiable at an observer, so the profile surface has
+    a genuine cone point over each one. A CONTINUOUS group of ambient
+    isometries cannot permute a finite set, so it must fix all R of
+    them, and that is what Lemma E turns into a contradiction.
+    """
+    E = observer_edm(P)
+    return E - E.mean(axis=1, keepdims=True)
+
+
+def singular_gap_jacobian(P: np.ndarray, h: float = 1e-30) -> np.ndarray:
+    """d/dP of the pairwise distances between singular points.
+
+    An ambient isometry fixes the singular points, so any flex that
+    moves the observers must preserve || M(E_r - E_s) ||. Hypothesis
+    (G3) is that this map is an immersion modulo congruence.
+    """
+    R, d = P.shape
+    flat = P.ravel()
+    rows, cols = np.triu_indices(R, k=1)
+    out = np.zeros((rows.size, flat.size))
+    for k in range(flat.size):
+        probe = flat.astype(complex)
+        probe[k] += 1j * h
+        Q = probe.reshape(R, d)
+        E = np.sqrt(np.sum((Q[:, None, :] - Q[None, :, :]) ** 2, axis=2))
+        W = E - E.sum(axis=1, keepdims=True) / R
+        diff = W[rows] - W[cols]
+        out[:, k] = np.imag(np.sqrt(np.sum(diff * diff, axis=1))) / h
+    return out
+
+
+def sufficiency_upper_bound(d: int, R: int) -> int:
+    """Lemma F: dim Lambda - dim K(infinity), the number of strict drops
+    a nested chain of subspaces can make. Generic targets each force at
+    least one, so this many targets always suffice."""
+    m = R - 1
+    return d * R + m * (m + 1) // 2 - d * (d + 1) // 2
 
 
 def threshold_count(d: int, R: int) -> int | None:
@@ -277,11 +327,16 @@ def check_theorem_1_closed_form() -> dict:
     return {"rows": rows, "passed": bool(ok)}
 
 
+#: Every (d, R) threshold ever measured. Rounds 1-3 supplied the first
+#: ten; round 4 added the five marked below, each committed in advance.
 MEASURED_THRESHOLDS = {
-    (2, 4): 11, (2, 5): 9, (2, 6): 8, (2, 8): 9,
-    (3, 5): 19, (3, 6): 14, (3, 8): 12,
-    (4, 6): 29, (4, 8): 17, (5, 7): 41,
+    (2, 4): 11, (2, 5): 9, (2, 6): 8, (2, 7): 8, (2, 8): 9,
+    (3, 5): 19, (3, 6): 14, (3, 7): 12, (3, 8): 12,
+    (4, 6): 29, (4, 7): 20, (4, 8): 17,
+    (5, 7): 41, (5, 8): 27,
+    (6, 8): 55,
 }
+ROUND4_THRESHOLD_CELLS = ((2, 7), (3, 7), (4, 7), (5, 8), (6, 8))
 
 
 def check_theorem_2a_necessity() -> dict:
@@ -429,6 +484,119 @@ def check_round4_thresholds() -> dict:
     }
 
 
+SUFFICIENCY_CELLS = tuple(
+    (d, R) for d in range(2, 8) for R in range(d + 2, d + 5)
+)
+
+
+def check_lemma_e_inputs() -> dict:
+    """Check 7: the two facts Lemma E rests on.
+
+    (i) The non-squared observer distance matrix has full rank `R`.
+    (ii) Hence the singular points `M E_r` span `V`, so their AFFINE span
+         is at least `m - 1`.
+
+    A nonzero infinitesimal isometry of `R^m` has zero set of dimension
+    at most `m - 2`, because a nonzero skew matrix has even rank >= 2.
+    So (ii) leaves no room: no nonzero ambient isometry can fix all the
+    cone points, and `Sigma_P` has no continuous symmetry.
+    """
+
+    rows = []
+    ok = True
+    for d, R in SUFFICIENCY_CELLS:
+        P = observer_shell(R, d)
+        rank_E = rank_of(observer_edm(P))
+        span = rank_of(singular_points(P))
+        rows.append({
+            "d": d, "R": R,
+            "rank_of_observer_edm": rank_E, "needs": R,
+            "linear_span_of_cone_points": span, "m": R - 1,
+            "affine_span_at_least": span - 1,
+            "zero_set_of_a_nonzero_isometry_at_most": R - 1 - 2,
+            "no_room": bool(span - 1 > R - 3),
+        })
+        ok = ok and rank_E == R and span == R - 1
+    return {"rows": rows, "passed": bool(ok)}
+
+
+def check_g3_observer_gap_immersion() -> dict:
+    """Check 8: hypothesis (G3).
+
+    An ambient isometry fixes the cone points, so a flex that moves the
+    observers must preserve every `|| M(E_r - E_s) ||`. (G3) says that
+    map is an immersion modulo congruence -- rank `dR - d(d+1)/2` -- and
+    then the only surviving observer motions are rigid ones.
+
+    This is the single hypothesis the sufficiency proof still leans on
+    that is not itself proved here. It is explicit, finite dimensional,
+    and about one concrete map, which is a long way from where the
+    conjecture stood.
+    """
+
+    rows = []
+    ok = True
+    for d, R in SUFFICIENCY_CELLS:
+        P = observer_shell(R, d)
+        measured = rank_of(singular_gap_jacobian(P))
+        target = d * R - d * (d + 1) // 2
+        rows.append({
+            "d": d, "R": R, "jacobian_rank": measured,
+            "needed_for_immersion_mod_congruence": target,
+            "n_gap_constraints": R * (R - 1) // 2,
+            "agrees": bool(measured == target),
+        })
+        ok = ok and measured == target
+    return {"rows": rows, "passed": bool(ok)}
+
+
+def check_sufficiency_brackets_the_threshold() -> dict:
+    """Check 9: the proved lower and upper bounds, and where they meet.
+
+    Theorem 2a gives `n >= N(d,R)`. Lemma F gives rigidity once
+    `n >= dim Lambda - dim K(inf) = dR + m(m+1)/2 - d(d+1)/2`, because a
+    nested chain of subspaces admits at most that many strict drops.
+
+    At `R = d + 2` the two coincide -- `m - d = 1` makes the ceiling in
+    `N` vacuous -- so the threshold is PINNED, not bracketed. That is the
+    case that fixes 3+1D at 19.
+    """
+
+    rows = []
+    ok = True
+    for d, R in SUFFICIENCY_CELLS:
+        lower = threshold_count(d, R)
+        upper = sufficiency_upper_bound(d, R)
+        measured = MEASURED_THRESHOLDS.get((d, R))
+        pinned = lower == upper
+        rows.append({
+            "d": d, "R": R, "m_minus_d": R - 1 - d,
+            "lower_bound_theorem_2a": lower,
+            "upper_bound_lemma_f": upper,
+            "bounds_coincide": bool(pinned),
+            "measured": measured,
+            "measured_inside_bounds": (
+                None if measured is None else bool(lower <= measured <= upper)
+            ),
+        })
+        ok = ok and lower <= upper
+        if pinned:
+            ok = ok and (R == d + 2)
+        if measured is not None:
+            ok = ok and lower <= measured <= upper
+    return {
+        "rows": rows,
+        "pinned_cells": [
+            [r["d"], r["R"]] for r in rows if r["bounds_coincide"]
+        ],
+        "pinned_exactly_when_R_is_d_plus_2": bool(
+            all((r["R"] == d + 2) == r["bounds_coincide"]
+                for r in rows for d in [r["d"]])
+        ),
+        "passed": bool(ok),
+    }
+
+
 CHECKS = (
     ("lemma_a_reduction", check_lemma_a_reduction),
     ("lemma_b_flex_dimension", check_lemma_b_flex_dimension),
@@ -436,6 +604,9 @@ CHECKS = (
     ("theorem_1_closed_form", check_theorem_1_closed_form),
     ("theorem_2a_necessity", check_theorem_2a_necessity),
     ("d1_defeats_counting_alone", check_d1_defeats_counting_alone),
+    ("lemma_e_inputs", check_lemma_e_inputs),
+    ("g3_observer_gap_immersion", check_g3_observer_gap_immersion),
+    ("sufficiency_brackets", check_sufficiency_brackets_the_threshold),
     ("p14_d6_r4_slope_three",
      lambda: check_under_observed(6, 4, range(6, 13), 1800)),
     ("p15_d6_r7_saturated",

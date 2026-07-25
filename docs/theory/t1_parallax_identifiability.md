@@ -1,14 +1,16 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.3 — statements and proof programs; nothing frozen.
-The G4b threshold is a general-dimension law: `R >= d + 2` observers,
-measured across `d = 1..6` against 20 predictions preregistered in four
-rounds, and now largely *derived* (`t1_g4c_proof.md`). Physical `3 + 1`
-needs five observers, from 19 targets. The regimes and the necessity of
-the target-count threshold are theorems; that the threshold is attained
-is the one open step, and `d = 1` proves counting alone cannot close
-it.**
-(v1.3 2026-07-25 KST: G4c derived — the flex condition reduced to
+Status: **THEORY DRAFT v1.4 — statements and proof programs; nothing frozen.
+The G4b threshold is a general-dimension law: `R >= d + 2` observers.
+Measured across `d = 1..6` against 20 predictions preregistered in four
+rounds, and now *proved* (`t1_g4c_proof.md`) up to one explicit
+finite-dimensional hypothesis. **For physical `3 + 1` the answer is
+pinned: five observers and 19 targets, both theorems.** What remains is
+hypothesis (G3) and the sharpness of the threshold for `R > d + 2`.**
+(v1.4 2026-07-25 KST: G4c sufficiency closed — the profile surface's
+conical singularities forbid any continuous ambient symmetry, which
+brackets the threshold from above and pins it exactly at `R = d + 2`;
+v1.3 2026-07-25 KST: G4c derived — the flex condition reduced to
 infinitesimal rigidity of the centered profile cloud, giving closed
 forms for both regimes with no free parameter, plus 7/7 out-of-sample
 confirmations at `d = 6` and at non-exact divisions;
@@ -1081,22 +1083,46 @@ with zero strict inversions in either.
     collapses to `d^2 + 3d + 1` — which retires round 3's
     `[speculative]` tag on that quadratic: it was the `m - d = 1` case
     of the count, not a curve fit.
-  - **Theorem 2b `[CONJECTURED]`** (sufficiency): that the count is
-    *attained*. It is, exactly and with no slack, in all 15 `(d,R)`
-    cells ever run, 5 of them preregistered in round 4 including two
-    with non-exact divisions. But it is **false at `d = 1`**, where the
-    count permits rigidity and the configuration is never rigid, because
-    `Phi~` is piecewise linear there. So curvature is not decoration in
-    the argument — it is the entire content of the open step, and
-    counting alone provably cannot close it.
+  - **Theorem 2b′ `[PROVED]` under (G1)-(G3)** (sufficiency). Counting
+    alone provably cannot give this — at `d = 1` the count permits
+    rigidity and the configuration is never rigid. What supplies the
+    missing content is that **the profile surface is not smooth**: each
+    observer contributes a conical singular point at `w(p_r) = M E_r`,
+    a connected group of ambient isometries cannot permute a finite set,
+    so any continuous symmetry must fix all `R` cone points. Those
+    points span `V`, because the **non-squared** observer distance
+    matrix is generically nonsingular (the squared one has rank `<= d+2`
+    and would be useless here), so their affine span is at least
+    `m - 1`; a nonzero infinitesimal isometry of `R^m` vanishes on at
+    most `m - 2` dimensions, since a nonzero skew matrix has even rank
+    `>= 2`. No room — so `Sigma_P` has no continuous symmetry
+    (**Lemma E**). A nested chain of subspaces then stabilizes after at
+    most `dim Lambda - dim K(∞)` strict drops (**Lemma F**), giving
+    rigidity for all `n >= dR + m(m+1)/2 - d(d+1)/2`. The `d = 1`
+    exemption is now explained inside the proof rather than beside it:
+    there the cone is two rays, a union of linear pieces, and the
+    argument has nothing to grip.
+  - **The threshold at `R = d + 2` is settled `[PROVED]`.** The lower
+    bound of 2a is the upper bound of 2b′ divided by `m - d`, so when
+    `m - d = 1` — exactly `R = d + 2` — they coincide and
+    `n_threshold = d^2 + 3d + 1` for every `d >= 2`. **In `3 + 1`
+    spacetime that is five observers and 19 targets, and both are now
+    theorems.**
+
+  What remains: **(G3)**, the one unproved input — that
+  `P |-> (||M(E_r - E_s)||)_{r<s}` is an immersion modulo congruence,
+  rank `dR - d(d+1)/2`, verified in 18/18 cells across `d = 2..7` — and
+  **sharpness for `R > d + 2`**, where the bounds separate (e.g.
+  `d = 3, R = 6` gives `14 <= n <= 27`, measured 14). That residual is
+  narrower than the original conjecture in two ways: it excludes the
+  physical case, and it is a sharpness claim rather than an existence
+  one, since 2b′ already delivers rigidity there at a larger explicit
+  `n`.
 
   Scope is unchanged from G4b and is not improved by any of this:
   infinitesimal rigidity in the exact model. Not global uniqueness, not
   noisy or `delta`-quantized `D`, not `D` harvested through the
-  instrument from a measured causal set. **Theorem 2b is the one open
-  item**, and it is not a matter of more measurement — `d = 1` already
-  shows counting is not self-sufficient, so a proof must use the
-  curvature of the profile surface.
+  instrument from a measured causal set.
 
 ## 7. Numerical verification plan
 

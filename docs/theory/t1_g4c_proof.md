@@ -170,19 +170,17 @@ Note what this does **not** need: no genericity of `Psi`, no curvature
 argument, no claim about attainment. It is a hard lower bound on how
 many targets any rigid configuration must carry.
 
-### 7b. Sufficiency `[CONJECTURED]`
+### 7b. Sufficiency
 
-> For `R >= d + 2`, `d >= 2` and generic scenes with `n >= N(d,R)`,
+> For `R >= d + 2`, `d >= 2` and generic scenes with `n` large enough,
 > `nullity = d(d+1)/2`.
 
-Equivalently: `Psi` attains its maximal possible rank generically. This
-is the step rigidity theory always gets stuck on — the gap between
+This is the step rigidity theory usually gets stuck on — the gap between
 "the count permits rigidity" and "rigidity happens", the same gap that
-separates Maxwell counting from Laman-type theorems. It is **not**
-supplied by anything above.
-
-Two things are known about it here, and they point in opposite
-directions, which is why the tag is `[CONJECTURED]`.
+separates Maxwell counting from Laman-type theorems. **Sections 7d–7g
+close it**, up to one explicit finite-dimensional hypothesis (G3), and
+close it *sharply* at `R = d + 2`. What follows first is the evidence
+that motivated looking.
 
 **In favour.** The count is attained *exactly*, with no slack, in every
 `(d, R)` cell ever run — the ten of rounds 1-3, and the five that round 4
@@ -225,6 +223,140 @@ So the curvature of the profile surface is not decoration in the
 argument — it is the entire content of the sufficiency step, and `d = 1`
 is the standing proof that the count alone does not suffice.
 
+### 7d. The tangency reformulation
+
+Fix the observers for a moment. An element of `Im L ∩ F` is an ambient
+isometry `v |-> Av + b` of `V` (with `A` skew) that some scene motion
+induces. Writing `T_x := Im(M U(x))` for the tangent space of the
+profile surface `Sigma_P = w(R^d)` at `w(x)`, the condition at a target
+`x` is
+
+    A w(x) + b + M W_x deltaP  in  T_x.                              (T)
+
+With `deltaP = 0` and (T) imposed at *every* `x`, this says precisely
+that the linear vector field `X(v) = Av + b` is **tangent to `Sigma_P`
+everywhere** — that is, `Sigma_P` is invariant under a one-parameter
+group of ambient isometries. Sufficiency therefore becomes a question
+about symmetries of one surface, and that question has an answer.
+
+### 7e. Lemma E — `Sigma_P` has no continuous symmetry `[PROVED under (G1)]`
+
+> For `d >= 2` and generic `P`, the only `(A, b)` tangent to `Sigma_P`
+> at every smooth point is `(A, b) = 0`.
+
+*Proof.* **`Sigma_P` is not smooth.** `phi_r(x) = |x - p_r|` fails to be
+differentiable at `x = p_r`, and near there `Sigma_P` is a cone over a
+`(d-1)`-sphere: with `x = p_r + rho * omega`,
+
+    Phi(x) = E_r + rho ( e_r + sum_{s != r} <omega, u_s(p_r)> e_s ) + O(rho^2)
+
+whose tangent cone at `w(p_r)` is a genuinely curved cone, not a union of
+linear subspaces. Away from the observers `w` is real-analytic and (G1)
+makes it an immersion, so every other point of `Sigma_P` has a tangent
+cone that *is* a finite union of `d`-planes. Hence the set
+
+    S := { v in Sigma_P : the tangent cone at v has a curved component }
+
+equals `{ w(p_1), ..., w(p_R) }`, and is finite.
+
+The flow of `X` is a one-parameter group of isometries of `V` preserving
+`Sigma_P`, so it preserves `S`. A **connected** group cannot permute a
+finite set nontrivially, so it fixes every point of `S`:
+
+    A w(p_r) + b = 0    for r = 1, ..., R.
+
+Now suppose `(A, b) != 0`. Its zero set `{v : Av + b = 0}` is empty when
+`A = 0`, and otherwise an affine subspace of dimension `dim ker A`. A
+nonzero real skew-symmetric matrix has even rank at least `2`, so that
+dimension is at most `m - 2`.
+
+But `w(p_r) = M E_r`, the centered rows of the **non-squared** observer
+distance matrix `E`. (Squared distance matrices have rank at most
+`d + 2`; non-squared ones are generically nonsingular.) With
+`rank E = R`, the vectors `{M E_r}` span `M(R^R) = V`, of dimension `m`,
+so their **affine** span has dimension at least `m - 1`.
+
+`m - 1 > m - 2`. The cone points do not fit in the zero set, so
+`(A, b) = 0`. ∎
+
+This is where `d >= 2` finally earns its keep in a *proof* rather than in
+a picture: it is what makes the cone at `w(p_r)` curved. At `d = 1` the
+"cone" is two rays — a union of linear pieces — `S` is empty, and the
+argument has nothing to grip.
+
+### 7f. Lemma F — finitely many targets suffice `[PROVED]`
+
+Let `Lambda := R^{dR} × so(V) × V`, of dimension `dR + m(m+1)/2`, and for
+`x in R^d` let `C(x) ⊆ Lambda` be the subspace cut out by (T). Then
+`K(n) := ∩_{j<=n} C(x_j)` is the space of candidate flexes after `n`
+targets, and `K(∞) := ∩_{x} C(x)`.
+
+`K(1) ⊇ K(2) ⊇ ...` is a nested chain of subspaces of `Lambda`, so it
+strictly decreases at most `dim Lambda - dim K(∞)` times. Choosing
+targets greedily — at each step, if the current intersection strictly
+contains `K(∞)`, some `x` (hence a generic one) strictly reduces it —
+
+> `K(n) = K(∞)` for generic targets once
+> `n >= dim Lambda - dim K(∞)`. ∎
+
+### 7g. Theorem 2b′ — sufficiency `[PROVED under (G1), (G2), (G3)]`
+
+**(G3)** For generic `P` with `R >= d + 2`, the map
+`G : P |-> ( || M(E_r - E_s) || )_{r<s}` has differential of rank
+`dR - d(d+1)/2`: it is an immersion modulo congruence.
+
+> `K(∞)` consists exactly of the rigid motions of the scene, so
+> `dim K(∞) = d(d+1)/2`; and therefore for generic scenes with
+>
+>     n >= dR + m(m+1)/2 - d(d+1)/2
+>
+> we have `ker L = ` rigid motions, `Im L ∩ F = 0`, and
+> `nullity = d(d+1)/2`.
+
+*Proof.* Take `(deltaP, A, b) in K(∞)`. Condition (T) holding at every
+`x` says the scene deformation carries the cloud by the ambient isometry
+`(A,b)`; equivalently `Sigma_{P + eps deltaP}` is congruent to
+`Sigma_P` to first order. Congruences carry cone points to cone points,
+so the pairwise distances of the `w(p_r)` are preserved to first order:
+`deltaP in ker DG`. By (G3), `deltaP` is an infinitesimal rigid motion
+of the observers; extend it to a rigid motion `g` of the whole scene and
+replace `(deltaX, deltaP)` by `(deltaX, deltaP) - g`, which changes
+nothing since `g` induces `delta w = 0`. Now `deltaP = 0`, and Lemma E
+gives `(A, b) = 0`. So `K(∞)` is exactly the rigid motions.
+
+Lemma F then gives `K(n) = K(∞)` for `n >= dim Lambda - d(d+1)/2`.
+Consequently no element of `K(n)` has `(A,b) != 0`, i.e.
+`Im L ∩ F = 0`; and an element with `(A,b) = 0` has `deltaP` rigid and
+then `delta x_j` uniquely determined by the injectivity of `M U(x_j)`
+(rank `d`, as `m > d`), so `ker L` is exactly the rigid motions. ∎
+
+### 7h. Where the bounds meet: `R = d + 2` is settled `[PROVED]`
+
+Theorem 2a gives `n >= N(d,R)`; Theorem 2b′ gives rigidity once
+`n >= dR + m(m+1)/2 - d(d+1)/2`. The lower bound is the upper bound
+divided by `m - d` and rounded up, so **when `m - d = 1` — that is,
+exactly when `R = d + 2` — the two coincide and the threshold is
+pinned**:
+
+    n_threshold(d, d+2) = d^2 + 3d + 1,   proved, for every d >= 2.
+
+| `d` | `R = d+2` | threshold |
+|---|---|---|
+| 2 | 4 | 11 |
+| **3** | **5** | **19** |
+| 4 | 6 | 29 |
+| 5 | 7 | 41 |
+| 6 | 8 | 55 |
+| 7 | 9 | 71 |
+
+The `d = 3` row is the physical one: **in 3+1 spacetime, five observers
+and 19 targets, and both numbers are now theorems** rather than
+measurements — modulo (G1)–(G3).
+
+For `R > d + 2` the bounds separate (e.g. `d = 3, R = 6` gives
+`14 <= n_threshold <= 27`, measured 14). Sharpness there is still open,
+and is what remains of the original conjecture.
+
 ### 7c. The closed form at `R = d + 2` `[PROVED, given 7a]`
 
 At `R = d + 2` we have `m - d = 1` and the ceiling is vacuous:
@@ -256,6 +388,13 @@ just the conclusion:
 5. **Theorem 2a** — that no measured rigid cell violates the lower bound.
 6. **The `d = 1` counterexample to sufficiency** — the necessary
    condition holds while rigidity fails.
+7. **Lemma E's two inputs** — that `rank E = R` and that the cone points
+   span `V`, so their affine span exceeds the largest possible zero set
+   of a nonzero ambient isometry.
+8. **(G3)** — the rank of `DG` against `dR - d(d+1)/2`.
+9. **The brackets** — that `N(d,R) <= dR + m(m+1)/2 - d(d+1)/2` always,
+   that every measured threshold lies between them, and that they
+   coincide exactly on the cells with `R = d + 2`.
 
 ## 9. Status
 
@@ -265,16 +404,33 @@ just the conclusion:
 | Lemma B (complete-graph flex dimension) | `[PROVED]` |
 | Lemma C (decomposition, and `nullity = dim ker Psi`) | `[PROVED]` |
 | (G1), (G2) genericity | `[PROVABLE]` |
+| **(G3)** observer gap map is an immersion mod congruence | `[PROVABLE]`, 18/18 cells |
 | Theorem 1 (`R <= d+1` closed form) | `[PROVED]` under (G1), (G2) |
 | Theorem 2a (threshold necessity) | `[PROVED]` under (G2) |
-| Theorem 2b (threshold sufficiency) | `[CONJECTURED]`, 15/15 cells |
+| Lemma E (`Sigma_P` has no continuous symmetry) | `[PROVED]` under (G1) |
+| Lemma F (finitely many targets suffice) | `[PROVED]` |
+| **Theorem 2b′ (sufficiency, with an explicit bound)** | `[PROVED]` under (G1)–(G3) |
+| **Threshold at `R = d + 2` equals `d^2 + 3d + 1`** | `[PROVED]` under (G1)–(G3) |
+| Sharpness of the threshold for `R > d + 2` | `[CONJECTURED]`, 15/15 cells |
 | `R >= d + 2` as *the* rigidity threshold | `[MEASURED]`, `d = 1..6` |
 
 What this changes relative to v1.2: the counting law and the threshold
 formula had four and one confirmations respectively and **no
-derivation**. They now have one. The regime law's *necessary* half is a
-theorem in every dimension at once, which is what a general-`d` result
-was supposed to buy.
+derivation**. They now have one, and the sufficiency step — the one that
+looked like the permanent obstacle — is closed at `R = d + 2`, which is
+the case that answers the physical question. Three spatial dimensions
+need five observers and 19 targets, and both numbers are theorems.
+
+The residual conjecture is narrower than the original in two ways. It
+concerns only `R > d + 2`, where the extra observers make the count
+divide unevenly; and it is a *sharpness* claim, not an existence one,
+since Theorem 2b′ already gives rigidity there at a larger explicit `n`.
+
+(G3) is worth separating out. It is the single unproved input to
+sufficiency, and it is a statement about one concrete finite-dimensional
+map on observer configurations alone — no targets, no surface, no
+`n`. It is verified at rank exactly `dR - d(d+1)/2` in all 18 cells run
+across `d = 2..7`.
 
 What it does not change: the scope. Everything here is infinitesimal
 rigidity in the exact model. Global uniqueness, noisy or
@@ -282,11 +438,19 @@ rigidity in the exact model. Global uniqueness, noisy or
 measured causal set are all still outside, and no amount of further
 dimensions would bring them in.
 
-**The one open step is 7b**, and it is not a matter of more measurement.
-`d = 1` shows the count is not self-sufficient, so a proof has to use
-curvature of the profile surface — plausibly by exhibiting, at some
-convenient configuration, a `Psi` of maximal rank and invoking lower
-semicontinuity of rank, which is the standard route and the reason the
-tag is `[CONJECTURED]` rather than `[PROVABLE]`: the convenient
-configuration has to be constructed, and in `d >= 2` it must be one
-where the profile surface genuinely curves.
+**What is left is (G3) and the sharpness for `R > d + 2`.** Neither is a
+matter of more measurement. (G3) is an explicit rank statement about one
+map on observer configurations, of the kind that yields to a single
+well-chosen configuration plus lower semicontinuity of rank. Sharpness
+for `R > d + 2` asks why `m - d` independent conditions arrive with each
+new target rather than fewer, and Lemma F's greedy argument only
+guarantees one.
+
+The route that closed 7b is worth recording, because the obstacle was
+never really the counting. `d = 1` shows counting cannot be
+self-sufficient; what supplies the missing content is that the profile
+surface **is not smooth**. Each observer contributes a conical singular
+point, a continuous group cannot permute finitely many of them, and the
+cone points are forced to span because the non-squared observer distance
+matrix has full rank. The curvature that `d = 1` lacks turns out to be
+the curvature of those cones.
