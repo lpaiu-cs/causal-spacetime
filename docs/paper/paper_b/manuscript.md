@@ -840,9 +840,22 @@ The experiments establish empirically what the instrument distinguishes.
 This section states what its observable can identify *in principle* —
 proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
-check into the strongest check the observable admits. Full statements,
-proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v1.5); every statement
+check into the strongest check the observable admits.
+
+The construction underneath it is, as far as a positioning audit could
+determine, the newest thing in this program: no prior work builds
+observer worldlines of ticks on a causal set and defines spatial
+structure from the resulting bracket widths. The existing families of
+causal-set spatial distance each supply an external ingredient instead —
+the dimension itself [@rideout2009], a mesoscale [@eichhorn2019], a
+dimension-dependent constant [@bogunakrioukov2024], or a choice of
+antichain [@major2006; @major2007]. What is supplied here is an observer
+congruence, which is a different trade and not a strictly better one:
+the chain is itself protocol structure, so this is a new route to
+spatial reconstruction rather than a derivation from order alone.
+
+Full statements, proofs, and proof-status tags are in
+`docs/theory/t1_parallax_identifiability.md` (v1.6); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -896,11 +909,23 @@ mirrored about a lone observer produce identical widths exactly — the
 "parallax" in the method's name is the second observer breaking that
 fold, and the harness pins the fold as an integer-equality regression.
 
+The closest prior identifiability result in the causal-set literature is
+[@humeyermeyer2025], which shows that distances between causally related
+pairs determine distances between spacelike pairs in any dimension,
+removing the conformal ambiguity. The difference is the input: it assumes
+exact continuum separations, where everything below works from finite
+order data through a measured instrument. Related questions of embedding
+uniqueness and the Hauptvermutung are treated in [@madsen2026] and
+[@muller2025].
+
 The stronger statement concerns the *unlabeled* case, which is the one
 the pipeline actually inhabits: the parallax dissimilarity D of
 Section 3.2 discards observer labels by construction. For exact
-profiles, D is strictly Robinson (a seriation structure [@robinson1951])
-in the true spatial order: the centered-profile map is piecewise linear with
+profiles, D is strictly Robinson in the true spatial order — a seriation
+structure [@robinson1951; @brainerd1951], whose decoding to an order up
+to reversal is classical [@atkins1998; @preafortin2014; @carmona2025] and
+is not what we claim; what we claim is that the parallax observable *has*
+that structure. The centered-profile map is piecewise linear with
 gap-direction inner products exactly 4 a_k b_l / R > 0 on the hull
 (a_k, b_l count observers flanking the gaps), which forces
 D(x,z)^2 > D(x,y)^2 + D(y,z)^2 for x < y < z. Consequently the largest
@@ -1047,12 +1072,36 @@ fluctuates like a longest chain should (Tracy-Widom, exponent 1/3,
 with Poisson excluded by 12.8 standard errors), while the
 tube-confined chain fluctuates like a Poisson process (exponent 1/2,
 Tracy-Widom excluded by 13.2), against a thinned clock that returns
-its constructed 1/2 as calibration. The mechanism is confinement:
+its constructed 1/2 as calibration.
+
+Both of those are confirmations of exact theory rather than findings,
+and the reason is an identification worth stating explicitly. In null
+coordinates u = t - x, v = t + x the 1+1D causal relation becomes
+coordinatewise order under a linear map of constant Jacobian, so a
+sprinkled Alexandrov interval becomes an axis-aligned rectangle of
+Poisson points and the longest chain *is* the longest increasing path
+through them — not an analogue of Poissonian last-passage percolation
+but that object [@bollobasbrightwell1991; @bachmat2007]. The
+unconstrained exponent 1/3, with Tracy-Widom fluctuations, is then
+[@bdj1999; @johansson2000]; the confined Gaussian 1/2 is
+[@deyjosephpeled2024], **including the confinement mechanism** that the
+measurements here recover independently. That mechanism is that
 Tracy-Widom fluctuations come from a longest chain's freedom to
 optimize a transverse path, and the tube is rho^{-1/2} wide against a
 natural wandering of rho^{-1/6}, so it suppresses precisely that
 freedom — widening the tube to the wandering scale restores the 1/3
-exponent monotonically. The consequence for the error laws above is
+exponent monotonically. Confinement in this sense is not thinness of
+the domain: last-passage percolation in a thin rectangle still
+converges to Tracy-Widom [@bodineaumartin2005; @baiksuidan2005], and
+what destroys the optimization is constraining the path while the
+endpoints stay on the diagonal.
+
+What is this program's own here is therefore narrow, and we state it
+narrowly: not the exponents, but the observation that a dedicated
+survey of causal-set chain statistics cites the relevant theorem and
+never names the class [@brightwellluczak2015], and that the
+corresponding statements in three or more spatial dimensions remain
+open. The consequence for the error laws above is
 that neither arm's error exponent measures its own count class: the
 tube's is contaminated by the wandering it failed to remove, and the
 order-only chain's is swamped by the wandering it deliberately allows.
@@ -1110,8 +1159,23 @@ expects. Centering might be thought to cost an observer, since two
 targets share a centered profile exactly when their distances to every
 observer differ by a common constant — the condition behind
 three-receiver ambiguity in hyperbolic positioning — but for targets
-in the hull that never happens, and the labeled centered profile
-already fixes the target. What defeats three observers is dimensional:
+in the hull that never happens in any configuration we scanned, and the
+labeled centered profile already fixes the target.
+
+That deserves a warning, because two different d + 2 thresholds meet
+here and a reader from the localization literature will assume they are
+the same one. Range-difference positioning with *known, labeled*
+receivers has its own: d + 1 receivers leave a generic two-fold
+ambiguity and d + 2 remove it, stated in general dimension by
+[@calhoun2021] and analysed rigorously for the plane, with the
+bifurcation locus mapped, by [@compagnoni2014]. The threshold below is
+**not** that one. It removes a continuous flex in an *unlabeled*
+problem with *unknown* observer positions, and it arrives through
+curvature of the profile surface rather than through a discrete fold.
+The two coincide numerically and share no mechanism. We also state the
+weakness plainly: the hull claim above is a numerical finding standing
+against a published genericity theorem, and closing it properly would
+mean proving the hull case, which we have not done. What defeats three observers is dimensional:
 three centered profiles span only a two-dimensional space, so the
 profile surface fills its ambient and the dissimilarity collapses to
 the distance matrix of coplanar points, leaving six continuous
@@ -1234,6 +1298,31 @@ cone points is an immersion modulo congruence, which is verified at
 exact rank in every configuration tried across six spatial dimensions.
 For more than d + 2 observers the two bounds separate and sharpness is
 still open, though rigidity itself is not.
+
+A reconciliation is owed here, because unlabeled rigidity is a developed
+subject and a reader will reach for it. [@gtt2019] proves that for two or
+more dimensions and at least d + 2 generic points, labels have no effect
+on generic uniqueness — a configuration is determined by the *unlabeled*
+multiset of pairwise lengths exactly when it is determined by the labeled
+ones — with successors in [@garamvolgyi2021; @garamvolgyi2022;
+@connelly2024; @gkioulekas2024]. **The result above is not a corollary of
+that, and does not reprove it.** In those papers the measurements are
+lengths among the unknown points themselves and "unlabeled" is a
+combinatorial quotient over which pair produced which number. Here the
+measurements are lengths among the *images* of a map whose parameters —
+the observer positions — are themselves unknown, and permutation
+invariance is automatic rather than hard-won, since the dissimilarity
+depends on the profiles only through Euclidean distances. The nearer
+structural home is identifiability under algebraic constraints
+[@cruickshank2023] and the frameworks-on-surfaces program, which assumes
+the surface known and fixed where ours is parametrized by hidden
+observers.
+
+The vocabulary that goes with that distinction is not optional. What is
+established here is **infinitesimal** rigidity — the flex space has the
+dimension of the rigid motions, in an exact model. [@gtt2019] establishes
+**global** generic uniqueness. Our statement is strictly the weaker of
+the two and we do not describe it as global rigidity anywhere.
 
 The scope conditions of Section 8.5 travel with this unchanged and are
 not relaxed by the extra dimensions, the derivation, or the proof:
