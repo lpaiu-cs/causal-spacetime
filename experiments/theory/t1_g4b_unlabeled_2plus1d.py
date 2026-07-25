@@ -187,26 +187,34 @@ def observer_ring(R: int, radius: float = RING_RADIUS) -> np.ndarray:
     return radius * np.column_stack((np.cos(angles), np.sin(angles)))
 
 
-def observer_shell(R: int, d: int, radius: float = RING_RADIUS) -> np.ndarray:
+def observer_shell(
+    R: int, d: int, radius: float = RING_RADIUS, variant: int = 0
+) -> np.ndarray:
     """Observers spread over the sphere of the given radius in ``R^d``.
 
-    ``d = 2`` returns the original evenly spaced ring, so the plane
-    results are bit-for-bit what they were. Higher dimensions take a
-    seeded pseudo-random spread rather than an exactly symmetric one, and
-    that is a deliberate choice: a regular simplex of observers is a
-    non-generic configuration, and a rank measured there would understate
-    what a typical configuration reaches. The seed depends only on
-    ``(d, R)``, so the shell is fixed once those are.
+    ``d = 2`` at the default variant returns the original evenly spaced
+    ring, so the plane results are bit-for-bit what they were. Higher
+    dimensions take a seeded pseudo-random spread rather than an exactly
+    symmetric one, and that is a deliberate choice: a regular simplex of
+    observers is a non-generic configuration, and a rank measured there
+    would understate what a typical configuration reaches.
+
+    ``variant`` redraws the shell from a different seed while changing
+    nothing else. A rigidity THRESHOLD is a claim about where a rank
+    transition sits, so it is fair to ask whether the number belongs to
+    the geometry or to one arbitrary placement; varying this is how that
+    gets answered rather than assumed.
     """
 
-    if d == 2:
+    if d == 2 and variant == 0:
         return observer_ring(R, radius)
-    directions = np.random.default_rng(90_001 + 17 * d + R).normal(size=(R, d))
+    seed = 90_001 + 17 * d + R + 1_000_003 * variant
+    directions = np.random.default_rng(seed).normal(size=(R, d))
     directions /= np.linalg.norm(directions, axis=1, keepdims=True)
     return radius * directions
 
 
-def scene(n: int, R: int, seed: int, d: int = 2):
+def scene(n: int, R: int, seed: int, d: int = 2, shell_variant: int = 0):
     rng = np.random.default_rng(seed)
     if d == 1:
         P = np.sort(rng.uniform(-1.0, 1.0, size=(R, 1)), axis=0)
@@ -214,13 +222,13 @@ def scene(n: int, R: int, seed: int, d: int = 2):
             rng.uniform(P.min() + 0.05, P.max() - 0.05, size=(n, 1)), axis=0
         )
         return X, P
-    if d == 2:
+    if d == 2 and shell_variant == 0:
         P = observer_ring(R)
         radius = TARGET_RADIUS * np.sqrt(rng.uniform(0.0, 1.0, size=n))
         angle = rng.uniform(0.0, 2.0 * np.pi, size=n)
         X = np.column_stack((radius * np.cos(angle), radius * np.sin(angle)))
         return X, P
-    P = observer_shell(R, d)
+    P = observer_shell(R, d, variant=shell_variant)
     directions = rng.normal(size=(n, d))
     directions /= np.linalg.norm(directions, axis=1, keepdims=True)
     radius = TARGET_RADIUS * rng.uniform(0.0, 1.0, size=n) ** (1.0 / d)

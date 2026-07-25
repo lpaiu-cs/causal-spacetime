@@ -177,6 +177,7 @@
     "p3_d3_r5plus_curved": {
       "d": 3,
       "gauge": 6,
+      "shell_variant": 0,
       "rows": [
         {
           "R": 5,
@@ -505,6 +506,761 @@
       ],
       "all_reached_rigidity": true,
       "passed": true
+    },
+    "p6_d4_r3_under_observed": {
+      "d": 4,
+      "R": 3,
+      "regime_condition": "R - 1 = 2 < d = 4",
+      "rows": [
+        {
+          "n": 6,
+          "nullity": 27,
+          "extra_flexes": 17
+        },
+        {
+          "n": 7,
+          "nullity": 29,
+          "extra_flexes": 19
+        },
+        {
+          "n": 8,
+          "nullity": 31,
+          "extra_flexes": 21
+        },
+        {
+          "n": 9,
+          "nullity": 33,
+          "extra_flexes": 23
+        },
+        {
+          "n": 10,
+          "nullity": 35,
+          "extra_flexes": 25
+        },
+        {
+          "n": 11,
+          "nullity": 37,
+          "extra_flexes": 27
+        },
+        {
+          "n": 12,
+          "nullity": 39,
+          "extra_flexes": 29
+        }
+      ],
+      "consecutive_nullity_steps": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "expected_slope": 2,
+      "slope_is_constant": true,
+      "observed_slope": 2,
+      "grows_with_n": true,
+      "passed": true
+    },
+    "p7_d4_r4_under_observed": {
+      "d": 4,
+      "R": 4,
+      "regime_condition": "R - 1 = 3 < d = 4",
+      "rows": [
+        {
+          "n": 6,
+          "nullity": 28,
+          "extra_flexes": 18
+        },
+        {
+          "n": 7,
+          "nullity": 29,
+          "extra_flexes": 19
+        },
+        {
+          "n": 8,
+          "nullity": 30,
+          "extra_flexes": 20
+        },
+        {
+          "n": 9,
+          "nullity": 31,
+          "extra_flexes": 21
+        },
+        {
+          "n": 10,
+          "nullity": 32,
+          "extra_flexes": 22
+        },
+        {
+          "n": 11,
+          "nullity": 33,
+          "extra_flexes": 23
+        },
+        {
+          "n": 12,
+          "nullity": 34,
+          "extra_flexes": 24
+        }
+      ],
+      "consecutive_nullity_steps": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "expected_slope": 1,
+      "slope_is_constant": true,
+      "observed_slope": 1,
+      "grows_with_n": true,
+      "passed": true
+    },
+    "p8_d4_r5_saturated": {
+      "d": 4,
+      "R": 5,
+      "regime_condition": "R - 1 = 4 == d = 4",
+      "rows": [
+        {
+          "n": 6,
+          "nullity": 30,
+          "extra_flexes": 20
+        },
+        {
+          "n": 10,
+          "nullity": 30,
+          "extra_flexes": 20
+        },
+        {
+          "n": 14,
+          "nullity": 30,
+          "extra_flexes": 20
+        },
+        {
+          "n": 20,
+          "nullity": 30,
+          "extra_flexes": 20
+        },
+        {
+          "n": 30,
+          "nullity": 30,
+          "extra_flexes": 20
+        }
+      ],
+      "distinct_nullities": [
+        30
+      ],
+      "distinct_extra_flexes": [
+        20
+      ],
+      "constant_in_n": true,
+      "nullity": 30,
+      "extra_flexes": 20,
+      "counting_law_d_times_R_plus_gauge": 30,
+      "passed": true
+    },
+    "p9_d4_r6plus_curved": {
+      "d": 4,
+      "gauge": 10,
+      "shell_variant": 0,
+      "rows": [
+        {
+          "R": 6,
+          "regime_condition": "R - 1 = 5 > d = 4",
+          "first_rigid_n": 29,
+          "counting_bound": 12,
+          "detail": [
+            {
+              "n": 8,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 16,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 17,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 18,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 19,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 20,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 21,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 22,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 23,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 24,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 25,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 26,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 27,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 28,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 29,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 30,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 31,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 32,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 33,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 34,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 35,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 36,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 37,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 38,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 39,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 40,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        },
+        {
+          "R": 8,
+          "regime_condition": "R - 1 = 7 > d = 4",
+          "first_rigid_n": 17,
+          "counting_bound": 13,
+          "detail": [
+            {
+              "n": 8,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 16,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 17,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 18,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 19,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 20,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 21,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 22,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 23,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 24,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 25,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 26,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 27,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 28,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 29,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 30,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 31,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 32,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 33,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 34,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 35,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 36,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 37,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 38,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 39,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 40,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        }
+      ],
+      "all_reached_rigidity": true,
+      "passed": true
+    },
+    "p11_d5_r7_threshold": {
+      "d": 5,
+      "gauge": 15,
+      "shell_variant": 0,
+      "rows": [
+        {
+          "R": 7,
+          "regime_condition": "R - 1 = 6 > d = 5",
+          "first_rigid_n": 41,
+          "counting_bound": 14,
+          "detail": [
+            {
+              "n": 32,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 33,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 34,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 35,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 36,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 37,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 38,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 39,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 40,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 41,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 42,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 43,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 44,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 45,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 46,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 47,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 48,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 49,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 50,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        }
+      ],
+      "all_reached_rigidity": true,
+      "passed": true
+    },
+    "p12_d3_r5_other_shell": {
+      "d": 3,
+      "gauge": 6,
+      "shell_variant": 1,
+      "rows": [
+        {
+          "R": 5,
+          "regime_condition": "R - 1 = 4 > d = 3",
+          "first_rigid_n": 19,
+          "counting_bound": 9,
+          "detail": [
+            {
+              "n": 10,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 16,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 17,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 18,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 19,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 20,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 21,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 22,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 23,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 24,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 25,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ]
+        }
+      ],
+      "all_reached_rigidity": true,
+      "passed": true
+    },
+    "p13_d5_r6_saturated": {
+      "d": 5,
+      "R": 6,
+      "regime_condition": "R - 1 = 5 == d = 5",
+      "rows": [
+        {
+          "n": 8,
+          "nullity": 45,
+          "extra_flexes": 30
+        },
+        {
+          "n": 12,
+          "nullity": 45,
+          "extra_flexes": 30
+        },
+        {
+          "n": 16,
+          "nullity": 45,
+          "extra_flexes": 30
+        },
+        {
+          "n": 20,
+          "nullity": 45,
+          "extra_flexes": 30
+        }
+      ],
+      "distinct_nullities": [
+        45
+      ],
+      "distinct_extra_flexes": [
+        30
+      ],
+      "constant_in_n": true,
+      "nullity": 45,
+      "extra_flexes": 30,
+      "counting_law_d_times_R_plus_gauge": 45,
+      "passed": true
     }
   },
   "all_passed": true,
@@ -545,6 +1301,66 @@
       "confidence_when_frozen": "strong"
     }
   ],
-  "predictions_hit": 5,
-  "predictions_total": 5
+  "prediction_scorecard_round2": [
+    {
+      "id": "P6",
+      "predicted": "d=4, R=3: nullity grows in n with slope 2",
+      "observed": "slope 2, steps [2, 2, 2, 2, 2, 2]",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P7",
+      "predicted": "d=4, R=4: nullity grows in n with slope 1",
+      "observed": "slope 1, steps [1, 1, 1, 1, 1, 1]",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P8",
+      "predicted": "d=4, R=5: nullity 30, extra 20, constant in n",
+      "observed": "nullity 30, extra 20, constant=True",
+      "hit": true,
+      "confidence_when_frozen": "medium"
+    },
+    {
+      "id": "P9",
+      "predicted": "d=4, R>=6: nullity 10 = gauge, extra 0",
+      "observed": "R=6 first rigid n=29; R=8 first rigid n=17",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P10",
+      "predicted": "d=4, R=6 threshold exceeds both 12 (counting bound) and 19 (the d=3, R=5 threshold)",
+      "observed": "first rigid n = 29",
+      "hit": true,
+      "confidence_when_frozen": "directional"
+    }
+  ],
+  "prediction_scorecard_round3": [
+    {
+      "id": "P11",
+      "predicted": "d=5, R=7 threshold is exactly 41 (= d^2 + 3d + 1)",
+      "observed": "first rigid n = 41",
+      "hit": true,
+      "confidence_when_frozen": "speculative"
+    },
+    {
+      "id": "P12",
+      "predicted": "a redrawn observer shell leaves the d=3, R=5 threshold at 19",
+      "observed": "first rigid n = 19 (shell variant 1)",
+      "hit": true,
+      "confidence_when_frozen": "medium"
+    },
+    {
+      "id": "P13",
+      "predicted": "d=5: gauge 15 when rigid, and R=6 saturated at nullity 45, extra 30, constant in n",
+      "observed": "gauge 15; R=6 nullity 45, extra 30, constant=True",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    }
+  ],
+  "predictions_hit": 13,
+  "predictions_total": 13
 }

@@ -77,8 +77,21 @@ This paper reports the validated-instrument line of the program:
    character with dimension: ordinal in 1+1D, metric in 2+1D, where
    four or more observers make the dissimilarity determine the whole
    scene up to congruence while three provably do not (characterization
-   at stated strength -- infinitesimal rigidity, exact model). Source:
-   `docs/theory/t1_parallax_identifiability.md` (v1.0) and manuscript
+   at stated strength -- infinitesimal rigidity, exact model).
+   That threshold is not a 2+1D fact but a general-dimension law
+   (Section 8.6): the observable rigidifies exactly from `R >= d + 2`
+   observers, so physical 3+1 needs five, from 19 targets, and 1+1D is
+   the lone exception because its profile surface is a polyline of zero
+   curvature. Measured across spatial dimensions one through five
+   against 13 predictions preregistered in three rounds and never
+   amended afterwards, 13/13 -- including the two that carry
+   information: a fibre slope of 2 where every prior measurement had
+   slope 1, and the `R = d + 2` threshold formula carried out of sample
+   to `d = 5` (predicted 41, measured 41). Scope is unchanged by the
+   extra dimensions, and a written general-`d` proof -- which would
+   close every dimension at once -- is the open item. Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.2),
+   `docs/theory/t1_g4c_predictions{,_round2,_round3}.json`, and manuscript
    Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime

@@ -118,6 +118,76 @@ def test_five_observers_in_three_dimensions_reach_rigidity():
         assert (null == gauge_dimension(3)) is expect_rigid, (n, null)
 
 
+def _is_rigid(n: int, R: int, d: int, seed: int, shell_variant: int = 0) -> bool:
+    X, P = scene(n, R, seed=seed, d=d, shell_variant=shell_variant)
+    null, _ = nullity(flatten(X, P), n, R, d, )
+    return null == gauge_dimension(d)
+
+
+def test_fibre_slope_tracks_d_minus_r_plus_one_not_just_one():
+    """The out-of-sample cell that separates the formula from a pattern.
+
+    Every cell measured before round 2 -- d=2 R=2, d=3 R=3 -- had fibre
+    dimension exactly 1, so "slope 1" fitted all of it. At d=4, R=3 the
+    formula says 2 and mere pattern-matching says 1.
+    """
+
+    steep = nullity_by_n(range(6, 13), R=3, d=4, seed_base=1100)
+    assert [row["nullity"] for row in steep] == [27, 29, 31, 33, 35, 37, 39]
+    assert set(consecutive_differences(steep)) == {2}
+
+    shallow = nullity_by_n(range(6, 13), R=4, d=4, seed_base=1200)
+    assert [row["nullity"] for row in shallow] == [28, 29, 30, 31, 32, 33, 34]
+    assert set(consecutive_differences(shallow)) == {1}
+
+
+def test_counting_law_holds_in_four_and_five_dimensions():
+    """nullity = d*R + d(d+1)/2 in the saturated regime, now at its
+    third and fourth confirmation (9 at d=2, 18 at d=3)."""
+
+    d4 = nullity_by_n((6, 10, 14, 20, 30), R=5, d=4, seed_base=1300)
+    assert {row["nullity"] for row in d4} == {4 * 5 + gauge_dimension(4)} == {30}
+
+    d5 = nullity_by_n((8, 12, 16, 20), R=6, d=5, seed_base=1700)
+    assert {row["nullity"] for row in d5} == {5 * 6 + gauge_dimension(5)} == {45}
+
+
+def test_rigidity_thresholds_at_r_equals_d_plus_two():
+    """Measured 11, 19, 29, 41 for d = 2, 3, 4, 5.
+
+    The d = 5 point was predicted at 41 by n = d^2 + 3d + 1 fitted to the
+    first three, and committed before the scan ran; it is the only thing
+    that makes the formula more than interpolation.
+    """
+
+    assert not _is_rigid(28, 6, 4, seed=1400 + 8)
+    assert _is_rigid(29, 6, 4, seed=1400 + 29)
+    assert not _is_rigid(40, 7, 5, seed=1500 + 40)
+    assert _is_rigid(41, 7, 5, seed=1500 + 41)
+
+    for d, measured in ((2, 11), (3, 19), (4, 29), (5, 41)):
+        assert d * d + 3 * d + 1 == measured
+
+
+def test_threshold_survives_a_redrawn_observer_shell():
+    """A threshold is a claim about where a rank transition sits, so it
+    could have been an artifact of one arbitrary observer placement.
+    Redrawing the shell leaves d = 3, R = 5 at 19."""
+
+    assert not _is_rigid(18, 5, 3, seed=1600 + 18, shell_variant=1)
+    assert _is_rigid(19, 5, 3, seed=1600 + 19, shell_variant=1)
+
+
+def test_shell_variant_zero_leaves_the_plane_construction_alone():
+    """The variant knob must not perturb any existing G4b number."""
+
+    plain = scene(9, 4, seed=42, d=2)
+    same = scene(9, 4, seed=42, d=2, shell_variant=0)
+    np.testing.assert_array_equal(plain[0], same[0])
+    np.testing.assert_array_equal(plain[1], same[1])
+    assert not np.allclose(scene(9, 4, seed=42, d=2, shell_variant=1)[1], plain[1])
+
+
 def test_counting_bound_is_necessary_but_was_not_tight_anywhere():
     """It gave 7 where the plane measured 11, and 9 where three
     dimensions measured 19. Recorded so the gap is visible rather than

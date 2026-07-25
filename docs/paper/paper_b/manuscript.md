@@ -842,7 +842,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v1.0); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.2); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -1145,6 +1145,56 @@ therefore verified numerically rather than proved, and Section 6's
 law, concentration and labeled identifiability, with the unlabeled
 statement standing as characterization at that stated strength.
 
+### 8.6 The threshold is a general-dimension law
+
+The argument of Section 8.5 never mentions the number two. The centered
+profile map carries a d-dimensional target space into the
+(R-1)-dimensional mean-zero subspace of the R observer readings, so its
+image is a d-surface, and the behaviour is fixed by whether that surface
+has room to curve. Below R - 1 = d it does not even fill its ambient:
+the map is a submersion, each target slides along a fibre of dimension
+d - R + 1 without moving the observable at all, and the flex count grows
+with the number of targets. At R - 1 = d the surface exactly fills its
+ambient, the dissimilarity collapses to a distance matrix, and the flex
+count is constant in the target count. Above it — that is, from
+R >= d + 2 — the surface is curved inside a larger space and the flexes
+vanish down to rigid motion. Two spatial dimensions gave R >= 4 because
+2 + 2 = 4, not because the plane is distinguished.
+
+We tested that reading rather than asserting it, in three rounds whose
+predictions were committed before the corresponding measurements and
+never amended after. All thirteen hold, across spatial dimensions one
+through five. Two of them carry the weight. Every configuration measured
+before the second round happened to have fibre dimension exactly one, so
+a law stating merely "slope one" would have fitted all existing data;
+at d = 4 with three observers the formula demands slope two, and slope
+two is what appears. And the rigidity thresholds at R = d + 2 run
+11, 19, 29 for d = 2, 3, 4, which n = d^2 + 3d + 1 reproduces exactly —
+an empty observation, since three points determine a quadratic, until it
+was carried out of sample to d = 5, where it predicted 41 before the scan
+and measured 41. Redrawing the observer positions from a different seed
+leaves the d = 3 threshold at 19, so these are properties of the
+geometry rather than of one arbitrary placement.
+
+For physical 3+1 spacetime, where the spatial dimension is three, the
+consequence is explicit: **five observers suffice, from 19 targets, and
+the unlabeled dissimilarity then determines the whole scene up to
+Euclidean congruence with the absolute scale included.** One spatial
+dimension remains the exception at every observer count, and now for a
+stated reason — there the profile surface is a polyline of exactly zero
+curvature, so the mechanism that rigidifies every higher dimension is
+absent rather than merely weak.
+
+The scope conditions of Section 8.5 travel with this unchanged and are
+not relaxed by the extra dimensions: infinitesimal rigidity in the exact
+model, verified numerically rather than proved, with global uniqueness,
+noisy dissimilarity, and dissimilarity harvested through the instrument
+all outside what is claimed. The counting law for the saturated regime
+has four confirmations and no derivation; the threshold formula has one
+out-of-sample confirmation and none. A written general-dimension theorem
+would close every dimension at once and is the open item; a sixth
+measured dimension would not.
+
 ![Figure 6](figures/fig6_theory.png)
 
 *Figure 6. The theory of Section 8 on its verified data. Left: the
@@ -1439,7 +1489,7 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v1.0). Verification: `experiments/theory/t1_verification.py` (13
+(v1.2). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
@@ -1450,7 +1500,17 @@ unmodified, with its table tracked at
 2+1D result of Section 8.5: seven checks, the Jacobian taken by
 complex-step differentiation and the rigid-motion gauge asserted
 before any verdict, table tracked at
-`docs/theory/t1_g4b_unlabeled_results.json`), and
+`docs/theory/t1_g4b_unlabeled_results.json`),
+`experiments/theory/t1_g4c_general_dimension.py` (the general-dimension
+law of Section 8.6: nine checks over spatial dimensions two through
+five, scored against the three preregistration files
+`docs/theory/t1_g4c_predictions{,_round2,_round3}.json`, which were
+each committed before the measurement they score and never amended
+afterwards; the harness reads them rather than restating them, and a
+missed prediction is recorded on the scorecard rather than failing the
+run, so that CI pins what was measured and never applies pressure to
+the predictions; table tracked at
+`docs/theory/t1_g4c_general_dimension_results.json`), and
 `experiments/theory/t1_g2_count_class.py` (the count-fluctuation
 class of Section 8.4, measured from chain lengths with no distance
 estimator, table tracked at

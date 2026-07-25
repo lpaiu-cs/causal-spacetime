@@ -1,12 +1,17 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.1 — statements and proof programs; nothing frozen.
-One gap in Section 6 is open, and it was opened deliberately: G4c asks
-whether the G4b mechanism is a general-dimension law, and its predictions
-are written down in `t1_g4c_predictions.json` ahead of the measurement.**
-(v1.1 2026-07-25 KST: G4c opened with preregistered predictions — the
-regime law `sign((R-1) - d)`, the `R >= d + 2` rigidity threshold, and a
-retro-check at `d = 2, R = 2` that G4b never ran;
+Status: **THEORY DRAFT v1.2 — statements and proof programs; nothing frozen.
+The G4b threshold is a general-dimension law: `R >= d + 2` observers,
+measured and confirmed across `d = 1..5` against 13 predictions
+preregistered in three rounds. Physical `3 + 1` therefore needs five
+observers, from 19 targets. What remains open is a written proof, not
+another dimension.**
+(v1.2 2026-07-25 KST: G4c measured — the regime law `sign((R-1) - d)`
+confirmed at `d = 3, 4, 5`, slope `d - R + 1` separated from "slope 1"
+out of sample, and the `R = d + 2` thresholds `11, 19, 29, 41` shown
+robust to observer placement;
+v1.1 2026-07-25 KST: G4c opened with those predictions frozen ahead of
+the measurement;
 v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
 it directly from chain lengths rather than from the distance error —
 protocol-dependent, KPZ for the order-only chain and Poisson for the
@@ -1006,30 +1011,58 @@ with zero strict inversions in either.
   cannot curve, which is the same flatness that limits 1+1D. Section
   5b carries the statements and their scope; the work is
   `[MEASURED]` (infinitesimal rigidity, exact model), not `[PROVED]`.
-- **G4c — is the G4b mechanism a general-dimension law?** **OPEN
-  (v1.1), opened deliberately and with its predictions preregistered in
-  `t1_g4c_predictions.json`.** G4b's argument is stated in terms of one
+- **G4c — is the G4b mechanism a general-dimension law?** **MEASURED
+  and confirmed (v1.2) across `d = 1..5`, 13/13 preregistered
+  predictions over three rounds. The remaining item is a written proof,
+  not more measurement.** G4b's argument is stated in terms of one
   comparison and no dimension: the centered profile map sends `R^d` into
   the `(R-1)`-dimensional mean-zero subspace of `R^R`, so its image is a
-  `d`-surface, and everything follows from the sign of `(R-1) - d` —
-  fibres and an `n`-growing flex count when `R - 1 < d`, a filled ambient
-  and a constant flex count when `R - 1 = d`, curvature and rigidity when
-  `R >= d + 2`. That reading reproduces the measured `d = 2` numbers
-  exactly, and it explains why `d = 1` is exempt at every `R` (there
-  `Phi~` is piecewise linear, so the "surface" is a polyline with zero
-  curvature and the rigidifying mechanism is simply absent — an
-  exemption specific to one dimension, not expected to recur).
-  Two things make this worth doing as a *proof* target rather than as
-  another numerical arm. First, a general-`d` theorem would close
-  `3 + 1` and every higher dimension at once, whereas measuring `d = 3`
-  adds one more `[MEASURED]` data point at unchanged strength. Second,
-  `d = 3` is not merely confirmatory: it exposes the under-observed
-  regime (`R - 1 < d`, reachable at `R = 3`) that `d = 2` could only
-  have shown at `R = 2`, which G4b never ran. The prediction file
-  therefore also carries that `d = 2, R = 2` retro-check, which can
-  falsify the law in the already-understood dimension before `d = 3` is
-  reached. Nothing here may be cited: `[CONJECTURED]` until measured,
-  and `[MEASURED]` is the ceiling even then.
+  `d`-surface, and everything follows from the sign of `(R-1) - d`:
+
+  | condition | mechanism | flex count |
+  |---|---|---|
+  | `R - 1 < d` | submersion; each target slides along a fibre of dimension `d - R + 1` | grows in `n`, slope `d - R + 1` |
+  | `R - 1 = d` | surface fills its ambient; the freedom is realizable by moving observers | constant, `nullity = dR + d(d+1)/2` |
+  | `R >= d + 2` | curved `d`-surface in a bigger ambient; curvature rigidifies | `nullity = gauge = d(d+1)/2` |
+
+  So **`R >= d + 2` is the threshold in every dimension**, and the plane
+  was never special. For physical `3 + 1` (spatial `d = 3`): five
+  observers suffice, from `n >= 19` targets, and `D` then determines
+  targets and observers up to Euclidean congruence with the absolute
+  scale included. `d = 1` is exempt at every `R` because `Phi~` is
+  piecewise linear there — the "surface" is a polyline of zero curvature
+  and the rigidifying mechanism is simply absent. That exemption is
+  specific to one dimension and does not recur.
+
+  The evidence is preregistered in three rounds
+  (`t1_g4c_predictions{,_round2,_round3}.json`), each committed before
+  the corresponding measurement and never amended afterwards:
+
+  1. **Round 1 (`d = 3`, 5/5).** Includes the `d = 2, R = 2`
+     retro-check, a cell G4b never ran, which could have falsified the
+     law in the dimension already understood.
+  2. **Round 2 (`d = 4`, 5/5).** Out of sample. Every cell measured
+     before it had fibre dimension exactly `1`, so "slope 1" and
+     "slope `d - R + 1`" fitted all existing data equally; `d = 4,
+     R = 3` separates them and came back **slope 2**.
+  3. **Round 3 (3/3).** The thresholds at `R = d + 2` are `11, 19, 29`
+     for `d = 2, 3, 4`, which `n = d^2 + 3d + 1` reproduces exactly —
+     but three points determine a quadratic, so that fit carried no
+     information until it was put out of sample at `d = 5`, where it
+     predicted `41` and measured `41`. A control redraws the observer
+     shell from a different seed and leaves the `d = 3` threshold at
+     `19`, so the thresholds are not artifacts of one placement.
+
+  Scope is unchanged from G4b and is not improved by any of this:
+  `[MEASURED]`, infinitesimal rigidity in the exact model. Not global
+  uniqueness, not noisy or `delta`-quantized `D`, not `D` harvested
+  through the instrument from a measured causal set. The counting law
+  `nullity = dR + d(d+1)/2` has four confirmations and no derivation;
+  the threshold formula has one out-of-sample hit and no derivation at
+  all. **G4c-proof — a written general-`d` theorem — is the open
+  item**, and it is worth more than a sixth dimension would be: it
+  would close every `d` at once and lift the whole line from
+  `[MEASURED]` to `[PROVED]`.
 
 ## 7. Numerical verification plan
 
