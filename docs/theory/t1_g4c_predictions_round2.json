@@ -1,0 +1,77 @@
+{
+  "scope": "G4c round 2: an out-of-sample test of the regime law at d = 4. Written AFTER round 1 came back 5/5 at d = 3 and BEFORE any d = 4 measurement of any kind was run. Round 1's file is left untouched on purpose -- amending it would destroy the only thing that makes it evidence.",
+  "written": "2026-07-25 KST",
+  "parent_commit": "07d799e",
+  "why_a_second_round": "Round 1 hit 5 of 5, which is the point at which a law is least trustworthy and most in need of a test it was not tuned on. Every cell measured so far -- d=2 R=2, d=3 R=3 -- happened to have fibre dimension exactly 1, so 'slope 1' and 'slope d - R + 1' are not yet distinguishable by any data in this repo. d = 4 separates them.",
+
+  "state_of_evidence_when_written": {
+    "d=1": "measured: never rigid at any R (piecewise-linear exemption)",
+    "d=2": "measured: R=2 slope 1; R=3 saturated at nullity 9; R>=4 rigid, threshold 11 at R=4",
+    "d=3": "measured: R=3 slope 1; R=4 saturated at nullity 18, extra 12; R>=5 rigid, thresholds 19/14/12 at R=5/6/8",
+    "d>=4": "no measurement of any kind"
+  },
+
+  "predictions": [
+    {
+      "id": "P6",
+      "target": "d = 4, R = 3",
+      "regime": "under_observed",
+      "claim": "nullity grows in n with slope 2",
+      "law": "fibre dimension = d - R + 1 = 2",
+      "falsified_if": "the slope is 1, or is not constant",
+      "confidence": "strong",
+      "basis": "THE discriminating prediction of this round. Every measured cell so far had fibre dimension 1, so a law that merely said 'slope 1' would fit all existing data and fail here. If the slope comes back 1, the fibre-dimension formula is wrong and round 1 was pattern-matching."
+    },
+    {
+      "id": "P7",
+      "target": "d = 4, R = 4",
+      "regime": "under_observed",
+      "claim": "nullity grows in n with slope 1",
+      "law": "fibre dimension = d - R + 1 = 1",
+      "falsified_if": "the slope is not 1",
+      "confidence": "strong",
+      "basis": "the same formula at a different (d, R) with the same answer; pairs with P6 to show the slope tracks d - R + 1 rather than d or R alone"
+    },
+    {
+      "id": "P8",
+      "target": "d = 4, R = 5",
+      "regime": "saturated",
+      "claim": "nullity == 30 and extra flexes == 20, constant in n",
+      "law": "nullity = d*R + d(d+1)/2 = 20 + 10",
+      "falsified_if": "nullity is not 30, or varies with n",
+      "confidence": "medium",
+      "basis": "the counting law now has two confirmations (9 at d=2 R=3, 18 at d=3 R=4) rather than the one it had in round 1, but it remains a heuristic rather than a derivation"
+    },
+    {
+      "id": "P9",
+      "target": "d = 4, R >= 6, n large enough",
+      "regime": "curved",
+      "claim": "nullity == 10 == gauge, extra flexes == 0",
+      "falsified_if": "extra flexes remain positive at every n tested",
+      "confidence": "strong",
+      "basis": "the curvature argument, now at its third dimension"
+    },
+    {
+      "id": "P10",
+      "target": "d = 4, R = 6, first rigid n",
+      "claim": "the threshold exceeds both the counting bound (12) and the d = 3, R = 5 threshold (19)",
+      "counting_bound": {"inequality": "n(n-1)/2 >= d(n+R) - d(d+1)/2", "d4_R6": 12},
+      "falsified_if": "the threshold is <= 19",
+      "confidence": "directional",
+      "basis": "thresholds at R = d + 2 went 11 (d=2) then 19 (d=3); more parameters per point should keep pushing it up, and the counting bound has been loose in every dimension so far"
+    }
+  ],
+
+  "what_would_count_as_the_law_failing": [
+    "P6 returning slope 1 -- this would mean the fibre count is not d - R + 1 and round 1's agreement was coincidence",
+    "P9 finding no rigid n at all by the top of the scan, with extra flexes still positive",
+    "any nullity that is not constant where the law says saturated, or constant where the law says it grows"
+  ],
+
+  "still_not_claimed": [
+    "global uniqueness -- everything here is the rank of one Jacobian",
+    "noisy or delta-quantized D",
+    "D harvested through the instrument from a measured causal set",
+    "a written proof; even a perfect scorecard leaves this [MEASURED], not [PROVED]"
+  ]
+}
