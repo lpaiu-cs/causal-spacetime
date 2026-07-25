@@ -127,13 +127,20 @@ def jacobian(theta: np.ndarray, n: int, R: int, d: int = 2, h: float = 1e-30):
 
 
 def rigid_motion_gauge(theta: np.ndarray, d: int) -> np.ndarray:
-    """Basis of the exact invariances of ``D``: translations and (in the
-    plane) rotation, applied to the WHOLE scene.
+    """Basis of the exact invariances of ``D``: the rigid motions of the
+    WHOLE scene -- ``d`` translations and the ``d(d-1)/2`` rotation
+    generators, one per coordinate pair.
 
     Scale is deliberately absent. ``D`` is homogeneous of degree 1, so a
     global scaling multiplies it rather than preserving it -- which is
     why the absolute scale is recoverable and the gauge is ``d(d+1)/2``,
     not one more.
+
+    The pair loop is the general-``d`` form of what this function used to
+    special-case: at ``d = 2`` its single pair ``(0, 1)`` emits exactly
+    the old ``(-y, x)`` column, in the same position, so generalizing it
+    leaves every plane number untouched. At ``d = 1`` there are no pairs
+    and the gauge is the lone translation.
     """
 
     points = theta.reshape(-1, d)
@@ -142,10 +149,12 @@ def rigid_motion_gauge(theta: np.ndarray, d: int) -> np.ndarray:
         direction = np.zeros_like(points)
         direction[:, axis] = 1.0
         columns.append(direction.ravel())
-    if d == 2:
-        columns.append(
-            np.column_stack((-points[:, 1], points[:, 0])).ravel()
-        )
+    for first in range(d):
+        for second in range(first + 1, d):
+            direction = np.zeros_like(points)
+            direction[:, first] = -points[:, second]
+            direction[:, second] = points[:, first]
+            columns.append(direction.ravel())
     return np.column_stack(columns)
 
 
@@ -178,6 +187,25 @@ def observer_ring(R: int, radius: float = RING_RADIUS) -> np.ndarray:
     return radius * np.column_stack((np.cos(angles), np.sin(angles)))
 
 
+def observer_shell(R: int, d: int, radius: float = RING_RADIUS) -> np.ndarray:
+    """Observers spread over the sphere of the given radius in ``R^d``.
+
+    ``d = 2`` returns the original evenly spaced ring, so the plane
+    results are bit-for-bit what they were. Higher dimensions take a
+    seeded pseudo-random spread rather than an exactly symmetric one, and
+    that is a deliberate choice: a regular simplex of observers is a
+    non-generic configuration, and a rank measured there would understate
+    what a typical configuration reaches. The seed depends only on
+    ``(d, R)``, so the shell is fixed once those are.
+    """
+
+    if d == 2:
+        return observer_ring(R, radius)
+    directions = np.random.default_rng(90_001 + 17 * d + R).normal(size=(R, d))
+    directions /= np.linalg.norm(directions, axis=1, keepdims=True)
+    return radius * directions
+
+
 def scene(n: int, R: int, seed: int, d: int = 2):
     rng = np.random.default_rng(seed)
     if d == 1:
@@ -186,11 +214,17 @@ def scene(n: int, R: int, seed: int, d: int = 2):
             rng.uniform(P.min() + 0.05, P.max() - 0.05, size=(n, 1)), axis=0
         )
         return X, P
-    P = observer_ring(R)
-    radius = TARGET_RADIUS * np.sqrt(rng.uniform(0.0, 1.0, size=n))
-    angle = rng.uniform(0.0, 2.0 * np.pi, size=n)
-    X = np.column_stack((radius * np.cos(angle), radius * np.sin(angle)))
-    return X, P
+    if d == 2:
+        P = observer_ring(R)
+        radius = TARGET_RADIUS * np.sqrt(rng.uniform(0.0, 1.0, size=n))
+        angle = rng.uniform(0.0, 2.0 * np.pi, size=n)
+        X = np.column_stack((radius * np.cos(angle), radius * np.sin(angle)))
+        return X, P
+    P = observer_shell(R, d)
+    directions = rng.normal(size=(n, d))
+    directions /= np.linalg.norm(directions, axis=1, keepdims=True)
+    radius = TARGET_RADIUS * rng.uniform(0.0, 1.0, size=n) ** (1.0 / d)
+    return radius[:, None] * directions, P
 
 
 def flatten(X: np.ndarray, P: np.ndarray) -> np.ndarray:
