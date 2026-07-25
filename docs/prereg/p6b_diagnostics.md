@@ -95,3 +95,34 @@ ordinal reconstruction and, where truth labels exist, whether the recovered
 order is correct. It improves mixed-class AUC by 0.027 over height, while
 height remains an effective low-cost screening observable. Paper B should
 present both facts and avoid a blanket superiority claim.
+
+## Post-analysis correction (2026-07-17; frozen files unchanged)
+
+The frozen P6b proxy was reproduced exactly, but its P1 formula in
+`p6b_test_constants.json` omitted the preregistered restart-stability gate.
+P1's declared decision is the conjunction of held-out violation, truth-order
+error, and restart-order disagreement. This is a specification inconsistency,
+not a discrepancy in the executed rows, so the historical constants, scored
+rows, and summary remain unchanged.
+
+A deterministic gate-complete correction joins
+`p6b_scored_rows.csv` to `p1_stage_b_epsilon_sweep.csv` on `(seed, epsilon)`.
+The dated correction, source hashes, and exact values are in
+`docs/paper/paper_b/figures/p6b_margin_correction.json`. The corrected full
+margin has AUC 0.9898. Removing only the truth-coordinate term while retaining
+all order-only gates gives AUC 0.9680, effectively tied in point estimate with
+height at 0.9668. Adding stability changes no labelled pass/block decision but
+does change ranks. Accordingly, the original 0.9934 value is reported only as
+the historical frozen proxy, and the earlier claim that the aggregate ranking
+does not depend on truth assistance is withdrawn.
+
+In the 27 P1 H-LAG cells, the corrected order-only margin is nonnegative for
+26, while the full margin's truth gate defines the window. This is direct
+evidence that truth recovery is load-bearing rather than a dispensable
+evaluation-only term.
+
+The aggregate also mixes generator families and reference normalizations.
+Within-family and family-pair comparisons can reverse the apparent
+order-only/height ordering, while repeated configurations from a chain or seed
+are correlated. These results are descriptive point estimates, not an
+uncertainty-qualified proof of general diagnostic superiority.

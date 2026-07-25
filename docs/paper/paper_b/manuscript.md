@@ -38,10 +38,11 @@ crystal control blocks structurally (4/4). Constructed chain-rich layered
 negatives close the remaining control gap — eight preregistered cells all
 block at the geometry gates themselves (149/160 fresh seeds) — and a
 preregistered head-to-head on identical data gives the instrument the
-highest ROC AUC (0.993, against 0.967/0.939/0.933 for height,
-Myrheim-Meyer dimension, and interval abundance; unchanged at 0.993
-when the margin's truth term is removed so the comparison is
-order-only), with the dimension
+highest ROC AUC (0.990, against 0.967/0.939/0.933 for height,
+Myrheim-Meyer dimension, and interval abundance; removing the margin's
+truth term so the comparison is order-only lowers it to 0.968, which
+ties height's 0.967 in point estimate — the aggregate ranking does
+depend on truth assistance), with the dimension
 estimator false-passing 25/27 of the dilution false-pass window while
 height, an excellent cheap screen here, remains slightly more monotone
 than the instrument on the dilution sweep. An identifiability theory for
@@ -683,30 +684,61 @@ reference; the instrument enters as its minimum normalized gate margin
 
 | diagnostic | ROC AUC | P1 median Spearman rho vs epsilon | H-LAG false-pass |
 | --- | --- | --- | --- |
-| instrument margin | **0.993** | 0.976 | (defines the window) |
+| instrument margin | **0.990** | 0.970 | (defines the window) |
+| instrument margin, order-only | 0.968 | 0.786 | 26/27 |
 | height distance | 0.967 | **0.994** | 0/27 |
 | MM-dimension distance | 0.939 | 0.012 | **25/27** |
 | abundance distance | 0.933 | 0.786 | 0/27 |
 
-One fairness caveat is required before reading the table. The frozen
-instrument margin incorporates the truth gate wherever generator
-coordinates exist (mandatorily for P1, and for P5/P6), which the three
-comparators never see — so the frozen AUC is truth-assisted, and a
-judgment of unlabeled causal order would not have that term.
-Recomputing the margin from the frozen per-row table with the truth
-term removed (order-only gates: held-out violation and null gap;
-descriptive, deterministic) gives AUC 0.9931 against the frozen 0.9934,
-with 10/362 individual pass/block signs changing: the aggregate
-comparison does not rest on truth assistance.
+Two things must be said before reading that table, and the second
+withdraws a claim this paper previously made.
+
+First, the margins quoted here are *gate-complete*, which the frozen
+P6b proxy was not. P1's preregistered decision is the conjunction of
+three gates — held-out violation, truth-order error, and
+restart-order disagreement — and the frozen proxy's P1 formula omitted
+restart stability. That is a specification inconsistency rather than a
+discrepancy in the executed rows, so nothing frozen was regenerated;
+the correction is a deterministic join of the frozen scored rows back
+to the frozen P1 sweep on (seed, epsilon), dated and hashed in
+`figures/p6b_margin_correction.json`. The historical proxy value,
+0.9934, is reported only as that: a proxy. Adding the missing gate
+changes no labelled pass/block decision, but it does change ranks, and
+ranks are what an AUC reads.
+
+Second, the fairness caveat. The instrument margin incorporates the
+truth gate wherever generator coordinates exist (mandatorily for P1,
+and for P5/P6), which the three comparators never see, so a judgment
+of unlabeled causal order would not have that term. Removing only the
+truth term — and keeping restart stability, which is computed from
+repeated fits to the order data and needs no coordinates — gives AUC
+0.968 against the gate-complete 0.990. That is a tie with height's
+0.967 in point estimate. **An earlier version of this paper reported
+0.9931 here and concluded that the aggregate ranking does not rest on
+truth assistance; that recomputation had itself dropped the
+restart-stability gate, and the conclusion is withdrawn.** On this
+aggregate, the instrument's margin over the cheap comparators is
+carried by the truth term.
+
+The H-LAG column makes the same point mechanically rather than
+aggregately: in the 27 cells where profiles embed but no longer
+recover true space, the order-only margin is nonnegative for 26. That
+is a statement about what the truth gate is doing rather than
+independent evidence for it — the window is *defined* by truth error
+above its gate, so the full margin is negative on all 27 by
+construction, and the 26 counts the cells whose restart stability also
+stays inside its gate.
 
 Figure 4 shows the ROC curves and the safety check on the false-pass
-window. Three findings. First, the instrument has the highest AUC, and the
+window. Three findings. First, the instrument has the highest AUC with
+its full gate set, though not with the truth term removed, and the
 false-pass window of Section 5 is quantitatively where Myrheim-Meyer
 dimension is unsafe: it calls 25/27 of the H-LAG cells geometric — the
 bipartite crystal of Section 7.2 was not an isolated failure but an
 instance of a systematic one. Second, no blanket superiority is claimed:
 order height is marginally *more* monotone than the instrument on the P1
-sweep (median rho 0.994 against 0.976) and is clean on the H-LAG window —
+sweep (median rho 0.994 against 0.970, and against 0.786 for the
+order-only margin) and is clean on the H-LAG window —
 on these families a cheap scalar does most of the ranking work, and an
 honest comparison says so. Third, what the instrument adds is not rank
 correlation but the character of the verdict. Descriptively, in the
@@ -725,17 +757,20 @@ instrument is the only comparator whose pass has a validated meaning.
 ![Figure 4](figures/fig4_p6b_comparison.png)
 
 *Figure 4. P6b head-to-head on identical data. Left: ROC curves over the
-362 frozen-labelled orders (58 geometric, 304 non-geometric) — frozen
-instrument margin AUC 0.9934, order height 0.9668, MM dimension 0.9388,
-interval abundance 0.9326; the dashed curve is the order-only instrument
-margin with the truth-gate term removed (AUC 0.9931, the descriptive
-recomputation behind the fairness caveat above — the aggregate
-comparison does not rest on truth assistance). Right: of the 27 P1 H-LAG
-cells (embeddable but not true space; a window only the instrument
-defines), MM dimension calls 25 geometric while height and abundance
-call none. Both panels are computed from the frozen per-row table and
-frozen summary, and the plotting script asserts every AUC against the
-frozen registry values.*
+362 frozen-labelled orders (58 geometric, 304 non-geometric) —
+gate-complete instrument margin AUC 0.990, order height 0.967, MM
+dimension 0.939, interval abundance 0.933; the dashed curve is the
+order-only instrument margin, which removes the truth-coordinate term
+and keeps restart stability (AUC 0.968, tied with height in point
+estimate — see the withdrawal above). Right: of the 27 P1 H-LAG cells
+(embeddable but not true space; a window only the instrument defines),
+the order-only margin is nonnegative for 26 and MM dimension calls 25
+geometric, while height and abundance call none. Both panels are
+computed from the frozen per-row table joined to the frozen P1 sweep
+for restart stability; the plotting script asserts every AUC against
+the dated correction table and additionally re-derives the historical
+frozen proxy from its own column, so neither the corrected values nor
+the provenance of the underlying CSV can drift unnoticed.*
 
 ### 7.7 What the chain establishes
 
@@ -1237,9 +1272,8 @@ under preregistered per-cell expectations, block at the numerical
 geometry gates (8/8 cells, 149/160 fresh seeds), so rejection of
 non-manifoldlike order is not an artifact of chain extraction; and on
 identical data spanning four generator families, the instrument margin
-has the highest ROC AUC (0.993; 0.9931 with the truth term removed
-from the margin, so the ranking does not rest on truth assistance)
-among {Myrheim-Meyer distance, abundance distance, height distance},
+has the highest ROC AUC with its full gate set (0.990) among
+{Myrheim-Meyer distance, abundance distance, height distance},
 with the dimension estimator false-passing 25/27 of the P1 false-pass
 window.
 
@@ -1258,9 +1292,13 @@ classification is descriptive characterization on the theory track,
 not a frozen claim). Claim (g) asserts no superiority of
 the instrument over order height as a *ranking* statistic on the P1
 sweep — height is marginally more monotone there — only the highest
-aggregate AUC, the dimension estimator's specific unsafety in the
-false-pass window, and the validated character of the instrument's
-verdict. Claim (e) is about
+aggregate AUC with the full gate set, the dimension estimator's
+specific unsafety in the false-pass window, and the validated
+character of the instrument's verdict. It explicitly does **not**
+claim that the aggregate ranking survives removing the truth term: the
+order-only margin scores 0.968 against height's 0.967, a tie in point
+estimate, and an earlier version of this paper claimed otherwise on a
+recomputation that had dropped a second, truth-independent gate. Claim (e) is about
 one restricted ensemble family in 1+1 effective dimensions at N <= 600, whose
 beta = 0 measure is already sprinkling-equivalent: the emergence content is
 that reconstructable geometry *survives* action weighting up to the
@@ -1365,10 +1403,19 @@ Preregistrations: `docs/prereg/p3_dynamics_emergence.md`,
 its decision registry and per-run CSV under `docs/prereg/frozen/`). The
 P6b aggregate metrics are in `p6b_diagnostics_summary.json`; the
 descriptive row-level statements in Section 7.6 (layered-family heights,
-per-row reference-band counts, and the order-only-margin AUC of 0.9931
-with the truth term removed) recompute deterministically from the
-frozen `p6b_scored_rows.csv` with the frozen reference cutoffs and gate
-constants, and are labeled descriptive, not confirmatory. The local-shuffle retirement is
+per-row reference-band counts, and the gate-complete margins) recompute
+deterministically from the frozen `p6b_scored_rows.csv` with the frozen
+reference cutoffs and gate constants, and are labeled descriptive, not
+confirmatory. The gate-complete margins additionally join the frozen P1
+sweep on (seed, epsilon) to recover the restart-stability value that
+the historical P6b run did not carry into its scored table; that
+correction is dated and hashed in
+`docs/paper/paper_b/figures/p6b_margin_correction.json` and declared in
+`docs/prereg/p6b_diagnostics.md`, and it regenerates no frozen
+artifact. `p6_diagnostics.py` now carries `restart_order_disagreement`
+forward, so a future regeneration needs no join -- at the cost of one
+added column relative to the frozen snapshot, with no existing value
+changed. The local-shuffle retirement is
 recorded in the P6 preregistration's deviations log with its audit CSV
 (`p6_stage_a_local_shuffle_audit.csv`). The unrestricted-ensemble
 obstruction (Section 7.2) is exploratory rather than preregistered; its
@@ -1427,10 +1474,12 @@ CSVs and summaries for Figures 1-5 and 7, and the two tracked theory
 tables for Figure 6 (`docs/theory/t1_figure_data.json`, regenerated
 byte-identically by `experiments/theory/t1_figure_data.py` from the
 CI-pinned check configurations, and the density-scaling table above).
-The plotting script asserts the frozen registry AUC values, the
-order-only AUC, the zero band violations, and the slope window at read
-time, so a figure cannot silently disagree with the registries it
-depicts.
+The plotting script asserts the gate-complete and order-only AUCs
+against the dated P6b correction table, re-derives the historical
+frozen proxy from its own column, and checks the zero band violations
+and the slope window at read time, so a figure cannot silently
+disagree either with the registries it depicts or with the correction
+that supersedes them.
 
 The selector-robustness check of Section 7.7 is likewise descriptive,
 not preregistered:

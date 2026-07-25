@@ -2,7 +2,7 @@
 
 P1-A (calibration, seeds 0-9): measure the truth-recovery dose-response curve
 across the epsilon grid and propose the H-MONO test constant. No frozen test
-is applied. P1-B (confirmatory, seeds 100-119): load the frozen constants,
+is applied. P1-B (confirmatory, seeds 300-319): load the frozen constants,
 apply H-MONO / H-THRESH / H-LAG and endpoint reproduction.
 
 The frozen PC-V1 instrument is imported unchanged; P1 adds only the
@@ -142,7 +142,7 @@ def sweep_seed(config, grid, policy, code_version, stage) -> list[dict]:
 
 def per_seed_curve(
     rows: list[dict], seed: int
-) -> tuple[list[float], list[float], list[float]]:
+) -> tuple[list[float], list[float], list[float], list[float]]:
     cells = sorted(
         (
             r
@@ -156,7 +156,26 @@ def per_seed_curve(
     eps = [r["epsilon"] for r in cells]
     truth = [r["truth_order_error"] for r in cells]
     heldout = [r["heldout_violation"] for r in cells]
-    return eps, truth, heldout
+    stability = [r["restart_order_disagreement"] for r in cells]
+    return eps, truth, heldout, stability
+
+
+def _p1_gate_pass(
+    *,
+    truth: float,
+    heldout: float,
+    stability: float,
+    truth_max: float,
+    heldout_max: float,
+    stability_max: float,
+) -> bool:
+    """Apply the full declared P1 gate conjunction to one epsilon cell."""
+
+    return (
+        truth <= truth_max
+        and heldout <= heldout_max
+        and stability <= stability_max
+    )
 
 
 def main() -> None:
@@ -193,7 +212,7 @@ def main() -> None:
     covered: list[dict] = []
     insufficient: list[int] = []
     for seed in seeds:
-        eps, truth, heldout = per_seed_curve(all_rows, seed)
+        eps, truth, heldout, stability = per_seed_curve(all_rows, seed)
         if len(eps) < min_cells or eps[0] != 0.0 or eps[-1] != max(grid):
             insufficient.append(seed)
             continue
@@ -205,8 +224,10 @@ def main() -> None:
                 "cross_heldout": crossing_epsilon(eps, heldout, 0.05),
                 "eps0_truth": truth[0],
                 "eps0_heldout": heldout[0],
+                "eps0_stability": stability[0],
                 "eps1_truth": truth[-1],
                 "eps1_heldout": heldout[-1],
+                "eps1_stability": stability[-1],
             }
         )
 
@@ -275,14 +296,23 @@ def _decide_confirmatory(
     thresh_estimable = sum(1 for c in covered if c["cross_truth"] is not None)
     h_thresh = thresh_estimable >= constants["thresh_estimable_min"]
 
-    def gate_pass(truth: float, heldout: float) -> bool:
-        return truth <= pcv1.truth_error_max and heldout <= pcv1.heldout_max
+    def gate_pass(truth: float, heldout: float, stability: float) -> bool:
+        return _p1_gate_pass(
+            truth=truth,
+            heldout=heldout,
+            stability=stability,
+            truth_max=pcv1.truth_error_max,
+            heldout_max=pcv1.heldout_max,
+            stability_max=pcv1.stability_max,
+        )
 
     endpoints_ok = sum(
         1
         for c in covered
-        if gate_pass(c["eps0_truth"], c["eps0_heldout"])
-        and not gate_pass(c["eps1_truth"], c["eps1_heldout"])
+        if gate_pass(c["eps0_truth"], c["eps0_heldout"], c["eps0_stability"])
+        and not gate_pass(
+            c["eps1_truth"], c["eps1_heldout"], c["eps1_stability"]
+        )
     )
 
     registry = {

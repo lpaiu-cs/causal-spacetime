@@ -26,6 +26,7 @@ from t1_g2_count_class import (  # noqa: E402
     fit_exponent_with_uncertainty,
     measure_arm,
 )
+from t1_g2_density_scaling import loglog_slope_with_uncertainty  # noqa: E402
 
 SHORT_GRID = (1000, 2000, 4000, 8000, 16000)
 KPZ = 1.0 / 3.0
@@ -56,8 +57,41 @@ def test_fit_refuses_too_few_densities():
     an interval from; that must be an explicit error, not a division by
     a zero degree-of-freedom count."""
 
-    with pytest.raises(ValueError, match="at least 3 densities"):
+    with pytest.raises(ValueError, match="at least 3 points"):
         fit_exponent_with_uncertainty([1.0, 2.0], [1.0, 2.0])
+
+
+def test_fit_is_the_shared_estimator_not_a_second_copy():
+    """The interval convention must have one definition: this file's
+    entry point differs from the density-scaling one only in renaming
+    the slope to theta."""
+
+    x, y = [1.0, 2.0, 4.0, 8.0], [1.0, 1.3, 1.7, 2.2]
+    shared = loglog_slope_with_uncertainty(x, y)
+    local = fit_exponent_with_uncertainty(x, y)
+
+    assert local["theta"] == shared["slope"]
+    assert "slope" not in local
+    for key in ("stderr", "dof", "n_points", "ci95", "ci90"):
+        assert local[key] == shared[key], key
+
+
+def test_tube_width_is_rejected_for_arms_that_have_no_tube():
+    """Passing a width to a tubeless arm must fail loudly rather than
+    silently return a measurement of something else."""
+
+    with pytest.raises(ValueError, match="tube_width is meaningless"):
+        measure_arm("order_only", rho_grid=(1000, 2000, 4000), trials=2,
+                    tube_width_at=lambda rho: 0.1)
+
+
+def test_a_density_that_loses_its_trials_is_an_error_not_a_nan():
+    """An empty or single-survivor density cannot yield a mean and an
+    sd; letting it through would put a nan in the tracked table where
+    it reads as a measurement."""
+
+    with pytest.raises(ValueError, match="kept only"):
+        measure_arm("thinned", rho_grid=(1000, 2000, 4000), trials=1)
 
 
 def test_calibration_arm_returns_one_half():

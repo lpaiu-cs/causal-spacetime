@@ -15,6 +15,7 @@ from __future__ import annotations
 import csv
 import json
 import statistics as st
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -22,6 +23,13 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+
+# the corrected margin lives in the library so the figure, the audit
+# table and the tests all compute it the same way
+sys.path.insert(0, str(Path("src")))
+from causal_spacetime_lab.positive_control.p6b_margin import (  # noqa: E402
+    p6b_instrument_margin,
+)
 
 FROZEN = Path("docs/prereg/frozen")
 THEORY = Path("docs/theory")
@@ -440,38 +448,64 @@ def _roc_points(labels: list[int], scores: list[float]):
     return fpr, tpr
 
 
-def _order_only_margin(row: dict) -> float:
-    """The frozen instrument margin with the truth-gate term removed
-    (order-only gates: held-out violation and null gap; Section 7.6)."""
+def _rows_with_p1_stability() -> list[dict]:
+    """Labelled P6b rows, with P1's restart-stability value joined back in.
 
-    if row["status"] != "ok":
-        return -5.0
-    heldout = float(row["heldout"])
-    if row["source"] == "P1":
-        return (0.05 - heldout) / 0.05
-    margins = [(0.10 - heldout) / 0.10]
-    if row.get("null_gap", "") != "":
-        margins.append((float(row["null_gap"]) - 0.10) / 0.10)
-    return min(margins)
+    The historical P6b run did not carry `restart_order_disagreement`
+    into its scored table even though P1's preregistered decision is a
+    three-gate conjunction that includes it, so the gate-complete margin
+    has to recover it from the P1 sweep on (seed, epsilon) -- the join
+    declared in docs/prereg/p6b_diagnostics.md. Non-P1 sources are
+    unaffected; their gates never referenced stability.
+    """
+
+    sweep = {
+        (int(float(r["seed"])), float(r["epsilon"])): r
+        for r in _rows("p1_stage_b_epsilon_sweep.csv")
+    }
+    joined = []
+    for row in _rows("p6b_scored_rows.csv"):
+        if row.get("label") == "":
+            continue
+        row = dict(row)
+        if row["source"] == "P1" and not row.get("restart_order_disagreement"):
+            key = (int(float(row["seed"])), float(row["epsilon"]))
+            row["restart_order_disagreement"] = sweep[key][
+                "restart_order_disagreement"
+            ]
+        joined.append(row)
+    return joined
 
 
 def figure_p6b_comparison() -> None:
     """Fig 4: P6b head-to-head — ROC curves and the H-LAG safety check.
 
-    Reads the frozen per-row table and the frozen summary; recomputes each
-    AUC with the registry's rank convention and asserts equality with the
-    frozen values, so the figure can never silently disagree with the
-    registry. The order-only instrument variant (truth term removed) is the
-    descriptive recomputation of Section 7.6.
+    Plots the GATE-COMPLETE margins of the correction recorded in
+    docs/prereg/p6b_diagnostics.md, not the historical proxy: P1's
+    preregistered decision is a three-gate conjunction, and the original
+    P6b formula omitted restart stability. Both the full and the
+    order-only variants are asserted against the dated correction table,
+    and the historical proxy is additionally recomputed from the frozen
+    column so a drift in the underlying CSV still fails loudly.
+
+    The order-only variant removes only the truth-coordinate term and
+    KEEPS restart stability, which is computed from repeated fits to the
+    order data and so is available without generator coordinates.
     """
 
-    rows = [r for r in _rows("p6b_scored_rows.csv") if r.get("label") != ""]
+    rows = _rows_with_p1_stability()
     summary = json.loads((FROZEN / "p6b_diagnostics_summary.json").read_text())
+    correction = json.loads((OUT / "p6b_margin_correction.json").read_text())
     labels = [int(float(r["label"])) for r in rows]
 
+    full = [p6b_instrument_margin(r["source"], r) for r in rows]
+    order_only = [
+        p6b_instrument_margin(r["source"], r, include_truth=False)
+        for r in rows
+    ]
     series = [
-        ("instrument margin", [float(r["instrument_margin"]) for r in rows],
-         BLUE, "-"),
+        ("instrument margin", full, BLUE, "-"),
+        ("order-only margin (no truth term)", order_only, BLUE, "--"),
         ("MM-dimension distance", [-float(r["mm_distance"]) for r in rows],
          VERM, "-"),
         ("height distance", [-float(r["height_distance"]) for r in rows],
@@ -479,18 +513,23 @@ def figure_p6b_comparison() -> None:
         ("abundance distance", [-float(r["abundance_distance"]) for r in rows],
          ORANGE, "-"),
     ]
-    frozen_auc_keys = ("instrument_margin", "mm_distance",
-                      "height_distance", "abundance_distance")
-    for (label, scores, _c, _ls), key in zip(series, frozen_auc_keys,
+    corrected_keys = ("gate_complete_full", "gate_complete_order_only",
+                      "mm_distance", "height_distance", "abundance_distance")
+    for (label, scores, _c, _ls), key in zip(series, corrected_keys,
                                              strict=True):
         auc = _rank_auc(labels, scores)
-        frozen = float(summary["roc_auc"][key])
-        assert abs(auc - frozen) < 1e-9, (label, auc, frozen)
-    order_only = [_order_only_margin(r) for r in rows]
-    auc_order_only = _rank_auc(labels, order_only)
-    assert abs(auc_order_only - 0.9931) < 1e-4, auc_order_only
-    series.insert(1, ("order-only margin (no truth term)", order_only,
-                      BLUE, "--"))
+        expected = float(correction["roc_auc"][key])
+        assert abs(auc - expected) < 1e-9, (label, auc, expected)
+
+    # provenance: the frozen proxy must still reproduce from its own
+    # column, so a changed CSV cannot slip past the corrected figures
+    historical = _rank_auc(
+        labels, [float(r["instrument_margin"]) for r in rows]
+    )
+    assert abs(historical - float(summary["roc_auc"]["instrument_margin"])) < 1e-9
+    assert abs(
+        historical - float(correction["roc_auc"]["historical_frozen_proxy"])
+    ) < 1e-9
 
     fig, (ax_roc, ax_bar) = plt.subplots(
         1, 2, figsize=(10.6, 4.3), gridspec_kw={"width_ratios": [1.45, 1.0]}
@@ -519,20 +558,30 @@ def figure_p6b_comparison() -> None:
     )
 
     overlap = summary["p1_h_lag_overlap"]
-    cheap = (("MM dim.", "mm_distance", VERM),
-             ("height", "height_distance", GREEN),
-             ("abundance", "abundance_distance", ORANGE))
-    n_h_lag = int(overlap["mm_distance"]["n_h_lag"])
-    counts = [int(overlap[key]["n_false_pass"]) for _lbl, key, _c in cheap]
-    ax_bar.bar([c[0] for c in cheap], counts, color=[c[2] for c in cheap],
-               width=0.55, zorder=3)
-    for i, count in enumerate(counts):
+    h_lag = correction["p1_rank_and_h_lag"]
+    n_h_lag = int(h_lag["h_lag_count"])
+    assert n_h_lag == int(overlap["mm_distance"]["n_h_lag"])
+    # The order-only instrument belongs on this panel. Dropping the truth
+    # term is exactly what this window is built to expose, and 26/27 is
+    # the number behind withdrawing the truth-independence claim. It is
+    # labelled as a variant of the instrument, not a competitor to it.
+    bars = [
+        ("instrument\n(order-only)",
+         int(h_lag["gate_complete_order_only_pass_count"]), BLUE),
+        ("MM dim.", int(overlap["mm_distance"]["n_false_pass"]), VERM),
+        ("height", int(overlap["height_distance"]["n_false_pass"]), GREEN),
+        ("abundance", int(overlap["abundance_distance"]["n_false_pass"]),
+         ORANGE),
+    ]
+    ax_bar.bar([b[0] for b in bars], [b[1] for b in bars],
+               color=[b[2] for b in bars], width=0.55, zorder=3)
+    for i, (_label, count, _color) in enumerate(bars):
         ax_bar.annotate(f"{count}/{n_h_lag}", (i, count + 0.5), fontsize=9,
                         color=INK, ha="center")
     ax_bar.set_ylim(0, n_h_lag + 3.5)
     ax_bar.axhline(n_h_lag, color=MUTED, linestyle="--", linewidth=1.0,
                    zorder=2)
-    ax_bar.annotate(f"all {n_h_lag} H-LAG cells", (1.0, n_h_lag + 0.6),
+    ax_bar.annotate(f"all {n_h_lag} H-LAG cells", (1.5, n_h_lag + 0.6),
                     fontsize=8, color=MUTED, ha="center")
     ax_bar.set_ylabel("cells called geometric (false pass)", fontsize=9.5,
                       color=INK)

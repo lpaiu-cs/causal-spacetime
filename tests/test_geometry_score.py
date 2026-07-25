@@ -44,6 +44,17 @@ def test_minimum_margin_supports_partial_source_specific_gates():
     ) == pytest.approx(0.5)
 
 
+def test_minimum_margin_supports_restart_stability_gate():
+    assert minimum_gate_margin(
+        heldout=0.025,
+        heldout_max=0.05,
+        truth_error=0.075,
+        truth_error_max=0.15,
+        stability_error=0.12,
+        stability_error_max=0.15,
+    ) == pytest.approx(0.2)
+
+
 def test_geometry_score_is_raw_margin_with_fixed_offset_and_clipping():
     margin = minimum_gate_margin(
         heldout=0.09,

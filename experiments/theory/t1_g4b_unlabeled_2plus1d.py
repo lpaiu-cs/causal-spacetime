@@ -243,39 +243,93 @@ def check_machinery(seed: int = 5) -> dict:
     }
 
 
+def _newton_to_equal_profile(
+    x: np.ndarray,
+    P: np.ndarray,
+    start: np.ndarray,
+    iters: int = 200,
+    radius: float = 1.2,
+) -> np.ndarray | None:
+    """Solve ``Phi~(x') = Phi~(x)`` from ``start``, or return None.
+
+    The equations are the R-1 independent TDOA differences
+    ``(|x'-p_r| - |x'-p_1|) - (|x-p_r| - |x-p_1|) = 0``, whose Jacobian
+    rows are ``u_r - u_1``. Converging to ``x`` itself is the trivial
+    root; anything else, inside the region, is a twin.
+
+    ``radius`` is not a convenience bound, it is part of the question.
+    Each difference tends to ``(p_1 - p_r) . u`` as ``|x'| -> inf``
+    along direction ``u``, so the residual has finite limits at
+    infinity and Newton will happily run out to ``|x'| ~ 1e15`` and
+    report a vanishing residual there. Those are asymptotic escapes,
+    not second roots of the finite problem -- and they appear only for
+    a target at the ring's symmetric centre, where every asymptotic
+    limit is attainable. Iterates that leave the region are abandoned.
+    """
+
+    def residual(point):
+        a = np.linalg.norm(point[None, :] - P, axis=1)
+        b = np.linalg.norm(x[None, :] - P, axis=1)
+        return (a[1:] - a[0]) - (b[1:] - b[0])
+
+    point = np.array(start, dtype=float)
+    for _ in range(iters):
+        distances = np.linalg.norm(point[None, :] - P, axis=1)
+        if np.any(distances < 1e-9):
+            return None
+        unit = (point[None, :] - P) / distances[:, None]
+        step, *_ = np.linalg.lstsq(unit[1:] - unit[0][None, :],
+                                   -residual(point), rcond=None)
+        point = point + step
+        if not np.all(np.isfinite(point)) or np.linalg.norm(point) > radius:
+            return None
+        if np.linalg.norm(step) < 1e-14:
+            break
+    return point if np.linalg.norm(residual(point)) < 1e-11 else None
+
+
 def check_labeled_centered_map_is_injective(
-    R_values: tuple[int, ...] = (3, 4, 8), grid: int = 700
+    R_values: tuple[int, ...] = (3, 4, 8), starts: int = 120
 ) -> dict:
     """Check 1: the centering fold does not exist on the hull.
 
     ``Phi~(x') = Phi~(x)`` is the TDOA condition, and three-receiver
     TDOA is two-valued in general -- so one might expect centering to
-    cost an observer. A dense scan of ``||Phi~(x') - Phi~(x)||`` over a
-    wide box finds no second zero for targets in the hull, and the
+    cost an observer. It does not, for targets in the hull, and the
     differential has full rank, so the labeled centered profile already
     pins the target down. Whatever defeats R = 3 below, it is not this.
+
+    The search is Newton from many random starts, NOT a grid scan. A
+    scan cannot do this job: the field grows like ``sigma_min`` times
+    the distance to the twin, with ``sigma_min ~ 0.97`` here, so any
+    grid coarser than the acceptance threshold divided by that slope
+    reports zero twins whether or not one exists -- a verdict
+    guaranteed by the sampling rather than by the geometry. Newton
+    converges onto a root from anywhere in its basin, so a twin that
+    exists is found regardless of where the starts happen to land.
     """
 
     rows = []
     ok = True
     for R in R_values:
         P = observer_ring(R)
-        axis = np.linspace(-1.2, 1.2, grid)
-        gx, gy = np.meshgrid(axis, axis, indexing="ij")
-        candidates = np.column_stack((gx.ravel(), gy.ravel()))
-        sep = candidates[:, None, :] - P[None, :, :]
-        field = np.sqrt(np.sum(sep * sep, axis=2))
-        field = field - field.mean(axis=1, keepdims=True)
-
         worst_rank = 2
         twins = 0
-        for target in ([0.07, -0.05], [0.0, 0.0], [0.11, 0.06]):
+        for index, target in enumerate(
+            ([0.07, -0.05], [0.0, 0.0], [0.11, 0.06])
+        ):
             x = np.array(target, dtype=float)
-            ref = np.linalg.norm(x[None, :] - P, axis=1)
-            ref = ref - ref.mean()
-            gaps = np.linalg.norm(field - ref[None, :], axis=1)
-            far = np.linalg.norm(candidates - x[None, :], axis=1) > 0.05
-            twins += int(np.sum(gaps[far] < 1e-4))
+            rng = np.random.default_rng(4_000 + 17 * R + index)
+            found: list[np.ndarray] = []
+            for _ in range(starts):
+                root = _newton_to_equal_profile(
+                    x, P, rng.uniform(-1.2, 1.2, size=2)
+                )
+                if root is None or np.linalg.norm(root - x) < 1e-6:
+                    continue  # failed, or the trivial root
+                if all(np.linalg.norm(root - seen) > 1e-6 for seen in found):
+                    found.append(root)
+            twins += len(found)
 
             step = 1e-6
             jac = np.zeros((R, 2))
@@ -293,6 +347,7 @@ def check_labeled_centered_map_is_injective(
         rows.append({
             "R": R,
             "twins_found": twins,
+            "newton_starts_per_target": starts,
             "min_differential_rank": worst_rank,
         })
         ok = ok and twins == 0 and worst_rank == 2
@@ -371,15 +426,25 @@ def _null_direction_off_gauge(theta, n, R, d=2):
     return column / np.linalg.norm(column)
 
 
-def _restore_to_level_set(theta, target, n, R, d=2, iters=60):
+def _restore_to_level_set(theta, target, n, R, d=2, iters=60, tol=1e-13):
+    """Gauss-Newton back onto the exact D level set.
+
+    Returns the scene and whether it actually got there. Without the
+    flag a step that exhausted its iterations would leave the flow off
+    the constant-D surface silently, and only the final point's drift
+    would ever be checked -- which says nothing about the steps in
+    between.
+    """
+
     for _ in range(iters):
         residual = dissimilarity(theta, n, R, d) - target
-        if np.linalg.norm(residual) < 1e-14:
-            break
+        if np.linalg.norm(residual) < tol:
+            return theta, True
         step, *_ = np.linalg.lstsq(jacobian(theta, n, R, d), -residual,
                                    rcond=None)
         theta = theta + step
-    return theta
+    residual = dissimilarity(theta, n, R, d) - target
+    return theta, bool(np.linalg.norm(residual) < tol)
 
 
 def check_r3_explicit_counterexample(
@@ -400,13 +465,20 @@ def check_r3_explicit_counterexample(
 
     theta = start.copy()
     travelled = 0.0
+    unconverged_steps = 0
     for _ in range(steps):
         direction = _null_direction_off_gauge(theta, n, 3, 2)
         if direction is None:
             break
-        theta = _restore_to_level_set(
+        theta, converged = _restore_to_level_set(
             theta + step_size * direction, target, n, 3, 2
         )
+        if not converged:
+            # the path has left the constant-D surface; stop rather
+            # than keep integrating along a curve that is no longer the
+            # level set, and report it
+            unconverged_steps += 1
+            break
         travelled += step_size
 
     drift = float(np.max(np.abs(dissimilarity(theta, n, 3, 2) - target)))
@@ -417,6 +489,10 @@ def check_r3_explicit_counterexample(
     return {
         "n": n,
         "arc_length": travelled,
+        # every step of the reported arc reached the level set; a
+        # nonzero count means the flow stopped early and the arc is
+        # only as long as the converged prefix
+        "unconverged_steps": unconverged_steps,
         "max_D_drift": drift,
         "scene_shape_gap": gap,
         "target_spread": spread,
@@ -427,7 +503,11 @@ def check_r3_explicit_counterexample(
         # is an assertion, not evidence
         "scene_before": start.tolist(),
         "scene_after": theta.tolist(),
-        "passed": bool(drift < 1e-12 and gap > 0.02 * spread),
+        "passed": bool(
+            drift < 1e-12
+            and gap > 0.02 * spread
+            and unconverged_steps == 0
+        ),
     }
 
 

@@ -15,24 +15,27 @@ def minimum_gate_margin(
     null_gap_min: float | None = None,
     truth_error: float | None = None,
     truth_error_max: float | None = None,
+    stability_error: float | None = None,
+    stability_error_max: float | None = None,
 ) -> float:
     """Return the limiting normalized margin for the supplied frozen gates."""
 
     pairs = (
-        (null_gap, null_gap_min, "null-gap"),
-        (truth_error, truth_error_max, "truth-error"),
+        (null_gap, null_gap_min, "null-gap", True),
+        (truth_error, truth_error_max, "truth-error", False),
+        (stability_error, stability_error_max, "stability-error", False),
     )
     if heldout_max <= 0.0:
         raise ValueError("gate thresholds must be positive")
     margins = [(heldout_max - float(heldout)) / heldout_max]
-    for value, threshold, name in pairs:
+    for value, threshold, name, is_lower_bound in pairs:
         if (value is None) != (threshold is None):
             raise ValueError(f"{name} value and threshold must be supplied together")
         if value is None:
             continue
         if threshold <= 0.0:
             raise ValueError("gate thresholds must be positive")
-        if name == "null-gap":
+        if is_lower_bound:
             margins.append((float(value) - threshold) / threshold)
         else:
             margins.append((threshold - float(value)) / threshold)

@@ -359,9 +359,9 @@ def _t_critical(level: float, dof: int) -> float:
     return table[max(smaller)] if dof < 30 else (1.960 if level == 0.95 else 1.645)
 
 
-def fit_exponent_with_uncertainty(rows: list[dict], key: str) -> dict:
+def loglog_slope_with_uncertainty(abscissa, ordinate) -> dict:
     """Log-log slope with a residual-based interval and a split-half
-    stability check.
+    stability check. The one implementation for this track.
 
     The interval is the textbook OLS one: ``se = sqrt(s^2 / Sxx)`` on
     the residual variance ``s^2`` with ``n - 2`` degrees of freedom.
@@ -372,10 +372,15 @@ def fit_exponent_with_uncertainty(rows: list[dict], key: str) -> dict:
     (P7 quotes a 90% bootstrap interval on its tunneling exponent;
     this is the analytic counterpart for a 7-point grid, with both
     conventional levels recorded.)
+
+    Callers that fit something other than a quantity against ``rho``
+    -- the count-class harness fits sd against mean -- go through this
+    directly, so the interval convention has exactly one definition to
+    correct if it ever needs correcting again.
     """
 
-    x = np.log(np.asarray([row["rho"] for row in rows], dtype=float))
-    y = np.log(np.asarray([row[key] for row in rows], dtype=float))
+    x = np.log(np.asarray(abscissa, dtype=float))
+    y = np.log(np.asarray(ordinate, dtype=float))
     if x.size < 3:
         raise ValueError("a slope interval needs at least 3 points")
     slope, intercept = np.polyfit(x, y, 1)
@@ -394,14 +399,19 @@ def fit_exponent_with_uncertainty(rows: list[dict], key: str) -> dict:
         result[name] = [float(slope - half), float(slope + half)]
     if x.size >= 6:  # split halves overlapping in the middle point
         cut = x.size // 2
-        result["halves"] = {
-            "low": fit_exponent(rows[: cut + 1], key),
-            "high": fit_exponent(rows[cut:], key),
-        }
-        result["half_split_spread"] = abs(
-            result["halves"]["low"] - result["halves"]["high"]
-        )
+        low = float(np.polyfit(x[: cut + 1], y[: cut + 1], 1)[0])
+        high = float(np.polyfit(x[cut:], y[cut:], 1)[0])
+        result["halves"] = {"low": low, "high": high}
+        result["half_split_spread"] = abs(low - high)
     return result
+
+
+def fit_exponent_with_uncertainty(rows: list[dict], key: str) -> dict:
+    """``loglog_slope_with_uncertainty`` for a quantity against ``rho``."""
+
+    return loglog_slope_with_uncertainty(
+        [row["rho"] for row in rows], [row[key] for row in rows]
+    )
 
 
 _COUNT_CANDIDATES = {"poisson_rate_-1/4": -0.25, "kpz_like_-1/3": -1.0 / 3.0}

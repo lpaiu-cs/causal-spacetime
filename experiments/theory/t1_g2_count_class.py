@@ -65,6 +65,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+from t1_g2_density_scaling import loglog_slope_with_uncertainty
 
 from causal_spacetime_lab.density_coupled_clocks import (
     harvest_chain_from_sprinkling_1p1,
@@ -88,44 +89,18 @@ TRIALS = 300
 
 CANDIDATES = {"poisson_rate_1/2": 0.5, "kpz_like_1/3": 1.0 / 3.0}
 
-# Two-sided Student-t critical values; the project has no scipy.
-_T975 = {2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365,
-         8: 2.306, 9: 2.262, 10: 2.228}
-
 
 def fit_exponent_with_uncertainty(x: list[float], y: list[float]) -> dict:
-    """Log-log slope with a residual-based interval and split halves --
-    the same treatment every other exponent in this track carries."""
+    """The track's one log-log slope estimator, applied to sd vs mean.
 
-    log_x = np.log(np.asarray(x, dtype=float))
-    log_y = np.log(np.asarray(y, dtype=float))
-    if log_x.size < 3:
-        raise ValueError(
-            "a residual-based interval needs at least 3 densities; "
-            f"got {log_x.size}"
-        )
-    slope, intercept = np.polyfit(log_x, log_y, 1)
-    residual = log_y - (slope * log_x + intercept)
-    dof = int(log_x.size - 2)
-    stderr = float(np.sqrt(
-        float(residual @ residual) / dof
-        / float(((log_x - log_x.mean()) ** 2).sum())
-    ))
-    critical = _T975.get(dof, 1.96)
-    result = {
-        "theta": float(slope),
-        "stderr": stderr,
-        "dof": dof,
-        "n_points": int(log_x.size),
-        "ci95": [float(slope - critical * stderr),
-                 float(slope + critical * stderr)],
-    }
-    if log_x.size >= 6:
-        cut = log_x.size // 2
-        low = np.polyfit(log_x[: cut + 1], log_y[: cut + 1], 1)[0]
-        high = np.polyfit(log_x[cut:], log_y[cut:], 1)[0]
-        result["halves"] = {"low": float(low), "high": float(high)}
-        result["half_split_spread"] = float(abs(low - high))
+    Delegates to ``loglog_slope_with_uncertainty`` rather than carrying
+    a second copy, so the interval convention has a single definition;
+    only the key is renamed, because here the slope IS the fluctuation
+    exponent.
+    """
+
+    result = dict(loglog_slope_with_uncertainty(x, y))
+    result["theta"] = result.pop("slope")
     return result
 
 
@@ -133,6 +108,12 @@ def chain_length(arm: str, rho: float, rng: np.random.Generator,
                  tube_width: float | None = None) -> int | None:
     """One realization's tick count. ``None`` marks a clock failure, so
     a failed harvest can never be silently read as a short chain."""
+
+    if tube_width is not None and arm != "tube":
+        # only the tube harvest has a tube; accepting the argument for
+        # the others would silently answer a different question than the
+        # caller asked
+        raise ValueError(f"tube_width is meaningless for arm {arm!r}")
 
     if arm == "thinned":
         ticks = make_poisson_clock_chain_1p1(
@@ -162,7 +143,19 @@ def chain_length(arm: str, rho: float, rng: np.random.Generator,
 
 def measure_arm(arm: str, rho_grid=RHO_GRID, trials: int = TRIALS,
                 tube_width_at=None, base_seed: int = 0) -> dict:
-    """Mean and sd of the chain length per density, then the exponent."""
+    """Mean and sd of the chain length per density, then the exponent.
+
+    Seeding note: the per-trial seed depends on ``(base_seed, k, rho)``
+    and not on the arm, so at a shared ``base_seed`` the tube and
+    order-only arms are measured on the *same* sprinklings. That is
+    deliberate -- it makes the KPZ-vs-Poisson contrast a paired
+    comparison and removes sprinkling-to-sprinkling variance from it --
+    but it also means the two arms' standard errors are NOT
+    independent, so the gap between their exponents must not be given
+    an interval built from them as if it were a difference of
+    independent estimates. Pass distinct ``base_seed`` values to make
+    the arms independent.
+    """
 
     rows = []
     failures = 0
@@ -177,6 +170,16 @@ def measure_arm(arm: str, rho_grid=RHO_GRID, trials: int = TRIALS,
                 continue
             lengths.append(value)
         sample = np.asarray(lengths, dtype=float)
+        # a density that lost all (or all but one) of its trials cannot
+        # contribute a mean and an sd; letting it through would put a
+        # nan into the fit and from there into the tracked table, where
+        # it reads as a measurement rather than as a failure
+        if sample.size < 2:
+            raise ValueError(
+                f"arm {arm!r} at rho={rho} kept only {sample.size} of "
+                f"{trials} trials ({failures} clock failures so far); "
+                "no mean/sd can be formed"
+            )
         rows.append({
             "rho": rho,
             "trials": int(sample.size),

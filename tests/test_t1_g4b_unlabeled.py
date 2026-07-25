@@ -17,13 +17,16 @@ EXPERIMENT_DIR = Path(__file__).resolve().parents[1] / "experiments" / "theory"
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from t1_g4b_unlabeled_2plus1d import (  # noqa: E402
+    _newton_to_equal_profile,
     check_frozen_scene_is_in_the_rigid_regime,
+    check_labeled_centered_map_is_injective,
     check_r3_explicit_counterexample,
     dissimilarity,
     flatten,
     gauge_dimension,
     jacobian,
     nullity,
+    observer_ring,
     rigid_motion_gauge,
     scene,
     scene_edm,
@@ -87,6 +90,55 @@ def test_four_observers_reach_rigidity_where_three_never_do():
         X, P = scene(n, R, seed=500 + n)
         null, _ = nullity(flatten(X, P), n, R, 2)
         assert null == gauge_dimension(2), (R, null)
+
+
+def test_the_twin_search_can_actually_find_a_twin():
+    """Teeth for check 1. With only two observers the centered profile
+    is a single distance difference, whose level set is an entire
+    hyperbola branch -- so twins genuinely exist there, and a search
+    reporting none for R >= 3 must first be shown capable of finding
+    them when they are present. (A grid scan is not: the field grows
+    like ~0.97 times the distance to the twin, so any spacing coarser
+    than the acceptance threshold over that slope reports zero twins
+    by construction, whatever the geometry.)"""
+
+    P = np.array([[-0.25, 0.0], [0.25, 0.0]])
+    x = np.array([0.07, -0.05])
+    rng = np.random.default_rng(0)
+
+    found = []
+    for _ in range(60):
+        root = _newton_to_equal_profile(x, P, rng.uniform(-1.2, 1.2, size=2))
+        if root is None or np.linalg.norm(root - x) < 1e-6:
+            continue
+        if all(np.linalg.norm(root - seen) > 1e-6 for seen in found):
+            found.append(root)
+
+    assert found, "found no twin where twins provably exist"
+    for root in found[:5]:
+        a = np.linalg.norm(root[None, :] - P, axis=1)
+        b = np.linalg.norm(x[None, :] - P, axis=1)
+        assert abs((a[0] - a.mean()) - (b[0] - b.mean())) < 1e-12
+
+
+def test_the_twin_search_rejects_escapes_to_infinity():
+    """The TDOA differences have finite limits as |x'| -> infinity, so
+    Newton can run out to |x'| ~ 1e15 and report a vanishing residual
+    there. Those are asymptotic escapes, not roots of the finite
+    problem, and they show up precisely at the ring's symmetric centre;
+    unbounded, check 1 reports over a hundred phantom twins."""
+
+    P = observer_ring(3)
+    x = np.array([0.0, 0.0])  # the symmetric centre, where escapes occur
+    rng = np.random.default_rng(4051)
+
+    for _ in range(60):
+        root = _newton_to_equal_profile(x, P, rng.uniform(-1.2, 1.2, size=2))
+        assert root is None or np.linalg.norm(root) <= 1.2 + 1e-12
+
+    assert check_labeled_centered_map_is_injective(
+        R_values=(3,), starts=60
+    )["passed"]
 
 
 def test_explicit_same_dissimilarity_counterexample_at_r3():
