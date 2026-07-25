@@ -173,6 +173,17 @@ salvage one of them.
   calibrate.
 - **E3.** The rule was selected after seeing P8's outcome. Mitigated by
   entirely fresh seeds and by admitting P8's counts as motivation only.
+- **E4 (recorded post-run; found in code review).** The implementation
+  of H-SPEC-PAIRED counts a structurally-blocked control
+  (`control_status != "ok"`) as a spec pass, following the programme's
+  P2/P8 convention — but Section 2's registered wording is `h_3 < c_3`
+  alone and says nothing about structural blocks. The clause **did not
+  fire**: all 20 confirmatory controls built and returned `ok`, so the
+  registered rule and the implemented rule agree on every seed actually
+  scored. The code is deliberately left as it ran — editing the decision
+  function after the run, even toward the registered text, would itself
+  be a post-hoc change — and this note is the record. Any successor
+  design should register the structural-block clause explicitly.
 
 ## 11. Confirmatory outcome (post-run factual record)
 

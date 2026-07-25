@@ -50,11 +50,22 @@ CEILING = 0.10         # programme-wide held-out ceiling (diagnostic only)
 def decide(ok: list[dict], seed_count: int) -> dict:
     """Apply the preregistered paired rule to the valid rows.
 
-    Counts only; no fitted quantity anywhere. The rule is evaluated on
-    the valid-seed denominator as the prereg specifies (invalid seeds
-    are excluded and never topped up), while the pass thresholds stay
-    at their absolute 16-of-20 / 4-of-20 values -- so lost seeds make
-    the rule strictly harder, never easier.
+    Counts only; no fitted quantity anywhere. Invalid seeds are excluded
+    from the valid-row set and never topped up, while the thresholds
+    stay at their absolute values -- and the effect of a lost seed is
+    ASYMMETRIC across the legs. The two ``>=`` legs get strictly harder
+    (16 successes must come from fewer seeds). The ``<=`` improvement
+    leg gets statistically easier: with fewer seeds there are fewer
+    chances to observe an improving one under the absolute cap of 4.
+    The confirmatory run had 20/20 valid seeds, so neither direction
+    was exercised; the asymmetry is pinned by a regression so it stays
+    visible.
+
+    One further divergence from the registered wording is recorded as
+    prereg deviation E4: a structurally-blocked control counts as a
+    spec pass here (the P2/P8 convention), while Section 2's text is
+    ``h_3 < c_3`` alone. The clause did not fire -- every confirmatory
+    control returned ``ok``.
     """
 
     underfit = sum(1 for r in ok if r["d3_truth"] < r["d2_truth"])
@@ -115,6 +126,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     seed_spec = args.seeds or CONFIRMATORY_SEEDS
+    # String equality on the spec, not set equality on the parsed seeds:
+    # spelling the same twenty seeds any other way (e.g. "500,501,...")
+    # runs them LABELLED AS SMOKE. That is the conservative direction --
+    # a rerun can only fail to claim confirmatory status, never acquire
+    # it by accident -- so it is left as is, on purpose.
     confirmatory = seed_spec == CONFIRMATORY_SEEDS
     seeds = parse_seed_spec(seed_spec)
     policy = RepresentabilityFitPolicy()
