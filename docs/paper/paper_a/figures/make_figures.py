@@ -52,12 +52,33 @@ def _style(ax) -> None:
 # Figure 1: the reconstruction ladder (schematic)
 # --------------------------------------------------------------------------
 LADDER = [
-    ("R0", "order only", "dimension; timelike shape", "no absolute scale"),
-    ("R1", "+ measure", "timelike proper time", "needs a density"),
-    ("R2", "+ observer", "radar time; unsigned distance", "sign undetermined"),
-    ("R3", "+ orientation", "signed coords; Lorentz map", "supplied orientation"),
-    ("R4", "+ atlas", "Poincare transition maps", "supplied charts"),
-    ("R5", "+ conformal weights", "volume; coarse-grain stability", "factor supplied"),
+    (
+        "R0",
+        "order only",
+        "flat-sprinkling dimension; raw chain statistics",
+        "model assumptions; no metric scale",
+    ),
+    ("R1", "order + global density", "timelike proper time", "needs a density"),
+    ("R2", "order + observer clock", "radar time; unsigned distance",
+     "sign undetermined"),
+    (
+        "R3",
+        "order + observer + orientation",
+        "signed coords; Lorentz map",
+        "calibrated separation",
+    ),
+    (
+        "R4",
+        "order + observer + oriented atlas",
+        "Poincare transition maps",
+        "calibrated charts",
+    ),
+    (
+        "R5",
+        "order + global/local measure",
+        "volume; coarse-grain stability",
+        "global/local measure supplied",
+    ),
 ]
 
 
@@ -76,20 +97,19 @@ def figure_ladder() -> None:
         # top line: ingredient -> reconstructed
         ax.text(1.05, y + 0.62, ingredient, fontsize=9.5, color=INK, va="center",
                 zorder=2)
-        ax.annotate("", xy=(4.5, y + 0.62), xytext=(3.95, y + 0.62),
+        ax.annotate("", xy=(4.6, y + 0.62), xytext=(4.25, y + 0.62),
                     arrowprops=dict(arrowstyle="->", color=MUTED, lw=1.2))
-        ax.text(4.7, y + 0.62, recovered, fontsize=9.5, color=INK, va="center",
+        ax.text(4.78, y + 0.62, recovered, fontsize=9.5, color=INK, va="center",
                 fontweight="medium", zorder=2)
         # bottom line: bounded-by note (own line, no collision)
         ax.text(1.05, y + 0.28, f"bounded by: {bound}", fontsize=8, color=MUTED,
                 va="center", zorder=2, style="italic")
-    ax.text(1.05, n + 0.02, "supplied ingredient  ->  reconstructed quantity",
+    ax.text(1.05, n + 0.02, "required supplied structure  ->  reconstructed quantity",
             fontsize=8.5, color=MUTED)
     ax.set_xlim(-0.1, 9.8)
     ax.set_ylim(0, n + 0.4)
     ax.set_title(
-        "The reconstruction ladder: causal order + one supplied ingredient at a "
-        "time",
+        "Reconstruction dependency ledger: causal order + required structure",
         fontsize=11, color=INK, loc="left",
     )
     fig.tight_layout()
@@ -210,9 +230,9 @@ def figure_measure() -> None:
     fig, ax = plt.subplots(figsize=(6.2, 4.2))
     _style(ax)
     ax.plot(ns, [_f(r, "unweighted_relative_rmse") for r in rows], marker="s", ms=5,
-            color=VERM, lw=2, label="unweighted (no measure supplied)")
+            color=VERM, lw=2, label="unweighted coordinate support")
     ax.plot(ns, [_f(r, "weighted_relative_rmse") for r in rows], marker="o", ms=5,
-            color=BLUE, lw=2, label="weighted (measure supplied)")
+            color=BLUE, lw=2, label="local-measure weighted")
     ax.set_xscale("log")
     ax.set_xticks([600, 1200, 2400])
     ax.set_xticklabels(["600", "1200", "2400"], fontsize=9)
@@ -222,8 +242,8 @@ def figure_measure() -> None:
     ax.set_ylim(0, None)
     ax.legend(fontsize=9, frameon=False, loc="center right")
     ax.set_title(
-        "R5: volume reconstruction needs a supplied measure\n"
-        "(unweighted is biased and does not converge; weighted does)",
+        "R5: local weights for coordinate-support sampling\n"
+        "(unweighted relative RMSE stays high; weighted RMSE falls over tested N)",
         fontsize=10.5, color=INK, loc="left",
     )
     fig.tight_layout()
