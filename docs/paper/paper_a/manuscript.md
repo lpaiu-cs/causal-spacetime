@@ -1,27 +1,30 @@
 # An operational reconstruction ladder for spacetime quantities from causal order
 
-**Draft v0.2.** Causal Spacetime Lab. Every quantitative result is grounded in
-the experiment output CSVs (regenerable; each cited with its producing script);
-no number is from memory.
+**Draft v0.3.** Causal Spacetime Lab. Every quantitative result is tied to a
+producing experiment and expected output path. Five figure-source summaries are
+committed; the remaining cited tables require regeneration before submission
+(Section 9 and `artifact_manifest.md`). No number is from memory.
 
 ## Abstract
 
 We study, in controlled 1+1D (and, for dimension, higher-D) Minkowski models,
 which spacetime quantities can be operationally reconstructed from a causal
 (accessibility) order once a minimal, explicitly declared set of additional
-ingredients is supplied. We organize the reconstructions as a ladder. From
-causal order alone, order statistics recover the spacetime dimension and the
-longest antichain-free chain fixes the *shape* of timelike separation, but not
-its absolute scale. Adding a counting measure (event density) turns Alexandrov
-interval cardinality into a timelike proper-time estimate whose error is
-consistent with finite-sampling noise. Adding an observer chain with clock
+ingredients is supplied. We organize the reconstructions as a ladder. In flat
+Poisson-sprinkled Alexandrov intervals, order statistics estimate dimension,
+and raw longest-chain length is an uncalibrated timelike statistic; converting
+it to proper time requires density and dimension-dependent normalization.
+Adding a global event-density calibration turns Alexandrov interval cardinality
+into a timelike proper-time estimate whose error is consistent with
+finite-sampling noise at the tested settings. Adding an observer chain with clock
 labels yields radar time and unsigned radar distance; adding an orientation
 reference lifts the reflection degeneracy to signed coordinates and lets one
 recover the Lorentz map between two inertial protocols; adding overlapping
 charts yields an observer atlas with approximately consistent Poincare
-transition maps; adding conformal measure weights makes volume reconstruction
-possible under the conformal ambiguity, and coarse-graining is stable only when
-density is rescaled. We also give a Rindler horizon analogue, in which an
+transition maps; adding supplied measure information, implemented in exp19 as
+local weights, makes volume reconstruction possible under the conformal
+ambiguity, and density-rescaled reconstruction is stable in the tested
+random-thinning protocol. We also give a Rindler horizon analogue, in which an
 accelerated observer's two-way radar reconstruction is confined to the expected
 wedge, and a finite-speed lattice counterexample showing that finite signal
 speed alone does not produce Lorentzian structure. The contribution is not any
@@ -32,14 +35,15 @@ validations inside known models.
 
 ## 1. Introduction
 
-A conservative reading of the causal-set and order-first programs is that
-causal order carries much, but not all, of Lorentzian geometry: with a volume
-element it fixes geometry up to the well-understood conformal freedom
+A conservative reading of the causal-set and order-first programs is that, for
+future- and past-distinguishing Lorentzian spacetimes, causal or chronological
+structure determines the conformal class. Supplying a volume element fixes the
+remaining conformal factor, up to diffeomorphism and unit conventions
 [@blms1987; @malament1977; @hkm1976; @kronheimer1967; @sorkin2005; @surya2019].
 This paper treats that statement operationally and quantitatively. Rather than
 ask whether spacetime "is" a causal set, we ask: fix a causal (or
-null-accessibility) order in a known model; then, supplying one additional
-ingredient at a time, which spacetime quantities can a finite procedure
+null-accessibility) order in a known model; then, supplying an explicitly
+declared ingredient set, which spacetime quantities can a finite procedure
 actually reconstruct, with what error, and where does each reconstruction stop?
 
 The value of posing it this way is an explicit *ledger*. Many individual
@@ -54,7 +58,7 @@ does not fix conformal scale; a single observer yields only unsigned distance
 Lorentzian structure.
 
 Contributions: (1) a reconstruction ladder that indexes recoverable spacetime
-quantities by the minimal supplied ingredient, with per-rung error behavior in
+quantities by the minimal supplied ingredient set, with per-rung error behavior in
 controlled models; (2) grounded validations of dimension, proper time, radar
 decomposition, Lorentz-map and atlas consistency, and measure-dependent volume;
 (3) three bounding negative results (conformal scale, reflection degeneracy,
@@ -72,27 +76,28 @@ Primitive:
 - **Causal / accessibility order.** A strict partial order on events (in the
   continuum models, Minkowski causal precedence; null-inclusive).
 
-Supplied ingredients, in increasing strength:
+Supplied ingredient symbols (these form branches, not one linear hierarchy):
 
-- **M — counting measure / event density.** A volume element, supplied as a
-  density or a sampling process.
+- **M — global event-density calibration.** The conversion between event count
+  and physical volume in the declared sampling model.
 - **O — observer chain with clock labels.** A timelike chain carrying ordered
   tick labels (an operational clock), defining a radar protocol.
-- **R — orientation reference.** A second synchronized chain with known
+- **R — oriented synchronized reference.** A second beacon chain with calibrated
   separation, fixing a spatial side.
 - **A — observer atlas.** Multiple overlapping observer charts.
-- **W — conformal measure weights.** A supplied local volume weighting.
+- **W — local measure profile / weights.** The physical volume element relative
+  to the support sampling measure.
 
 Rungs (minimal ingredient -> what is reconstructed):
 
 | Rung | Ingredient | Reconstructed | Bounded by |
 | --- | --- | --- | --- |
-| R0 | order only | dimension; timelike *shape* (longest chain); conformal/causal structure | no absolute scale |
+| R0 | order only | flat-sprinkling dimension estimate; uncalibrated chain statistics | manifold/model assumptions; no metric scale |
 | R1 | order + M | timelike proper time (interval cardinality -> volume -> tau) | needs a density |
 | R2 | order + O | radar time; unsigned radar distance | sign undetermined |
 | R3 | order + O + R | signed coordinates; Lorentz map between protocols | supplied orientation |
-| R4 | order + O + A | atlas transition maps (Poincare); invariant agreement | supplied charts |
-| R5 | order + M + W | volume under conformal ambiguity; coarse-graining stability | conformal factor supplied |
+| R4 | order + O + R + A | atlas transition maps (Poincare); invariant agreement | oriented, calibrated charts |
+| R5 | order + M + W | volume under conformal ambiguity; coarse-graining stability | global and local measure supplied |
 
 Three negative results bound the ladder from below (Section 5): conformal scale
 is not fixed by order alone (motivating M and W); a single observer gives only
@@ -101,11 +106,10 @@ Lorentzian structure. Figure 1 summarizes the ladder.
 
 ![Figure 1](figures/fig1_ladder.png)
 
-*Figure 1. The reconstruction ladder. Each rung adds one supplied ingredient to
-the primitive causal order and unlocks a reconstructed quantity, bounded by what
-that ingredient does not supply. Reading top-down recovers operational geometry;
-reading the "bounded by" column is the ledger of what each reconstruction
-costs.*
+*Figure 1. The reconstruction dependency ledger. Each row names a minimal
+ingredient set and the quantity it unlocks; the observer and measure rows are
+branches rather than one cumulative linear chain. The "bounded by" line records
+what that ingredient set still does not supply.*
 
 ## 3. Methods (verified foundation layer)
 
@@ -138,15 +142,16 @@ the conventions the results depend on.
   are the latest preceding and earliest succeeding tick labels; radar time is
   their mean and radar distance their half-difference. A single chain gives
   unsigned distance; a second oriented chain supplies the sign. Lorentz maps
-  between two inertial protocols are fit on their overlap.
+  between two inertial protocols are fit on their overlap [@perlick2008].
 - **Rindler.** An accelerated (Rindler) observer in flat spacetime, with
   analytic two-way radar ticks; the reconstructible region is the Rindler
   wedge, with the horizon appearing as a reconstruction-inaccessibility
-  boundary.
+  boundary [@rindler1966].
 - **Conformal / measure.** Positive conformal rescalings preserve causal order
   while changing volume and clock scale; volume reconstruction then requires
-  supplied measure weights, and coarse-graining (random thinning) is stable
-  only with density rescaling.
+  supplied measure information (implemented in exp19 as local weights). In the
+  tested random-thinning protocol, reconstruction is stable after density
+  rescaling.
 
 ## 4. Results
 
@@ -155,46 +160,53 @@ number and its producing script.
 
 ### 4.1 R0 — order alone
 
-**Dimension.** The Myrheim-Meyer estimator recovers spacetime dimension in flat
-Alexandrov intervals and converges toward the true value as N grows: for true
+**Dimension.** In the declared flat Poisson-sprinkling model, the
+Myrheim-Meyer order statistic estimates spacetime dimension: for true
 dimension 2 the estimate moves 1.95 -> 2.03 -> 2.01 -> 1.99 at N = 300, 600,
 1200, 2400; for dimension 3, 2.96 -> 2.95 -> 3.00 -> 3.00; for dimension 4,
-4.07 -> 3.97 -> 3.93 -> 3.97, with RMSE decreasing with N
+4.07 -> 3.97 -> 3.93 -> 3.97. Endpoint RMSE is lower at N = 2400 than at
+N = 300, with non-monotonic finite-sample fluctuations for dimensions 3 and 4
 (exp10; `outputs/data/dimension_reconstruction_summary.csv`).
 
-**Timelike shape (longest chain).** The longest chain follows the
+**Uncalibrated timelike statistic (longest chain).** The longest chain follows the
 Brightwell-Gregory scaling L ~ sqrt(2 rho) tau, approached from below at finite
 density: at rho = 300 the normalized length L/(sqrt(rho) tau) is 1.325 with
 endpoints included and 1.085 with endpoints removed, versus the asymptotic
 sqrt(2) ~ 1.414, giving a finite-size low bias (mean chain proper-time error
 -0.127) (exp09; `outputs/data/longest_chain_calibration_summary.csv`). The
 approach toward the asymptotic value with N is shown by the chain estimator's
-error falling with N in Section 4.2. This fixes the *shape* of timelike
-separation from order plus a density normalization, with O(1) endpoint and
-finite-size corrections; absolute scale is not fixed by order alone.
+error falling with N in Section 4.2. Raw longest-chain length is
+order-theoretic. Interpreting it as proper time, including the normalization
+quoted here, belongs to R1 because it requires density and a dimension-specific
+asymptotic law; absolute scale is not fixed by order alone.
 
 ### 4.2 R1 — order + measure: timelike proper time
 
 With event density supplied, Alexandrov interval cardinality reconstructs
 timelike proper time between internal pairs, tau_est = sqrt(2K/rho). The
 volume-estimator relative RMSE falls from 0.273 at N = 300 to 0.105 at
-N = 2400, and beats the chain estimator (0.382 -> 0.231) at every N (exp07;
-`outputs/data/timelike_pair_reconstruction_summary.csv`). In a fixed-interval
-sanity check the interval-cardinality estimate of tau = 2.0 is exact at every N
-(absolute error 0.0), while the chain estimate converges toward it
+N = 2400. Its separately aggregated RMSE is below the chain estimator's
+(0.382 -> 0.231) at every N, but the volume statistic uses 500 pairs per N
+whereas the chain statistic uses 125, so this is not a paired comparison
+(exp07; `outputs/data/timelike_pair_reconstruction_summary.csv`). In a
+fixed-interval sanity check, the interval-cardinality formula returns
+tau = 2.0 exactly because the full sampling diamond uses K = N and rho = N/V;
+this is a normalization identity, not an independent accuracy test. The chain
+estimate converges toward it
 (0.303 at N = 200 -> 0.0125 at N = 2000) (exp03;
 `outputs/data/timelike_reconstruction_summary.csv`). The observed errors are
-consistent with finite-sampling noise rather than bias or estimator error: the
-ratio of reconstruction RMSE to the predicted Poisson standard deviation is
-0.93-1.07 across N (binomial 1.00-1.14) (exp08;
+consistent with finite-sampling noise at the tested settings: the ratio of
+reconstruction RMSE to the predicted Poisson standard deviation is 0.93-1.07
+across N (binomial 1.00-1.14). Smaller bias or other estimator errors are not
+excluded (exp08;
 `outputs/data/probe_pair_statistical_calibration_summary.csv`).
 
 ### 4.3 R2 — order + observer: radar time and unsigned distance
 
 Given an observer chain with clock labels, radar time and unsigned radar
-distance are reconstructed from causal accessibility; the error falls roughly
-by half per doubling of tick resolution — radar-time RMSE from 0.027 at 16
-ticks to 0.0033 at 128 ticks, radar-distance RMSE from 0.072 to 0.0085, with
+distance are reconstructed from causal accessibility; at N = 300 the error
+falls roughly by half per doubling of tick resolution — radar-time RMSE from
+0.027 at 16 ticks to 0.0033 at 128 ticks, radar-distance RMSE from 0.072 to 0.0085, with
 the accessible fraction 1.0 throughout (exp11;
 `outputs/data/discrete_radar_reconstruction_summary.csv`). A single observer
 determines only unsigned distance (the reflection degeneracy of Section 5).
@@ -204,9 +216,9 @@ determines only unsigned distance (the reflection degeneracy of Section 5).
 A second synchronized beacon chain with known separation supplies orientation,
 lifting the degeneracy to signed 1+1D coordinates. The affine map recovered
 between two oriented inertial protocols approaches the Lorentz boost, with the
-fitted-beta RMSE falling with tick density: from 0.0070 at 32 ticks to 0.0016
-at 128 ticks for beta = 0.3, and from 0.016 to 0.0061 for beta = 0.6 (again
-about halving per tick doubling) (exp13;
+fitted-beta RMSE falling with tick density. Averaged over N as in Figure 2, it
+falls from 0.00495 at 32 ticks to 0.000975 at 128 ticks for beta = 0.3, and
+from 0.01345 to 0.00431 for beta = 0.6 (exp13;
 `outputs/data/oriented_radar_lorentz_summary.csv`).
 
 Figure 2 collects the convergence behavior of the first four rungs: dimension
@@ -216,23 +228,26 @@ recovery (d).
 ![Figure 2](figures/fig2_convergence.png)
 
 *Figure 2. Reconstruction accuracy in controlled models. (a) Myrheim-Meyer
-dimension converges to the true value for D = 2, 3, 4 as N grows (exp10).
+dimension estimates lie near D = 2, 3, 4; endpoint RMSE is lower at N = 2400
+than N = 300 despite non-monotonic finite-sample fluctuations (exp10).
 (b) Timelike proper-time relative RMSE falls with N, the interval-volume
-estimator beating the longest-chain estimator (exp07). (c) Observer radar time
-and distance RMSE fall about by half per doubling of clock ticks (exp11).
+estimator below the separately aggregated longest-chain estimator (exp07).
+(c) Observer radar time and distance RMSE fall about by half per doubling of
+clock ticks (exp11).
 (d) Recovered Lorentz beta RMSE falls with clock ticks for two boosts (exp13).
 Panels (c, d) are means over N; axes are logarithmic where noted.*
 
-### 4.5 R4 — + atlas: transition-map consistency
+### 4.5 R4 — + oriented atlas: transition-map consistency
 
-With overlapping observer charts, affine Lorentz/Poincare transition maps fit
+With overlapping observer charts that retain the synchronized, calibrated
+orientation reference from R3, affine Lorentz/Poincare transition maps fit
 on chart overlaps show approximately consistent composition and invariant
 agreement, improving with tick density: the mean transition-map beta error
 falls 0.0047 -> 0.0012 and the invariant-interval RMSE 0.050 -> 0.010 (ticks
 32 -> 128), while loop closure (A -> B -> C versus direct A -> C) has a
 beta-composition error of 0.0072 -> 0.0017 (exp14;
 `outputs/data/observer_atlas_transition_summary.csv`,
-`observer_atlas_loop_summary.csv`). On exact analytic input the same
+`outputs/data/observer_atlas_loop_summary.csv`). On exact analytic input the same
 transition/loop machinery recovers the maps to machine precision (beta error
 ~5.6e-17, RMSE ~4e-17) (exp15;
 `outputs/data/exact_poincare_map_sanity.csv`).
@@ -244,12 +259,14 @@ clock scale: under constant (1.0/1.5/2.0) and sinusoidal rescalings the causal
 matrix is unchanged and the reconstructed dimension is identical (2.020), while
 the proper-time ratio tracks 1.0/1.5/2.0 and the volume ratio 1.0/2.25/4.0
 (exp18; `outputs/data/conformal_order_ambiguity_summary.csv`). With supplied
-measure weights, weighted volume reconstruction is unbiased and convergent
-(relative RMSE 0.234 -> 0.118 with N), whereas the unweighted estimate is
-biased low and non-converging (0.569 -> 0.557, bias ~ -0.29); the analytic
+measure weights, weighted volume reconstruction has negligible observed bias
+and decreasing relative RMSE (0.234 -> 0.118 across the tested N), whereas,
+for exp19's coordinate-volume support sampling, the unweighted estimate
+retains a large low bias with no material RMSE improvement
+(0.569 -> 0.557, bias ~ -0.29); the analytic
 volume/proper-time formulas are verified to ~1e-7 (exp19, exp20;
 `outputs/data/weighted_conformal_volume_summary.csv`,
-`conformal_volume_exact_sanity.csv`). Under random thinning, density-rescaled
+`outputs/data/conformal_volume_exact_sanity.csv`). Under random thinning, density-rescaled
 reconstruction is stable (volume RMSE 0.018 -> 0.009, dimension steady ~2.0)
 while the uncorrected estimate blows up to RMSE 0.270 (bias -0.183) at 25%
 retention (exp23; `outputs/data/thinning_coarse_graining_summary.csv`).
@@ -257,11 +274,14 @@ Figure 3 shows the measure dependence directly.
 
 ![Figure 3](figures/fig3_measure.png)
 
-*Figure 3. R5: volume reconstruction requires a supplied measure. With measure
-weights supplied, the weighted volume estimate is unbiased and converges with N;
-without them the unweighted estimate is biased low and does not converge
-(constant-1.5 conformal profile, exp19). This is why order-alone recovers only
-timelike shape, not absolute scale.*
+*Figure 3. R5: volume reconstruction requires supplied measure information. For
+the coordinate-volume support sampling used in exp19, the weighted estimate
+has negligible observed bias and decreasing RMSE over the tested N, while
+omitting the supplied local weights gives the reported persistent bias
+(constant-1.5 conformal profile). Equivalent measure
+information can conceptually be encoded in the sampling law rather than as
+post-hoc weights; that alternative is not part of Figure 3's evidence package.
+Order alone fixes no absolute scale.*
 
 ### 4.7 Horizon analogue — Rindler reconstruction-inaccessibility
 
@@ -284,17 +304,18 @@ flat-spacetime horizon analogue, not a black-hole simulation.
 - **Conformal scale is not fixed by order alone.** Positive conformal
   rescalings leave the causal order invariant while changing physical volume
   and clock scale (Section 4.6). Absolute scale therefore requires a supplied
-  measure (rung M); this is why R0 recovers only timelike *shape*.
+  measure (rung M); R0 therefore supplies uncalibrated order statistics, not a
+  proper-time scale.
 - **A single observer gives only unsigned distance.** One chain's radar
   distance is |x|: two targets at x = +0.1 and x = -0.1 return the identical
   single-observer distance 0.1, while the two-chain oriented protocol recovers
   the signed positions +0.1 and -0.1. Signed coordinates therefore require an
   orientation reference (rung R) (exp12;
   `outputs/data/single_observer_reflection_degeneracy.csv`).
-- **Finite signal speed alone does not give Lorentzian structure.** A regular
-  finite-speed lattice reproduces the correct volume growth — cumulative counts
-  follow the triangular-number law tracking the continuum 1 + rho t^2
-  (t = 5: 21 vs 14.75; t = 30: 496 vs 496) — yet its edges lie only along the
+- **Finite signal speed alone does not give Lorentzian structure.** After
+  calibrating density at the final time, a regular finite-speed lattice shares
+  the continuum model's leading quadratic count growth, while finite-t counts
+  differ (t = 5: 21 vs 14.75; t = 30: 496 vs 496). Yet its edges lie only along the
   two lightcone diagonals (465 each), so it has a discrete symmetry, not the
   continuous Lorentz symmetry of a sprinkled causal set (exp05;
   `outputs/data/finite_speed_lattice_growth.csv`). Finite speed is necessary
@@ -309,16 +330,18 @@ region rather than tracking spacelike distance cleanly (exp06;
 
 ## 6. Discussion
 
-The ladder is an accounting device. Read top-down it recovers a substantial
-fraction of operational Lorentzian geometry — dimension, timelike duration,
-radar decomposition, Lorentz and Poincare consistency, volume — from a causal
-order plus a short, explicit list of supplied ingredients. Read bottom-up it is
-equally a list of what each reconstruction *costs*: absolute scale costs a
+The ladder is a branched accounting device, not a single cumulative chain.
+Across its dependency rows it recovers a substantial fraction of operational
+Lorentzian geometry — dimension, timelike duration, radar decomposition,
+Lorentz and Poincare consistency, volume — from a causal order plus short,
+explicit ingredient sets. It is equally a list of what each reconstruction
+*costs*: absolute scale costs a
 measure; a signed spatial coordinate costs an orientation; a metric-not-merely-
 conformal statement costs a volume element; Lorentzian structure is not bought
 by finite speed alone. Stating both directions together is the point: it turns
-"causal order plus a volume element fixes geometry up to conformal factor" from
-a slogan into a per-quantity operational ledger with measured error behavior.
+"causal structure fixes the conformal class, and a volume element fixes the
+remaining conformal factor" from a slogan into a per-quantity operational
+ledger with measured error behavior.
 
 This framing also clarifies what the program does *not* show and sets up the
 open question. Everything here is reconstruction inside known models: the
@@ -330,12 +353,14 @@ requires a validated discriminator and is taken up separately.
 ## 7. Claim boundary
 
 We claim, as controlled validations in known 1+1D (and higher-D for dimension)
-models: dimension is recoverable from order statistics; timelike proper time is
+models: dimension is estimated from order statistics in flat sprinklings;
+timelike proper time is
 recoverable from interval cardinality once a density is supplied, with
 finite-sampling-consistent error; radar time and unsigned distance are
 recoverable from an observer protocol, signed coordinates and the Lorentz map
 with an orientation reference, and atlas transition maps with overlapping
-charts; volume is recoverable with supplied conformal weights and is stable
+oriented, calibrated charts; volume is recoverable with supplied global
+density and local measure information and is stable
 under density-rescaled coarse-graining; and a Rindler wedge is the
 reconstructible region for an accelerated observer.
 
@@ -356,17 +381,23 @@ geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this
 foundation, measures its dose-response to geometry dilution and its dimension
 selection in 2+1D, and then carries it to orders produced by growth dynamics
-and by action-weighted equilibrium ensembles, where the continuum phase of a
-restricted ensemble passes the instrument and the crystalline phase does not.
+and by an action-weighted 2D-order ensemble. At N = 600, random-start
+post-burn-in configurations at beta = 2 and beta = 8 pass the frozen
+instrument, while the beta = 32 bipartite-start control blocks structurally.
+These are not certified equilibrium draws, and the companion study did not
+establish an equilibrium transition or finite-size scaling.
 
 ## 9. Reproducibility
 
-Foundation-layer baseline commit `325df55`. Every number in Section 4/6 is
-produced by the cited `experiments/exp*.py` script (run with `PYTHONPATH=src`)
-and read from the named summary CSV under `outputs/data/`. Conventions
-(sprinkling measure, causal relation, chain and interval normalizations,
-Myrheim-Meyer inversion) are fixed in the foundation modules and stated in
-Section 3.
+Foundation-layer baseline commit `325df55`. Every number in Sections 4-5 has a
+cited `experiments/exp*.py` producer and expected summary path. Five summaries
+used by the figures are committed under `figures/data/`; the other named
+`outputs/data/` tables are gitignored generated outputs and are not present in
+a clean checkout. `artifact_manifest.md` records this boundary and the hashes
+of the committed summaries. The full 19-table evidence package must be
+regenerated and committed before submission. Conventions (sprinkling measure,
+causal relation, chain and interval normalizations, Myrheim-Meyer inversion)
+are fixed in the foundation modules and stated in Section 3.
 
 ## Appendix A: conventions and normalizations
 
@@ -386,5 +417,5 @@ the foundation modules.
 ## References
 
 Verified bibliography in `citations/references.bib` (shared verified core with
-Paper B). Additional radar-coordinate and Rindler references to be added in the
-bibliography pass.
+Paper B), including the radar-method and uniformly accelerated-frame sources
+used here.

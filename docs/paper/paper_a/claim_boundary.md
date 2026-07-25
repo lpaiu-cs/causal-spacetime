@@ -1,26 +1,30 @@
 # Paper A claim boundary
 
-Complements manuscript Section 8. Every claim is a controlled validation in a
-known model, grounded in a cited experiment CSV.
+Complements manuscript Section 7. Every claim is a controlled validation in a
+known model and tied to a cited experiment output. The clean-checkout evidence
+boundary is recorded separately in `artifact_manifest.md`.
 
 ## Claimed (supported, as controlled validations)
 
-- **Dimension** is recoverable from causal order statistics in flat Alexandrov
-  intervals, converging to the true value with N (exp10).
+- **Dimension** is estimated from causal-order statistics in flat
+  Poisson-sprinkled Alexandrov intervals, with lower endpoint RMSE at N=2400
+  than N=300 but non-monotonic finite-sample fluctuations in 3D/4D (exp10).
 - **Timelike proper time** is recoverable from Alexandrov interval cardinality
   once an event density is supplied, with error consistent with finite-sampling
   noise (exp07, exp03, exp08).
-- **Longest-chain timelike shape** follows the Brightwell-Gregory scaling with a
-  supplied density normalization (exp09).
+- **Raw longest-chain length** is order-theoretic; its conversion to timelike
+  proper time follows Brightwell-Gregory scaling only after supplied density
+  and dimension-dependent normalization (exp09).
 - **Radar time and unsigned distance** are recoverable from an observer chain
   with clock labels; error falls with tick density (exp11).
 - **Signed coordinates and the Lorentz map** are recoverable with an added
   orientation reference (exp13).
 - **Atlas transition maps** (Poincare) are approximately consistent across
-  overlapping charts (exp14, exp15).
+  overlapping oriented, calibrated charts (exp14, exp15).
 - **Volume under the conformal ambiguity** is recoverable with supplied measure
-  weights; coarse-graining is stable only with density rescaling (exp18-20,
-  exp23).
+  information, implemented in exp19 as local weights; in the tested
+  random-thinning protocol, reconstruction is stable after density rescaling
+  (exp18-20, exp23).
 - **Rindler wedge** is the reconstructible region for an accelerated observer; a
   horizon appears as a reconstruction-inaccessibility boundary (exp16, exp17).
 
@@ -46,3 +50,7 @@ known model, grounded in a cited experiment CSV.
   explicitly out of scope and is the subject of the companion Paper B.
 - Results are controlled and mostly 1+1D (dimension checked to 4D); constants
   are convention-dependent and stated where used.
+- Paper B's N=600 action-weighted samples are not certified equilibrium draws;
+  no equilibrium transition or finite-size scaling is imported into Paper A.
+- Fourteen of the 19 cited summary tables are not yet archived in the clean
+  checkout; manuscript submission requires the complete evidence package.
