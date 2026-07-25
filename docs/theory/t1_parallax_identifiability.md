@@ -940,17 +940,39 @@ The quantity is
     amp := (rms position error / L) / (delta / 2L)
 
 for a scene of diameter `L`: how many multiples of one readout's own
-error bound end up in the reconstructed positions. The error model is the
-instrument's — uniform on `[-delta/2, delta/2]` per profile entry, pushed
-through `Phi -> Phi~ -> D`, then inverted linearly.
+error bound end up in the reconstructed positions.
 
-**A methodological trap first, because this note fell into it.** `J` is
-homogeneous of degree zero, so `sigma_min` is scale-free, while `delta`
-is a length. Comparing them without dividing by the scene size is
-meaningless. And isotropic noise on `D` overstates the damage several-fold
-relative to the real error model, because quantization cannot produce the
-directions in `D`-space that hurt most. Both mistakes point the same way —
-toward alarm — and both are wrong.
+**What is assumed, since only one of the four is proved.** The *support*
+`|error| <= delta/2` per profile entry is the band theorem. That the
+error is *uniform* on that interval is assumed. That it is *independent*
+across `(target, observer)` is assumed and is load-bearing: `Phi~ = M Phi`
+subtracts the observer mean, so any component common to all observers of
+a target is annihilated before `D` exists. Measured on the frozen scene,
+`amp` is `2.08` under independence and `7e-13` — i.e. zero — under
+perfect common mode, with an equal mixture at `1.15`. Independence is the
+most pessimistic structure tried, so the figures below are conservative
+by choice, not by derivation. And the inverse is the *linearised,
+minimum-norm* one, which is optimistic: a nonlinear solver need not find
+the smallest displacement consistent with the data.
+
+**Two methodological traps, because this note fell into both.** `J` is
+homogeneous of degree zero, so `sigma_min` is scale-free while `delta` is
+a length; comparing them without dividing by the scene size is
+meaningless. And isotropic noise on `D` overstates the damage
+several-fold relative to the real error model, because quantization
+cannot produce the directions in `D`-space that hurt most. Both point the
+same way — toward alarm — and both are wrong.
+
+**A third trap sits inside the margin itself.** `sigma_min` as computed
+here is *the smallest singular value above the rank cutoff*, not the
+smallest nonzero one. Once a configuration's true margin falls under that
+cutoff it loses a dimension of rank and the reported margin jumps to the
+next value up: at `d = 2, R = 32, n = 48` the margin sits about four
+times the cutoff, and moving the cutoff one notch inflates the reported
+number 31-fold. The worse configuration reports the better number. Every
+margin in the table therefore carries its nullity and its headroom over
+the cutoff, and a margin that is not readable in that sense is excluded
+rather than used.
 
 **Finding 1: the frozen 2+1D instrument is comfortable.** `amp = 2.16`,
 and the response is linear in `delta` across three decades — no floor, no

@@ -1,65 +1,184 @@
 {
-  "scope": "A1: finite-resolution cost of the exact-model rigidity results. DESCRIPTIVE -- no preregistration, no gate, nothing frozen. Linearised inverse; the error model is the instrument's own delta/2 readout bound, applied per profile entry.",
+  "scope": "A1: finite-resolution cost of the exact-model rigidity results. DESCRIPTIVE -- no preregistration, no gate, nothing frozen. 'passed' means the measurement ran and the instrument validated; it encodes no threshold on any measured value, since every such threshold would have been chosen after seeing the data. The regression tests pin the numbers.",
+  "assumptions": {
+    "readout_support": "|error| <= delta/2 per profile entry (PROVED)",
+    "readout_distribution": "uniform on that interval (ASSUMED)",
+    "readout_independence": "independent across (target, observer) (ASSUMED, and load-bearing -- see check error_model_sensitivity)",
+    "inverse": "linearised, minimum-norm J^+ dD -- optimistic, since a nonlinear solver need not find the smallest consistent displacement"
+  },
   "checks": {
     "frozen_instrument": {
       "n_targets": 34,
       "n_observers": 8,
       "scene_diameter": 0.5,
-      "sigma_min": 0.012746333800712809,
+      "margin": {
+        "sigma_min": 0.012746333800712809,
+        "sigma_max": 3.789313448291069,
+        "ratio": 0.003363758098834827,
+        "nullity": 3,
+        "gauge": 3,
+        "rigid": true,
+        "headroom_over_rank_tolerance": 3363758.098834827,
+        "margin_is_readable": true
+      },
+      "tick_ladder": {
+        "rungs": [
+          {
+            "ticks": 12,
+            "delta": 0.12727272727272726,
+            "source": "g4a table"
+          },
+          {
+            "ticks": 24,
+            "delta": 0.0608695652173913,
+            "source": "g4a table"
+          },
+          {
+            "ticks": 48,
+            "delta": 0.02978723404255319,
+            "source": "g4a table"
+          },
+          {
+            "ticks": 96,
+            "delta": 0.014736842105263158,
+            "source": "g4a table"
+          },
+          {
+            "ticks": 192,
+            "delta": 0.007329842931937172,
+            "source": "g4a table"
+          },
+          {
+            "ticks": 384,
+            "delta": 0.0036553524804177544,
+            "source": "g4a table"
+          },
+          {
+            "ticks": 768,
+            "delta": 0.0018252933507170795,
+            "source": "extension of the same rule"
+          },
+          {
+            "ticks": 1536,
+            "delta": 0.0009120521172638436,
+            "source": "extension of the same rule"
+          }
+        ],
+        "span_used_for_extensions": 1.4,
+        "shared_rungs_agree_with_g4a": true,
+        "mismatched_ticks": []
+      },
       "rows": [
         {
           "ticks": 12,
           "delta": 0.12727272727272726,
           "delta_over_2L": 0.12727272727272726,
-          "position_error_over_L": 0.4798731133835172,
-          "amp": 3.770431605156207
+          "relative_delta": 0.2545454545454545,
+          "model": "independent",
+          "trials": 30,
+          "amp": 3.7704316051562063,
+          "amp_sd": 0.9146107152178746,
+          "amp_min": 2.1163064987717197,
+          "amp_max": 5.783893647792439,
+          "position_error_over_L": 0.4798731133835171
         },
         {
           "ticks": 24,
           "delta": 0.0608695652173913,
           "delta_over_2L": 0.0608695652173913,
-          "position_error_over_L": 0.16694834495040714,
-          "amp": 2.742722809899546
+          "relative_delta": 0.1217391304347826,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.7427228098995466,
+          "amp_sd": 0.7941738681671412,
+          "amp_min": 1.5708369481134934,
+          "amp_max": 4.6244667191062145,
+          "position_error_over_L": 0.16694834495040717
         },
         {
           "ticks": 48,
           "delta": 0.02978723404255319,
           "delta_over_2L": 0.02978723404255319,
-          "position_error_over_L": 0.06868393936957085,
-          "amp": 2.3058179645498784
+          "relative_delta": 0.05957446808510638,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.3058179645498784,
+          "amp_sd": 0.7284705953471377,
+          "amp_min": 1.4745374221702519,
+          "amp_max": 4.001928680576049,
+          "position_error_over_L": 0.06868393936957085
         },
         {
           "ticks": 96,
           "delta": 0.014736842105263158,
           "delta_over_2L": 0.014736842105263158,
-          "position_error_over_L": 0.03181779888448995,
-          "amp": 2.159064924304675
+          "relative_delta": 0.029473684210526315,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.159064924304675,
+          "amp_sd": 0.7302758664095167,
+          "amp_min": 1.2696447172945804,
+          "amp_max": 3.8753122308761934,
+          "position_error_over_L": 0.03181779888448995
         },
         {
           "ticks": 192,
           "delta": 0.007329842931937172,
           "delta_over_2L": 0.007329842931937172,
-          "position_error_over_L": 0.015472342084262404,
-          "amp": 2.1108695272100855
+          "relative_delta": 0.014659685863874344,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.1108695272100864,
+          "amp_sd": 0.7423083397362497,
+          "amp_min": 1.1922106121347062,
+          "amp_max": 3.874840078572045,
+          "position_error_over_L": 0.015472342084262411
         },
         {
           "ticks": 384,
           "delta": 0.0036553524804177544,
           "delta_over_2L": 0.0036553524804177544,
-          "position_error_over_L": 0.007654961687806587,
-          "amp": 2.094178804592802
+          "relative_delta": 0.007310704960835509,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.094178804592802,
+          "amp_sd": 0.7501717081672373,
+          "amp_min": 1.1674444492248424,
+          "amp_max": 3.8843382173887884,
+          "position_error_over_L": 0.007654961687806587
         },
         {
           "ticks": 768,
           "delta": 0.0018252933507170795,
           "delta_over_2L": 0.0018252933507170795,
-          "position_error_over_L": 0.0038109146255562738,
-          "amp": 2.0878367984297586
+          "relative_delta": 0.003650586701434159,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.087836798429759,
+          "amp_sd": 0.7544108462021972,
+          "amp_min": 1.158549566811549,
+          "amp_max": 3.891616459943959,
+          "position_error_over_L": 0.0038109146255562746
+        },
+        {
+          "ticks": 1536,
+          "delta": 0.0009120521172638436,
+          "delta_over_2L": 0.0009120521172638436,
+          "relative_delta": 0.0018241042345276872,
+          "model": "independent",
+          "trials": 30,
+          "amp": 2.0851779740404757,
+          "amp_sd": 0.7565879752537259,
+          "amp_min": 1.154936050057155,
+          "amp_max": 3.895889747580724,
+          "position_error_over_L": 0.0019017909860955477
         }
       ],
+      "instrument_ticks": 96,
       "amp_at_the_instruments_own_resolution": 2.159064924304675,
-      "relative_spread_of_amp_over_the_fine_half": 0.034115753649177134,
-      "response_is_linear_in_delta": true,
+      "amp_sd_there": 0.7302758664095167,
+      "position_error_over_L_there": 0.03181779888448995,
+      "relative_spread_of_amp_over_the_fine_half": 0.03543436156724193,
       "passed": true
     },
     "amplification_tracks_sigma_min": {
@@ -69,15 +188,51 @@
           "d": 2,
           "R": 8,
           "n": 34,
-          "sigma_min": 0.005661556572883472,
-          "amp_by_relative_delta": {
-            "1e-02": 4.064992564489414,
-            "1e-03": 4.059476865145279,
-            "1e-04": 4.061813978607436
+          "margin": {
+            "sigma_min": 0.005661556572883472,
+            "sigma_max": 3.8043141091920893,
+            "ratio": 0.0014881937743268523,
+            "nullity": 3,
+            "gauge": 3,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 1488193.7743268523,
+            "margin_is_readable": true
           },
-          "amp_times_sigma_min": 0.022996189628414897,
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 4.0649925644894145,
+              "amp_sd": 1.1093574639019252,
+              "amp_min": 2.2233581910073554,
+              "amp_max": 6.874929599774165,
+              "position_error_over_L": 0.020324962822447074
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 4.05947686514528,
+              "amp_sd": 1.1453578699252616,
+              "amp_min": 2.3076825428113925,
+              "amp_max": 6.86713095864964,
+              "position_error_over_L": 0.00202973843257264
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 4.061813978607435,
+              "amp_sd": 1.1482962115782427,
+              "amp_min": 2.321647045288596,
+              "amp_max": 6.8626375995425555,
+              "position_error_over_L": 0.00020309069893037176
+            }
+          ],
+          "amp_times_sigma_min": 0.02299618962841489,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 0.020324962822447067,
+          "predicted_displacement_over_L_at_coarse_delta": 0.020324962822447074,
           "coarse_delta_outside_the_linear_regime": false
         },
         {
@@ -85,15 +240,51 @@
           "d": 2,
           "R": 4,
           "n": 48,
-          "sigma_min": 0.004871771506539495,
-          "amp_by_relative_delta": {
-            "1e-02": 6.363699306216626,
-            "1e-03": 6.291440359660964,
-            "1e-04": 6.28597023019611
+          "margin": {
+            "sigma_min": 0.004871771506539495,
+            "sigma_max": 6.42465747835534,
+            "ratio": 0.0007582927997255083,
+            "nullity": 3,
+            "gauge": 3,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 758292.7997255082,
+            "margin_is_readable": true
           },
-          "amp_times_sigma_min": 0.030623810658424917,
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 6.3636993062166285,
+              "amp_sd": 3.7695907448978496,
+              "amp_min": 1.7674090187003968,
+              "amp_max": 16.638654269351115,
+              "position_error_over_L": 0.031818496531083144
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 6.291440359660965,
+              "amp_sd": 3.7404140178358074,
+              "amp_min": 2.054557217296704,
+              "amp_max": 16.741893867553216,
+              "position_error_over_L": 0.0031457201798304824
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 6.285970230196111,
+              "amp_sd": 3.737900606307385,
+              "amp_min": 2.083857014193574,
+              "amp_max": 16.75548669096013,
+              "position_error_over_L": 0.00031429851150980556
+            }
+          ],
+          "amp_times_sigma_min": 0.030623810658424924,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 0.03181849653108313,
+          "predicted_displacement_over_L_at_coarse_delta": 0.031818496531083144,
           "coarse_delta_outside_the_linear_regime": false
         },
         {
@@ -101,15 +292,51 @@
           "d": 2,
           "R": 16,
           "n": 48,
-          "sigma_min": 0.00011008254312430479,
-          "amp_by_relative_delta": {
-            "1e-02": 124.64888347196108,
-            "1e-03": 90.32362372423691,
-            "1e-04": 89.12486265626215
+          "margin": {
+            "sigma_min": 0.00011008254312430479,
+            "sigma_max": 4.556830583127881,
+            "ratio": 2.415769932985799e-05,
+            "nullity": 3,
+            "gauge": 3,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 24157.699329857987,
+            "margin_is_readable": true
           },
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 124.6488834719611,
+              "amp_sd": 58.361754613658476,
+              "amp_min": 38.98221375431382,
+              "amp_max": 287.67158140875756,
+              "position_error_over_L": 0.6232444173598055
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 90.3236237242369,
+              "amp_sd": 37.476346891391806,
+              "amp_min": 28.33950619730989,
+              "amp_max": 205.40857595311516,
+              "position_error_over_L": 0.04516181186211845
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 89.12486265626215,
+              "amp_sd": 35.520243465372275,
+              "amp_min": 32.20608678054551,
+              "amp_max": 197.09775007079747,
+              "position_error_over_L": 0.004456243132813108
+            }
+          ],
           "amp_times_sigma_min": 0.00981109153680572,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 0.6232444173598054,
+          "predicted_displacement_over_L_at_coarse_delta": 0.6232444173598055,
           "coarse_delta_outside_the_linear_regime": true
         },
         {
@@ -117,15 +344,51 @@
           "d": 2,
           "R": 24,
           "n": 48,
-          "sigma_min": 9.021383112759069e-07,
-          "amp_by_relative_delta": {
-            "1e-02": 5892.370626570251,
-            "1e-03": 4074.834003274997,
-            "1e-04": 4062.4257268275824
+          "margin": {
+            "sigma_min": 9.021383112759069e-07,
+            "sigma_max": 4.501751928432776,
+            "ratio": 2.0039716217547648e-07,
+            "nullity": 3,
+            "gauge": 3,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 200.39716217547647,
+            "margin_is_readable": true
           },
-          "amp_times_sigma_min": 0.0036648698848840335,
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 5892.370626570252,
+              "amp_sd": 3445.7268199646746,
+              "amp_min": 554.5446892106442,
+              "amp_max": 11740.005341005475,
+              "position_error_over_L": 29.46185313285126
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 4074.8340032749966,
+              "amp_sd": 3138.0078698458283,
+              "amp_min": 179.32015105409923,
+              "amp_max": 10315.165018784035,
+              "position_error_over_L": 2.037417001637498
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 4062.425726827583,
+              "amp_sd": 3168.366975157459,
+              "amp_min": 180.20423500117423,
+              "amp_max": 10942.781558166902,
+              "position_error_over_L": 0.20312128634137916
+            }
+          ],
+          "amp_times_sigma_min": 0.003664869884884034,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 29.461853132851257,
+          "predicted_displacement_over_L_at_coarse_delta": 29.46185313285126,
           "coarse_delta_outside_the_linear_regime": true
         },
         {
@@ -133,15 +396,51 @@
           "d": 3,
           "R": 5,
           "n": 48,
-          "sigma_min": 0.0002466852681280051,
-          "amp_by_relative_delta": {
-            "1e-02": 45.58369272020953,
-            "1e-03": 45.42391625942695,
-            "1e-04": 45.45892518382262
+          "margin": {
+            "sigma_min": 0.0002466852681280051,
+            "sigma_max": 4.982242780904442,
+            "ratio": 4.9512895893688984e-05,
+            "nullity": 6,
+            "gauge": 6,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 49512.89589368898,
+            "margin_is_readable": true
           },
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 45.58369272020952,
+              "amp_sd": 21.971014185617605,
+              "amp_min": 21.701492078449036,
+              "amp_max": 121.38077535685179,
+              "position_error_over_L": 0.22791846360104762
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 45.423916259426946,
+              "amp_sd": 21.317452260590443,
+              "amp_min": 20.421357777665396,
+              "amp_max": 109.45254139529406,
+              "position_error_over_L": 0.022711958129713473
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 45.45892518382262,
+              "amp_sd": 21.266170308435573,
+              "amp_min": 20.124861262024048,
+              "amp_max": 108.24144204559812,
+              "position_error_over_L": 0.0022729462591911313
+            }
+          ],
           "amp_times_sigma_min": 0.011214047147782208,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 0.22791846360104764,
+          "predicted_displacement_over_L_at_coarse_delta": 0.22791846360104762,
           "coarse_delta_outside_the_linear_regime": true
         },
         {
@@ -149,15 +448,51 @@
           "d": 3,
           "R": 8,
           "n": 48,
-          "sigma_min": 0.0009349040548584304,
-          "amp_by_relative_delta": {
-            "1e-02": 12.990645816310758,
-            "1e-03": 12.44624500893602,
-            "1e-04": 12.413525254489471
+          "margin": {
+            "sigma_min": 0.0009349040548584304,
+            "sigma_max": 5.043030561000493,
+            "ratio": 0.00018538536373115963,
+            "nullity": 6,
+            "gauge": 6,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 185385.36373115962,
+            "margin_is_readable": true
           },
-          "amp_times_sigma_min": 0.011605455095509736,
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 12.990645816310762,
+              "amp_sd": 4.994112308170232,
+              "amp_min": 5.56703682323954,
+              "amp_max": 28.859130262162203,
+              "position_error_over_L": 0.0649532290815538
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 12.446245008936021,
+              "amp_sd": 4.574235979089796,
+              "amp_min": 4.679582649258062,
+              "amp_max": 25.57063766483923,
+              "position_error_over_L": 0.006223122504468011
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 12.413525254489475,
+              "amp_sd": 4.530947297056467,
+              "amp_min": 4.596516183295994,
+              "amp_max": 25.240372964828648,
+              "position_error_over_L": 0.0006206762627244738
+            }
+          ],
+          "amp_times_sigma_min": 0.011605455095509738,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 0.06495322908155379,
+          "predicted_displacement_over_L_at_coarse_delta": 0.0649532290815538,
           "coarse_delta_outside_the_linear_regime": false
         },
         {
@@ -165,23 +500,59 @@
           "d": 4,
           "R": 6,
           "n": 60,
-          "sigma_min": 0.00034203300541560974,
-          "amp_by_relative_delta": {
-            "1e-02": 64.76358666106867,
-            "1e-03": 64.58688100036649,
-            "1e-04": 64.59341787535833
+          "margin": {
+            "sigma_min": 0.00034203300541560974,
+            "sigma_max": 5.14677088545271,
+            "ratio": 6.645584445625162e-05,
+            "nullity": 10,
+            "gauge": 10,
+            "rigid": true,
+            "headroom_over_rank_tolerance": 66455.84445625161,
+            "margin_is_readable": true
           },
+          "readings": [
+            {
+              "relative_delta": 0.01,
+              "model": "independent",
+              "trials": 30,
+              "amp": 64.76358666106866,
+              "amp_sd": 18.27084453356303,
+              "amp_min": 31.695354887905136,
+              "amp_max": 104.25133719814801,
+              "position_error_over_L": 0.3238179333053433
+            },
+            {
+              "relative_delta": 0.001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 64.58688100036649,
+              "amp_sd": 18.759609056623813,
+              "amp_min": 29.626771879070624,
+              "amp_max": 106.83116242157102,
+              "position_error_over_L": 0.03229344050018325
+            },
+            {
+              "relative_delta": 0.0001,
+              "model": "independent",
+              "trials": 30,
+              "amp": 64.59341787535833,
+              "amp_sd": 18.810562536772224,
+              "amp_min": 29.381806190589025,
+              "amp_max": 107.08795789254559,
+              "position_error_over_L": 0.0032296708937679165
+            }
+          ],
           "amp_times_sigma_min": 0.022093080845975176,
           "linear_across_the_fine_pair": true,
-          "predicted_displacement_over_L_at_coarse_delta": 0.32381793330534336,
+          "predicted_displacement_over_L_at_coarse_delta": 0.3238179333053433,
           "coarse_delta_outside_the_linear_regime": true
         }
       ],
       "product_range": [
-        0.0036648698848840335,
-        0.030623810658424917
+        0.003664869884884034,
+        0.030623810658424924
       ],
-      "product_within_one_order_of_magnitude": true,
+      "product_spread_factor": 8.356043084840362,
       "all_linear_across_the_fine_pair": true,
       "corners_that_leave_the_linear_regime": [
         "2+1D many observers",
@@ -189,6 +560,48 @@
         "3+1D minimum R",
         "4+1D minimum R"
       ],
+      "passed": true
+    },
+    "error_model_sensitivity": {
+      "rows": [
+        {
+          "model": "independent",
+          "relative_delta": 0.001,
+          "trials": 30,
+          "amp": 2.0840891763557097,
+          "amp_sd": 0.7575816362847498,
+          "amp_min": 1.1534817384405638,
+          "amp_max": 3.8979558871576936,
+          "position_error_over_L": 0.001042044588177855
+        },
+        {
+          "model": "common_mode",
+          "relative_delta": 0.001,
+          "trials": 30,
+          "amp": 7.471414351360833e-13,
+          "amp_sd": 2.616576804829391e-13,
+          "amp_min": 3.6852317678922483e-13,
+          "amp_max": 1.3048467397522207e-12,
+          "position_error_over_L": 3.7357071756804166e-16
+        },
+        {
+          "model": "half_common",
+          "relative_delta": 0.001,
+          "trials": 30,
+          "amp": 1.150576995565182,
+          "amp_sd": 0.30478460371736255,
+          "amp_min": 0.5763262777788574,
+          "amp_max": 1.822556359710054,
+          "position_error_over_L": 0.0005752884977825909
+        }
+      ],
+      "amp_by_model": {
+        "independent": 2.0840891763557097,
+        "common_mode": 7.471414351360833e-13,
+        "half_common": 1.150576995565182
+      },
+      "independent_is_the_conservative_choice": true,
+      "common_mode_is_annihilated_by_centering": true,
       "passed": true
     },
     "observer_count_optimum": {
@@ -199,37 +612,62 @@
           "by_R": [
             {
               "R": 4,
-              "sigma_min": 0.006821258127016485
+              "sigma_min": 0.006821258127016485,
+              "all_rigid": true,
+              "min_headroom": 845751.3950375101,
+              "all_readable": true
             },
             {
               "R": 5,
-              "sigma_min": 0.007993652121031973
+              "sigma_min": 0.007993652121031973,
+              "all_rigid": true,
+              "min_headroom": 1509403.2597309717,
+              "all_readable": true
             },
             {
               "R": 6,
-              "sigma_min": 0.007734971209621189
+              "sigma_min": 0.007734971209621189,
+              "all_rigid": true,
+              "min_headroom": 1577502.6837271163,
+              "all_readable": true
             },
             {
               "R": 8,
-              "sigma_min": 0.008061998030877758
+              "sigma_min": 0.008061998030877758,
+              "all_rigid": true,
+              "min_headroom": 1044117.3543452673,
+              "all_readable": true
             },
             {
               "R": 10,
-              "sigma_min": 0.0018086669117728335
+              "sigma_min": 0.0018086669117728335,
+              "all_rigid": true,
+              "min_headroom": 217759.4375896118,
+              "all_readable": true
             },
             {
               "R": 12,
-              "sigma_min": 0.0005748247589090212
+              "sigma_min": 0.0005748247589090212,
+              "all_rigid": true,
+              "min_headroom": 85435.10702457321,
+              "all_readable": true
             },
             {
               "R": 16,
-              "sigma_min": 0.00011832802143326438
+              "sigma_min": 0.00011832802143326438,
+              "all_rigid": true,
+              "min_headroom": 25335.159094491824,
+              "all_readable": true
             },
             {
               "R": 20,
-              "sigma_min": 1.1179577675874596e-05
+              "sigma_min": 1.1179577675874596e-05,
+              "all_rigid": true,
+              "min_headroom": 2360.2447588896493,
+              "all_readable": true
             }
           ],
+          "R_values_with_an_unreadable_margin": [],
           "best_conditioned_R": 8,
           "best_sigma_min": 0.008061998030877758,
           "worst_R": 20,
@@ -243,33 +681,55 @@
           "by_R": [
             {
               "R": 5,
-              "sigma_min": 0.00022400028888142166
+              "sigma_min": 0.00022400028888142166,
+              "all_rigid": true,
+              "min_headroom": 36154.693403283796,
+              "all_readable": true
             },
             {
               "R": 6,
-              "sigma_min": 0.00042969552504084474
+              "sigma_min": 0.00042969552504084474,
+              "all_rigid": true,
+              "min_headroom": 40520.711321188865,
+              "all_readable": true
             },
             {
               "R": 7,
-              "sigma_min": 0.0020528503298944244
+              "sigma_min": 0.0020528503298944244,
+              "all_rigid": true,
+              "min_headroom": 404128.37596708146,
+              "all_readable": true
             },
             {
               "R": 8,
-              "sigma_min": 0.0015543090633151123
+              "sigma_min": 0.0015543090633151123,
+              "all_rigid": true,
+              "min_headroom": 299161.74770956935,
+              "all_readable": true
             },
             {
               "R": 10,
-              "sigma_min": 0.0016193352811090607
+              "sigma_min": 0.0016193352811090607,
+              "all_rigid": true,
+              "min_headroom": 352531.3313900426,
+              "all_readable": true
             },
             {
               "R": 12,
-              "sigma_min": 0.002597841263112125
+              "sigma_min": 0.002597841263112125,
+              "all_rigid": true,
+              "min_headroom": 584016.7734458676,
+              "all_readable": true
             },
             {
               "R": 14,
-              "sigma_min": 0.0013585577151045347
+              "sigma_min": 0.0013585577151045347,
+              "all_rigid": true,
+              "min_headroom": 264355.00167339947,
+              "all_readable": true
             }
           ],
+          "R_values_with_an_unreadable_margin": [],
           "best_conditioned_R": 12,
           "best_sigma_min": 0.002597841263112125,
           "worst_R": 5,
@@ -288,45 +748,141 @@
           "n": 48,
           "at_minimum_R": {
             "R": 4,
-            "sigma_min": 0.006531289566405266,
-            "amp": 5.798430361770698
+            "margin": {
+              "sigma_min": 0.006531289566405266,
+              "sigma_max": 6.011782005757904,
+              "ratio": 0.0010864149032931989,
+              "nullity": 3,
+              "gauge": 3,
+              "rigid": true,
+              "headroom_over_rank_tolerance": 1086414.903293199,
+              "margin_is_readable": true
+            },
+            "relative_delta": 0.001,
+            "model": "independent",
+            "trials": 30,
+            "amp": 5.798430361770697,
+            "amp_sd": 1.89011259546693,
+            "amp_min": 1.875902577576286,
+            "amp_max": 10.356100817950466,
+            "position_error_over_L": 0.0028992151808853485
           },
           "at_R_plus_three": {
             "R": 7,
-            "sigma_min": 0.013797910773986056,
-            "amp": 2.2884983258770792
+            "margin": {
+              "sigma_min": 0.013797910773986056,
+              "sigma_max": 4.616286740636056,
+              "ratio": 0.0029889631102258843,
+              "nullity": 3,
+              "gauge": 3,
+              "rigid": true,
+              "headroom_over_rank_tolerance": 2988963.1102258842,
+              "margin_is_readable": true
+            },
+            "relative_delta": 0.001,
+            "model": "independent",
+            "trials": 30,
+            "amp": 2.2884983258770784,
+            "amp_sd": 0.5000642884415155,
+            "amp_min": 1.3117447260166877,
+            "amp_max": 3.2938708791002043,
+            "position_error_over_L": 0.0011442491629385391
           },
-          "amp_penalty_for_sitting_at_the_threshold": 2.5337271590742447
+          "amp_penalty_for_sitting_at_the_threshold": 2.5337271590742456
         },
         {
           "d": 3,
           "n": 48,
           "at_minimum_R": {
             "R": 5,
-            "sigma_min": 0.00015108118460785842,
-            "amp": 82.19706277514018
+            "margin": {
+              "sigma_min": 0.00015108118460785842,
+              "sigma_max": 4.971265214131462,
+              "ratio": 3.039089207680787e-05,
+              "nullity": 6,
+              "gauge": 6,
+              "rigid": true,
+              "headroom_over_rank_tolerance": 30390.892076807868,
+              "margin_is_readable": true
+            },
+            "relative_delta": 0.001,
+            "model": "independent",
+            "trials": 30,
+            "amp": 82.19706277514018,
+            "amp_sd": 44.818106444389485,
+            "amp_min": 19.63352691141628,
+            "amp_max": 191.91421268683064,
+            "position_error_over_L": 0.041098531387570095
           },
           "at_R_plus_three": {
             "R": 8,
-            "sigma_min": 0.0013410220454431205,
-            "amp": 12.116311104845344
+            "margin": {
+              "sigma_min": 0.0013410220454431205,
+              "sigma_max": 4.564826022380926,
+              "ratio": 0.0002937728708319247,
+              "nullity": 6,
+              "gauge": 6,
+              "rigid": true,
+              "headroom_over_rank_tolerance": 293772.8708319247,
+              "margin_is_readable": true
+            },
+            "relative_delta": 0.001,
+            "model": "independent",
+            "trials": 30,
+            "amp": 12.116311104845346,
+            "amp_sd": 3.5899263292081836,
+            "amp_min": 5.783001058936764,
+            "amp_max": 21.51495572482667,
+            "position_error_over_L": 0.0060581555524226735
           },
-          "amp_penalty_for_sitting_at_the_threshold": 6.784000680064196
+          "amp_penalty_for_sitting_at_the_threshold": 6.784000680064195
         },
         {
           "d": 4,
           "n": 60,
           "at_minimum_R": {
             "R": 6,
-            "sigma_min": 0.00011053537240673735,
-            "amp": 97.14830220026897
+            "margin": {
+              "sigma_min": 0.00011053537240673735,
+              "sigma_max": 5.304945221563668,
+              "ratio": 2.083628912084342e-05,
+              "nullity": 10,
+              "gauge": 10,
+              "rigid": true,
+              "headroom_over_rank_tolerance": 20836.28912084342,
+              "margin_is_readable": true
+            },
+            "relative_delta": 0.001,
+            "model": "independent",
+            "trials": 30,
+            "amp": 97.14830220026899,
+            "amp_sd": 31.470802185865807,
+            "amp_min": 46.9750490217779,
+            "amp_max": 183.3457938930017,
+            "position_error_over_L": 0.048574151100134494
           },
           "at_R_plus_three": {
             "R": 9,
-            "sigma_min": 0.0005275507079086471,
-            "amp": 18.25235171487126
+            "margin": {
+              "sigma_min": 0.0005275507079086471,
+              "sigma_max": 4.752227027543098,
+              "ratio": 0.00011101125953180541,
+              "nullity": 10,
+              "gauge": 10,
+              "rigid": true,
+              "headroom_over_rank_tolerance": 111011.25953180541,
+              "margin_is_readable": true
+            },
+            "relative_delta": 0.001,
+            "model": "independent",
+            "trials": 30,
+            "amp": 18.25235171487126,
+            "amp_sd": 7.434286832042752,
+            "amp_min": 9.142532057515137,
+            "amp_max": 41.61925046601033,
+            "position_error_over_L": 0.00912617585743563
           },
-          "amp_penalty_for_sitting_at_the_threshold": 5.322508776834305
+          "amp_penalty_for_sitting_at_the_threshold": 5.322508776834306
         }
       ],
       "threshold_is_always_worse": true,
@@ -336,8 +892,15 @@
   "all_passed": true,
   "headline": {
     "frozen_2plus1d_amp": 2.159064924304675,
-    "frozen_2plus1d_position_error_over_L_at_96_ticks": 0.03181779888448995,
-    "response_linear_in_delta": true,
+    "frozen_2plus1d_amp_sd": 0.7302758664095167,
+    "frozen_2plus1d_position_error_over_L": 0.03181779888448995,
+    "frozen_2plus1d_ticks": 96,
+    "amp_spread_over_the_fine_half": 0.03543436156724193,
+    "amp_by_error_model": {
+      "independent": 2.0840891763557097,
+      "common_mode": 7.471414351360833e-13,
+      "half_common": 1.150576995565182
+    },
     "best_conditioned_R_by_dimension": {
       "2": 8,
       "3": 12
@@ -347,9 +910,9 @@
       "3": 11.59749068219879
     },
     "amp_penalty_at_R_equals_d_plus_2": {
-      "2": 2.5337271590742447,
-      "3": 6.784000680064196,
-      "4": 5.322508776834305
+      "2": 2.5337271590742456,
+      "3": 6.784000680064195,
+      "4": 5.322508776834306
     },
     "reading": "The instrument's own configuration is comfortable. The proved threshold R = d + 2 is not a good place to operate, and gets worse with dimension; nor is a large observer count, which lowers the threshold while collapsing the margin. The exact model says how few observers are possible and nothing about how many are wise."
   }

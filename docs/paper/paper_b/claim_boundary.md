@@ -173,9 +173,30 @@ or by a proved, CI-pinned statement in
   scene up to Euclidean congruence (absolute scale included), and with
   3 observers it provably does not (explicit same-dissimilarity,
   non-congruent scene). That is INFINITESIMAL rigidity in the exact
-  model, established numerically -- NOT global uniqueness, NOT a
-  written proof, and NOT extended to measured data. Section 6's 2+1D
-  results are not claimed to rest on it.
+  model -- NOT global uniqueness and NOT extended to measured data.
+  Section 6's 2+1D results are not claimed to rest on it.
+- That threshold is claimed as a general-dimension law, `R >= d + 2`
+  (manuscript Section 8.6), measured across spatial dimensions one
+  through six and proved up to one stated rank hypothesis on observer
+  configurations; the `R = d + 2` case, which fixes 3+1D at five
+  observers and 19 targets, is where the proved lower and upper bounds
+  coincide. Sharpness for `R > d + 2` is NOT claimed, and neither the
+  derivation nor the proof relaxes the exact-model scope above.
+- **Operating conditions (Section 8.7) are DESCRIPTIVE and narrow the
+  noise exclusion without removing it.** What is measured is one error
+  model -- support proved at half a tick, but uniformity and
+  independence across target-observer pairs both ASSUMED -- pushed
+  through one LINEARISED, MINIMUM-NORM inverse. The independence
+  assumption is load-bearing, not cosmetic: the parallax centering
+  annihilates common-mode readout error outright, and the measured cost
+  runs from about two readout bounds under independence to zero under
+  perfect correlation. Independence is the most pessimistic structure
+  tried, so the reported figures are conservative by choice rather than
+  by derivation; the minimum-norm inverse pushes the other way and makes
+  them a best case. NOT claimed: a general noisy-`D` stability theorem,
+  any statement about `D` harvested through the instrument from a
+  measured causal set, or that the observer counts reported as
+  best-conditioned are optimal in any sense beyond the grids swept.
 - The Poisson-clock
   concentration statements describe an idealization no frozen instrument
   realizes; no inverse-root density law is claimed for harvested-chain

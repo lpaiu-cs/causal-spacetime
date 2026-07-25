@@ -112,8 +112,14 @@ This paper reports the validated-instrument line of the program:
    margin IS the error budget, crowding observers destroys it, and
    `R = d + 2`, the corner whose threshold is pinned, is the worst place
    to operate, worst of all in 3+1D. The theorem bounds how few
-   observers are possible, not how many are wise. Descriptive: nothing
-   preregistered there and no gate consumes it. Source:
+   observers are possible, not how many are wise. Descriptive, and
+   narrow: only the readout error's *support* is proved, while its
+   uniformity and its independence across target-observer pairs are
+   assumptions -- the second load-bearing, since the parallax centering
+   annihilates common-mode error outright and the measured cost runs
+   from about two readout bounds down to zero across correlation
+   structures. Nothing preregistered there and no gate consumes it.
+   Source:
    `docs/theory/t1_parallax_identifiability.md` (v1.5),
    `docs/theory/t1_g4c_predictions{,_round2,_round3,_round4}.json`, and manuscript
    Section 8.

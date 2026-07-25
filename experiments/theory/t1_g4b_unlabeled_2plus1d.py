@@ -84,13 +84,27 @@ RESULTS_PATH = ROOT / "docs" / "theory" / "t1_g4b_unlabeled_results.json"
 RING_RADIUS = 0.25
 TARGET_RADIUS = 0.16
 
+#: Relative cutoff separating a singular value from zero. Everything that
+#: counts a rank here must use this same number -- and anything that
+#: reports the SMALLEST surviving singular value as a stability margin
+#: must also report how far that margin sits above the cutoff, because
+#: the two collide in exactly the regime such a study cares about: a
+#: configuration whose true margin drops below the cutoff loses a
+#: dimension of rank and then reports the NEXT singular value, which is
+#: larger. Worse configuration, better number. See
+#: ``t1_g4c_conditioning.margin``.
+RANK_TOLERANCE = 1e-9
+
 
 # --------------------------------------------------------------------
 # the observable
 # --------------------------------------------------------------------
 
-def dissimilarity(theta: np.ndarray, n: int, R: int, d: int = 2):
-    """``D`` over target pairs, from the flat scene vector ``theta``.
+def radial_profile(theta: np.ndarray, n: int, R: int, d: int = 2):
+    """``Phi(x_j)_r = |x_j - p_r|`` -- the uncentered readout, before the
+    parallax step. This is the stage the instrument's resolution bound
+    applies to, so anything modelling readout error has to perturb HERE
+    and then come back through :func:`profile_to_dissimilarity`.
 
     Written with an explicit ``sqrt(sum of squares)`` rather than
     ``np.linalg.norm`` so it stays analytic under a complex step, which
@@ -100,11 +114,29 @@ def dissimilarity(theta: np.ndarray, n: int, R: int, d: int = 2):
     X = theta[: n * d].reshape(n, d)
     P = theta[n * d:].reshape(R, d)
     sep = X[:, None, :] - P[None, :, :]
-    phi = np.sqrt(np.sum(sep * sep, axis=2))
+    return np.sqrt(np.sum(sep * sep, axis=2))
+
+
+def profile_to_dissimilarity(phi, R: int):
+    """The centering-and-pairing half of the observable, split out so it
+    has exactly one definition.
+
+    Anything that evaluates ``D`` without going through this function --
+    a perturbed-profile study, a fast path -- is a second definition of
+    the instrument, and the tolerance episode in ``causal.py`` is what
+    that costs. Kept complex-step analytic for the same reason as above.
+    """
+
     tilde = phi - phi.sum(axis=1, keepdims=True) / R
-    rows, cols = np.triu_indices(n, k=1)
+    rows, cols = np.triu_indices(phi.shape[0], k=1)
     diff = tilde[rows] - tilde[cols]
     return np.sqrt(np.sum(diff * diff, axis=1)) / np.sqrt(R)
+
+
+def dissimilarity(theta: np.ndarray, n: int, R: int, d: int = 2):
+    """``D`` over target pairs, from the flat scene vector ``theta``."""
+
+    return profile_to_dissimilarity(radial_profile(theta, n, R, d), R)
 
 
 def jacobian(theta: np.ndarray, n: int, R: int, d: int = 2, h: float = 1e-30):
@@ -174,7 +206,7 @@ def nullity(theta: np.ndarray, n: int, R: int, d: int = 2) -> tuple[int, np.ndar
     spectrum = np.linalg.svd(matrix, compute_uv=False)
     if spectrum.size == 0 or spectrum[0] == 0.0:
         return theta.size, spectrum
-    rank = int(np.sum(spectrum > spectrum[0] * 1e-9))
+    rank = int(np.sum(spectrum > spectrum[0] * RANK_TOLERANCE))
     return theta.size - rank, spectrum
 
 
@@ -455,7 +487,7 @@ def check_r3_is_never_rigid(
 def _null_direction_off_gauge(theta, n, R, d=2):
     matrix = jacobian(theta, n, R, d)
     _, spectrum, vt = np.linalg.svd(matrix)
-    rank = int(np.sum(spectrum > spectrum[0] * 1e-9))
+    rank = int(np.sum(spectrum > spectrum[0] * RANK_TOLERANCE))
     null_space = vt[rank:].T
     if null_space.shape[1] == 0:
         return None
@@ -613,7 +645,7 @@ def check_frozen_scene_is_in_the_rigid_regime() -> dict:
         "gauge": gauge,
         "extra_flexes": null - gauge,
         "smallest_nonzero_singular_value": float(
-            spectrum[spectrum > spectrum[0] * 1e-9].min()
+            spectrum[spectrum > spectrum[0] * RANK_TOLERANCE].min()
         ),
         "passed": bool(null == gauge),
     }

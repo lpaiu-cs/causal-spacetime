@@ -1237,19 +1237,36 @@ still open, though rigidity itself is not.
 
 The scope conditions of Section 8.5 travel with this unchanged and are
 not relaxed by the extra dimensions, the derivation, or the proof:
-infinitesimal rigidity in the exact model, with global uniqueness and
-dissimilarity harvested through the instrument still outside what is
-claimed.
+infinitesimal rigidity in the exact model, with global uniqueness, noisy
+dissimilarity, and dissimilarity harvested through the instrument all
+outside what is claimed. Section 8.7 narrows the second of those and does
+not remove it: it measures one error model, propagated through one
+linearised inverse, and reports what that costs.
 
 ### 8.7 What the exact model does not say: operating conditions
 
 All of the above is exact-model, while the instrument reads each radial
-distance to within half a tick. We measured what that costs, propagating
-the instrument's own error model — uniform within the readout bound on
-every profile entry — through to the reconstructed positions, and
-expressing the result as a multiple of that same bound. These are
-descriptive measurements: nothing preregistered, nothing frozen, no gate
-consumes them.
+distance to within half a tick. We measured what that costs, propagating a
+readout error through to the reconstructed positions and expressing the
+result as a multiple of the readout bound itself. These are descriptive
+measurements: nothing preregistered, nothing frozen, no gate consumes
+them.
+
+What is assumed matters here more than usual, because two of the three
+inputs are choices rather than consequences. Only the *support* of the
+readout error is proved — half a tick either way, by the band theorem.
+That it is uniform on that interval is an assumption. That it is
+independent across target–observer pairs is a second assumption, and a
+load-bearing one: the parallax step subtracts the observer mean, so any
+error component shared by all observers of a target is annihilated before
+the dissimilarity is formed. Measured on the frozen scene, the same
+readout bound costs about two of itself under independence and *nothing
+at all* under perfect common-mode error. Independence is the most
+pessimistic of the correlation structures we tried, so the figures below
+are conservative in that respect, but they are conservative by choice
+rather than by derivation. The inverse is likewise the linearised,
+minimum-norm one, which is optimistic: a nonlinear solver has no
+guarantee of finding the smallest displacement consistent with the data.
 
 At the configuration the pipeline actually uses, the answer is
 reassuring. The reconstruction costs about two readout bounds in
