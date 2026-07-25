@@ -1,6 +1,6 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.5 — statements and proof programs; nothing frozen.
+Status: **THEORY DRAFT v1.6 — statements and proof programs; nothing frozen.
 The G4b threshold is a general-dimension law: `R >= d + 2` observers.
 Measured across `d = 1..6` against 20 predictions preregistered in four
 rounds, and now *proved* (`t1_g4c_proof.md`) up to one explicit
@@ -11,7 +11,13 @@ Section 5c adds the operating conditions: at the instrument's own
 configuration a `delta/2` readout costs about `2 delta` in position and
 falls linearly, but `R = d + 2` — the corner that is pinned — is the
 worst place to operate, and crowding observers destroys the margin.**
-(v1.5 2026-07-25 KST: A1 — finite-resolution cost measured; the exact-model
+(v1.6 2026-07-25 KST: first external-citation pass, after a positioning
+audit — the G2 fluctuation classes are published theorems and are reframed
+from discovery to validation; the transverse normalization is stated; the
+hull/TDOA argument becomes Proposition 5b.1; Section 1b reconciles with
+unlabeled rigidity and fixes the infinitesimal-vs-global vocabulary; see
+revision note 16;
+v1.5 2026-07-25 KST: A1 — finite-resolution cost measured; the exact-model
 threshold and the usable operating point are different numbers;
 v1.4 2026-07-25 KST: G4c sufficiency closed — the profile surface's
 conical singularities forbid any continuous ambient symmetry, which
@@ -63,6 +69,69 @@ sprinkling with expected error decreasing in sprinkling density. This
 complements the embedding-uniqueness theorem (uniqueness *given* an
 embedding) with a finite, order-intrinsic reconstruction criterion.
 
+## 1b. Related work, and what is actually new here (v1.6)
+
+Added after a positioning audit (`t1_literature_positioning.md`). The
+proofs below are unchanged; what changes is what may be claimed.
+
+**The construction is the clearest new thing.** No prior work was found
+that builds observer worldlines of ticks on a causal set and defines
+spatial structure from bracket widths. The four existing families of
+causal-set spatial distance each supply a different external ingredient:
+
+| proposal | supplied ingredient |
+|---|---|
+| `[@rideout2009]` | the dimension `d`; equidistant-set existence only conjectured |
+| `[@eichhorn2019]` | a mesoscale cutoff |
+| `[@bogunakrioukov2024]` | a dimension-dependent constant |
+| `[@major2006; @major2007]` | a choice of antichain |
+
+T1 replaces those with *supply an observer congruence*. That is a
+**different trade, not a strictly better one** — the chain is itself
+supplied protocol structure (axiom A4), so this is a new route rather
+than a derivation from order alone. `[@bogunakrioukov2024]` is the
+current competing proposal, is explicitly intrinsic to the causal-set
+graph, and carries its own critique of `[@rideout2009]`; it postdates
+this program's implicit baseline and is engaged here rather than ignored.
+
+**The nearest prior identifiability result.** `[@humeyermeyer2025]` shows
+that distances between causally related pairs determine distances between
+spacelike pairs in any dimension, removing the conformal ambiguity. It is
+the closest thing in the causal-set literature to what Section 4 does,
+and it differs in the input: it assumes *exact continuum separations*,
+where T1 works from finite order data through a measured instrument. See
+also `[@madsen2026]` and `[@muller2025]` on embedding uniqueness and the
+Hauptvermutung.
+
+**Reconciliation with unlabeled rigidity (Gortler-Theran-Thurston).**
+`[@gtt2019]` proves that for `d >= 2` and `n >= d+2` generic points,
+labels have no effect on generic uniqueness: a generic configuration is
+determined by the *unlabeled* multiset of pair lengths iff by the labeled
+ones. Successors: `[@garamvolgyi2021; @garamvolgyi2022; @connelly2024;
+@gkioulekas2024]`. **T1 is not a corollary of this, and does not
+reprove it.** In GTT the measurements are Euclidean lengths *among the
+unknown points themselves*, and "unlabeled" is a combinatorial quotient
+over which pair produced which number. T1's observable is the distance
+structure of the **images** `w_j = w(x_j)` under a map whose parameters —
+the observer positions — are themselves unknown; its
+permutation-invariance is automatic rather than hard-won, since `D`
+depends on `w` only through Euclidean distances. GTT's hard content is
+not what T1 proves. The right structural home is identifiability under
+algebraic constraints `[@cruickshank2023]` and the frameworks-on-surfaces
+program — which always assumes the surface *known and fixed*, where T1's
+surface is parametrized by hidden observers. That is the gap being
+filled.
+
+**Vocabulary, enforced throughout.** T1 establishes **infinitesimal**
+rigidity — nullity equal to the `d(d+1)/2` gauge, in the exact model.
+GTT proves **global** generic uniqueness. The phrase "global rigidity"
+must never describe a T1 result, here or in any abstract or title.
+
+**One arithmetic note.** `d^2+3d+1 = (d+1)(d+2)-1` returned zero hits
+across rigidity, distance geometry and localization. `>= d+2` is
+ubiquitous in those fields but always bounds the number of
+*configuration points*, never *anchors*.
+
 ## 2. Setup and definitions
 
 Work in the 1+1D causal diamond `M = { (t,x) : |x| + |t| < 1 }` with the
@@ -71,6 +140,22 @@ Minkowski *causal* order (null-inclusive):
 ```
 (t,x) < (t',x')   iff   t' - t > 0  and  (t'-t)^2 >= (x'-x)^2.
 ```
+
+**"Order-intrinsic", defined (v1.6).** `[@surya2019]` §4 defines an
+*order invariant* as a function independent of the labelling of the
+causal set. This document uses "order-intrinsic" in a **stronger** sense:
+computable from the order relation with **no reference to embedded
+coordinates** at any stage, including in the selection of what to
+measure. The distinction is load-bearing for Section 5's contrast between
+the coordinate-tube protocol (which reads embedded coordinates to select
+its chain, and is therefore *not* order-intrinsic in this sense even
+though its output is an order invariant) and the order-only harvest
+(which is, given the anchor designation). The stronger notion is used
+informally in the literature — `[@rideout2009]` "defined intrinsically to
+the causal set", `[@bogunakrioukov2024]` "without any reference to an
+embedding continuous manifold" — but is not, as far as the audit found,
+axiomatized anywhere. It is axiomatized here only to the extent of this
+paragraph.
 
 This is J (causal precedence), not the strict chronological order I —
 deliberately: it is the convention `causal_matrix_minkowski()` implements
@@ -349,6 +434,21 @@ sorting the anchor row of `D` recovers the spatial order; anchoring at
 the other extreme yields exactly the reversal. No observer labels, no
 coordinates, no access to the profiles themselves — `D` alone, and
 `R >= 2` suffices. ∎
+
+*Attribution (v1.6).* The decoding in (c) is **textbook seriation** and is
+kept as a lemma here only because it is short and self-contained; the
+audit could not locate the strictly-linear case as a numbered theorem
+(`[@armstrong2021]` defines "strictly linear Robinson" but proves only the
+circular analogue). The framework is not this program's:
+`[@robinson1951]` and `[@brainerd1951]` for the seriation problem itself;
+`[@atkins1998]` for the closest explicit statement — with no repeated
+Fiedler values, the two monotone permutations are the only compatible
+orders; `[@preafortin2014]` for the compatible orders forming a PQ-tree,
+which strictness collapses to a single Q-node; `[@carmona2025]` for
+"flat" Robinson space as the modern name for *unique up to reversal*;
+`[@chepoifichet1997; @laurentseminaroti2017]` for the recognition line.
+**The contribution to claim is that the parallax observable *is* strictly
+Robinson (part (b)), not the decoding that follows from it.**
 
 **(d) What `R >= 3` actually buys.** Not decodability — (c) holds at
 `R = 2`, where the expectation in v0.2's G1 that `R >= 3` would be the
@@ -635,6 +735,20 @@ and the law turns out to hold for exactly one of them
   `rho^{-1/4}`). Measured: rate exponent `+0.516`; **transverse RMS
   exponent `-0.168` (95% CI `[-0.192, -0.144]`), within `0.002` of the
   KPZ wandering value `-1/6` and excluding `-1/4` by `8.8 se`**; RMSE
+  *(**Normalization, v1.6 — read this before comparing to the
+  literature.** `[@johansson2000]` states the wandering exponent as
+  `xi = 2/3`, and `2/3` against `-1/6` looks like a contradiction until
+  the variables are named. Johansson measures transverse displacement in
+  units of the box side `L`, in which the point spacing is `1`:
+  wandering `~ L^{2/3}`. This document measures it in units of the
+  **fixed continuum region**, with the sprinkling density `rho` as
+  abscissa. A fixed region at density `rho` holds `N ~ rho` points, so
+  its side in point-spacing units is `L ~ rho^{1/2}`; the wandering is
+  then `~ L^{2/3} ~ rho^{1/3}` in those units, and dividing by
+  `L ~ rho^{1/2}` to return to region units gives
+  `rho^{1/3 - 1/2} = rho^{-1/6}`. So `xi = 2/3` and `-1/6` are the same
+  statement. Every later `-1/6` here is in region-and-density units and
+  should be read against this sentence.)*
   exponent `-0.155` (95% CI `[-0.180, -0.131]`) with RMSE
   approximately equal to the transverse RMS at *every* density — the
   free clock's error is wandering-dominated end to end. Honest
@@ -723,7 +837,22 @@ whatever. See the count-class subsection below. The
 recorded -- descriptive, never gating; it identified the systematics
 correctly, and v1.0 supersedes its *attribution*.
 
-### The count-fluctuation class (v1.0): protocol-dependent, like everything else here
+### The count-fluctuation class: protocol-dependent, and both classes are known theorems
+
+**What this object is (v1.6).** The 1+1D Minkowski-sprinkling longest chain
+is not an analogue of Poissonian last-passage percolation. In null
+coordinates `u = t - x`, `v = t + x` the causal relation `dt >= |dx|`
+becomes `du >= 0` and `dv >= 0` — coordinatewise order — the change of
+variables is linear with constant Jacobian so a uniform Poisson process
+stays a uniform Poisson process, and an Alexandrov interval becomes an
+axis-aligned rectangle. The longest chain **is** the longest increasing
+path through a planar Poisson process. The identification is stated as
+motivation in `[@bollobasbrightwell1991]` and written out as an explicit
+dictionary in `[@bachmat2007]`.
+
+Everything below is therefore a **numerical confirmation of published
+theorems**, not a discovery, and was developed here without knowledge of
+them. The measurements stand; the attribution changes.
 
 Measured directly from the chains' tick counts, with no distance
 estimator in the loop (`experiments/theory/t1_g2_count_class.py`,
@@ -733,21 +862,33 @@ regressions `tests/test_t1_g2_count_class.py`):
 | clock | `theta` | 95% CI | half-split | verdict |
 |---|---|---|---|---|
 | thinned Poisson (calibration) | `+0.4981` | `[0.4765, 0.5197]` | `0.017` | `1/2`, as constructed |
-| **order-only anchored chain** | `+0.3221` | `[0.2881, 0.3562]` | `0.033` | **KPZ `1/3`** (Poisson excluded, `12.8` se) |
-| **tube-confined chain** | `+0.4870` | `[0.4585, 0.5154]` | `0.005` | **Poisson `1/2`** (KPZ excluded, `13.2` se) |
+| **order-only anchored chain** | `+0.3221` | `[0.2881, 0.3562]` | `0.033` | **KPZ `1/3`** `[@bdj1999; @johansson2000]` (Poisson excluded, `12.8` se) |
+| **tube-confined chain** | `+0.4870` | `[0.4585, 0.5154]` | `0.005` | **Poisson `1/2`** `[@deyjosephpeled2024]` (KPZ excluded, `13.2` se) |
 
-`[MEASURED]`. The calibration arm returns `1/2` with bias `-0.0019`,
-which is what licenses the other two rows; and the design's wobble
-here (half-split spreads `0.005..0.033`) is five to thirty times
-*smaller* than the `0.167` separation, exactly inverting the situation
-that blocked the distance route, where a `0.110` wobble faced a
-`0.083` separation.
+`[MEASURED]`, and in both non-calibration rows the measured value
+confirms a theorem about the identified object:
 
-**There is no single count class**, which is why asking for "the"
-class never converged. The two harvests sit on opposite sides of the
-gap, and the mechanism is confinement. A longest chain's Tracy-Widom
-fluctuations come from its freedom to optimize a transverse path; the
-shipped tube is `~ rho^{-1/2}` wide while the chain's natural
+- `theta = 1/3` with Tracy-Widom limiting fluctuations for the
+  unconstrained longest increasing path is `[@bdj1999]` and
+  `[@johansson2000]`. Measured `0.3221`.
+- Gaussian `theta = 1/2` for increasing paths **confined to a narrow
+  strip** is `[@deyjosephpeled2024]`: paths in `[0,n]^2` restricted to
+  width `n^gamma` with `gamma < 2/3` have variance `n^{1-gamma/2+o(1)}`,
+  which at `gamma = 0` is `sd ~ L^{1/2}`. Measured `0.4870`.
+
+The calibration arm returns `1/2` with bias `-0.0019`, which is what
+licenses reading the other two rows at all; and the design's wobble here
+(half-split spreads `0.005..0.033`) is five to thirty times *smaller*
+than the `0.167` separation, exactly inverting the situation that
+blocked the distance route, where a `0.110` wobble faced a `0.083`
+separation.
+
+**There is no single count class**, which is why asking for "the" class
+never converged. The two harvests sit on opposite sides of the gap, and
+the mechanism is confinement — **also `[@deyjosephpeled2024]`'s**, and
+recovered here independently rather than first. A longest chain's
+Tracy-Widom fluctuations come from its freedom to optimize a transverse
+path; the shipped tube is `~ rho^{-1/2}` wide while the chain's natural
 wandering is `~ rho^{-1/6}` (Section 5's order-only measurement), so
 asymptotically the tube is *far* narrower than the excursions KPZ
 scaling wants. Confine the chain below that scale and the optimization
@@ -778,7 +919,30 @@ Consequences, stated so the earlier text is not left standing:
   it deliberately allows. Reading a mechanism off a total error
   exponent was the error common to both.
 
-With this, **G2 has no open items.**
+**Confinement is not thinness (v1.6).** A narrow *domain* does not destroy
+KPZ: last-passage percolation to `(n, n^a)` in a thin rectangle still
+converges to Tracy-Widom `[@bodineaumartin2005; @baiksuidan2005]`. What
+destroys it is constraining the *path* while the endpoints stay on the
+diagonal, which is the Dey-Joseph-Peled regime and is what the tube here
+does. The two must not be conflated, and the tube must be described in
+that sense explicitly whenever it is described at all.
+
+**What survives as this program's contribution, stated narrowly (v1.6).**
+Not the exponents. Two things:
+
+1. *The naming gap.* `[@brightwellluczak2015]` is a dedicated survey of
+   causal-set chain statistics, cites `[@bdj1999]`, and contains zero
+   occurrences of "Tracy-Widom", "KPZ", "Kardar", "last-passage" or
+   "Hammersley"; it asks openly for tight variance bounds in general `d`.
+   The dictionary of Section 5's opening is standard in one literature
+   and absent from the other.
+2. *`d >= 3` is genuinely open.* The theorems cited above are 1+1D. The
+   corresponding measurements in higher dimension are not made here and
+   are where a scientific claim could live.
+
+With this, **G2 has no open items** as a *measurement* question. Its
+priority question is answered in the other direction: the classes were
+already known.
 
 Any density-scaling claim must name its clock protocol.
 
@@ -866,12 +1030,42 @@ recall that the pipeline sees only `D(j,k) = ||Phi~(x_j) - Phi~(x_k)||
 / sqrt(R)`, an `n x n` matrix carrying no observer labels and no
 observer positions. Then, in the exact model:
 
-- The centering fold is *not* the obstruction. `Phi~(x') = Phi~(x)`
-  is the TDOA condition `|x'-p_r| - |x-p_r| = c`, and three-receiver
-  TDOA is famously two-valued — so one expects centering to cost an
-  observer. It does not, for targets in the hull: a dense scan finds
-  no second zero and `d(Phi~)/dx` has full rank `d` throughout, so the
-  *labeled* centered profile already determines the target.
+- **Proposition 5b.1 (the centering fold is not the obstruction, and
+  T1's `d+2` is not TDOA's).** `[MEASURED]`, and the tag is the point of
+  the proposition rather than an omission — see the scope note below.
+
+  *Setup.* `Phi~(x') = Phi~(x)` says `|x'-p_r| - |x-p_r| = c` for every
+  `r`: exactly a range-difference (TDOA) coincidence with unknown common
+  offset. For **known, labeled** receivers this is classical, and it has
+  its own `d+2`: `R = d+1` leaves a generic two-fold ambiguity while
+  `R >= d+2` gives uniqueness — general `d` in `[@calhoun2021]`,
+  rigorously with the bifurcation locus mapped for `d = 2` in
+  `[@compagnoni2014]`.
+
+  *Claim.* For targets in the convex hull of the observers the fold does
+  not occur: a dense scan finds no second zero, and `d(Phi~)/dx` has full
+  rank `d` throughout, so the labeled centered profile already determines
+  the target. The hull hypothesis is doing the work — the classical
+  two-valuedness lives outside it.
+
+  *Why this must be said explicitly.* **T1's `R >= d+2` and TDOA's
+  `R >= d+2` are different facts with different mechanisms, and they
+  coincide numerically.** TDOA's threshold removes a *discrete* fold in a
+  *labeled* problem with *known* receivers. T1's removes a *continuous*
+  flex in an *unlabeled* problem with *unknown* receivers, and arrives via
+  curvature of the profile surface (Section 7 of `t1_g4c_proof.md`).
+  Without this paragraph a reader from localization will assume T1 has
+  rediscovered a 1987 fact. It has not — but neither has it proved the
+  hull claim.
+
+  *Scope, stated because it is a genuine weakness.* This proposition is a
+  **numerical finding standing against a published genericity theorem**.
+  A dense scan is not a proof that no twin exists in the hull, and
+  `[@calhoun2021]`'s statement is the one with a theorem behind it. The
+  tension is named here rather than smoothed: what is claimed is that the
+  fold is not *observed* on the hull across the configurations scanned,
+  not that it cannot occur there. Closing this properly means proving the
+  hull case, which is not done.
 - `R = 3` nevertheless fails, and not by a fold but by a **continuous
   flex**. Three centered profiles span the 2-dimensional mean-zero
   subspace of `R^3`, so the profile surface fills its ambient space
@@ -1057,12 +1251,20 @@ operated on.
   one item, and v0.7 sharpens why:* the harvested chain's
   **count**-fluctuation class (`-1/4` Poisson-rate guess vs `-1/3`
   KPZ-like) — **settled in v1.0, and the answer is that there is no
-  single class**. Measured directly from chain lengths, with no
-  distance estimator and therefore no wandering admixture, the
+  single class**; **and both classes are published theorems about this
+  object (v1.6)**, since in null coordinates the 1+1D sprinkled longest
+  chain *is* Poissonian last-passage percolation
+  `[@bollobasbrightwell1991; @bachmat2007]`. The measurements below are
+  confirmations, not discoveries; what is this program's own is the
+  naming gap in the causal-set literature `[@brightwellluczak2015]` and
+  the still-open `d >= 3` case. Measured directly from chain lengths,
+  with no distance estimator and therefore no wandering admixture, the
   order-only anchored chain is KPZ (`theta = 0.322`, Poisson excluded
-  by `12.8` se) and the tube-confined chain is Poisson
-  (`theta = 0.487`, KPZ excluded by `13.2` se), with the thinned clock
-  returning its constructed `1/2` as calibration. The mechanism is
+  by `12.8` se — the theorem is `[@bdj1999; @johansson2000]`) and the
+  tube-confined chain is Poisson (`theta = 0.487`, KPZ excluded by
+  `13.2` se — the theorem, including the mechanism, is
+  `[@deyjosephpeled2024]`), with the thinned clock returning its
+  constructed `1/2` as calibration. The mechanism is
   confinement: the tube is `rho^{-1/2}` wide against a natural
   wandering of `rho^{-1/6}`, which destroys the transverse
   optimization that produces Tracy-Widom fluctuations; widening the
@@ -1465,7 +1667,7 @@ The `[PROVED]` Model-D statements of Lemmas 1-3 are therefore also
 verified against the instrument, and the band/fold/density assertions are
 pinned in CI as exact (non-statistical) regressions.
 
-## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8, note 14 is v0.9, note 15 is v1.0)
+## Revision notes (after PR reviews; notes 1-6 are v0.1 -> v0.2, notes 7-8 are v0.3, note 9 is v0.4, note 10 is v0.5, note 11 is v0.6, note 12 is v0.7, note 13 is v0.8, note 14 is v0.9, note 15 is v1.0, note 16 is v1.6)
 
 1. G2 rewritten: the v0.1 description of the observer chains was wrong
    about the code — PC-V1 appends deterministic uniform-grid worldlines
@@ -1779,6 +1981,82 @@ pinned in CI as exact (non-statistical) regressions.
     Reading a mechanism off a total error exponent was the common
     error, and it is the reason this item stayed open for four
     revisions.
+
+16. v1.6 (literature positioning): the first external-citation pass on
+    this document, following an audit
+    (`t1_literature_positioning.md`). No proof changed, no measured
+    number changed, and no proof-status tag moved except the one new
+    proposition below. What changed is what may be claimed.
+
+    The largest correction is that **the G2 fluctuation classes are
+    published theorems, not findings here**. In null coordinates
+    `u = t - x`, `v = t + x` the causal order becomes coordinatewise
+    order under a linear map of constant Jacobian, so the 1+1D
+    sprinkled longest chain *is* Poissonian last-passage percolation
+    rather than an analogue of it. Both measured exponents therefore
+    confirm named theorems -- `theta = 1/3` from `[@bdj1999;
+    @johansson2000]`, the confined Gaussian `theta = 1/2` **and its
+    confinement mechanism** from `[@deyjosephpeled2024]`. Sections 5
+    and 6 are reframed from discovery to validation. What survives as
+    this program's own is narrower and is now stated as such: the
+    naming gap in the causal-set literature (`[@brightwellluczak2015]`,
+    a dedicated survey, cites `[@bdj1999]` and never says "KPZ"), and
+    the open `d >= 3` case. A non-conflation warning is added, since
+    thinness of the *domain* does not destroy KPZ
+    (`[@bodineaumartin2005; @baiksuidan2005]`) -- constraining the
+    *path* does.
+
+    Second, the transverse exponent's normalization is now stated where
+    it is first used. `-0.168` against Johansson's `xi = 2/3` reads as
+    an arithmetic error until one says that the literature measures
+    wandering in units of the box side and this document measures it in
+    units of a fixed region with density as abscissa. They are the same
+    statement; that sentence was missing.
+
+    Third, the hull-versus-TDOA-fold argument becomes **Proposition
+    5b.1** -- the one tag this revision adds, and it is `[MEASURED]`
+    deliberately. The centered observable is a TDOA measurement, and
+    labeled TDOA has its own `d+2` (`[@calhoun2021]`, and
+    `[@compagnoni2014]` for `d = 2`). T1's `d+2` is a different fact
+    with a different mechanism and the two coincide numerically, which
+    makes "they rediscovered a 1987 fact" the default misreading. The
+    proposition says so explicitly, and also says plainly that a dense
+    scan standing against a published genericity theorem is a weakness
+    rather than a proof.
+
+    Fourth, positioning: a new Section 1b reconciles with
+    `[@gtt2019]` (labels do not affect generic uniqueness for
+    `d >= 2`, `n >= d+2`) and states why T1 is not a corollary -- GTT
+    measures lengths among the unknown points, T1 measures them among
+    the *images* of a map whose parameters are also unknown. The
+    vocabulary rule that follows is absolute: T1's result is
+    **infinitesimal** and the phrase "global rigidity" must not
+    describe it. Section 1b also engages the four existing causal-set
+    distance proposals, cites `[@humeyermeyer2025]` as the nearest
+    prior identifiability theorem, and states the observer-chain
+    construction as the clearest novelty while conceding that the chain
+    is supplied protocol structure.
+
+    Fifth, "order-intrinsic" is defined in Section 2 against
+    `[@surya2019]` §4's weaker *order invariant*, because the
+    coordinate-tube contrast in Section 5 depends on the stronger
+    reading. And Lemma 4(c)'s decoding is attributed to the seriation
+    literature (`[@robinson1951; @brainerd1951; @atkins1998;
+    @preafortin2014; @carmona2025]`); what is claimed is part (b), that
+    the parallax observable *is* strictly Robinson.
+
+    One item the audit left open is closed here. It had flagged, as an
+    unexplained discrepancy a referee would find, that a naive
+    degrees-of-freedom count for TDOA self-calibration gives `(4, 5)`
+    in 2D and `(5, 9)` in 3D against T1's `(4, 11)` and `(5, 19)`. The
+    counts differ because they are counts of different observables: the
+    self-calibration literature knows the receiver index and so
+    observes `w_j` itself, whose flex space is `ker L`; T1 observes only
+    `||w_j - w_k||` and so pays `Im L cap F` as well. Written out, the
+    two numerators differ by exactly `dim F = R(R-1)/2`. The labeled
+    thresholds were then measured directly and come out `5, 4, 9, 6, 14`
+    across five `(d, R)` cells, matching the naive count exactly. See
+    `t1_literature_positioning.md` §9.
 
 ## 8. Relation to the frozen program
 

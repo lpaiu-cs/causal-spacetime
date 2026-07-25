@@ -1,8 +1,10 @@
 # Citation verification report
 
-All 28 references in `references.bib` were verified (13 on 2026-07-09, 11 on
+All 54 references in `references.bib` were verified (13 on 2026-07-09, 11 on
 2026-07-14 for the emergence section and related-work coverage, 4 on
-2026-07-17 for the theory section's named results) against authoritative
+2026-07-17 for the theory section's named results, and 26 copied verbatim
+on 2026-07-25 from `docs/theory/citations/t1_references.bib` for the
+positioning pass) against authoritative
 sources (APS, AIP, Cambridge Core, Springer, PMLR, arXiv, CERN CDS, NASA ADS,
 MIT DSpace, OUP, JSTOR). Each entry was cross-checked on author list, year,
 venue, and volume/page (or article number). No field was fabricated.
@@ -57,3 +59,59 @@ venue, and volume/page (or article number). No field was fabricated.
 - Inline citations in `manuscript.md` use pandoc keys (`[@blms1987]`, ...) that
   match these BibTeX keys exactly, so a pandoc or LaTeX build wires them
   automatically.
+
+
+## 2026-07-25 positioning pass (26 entries)
+
+These were verified by the issuing audit session and are recorded in
+`docs/theory/citations/t1_citation_verification_report.md`, which is the
+authoritative row-by-row record for them. They were **copied verbatim**
+into `references.bib`; keys are identical across both files by design, so
+the two must be kept in step.
+
+| key | role in Paper B | section |
+| --- | --- | --- |
+| bdj1999, johansson2000 | the theorems the order-only chain exponent confirms | 8.4 |
+| deyjosephpeled2024 | the theorem the tube exponent confirms, mechanism included | 8.4 |
+| bollobasbrightwell1991, bachmat2007 | the null-coordinate identification making those apply | 8.4 |
+| bodineaumartin2005, baiksuidan2005 | thin domain does not destroy KPZ; the non-conflation warning | 8.4 |
+| brightwellluczak2015 | the naming gap that survives as contribution | 8.4 |
+| calhoun2021, compagnoni2014 | labeled TDOA's own `d+2`, distinguished from ours | 8.5 |
+| gtt2019, garamvolgyi2021, garamvolgyi2022, connelly2024, gkioulekas2024 | unlabeled rigidity; the reconciliation | 8.6 |
+| cruickshank2023 | identifiability under algebraic constraints; the structural home | 8.6 |
+| humeyermeyer2025, muller2025 | nearest prior identifiability results | 8.2 |
+| rideout2009 (already present), eichhorn2019, bogunakrioukov2024, major2006, major2007 | the four competing distance proposals | 8 opening |
+| atkins1998, preafortin2014, carmona2025, brainerd1951 | the seriation framework behind Lemma 4c | 8.2 |
+
+### Two corrections made during this pass
+
+| key | defect | correction | confirmed via |
+| --- | --- | --- | --- |
+| armstrong2021 | `year` was the arXiv preprint year (2021); volume/pages absent | journal version is SIAM J. Math. Data Sci. **5**(1), 201--221, **2023**; key left unchanged so citations do not break | SIAM article page, doi 10.1137/22M1495342 |
+| aghili2018 | **title was wrong** -- recorded as "Statistical geometry and causal set dimension" | actual title is "Path length distribution in two-dimensional causal sets" | EPJ C article page and Springer record, doi 10.1140/epjc/s10052-018-6229-7 |
+
+Both corrections were applied to `docs/theory/citations/t1_references.bib`
+as well. No field was fabricated and no unverified entry was added; in
+particular Bombelli-Noldus-Tafoya (arXiv:1212.0601) is deliberately absent,
+having been withdrawn by its authors.
+
+
+### Post-hoc verification of the two load-bearing theorem statements
+
+The manuscript's Section 8.4 states the content of the theorems it cites,
+which is more exposure than citing them. The statements were verified
+against the published abstracts during code review of the positioning PR
+(2026-07-25) — after the prose was written, recorded here so the order of
+operations is on the record:
+
+- `deyjosephpeled2024` (arXiv:1808.08407 / Israel J. Math. 262): the
+  abstract states that the maximal increasing path in `[0,n]^2` restricted
+  to a strip of width `n^gamma`, `gamma < 2/3`, has expectation
+  `2n - n^{1-gamma+o(1)}`, **variance `n^{1-gamma/2+o(1)}`**, and converges
+  to the **Gaussian** distribution after scaling. At `gamma = 0` that is
+  `sd ~ n^{1/2}` against mean `~ 2n`, i.e. `theta = 1/2`, as the
+  manuscript asserts.
+- `bdj1999` (J. AMS 12): expectation `2n - n^{1/3}(c_1+o(1))`, variance
+  `n^{2/3}(c_2+o(1))`, Tracy-Widom limit — `theta = 1/3`, as asserted.
+
+Both match the manuscript's usage exactly; no edit was needed.
