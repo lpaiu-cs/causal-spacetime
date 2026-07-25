@@ -1,6 +1,8 @@
 # P9: dimension selection in 3+1D under a within-seed decision rule
 
-Status: **PREREGISTERED; NOT RUN** (2026-07-25).
+Status: **CONFIRMATORY RUN COMPLETE; P9 SUPPORTED 20/20/20** (2026-07-25).
+Sections 1-10 are the preregistration, unedited since before the run;
+Section 11 is the factual record.
 Depends on P8 (`p8_3plus1d.md`, PR #19) for the scene and the measurement
 script; P9 changes **only the decision rule**.
 
@@ -171,7 +173,55 @@ salvage one of them.
   calibrate.
 - **E3.** The rule was selected after seeing P8's outcome. Mitigated by
   entirely fresh seeds and by admitting P8's counts as motivation only.
+- **E4 (recorded post-run; found in code review).** The implementation
+  of H-SPEC-PAIRED counts a structurally-blocked control
+  (`control_status != "ok"`) as a spec pass, following the programme's
+  P2/P8 convention — but Section 2's registered wording is `h_3 < c_3`
+  alone and says nothing about structural blocks. The clause **did not
+  fire**: all 20 confirmatory controls built and returned `ok`, so the
+  registered rule and the implemented rule agree on every seed actually
+  scored. The code is deliberately left as it ran — editing the decision
+  function after the run, even toward the registered text, would itself
+  be a post-hoc change — and this note is the record. Any successor
+  design should register the structural-block clause explicitly.
 
 ## 11. Confirmatory outcome (post-run factual record)
 
-Not yet run.
+**Run 2026-07-25, seeds 500-519, each used once. All 20 valid.
+P9 SUPPORTED — every leg at its maximum.**
+
+| leg | rule | count | verdict |
+|---|---|---|---|
+| underfit (`t_3 < t_2`) | `>= 16` of 20 | **20 / 20** | supported |
+| no-improvement (`t_4 < t_3 - 0.05`) | `<= 4` of 20 | **0 / 20** | not rejected |
+| paired spec (`h_3 < c_3`) | `>= 16` of 20 | **20 / 20** | supported |
+
+H-KNEE supported (conjunction of the first two, with the second read as
+a non-rejection per Section 3); H-SPEC-PAIRED supported; **P9 supported**
+as the conjunction of all three.
+
+**H-CEILING (diagnostic, gated nothing): 0.95** — 19 of 20 seeds under
+the programme's 0.10 held-out ceiling. The exception is seed 503 at
+`h_3 = 0.117`; under P8's absolute-gate procedure that seed alone would
+have counted against H-SENS-3D, and under the paired rule it still
+passes its own control (0.193) by a wide margin — a clean illustration
+of exactly the difference between the two procedures.
+
+Artifacts: `docs/prereg/frozen/p9_confirmatory.csv` (per-seed rows with
+scene digests) and `docs/prereg/frozen/p9_decision_registry.json`.
+
+Provenance note, recorded because the stamp is misleading on its own:
+the registry's `code_version` reads `111dd7d`, the commit checked out
+when the run launched — at which moment the runner itself was present in
+the working tree but not yet committed. The runner was committed
+**byte-identical** immediately after launch as `2ea82f3` (verified: the
+working-tree file at run completion had no diff against that commit).
+The measurement path (`scene_3d`, `sweep_seed`, the frozen PC-V1
+pipeline) was entirely committed content at `111dd7d`.
+
+What this outcome licenses, per Section 9: *the instrument selects
+`d = 3` on 3+1D sprinkled order, by a within-seed criterion*. It makes
+no absolute held-out claim — that is what P8's gate would have provided
+— and the reading of Section 1 stands: together with P8's no-gate
+outcome, this is evidence that the absolute-gate procedure, not the
+instrument, is what fails to transplant to higher dimension.

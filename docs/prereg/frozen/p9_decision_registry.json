@@ -1,0 +1,22 @@
+{
+  "stage": "P9",
+  "confirmatory": true,
+  "code_version": "111dd7d",
+  "seed_spec": "500-519",
+  "seed_count": 20,
+  "valid_seed_count": 20,
+  "pass_min": 16,
+  "denominator": 20,
+  "saturation_tolerance": 0.05,
+  "underfit_count": 20,
+  "improvement_count": 0,
+  "paired_spec_count": 20,
+  "h_knee_underfit_supported": true,
+  "h_knee_no_improvement_not_rejected": true,
+  "h_knee_no_improvement_is_a_non_rejection": true,
+  "h_knee_supported": true,
+  "h_spec_paired_supported": true,
+  "p9_supported": true,
+  "h_ceiling_fraction": 0.95,
+  "h_ceiling_note": "descriptive diagnostic; gates nothing (prereg Section 2)"
+}
