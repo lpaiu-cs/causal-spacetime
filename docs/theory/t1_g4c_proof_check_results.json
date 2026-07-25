@@ -1,0 +1,1848 @@
+{
+  "scope": "G4c proof program: the lemmas of docs/theory/t1_g4c_proof.md verified as lemmas, plus the round-4 out-of-sample tests of the derived closed forms. Exact model, infinitesimal rigidity. Nothing frozen; no gate consumes this.",
+  "predictions_read_from": "docs\\theory\\t1_g4c_predictions_round4.json",
+  "checks": {
+    "lemma_a_reduction": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 2,
+          "n": 6,
+          "m": 1,
+          "flex_dim": 11,
+          "max_relative_residual": 2.3522102753963797e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 2,
+          "R": 2,
+          "n": 9,
+          "m": 1,
+          "flex_dim": 14,
+          "max_relative_residual": 2.939542582773562e-14,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 6,
+          "m": 2,
+          "flex_dim": 9,
+          "max_relative_residual": 8.817162963294139e-16,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 10,
+          "m": 2,
+          "flex_dim": 9,
+          "max_relative_residual": 1.0597457489239552e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 2,
+          "R": 4,
+          "n": 8,
+          "m": 3,
+          "flex_dim": 6,
+          "max_relative_residual": 1.7280930242001823e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 2,
+          "R": 4,
+          "n": 11,
+          "m": 3,
+          "flex_dim": 3,
+          "max_relative_residual": 0.0,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 6,
+          "m": 2,
+          "flex_dim": 18,
+          "max_relative_residual": 2.7992098552368902e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 9,
+          "m": 2,
+          "flex_dim": 21,
+          "max_relative_residual": 1.1073708172665164e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 6,
+          "m": 3,
+          "flex_dim": 18,
+          "max_relative_residual": 2.1193762131734762e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 12,
+          "m": 3,
+          "flex_dim": 18,
+          "max_relative_residual": 2.8696738104401497e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "n": 12,
+          "m": 4,
+          "flex_dim": 13,
+          "max_relative_residual": 3.5787140170430135e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "n": 19,
+          "m": 4,
+          "flex_dim": 6,
+          "max_relative_residual": 0.0,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 4,
+          "R": 3,
+          "n": 6,
+          "m": 2,
+          "flex_dim": 27,
+          "max_relative_residual": 1.5974922203754302e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 4,
+          "R": 4,
+          "n": 6,
+          "m": 3,
+          "flex_dim": 28,
+          "max_relative_residual": 2.6403825255307323e-15,
+          "every_flex_lands_in_F": true
+        },
+        {
+          "d": 4,
+          "R": 5,
+          "n": 6,
+          "m": 4,
+          "flex_dim": 30,
+          "max_relative_residual": 1.5227022990747777e-14,
+          "every_flex_lands_in_F": true
+        }
+      ],
+      "passed": true
+    },
+    "lemma_b_flex_dimension": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 2,
+          "n": 6,
+          "m": 1,
+          "q": 1,
+          "dim_F": 1,
+          "formula": 1,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 2,
+          "n": 9,
+          "m": 1,
+          "q": 1,
+          "dim_F": 1,
+          "formula": 1,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 6,
+          "m": 2,
+          "q": 2,
+          "dim_F": 3,
+          "formula": 3,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 10,
+          "m": 2,
+          "q": 2,
+          "dim_F": 3,
+          "formula": 3,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 4,
+          "n": 8,
+          "m": 3,
+          "q": 3,
+          "dim_F": 6,
+          "formula": 6,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 4,
+          "n": 11,
+          "m": 3,
+          "q": 3,
+          "dim_F": 6,
+          "formula": 6,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 6,
+          "m": 2,
+          "q": 2,
+          "dim_F": 3,
+          "formula": 3,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 9,
+          "m": 2,
+          "q": 2,
+          "dim_F": 3,
+          "formula": 3,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 6,
+          "m": 3,
+          "q": 3,
+          "dim_F": 6,
+          "formula": 6,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 12,
+          "m": 3,
+          "q": 3,
+          "dim_F": 6,
+          "formula": 6,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "n": 12,
+          "m": 4,
+          "q": 4,
+          "dim_F": 10,
+          "formula": 10,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "n": 19,
+          "m": 4,
+          "q": 4,
+          "dim_F": 10,
+          "formula": 10,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 3,
+          "n": 6,
+          "m": 2,
+          "q": 2,
+          "dim_F": 3,
+          "formula": 3,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 4,
+          "n": 6,
+          "m": 3,
+          "q": 3,
+          "dim_F": 6,
+          "formula": 6,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 5,
+          "n": 6,
+          "m": 4,
+          "q": 4,
+          "dim_F": 10,
+          "formula": 10,
+          "agrees": true
+        }
+      ],
+      "passed": true
+    },
+    "lemma_c_decomposition": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 2,
+          "n": 6,
+          "measured_nullity": 11,
+          "dim_ker_L": 10,
+          "dim_ImL_cap_F": 1,
+          "sum": 11,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 2,
+          "n": 9,
+          "measured_nullity": 14,
+          "dim_ker_L": 13,
+          "dim_ImL_cap_F": 1,
+          "sum": 14,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 6,
+          "measured_nullity": 9,
+          "dim_ker_L": 6,
+          "dim_ImL_cap_F": 3,
+          "sum": 9,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 10,
+          "measured_nullity": 9,
+          "dim_ker_L": 6,
+          "dim_ImL_cap_F": 3,
+          "sum": 9,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 4,
+          "n": 8,
+          "measured_nullity": 6,
+          "dim_ker_L": 3,
+          "dim_ImL_cap_F": 3,
+          "sum": 6,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 4,
+          "n": 11,
+          "measured_nullity": 3,
+          "dim_ker_L": 3,
+          "dim_ImL_cap_F": 0,
+          "sum": 3,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 6,
+          "measured_nullity": 18,
+          "dim_ker_L": 15,
+          "dim_ImL_cap_F": 3,
+          "sum": 18,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 9,
+          "measured_nullity": 21,
+          "dim_ker_L": 18,
+          "dim_ImL_cap_F": 3,
+          "sum": 21,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 6,
+          "measured_nullity": 18,
+          "dim_ker_L": 12,
+          "dim_ImL_cap_F": 6,
+          "sum": 18,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 12,
+          "measured_nullity": 18,
+          "dim_ker_L": 12,
+          "dim_ImL_cap_F": 6,
+          "sum": 18,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "n": 12,
+          "measured_nullity": 13,
+          "dim_ker_L": 6,
+          "dim_ImL_cap_F": 7,
+          "sum": 13,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "n": 19,
+          "measured_nullity": 6,
+          "dim_ker_L": 6,
+          "dim_ImL_cap_F": 0,
+          "sum": 6,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 3,
+          "n": 6,
+          "measured_nullity": 27,
+          "dim_ker_L": 24,
+          "dim_ImL_cap_F": 3,
+          "sum": 27,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 4,
+          "n": 6,
+          "measured_nullity": 28,
+          "dim_ker_L": 22,
+          "dim_ImL_cap_F": 6,
+          "sum": 28,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 5,
+          "n": 6,
+          "measured_nullity": 30,
+          "dim_ker_L": 20,
+          "dim_ImL_cap_F": 10,
+          "sum": 30,
+          "agrees": true
+        }
+      ],
+      "passed": true
+    },
+    "theorem_1_closed_form": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 2,
+          "n": 6,
+          "measured": 11,
+          "formula": 11,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 2,
+          "n": 9,
+          "measured": 14,
+          "formula": 14,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 6,
+          "measured": 9,
+          "formula": 9,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 3,
+          "n": 10,
+          "measured": 9,
+          "formula": 9,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 6,
+          "measured": 18,
+          "formula": 18,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 3,
+          "n": 9,
+          "measured": 21,
+          "formula": 21,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 6,
+          "measured": 18,
+          "formula": 18,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 4,
+          "n": 12,
+          "measured": 18,
+          "formula": 18,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 3,
+          "n": 6,
+          "measured": 27,
+          "formula": 27,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 4,
+          "n": 6,
+          "measured": 28,
+          "formula": 28,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 5,
+          "n": 6,
+          "measured": 30,
+          "formula": 30,
+          "agrees": true
+        }
+      ],
+      "passed": true
+    },
+    "theorem_2a_necessity": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 4,
+          "m_minus_d": 1,
+          "bound_N": 11,
+          "measured_threshold": 11,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 2,
+          "R": 5,
+          "m_minus_d": 2,
+          "bound_N": 9,
+          "measured_threshold": 9,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 2,
+          "R": 6,
+          "m_minus_d": 3,
+          "bound_N": 8,
+          "measured_threshold": 8,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 2,
+          "R": 7,
+          "m_minus_d": 4,
+          "bound_N": 8,
+          "measured_threshold": 8,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 2,
+          "R": 8,
+          "m_minus_d": 5,
+          "bound_N": 9,
+          "measured_threshold": 9,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "m_minus_d": 1,
+          "bound_N": 19,
+          "measured_threshold": 19,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 3,
+          "R": 6,
+          "m_minus_d": 2,
+          "bound_N": 14,
+          "measured_threshold": 14,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 3,
+          "R": 7,
+          "m_minus_d": 3,
+          "bound_N": 12,
+          "measured_threshold": 12,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 3,
+          "R": 8,
+          "m_minus_d": 4,
+          "bound_N": 12,
+          "measured_threshold": 12,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 4,
+          "R": 6,
+          "m_minus_d": 1,
+          "bound_N": 29,
+          "measured_threshold": 29,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 4,
+          "R": 7,
+          "m_minus_d": 2,
+          "bound_N": 20,
+          "measured_threshold": 20,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 4,
+          "R": 8,
+          "m_minus_d": 3,
+          "bound_N": 17,
+          "measured_threshold": 17,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 5,
+          "R": 7,
+          "m_minus_d": 1,
+          "bound_N": 41,
+          "measured_threshold": 41,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 5,
+          "R": 8,
+          "m_minus_d": 2,
+          "bound_N": 27,
+          "measured_threshold": 27,
+          "bound_respected": true,
+          "bound_attained": true
+        },
+        {
+          "d": 6,
+          "R": 8,
+          "m_minus_d": 1,
+          "bound_N": 55,
+          "measured_threshold": 55,
+          "bound_respected": true,
+          "bound_attained": true
+        }
+      ],
+      "bound_respected_everywhere": true,
+      "cells_where_bound_is_attained": 15,
+      "cells_total": 15,
+      "passed": true
+    },
+    "d1_defeats_counting_alone": {
+      "rows": [
+        {
+          "n": 6,
+          "R": 3,
+          "m": 2,
+          "q": 2,
+          "nullity": 3,
+          "gauge": 1,
+          "extra_flexes": 2,
+          "counting_lower_bound_on_nullity": 0,
+          "count_permits_rigidity": true,
+          "actually_rigid": false
+        },
+        {
+          "n": 10,
+          "R": 4,
+          "m": 3,
+          "q": 2,
+          "nullity": 4,
+          "gauge": 1,
+          "extra_flexes": 3,
+          "counting_lower_bound_on_nullity": -3,
+          "count_permits_rigidity": true,
+          "actually_rigid": false
+        },
+        {
+          "n": 16,
+          "R": 6,
+          "m": 5,
+          "q": 3,
+          "nullity": 5,
+          "gauge": 1,
+          "extra_flexes": 4,
+          "counting_lower_bound_on_nullity": -20,
+          "count_permits_rigidity": true,
+          "actually_rigid": false
+        },
+        {
+          "n": 24,
+          "R": 8,
+          "m": 7,
+          "q": 6,
+          "nullity": 4,
+          "gauge": 1,
+          "extra_flexes": 3,
+          "counting_lower_bound_on_nullity": -91,
+          "count_permits_rigidity": true,
+          "actually_rigid": false
+        }
+      ],
+      "counting_permits_but_reality_refuses": true,
+      "passed": true
+    },
+    "lemma_e_inputs": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 4,
+          "rank_of_observer_edm": 4,
+          "needs": 4,
+          "linear_span_of_cone_points": 3,
+          "m": 3,
+          "affine_span_at_least": 2,
+          "zero_set_of_a_nonzero_isometry_at_most": 1,
+          "no_room": true
+        },
+        {
+          "d": 2,
+          "R": 5,
+          "rank_of_observer_edm": 5,
+          "needs": 5,
+          "linear_span_of_cone_points": 4,
+          "m": 4,
+          "affine_span_at_least": 3,
+          "zero_set_of_a_nonzero_isometry_at_most": 2,
+          "no_room": true
+        },
+        {
+          "d": 2,
+          "R": 6,
+          "rank_of_observer_edm": 6,
+          "needs": 6,
+          "linear_span_of_cone_points": 5,
+          "m": 5,
+          "affine_span_at_least": 4,
+          "zero_set_of_a_nonzero_isometry_at_most": 3,
+          "no_room": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "rank_of_observer_edm": 5,
+          "needs": 5,
+          "linear_span_of_cone_points": 4,
+          "m": 4,
+          "affine_span_at_least": 3,
+          "zero_set_of_a_nonzero_isometry_at_most": 2,
+          "no_room": true
+        },
+        {
+          "d": 3,
+          "R": 6,
+          "rank_of_observer_edm": 6,
+          "needs": 6,
+          "linear_span_of_cone_points": 5,
+          "m": 5,
+          "affine_span_at_least": 4,
+          "zero_set_of_a_nonzero_isometry_at_most": 3,
+          "no_room": true
+        },
+        {
+          "d": 3,
+          "R": 7,
+          "rank_of_observer_edm": 7,
+          "needs": 7,
+          "linear_span_of_cone_points": 6,
+          "m": 6,
+          "affine_span_at_least": 5,
+          "zero_set_of_a_nonzero_isometry_at_most": 4,
+          "no_room": true
+        },
+        {
+          "d": 4,
+          "R": 6,
+          "rank_of_observer_edm": 6,
+          "needs": 6,
+          "linear_span_of_cone_points": 5,
+          "m": 5,
+          "affine_span_at_least": 4,
+          "zero_set_of_a_nonzero_isometry_at_most": 3,
+          "no_room": true
+        },
+        {
+          "d": 4,
+          "R": 7,
+          "rank_of_observer_edm": 7,
+          "needs": 7,
+          "linear_span_of_cone_points": 6,
+          "m": 6,
+          "affine_span_at_least": 5,
+          "zero_set_of_a_nonzero_isometry_at_most": 4,
+          "no_room": true
+        },
+        {
+          "d": 4,
+          "R": 8,
+          "rank_of_observer_edm": 8,
+          "needs": 8,
+          "linear_span_of_cone_points": 7,
+          "m": 7,
+          "affine_span_at_least": 6,
+          "zero_set_of_a_nonzero_isometry_at_most": 5,
+          "no_room": true
+        },
+        {
+          "d": 5,
+          "R": 7,
+          "rank_of_observer_edm": 7,
+          "needs": 7,
+          "linear_span_of_cone_points": 6,
+          "m": 6,
+          "affine_span_at_least": 5,
+          "zero_set_of_a_nonzero_isometry_at_most": 4,
+          "no_room": true
+        },
+        {
+          "d": 5,
+          "R": 8,
+          "rank_of_observer_edm": 8,
+          "needs": 8,
+          "linear_span_of_cone_points": 7,
+          "m": 7,
+          "affine_span_at_least": 6,
+          "zero_set_of_a_nonzero_isometry_at_most": 5,
+          "no_room": true
+        },
+        {
+          "d": 5,
+          "R": 9,
+          "rank_of_observer_edm": 9,
+          "needs": 9,
+          "linear_span_of_cone_points": 8,
+          "m": 8,
+          "affine_span_at_least": 7,
+          "zero_set_of_a_nonzero_isometry_at_most": 6,
+          "no_room": true
+        },
+        {
+          "d": 6,
+          "R": 8,
+          "rank_of_observer_edm": 8,
+          "needs": 8,
+          "linear_span_of_cone_points": 7,
+          "m": 7,
+          "affine_span_at_least": 6,
+          "zero_set_of_a_nonzero_isometry_at_most": 5,
+          "no_room": true
+        },
+        {
+          "d": 6,
+          "R": 9,
+          "rank_of_observer_edm": 9,
+          "needs": 9,
+          "linear_span_of_cone_points": 8,
+          "m": 8,
+          "affine_span_at_least": 7,
+          "zero_set_of_a_nonzero_isometry_at_most": 6,
+          "no_room": true
+        },
+        {
+          "d": 6,
+          "R": 10,
+          "rank_of_observer_edm": 10,
+          "needs": 10,
+          "linear_span_of_cone_points": 9,
+          "m": 9,
+          "affine_span_at_least": 8,
+          "zero_set_of_a_nonzero_isometry_at_most": 7,
+          "no_room": true
+        },
+        {
+          "d": 7,
+          "R": 9,
+          "rank_of_observer_edm": 9,
+          "needs": 9,
+          "linear_span_of_cone_points": 8,
+          "m": 8,
+          "affine_span_at_least": 7,
+          "zero_set_of_a_nonzero_isometry_at_most": 6,
+          "no_room": true
+        },
+        {
+          "d": 7,
+          "R": 10,
+          "rank_of_observer_edm": 10,
+          "needs": 10,
+          "linear_span_of_cone_points": 9,
+          "m": 9,
+          "affine_span_at_least": 8,
+          "zero_set_of_a_nonzero_isometry_at_most": 7,
+          "no_room": true
+        },
+        {
+          "d": 7,
+          "R": 11,
+          "rank_of_observer_edm": 11,
+          "needs": 11,
+          "linear_span_of_cone_points": 10,
+          "m": 10,
+          "affine_span_at_least": 9,
+          "zero_set_of_a_nonzero_isometry_at_most": 8,
+          "no_room": true
+        }
+      ],
+      "passed": true
+    },
+    "g3_observer_gap_immersion": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 4,
+          "jacobian_rank": 5,
+          "needed_for_immersion_mod_congruence": 5,
+          "n_gap_constraints": 6,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 5,
+          "jacobian_rank": 7,
+          "needed_for_immersion_mod_congruence": 7,
+          "n_gap_constraints": 10,
+          "agrees": true
+        },
+        {
+          "d": 2,
+          "R": 6,
+          "jacobian_rank": 9,
+          "needed_for_immersion_mod_congruence": 9,
+          "n_gap_constraints": 15,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "jacobian_rank": 9,
+          "needed_for_immersion_mod_congruence": 9,
+          "n_gap_constraints": 10,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 6,
+          "jacobian_rank": 12,
+          "needed_for_immersion_mod_congruence": 12,
+          "n_gap_constraints": 15,
+          "agrees": true
+        },
+        {
+          "d": 3,
+          "R": 7,
+          "jacobian_rank": 15,
+          "needed_for_immersion_mod_congruence": 15,
+          "n_gap_constraints": 21,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 6,
+          "jacobian_rank": 14,
+          "needed_for_immersion_mod_congruence": 14,
+          "n_gap_constraints": 15,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 7,
+          "jacobian_rank": 18,
+          "needed_for_immersion_mod_congruence": 18,
+          "n_gap_constraints": 21,
+          "agrees": true
+        },
+        {
+          "d": 4,
+          "R": 8,
+          "jacobian_rank": 22,
+          "needed_for_immersion_mod_congruence": 22,
+          "n_gap_constraints": 28,
+          "agrees": true
+        },
+        {
+          "d": 5,
+          "R": 7,
+          "jacobian_rank": 20,
+          "needed_for_immersion_mod_congruence": 20,
+          "n_gap_constraints": 21,
+          "agrees": true
+        },
+        {
+          "d": 5,
+          "R": 8,
+          "jacobian_rank": 25,
+          "needed_for_immersion_mod_congruence": 25,
+          "n_gap_constraints": 28,
+          "agrees": true
+        },
+        {
+          "d": 5,
+          "R": 9,
+          "jacobian_rank": 30,
+          "needed_for_immersion_mod_congruence": 30,
+          "n_gap_constraints": 36,
+          "agrees": true
+        },
+        {
+          "d": 6,
+          "R": 8,
+          "jacobian_rank": 27,
+          "needed_for_immersion_mod_congruence": 27,
+          "n_gap_constraints": 28,
+          "agrees": true
+        },
+        {
+          "d": 6,
+          "R": 9,
+          "jacobian_rank": 33,
+          "needed_for_immersion_mod_congruence": 33,
+          "n_gap_constraints": 36,
+          "agrees": true
+        },
+        {
+          "d": 6,
+          "R": 10,
+          "jacobian_rank": 39,
+          "needed_for_immersion_mod_congruence": 39,
+          "n_gap_constraints": 45,
+          "agrees": true
+        },
+        {
+          "d": 7,
+          "R": 9,
+          "jacobian_rank": 35,
+          "needed_for_immersion_mod_congruence": 35,
+          "n_gap_constraints": 36,
+          "agrees": true
+        },
+        {
+          "d": 7,
+          "R": 10,
+          "jacobian_rank": 42,
+          "needed_for_immersion_mod_congruence": 42,
+          "n_gap_constraints": 45,
+          "agrees": true
+        },
+        {
+          "d": 7,
+          "R": 11,
+          "jacobian_rank": 49,
+          "needed_for_immersion_mod_congruence": 49,
+          "n_gap_constraints": 55,
+          "agrees": true
+        }
+      ],
+      "passed": true
+    },
+    "sufficiency_brackets": {
+      "rows": [
+        {
+          "d": 2,
+          "R": 4,
+          "m_minus_d": 1,
+          "lower_bound_theorem_2a": 11,
+          "upper_bound_lemma_f": 11,
+          "bounds_coincide": true,
+          "measured": 11,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 2,
+          "R": 5,
+          "m_minus_d": 2,
+          "lower_bound_theorem_2a": 9,
+          "upper_bound_lemma_f": 17,
+          "bounds_coincide": false,
+          "measured": 9,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 2,
+          "R": 6,
+          "m_minus_d": 3,
+          "lower_bound_theorem_2a": 8,
+          "upper_bound_lemma_f": 24,
+          "bounds_coincide": false,
+          "measured": 8,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 3,
+          "R": 5,
+          "m_minus_d": 1,
+          "lower_bound_theorem_2a": 19,
+          "upper_bound_lemma_f": 19,
+          "bounds_coincide": true,
+          "measured": 19,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 3,
+          "R": 6,
+          "m_minus_d": 2,
+          "lower_bound_theorem_2a": 14,
+          "upper_bound_lemma_f": 27,
+          "bounds_coincide": false,
+          "measured": 14,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 3,
+          "R": 7,
+          "m_minus_d": 3,
+          "lower_bound_theorem_2a": 12,
+          "upper_bound_lemma_f": 36,
+          "bounds_coincide": false,
+          "measured": 12,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 4,
+          "R": 6,
+          "m_minus_d": 1,
+          "lower_bound_theorem_2a": 29,
+          "upper_bound_lemma_f": 29,
+          "bounds_coincide": true,
+          "measured": 29,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 4,
+          "R": 7,
+          "m_minus_d": 2,
+          "lower_bound_theorem_2a": 20,
+          "upper_bound_lemma_f": 39,
+          "bounds_coincide": false,
+          "measured": 20,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 4,
+          "R": 8,
+          "m_minus_d": 3,
+          "lower_bound_theorem_2a": 17,
+          "upper_bound_lemma_f": 50,
+          "bounds_coincide": false,
+          "measured": 17,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 5,
+          "R": 7,
+          "m_minus_d": 1,
+          "lower_bound_theorem_2a": 41,
+          "upper_bound_lemma_f": 41,
+          "bounds_coincide": true,
+          "measured": 41,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 5,
+          "R": 8,
+          "m_minus_d": 2,
+          "lower_bound_theorem_2a": 27,
+          "upper_bound_lemma_f": 53,
+          "bounds_coincide": false,
+          "measured": 27,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 5,
+          "R": 9,
+          "m_minus_d": 3,
+          "lower_bound_theorem_2a": 22,
+          "upper_bound_lemma_f": 66,
+          "bounds_coincide": false,
+          "measured": null,
+          "measured_inside_bounds": null
+        },
+        {
+          "d": 6,
+          "R": 8,
+          "m_minus_d": 1,
+          "lower_bound_theorem_2a": 55,
+          "upper_bound_lemma_f": 55,
+          "bounds_coincide": true,
+          "measured": 55,
+          "measured_inside_bounds": true
+        },
+        {
+          "d": 6,
+          "R": 9,
+          "m_minus_d": 2,
+          "lower_bound_theorem_2a": 35,
+          "upper_bound_lemma_f": 69,
+          "bounds_coincide": false,
+          "measured": null,
+          "measured_inside_bounds": null
+        },
+        {
+          "d": 6,
+          "R": 10,
+          "m_minus_d": 3,
+          "lower_bound_theorem_2a": 28,
+          "upper_bound_lemma_f": 84,
+          "bounds_coincide": false,
+          "measured": null,
+          "measured_inside_bounds": null
+        },
+        {
+          "d": 7,
+          "R": 9,
+          "m_minus_d": 1,
+          "lower_bound_theorem_2a": 71,
+          "upper_bound_lemma_f": 71,
+          "bounds_coincide": true,
+          "measured": null,
+          "measured_inside_bounds": null
+        },
+        {
+          "d": 7,
+          "R": 10,
+          "m_minus_d": 2,
+          "lower_bound_theorem_2a": 44,
+          "upper_bound_lemma_f": 87,
+          "bounds_coincide": false,
+          "measured": null,
+          "measured_inside_bounds": null
+        },
+        {
+          "d": 7,
+          "R": 11,
+          "m_minus_d": 3,
+          "lower_bound_theorem_2a": 35,
+          "upper_bound_lemma_f": 104,
+          "bounds_coincide": false,
+          "measured": null,
+          "measured_inside_bounds": null
+        }
+      ],
+      "pinned_cells": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          7,
+          9
+        ]
+      ],
+      "pinned_exactly_when_R_is_d_plus_2": true,
+      "passed": true
+    },
+    "p14_d6_r4_slope_three": {
+      "d": 6,
+      "R": 4,
+      "regime_condition": "R - 1 = 3 < d = 6",
+      "rows": [
+        {
+          "n": 6,
+          "nullity": 48,
+          "extra_flexes": 27
+        },
+        {
+          "n": 7,
+          "nullity": 51,
+          "extra_flexes": 30
+        },
+        {
+          "n": 8,
+          "nullity": 54,
+          "extra_flexes": 33
+        },
+        {
+          "n": 9,
+          "nullity": 57,
+          "extra_flexes": 36
+        },
+        {
+          "n": 10,
+          "nullity": 60,
+          "extra_flexes": 39
+        },
+        {
+          "n": 11,
+          "nullity": 63,
+          "extra_flexes": 42
+        },
+        {
+          "n": 12,
+          "nullity": 66,
+          "extra_flexes": 45
+        }
+      ],
+      "consecutive_nullity_steps": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "expected_slope": 3,
+      "slope_is_constant": true,
+      "observed_slope": 3,
+      "grows_with_n": true,
+      "passed": true
+    },
+    "p15_d6_r7_saturated": {
+      "d": 6,
+      "R": 7,
+      "regime_condition": "R - 1 = 6 == d = 6",
+      "rows": [
+        {
+          "n": 8,
+          "nullity": 63,
+          "extra_flexes": 42
+        },
+        {
+          "n": 12,
+          "nullity": 63,
+          "extra_flexes": 42
+        },
+        {
+          "n": 16,
+          "nullity": 63,
+          "extra_flexes": 42
+        },
+        {
+          "n": 20,
+          "nullity": 63,
+          "extra_flexes": 42
+        }
+      ],
+      "distinct_nullities": [
+        63
+      ],
+      "distinct_extra_flexes": [
+        42
+      ],
+      "constant_in_n": true,
+      "nullity": 63,
+      "extra_flexes": 42,
+      "counting_law_d_times_R_plus_gauge": 63,
+      "passed": true
+    },
+    "p16_to_p20_thresholds": {
+      "rows": [
+        {
+          "R": 7,
+          "regime_condition": "R - 1 = 6 > d = 2",
+          "first_rigid_n": 8,
+          "counting_bound": 8,
+          "detail": [
+            {
+              "n": 5,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 6,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 7,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 8,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ],
+          "d": 2,
+          "scanned": [
+            5,
+            14
+          ],
+          "derived_bound": 8
+        },
+        {
+          "R": 7,
+          "regime_condition": "R - 1 = 6 > d = 3",
+          "first_rigid_n": 12,
+          "counting_bound": 10,
+          "detail": [
+            {
+              "n": 8,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 9,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 10,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 11,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 12,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 13,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 14,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 16,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 17,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 18,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ],
+          "d": 3,
+          "scanned": [
+            8,
+            18
+          ],
+          "derived_bound": 12
+        },
+        {
+          "R": 7,
+          "regime_condition": "R - 1 = 6 > d = 4",
+          "first_rigid_n": 20,
+          "counting_bound": 12,
+          "detail": [
+            {
+              "n": 14,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 15,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 16,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 17,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 18,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 19,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 20,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 21,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 22,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 23,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 24,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 25,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 26,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ],
+          "d": 4,
+          "scanned": [
+            14,
+            26
+          ],
+          "derived_bound": 20
+        },
+        {
+          "R": 8,
+          "regime_condition": "R - 1 = 7 > d = 5",
+          "first_rigid_n": 27,
+          "counting_bound": 15,
+          "detail": [
+            {
+              "n": 20,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 21,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 22,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 23,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 24,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 25,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 26,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 27,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 28,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 29,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 30,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 31,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 32,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 33,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ],
+          "d": 5,
+          "scanned": [
+            20,
+            33
+          ],
+          "derived_bound": 27
+        },
+        {
+          "R": 8,
+          "regime_condition": "R - 1 = 7 > d = 6",
+          "first_rigid_n": 55,
+          "counting_bound": 17,
+          "detail": [
+            {
+              "n": 48,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 49,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 50,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 51,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 52,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 53,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 54,
+              "rigid_seeds": 0,
+              "of": 4
+            },
+            {
+              "n": 55,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 56,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 57,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 58,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 59,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 60,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 61,
+              "rigid_seeds": 4,
+              "of": 4
+            },
+            {
+              "n": 62,
+              "rigid_seeds": 4,
+              "of": 4
+            }
+          ],
+          "d": 6,
+          "scanned": [
+            48,
+            62
+          ],
+          "derived_bound": 55
+        }
+      ],
+      "all_reached_rigidity": true,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "prediction_scorecard_round4": [
+    {
+      "id": "P14",
+      "predicted": "d=6, R=4: nullity = 3n + 30 (slope 3, intercept 30)",
+      "observed": "slope 3, nullities [48, 51, 54, 57, 60, 63, 66]",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P15",
+      "predicted": "d=6, R=7: nullity 63, constant in n",
+      "observed": "nullity 63, constant=True",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P16",
+      "predicted": "d=2, R=7: first rigid n = 8",
+      "observed": "first rigid n = 8",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P17",
+      "predicted": "d=3, R=7: first rigid n = 12",
+      "observed": "first rigid n = 12",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P18",
+      "predicted": "d=4, R=7: first rigid n = 20",
+      "observed": "first rigid n = 20",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P19",
+      "predicted": "d=5, R=8: first rigid n = 27",
+      "observed": "first rigid n = 27",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    },
+    {
+      "id": "P20",
+      "predicted": "d=6, R=8: first rigid n = 55",
+      "observed": "first rigid n = 55",
+      "hit": true,
+      "confidence_when_frozen": "strong"
+    }
+  ],
+  "predictions_hit": 7,
+  "predictions_total": 7
+}

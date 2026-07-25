@@ -77,8 +77,37 @@ This paper reports the validated-instrument line of the program:
    character with dimension: ordinal in 1+1D, metric in 2+1D, where
    four or more observers make the dissimilarity determine the whole
    scene up to congruence while three provably do not (characterization
-   at stated strength -- infinitesimal rigidity, exact model). Source:
-   `docs/theory/t1_parallax_identifiability.md` (v1.0) and manuscript
+   at stated strength -- infinitesimal rigidity, exact model).
+   That threshold is not a 2+1D fact but a general-dimension law
+   (Section 8.6): the observable rigidifies exactly from `R >= d + 2`
+   observers, so physical 3+1 needs five, from 19 targets, and 1+1D is
+   the lone exception because its profile surface is a polyline of zero
+   curvature. Measured across spatial dimensions one through six
+   against 20 predictions preregistered in four rounds and never
+   amended afterwards, 20/20 -- including the two that carry
+   information: a fibre slope of 2 where every prior measurement had
+   slope 1, and the `R = d + 2` threshold formula carried out of sample
+   to `d = 5` (predicted 41, measured 41). Most of that law is now
+   *derived* rather than observed: the flex condition reduces exactly to
+   infinitesimal rigidity of the centered profile cloud, which yields a
+   closed form below the threshold and a proved lower bound above it,
+   both with no free parameter and both reproducing every measured cell.
+   The bound is attained with no slack in all 15 observer counts tried
+   across six spatial dimensions. Attainment is proved too, by way of
+   the profile surface's conical singularities -- one per observer,
+   which no continuous ambient symmetry can permute, and which span
+   because the un-squared observer distance matrix is nonsingular. That
+   brackets the threshold from above, and the bracket closes exactly at
+   `R = d + 2`: **physical 3+1 is pinned at five observers and 19
+   targets, both theorems**, modulo one explicit rank hypothesis on
+   observer configurations (verified 18/18 across `d = 2..7`).
+   Sharpness for `R > d + 2` stays open, though rigidity there does not.
+   `d = 1` is exempt in the proof for the same reason it was exempt in
+   the measurements: its cone degenerates to two rays. Scope is
+   unchanged by the extra dimensions, the derivation, or the proof.
+   Source:
+   `docs/theory/t1_parallax_identifiability.md` (v1.4),
+   `docs/theory/t1_g4c_predictions{,_round2,_round3,_round4}.json`, and manuscript
    Section 8.
 
 It is deliberately conservative: it does not claim continuum spacetime

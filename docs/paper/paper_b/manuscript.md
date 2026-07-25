@@ -842,7 +842,7 @@ proved for an exact model of the instrument and then verified against the
 instrument itself — which turns the truth-recovery gate from a plausible
 check into the strongest check the observable admits. Full statements,
 proofs, and proof-status tags are in
-`docs/theory/t1_parallax_identifiability.md` (v1.0); every statement
+`docs/theory/t1_parallax_identifiability.md` (v1.4); every statement
 quoted as proved below is additionally pinned as a deterministic CI
 regression by a verification harness
 (`experiments/theory/t1_verification.py`), so a divergence between the
@@ -1145,6 +1145,102 @@ therefore verified numerically rather than proved, and Section 6's
 law, concentration and labeled identifiability, with the unlabeled
 statement standing as characterization at that stated strength.
 
+### 8.6 The threshold is a general-dimension law
+
+The argument of Section 8.5 never mentions the number two. The centered
+profile map carries a d-dimensional target space into the
+(R-1)-dimensional mean-zero subspace of the R observer readings, so its
+image is a d-surface, and the behaviour is fixed by whether that surface
+has room to curve. Below R - 1 = d it does not even fill its ambient:
+the map is a submersion, each target slides along a fibre of dimension
+d - R + 1 without moving the observable at all, and the flex count grows
+with the number of targets. At R - 1 = d the surface exactly fills its
+ambient, the dissimilarity collapses to a distance matrix, and the flex
+count is constant in the target count. Above it — that is, from
+R >= d + 2 — the surface is curved inside a larger space and the flexes
+vanish down to rigid motion. Two spatial dimensions gave R >= 4 because
+2 + 2 = 4, not because the plane is distinguished.
+
+We tested that reading rather than asserting it, in four rounds whose
+predictions were committed before the corresponding measurements and
+never amended after. All twenty hold, across spatial dimensions one
+through six. Two of them carry the weight. Every configuration measured
+before the second round happened to have fibre dimension exactly one, so
+a law stating merely "slope one" would have fitted all existing data;
+at d = 4 with three observers the formula demands slope two, and slope
+two is what appears. And the rigidity thresholds at R = d + 2 run
+11, 19, 29 for d = 2, 3, 4, which n = d^2 + 3d + 1 reproduces exactly —
+an empty observation, since three points determine a quadratic, until it
+was carried out of sample to d = 5, where it predicted 41 before the scan
+and measured 41. Redrawing the observer positions from a different seed
+leaves the d = 3 threshold at 19, so these are properties of the
+geometry rather than of one arbitrary placement.
+
+For physical 3+1 spacetime, where the spatial dimension is three, the
+consequence is explicit: **five observers suffice, from 19 targets, and
+the unlabeled dissimilarity then determines the whole scene up to
+Euclidean congruence with the absolute scale included.** One spatial
+dimension remains the exception at every observer count, and now for a
+stated reason — there the profile surface is a polyline of exactly zero
+curvature, so the mechanism that rigidifies every higher dimension is
+absent rather than merely weak.
+
+Most of that law is now derived rather than observed. The observable
+squares to the squared distance between centered profile vectors, so a
+first-order motion leaving every dissimilarity fixed is precisely one
+that moves the cloud of those vectors as an infinitesimal isometry of
+the (R-1)-dimensional space they inhabit. The scene's flex space is
+therefore the preimage of a classical complete-graph flex space, and its
+dimension splits into the kernel of the scene-to-cloud map plus the part
+of that map's image which the cloud can absorb. Below the threshold the
+map is onto and the split closes in closed form,
+dR + n(d - R + 1) + R(R-1)/2, which reproduces every measured
+configuration in those regimes; the saturated counting law is its
+special case, and the coincidence that made its flex count look like the
+scene's rigid motions is only that the profile space and the target
+space have the same dimension there. Above the threshold the same
+bookkeeping bounds how few targets a rigid configuration can carry, and
+that bound — a theorem, with no genericity assumption beyond the cloud
+spanning — is attained exactly, with no slack, in all fifteen observer
+counts tried across six spatial dimensions, five of them committed in
+advance. It also explains the quadratic of the paragraph above: at
+R = d + 2 the bound collapses to d^2 + 3d + 1, so what had looked like a
+three-point curve fit was a dimension count.
+
+That the bound is *attained* does not follow from counting, and one
+dimension shows why the gap is real rather than clerical: at d = 1 the
+count permits rigidity comfortably and the configuration is never rigid
+at any observer count. What closes it is that the profile surface is not
+smooth. The distance to an observer is not differentiable at the
+observer, so the surface carries one conical singular point per
+observer; a connected group of ambient isometries cannot permute a
+finite set, so any continuous symmetry would have to fix all of them. It
+cannot: those cone points are the centered rows of the observer distance
+matrix — the un-squared one, which unlike its squared counterpart is
+generically nonsingular — so they span, while a nonzero infinitesimal
+isometry vanishes on a subspace two dimensions short of spanning. The
+surface therefore admits no continuous symmetry, a nested chain of
+candidate flexes must terminate, and rigidity follows once the target
+count exceeds an explicit bound. One dimension is exempt in the proof
+for the same reason it was exempt in the measurements: there the cone
+degenerates to two rays and the argument has nothing to grip.
+
+The lower bound from counting and this upper bound coincide exactly when
+there are d + 2 observers, the fewest that work. **So in 3+1 spacetime
+the answer is pinned rather than measured: five observers and 19
+targets, both of them theorems**, subject to one remaining hypothesis —
+that the map sending observer positions to the mutual distances of those
+cone points is an immersion modulo congruence, which is verified at
+exact rank in every configuration tried across six spatial dimensions.
+For more than d + 2 observers the two bounds separate and sharpness is
+still open, though rigidity itself is not.
+
+The scope conditions of Section 8.5 travel with this unchanged and are
+not relaxed by the extra dimensions, the derivation, or the proof:
+infinitesimal rigidity in the exact model, with global uniqueness, noisy
+dissimilarity, and dissimilarity harvested through the instrument all
+outside what is claimed.
+
 ![Figure 6](figures/fig6_theory.png)
 
 *Figure 6. The theory of Section 8 on its verified data. Left: the
@@ -1439,7 +1535,7 @@ scene-generation reason and motivated the preregistered remediation.
 The theory of Section 8 has a parallel audit trail, analysis-only (no
 gate, no frozen artifact touched). Statements, proofs, proof-status
 tags, and revision notes: `docs/theory/t1_parallax_identifiability.md`
-(v1.0). Verification: `experiments/theory/t1_verification.py` (13
+(v1.4). Verification: `experiments/theory/t1_verification.py` (13
 deterministic checks, from the quantization band through the
 same-dissimilarity counterexample and the Model P simulation),
 `experiments/theory/t1_g4_2plus1d.py` (the Section 8.5 dimension
@@ -1450,7 +1546,26 @@ unmodified, with its table tracked at
 2+1D result of Section 8.5: seven checks, the Jacobian taken by
 complex-step differentiation and the rigid-motion gauge asserted
 before any verdict, table tracked at
-`docs/theory/t1_g4b_unlabeled_results.json`), and
+`docs/theory/t1_g4b_unlabeled_results.json`),
+`experiments/theory/t1_g4c_general_dimension.py` (the general-dimension
+law of Section 8.6: nine checks over spatial dimensions two through
+five, scored against the three preregistration files
+`docs/theory/t1_g4c_predictions{,_round2,_round3,_round4}.json`, which were
+each committed before the measurement they score and never amended
+afterwards; the harness reads them rather than restating them, and a
+missed prediction is recorded on the scorecard rather than failing the
+run, so that CI pins what was measured and never applies pressure to
+the predictions; table tracked at
+`docs/theory/t1_g4c_general_dimension_results.json`),
+`experiments/theory/t1_g4c_proof_check.py` (the derivation of
+Section 8.6, verified lemma by lemma rather than only through its
+conclusion — the reduction checked as a subspace containment on each
+flex vector, the complete-graph flex dimension against the measured
+affine span, and the decomposition on rigid cells as well as flexible
+ones — together with the round-4 out-of-sample cells frozen in
+`docs/theory/t1_g4c_predictions_round4.json`; statements and proof-status
+tags in `docs/theory/t1_g4c_proof.md`, table tracked at
+`docs/theory/t1_g4c_proof_check_results.json`), and
 `experiments/theory/t1_g2_count_class.py` (the count-fluctuation
 class of Section 8.4, measured from chain lengths with no distance
 estimator, table tracked at

@@ -1,8 +1,26 @@
 # T1: Parallax identifiability and stability of bracket-width echo profiles
 
-Status: **THEORY DRAFT v1.0 — statements and proof programs; nothing frozen.
-No gap in Section 6 is open.**
-(v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
+Status: **THEORY DRAFT v1.4 — statements and proof programs; nothing frozen.
+The G4b threshold is a general-dimension law: `R >= d + 2` observers.
+Measured across `d = 1..6` against 20 predictions preregistered in four
+rounds, and now *proved* (`t1_g4c_proof.md`) up to one explicit
+finite-dimensional hypothesis. **For physical `3 + 1` the answer is
+pinned: five observers and 19 targets, both theorems.** What remains is
+hypothesis (G3) and the sharpness of the threshold for `R > d + 2`.**
+(v1.4 2026-07-25 KST: G4c sufficiency closed — the profile surface's
+conical singularities forbid any continuous ambient symmetry, which
+brackets the threshold from above and pins it exactly at `R = d + 2`;
+v1.3 2026-07-25 KST: G4c derived — the flex condition reduced to
+infinitesimal rigidity of the centered profile cloud, giving closed
+forms for both regimes with no free parameter, plus 7/7 out-of-sample
+confirmations at `d = 6` and at non-exact divisions;
+v1.2 2026-07-25 KST: G4c measured — the regime law `sign((R-1) - d)`
+confirmed at `d = 3, 4, 5`, slope `d - R + 1` separated from "slope 1"
+out of sample, and the `R = d + 2` thresholds `11, 19, 29, 41` shown
+robust to observer placement;
+v1.1 2026-07-25 KST: G4c opened with those predictions frozen ahead of
+the measurement;
+v1.0 2026-07-25 KST: G2's count-fluctuation class settled by measuring
 it directly from chain lengths rather than from the distance error —
 protocol-dependent, KPZ for the order-only chain and Poisson for the
 tube-confined one; v0.9 2026-07-25 KST: G4b settled — in 2+1D the unlabeled dissimilarity
@@ -1001,6 +1019,110 @@ with zero strict inversions in either.
   cannot curve, which is the same flatness that limits 1+1D. Section
   5b carries the statements and their scope; the work is
   `[MEASURED]` (infinitesimal rigidity, exact model), not `[PROVED]`.
+- **G4c — is the G4b mechanism a general-dimension law?** **MEASURED
+  and confirmed (v1.2) across `d = 1..5`, 13/13 preregistered
+  predictions over three rounds. The remaining item is a written proof,
+  not more measurement.** G4b's argument is stated in terms of one
+  comparison and no dimension: the centered profile map sends `R^d` into
+  the `(R-1)`-dimensional mean-zero subspace of `R^R`, so its image is a
+  `d`-surface, and everything follows from the sign of `(R-1) - d`:
+
+  | condition | mechanism | flex count |
+  |---|---|---|
+  | `R - 1 < d` | submersion; each target slides along a fibre of dimension `d - R + 1` | grows in `n`, slope `d - R + 1` |
+  | `R - 1 = d` | surface fills its ambient; the freedom is realizable by moving observers | constant, `nullity = dR + d(d+1)/2` |
+  | `R >= d + 2` | curved `d`-surface in a bigger ambient; curvature rigidifies | `nullity = gauge = d(d+1)/2` |
+
+  So **`R >= d + 2` is the threshold in every dimension**, and the plane
+  was never special. For physical `3 + 1` (spatial `d = 3`): five
+  observers suffice, from `n >= 19` targets, and `D` then determines
+  targets and observers up to Euclidean congruence with the absolute
+  scale included. `d = 1` is exempt at every `R` because `Phi~` is
+  piecewise linear there — the "surface" is a polyline of zero curvature
+  and the rigidifying mechanism is simply absent. That exemption is
+  specific to one dimension and does not recur.
+
+  The evidence is preregistered in three rounds
+  (`t1_g4c_predictions{,_round2,_round3}.json`), each committed before
+  the corresponding measurement and never amended afterwards:
+
+  1. **Round 1 (`d = 3`, 5/5).** Includes the `d = 2, R = 2`
+     retro-check, a cell G4b never ran, which could have falsified the
+     law in the dimension already understood.
+  2. **Round 2 (`d = 4`, 5/5).** Out of sample. Every cell measured
+     before it had fibre dimension exactly `1`, so "slope 1" and
+     "slope `d - R + 1`" fitted all existing data equally; `d = 4,
+     R = 3` separates them and came back **slope 2**.
+  3. **Round 3 (3/3).** The thresholds at `R = d + 2` are `11, 19, 29`
+     for `d = 2, 3, 4`, which `n = d^2 + 3d + 1` reproduces exactly —
+     but three points determine a quadratic, so that fit carried no
+     information until it was put out of sample at `d = 5`, where it
+     predicted `41` and measured `41`. A control redraws the observer
+     shell from a different seed and leaves the `d = 3` threshold at
+     `19`, so the thresholds are not artifacts of one placement.
+
+  **The derivation is now written (`t1_g4c_proof.md`, v1.3), and most
+  of the law is a theorem.** The observable satisfies
+  `R * D(j,k)^2 = ||w_j - w_k||^2` for the centered profile cloud
+  `w_j = M Phi(x_j)`, so a flex of `D` is *exactly* an infinitesimal
+  isometry of that cloud in the `(R-1)`-dimensional mean-zero subspace
+  (Lemma A). With `L` the derivative of scene-to-cloud and `F` the
+  cloud's flex space, `nullity = dim ker L + dim(Im L ∩ F)` (Lemma C),
+  and the classical complete-graph count gives
+  `dim F = n(m-q) + q(q+1)/2` (Lemma B). Two closed forms follow, both
+  with no free parameter:
+
+  - **Theorem 1 `[PROVED]`** (`R <= d+1`): `L` is onto, so
+    `nullity = dR + n(d - R + 1) + R(R-1)/2`. The saturated counting
+    law is its `m = d` case — and the "coincidence" that the flex count
+    there looked like the scene gauge is just `m(m+1)/2` with `m = d`.
+    It is the gauge of the *profile* space, and the two agree in that
+    regime only.
+  - **Theorem 2a `[PROVED]`** (necessity): rigidity requires
+    `n >= ceil([dR + m(m+1)/2 - d(d+1)/2]/(m-d))`. At `R = d+2` this
+    collapses to `d^2 + 3d + 1` — which retires round 3's
+    `[speculative]` tag on that quadratic: it was the `m - d = 1` case
+    of the count, not a curve fit.
+  - **Theorem 2b′ `[PROVED]` under (G1)-(G3)** (sufficiency). Counting
+    alone provably cannot give this — at `d = 1` the count permits
+    rigidity and the configuration is never rigid. What supplies the
+    missing content is that **the profile surface is not smooth**: each
+    observer contributes a conical singular point at `w(p_r) = M E_r`,
+    a connected group of ambient isometries cannot permute a finite set,
+    so any continuous symmetry must fix all `R` cone points. Those
+    points span `V`, because the **non-squared** observer distance
+    matrix is generically nonsingular (the squared one has rank `<= d+2`
+    and would be useless here), so their affine span is at least
+    `m - 1`; a nonzero infinitesimal isometry of `R^m` vanishes on at
+    most `m - 2` dimensions, since a nonzero skew matrix has even rank
+    `>= 2`. No room — so `Sigma_P` has no continuous symmetry
+    (**Lemma E**). A nested chain of subspaces then stabilizes after at
+    most `dim Lambda - dim K(∞)` strict drops (**Lemma F**), giving
+    rigidity for all `n >= dR + m(m+1)/2 - d(d+1)/2`. The `d = 1`
+    exemption is now explained inside the proof rather than beside it:
+    there the cone is two rays, a union of linear pieces, and the
+    argument has nothing to grip.
+  - **The threshold at `R = d + 2` is settled `[PROVED]`.** The lower
+    bound of 2a is the upper bound of 2b′ divided by `m - d`, so when
+    `m - d = 1` — exactly `R = d + 2` — they coincide and
+    `n_threshold = d^2 + 3d + 1` for every `d >= 2`. **In `3 + 1`
+    spacetime that is five observers and 19 targets, and both are now
+    theorems.**
+
+  What remains: **(G3)**, the one unproved input — that
+  `P |-> (||M(E_r - E_s)||)_{r<s}` is an immersion modulo congruence,
+  rank `dR - d(d+1)/2`, verified in 18/18 cells across `d = 2..7` — and
+  **sharpness for `R > d + 2`**, where the bounds separate (e.g.
+  `d = 3, R = 6` gives `14 <= n <= 27`, measured 14). That residual is
+  narrower than the original conjecture in two ways: it excludes the
+  physical case, and it is a sharpness claim rather than an existence
+  one, since 2b′ already delivers rigidity there at a larger explicit
+  `n`.
+
+  Scope is unchanged from G4b and is not improved by any of this:
+  infinitesimal rigidity in the exact model. Not global uniqueness, not
+  noisy or `delta`-quantized `D`, not `D` harvested through the
+  instrument from a measured causal set.
 
 ## 7. Numerical verification plan
 
