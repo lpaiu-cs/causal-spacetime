@@ -1,0 +1,62 @@
+{
+  "code_version": "0ec729f",
+  "per_n": {
+    "600": {
+      "n_ok": 20,
+      "median_truth": 0.1598582604496715,
+      "ci_truth": [
+        0.13345650222921496,
+        0.18065200615453858
+      ],
+      "constants": {
+        "chain_count": 6,
+        "min_chain_len": 25,
+        "max_targets": 44,
+        "min_targets": 20,
+        "train_c": 3000,
+        "heldout_c": 800
+      }
+    },
+    "900": {
+      "n_ok": 20,
+      "median_truth": 0.16227733792747917,
+      "ci_truth": [
+        0.1427852860272024,
+        0.1815739457388183
+      ],
+      "constants": {
+        "chain_count": 6,
+        "min_chain_len": 31,
+        "max_targets": 66,
+        "min_targets": 30,
+        "train_c": 4500,
+        "heldout_c": 1200
+      }
+    },
+    "1200": {
+      "n_ok": 20,
+      "median_truth": 0.19071126769836488,
+      "ci_truth": [
+        0.18070750715346406,
+        0.2011285047680605
+      ],
+      "constants": {
+        "chain_count": 6,
+        "min_chain_len": 35,
+        "max_targets": 88,
+        "min_targets": 40,
+        "train_c": 6000,
+        "heldout_c": 1600
+      }
+    }
+  },
+  "top_minus_bottom_truth": {
+    "diff": 0.030853007248693387,
+    "ci": [
+      0.003866766867455268,
+      0.05757966390614432
+    ]
+  },
+  "yardstick_falls": false,
+  "note": "B0 is the prerequisite Stage A assumed and then failed: the scaled instrument must make the sprinkled arm's error FALL with N (top-minus-bottom CI entirely below zero) before any B1 hypothesis is frozen or any E chain runs. top/bottom medians: 0.19071126769836488 vs 0.1598582604496715."
+}

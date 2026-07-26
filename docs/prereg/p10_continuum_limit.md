@@ -393,3 +393,162 @@ Lorentz structure, dynamics, or anything about ensembles other than this
 one. If the outcome is "deepening", the honest statement is
 "consistent with a continuum limit over the measured range" — and the
 next octave is the follow-up, not a victory lap.
+
+## 8. Stage B: the resolution ladder (designed 2026-07-26; **B0 ran
+2026-07-27 and its gate FAILED — Stage B stopped at 8.5; no B1 chain
+ever ran**)
+
+Stage A's findings dictate this design item by item, and every review
+lesson from PR #23's five rounds is pre-applied rather than rediscovered.
+
+### 8.1 The scaled instrument family
+
+One pipeline definition — `analyze_order`, now parameterized with
+keyword defaults that ARE the frozen constants (the defaults are pinned
+byte-identical against archived Stage A rows) — evaluated at operating
+points scaled in continuum units:
+
+| constant | law | 600 | 900 | 1200 |
+|---|---|---|---|---|
+| `min_chain_len` | `25 sqrt(N/600)` | 25 | 31 | 35 |
+| `max_targets` | `44 N/600` | 44 | 66 | 88 |
+| `min_targets` | `20 N/600` | 20 | 30 | 40 |
+| `train_c` | `3000 N/600` | 3000 | 4500 | 6000 |
+| `heldout_c` | `800 N/600` | 800 | 1200 | 1600 |
+| `chain_count` | fixed | 6 | 6 | 6 |
+
+Rationale: the longest chain grows like `~ 2 sqrt(N)`, so a fixed
+`min_chain_len` is a shrinking continuum window — `sqrt(N)` scaling
+holds it fixed. Target and constraint counts scale together because P8
+measured what happens when they do not: a fixed budget over more targets
+dilutes the fit. `chain_count` stays 6 — observer count is a design
+choice, not a resolution property. **The `N = 600` anchor is exactly
+the frozen instrument**, so Stage B connects continuously to everything
+the programme has measured. P7's `G` margins are not scaled: the score
+definition is frozen.
+
+### 8.2 Stage B0 — the yardstick pilot, and why it gates everything
+
+Stage A *assumed* the sprinkled arm would fall with `N` and it did not.
+B0 tests exactly that premise before anything else is spent: arm S
+(direct sampling, cheap) through the scaled instrument at all three
+sizes, 20 samples each, seeds 1100-1159 (fresh).
+
+**Gate for proceeding** (this is a design prerequisite, not a science
+hypothesis): the `N = 1200` minus `N = 600` median-truth difference must
+have its entire 95% bootstrap CI below zero. If it does not, the scaled
+instrument has not produced a resolution ladder either, Stage B stops,
+and that is the reportable finding. No E chain runs and no hypothesis
+is frozen until B0 passes.
+
+### 8.3 Stage B1 — frozen only after B0, stated now so the shape is on record
+
+- Six chains as in Stage A (dual starts, `beta = 2`, `eps N = 12`),
+  seeds **30000-30050** *(corrected: the original table said 1000-1050
+  and was not fresh -- P6-B's uniform reference orders are exactly
+  `default_rng(1000..1019).permutation(600)`, so the (600, random)
+  start would have literally reused one; see the 8.5 correction
+  note)*, burn 100k, **48 retained samples per chain
+  at 25k spacing** (Stage 0 measured 25k decorrelated) -> 1.3M steps
+  per chain. `m = 48` restores the inherited screen to P7's actual bar
+  (`ESS >= 20` at `m = 48`), ending the Stage A degeneracy.
+- Mixing screen: the corrected Stage A aggregator's rules verbatim —
+  shared P7 ESS diagnostic, strict random-tail band, both criteria
+  combined per chain, failing chains reported and excluded.
+- Uncertainty under dependence *(design amendment 2026-07-27, before
+  any B1 run)*: arm-E intervals are computed by a within-chain circular
+  block bootstrap, block length `ceil(2 tau)` from each chain's OWN
+  truth-series autocorrelation (shared Geyer diagnostic); blocks never
+  cross a chain boundary; arm S, being direct sampling, resamples
+  ordinarily. Rationale: the frozen `n0` screen admits `tau <= 2.4`,
+  and an iid bootstrap under that dependence narrows intervals by
+  roughly `sqrt(tau)` — enough to falsely support an equivalence
+  hypothesis. The screen itself is unchanged; the dependence is
+  handled where the uncertainty is computed. Block lengths are
+  reported per chain.
+- **H-TRACK (equivalence, TOST).** At each rung, the E − S median-truth
+  difference must have its 95% CI inside `[-0.05, +0.05]`. The margin
+  is the programme's standing saturation tolerance (P2 and P9's frozen
+  0.05), chosen because it is the difference the programme already
+  treats as not meaningful in truth-error units — an a-priori anchor,
+  not a fit. Supported only if every rung passes.
+- **H-DEEPEN.** Arm E's own `N = 1200` minus `N = 600` median-truth
+  difference has its 95% CI entirely below zero — the emergent phase's
+  geometry *sharpens* under the resolution ladder, not merely tracks.
+- Read as a conjunction for "consistent with a continuum limit over the
+  measured range"; each reported separately; H-TRACK failing at exactly
+  the top rung is the Stage A tension resolving into a detection and
+  would be a major honest finding, not a failure.
+- Exact hypothesis values above are frozen by this section now; only
+  B0's pass/fail decides *whether* B1 runs, never *what* it tests.
+
+### 8.4 Costs, measured basis
+
+B0: minutes (direct sampling; the scaled fit at `N = 1200` costs a few
+seconds per sample). B1: 1.3M steps per chain at the measured rates —
+1.3/2.6/4.5 hours per chain at 600/900/1200 — about 17 chain-hours,
+run as six parallel processes, wall ~5 h.
+
+### 8.5 Stage B0 outcome (factual record, 2026-07-27): the gate FAILED
+and Stage B stops here
+
+Seeds 1100-1159, 60/60 samples ok. Under the scaled instrument the
+sprinkled arm's truth error does not fall — it **rises, significantly**:
+
+| `N` | median truth [95% CI] | targets | chain floor |
+|---|---|---|---|
+| 600 | 0.1599 [0.1335, 0.1807] | 44 | 25 |
+| 900 | 0.1623 [0.1428, 0.1816] | 66 | 31 |
+| 1200 | 0.1907 [0.1807, 0.2011] | 88 | 35 |
+
+Top-minus-bottom: **+0.031 [+0.004, +0.058]** — the entire CI above
+zero, the opposite sign of the gate's requirement. Per 8.2, **no B1
+chain runs and the frozen 8.3 hypotheses are not evaluated.** Artifacts:
+`docs/prereg/frozen/p10_stage_b/`.
+
+**What this is a finding about.** Two instrument families have now been
+tried against the same premise and both refuse it: frozen constants
+leave the sprinkled curve flat (Stage A — scale-covariance), and
+continuum-scaled constants make it rise (B0). **Why it rises is not
+established.** A first version of this note offered a mechanism — that
+densifying targets shrinks typical pair separations, so the instrument
+asks harder questions as fast as it improves — and that mechanism is
+**wrong for this observable and is withdrawn**: the truth error samples
+comparison pairs *uniformly over all targets*
+(`embedding_distance_order_error`), so the typical separation of a
+sampled pair is set by the region, not by the target count, and does
+not shrink as targets densify (review finding). What survives as a
+candidate, still labelled post hoc and untested: the fit-optimization
+budget is unscaled in this family (`STEPS = 1500`, `RESTARTS = 5` fixed
+while free parameters and constraints double), so larger fits may
+simply be less converged. Distinguishing that from an intrinsic effect
+is a diagnostic for any successor stage, not something this record can
+assert.
+
+**What would make the Section 2 table decidable, and what it would
+take.** A *scale-fixed* observable — e.g. discordance restricted to
+pairs whose true continuum separation exceeds a threshold held fixed
+across `N` — asks the same question at every size while the resolution
+improves. That motivation stands on its own construction and does not
+depend on the withdrawn mechanism. It is a new observable, so it
+requires its own design section with the same discipline (gate first on
+arm S, hypotheses frozen before any E chain), not a quiet swap inside
+this one; and its arm-S gate is a genuine test, since this stage has
+now twice failed to produce a falling yardstick by rescaling alone.
+Whether to open that Stage B′ is a programme decision, recorded here as
+the open question this stage ends on.
+
+*Correction note (2026-07-27, review round on PR #24).* (i) The
+mechanism paragraph above originally asserted "scale-referenced by
+construction" via the pair-separation argument; withdrawn as described
+— what is measured is flat-then-rising, and the explanation is open.
+(ii) The `--stage b1` path originally trusted the documentation to
+prevent post-gate runs; it now reads the frozen B0 record and refuses
+unless `yardstick_falls` is true, the same enforcement pattern as
+P8-B's constants guard. (iii) The B1 seed table 1000-1050 collided
+with P6-B's uniform reference seeds 1000-1019 — the (600, random)
+start would have reused a P6-B reference order exactly — and is
+replaced by 30000-30050, verified clean including the derived streams;
+and the aggregator now validates every chain against the frozen table
+(membership and a uniform matching `chain_seed`), so a stale, extra,
+or wrong-seed CSV exits instead of entering the screen.
