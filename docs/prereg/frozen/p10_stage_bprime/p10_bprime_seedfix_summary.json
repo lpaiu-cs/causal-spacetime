@@ -1,0 +1,446 @@
+{
+  "code_version": "702f4a5",
+  "collision_map": {
+    "chain_seed_span": [
+      40000,
+      40059
+    ],
+    "old_scorer_seed_span": [
+      40009,
+      40068
+    ],
+    "n_old_scorer_seeds_colliding_with_chains": 51,
+    "n_scorer_seeds_total": 60,
+    "clean_namespace_span": [
+      41000,
+      41059
+    ],
+    "clean_disjoint_from_all": true
+  },
+  "delta_margin": 0.1399,
+  "per_n": {
+    "600": {
+      "n_ok": 20,
+      "median_restricted_old": 0.05204539987290879,
+      "ci_restricted_old": [
+        0.03038453016226821,
+        0.07873626382233918
+      ],
+      "median_truth_old": 0.14616758723478873,
+      "ci_truth_old": [
+        0.1309934876556475,
+        0.16077111481543205
+      ],
+      "min_eligible_old": 17057,
+      "median_restricted_clean": 0.05032226598361234,
+      "ci_restricted_clean": [
+        0.029027552137230208,
+        0.07819914640344669
+      ],
+      "median_truth_clean": 0.1513319852951654,
+      "ci_truth_clean": [
+        0.13304402101680599,
+        0.16139131640890228
+      ],
+      "min_eligible_clean": 16847,
+      "max_abs_delta_restricted": 0.0036164483095607602,
+      "max_abs_delta_mix_matched": 0.0038165242444830744,
+      "max_abs_delta_truth": 0.016336292705151495
+    },
+    "900": {
+      "n_ok": 20,
+      "median_restricted_old": 0.04568190732768712,
+      "ci_restricted_old": [
+        0.03058796552794161,
+        0.06721468273731598
+      ],
+      "median_truth_old": 0.13673071468647702,
+      "ci_truth_old": [
+        0.12363830949276032,
+        0.15533065362214343
+      ],
+      "min_eligible_old": 17603,
+      "median_restricted_clean": 0.047276786688031064,
+      "ci_restricted_clean": [
+        0.032125547517242226,
+        0.06594316033370674
+      ],
+      "median_truth_clean": 0.13689607778214652,
+      "ci_truth_clean": [
+        0.1212482837828715,
+        0.15647300552814114
+      ],
+      "min_eligible_clean": 17503,
+      "max_abs_delta_restricted": 0.004345424470027115,
+      "max_abs_delta_mix_matched": 0.0026512322278119255,
+      "max_abs_delta_truth": 0.010024471788508599
+    },
+    "1200": {
+      "n_ok": 20,
+      "median_restricted_old": 0.08923256231131366,
+      "ci_restricted_old": [
+        0.08430094801250479,
+        0.09812352860593995
+      ],
+      "median_truth_old": 0.17026658027491093,
+      "ci_truth_old": [
+        0.1599410972287378,
+        0.18356483788963354
+      ],
+      "min_eligible_old": 18304,
+      "median_restricted_clean": 0.08820895864683344,
+      "ci_restricted_clean": [
+        0.08331428636563057,
+        0.09686192761406118
+      ],
+      "median_truth_clean": 0.1676426257708878,
+      "ci_truth_clean": [
+        0.16262172405788716,
+        0.17935568704799473
+      ],
+      "min_eligible_clean": 18193,
+      "max_abs_delta_restricted": 0.006924727010603371,
+      "max_abs_delta_mix_matched": 0.004352080727965821,
+      "max_abs_delta_truth": 0.013275499474237645
+    }
+  },
+  "gate": {
+    "old": {
+      "top_minus_bottom_restricted": {
+        "diff": 0.037187162438404864,
+        "ci": [
+          0.009072925145257427,
+          0.06300002829527111
+        ]
+      },
+      "top_minus_bottom_truth_unrestricted": {
+        "diff": 0.024098993040122196,
+        "ci": [
+          0.005117278690648804,
+          0.0461348498058245
+        ]
+      },
+      "all_floors_met": true,
+      "yardstick_falls_restricted": false
+    },
+    "clean": {
+      "top_minus_bottom_restricted": {
+        "diff": 0.037886692663221096,
+        "ci": [
+          0.009704065567252871,
+          0.062445998268558386
+        ]
+      },
+      "top_minus_bottom_truth_unrestricted": {
+        "diff": 0.016310640475722393,
+        "ci": [
+          0.006944387032450714,
+          0.040430777358443054
+        ]
+      },
+      "all_floors_met": true,
+      "yardstick_falls_restricted": false
+    }
+  },
+  "mix_matched": {
+    "old": {
+      "top_minus_bottom": {
+        "diff": 0.03580459409540451,
+        "ci": [
+          0.012474709375947982,
+          0.05888494869158891
+        ]
+      },
+      "rise_survives": true
+    },
+    "clean": {
+      "top_minus_bottom": {
+        "diff": 0.03399369406511213,
+        "ci": [
+          0.012852291567200165,
+          0.057731824014433386
+        ]
+      },
+      "rise_survives": true
+    }
+  },
+  "curve": {
+    "old": {
+      "600": {
+        "pooled_total_by_bin": [
+          52565,
+          54534,
+          51648,
+          50812,
+          51353,
+          47021,
+          46427,
+          44706,
+          42002,
+          38308,
+          36167,
+          30786,
+          26060,
+          20414,
+          13333,
+          3871
+        ],
+        "pooled_discordant_by_bin": [
+          23757,
+          19549,
+          14341,
+          10477,
+          8079,
+          5520,
+          4162,
+          3033,
+          1955,
+          1272,
+          772,
+          347,
+          121,
+          26,
+          5,
+          0
+        ]
+      },
+      "900": {
+        "pooled_total_by_bin": [
+          51179,
+          51212,
+          50243,
+          48918,
+          48238,
+          47193,
+          45446,
+          44100,
+          41977,
+          39301,
+          36232,
+          33377,
+          28930,
+          23151,
+          15594,
+          4799
+        ],
+        "pooled_discordant_by_bin": [
+          23314,
+          18288,
+          13718,
+          10204,
+          7548,
+          5519,
+          4014,
+          2702,
+          1925,
+          1247,
+          754,
+          416,
+          189,
+          46,
+          17,
+          0
+        ]
+      },
+      "1200": {
+        "pooled_total_by_bin": [
+          47261,
+          46827,
+          47097,
+          45701,
+          45510,
+          44511,
+          43666,
+          42608,
+          41417,
+          39655,
+          37905,
+          34930,
+          32159,
+          27596,
+          22518,
+          11184
+        ],
+        "pooled_discordant_by_bin": [
+          22012,
+          18388,
+          15525,
+          12615,
+          10272,
+          8268,
+          6595,
+          4950,
+          3833,
+          2801,
+          1885,
+          1114,
+          538,
+          200,
+          84,
+          15
+        ]
+      },
+      "pointwise_1200_vs_600": {
+        "bins_compared": 16,
+        "bins_where_1200_above_600": 14,
+        "bins_ci_separated": 6
+      },
+      "high_edge": 0.4784,
+      "last_bin": {
+        "600": {
+          "total": 3871,
+          "discordant": 0
+        },
+        "900": {
+          "total": 4799,
+          "discordant": 0
+        },
+        "1200": {
+          "total": 11184,
+          "discordant": 15
+        }
+      }
+    },
+    "clean": {
+      "600": {
+        "pooled_total_by_bin": [
+          52390,
+          54718,
+          51619,
+          50647,
+          51126,
+          47360,
+          46052,
+          44895,
+          41967,
+          38352,
+          36012,
+          30718,
+          26306,
+          20399,
+          13505,
+          3967
+        ],
+        "pooled_discordant_by_bin": [
+          23569,
+          19651,
+          14294,
+          10358,
+          7852,
+          5474,
+          4107,
+          3090,
+          2078,
+          1236,
+          708,
+          356,
+          121,
+          24,
+          3,
+          0
+        ]
+      },
+      "900": {
+        "pooled_total_by_bin": [
+          50791,
+          51773,
+          50510,
+          48866,
+          48506,
+          47566,
+          45467,
+          43729,
+          41413,
+          39308,
+          36076,
+          33384,
+          28669,
+          23393,
+          16111,
+          4749
+        ],
+        "pooled_discordant_by_bin": [
+          23134,
+          18677,
+          14011,
+          10135,
+          7559,
+          5484,
+          3918,
+          2820,
+          1878,
+          1229,
+          782,
+          420,
+          193,
+          53,
+          15,
+          2
+        ]
+      },
+      "1200": {
+        "pooled_total_by_bin": [
+          47207,
+          46643,
+          47152,
+          45643,
+          45009,
+          44249,
+          43760,
+          42445,
+          41256,
+          39738,
+          37941,
+          35261,
+          32350,
+          27675,
+          22517,
+          11066
+        ],
+        "pooled_discordant_by_bin": [
+          21718,
+          18281,
+          15376,
+          12397,
+          10143,
+          8173,
+          6549,
+          4941,
+          3904,
+          2665,
+          1838,
+          1123,
+          563,
+          210,
+          97,
+          28
+        ]
+      },
+      "pointwise_1200_vs_600": {
+        "bins_compared": 16,
+        "bins_where_1200_above_600": 14,
+        "bins_ci_separated": 6
+      },
+      "high_edge": 0.4784,
+      "last_bin": {
+        "600": {
+          "total": 3967,
+          "discordant": 0
+        },
+        "900": {
+          "total": 4749,
+          "discordant": 2
+        },
+        "1200": {
+          "total": 11066,
+          "discordant": 28
+        }
+      }
+    }
+  },
+  "replay_check": {
+    "b0prime_median_restricted_max_abs_diff": 0.0,
+    "b0prime_median_truth_max_abs_diff": 0.0,
+    "curve_pooled_counts_match_frozen": true
+  }
+}

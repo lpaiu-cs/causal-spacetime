@@ -1,6 +1,33 @@
 # P10: does the emergent geometry deepen toward a continuum?
 
-Status: **STAGE A COMPLETE** (2026-07-26; readings revised same day when
+Status: **CLOSED** (2026-07-27, at Stage B'0 — see Section 9.5). The
+programme's founding continuum-limit question is UNDECIDABLE BY THIS
+INSTRUMENT FAMILY: through the frozen discriminator, truth accuracy in
+continuum units does not improve — and measurably degrades — as the
+order grows, under every combination tried of instrument scaling
+(frozen / continuum-scaled) and question restriction (full mix /
+margin-cutoff / mix-matched bins — see 9.5-9.6). Three gates, three
+failures; every per-size result in the programme stands unchanged.
+*(Calibrated 2026-07-27, 9.13; revised same day on tenth review: a
+fully stream-separated fresh replication detects no improvement
+anywhere and keeps the degradation's sign, ordering, and dense-tail
+rise, but its intervals include both signs — the replication is
+directionally consistent and INCONCLUSIVE, neither establishing nor
+excluding improvement, where the frozen arms' all-positive intervals
+had excluded it at their samples. "Measurably degrades" is a
+frozen-sample result; failing a frozen gate is a stopping rule
+operating, not evidence for the null.)*
+What a continuum-limit test now requires is a reconstruction whose
+continuum accuracy grows with density — a different instrument.
+The Stage A record below is preserved as written.
+
+Dates in this record are local dates (UTC+9, Asia/Seoul), matching the
+repository's commit timestamps, which carry their +09:00 offset — e.g.
+a section dated 2026-07-27 may sit in a commit reading
+2026-07-26T18:14Z when normalized to UTC. The chronology is verifiable
+from commit order; no date in this document is prospective.
+
+Stage A record: **STAGE A COMPLETE** (2026-07-26; readings revised same day when
 review found the ESS re-implementation diverged from the inherited P7
 diagnostic — see correction notes in 6d). Headline, primary reading
 (frozen mixing screen, computed with the shared P7 diagnostic): one
@@ -552,3 +579,560 @@ replaced by 30000-30050, verified clean including the derived streams;
 and the aggregator now validates every chain against the frozen table
 (membership and a uniform matching `chain_seed`), so a stale, extra,
 or wrong-seed CSV exits instead of entering the screen.
+
+## 9. Stage B': the scale-fixed observable (designed 2026-07-27;
+**B'0 ran the same day and its gate FAILED — see 9.5; P10 is closed**)
+
+Stage B ended on a diagnosis: both instrument families kept the same
+observable — sign discordance over uniformly sampled target pairs —
+whose difficulty mix is fixed by the continuum distribution of
+comparison margins and therefore never eases as resolution improves.
+B' inverts the design: **the instrument is the frozen P3 discriminator,
+verbatim and unscaled** (which also removes B0's unscaled-fit-budget
+confound: same constants, same convergence regime at every size), and
+only the truth *scoring* changes.
+
+### 9.1 The observable, and its two anchors
+
+**Margin-restricted discordance**: the same pair-pair comparisons as
+the frozen scorer, restricted to quadruples whose TRUE comparison
+margin `||x_a - x_b| - |x_c - x_d||` (continuum units, `x = (i -
+pi_i)/N`) is at least `DELTA_MARGIN`. Every size is asked the same
+fixed question set while per-question precision improves with density.
+
+Two anchors keep it honest:
+
+- **To the frozen observable**: at `delta = 0`, same seed and count,
+  the scorer reproduces the frozen scorer *bit for bit* (same pair
+  stream, same reference-tie exclusion) — pinned by regression. It is
+  a restriction of the frozen observable, not a second definition.
+- **To pure geometry**: `DELTA_MARGIN = 0.1399` is the 25th percentile
+  of the comparison-margin distribution of the exact continuum model
+  (uniform iid points in the unit `(u, v)` square), computed from
+  geometry alone — 4M draws, seed 2718281828, reproducible to 3.5e-6
+  across seeds. **No experiment data was consulted in choosing it.**
+  Eligible fraction is 75% by construction under the continuum model;
+  the realized fraction is reported per sample with a floor of 8,000
+  eligible comparisons out of 32,000 sampled.
+
+### 9.2 Stage B'0 — the gate, third attempt at the yardstick
+
+Arm S through the frozen instrument, both scorings per sample (the
+unrestricted scoring rides along as the replication of Stage A's flat
+curve on the very same fits). 20 samples per size, seeds 40000-40059,
+fresh against every range in the programme including P6-B's 1000-1019
+and the B1 envelope 30000-30379 (pinned by regression).
+
+**Gate**: the restricted discordance's top-minus-bottom CI entirely
+below zero, with full completeness at every rung and the eligible floor
+met on every sample — completeness-conditioned verdicts are not
+verdicts (the B0 lesson, inherited into `bprime_gate_verdict`).
+
+If this gate fails too, the scale-referenced behaviour is not a
+property of the question mix either, three distinct mechanisms have
+been eliminated (instrument scale-covariance, instrument rescaling,
+question-mix fixity), and P10 closes on that three-sided instrument
+finding.
+
+### 9.3 Stage B'1 — frozen now, runnable only on a B'0 pass
+
+Identical in structure to the (never-run) 8.3, with the restricted
+observable substituting for the unrestricted one end to end: six
+chains at fresh seeds (to be drawn clear of every used range and
+listed before any chain runs), 48 retained samples at 25k spacing,
+the corrected Stage B machinery verbatim — code-enforced B'0 gate,
+frozen-chain validation, index-set completeness, measurement
+completeness, dual-start presence, within-chain block bootstrap on the
+restricted truth series, ESS >= 20 at m = 48. Hypotheses: **H-TRACK'**
+(TOST at margin 0.05 per rung on restricted E - S differences; the
+margin is P2/P9's standing tolerance, same provenance as 8.3) and
+**H-DEEPEN'** (arm E's own top-minus-bottom restricted CI entirely
+below zero); conjunction for "consistent with a continuum limit over
+the measured range". The B'1 runner is deliberately NOT implemented
+until the gate passes — a 17-chain-hour path with nothing to authorize
+it is an invitation.
+
+### 9.4 Cost
+
+B'0: minutes (direct sampling; the dual scoring adds one 32k-comparison
+pass per sample). B'1 if authorized: the 8.4 budget unchanged.
+
+### 9.5 Stage B'0 outcome (factual record, 2026-07-27): the gate FAILED
+a third time, and P10 closes on its own rule
+
+Seeds 40000-40059, 60/60 samples ok, every eligible-comparison floor
+met (minimum 17,057 of 32,000 against a floor of 8,000).
+
+| `N` | unrestricted (replication) | restricted (gates) |
+|---|---|---|
+| 600 | 0.1462 [0.1310, 0.1608] | 0.0520 [0.0304, 0.0787] |
+| 900 | 0.1367 [0.1236, 0.1553] | 0.0457 [0.0306, 0.0672] |
+| 1200 | 0.1703 [0.1599, 0.1836] | 0.0892 [0.0843, 0.0981] |
+
+Top-minus-bottom, restricted: **+0.037 [+0.009, +0.062]** — the entire
+CI above zero, again the wrong sign. (Unrestricted, same fresh seeds:
++0.024 [+0.005, +0.045], consistent in direction with Stage A's flat
+curve and here crossing into significance; the rise is driven by the
+`N = 1200` rung, with `N = 900` dipping below `N = 600` on both
+scorings.) Per the frozen 9.2 rule, **B'1 is not implemented, its
+hypotheses are never evaluated, and P10 closes.**
+
+**The three-sided finding.** The margin restriction did what it was
+designed to do at every individual size — the cutoff-restricted
+questions are about three times easier than the full mix (0.05-0.09
+against 0.14-0.17) — and the improvement with `N` still never came.
+**A scope correction from review, applied before closing:** a common
+cutoff restricts the question set but does not FIX its distribution —
+the surviving margin mix above the cutoff can drift with the targets'
+spatial configuration across sizes, and the realized eligible rates
+(62.6% at `N = 600` to 66.2% at `N = 1200`, against the continuum 75%)
+show that it does. The frozen gate's verdict is unaffected — the gate
+was defined on the cutoff-restricted observable and failed as frozen —
+but the mechanism-elimination claim needed the mix drift addressed,
+which the post-hoc stratified diagnostic of 9.6 does. Three
+measurements so far:
+
+| attempt | instrument | question mix | sprinkled curve |
+|---|---|---|---|
+| Stage A | frozen (scale-covariant) | full | flat |
+| Stage B0 | continuum-scaled | full | rising |
+| Stage B'0 | frozen | **cutoff-restricted** | **rising** |
+
+The positive characterization, which is what P10 ends on: **through
+this discriminator family, truth accuracy in continuum units does not
+improve — and measurably degrades — as the order grows**, under every
+combination tried of instrument scaling and question fixing. The
+discriminator is a fixed-relative-resolution instrument. The Section 2
+outcome table is therefore undecidable by this instrument family, full
+stop: a continuum-limit test requires a reconstruction whose continuum
+accuracy grows with density, which is a different instrument, not a
+different protocol around this one.
+
+Why the fixed-question error rises is **not established**. The
+unscaled-fit-budget candidate from 8.5 does not directly apply (the
+constants, budgets and convergence regime are identical at every size
+here); what grows with `N` at frozen constants is the selected chains'
+lengths and hence the raw delay-rank magnitudes feeding the
+dissimilarity. That observation is recorded as a lead, labelled post
+hoc and untested, not as a mechanism.
+
+What this does NOT touch: every per-size result in the programme —
+PC-V1 through P9 and P10 Stage A's tracking result — is a
+fixed-size statement and stands unchanged. What closed is the road
+from this instrument to a continuum limit.
+
+Artifacts: `docs/prereg/frozen/p10_stage_bprime/`.
+
+### 9.6 Post-hoc stratified diagnostic (2026-07-27): the rise survives
+mix-matching, bin by bin
+
+Review of 9.5 identified a scope error: a common margin cutoff
+restricts the question set but does not fix its distribution, so the
+B'0 rise could in principle have been drift in the surviving-margin mix
+rather than degrading accuracy. This diagnostic settles that. The same
+60 samples (identical seeds, deterministic) were re-scored per a-priori
+margin bin — conditional quartiles of the continuum margin given
+`margin >= delta`, edges `0.2633 / 0.4160 / 0.6367` from the same
+pure-geometry stream as `DELTA_MARGIN` — and the equal-weight bin mean
+is the mix-matched error, immune to mix drift by construction.
+
+| `N` | mix-matched [95% CI] | bin 1 | bin 2 | bin 3 | bin 4 |
+|---|---|---|---|---|---|
+| 600 | 0.0392 [0.0189, 0.0609] | 0.1234 | 0.0340 | 0.0011 | 0.0000 |
+| 900 | 0.0346 [0.0226, 0.0561] | 0.1037 | 0.0259 | 0.0010 | 0.0000 |
+| 1200 | 0.0750 [0.0696, 0.0908] | 0.1930 | 0.0898 | 0.0175 | 0.0012 |
+
+Top-minus-bottom, mix-matched: **+0.036 [+0.012, +0.060]** — the rise
+survives, and at `N = 1200` the error is higher than at `N = 600` in
+every one of the four bins. *(Corrected on second review: four broad
+bins still admit WITHIN-bin drift, and error varies sharply with
+margin, so this subsection alone reduces rather than eliminates the
+mix-drift explanation. The elimination is done properly by the
+pointwise curve of 9.7.)*
+
+Status of this subsection: post hoc, run after the frozen 9.2 gate had
+already failed; it rewords the closure's mechanism claim and cannot
+reopen the gate. Artifacts alongside the B'0 record in
+`docs/prereg/frozen/p10_stage_bprime/`.
+
+### 9.7 Post-hoc pointwise curve (2026-07-27): domination across the
+margin axis, which no reweighting objection can touch
+
+Second review escalation on 9.6: equal-weighting four broad bins leaves
+within-bin drift, and the steep dependence of error on margin makes
+that a live concern. The decisive form is the pointwise
+error-versus-margin curve — nothing is aggregated across margins, so
+there is nothing to reweight. Same 60 samples, 16 a-priori fine bins
+(continuum 16-quantiles of the full margin range, same geometry stream,
+cross-seed delta <= 5e-4), per-bin medians over the 20 samples with
+bootstrap intervals.
+
+| margin bin | E(600) | E(900) | E(1200) | 1200 above 600 | CI-sep |
+|---|---|---|---|---|---|
+| [0.000, 0.033) | 0.4548 | 0.4550 | 0.4691 | Y | |
+| [0.033, 0.067) | 0.3558 | 0.3600 | 0.3956 | Y | Y |
+| [0.067, 0.103) | 0.2761 | 0.2826 | 0.3383 | Y | |
+| [0.103, 0.140) | 0.2165 | 0.2110 | 0.2855 | Y | Y |
+| [0.140, 0.179) | 0.1608 | 0.1435 | 0.2351 | Y | Y |
+| [0.179, 0.220) | 0.1241 | 0.0995 | 0.1907 | Y | Y |
+| [0.220, 0.263) | 0.0879 | 0.0603 | 0.1581 | Y | Y |
+| [0.263, 0.310) | 0.0531 | 0.0374 | 0.1196 | Y | |
+| [0.310, 0.361) | 0.0318 | 0.0290 | 0.0905 | Y | Y |
+| [0.361, 0.416) | 0.0135 | 0.0113 | 0.0625 | Y | |
+| [0.416, 0.478) | 0.0023 | 0.0025 | 0.0308 | Y | |
+| [0.478, 0.550) | 0.0006 | 0.0006 | 0.0154 | Y | |
+| [0.550, 0.637) | 0.0000 | 0.0000 | 0.0060 | Y | |
+| [0.637, 0.747) | 0.0000 | 0.0000 | 0.0022 | Y | |
+| [0.747, 0.914) | 0.0000 | 0.0000 | 0.0000 | | |
+| [0.914, inf) | 0.0000 | 0.0000 | 0.0000 | | |
+
+*(Bin labels here and in 9.9 are display-rounded to 3 decimals; the
+exact a-priori edges — 0.4784, 0.5503, 0.6367, 0.7473, 0.9144, … — are
+in the runner's constant block and the artifact. Claim-bearing
+thresholds in the text use the exact values.)*
+
+**The `N = 1200` curve sits above the `N = 600` curve in 14 of 16
+bins — every bin in which either curve is nonzero — with CI separation
+in 6.** The two exceptions are the widest-margin bins where both
+curves are exactly zero, leaving no room to be above. (The `N = 900`
+curve dips at or below `N = 600` through the mid bins, consistent with
+the 900 dip seen on every aggregate; the rise is a 1200 phenomenon,
+now visible pointwise.) Sparse-bin caveat: the widest bins carry few
+comparisons per sample for bracketed targets, and per-bin minimum
+counts are recorded in the artifact; the domination conclusion rests
+on the well-populated bins.
+
+This settles the mechanism claim in its strongest available form:
+**at fixed question difficulty — pointwise in margin — the frozen
+instrument answers less accurately at `N = 1200` than at `N = 600`.**
+Per-question accuracy in continuum units degrades with `N`; no
+mix-drift account survives a pointwise comparison. Status as 9.6:
+post hoc, after the frozen gate failed; rewords the mechanism claim,
+cannot reopen the gate. Artifact:
+`docs/prereg/frozen/p10_stage_bprime/p10_bprime_margincurve_summary.json`.
+
+### 9.8 Third escalation answered by bound and by zero (2026-07-27)
+
+Review pressed once more: any finite bin averages within itself, so
+within-bin drift remains logically possible at any granularity. Two
+answers, one quantitative and one absolute, both now in the artifact:
+
+**The drift bound.** The most a within-bin margin shift can move a bin
+average is `|mean-margin shift| x local slope`, and both factors are
+measured. The realized within-bin mean-margin shifts between `N = 600`
+and `N = 1200` are 0.00001-0.00125 — inside a fine bin the margin
+distribution has almost no room to move — so the maximal drift
+contribution is at most 0.0007 in every bin, while the observed rises
+are 0.002-0.074: **the rise exceeds the maximal drift contribution in
+all 14 nonzero bins, by one to three orders of magnitude** (bin 4:
++0.0743 against a bound of 0.00003). *(Corrected on fourth review:
+this is not a bound — equal mean margins can hide mass reallocation
+within a bin, and a neighbour-bin slope is no Lipschitz constant for
+the within-bin error curve. The "maximally 0.0007" figure and the
+"eliminated" conclusion drawn from it are withdrawn; the quantity is
+retained in the artifact as a descriptive indicator only. See 9.9.)*
+
+**The zero bins.** In bins 12-13 (margins 0.478-0.637... and the
+adjacent 0.637-0.747 in the medians table) the `N = 600` error is
+identically zero: an average of nonnegative indicators equal to zero
+means zero discordance at every sampled margin in the bin, and no
+reweighting of an identically-zero function is positive. `N = 1200` is
+positive there. At those margins, fixed-difficulty degradation holds
+with no binning assumption of any kind. *(Corrected on fourth review:
+those table entries are MEDIANS of 20 per-sample rates, not pooled
+averages — a zero median only means at least half the per-sample rates
+are zero. The pooled counts show 499 discordant `N = 600` comparisons
+in this region; the identically-zero claim is withdrawn as stated. The
+per-comparison zero-fact that does hold — 0/3,871 in the last bin — is
+established from pooled counts in 9.9.)*
+
+**Provenance correction (same round).** Both diagnostic artifacts had
+been produced from then-uncommitted implementations and stamped a clean
+HEAD that did not contain them — the same class of error as correction
+(xii) of Section 6d, recurring. Both were regenerated at a commit that
+contains their implementation, with medians verified IDENTICAL to the
+prior freezes; and diagnostic stamps are now dirty-aware
+(`-dirty` suffix), so an uncommitted implementation can never again
+stamp a commit it is not in.
+
+### 9.9 Fourth round: both 9.8 arguments corrected, and the exact
+pooled analysis that replaces them (2026-07-27)
+
+Review corrected both of 9.8's arguments, and both corrections are
+right. The "drift bound" was not a bound — a mean-margin shift times a
+neighbour-bin slope bounds nothing, since equal means can hide mass
+reallocation and the neighbour slope is no Lipschitz constant; it is
+demoted to a labelled descriptive indicator. And a zero MEDIAN of
+per-sample rates does not mean zero discordance — concretely so: the
+pooled counts reveal 499 discordant comparisons at `N = 600` in the
+high-margin region whose bin medians read 0.0000. The 9.8 "zero bins"
+claim is withdrawn as stated.
+
+What replaces them is exact and assumption-free: **pooled discordant
+counts over every sampled comparison**, per rung per bin —
+
+| margin bin | N=600 | N=900 | N=1200 | rate ratio 1200/600 |
+|---|---|---|---|---|
+| [0.416, 0.478) | 772/36167 (.0213) | 754/36232 (.0208) | 1885/37905 (.0497) | 2.3x |
+| [0.478, 0.550) | 347/30786 (.0113) | 416/33377 (.0125) | 1114/34930 (.0319) | 2.8x |
+| [0.550, 0.637) | 121/26060 (.0046) | 189/28930 (.0065) | 538/32159 (.0167) | 3.6x |
+| [0.637, 0.747) | 26/20414 (.0013) | 46/23151 (.0020) | 200/27596 (.0072) | 5.7x |
+| [0.747, 0.914) | 5/13333 (.0004) | 17/15594 (.0011) | 84/22518 (.0037) | 9.9x |
+| **[0.914, inf)** | **0/3871** | **0/4799** | **15/11184** | — |
+
+Three statements now carry the mechanism claim, in decreasing order of
+absoluteness:
+
+1. **The last bin is a true zero-fact at the per-comparison level.**
+   Every one of the 3,871 sampled comparisons at margins `>= 0.9144`
+   was answered correctly at `N = 600` (and all 4,799 at `N = 900`);
+   `N = 1200` errs there 15 times. No median is involved and no
+   within-bin reweighting story survives an empirical error of exactly
+   zero across the whole sampled bin. *(Corrected on fifth review:
+   "the whole sampled bin" is the pool's sampled support, not the bin —
+   the rungs sample different comparison sets, and the artifact records
+   different last-bin mean margins (0.9756 vs 1.0045). The zero is an
+   empirical pooled sample fact; it does not establish an
+   identically-zero response function over `[0.9144, inf)`. Scoped
+   properly in 9.10.)*
+2. **Every tail bin's pooled rate rises 2.3-9.9x** from `N = 600` to
+   `N = 1200`, on counts in the tens of thousands. Pooled comparisons
+   share fits, so these are exact sample facts rather than fresh
+   inference — the inferential statements remain the per-sample
+   bootstrap results of 9.7.
+3. The within-bin mean-margin shifts (0.00001-0.00125) remain recorded
+   as a **descriptive indicator only**.
+
+Also recorded rather than hidden: the m* construction of the previous
+commit was uninformative as designed — `m* = 0.4792`, essentially the
+region edge, because `N = 600` errs near the edge too; the per-bin
+pooled table above supersedes it. *(Tenth review: the threshold had
+been the display-rounded margin, so the "exact at >= m*" count was not
+evaluated at the true smallest discordant margin; recomputed with full
+precision flowing through the computation (`m* = 0.47917`, rounding
+now serialization-only). Counts unchanged on this data — 499 of
+94,464 — so the flaw was real in kind and immaterial in outcome;
+artifact refrozen at `fd4dc3e` with the exact `high_edge` 0.4784.)* Artifact regenerated at a commit
+containing its implementation (stamp `3a9edc3`, medians verified
+identical to the prior freeze), under the now-structural dirty-aware
+provenance rule.
+
+**The closure claim, in its final calibrated form.** The frozen gates
+failed as frozen (unchanged throughout). The mechanism reading is:
+per-question accuracy in continuum units degrades with `N` — exactly,
+at the highest margins, where `N = 600` is empirically error-free over
+thousands of sampled comparisons and `N = 1200` is not; and by 2-10x
+pooled-rate rises across the tail, with the pointwise CI separations of
+9.7 in the mid bins. What a mix-drift alternative would now require has
+no support in any recorded quantity and cannot operate at all in the
+last bin. *(Corrected on fifth review: "cannot operate at all"
+overstates — a reweighting account confined to within-bin regions
+unrepresented in the `N = 600` sample is not excluded by a
+sample-scoped zero. The terminal scoped form is 9.10.)*
+
+### 9.10 Fifth round: the zero-fact scoped to its sample (2026-07-27)
+
+Review pressed on 9.9's statement 1, and the point is right: the
+`N = 600` and `N = 1200` pools sample different target geometries and
+different comparisons, and the artifact itself records different
+last-bin mean margins (0.9756 versus 1.0045). Zero observed errors
+over the 3,871 comparisons the `N = 600` pool sampled is an empirical
+pooled sample result — it does not establish an identically-zero
+response function over `[0.9144, inf)`, and a reweighting account in
+which the `N = 1200` errors sit in within-bin regions unrepresented in
+the `N = 600` sample is not excluded by it. "Cannot operate at all in
+the last bin" is withdrawn.
+
+Two recorded quantities bear on that account, both descriptive: the
+only measured within-bin location statistic, the mean margin, moves
+toward larger margins at `N = 1200` (0.9756 -> 1.0045) — recorded as
+description, since a mean does not localize mass; and the degradation
+is CI-separated per sample in six mid bins (9.7), where the claim is
+inferential rather than support-dependent.
+
+The mechanism claim in its terminal form, claiming nothing beyond
+sampled support: **the frozen gates failed as frozen; per-question
+accuracy in continuum units degrades with `N` — inferentially in the
+mid bins (9.7's bootstrap-separated pointwise rises), and as exact
+sample facts in the tail (pooled rates rising 2.3-9.9x on tens of
+thousands of counts; `N = 600` error-free over its 3,871 sampled
+last-bin comparisons while `N = 1200` errs 15 times in 11,184).**
+Each escalation of this review cycle has now been driven to a quantity
+that is exact over its stated scope, and to no claim beyond it.
+*(Superseded as the record's last word by 9.13: in the fully
+stream-separated fresh replication the pointwise separations do not
+replicate — 0 of 16 bins — and the sparse extreme tail inverts, so
+the inferential leg of this paragraph is a frozen-sample result and
+the claim's replication grade is "directionally consistent, not
+separated". The sample-scoped exact facts above remain true as
+stated, of those samples.)*
+
+### 9.11 Sixth round: the scorer-seed namespace collision, conceded
+and measured (2026-07-27)
+
+Review found a seed-hygiene violation in the B'0 design itself, and it
+is real: the derived scorer seeds `base + k + 9` sit inside the
+consecutive chain-seed spans, so **51 of the 60 scorer streams
+coincide with some sample's chain stream** (values 40009-40059 — e.g.
+40020 selects scoring pairs for `N = 600` sample 11 AND drives
+`N = 900` sample 0's chain; 40009 scores `N = 600` sample 0 and drives
+its sample 9). The freshness test checked derived seeds against every
+EARLIER range and never against the B'0 chain seeds themselves — the
+same class of hole as the B1 collision of Section 8, one level deeper.
+Rows entering the gate bootstrap as independent replicates therefore
+shared deterministic RNG streams. The fits are untouched by this: the
+chain seeds are mutually distinct, and the only colliding randomness
+is the scorer's pair SELECTION.
+
+The seedfix stage (`--stage seedfix`, regression-pinned collision map)
+replays the same 60 fits and re-scores **every published B' quantity**
+under both namespaces — the original (an exact replay check) and a
+disjoint one, 41000-41059, fresh against everything including
+ourselves. *(Corrected on seventh review: the first seedfix run copied
+the unrestricted truth from the instrument's own output — which is
+scored internally at `seed + 9`, the same colliding stream — so
+exactly one published quantity had escaped this sweep while this
+paragraph said "every". Re-scored in 9.12.)* Frozen artifacts:
+`docs/prereg/frozen/p10_stage_bprime/p10_bprime_seedfix.csv` and
+`_summary.json` (stamp `b5b0af5`). Replay: the old-namespace medians
+reproduce the frozen B'0 summary to 0.0 and the pooled curve counts
+match the frozen artifact exactly, so the comparison is
+apples-to-apples. The results, old vs clean:
+
+| quantity | old namespace | clean namespace |
+|---|---|---|
+| gate: restricted top-minus-bottom | +0.0372 [+0.0091, +0.0630] | +0.0379 [+0.0097, +0.0624] |
+| gate verdict (falls) | NO (rise) | NO (rise) |
+| eligible floors | met (>= 16847) | met (>= 16847) |
+| 9.6 mix-matched rise | +0.0358 [+0.0125, +0.0589] | +0.0340 [+0.0129, +0.0577] |
+| 9.7 pointwise: bins 1200 above 600 | 14/16, 6 CI-separated | 14/16, 6 CI-separated |
+| 9.9 last bin, N = 600 | 0/3871 | 0/3967 |
+| 9.9 last bin, N = 900 | 0/4799 | 2/4749 |
+| 9.9 last bin, N = 1200 | 15/11184 | 28/11066 |
+
+Row-level maxima of |clean − old| are 0.0036 / 0.0044 / 0.0069
+(restricted, by rung) and at most 0.0044 (mix-matched) — the
+pair-sampling noise scale, an order below the between-sample spread
+that drives every interval. Every direction, verdict, and CI sign is
+unchanged; the pooled tail rates rise 2.5-19x under clean seeds
+(sparser top bins swing the ratio; the direction is identical).
+
+Owned rather than smoothed: under fresh pair draws `N = 900`'s last
+bin reads 2/4749 where the old draw read 0/4799 — a pooled zero is a
+sample fact that need not replicate, exactly as 9.10 scoped it; the
+`N = 600` zero DID replicate (0/3967), and `N = 1200`'s last-bin rate
+is ten times `N = 900`'s under the same clean namespace. Status: post
+hoc, labelled; the frozen record stands as run, the gate stays
+failed-as-frozen, and the terminal mechanism claim of 9.10 is
+unchanged — now measured to be robust to the scorer-seed namespace,
+rather than argued to be.
+
+### 9.12 Seventh round: the unrestricted arm, the one quantity the
+sweep had missed (2026-07-27)
+
+Review caught 9.11 doing what it had just corrected others for: the
+first seedfix run copied `row["truth"]` from the instrument — which
+scores truth INTERNALLY at `seed + 9`, the same colliding stream — so
+the unrestricted arm (the Stage A replication reading) was the one
+published quantity outside the robustness sweep, under a paragraph
+saying "every". Conceded; the run now re-scores it under both
+namespaces, with an in-run assertion that the old-namespace
+recomputation equals the instrument's own output bit for bit (it
+does; and the old truth medians reproduce the frozen B'0 summary to
+0.0). Artifacts refrozen at stamp `702f4a5`; the disjointness test now
+also clears the instrument's other derived windows (`seed + 100` fit
+learning).
+
+| unrestricted (8,000-comparison budget) | old | clean |
+|---|---|---|
+| median truth 600 / 900 / 1200 | 0.1462 / 0.1367 / 0.1703 | 0.1513 / 0.1369 / 0.1676 |
+| top-minus-bottom | +0.0241 [+0.0051, +0.0461] | +0.0163 [+0.0069, +0.0404] |
+
+The ordering (1200 > 600 > 900, the Stage A shape) and the
+top-minus-bottom sign with an all-positive CI hold in both namespaces.
+The point estimate moves by 0.008 and the row-level maxima of
+|clean − old| are 0.010-0.016 — three to four times the restricted
+quantities' shifts, exactly as the 8,000-comparison budget predicts
+(per-row pair-selection SE ~ 0.004 against the restricted scorers'
+~ 0.002): the unrestricted arm is the noisiest published quantity, and
+its namespace sensitivity is pair-sampling noise at that budget, with
+no direction or verdict change anywhere.
+
+### 9.13 Eighth round: full stream separation, and what a fresh
+replication kept and did not keep (2026-07-27)
+
+Review escalated once more, and the finding is again real: the frozen
+instrument ITSELF derives `seed+3` (margin), `seed+5` (split),
+`seed+9` (truth scorer), `seed+61` (null shuffle) and `seed+100` (fit
+learning) from every chain seed, so CONSECUTIVE chain seeds share
+derived streams across rows no matter what the external scorers do —
+the round-six fix separated the scorers and left the fits' windows
+packed. The internal offsets are frozen with the instrument; the
+allocation fix is spacing. The spaced arm (`--stage spaced`,
+stride-200 chain seeds 43000-54800, every derived stream and the
+scorer at `s+150` inside each row's private window `[s, s+199]`,
+window privacy and freshness regression-pinned) is therefore a
+REPLICATION with fresh samples, not a replay — and it changed the
+record, which is what this document is for. Artifacts:
+`p10_bprime_spaced.csv` / `_summary.json`, stamp `ce27fce`.
+
+What replicates:
+
+- **"Does not improve" — everywhere, again.** Medians 0.0575 /
+  0.0468 / 0.0822 (restricted), 0.1461 / 0.1383 / 0.1677
+  (unrestricted): the 1200 > 600 > 900 shape, positive top-minus-
+  bottom point estimates (+0.0247 restricted, +0.0216 unrestricted,
+  +0.0200 mix-matched), the gate verdict NO FALL, floors met. A
+  fourth independent arm in which nothing improves with `N`.
+  *(Tenth review: overstated — these intervals include negative
+  values, so improvement remains COMPATIBLE with these 20 samples.
+  The accurate statement: no improvement is detected, and the arm is
+  inconclusive on exclusion — unlike the frozen arms, whose
+  all-positive intervals excluded improvement at their samples.)*
+- **The dense-tail rise.** In the well-populated tail bins 10-11
+  (30-37k comparisons each) the `N = 1200` pooled rate again sits
+  above `N = 600`: 0.0403 vs 0.0290 and 0.0238 vs 0.0179 — ratios
+  1.39x and 1.33x against the frozen samples' 2.3x and 2.8x.
+
+What does not replicate:
+
+- **No aggregate CI separates.** Restricted +0.0247 [-0.0096,
+  +0.0517]; unrestricted +0.0216 [-0.0063, +0.0504]; mix-matched
+  +0.0200 [-0.0076, +0.0471] — every interval covers zero at 20
+  samples per rung, where the frozen samples' restricted and
+  mix-matched intervals were all-positive. Pointwise, 13/16 bins sit
+  above with **zero** CI separations against the frozen samples' 6.
+- **The sparse extreme tail inverts.** Bins 12-15 read 600-vs-1200 as
+  0.0127/0.0120, 0.0072/0.0054, 0.0032/0.0023, and in the last bin
+  8/5946 against 1/8530 — `N = 600` errs MORE there, where the frozen
+  samples read 0/3871 against 15/11184. The frozen last-bin zero and
+  the 3.6-9.9x sparse-bin ratios were sample facts of those 60 fits,
+  exactly as 9.10's scoping said, and they do not generalize: counts
+  of 1-28 against tens of thousands are carried by handfuls of
+  comparisons whose across-sample attribution this record does not
+  resolve.
+
+The calibrated conclusion, replacing 9.10's terminal form as the
+record's last word on mechanism: **closure is reinforced — in four
+independent arms (frozen gate, seed-fixed re-scoring, and a fully
+stream-separated fresh replication) continuum-unit accuracy never
+improves with `N` — while "measurably degrades" is downgraded from a
+CI-separated result to a frozen-sample result that replicates in sign,
+ordering, and dense-tail direction, but not in separation or in
+sparse-tail structure.** The gate never depended on the degradation
+claim (it failed on non-improvement, as frozen), so the closure
+stands untouched; 9.10's sample-scoped language needed no correction,
+which is what scoping is for. The reviewer's seed-hygiene escalation
+did real scientific work here: it forced the replication that
+measured the mechanism claim's generalization, and the record is
+better calibrated for it. *(Tenth review: "reinforced" and "never
+improves" overclaim — an interval that includes both signs cannot
+reinforce a scientific conclusion, and gate failure is a stopping
+rule operating, not evidence for the null. The closure is PROCEDURAL:
+three frozen gates failed as frozen, and the programme stops. The
+spaced arm's contribution is a directionally consistent, inconclusive
+fresh estimate: it detects no improvement and excludes nothing. The
+frozen arms' all-positive intervals excluded improvement at their
+samples; the replication leaves exclusion open. This paragraph, so
+marked, is the record's last word.)*
+
