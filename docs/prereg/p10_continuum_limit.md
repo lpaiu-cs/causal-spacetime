@@ -12,6 +12,12 @@ What a continuum-limit test now requires is a reconstruction whose
 continuum accuracy grows with density — a different instrument.
 The Stage A record below is preserved as written.
 
+Dates in this record are local dates (UTC+9, Asia/Seoul), matching the
+repository's commit timestamps, which carry their +09:00 offset — e.g.
+a section dated 2026-07-27 may sit in a commit reading
+2026-07-26T18:14Z when normalized to UTC. The chronology is verifiable
+from commit order; no date in this document is prospective.
+
 Stage A record: **STAGE A COMPLETE** (2026-07-26; readings revised same day when
 review found the ESS re-implementation diverged from the inherited P7
 diagnostic — see correction notes in 6d). Headline, primary reading
@@ -771,6 +777,11 @@ bootstrap intervals.
 | [0.747, 0.914) | 0.0000 | 0.0000 | 0.0000 | | |
 | [0.914, inf) | 0.0000 | 0.0000 | 0.0000 | | |
 
+*(Bin labels here and in 9.9 are display-rounded to 3 decimals; the
+exact a-priori edges — 0.4784, 0.5503, 0.6367, 0.7473, 0.9144, … — are
+in the runner's constant block and the artifact. Claim-bearing
+thresholds in the text use the exact values.)*
+
 **The `N = 1200` curve sits above the `N = 600` curve in 14 of 16
 bins — every bin in which either curve is nonzero — with CI separation
 in 6.** The two exceptions are the widest-margin bins where both
@@ -864,8 +875,8 @@ Three statements now carry the mechanism claim, in decreasing order of
 absoluteness:
 
 1. **The last bin is a true zero-fact at the per-comparison level.**
-   Every one of the 3,871 sampled comparisons at margins `>= 0.914` was
-   answered correctly at `N = 600` (and all 4,799 at `N = 900`);
+   Every one of the 3,871 sampled comparisons at margins `>= 0.9144`
+   was answered correctly at `N = 600` (and all 4,799 at `N = 900`);
    `N = 1200` errs there 15 times. No median is involved and no
    within-bin reweighting story survives an empirical error of exactly
    zero across the whole sampled bin. *(Corrected on fifth review:
@@ -873,7 +884,7 @@ absoluteness:
    the rungs sample different comparison sets, and the artifact records
    different last-bin mean margins (0.9756 vs 1.0045). The zero is an
    empirical pooled sample fact; it does not establish an
-   identically-zero response function over `[0.914, inf)`. Scoped
+   identically-zero response function over `[0.9144, inf)`. Scoped
    properly in 9.10.)*
 2. **Every tail bin's pooled rate rises 2.3-9.9x** from `N = 600` to
    `N = 1200`, on counts in the tens of thousands. Pooled comparisons
@@ -912,7 +923,7 @@ different comparisons, and the artifact itself records different
 last-bin mean margins (0.9756 versus 1.0045). Zero observed errors
 over the 3,871 comparisons the `N = 600` pool sampled is an empirical
 pooled sample result — it does not establish an identically-zero
-response function over `[0.914, inf)`, and a reweighting account in
+response function over `[0.9144, inf)`, and a reweighting account in
 which the `N = 1200` errors sit in within-bin regions unrepresented in
 the `N = 600` sample is not excluded by it. "Cannot operate at all in
 the last bin" is withdrawn.

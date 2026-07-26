@@ -93,6 +93,16 @@ MIN_ELIGIBLE = 8_000
 B0PRIME_SEED_BASE = {600: 40000, 900: 40020, 1200: 40040}
 B0PRIME_SAMPLES = 20
 
+#: Review round six: the DERIVED scorer seeds base+k+9 sit inside the
+#: consecutive chain-seed spans -- 51 of 60 scorer streams coincide
+#: with some sample's chain stream (values 40009-40059; e.g. 40020
+#: scores N=600 sample 11 AND drives N=900 sample 0's chain). The
+#: frozen record stands as run; the seedfix stage re-scores the same
+#: deterministic fits under this namespace, disjoint from every seed
+#: ever used in the programme (chain seeds 40000-40059, old scorer
+#: seeds 40009-40068, and all documented earlier ranges).
+SEEDFIX_SCORE_SEED_BASE = {600: 41000, 900: 41020, 1200: 41040}
+
 
 def margin_restricted_order_error(
     estimated, reference_x, delta: float,
@@ -336,6 +346,12 @@ FINE_BIN_EDGES = (
     float("inf"),
 )
 
+#: The high-margin pool's threshold IS a bin edge, derived, not a
+#: rounded literal: a 0.478 literal once labelled a pool that actually
+#: begins at 0.4784 (review finding -- the [0.4780, 0.4784) sliver was
+#: excluded from the counts but included in the label).
+HIGH_EDGE = FINE_BIN_EDGES[11]
+
 
 def fine_binned_order_error(
     estimated, reference_x, num_pair_comparisons: int, seed: int,
@@ -499,17 +515,16 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
     # m* = the smallest true margin at which the N = 1200 pool contains
     # a discordant comparison above the threshold below; the N = 600
     # pool's comparisons at margins >= m* are then counted exactly.
-    HIGH = 0.478  # bin-12 lower edge, where the earlier claim lived
     pooled = {}
     for n in LADDER:
         total = sum(
             c[b] for _, c, *_ in per_sample[n] for b in range(n_bins)
-            if FINE_BIN_EDGES[b] >= HIGH
+            if FINE_BIN_EDGES[b] >= HIGH_EDGE
         )
         wrong_margins = sorted(
             m
             for _, _, _, _, dm in per_sample[n]
-            for b in range(n_bins) if FINE_BIN_EDGES[b] >= HIGH
+            for b in range(n_bins) if FINE_BIN_EDGES[b] >= HIGH_EDGE
             for m in dm[b]
         )
         pooled[n] = {"total_at_or_above_high": int(total),
@@ -517,7 +532,7 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
                      "discordant_margins": [round(m, 4)
                                             for m in wrong_margins[:50]]}
     summary["pooled_high_margin"] = {
-        "high_edge": HIGH, **{str(n): pooled[n] for n in LADDER}
+        "high_edge": HIGH_EDGE, **{str(n): pooled[n] for n in LADDER}
     }
     star = None
     if pooled[1200]["discordant_at_or_above_high"]:
@@ -628,10 +643,277 @@ def run_mix_matched_diagnostic(output_dir: Path) -> None:
     print(json.dumps(summary, indent=2))
 
 
+def _seed_collision_map() -> dict:
+    """The round-six diagnosis, computed rather than asserted: which
+    old derived scorer seeds (base+k+9) coincide with chain seeds."""
+
+    chain = {b + k for b in B0PRIME_SEED_BASE.values()
+             for k in range(B0PRIME_SAMPLES)}
+    old_scorer = {b + k + 9 for b in B0PRIME_SEED_BASE.values()
+                  for k in range(B0PRIME_SAMPLES)}
+    clean = {b + k for b in SEEDFIX_SCORE_SEED_BASE.values()
+             for k in range(B0PRIME_SAMPLES)}
+    return {
+        "chain_seed_span": [min(chain), max(chain)],
+        "old_scorer_seed_span": [min(old_scorer), max(old_scorer)],
+        "n_old_scorer_seeds_colliding_with_chains":
+            len(old_scorer & chain),
+        "n_scorer_seeds_total": len(old_scorer),
+        "clean_namespace_span": [min(clean), max(clean)],
+        "clean_disjoint_from_all": not (clean & (chain | old_scorer)),
+    }
+
+
+def run_seedfix_rescore(output_dir: Path) -> None:
+    """POST-HOC, review round six: derived-seed namespace robustness.
+
+    The fits are untouched -- chain seeds do not collide with each
+    other, and the fits ARE the frozen objects. This replays the same
+    60 fits deterministically and scores every published B' quantity
+    under BOTH scorer namespaces: the original base+k+9 (which doubles
+    as an exact replay check against the frozen artifacts) and the
+    disjoint SEEDFIX namespace. Labelled post hoc: whatever it reads,
+    the frozen record stands and the gate stays failed-as-frozen. The
+    scorer's own randomness is pair SELECTION only, so per-row shifts
+    are bounded in probability by the pair-sampling noise; this run
+    measures them instead of arguing that.
+    """
+
+    n_bins = len(FINE_BIN_EDGES) - 1
+    rows = []
+    fine: dict = {"old": {n: [] for n in LADDER},
+                  "clean": {n: [] for n in LADDER}}
+    for n in LADDER:
+        base = B0PRIME_SEED_BASE[n]
+        for k in range(B0PRIME_SAMPLES):
+            pi = np.random.default_rng(base + k).permutation(n)
+            causal, times, coords = order_inputs(pi)
+            row, coords_fit, targets = analyze_order(
+                causal, times, coords, seed=base + k, want_truth=True,
+                return_fit=True,
+            )
+            out = {"n": float(n), "sample_index": float(k),
+                   "chain_seed": float(base + k),
+                   "old_score_seed": float(base + k + 9),
+                   "clean_score_seed": float(SEEDFIX_SCORE_SEED_BASE[n] + k),
+                   "code_version": _diag_code_version(),
+                   "status": row.get("status")}
+            if row.get("status") == "ok":
+                true_x = coords[targets] / float(n)
+                out["truth"] = row["truth"]
+                for tag, seed in (
+                    ("old", base + k + 9),
+                    ("clean", SEEDFIX_SCORE_SEED_BASE[n] + k),
+                ):
+                    restricted, n_eligible = margin_restricted_order_error(
+                        coords_fit, true_x, DELTA_MARGIN,
+                        num_pair_comparisons=BPRIME_COMPARISONS, seed=seed,
+                    )
+                    out[f"restricted_{tag}"] = restricted
+                    out[f"eligible_{tag}"] = float(n_eligible)
+                    errors, _counts = margin_binned_order_error(
+                        coords_fit, true_x,
+                        num_pair_comparisons=BPRIME_COMPARISONS, seed=seed,
+                    )
+                    finite = [e for e in errors if not np.isnan(e)]
+                    out[f"mix_matched_{tag}"] = (
+                        float(np.mean(errors))
+                        if len(finite) == len(errors) else float("nan")
+                    )
+                    fine[tag][n].append(fine_binned_order_error(
+                        coords_fit, true_x,
+                        num_pair_comparisons=BPRIME_COMPARISONS, seed=seed,
+                    ))
+                out["delta_restricted"] = (
+                    out["restricted_clean"] - out["restricted_old"]
+                )
+                out["delta_mix_matched"] = (
+                    out["mix_matched_clean"] - out["mix_matched_old"]
+                )
+            rows.append(out)
+        done = [r for r in rows if r["n"] == n and r["status"] == "ok"]
+        print(f"seedfix n={n}: {len(done)}/{B0PRIME_SAMPLES} ok | "
+              f"max |delta restricted| "
+              f"{max(abs(r['delta_restricted']) for r in done):.5f}",
+              flush=True)
+    write_rows_csv(output_dir / "p10_bprime_seedfix.csv", rows)
+
+    ok = [r for r in rows if r["status"] == "ok"]
+    summary: dict = {
+        "code_version": _diag_code_version(),
+        "collision_map": _seed_collision_map(),
+        "delta_margin": DELTA_MARGIN,
+        "per_n": {}, "gate": {}, "mix_matched": {}, "curve": {},
+    }
+    for n in LADDER:
+        sub = [r for r in ok if r["n"] == n]
+        entry: dict = {"n_ok": len(sub)}
+        for tag in ("old", "clean"):
+            vals = [r[f"restricted_{tag}"] for r in sub]
+            rng = np.random.default_rng(
+                _stable_seed("seedfix-restricted", n, tag)
+            )
+            boots = np.median(np.asarray(vals)[
+                rng.integers(0, len(vals), size=(4000, len(vals)))
+            ], axis=1) if vals else np.array([])
+            entry[f"median_restricted_{tag}"] = (
+                float(np.median(vals)) if vals else None
+            )
+            entry[f"ci_restricted_{tag}"] = [
+                float(np.percentile(boots, 2.5)),
+                float(np.percentile(boots, 97.5)),
+            ] if vals else [None, None]
+            entry[f"min_eligible_{tag}"] = (
+                int(min(r[f"eligible_{tag}"] for r in sub)) if sub else None
+            )
+        entry["max_abs_delta_restricted"] = (
+            float(max(abs(r["delta_restricted"]) for r in sub))
+            if sub else None
+        )
+        entry["max_abs_delta_mix_matched"] = (
+            float(max(abs(r["delta_mix_matched"]) for r in sub))
+            if sub else None
+        )
+        summary["per_n"][str(n)] = entry
+
+    for tag in ("old", "clean"):
+        drop, ci = _difference_ci(
+            [r[f"restricted_{tag}"] for r in ok if r["n"] == LADDER[-1]],
+            [r[f"restricted_{tag}"] for r in ok if r["n"] == LADDER[0]],
+            seed=_stable_seed("seedfix-drop", tag),
+        )
+        floors = all(
+            r[f"eligible_{tag}"] >= MIN_ELIGIBLE for r in ok
+        )
+        summary["gate"][tag] = {
+            "top_minus_bottom_restricted": {"diff": drop, "ci": list(ci)},
+            "all_floors_met": bool(floors),
+            "yardstick_falls_restricted": bprime_gate_verdict(
+                {n: sum(1 for r in ok if r["n"] == n) for n in LADDER},
+                floors, drop, tuple(ci),
+            ),
+        }
+        mdrop, mci = _difference_ci(
+            [r[f"mix_matched_{tag}"] for r in ok if r["n"] == LADDER[-1]],
+            [r[f"mix_matched_{tag}"] for r in ok if r["n"] == LADDER[0]],
+            seed=_stable_seed("seedfix-mixdrop", tag),
+        )
+        summary["mix_matched"][tag] = {
+            "top_minus_bottom": {"diff": mdrop, "ci": list(mci)},
+            "rise_survives": bool(
+                mdrop is not None and mci[0] is not None and mci[0] > 0.0
+            ),
+        }
+
+    for tag in ("old", "clean"):
+        curve_entry: dict = {}
+        curves: dict = {}
+        for n in LADDER:
+            medians, cis = [], []
+            for b in range(n_bins):
+                vals = np.array([
+                    e[b] for e, *_ in fine[tag][n] if not np.isnan(e[b])
+                ])
+                rng = np.random.default_rng(
+                    _stable_seed("seedfix-curve", n, b, tag)
+                )
+                boots = np.median(vals[
+                    rng.integers(0, vals.size, size=(4000, vals.size))
+                ], axis=1) if vals.size else np.array([])
+                medians.append(
+                    float(np.median(vals)) if vals.size else None
+                )
+                cis.append([
+                    float(np.percentile(boots, 2.5)),
+                    float(np.percentile(boots, 97.5)),
+                ] if vals.size else [None, None])
+            curves[n] = (medians, cis)
+            curve_entry[str(n)] = {
+                "pooled_total_by_bin": [
+                    int(sum(c[b] for _, c, *_ in fine[tag][n]))
+                    for b in range(n_bins)
+                ],
+                "pooled_discordant_by_bin": [
+                    int(sum(d[b] for _, _, _, d, _ in fine[tag][n]))
+                    for b in range(n_bins)
+                ],
+            }
+        above, separated = [], []
+        for b in range(n_bins):
+            m600, ci600 = curves[600][0][b], curves[600][1][b]
+            m1200, ci1200 = curves[1200][0][b], curves[1200][1][b]
+            if m600 is None or m1200 is None:
+                continue
+            above.append(bool(m1200 > m600))
+            separated.append(bool(ci1200[0] > ci600[1]))
+        curve_entry["pointwise_1200_vs_600"] = {
+            "bins_compared": len(above),
+            "bins_where_1200_above_600": int(sum(above)),
+            "bins_ci_separated": int(sum(separated)),
+        }
+        curve_entry["high_edge"] = HIGH_EDGE
+        curve_entry["last_bin"] = {
+            str(n): {
+                "total": int(sum(c[-1] for _, c, *_ in fine[tag][n])),
+                "discordant": int(
+                    sum(d[-1] for _, _, _, d, _ in fine[tag][n])
+                ),
+            } for n in LADDER
+        }
+        summary["curve"][tag] = curve_entry
+
+    frozen_dir = (Path(__file__).resolve().parents[2]
+                  / "docs" / "prereg" / "frozen" / "p10_stage_bprime")
+    replay: dict = {}
+    try:
+        frozen = json.loads(
+            (frozen_dir / "p10_bprime0_summary.json").read_text(
+                encoding="utf-8")
+        )
+        replay["b0prime_median_restricted_max_abs_diff"] = max(
+            abs(summary["per_n"][str(n)]["median_restricted_old"]
+                - frozen["per_n"][str(n)]["median_truth_restricted"])
+            for n in LADDER
+        )
+    except OSError:
+        replay["b0prime_median_restricted_max_abs_diff"] = None
+    try:
+        frozen_curve = json.loads(
+            (frozen_dir / "p10_bprime_margincurve_summary.json").read_text(
+                encoding="utf-8")
+        )
+        replay["curve_pooled_counts_match_frozen"] = all(
+            summary["curve"]["old"][str(n)][key]
+            == frozen_curve["curves"][str(n)][key]
+            for n in LADDER
+            for key in ("pooled_total_by_bin", "pooled_discordant_by_bin")
+        )
+    except OSError:
+        replay["curve_pooled_counts_match_frozen"] = None
+    summary["replay_check"] = replay
+
+    def _de_nan(obj):
+        if isinstance(obj, float) and np.isnan(obj):
+            return None
+        if isinstance(obj, dict):
+            return {key: _de_nan(val) for key, val in obj.items()}
+        if isinstance(obj, list):
+            return [_de_nan(val) for val in obj]
+        return obj
+
+    summary = _de_nan(summary)
+    (output_dir / "p10_bprime_seedfix_summary.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"collision_map": summary["collision_map"],
+                      "gate": summary["gate"],
+                      "replay_check": summary["replay_check"]}, indent=2))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage",
-                        choices=["b0", "b1", "diagnostic", "curve"],
+                        choices=["b0", "b1", "diagnostic", "curve",
+                                 "seedfix"],
                         default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
@@ -643,6 +925,8 @@ def main() -> None:
         run_mix_matched_diagnostic(args.output_dir)
     elif args.stage == "curve":
         run_margin_curve_diagnostic(args.output_dir)
+    elif args.stage == "seedfix":
+        run_seedfix_rescore(args.output_dir)
     elif args.stage == "b1":
         raise SystemExit(
             "B'1 is gated on the frozen B'0 record (prereg Section 9) and "

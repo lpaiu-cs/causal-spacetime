@@ -22,6 +22,10 @@ sys.path.insert(0, str(EXPERIMENT_DIR))
 from p10_stage_bprime import (  # noqa: E402
     B0PRIME_SEED_BASE,
     DELTA_MARGIN,
+    FINE_BIN_EDGES,
+    HIGH_EDGE,
+    SEEDFIX_SCORE_SEED_BASE,
+    _seed_collision_map,
     bprime_gate_verdict,
     margin_restricted_order_error,
 )
@@ -107,7 +111,12 @@ def test_the_bprime_gate_requires_completeness_floors_and_fall():
 
 def test_bprime_seeds_are_fresh():
     """Clear of every range used anywhere in the programme, including
-    P6-B's 1000-1019 and the B1 envelope 30000-30379."""
+    P6-B's 1000-1019 and the B1 envelope 30000-30379.
+
+    This test checked derived seeds against EARLIER ranges only, and
+    that was its hole: the base+k+9 scorer seeds also had to be checked
+    against the B'0 chain seeds themselves, and were not — the round-six
+    review finding. The two tests below close it."""
 
     used = (set(range(0, 10)) | set(range(100, 120)) | set(range(400, 420))
             | set(range(500, 520)) | set(range(820, 960))
@@ -116,3 +125,43 @@ def test_bprime_seeds_are_fresh():
     for base in B0PRIME_SEED_BASE.values():
         derived = {base + k for k in range(20)} | {base + k + 9 for k in range(20)}
         assert not (derived & used), base
+
+
+def test_the_old_scorer_collision_is_exactly_the_diagnosed_one():
+    """Pin the round-six diagnosis: 51 of 60 derived scorer seeds
+    coincide with some sample's chain seed (values 40009-40059). If a
+    seed table change ever alters this map, the prereg record's
+    correction note goes stale and this fails."""
+
+    diag = _seed_collision_map()
+    assert diag["chain_seed_span"] == [40000, 40059]
+    assert diag["old_scorer_seed_span"] == [40009, 40068]
+    assert diag["n_old_scorer_seeds_colliding_with_chains"] == 51
+    assert diag["n_scorer_seeds_total"] == 60
+
+
+def test_the_seedfix_namespace_is_disjoint_from_everything():
+    """The corrected scorer namespace must be fresh with respect to the
+    chain seeds, the old scorer seeds, AND every documented earlier
+    range — the full freshness rule, this time including ourselves."""
+
+    used = (set(range(0, 10)) | set(range(100, 120)) | set(range(400, 420))
+            | set(range(500, 520)) | set(range(820, 960))
+            | set(range(1000, 1020)) | set(range(1100, 1160))
+            | set(range(30000, 30380)))
+    chain = {b + k for b in B0PRIME_SEED_BASE.values() for k in range(20)}
+    old_scorer = {b + k + 9 for b in B0PRIME_SEED_BASE.values()
+                  for k in range(20)}
+    clean = {b + k for b in SEEDFIX_SCORE_SEED_BASE.values()
+             for k in range(20)}
+    assert len(clean) == 60
+    assert not (clean & (chain | old_scorer | used))
+    assert _seed_collision_map()["clean_disjoint_from_all"]
+
+
+def test_the_high_edge_is_the_actual_bin_edge_not_a_rounded_literal():
+    """A 0.478 literal once labelled a pool that begins at 0.4784; the
+    threshold must be the bin edge itself."""
+
+    assert HIGH_EDGE == FINE_BIN_EDGES[11]
+    assert abs(HIGH_EDGE - 0.4784) < 1e-12
