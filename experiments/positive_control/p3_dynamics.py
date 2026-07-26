@@ -55,10 +55,15 @@ P_SWEEP = (0.006, 0.008, 0.010, 0.014, 0.020)
 FROZEN_CONSTANTS_PATH = Path("docs/prereg/frozen/p3_test_constants.json")
 
 
-def _fit_heldout(profiles: EchoProfileMatrix, seed: int):
+def _fit_heldout(profiles: EchoProfileMatrix, seed: int,
+                 train_c: int = TRAIN_C, heldout_c: int = HELDOUT_C):
+    """Defaults ARE the frozen P3 fit; the parameters exist for P10
+    Stage B's scaled-instrument family, which must go through this one
+    definition rather than re-implement it (the ESS lesson of P10-A)."""
+
     diss = profile_dissimilarity_matrix(profiles, 4)
     margin = margin_from_probe_quantile(diss, seed=seed + 3)
-    split = build_constraint_split(diss, TRAIN_C, HELDOUT_C, margin, seed=seed + 5)
+    split = build_constraint_split(diss, train_c, heldout_c, margin, seed=seed + 5)
     coords, _ = fit_ordinal_embedding_gradient_descent(
         profiles.target_count, 1, split.train, steps=STEPS,
         learning_rate=0.05, seed=seed + 100, restarts=RESTARTS,
@@ -77,20 +82,33 @@ def _column_shuffle(profiles: EchoProfileMatrix, seed: int) -> EchoProfileMatrix
     return EchoProfileMatrix(delays, reach, profiles.target_indices.copy())
 
 
-def analyze_order(causal, times, coords, seed, want_truth, extra_truth_coords=None):
-    """Return a result dict for one causal order (structural blocks recorded)."""
+def analyze_order(causal, times, coords, seed, want_truth, extra_truth_coords=None,
+                  chain_count: int = CHAIN_COUNT,
+                  min_chain_len: int = MIN_CHAIN_LEN,
+                  max_targets: int = MAX_TARGETS,
+                  min_targets: int = MIN_TARGETS,
+                  train_c: int = TRAIN_C,
+                  heldout_c: int = HELDOUT_C):
+    """Return a result dict for one causal order (structural blocks recorded).
 
-    chains = select_disjoint_chains(causal, times, CHAIN_COUNT, MIN_CHAIN_LEN)
-    if len(chains) < CHAIN_COUNT:
+    The keyword defaults ARE the frozen P3 instrument, and every frozen
+    caller uses them unchanged. The parameters exist for P10 Stage B's
+    scaled-instrument family, whose N = 600 anchor must coincide with
+    the defaults exactly -- one pipeline definition, two operating
+    points, never a re-implementation.
+    """
+
+    chains = select_disjoint_chains(causal, times, chain_count, min_chain_len)
+    if len(chains) < chain_count:
         return {"status": f"structural_block: only {len(chains)} chains"}
-    targets = select_bracketed_targets(causal, chains, MAX_TARGETS, seed)
-    if targets.size < MIN_TARGETS:
+    targets = select_bracketed_targets(causal, chains, max_targets, seed)
+    if targets.size < min_targets:
         return {"status": f"structural_block: {targets.size} targets"}
     profiles = measure_order_intrinsic_profiles(causal, chains, targets)
     try:
-        coords_fit, heldout = _fit_heldout(profiles, seed)
+        coords_fit, heldout = _fit_heldout(profiles, seed, train_c, heldout_c)
         shuffled = _column_shuffle(profiles, seed + 61)
-        _, null_heldout = _fit_heldout(shuffled, seed)
+        _, null_heldout = _fit_heldout(shuffled, seed, train_c, heldout_c)
     except ValueError as error:
         return {"status": f"structural_block: {str(error)[:40]}"}
     row = {

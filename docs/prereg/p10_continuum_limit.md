@@ -393,3 +393,81 @@ Lorentz structure, dynamics, or anything about ensembles other than this
 one. If the outcome is "deepening", the honest statement is
 "consistent with a continuum limit over the measured range" — and the
 next octave is the follow-up, not a victory lap.
+
+## 8. Stage B: the resolution ladder (designed 2026-07-26; B0 not yet run)
+
+Stage A's findings dictate this design item by item, and every review
+lesson from PR #23's five rounds is pre-applied rather than rediscovered.
+
+### 8.1 The scaled instrument family
+
+One pipeline definition — `analyze_order`, now parameterized with
+keyword defaults that ARE the frozen constants (the defaults are pinned
+byte-identical against archived Stage A rows) — evaluated at operating
+points scaled in continuum units:
+
+| constant | law | 600 | 900 | 1200 |
+|---|---|---|---|---|
+| `min_chain_len` | `25 sqrt(N/600)` | 25 | 31 | 35 |
+| `max_targets` | `44 N/600` | 44 | 66 | 88 |
+| `min_targets` | `20 N/600` | 20 | 30 | 40 |
+| `train_c` | `3000 N/600` | 3000 | 4500 | 6000 |
+| `heldout_c` | `800 N/600` | 800 | 1200 | 1600 |
+| `chain_count` | fixed | 6 | 6 | 6 |
+
+Rationale: the longest chain grows like `~ 2 sqrt(N)`, so a fixed
+`min_chain_len` is a shrinking continuum window — `sqrt(N)` scaling
+holds it fixed. Target and constraint counts scale together because P8
+measured what happens when they do not: a fixed budget over more targets
+dilutes the fit. `chain_count` stays 6 — observer count is a design
+choice, not a resolution property. **The `N = 600` anchor is exactly
+the frozen instrument**, so Stage B connects continuously to everything
+the programme has measured. P7's `G` margins are not scaled: the score
+definition is frozen.
+
+### 8.2 Stage B0 — the yardstick pilot, and why it gates everything
+
+Stage A *assumed* the sprinkled arm would fall with `N` and it did not.
+B0 tests exactly that premise before anything else is spent: arm S
+(direct sampling, cheap) through the scaled instrument at all three
+sizes, 20 samples each, seeds 1100-1159 (fresh).
+
+**Gate for proceeding** (this is a design prerequisite, not a science
+hypothesis): the `N = 1200` minus `N = 600` median-truth difference must
+have its entire 95% bootstrap CI below zero. If it does not, the scaled
+instrument has not produced a resolution ladder either, Stage B stops,
+and that is the reportable finding. No E chain runs and no hypothesis
+is frozen until B0 passes.
+
+### 8.3 Stage B1 — frozen only after B0, stated now so the shape is on record
+
+- Six chains as in Stage A (dual starts, `beta = 2`, `eps N = 12`),
+  seeds 1000-1050 (fresh), burn 100k, **48 retained samples per chain
+  at 25k spacing** (Stage 0 measured 25k decorrelated) -> 1.3M steps
+  per chain. `m = 48` restores the inherited screen to P7's actual bar
+  (`ESS >= 20` at `m = 48`), ending the Stage A degeneracy.
+- Mixing screen: the corrected Stage A aggregator's rules verbatim —
+  shared P7 ESS diagnostic, strict random-tail band, both criteria
+  combined per chain, failing chains reported and excluded.
+- **H-TRACK (equivalence, TOST).** At each rung, the E − S median-truth
+  difference must have its 95% CI inside `[-0.05, +0.05]`. The margin
+  is the programme's standing saturation tolerance (P2 and P9's frozen
+  0.05), chosen because it is the difference the programme already
+  treats as not meaningful in truth-error units — an a-priori anchor,
+  not a fit. Supported only if every rung passes.
+- **H-DEEPEN.** Arm E's own `N = 1200` minus `N = 600` median-truth
+  difference has its 95% CI entirely below zero — the emergent phase's
+  geometry *sharpens* under the resolution ladder, not merely tracks.
+- Read as a conjunction for "consistent with a continuum limit over the
+  measured range"; each reported separately; H-TRACK failing at exactly
+  the top rung is the Stage A tension resolving into a detection and
+  would be a major honest finding, not a failure.
+- Exact hypothesis values above are frozen by this section now; only
+  B0's pass/fail decides *whether* B1 runs, never *what* it tests.
+
+### 8.4 Costs, measured basis
+
+B0: minutes (direct sampling; the scaled fit at `N = 1200` costs a few
+seconds per sample). B1: 1.3M steps per chain at the measured rates —
+1.3/2.6/4.5 hours per chain at 600/900/1200 — about 17 chain-hours,
+run as six parallel processes, wall ~5 h.
