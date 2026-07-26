@@ -906,7 +906,13 @@ absoluteness:
 Also recorded rather than hidden: the m* construction of the previous
 commit was uninformative as designed — `m* = 0.4792`, essentially the
 region edge, because `N = 600` errs near the edge too; the per-bin
-pooled table above supersedes it. Artifact regenerated at a commit
+pooled table above supersedes it. *(Tenth review: the threshold had
+been the display-rounded margin, so the "exact at >= m*" count was not
+evaluated at the true smallest discordant margin; recomputed with full
+precision flowing through the computation (`m* = 0.47917`, rounding
+now serialization-only). Counts unchanged on this data — 499 of
+94,464 — so the flaw was real in kind and immaterial in outcome;
+artifact refrozen at `fd4dc3e` with the exact `high_edge` 0.4784.)* Artifact regenerated at a commit
 containing its implementation (stamp `3a9edc3`, medians verified
 identical to the prior freeze), under the now-structural dirty-aware
 provenance rule.

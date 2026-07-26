@@ -1,5 +1,5 @@
 {
-  "code_version": "3a9edc3",
+  "code_version": "fd4dc3e",
   "fine_bin_edges": [
     0.0,
     0.033,
@@ -583,7 +583,7 @@
     }
   ],
   "pooled_high_margin": {
-    "high_edge": 0.478,
+    "high_edge": 0.4784,
     "600": {
       "total_at_or_above_high": 94464,
       "discordant_at_or_above_high": 499,
@@ -754,7 +754,7 @@
     }
   },
   "m_star_analysis": {
-    "m_star": 0.4792,
+    "m_star": 0.4791666666666665,
     "note": "totals for N=600 use whole bins overlapping [m*, inf); discordant counts are exact at >= m*",
     "n600_comparisons_in_overlapping_bins": 94464,
     "n600_discordant_at_or_above_m_star": 499
