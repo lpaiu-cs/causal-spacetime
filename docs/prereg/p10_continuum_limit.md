@@ -455,6 +455,17 @@ is frozen until B0 passes.
 - Mixing screen: the corrected Stage A aggregator's rules verbatim —
   shared P7 ESS diagnostic, strict random-tail band, both criteria
   combined per chain, failing chains reported and excluded.
+- Uncertainty under dependence *(design amendment 2026-07-27, before
+  any B1 run)*: arm-E intervals are computed by a within-chain circular
+  block bootstrap, block length `ceil(2 tau)` from each chain's OWN
+  truth-series autocorrelation (shared Geyer diagnostic); blocks never
+  cross a chain boundary; arm S, being direct sampling, resamples
+  ordinarily. Rationale: the frozen `n0` screen admits `tau <= 2.4`,
+  and an iid bootstrap under that dependence narrows intervals by
+  roughly `sqrt(tau)` — enough to falsely support an equivalence
+  hypothesis. The screen itself is unchanged; the dependence is
+  handled where the uncertainty is computed. Block lengths are
+  reported per chain.
 - **H-TRACK (equivalence, TOST).** At each rung, the E − S median-truth
   difference must have its 95% CI inside `[-0.05, +0.05]`. The margin
   is the programme's standing saturation tolerance (P2 and P9's frozen

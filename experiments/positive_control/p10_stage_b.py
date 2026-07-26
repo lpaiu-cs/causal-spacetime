@@ -350,17 +350,102 @@ def run_b1_chain(n: int, start: str, output_dir: Path) -> None:
 TOST_MARGIN = 0.05
 
 
+def _truth_block_length(series: list) -> int:
+    """Block length for one chain's truth series: ceil(2 tau), tau from
+    the shared Geyer diagnostic ON THE TRUTH SERIES itself.
+
+    The mixing screen is frozen on n0 and stays frozen; but n0 mixing
+    does not certify truth mixing, and an iid bootstrap over correlated
+    truth values narrows the CI by roughly sqrt(tau) -- enough to
+    falsely support an equivalence hypothesis (review finding). The
+    dependence is handled where the uncertainty is computed instead.
+    """
+
+    tau = integrated_autocorrelation(list(series))[0]
+    return max(1, math.ceil(2.0 * tau))
+
+
+def _block_resample_median(chains: list, rng, draws: int) -> np.ndarray:
+    """Bootstrap medians preserving within-chain dependence.
+
+    Circular moving-block bootstrap per chain -- blocks never cross a
+    chain boundary -- with each chain's block length set from its own
+    truth autocorrelation. Chains of iid values reduce to the ordinary
+    bootstrap (block length 1).
+    """
+
+    lengths = [_truth_block_length(c) for c in chains]
+    out = np.empty(draws)
+    arrays = [np.asarray(c, dtype=float) for c in chains]
+    for d in range(draws):
+        pieces = []
+        for arr, b in zip(arrays, lengths, strict=True):
+            m = arr.size
+            n_blocks = math.ceil(m / b)
+            starts = rng.integers(0, m, size=n_blocks)
+            idx = (starts[:, None] + np.arange(b)[None, :]) % m
+            pieces.append(arr[idx.ravel()][:m])
+        out[d] = float(np.median(np.concatenate(pieces)))
+    return out
+
+
+def _dependent_difference_ci(e_chains: list, s_values: list, seed,
+                             draws: int = 4000):
+    """median(E) - median(S) with arm-E dependence preserved.
+
+    Arm E enters as per-chain series and is block-resampled; arm S is
+    direct sampling (genuinely iid) and is resampled ordinarily.
+    """
+
+    flat_e = [v for c in e_chains for v in c]
+    s = np.asarray(s_values, dtype=float)
+    if not flat_e or s.size == 0:
+        return None, (None, None)
+    rng = np.random.default_rng(seed)
+    e_meds = _block_resample_median(e_chains, rng, draws)
+    s_meds = np.median(
+        s[rng.integers(0, s.size, size=(draws, s.size))], axis=1
+    )
+    diffs = e_meds - s_meds
+    return float(np.median(flat_e) - np.median(s)), (
+        float(np.percentile(diffs, 2.5)),
+        float(np.percentile(diffs, 97.5)),
+    )
+
+
+def _dependent_e_vs_e_ci(top_chains: list, bottom_chains: list, seed,
+                         draws: int = 4000):
+    """H-DEEPEN's top-minus-bottom, block-resampled on both sides."""
+
+    flat_top = [v for c in top_chains for v in c]
+    flat_bottom = [v for c in bottom_chains for v in c]
+    if not flat_top or not flat_bottom:
+        return None, (None, None)
+    rng = np.random.default_rng(seed)
+    diffs = (
+        _block_resample_median(top_chains, rng, draws)
+        - _block_resample_median(bottom_chains, rng, draws)
+    )
+    return float(np.median(flat_top) - np.median(flat_bottom)), (
+        float(np.percentile(diffs, 2.5)),
+        float(np.percentile(diffs, 97.5)),
+    )
+
+
 def evaluate_frozen_hypotheses(
-    e_truth_by_n: dict, s_truth_by_n: dict, seed_fn=_stable_seed
+    e_chains_by_n: dict, s_truth_by_n: dict, seed_fn=_stable_seed
 ) -> dict:
     """The preregistered 8.3 decision block, as a pure function.
 
-    ``e_truth_by_n`` maps each rung to the surviving arm-E truth values,
-    ``s_truth_by_n`` to the B0 arm-S truth values. Kept side-effect-free
-    so the verdict logic is testable on synthetic data before any real
-    B1 run exists -- the P9 pattern, applied here because a review found
-    the first aggregator claimed to compute these verdicts and emitted a
-    stub instead.
+    ``e_chains_by_n`` maps each rung to the surviving arm-E chains,
+    each a list of truth values IN SAMPLE ORDER -- the chain structure
+    is required, not decoration, because arm-E uncertainty is computed
+    by a within-chain circular block bootstrap (block length from each
+    chain's own truth autocorrelation). Flat pooling with an iid
+    bootstrap narrows the CI by roughly sqrt(tau) under the dependence
+    the ESS >= 20 screen still admits, which could falsely support an
+    equivalence hypothesis (review finding). ``s_truth_by_n`` holds the
+    B0 arm-S values, genuinely iid by direct sampling.
 
     * H-TRACK: at EVERY rung, the E - S median-difference 95% CI must
       lie inside [-TOST_MARGIN, +TOST_MARGIN]. A rung with no surviving
@@ -369,12 +454,12 @@ def evaluate_frozen_hypotheses(
       has its 95% CI entirely below zero.
     """
 
-    rungs = sorted(e_truth_by_n)
+    rungs = sorted(e_chains_by_n)
     per_rung = {}
     track_passes = []
     for n in rungs:
-        diff, ci = _difference_ci(
-            e_truth_by_n[n], s_truth_by_n.get(n, []),
+        diff, ci = _dependent_difference_ci(
+            e_chains_by_n[n], s_truth_by_n.get(n, []),
             seed=seed_fn("b1-tost", n),
         )
         evaluable = diff is not None
@@ -391,8 +476,8 @@ def evaluate_frozen_hypotheses(
     h_track = bool(rungs) and all(track_passes)
 
     top, bottom = (rungs[-1], rungs[0]) if rungs else (None, None)
-    deepen_diff, deepen_ci = _difference_ci(
-        e_truth_by_n.get(top, []), e_truth_by_n.get(bottom, []),
+    deepen_diff, deepen_ci = _dependent_e_vs_e_ci(
+        e_chains_by_n.get(top, []), e_chains_by_n.get(bottom, []),
         seed=seed_fn("b1-deepen"),
     ) if rungs else (None, (None, None))
     h_deepen = bool(
@@ -489,28 +574,40 @@ def aggregate(output_dir: Path) -> None:
     b0_rows = list(_csv.DictReader(
         B0_FROZEN_CSV.open(encoding="utf-8")
     ))
-    e_truth_by_n: dict = {}
+    e_chains_by_n: dict = {}
     s_truth_by_n: dict = {}
     for n in LADDER:
-        surviving = [
-            r for r in rows
-            if int(float(r["n"])) == n and r.get("status") == "ok"
-            and screen_pass.get((n, r["start"]), False)
-        ]
-        e_truth_by_n[n] = [float(r["truth"]) for r in surviving]
+        # chain structure preserved, in sample order: the block
+        # bootstrap must never resample across a chain boundary
+        e_chains_by_n[n] = []
+        for start in STARTS:
+            if not screen_pass.get((n, start), False):
+                continue
+            chain_rows = sorted(
+                (r for r in rows
+                 if int(float(r["n"])) == n and r["start"] == start
+                 and r.get("status") == "ok"),
+                key=lambda r: float(r["sample_index"]),
+            )
+            if chain_rows:
+                e_chains_by_n[n].append(
+                    [float(r["truth"]) for r in chain_rows]
+                )
         s_truth_by_n[n] = [
             float(r["truth"]) for r in b0_rows
             if int(float(r["n"])) == n and r.get("status") == "ok"
         ]
+        flat = [v for c in e_chains_by_n[n] for v in c]
         summary["per_n"][str(n)] = {
-            "E_n_ok": len(e_truth_by_n[n]),
-            "E_median_truth": (
-                float(np.median(e_truth_by_n[n])) if e_truth_by_n[n] else None
-            ),
+            "E_n_ok": len(flat),
+            "E_median_truth": float(np.median(flat)) if flat else None,
             "S_median_truth": b0["per_n"][str(n)]["median_truth"],
+            "E_truth_block_lengths": [
+                _truth_block_length(c) for c in e_chains_by_n[n]
+            ],
         }
     summary["frozen_hypotheses"] = evaluate_frozen_hypotheses(
-        e_truth_by_n, s_truth_by_n
+        e_chains_by_n, s_truth_by_n
     )
 
     (output_dir / "p10_b1_summary.json").write_text(

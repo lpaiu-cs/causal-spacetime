@@ -42,9 +42,14 @@ def _cloud(rng, center, n=48, spread=0.01):
     return list(center + spread * rng.standard_normal(n))
 
 
+def _chain(rng, center, n=48, spread=0.01):
+    """One arm-E chain: the decision block takes lists of chains."""
+    return [_cloud(rng, center, n, spread)]
+
+
 def test_tracking_and_deepening_supports_the_conjunction():
     rng = np.random.default_rng(1)
-    e = {600: _cloud(rng, 0.16), 900: _cloud(rng, 0.14), 1200: _cloud(rng, 0.12)}
+    e = {600: _chain(rng, 0.16), 900: _chain(rng, 0.14), 1200: _chain(rng, 0.12)}
     s = {600: _cloud(rng, 0.16), 900: _cloud(rng, 0.14), 1200: _cloud(rng, 0.12)}
     out = evaluate_frozen_hypotheses(e, s)
     assert out["h_track_supported"]
@@ -56,8 +61,8 @@ def test_a_real_offset_at_one_rung_fails_h_track():
     """An E-S offset outside the margin at a single rung is enough."""
 
     rng = np.random.default_rng(2)
-    e = {600: _cloud(rng, 0.16), 900: _cloud(rng, 0.14),
-         1200: _cloud(rng, 0.12 + TOST_MARGIN + 0.03)}
+    e = {600: _chain(rng, 0.16), 900: _chain(rng, 0.14),
+         1200: _chain(rng, 0.12 + TOST_MARGIN + 0.03)}
     s = {600: _cloud(rng, 0.16), 900: _cloud(rng, 0.14), 1200: _cloud(rng, 0.12)}
     out = evaluate_frozen_hypotheses(e, s)
     assert not out["per_rung"]["1200"]["tost_pass"]
@@ -71,7 +76,7 @@ def test_wide_uncertainty_fails_tost_even_with_zero_offset():
     the P10-A record was corrected to respect, now enforced in code."""
 
     rng = np.random.default_rng(3)
-    e = {600: _cloud(rng, 0.16, n=6, spread=0.08)}
+    e = {600: _chain(rng, 0.16, n=6, spread=0.08)}
     s = {600: _cloud(rng, 0.16, n=6, spread=0.08)}
     out = evaluate_frozen_hypotheses(e, s)
     assert not out["per_rung"]["600"]["tost_pass"]
@@ -79,7 +84,7 @@ def test_wide_uncertainty_fails_tost_even_with_zero_offset():
 
 def test_flat_e_curve_fails_h_deepen():
     rng = np.random.default_rng(4)
-    e = {600: _cloud(rng, 0.15), 900: _cloud(rng, 0.15), 1200: _cloud(rng, 0.15)}
+    e = {600: _chain(rng, 0.15), 900: _chain(rng, 0.15), 1200: _chain(rng, 0.15)}
     s = {600: _cloud(rng, 0.15), 900: _cloud(rng, 0.15), 1200: _cloud(rng, 0.15)}
     out = evaluate_frozen_hypotheses(e, s)
     assert out["h_track_supported"]          # tracking alone can hold
@@ -91,7 +96,7 @@ def test_a_rung_with_no_surviving_chain_blocks_h_track():
     """A missing rung is not skipped -- H-TRACK requires every rung."""
 
     rng = np.random.default_rng(5)
-    e = {600: _cloud(rng, 0.15), 900: [], 1200: _cloud(rng, 0.13)}
+    e = {600: _chain(rng, 0.15), 900: [], 1200: _chain(rng, 0.13)}
     s = {600: _cloud(rng, 0.15), 900: _cloud(rng, 0.14), 1200: _cloud(rng, 0.13)}
     out = evaluate_frozen_hypotheses(e, s)
     assert not out["per_rung"]["900"]["evaluable"]
@@ -174,6 +179,30 @@ def test_the_b0_gate_requires_full_rungs_not_just_a_falling_ci():
     short = {**full, 1200: B0_SAMPLES - 1}
     assert not b0_gate_verdict(short, *falling)               # one block
     assert not b0_gate_verdict({600: 1, 900: 1, 1200: 1}, *falling)
+
+
+def test_chain_dependence_widens_the_interval():
+    """An iid bootstrap over autocorrelated truth values narrows the CI
+    by roughly sqrt(tau) -- enough to falsely support equivalence under
+    the dependence the ESS >= 20 screen still admits (review finding).
+    The block bootstrap must therefore produce a WIDER interval on a
+    strongly autocorrelated chain than on an iid shuffle of the same
+    values, and its block length must exceed one."""
+
+    from p10_stage_b import _dependent_difference_ci, _truth_block_length
+
+    rng = np.random.default_rng(11)
+    # a slow AR(1)-style walk: strong positive autocorrelation
+    steps = 0.02 * rng.standard_normal(48)
+    correlated = list(0.15 + np.cumsum(steps) * 0.3)
+    assert _truth_block_length(correlated) > 1
+
+    shuffled = list(np.random.default_rng(12).permutation(correlated))
+    s_ref = _cloud(np.random.default_rng(13), float(np.median(correlated)))
+
+    _, ci_dep = _dependent_difference_ci([correlated], s_ref, seed=99)
+    _, ci_iid = _dependent_difference_ci([shuffled], s_ref, seed=99)
+    assert (ci_dep[1] - ci_dep[0]) > (ci_iid[1] - ci_iid[0])
 
 
 def test_the_anchor_operating_point_is_the_frozen_instrument():
