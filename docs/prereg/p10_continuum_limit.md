@@ -1,6 +1,18 @@
 # P10: does the emergent geometry deepen toward a continuum?
 
-Status: **STAGE A COMPLETE** (2026-07-26; readings revised same day when
+Status: **CLOSED** (2026-07-27, at Stage B'0 — see Section 9.5). The
+programme's founding continuum-limit question is UNDECIDABLE BY THIS
+INSTRUMENT FAMILY: through the frozen discriminator, truth accuracy in
+continuum units does not improve — and measurably degrades — as the
+order grows, under every combination tried of instrument scaling
+(frozen / continuum-scaled) and question fixing (full mix /
+margin-restricted). Three gates, three failures, three eliminated
+mechanisms; every per-size result in the programme stands unchanged.
+What a continuum-limit test now requires is a reconstruction whose
+continuum accuracy grows with density — a different instrument.
+The Stage A record below is preserved as written.
+
+Stage A record: **STAGE A COMPLETE** (2026-07-26; readings revised same day when
 review found the ESS re-implementation diverged from the inherited P7
 diagnostic — see correction notes in 6d). Headline, primary reading
 (frozen mixing screen, computed with the shared P7 diagnostic): one
@@ -554,7 +566,7 @@ and the aggregator now validates every chain against the frozen table
 or wrong-seed CSV exits instead of entering the screen.
 
 ## 9. Stage B': the scale-fixed observable (designed 2026-07-27;
-B'0 not yet run)
+**B'0 ran the same day and its gate FAILED — see 9.5; P10 is closed**)
 
 Stage B ended on a diagnosis: both instrument families kept the same
 observable — sign discordance over uniformly sampled target pairs —
@@ -629,3 +641,61 @@ it is an invitation.
 
 B'0: minutes (direct sampling; the dual scoring adds one 32k-comparison
 pass per sample). B'1 if authorized: the 8.4 budget unchanged.
+
+### 9.5 Stage B'0 outcome (factual record, 2026-07-27): the gate FAILED
+a third time, and P10 closes on its own rule
+
+Seeds 40000-40059, 60/60 samples ok, every eligible-comparison floor
+met (minimum 17,057 of 32,000 against a floor of 8,000).
+
+| `N` | unrestricted (replication) | restricted (gates) |
+|---|---|---|
+| 600 | 0.1462 [0.1310, 0.1608] | 0.0520 [0.0304, 0.0787] |
+| 900 | 0.1367 [0.1236, 0.1553] | 0.0457 [0.0306, 0.0672] |
+| 1200 | 0.1703 [0.1599, 0.1836] | 0.0892 [0.0843, 0.0981] |
+
+Top-minus-bottom, restricted: **+0.037 [+0.009, +0.062]** — the entire
+CI above zero, again the wrong sign. (Unrestricted, same fresh seeds:
++0.024 [+0.005, +0.045], consistent in direction with Stage A's flat
+curve and here crossing into significance; the rise is driven by the
+`N = 1200` rung, with `N = 900` dipping below `N = 600` on both
+scorings.) Per the frozen 9.2 rule, **B'1 is not implemented, its
+hypotheses are never evaluated, and P10 closes.**
+
+**The three-sided finding.** The margin restriction did exactly what it
+was designed to do at every individual size — the fixed question set is
+about three times easier than the full mix (0.05-0.09 against
+0.14-0.17) — and the improvement with `N` still never came. Three
+distinct mechanisms have now been eliminated by direct measurement:
+
+| attempt | instrument | question mix | sprinkled curve |
+|---|---|---|---|
+| Stage A | frozen (scale-covariant) | full | flat |
+| Stage B0 | continuum-scaled | full | rising |
+| Stage B'0 | frozen | **fixed by margin** | **rising** |
+
+The positive characterization, which is what P10 ends on: **through
+this discriminator family, truth accuracy in continuum units does not
+improve — and measurably degrades — as the order grows**, under every
+combination tried of instrument scaling and question fixing. The
+discriminator is a fixed-relative-resolution instrument. The Section 2
+outcome table is therefore undecidable by this instrument family, full
+stop: a continuum-limit test requires a reconstruction whose continuum
+accuracy grows with density, which is a different instrument, not a
+different protocol around this one.
+
+Why the fixed-question error rises is **not established**. The
+unscaled-fit-budget candidate from 8.5 does not directly apply (the
+constants, budgets and convergence regime are identical at every size
+here); what grows with `N` at frozen constants is the selected chains'
+lengths and hence the raw delay-rank magnitudes feeding the
+dissimilarity. That observation is recorded as a lead, labelled post
+hoc and untested, not as a mechanism.
+
+What this does NOT touch: every per-size result in the programme —
+PC-V1 through P9 and P10 Stage A's tracking result — is a
+fixed-size statement and stands unchanged. What closed is the road
+from this instrument to a continuum limit.
+
+Artifacts: `docs/prereg/frozen/p10_stage_bprime/`.
+

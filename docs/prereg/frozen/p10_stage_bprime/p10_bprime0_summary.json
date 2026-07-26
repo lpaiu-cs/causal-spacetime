@@ -1,0 +1,69 @@
+{
+  "code_version": "6595d34",
+  "delta_margin": 0.1399,
+  "per_n": {
+    "600": {
+      "n_ok": 20,
+      "median_truth": 0.14616758723478873,
+      "ci_truth": [
+        0.1309934876556475,
+        0.16077111481543205
+      ],
+      "median_truth_restricted": 0.05204539987290879,
+      "ci_truth_restricted": [
+        0.03038453016226821,
+        0.07873626382233918
+      ],
+      "min_eligible": 17057,
+      "all_floors_met": true
+    },
+    "900": {
+      "n_ok": 20,
+      "median_truth": 0.13673071468647702,
+      "ci_truth": [
+        0.12363830949276032,
+        0.15533065362214343
+      ],
+      "median_truth_restricted": 0.04568190732768712,
+      "ci_truth_restricted": [
+        0.03058796552794161,
+        0.06721468273731598
+      ],
+      "min_eligible": 17603,
+      "all_floors_met": true
+    },
+    "1200": {
+      "n_ok": 20,
+      "median_truth": 0.17026658027491093,
+      "ci_truth": [
+        0.1599410972287378,
+        0.18356483788963354
+      ],
+      "median_truth_restricted": 0.08923256231131366,
+      "ci_truth_restricted": [
+        0.08430094801250479,
+        0.09812352860593995
+      ],
+      "min_eligible": 18304,
+      "all_floors_met": true
+    }
+  },
+  "top_minus_bottom": {
+    "truth": {
+      "diff": 0.024098993040122196,
+      "ci": [
+        0.005004118651077406,
+        0.045373770728399904
+      ]
+    },
+    "truth_restricted": {
+      "diff": 0.037187162438404864,
+      "ci": [
+        0.008877552548214273,
+        0.061551218565970345
+      ]
+    }
+  },
+  "yardstick_falls_restricted": false,
+  "note": "The Section 9 gate. The unrestricted scoring rides along as the replication of Stage A's flat curve on the same fits; only the restricted scoring gates. If this fails too, the scale-referenced behaviour is not a property of the question mix either, and that is the finding."
+}
