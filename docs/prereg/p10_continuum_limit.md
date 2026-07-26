@@ -791,3 +791,36 @@ post hoc, after the frozen gate failed; rewords the mechanism claim,
 cannot reopen the gate. Artifact:
 `docs/prereg/frozen/p10_stage_bprime/p10_bprime_margincurve_summary.json`.
 
+### 9.8 Third escalation answered by bound and by zero (2026-07-27)
+
+Review pressed once more: any finite bin averages within itself, so
+within-bin drift remains logically possible at any granularity. Two
+answers, one quantitative and one absolute, both now in the artifact:
+
+**The drift bound.** The most a within-bin margin shift can move a bin
+average is `|mean-margin shift| x local slope`, and both factors are
+measured. The realized within-bin mean-margin shifts between `N = 600`
+and `N = 1200` are 0.00001-0.00125 — inside a fine bin the margin
+distribution has almost no room to move — so the maximal drift
+contribution is at most 0.0007 in every bin, while the observed rises
+are 0.002-0.074: **the rise exceeds the maximal drift contribution in
+all 14 nonzero bins, by one to three orders of magnitude** (bin 4:
++0.0743 against a bound of 0.00003).
+
+**The zero bins.** In bins 12-13 (margins 0.478-0.637... and the
+adjacent 0.637-0.747 in the medians table) the `N = 600` error is
+identically zero: an average of nonnegative indicators equal to zero
+means zero discordance at every sampled margin in the bin, and no
+reweighting of an identically-zero function is positive. `N = 1200` is
+positive there. At those margins, fixed-difficulty degradation holds
+with no binning assumption of any kind.
+
+**Provenance correction (same round).** Both diagnostic artifacts had
+been produced from then-uncommitted implementations and stamped a clean
+HEAD that did not contain them — the same class of error as correction
+(xii) of Section 6d, recurring. Both were regenerated at a commit that
+contains their implementation, with medians verified IDENTICAL to the
+prior freezes; and diagnostic stamps are now dirty-aware
+(`-dirty` suffix), so an uncommitted implementation can never again
+stamp a commit it is not in.
+
