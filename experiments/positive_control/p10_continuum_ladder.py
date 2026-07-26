@@ -31,6 +31,9 @@ from p3_dynamics import analyze_order
 from p5_two_orders_emergence import order_inputs
 from pc_common import DEFAULT_OUTPUT_DIR, git_describe, write_rows_csv
 
+from causal_spacetime_lab.positive_control.mcmc_diagnostics import (
+    integrated_autocorrelation,
+)
 from causal_spacetime_lab.positive_control.two_orders import (
     bipartite_perm,
     mcmc_2d_order_fast,
@@ -126,26 +129,19 @@ def run_arm_s(output_dir: Path) -> None:
 
 
 def _ess(values: list[float]) -> float:
-    """Geyer initial-positive-pair ESS, matching P7's convention."""
+    """ESS via the SHARED P7 diagnostic, not a re-implementation.
 
-    x = np.asarray(values, dtype=float)
-    x = x - x.mean()
-    m = x.size
-    if m < 4 or float(np.dot(x, x)) == 0.0:
-        return float(m)
-    denominator = float(np.dot(x, x))
-    autocorr = [
-        float(np.dot(x[: m - lag], x[lag:]) / denominator)
-        for lag in range(m)
-    ]
-    total = 0.0
-    for k in range(1, m // 2):
-        pair = autocorr[2 * k - 1] + autocorr[2 * k]
-        if pair <= 0.0:
-            break
-        total += pair
-    tau = 1.0 + 2.0 * total
-    return float(m / tau)
+    The first version of this function re-derived Geyer pairing and got
+    the indexing wrong -- it paired ``rho[1]+rho[2], rho[3]+rho[4]``
+    where the inherited ``integrated_autocorrelation`` pairs
+    ``rho[0]+rho[1], rho[2]+rho[3]`` with the ``-1`` adjustment. On the
+    archived rows that error flipped three of six chain verdicts,
+    including voiding the N = 1200 rung that the inherited calculation
+    keeps. The screen claims to inherit P7's convention, so P7's code is
+    the convention; review finding.
+    """
+
+    return integrated_autocorrelation(list(values))[1]
 
 
 def _median_and_bootstrap(values, seed, draws=4000):
@@ -237,9 +233,13 @@ def aggregate(output_dir: Path) -> None:
             chain_rows.sort(key=lambda r: float(r["sample_index"]))
             n0s = [float(r["n0"]) for r in chain_rows]
             ess = _ess(n0s)
+            # Strict band, no tolerance: the frozen rule says "inside
+            # the random chain's tail band" and specifies none. The
+            # first version widened by 10% each way, silently relaxing
+            # the preregistered screen; review finding.
             melted = (
                 band is not None
-                and band[0] * 0.9 <= n0s[0] <= band[1] * 1.1
+                and band[0] <= n0s[0] <= band[1]
             ) if start == "bipartite" else True
             ess_ok = bool(ess >= MIN_ESS)
             # The frozen screen (prereg 6c) has TWO criteria -- melt and

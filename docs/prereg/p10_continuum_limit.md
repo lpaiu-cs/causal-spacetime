@@ -1,20 +1,24 @@
 # P10: does the emergent geometry deepen toward a continuum?
 
-Status: **STAGE A COMPLETE** (2026-07-26). Headline, primary reading
-(frozen mixing screen applied): at N = 600 and N = 900 the continuum
-phase shows **no detectable difference** from genuine sprinklings through
-the frozen instrument -- 120/120 samples pass the gates, and the E - S
-median-truth differences are -0.005 [-0.030, +0.024] and -0.012
-[-0.045, +0.031] -- while the N = 1200 rung is **null under the frozen
-rule** (both its chains fail the mixing screen; the pooled secondary
-reading at 1200 shows the same no-detectable-difference pattern,
-+0.008 [-0.019, +0.046]). "No detectable difference" is a failure to
-detect at this sample size, NOT demonstrated equivalence: Stage A
-prespecified no equivalence margin, deliberately, and any equivalence
-claim is deferred to a Stage B with one. Two design defects found by
-the data are owned in Section 6d: the ESS screen was degenerate at
-m = 10, and the instrument is scale-covariant at frozen constants, so
-this ladder tests behaviour under scaling, not resolution accumulation.
+Status: **STAGE A COMPLETE** (2026-07-26; readings revised same day when
+review found the ESS re-implementation diverged from the inherited P7
+diagnostic — see correction notes in 6d). Headline, primary reading
+(frozen mixing screen, computed with the shared P7 diagnostic): one
+chain per rung survives, and **no E − S difference is detected at any
+size** — median-truth differences −0.005 [−0.030, +0.024] at N = 600,
++0.006 [−0.011, +0.026] at N = 900, and +0.036 [−0.012, +0.052] at
+N = 1200 — with 120/120 samples passing the frozen gates. The N = 1200
+interval covers zero but leans positive with a point estimate near the
+detection sensitivity, so the failure to detect is least informative
+exactly at the top rung; that is stated rather than smoothed. "No
+detectable difference" is a failure to detect at this sample size, NOT
+demonstrated equivalence: Stage A prespecified no equivalence margin,
+deliberately, and any equivalence claim is deferred to a Stage B with
+one. Two design defects found by the data are owned in Section 6d: the
+ESS screen is degenerate at m = 10 (iid data fails it 40% of the time
+under the inherited implementation), and the instrument is
+scale-covariant at frozen constants, so this ladder tests behaviour
+under scaling, not resolution accumulation.
 
 This is the first experiment of the post-T1 programme, and it is aimed at
 the programme's founding question rather than at the instrument. It is
@@ -208,13 +212,23 @@ returned `status = ok` and every one of them passes the frozen gates**
 `N = 900`** (the arm-E minimum is 0.5625, at `N = 600`).
 
 **Primary reading — the frozen mixing screen applied** (failing chains
-excluded per prereg 6c; the E column at each rung is what survives):
+excluded per prereg 6c; ESS from the shared P7 diagnostic; the E column
+at each rung is the surviving chain):
 
-| `N` | arm E truth (surviving) | arm S truth | E − S diff [95% CI] |
-|---|---|---|---|
-| 600 | 0.1436 (10 samples) | 0.1488 | −0.005 [−0.030, +0.024] |
-| 900 | 0.1399 (10 samples) | 0.1520 | −0.012 [−0.045, +0.031] |
-| 1200 | **null — no chain survives** | 0.1613 | — |
+| `N` | surviving chain | arm E truth | arm S truth | E − S diff [95% CI] |
+|---|---|---|---|---|
+| 600 | random | 0.1436 (10) | 0.1488 | −0.005 [−0.030, +0.024] |
+| 900 | bipartite | 0.1581 (10) | 0.1520 | +0.006 [−0.011, +0.026] |
+| 1200 | random | 0.1971 (10) | 0.1613 | +0.036 [−0.012, +0.052] |
+
+The `N = 1200` row deserves its own sentence: the interval covers zero,
+but the point estimate (+0.036) sits near the detection sensitivity and
+the surviving chain is the higher of the two (the excluded bipartite
+chain's median is 0.1596, close to arm S). So at the top rung the
+primary reading neither detects a difference nor gives much comfort —
+the pooled secondary reading there (+0.008 [−0.019, +0.046]) is
+friendlier, and the honest statement is that the top rung is where a
+longer-chain successor stage matters most.
 
 **Secondary reading — pooled, ignoring the screen** (kept only because
 the screen itself is documented below as degenerate; median [95% CI]):
@@ -245,22 +259,25 @@ samples, with the dual starts bracketing each other at every size.
 
 ### Two design defects, found by the data and owned here
 
-**(1) The frozen ESS screen is degenerate at `m = 10` and the frozen
-rule voids the top rung.** ESS cannot exceed the sample count, so
-requiring `ESS >= 10` from 10 retained samples demands the estimator
-find *exactly zero* positive autocorrelation — which perfectly iid data
-fails **25% of the time** (measured: 20,000 iid trials, `P(ESS >= 10)
-= 0.747`). Four of six chains fail the screen (ESS 6.9-9.0, i.e.
-`tau <= 1.45` — mild at worst; under a pure-iid null, 4-of-6 failures
-has `p ~ 0.04`, so some residual autocorrelation may be real but small).
-The rule as frozen — "a failing chain is reported and its samples
-excluded" — is now the **primary** reading above; the `N = 1200` rung is
-void under it, and the pooled table is retained as secondary only
-because the screen is defective in the way just quantified. The defect
-is the screen's design (P7's rule was transplanted from `m = 48`, where
-`ESS >= 20` is a real bar, to `m = 10`, where `ESS >= 10` is the
-degenerate ceiling), not the chains. A successor stage must retain
-enough samples per chain (`~48`) for the screen to mean something.
+**(1) The frozen ESS screen is degenerate at `m = 10`.** ESS cannot
+exceed the sample count, so requiring `ESS >= 10` from 10 retained
+samples demands the estimator find *exactly zero* positive
+autocorrelation — which perfectly iid data fails **40.4% of the time**
+under the inherited P7 implementation (measured: 20,000 iid trials; an
+earlier figure of 25% in this note was computed with a mis-paired
+re-implementation of the estimator, since corrected — note (ix)).
+Three of six chains fail the screen (ESS 9.3-9.9, `tau <= 1.08` —
+negligible; under a pure-iid null, 3-of-6 failures at a 40.4% rate has
+`p ~ 0.46`, i.e. **the observed failures are entirely consistent with
+the degenerate screen operating on well-mixed chains**). The rule as
+frozen — "a failing chain is reported and its samples excluded" — is
+the **primary** reading above, which keeps exactly one chain per rung;
+the pooled table is retained as secondary because the screen is
+defective in the way just quantified. The defect is the screen's design
+(P7's rule was transplanted from `m = 48`, where `ESS >= 20` is a real
+bar, to `m = 10`, where `ESS >= 10` is the degenerate ceiling), not the
+chains. A successor stage must retain enough samples per chain (`~48`)
+for the screen to mean something.
 
 **(2) The yardstick premise failed, informatively.** Section 2 assumed
 arm S's error would *fall* with `N` — "what converging looks like".
@@ -314,6 +331,28 @@ regenerated and verified against a strict parser. (viii) One sentence
 in defect note (2) still concluded "indistinguishable … (it does)";
 it now uses the same failure-to-detect wording as the rest of the
 record.
+
+**Third correction note (same day, third review round; this one changes
+readings, not only wording).** (ix) The aggregator's ESS was a
+re-implementation of Geyer pairing with the indexing off by one — it
+paired `rho[1]+rho[2], rho[3]+rho[4]` where the inherited P7 diagnostic
+(`integrated_autocorrelation`) pairs `rho[0]+rho[1], rho[2]+rho[3]`
+with the `−1` adjustment. The screen *claims* to inherit P7's
+convention, so P7's code is the convention; the aggregator now calls it
+directly. On the archived rows this flips three of six chain verdicts:
+the surviving chains are now 600-random, 900-bipartite, 1200-random —
+in particular **the `N = 1200` rung, called void in the first two
+versions of this record, is defined** with the random chain's 10
+samples, and its E − S truth difference is +0.036 [−0.012, +0.052].
+Every table and the status header were recomputed; the earlier
+correction notes' statements that the 1200 rung was void are superseded
+by this note and left in place as the record of what was believed when.
+The iid failure rate of the degenerate screen is 40.4% under the
+inherited implementation (the earlier 25% was measured with the
+mis-paired one). (x) The melt criterion silently widened the frozen
+"inside the random tail band" by 10% each way; it is now the strict
+band. No archived melt verdict changes — all three bipartite first
+samples lie strictly inside their bands.
 
 ## 7. What this can and cannot answer
 
