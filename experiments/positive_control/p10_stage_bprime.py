@@ -106,6 +106,23 @@ B0PRIME_SAMPLES = 20
 #: seeds 40009-40068, and all documented earlier ranges).
 SEEDFIX_SCORE_SEED_BASE = {600: 41000, 900: 41020, 1200: 41040}
 
+#: Round eight: the frozen instrument ITSELF derives seed+3 (margin),
+#: seed+5 (split), seed+9 (truth scorer), seed+61 (null shuffle) and
+#: seed+100 (fit learning) from every chain seed, so consecutive chain
+#: seeds share derived streams across rows no matter what the external
+#: scorers do -- e.g. chain seed 40000's margin stream (40003) IS chain
+#: seed 40003's primary stream. The internal offsets are frozen with
+#: the instrument (one pipeline definition, never re-implemented), so
+#: the allocation fix is SPACING: stride 200 gives every row the
+#: private window [s, s+199], every derived stream stays inside its own
+#: row's window, and the spaced scorer seed s+150 does too. New chain
+#: seeds mean new samples: the spaced arm is a REPLICATION of the B'0
+#: design under a corrected allocation, not a replay.
+SPACED_CHAIN_SEED_BASE = {600: 43000, 900: 47000, 1200: 51000}
+SPACED_STRIDE = 200
+SPACED_SCORE_OFFSET = 150
+INSTRUMENT_DERIVED_OFFSETS = (0, 3, 5, 9, 61, 100)
+
 
 def margin_restricted_order_error(
     estimated, reference_x, delta: float,
@@ -946,11 +963,265 @@ def run_seedfix_rescore(output_dir: Path) -> None:
                       "replay_check": summary["replay_check"]}, indent=2))
 
 
+def _spaced_seed(n: int, k: int) -> int:
+    return SPACED_CHAIN_SEED_BASE[n] + SPACED_STRIDE * k
+
+
+def _spaced_window_map() -> dict:
+    """Every row's private seed window, with the disjointness computed
+    rather than asserted: all instrument-derived offsets and the scorer
+    offset lie inside the stride, and the 60 windows are pairwise
+    disjoint and clear of every earlier namespace."""
+
+    windows = sorted(
+        _spaced_seed(n, k)
+        for n in LADDER for k in range(B0PRIME_SAMPLES)
+    )
+    pairwise_disjoint = all(
+        b - a >= SPACED_STRIDE
+        for a, b in zip(windows, windows[1:], strict=False)
+    )
+    return {
+        "stride": SPACED_STRIDE,
+        "instrument_derived_offsets": list(INSTRUMENT_DERIVED_OFFSETS),
+        "score_offset": SPACED_SCORE_OFFSET,
+        "offsets_inside_stride": bool(
+            max(*INSTRUMENT_DERIVED_OFFSETS, SPACED_SCORE_OFFSET)
+            < SPACED_STRIDE
+        ),
+        "window_span": [min(windows), max(windows) + SPACED_STRIDE - 1],
+        "pairwise_disjoint": bool(pairwise_disjoint),
+    }
+
+
+def run_spaced_replication(output_dir: Path) -> None:
+    """POST-HOC, review round eight: full derived-seed separation.
+
+    Fresh fits at stride-200 chain seeds -- every stream the instrument
+    derives (targets, margin, split, truth scorer, null shuffle, fit
+    learning) and the external scorer live inside their own row's
+    private window, so the bootstrap's independent-replicate basis
+    holds by construction, with no exception to argue away. New seeds
+    mean new samples: this is a REPLICATION of the B'0 design under a
+    corrected allocation, and agreement means directions and verdicts,
+    not digits. Labelled post hoc; the frozen record stands as run.
+    """
+
+    n_bins = len(FINE_BIN_EDGES) - 1
+    rows = []
+    fine: dict = {n: [] for n in LADDER}
+    for n in LADDER:
+        for k in range(B0PRIME_SAMPLES):
+            s = _spaced_seed(n, k)
+            pi = np.random.default_rng(s).permutation(n)
+            causal, times, coords = order_inputs(pi)
+            row, coords_fit, targets = analyze_order(
+                causal, times, coords, seed=s, want_truth=True,
+                return_fit=True,
+            )
+            out = {"n": float(n), "sample_index": float(k),
+                   "chain_seed": float(s),
+                   "score_seed": float(s + SPACED_SCORE_OFFSET),
+                   "code_version": _diag_code_version(),
+                   "status": row.get("status")}
+            if row.get("status") == "ok":
+                true_x = coords[targets] / float(n)
+                # the instrument's internal truth scoring at s+9 is
+                # inside this row's private window: collision-free as
+                # produced, no re-scoring needed
+                out["truth"] = row["truth"]
+                restricted, n_eligible = margin_restricted_order_error(
+                    coords_fit, true_x, DELTA_MARGIN,
+                    num_pair_comparisons=BPRIME_COMPARISONS,
+                    seed=s + SPACED_SCORE_OFFSET,
+                )
+                out["restricted"] = restricted
+                out["eligible"] = float(n_eligible)
+                out["eligible_floor_met"] = bool(n_eligible >= MIN_ELIGIBLE)
+                errors, _counts = margin_binned_order_error(
+                    coords_fit, true_x,
+                    num_pair_comparisons=BPRIME_COMPARISONS,
+                    seed=s + SPACED_SCORE_OFFSET,
+                )
+                finite = [e for e in errors if not np.isnan(e)]
+                out["mix_matched"] = (
+                    float(np.mean(errors))
+                    if len(finite) == len(errors) else float("nan")
+                )
+                fine[n].append(fine_binned_order_error(
+                    coords_fit, true_x,
+                    num_pair_comparisons=BPRIME_COMPARISONS,
+                    seed=s + SPACED_SCORE_OFFSET,
+                ))
+            rows.append(out)
+        done = [r for r in rows if r["n"] == n and r["status"] == "ok"]
+        print(f"spaced n={n}: {len(done)}/{B0PRIME_SAMPLES} ok | "
+              f"median restricted "
+              f"{np.median([r['restricted'] for r in done]):.4f}",
+              flush=True)
+    write_rows_csv(output_dir / "p10_bprime_spaced.csv", rows)
+
+    ok = [r for r in rows if r["status"] == "ok"]
+    summary: dict = {
+        "code_version": _diag_code_version(),
+        "window_map": _spaced_window_map(),
+        "delta_margin": DELTA_MARGIN,
+        "per_n": {}, "gate": {}, "mix_matched": {}, "curve": {},
+    }
+    for n in LADDER:
+        sub = [r for r in ok if r["n"] == n]
+        entry: dict = {"n_ok": len(sub)}
+        for quantity in ("restricted", "truth"):
+            vals = [r[quantity] for r in sub]
+            rng = np.random.default_rng(
+                _stable_seed("spaced", quantity, n)
+            )
+            boots = np.median(np.asarray(vals)[
+                rng.integers(0, len(vals), size=(4000, len(vals)))
+            ], axis=1) if vals else np.array([])
+            entry[f"median_{quantity}"] = (
+                float(np.median(vals)) if vals else None
+            )
+            entry[f"ci_{quantity}"] = [
+                float(np.percentile(boots, 2.5)),
+                float(np.percentile(boots, 97.5)),
+            ] if vals else [None, None]
+        entry["min_eligible"] = (
+            int(min(r["eligible"] for r in sub)) if sub else None
+        )
+        summary["per_n"][str(n)] = entry
+
+    floors = all(r["eligible_floor_met"] for r in ok)
+    drop, ci = _difference_ci(
+        [r["restricted"] for r in ok if r["n"] == LADDER[-1]],
+        [r["restricted"] for r in ok if r["n"] == LADDER[0]],
+        seed=_stable_seed("spaced-drop"),
+    )
+    tdrop, tci = _difference_ci(
+        [r["truth"] for r in ok if r["n"] == LADDER[-1]],
+        [r["truth"] for r in ok if r["n"] == LADDER[0]],
+        seed=_stable_seed("spaced-truthdrop"),
+    )
+    summary["gate"] = {
+        "top_minus_bottom_restricted": {"diff": drop, "ci": list(ci)},
+        "top_minus_bottom_truth_unrestricted": {
+            "diff": tdrop, "ci": list(tci),
+        },
+        "all_floors_met": bool(floors),
+        "yardstick_falls_restricted": bprime_gate_verdict(
+            {n: sum(1 for r in ok if r["n"] == n) for n in LADDER},
+            floors, drop, tuple(ci),
+        ),
+    }
+    mdrop, mci = _difference_ci(
+        [r["mix_matched"] for r in ok if r["n"] == LADDER[-1]],
+        [r["mix_matched"] for r in ok if r["n"] == LADDER[0]],
+        seed=_stable_seed("spaced-mixdrop"),
+    )
+    summary["mix_matched"] = {
+        "top_minus_bottom": {"diff": mdrop, "ci": list(mci)},
+        "rise_survives": bool(
+            mdrop is not None and mci[0] is not None and mci[0] > 0.0
+        ),
+    }
+
+    curves: dict = {}
+    curve_entry: dict = {}
+    for n in LADDER:
+        medians, cis = [], []
+        for b in range(n_bins):
+            vals = np.array([
+                e[b] for e, *_ in fine[n] if not np.isnan(e[b])
+            ])
+            rng = np.random.default_rng(_stable_seed("spaced-curve", n, b))
+            boots = np.median(vals[
+                rng.integers(0, vals.size, size=(4000, vals.size))
+            ], axis=1) if vals.size else np.array([])
+            medians.append(float(np.median(vals)) if vals.size else None)
+            cis.append([
+                float(np.percentile(boots, 2.5)),
+                float(np.percentile(boots, 97.5)),
+            ] if vals.size else [None, None])
+        curves[n] = (medians, cis)
+        curve_entry[str(n)] = {
+            "pooled_total_by_bin": [
+                int(sum(c[b] for _, c, *_ in fine[n]))
+                for b in range(n_bins)
+            ],
+            "pooled_discordant_by_bin": [
+                int(sum(d[b] for _, _, _, d, _ in fine[n]))
+                for b in range(n_bins)
+            ],
+        }
+    above, separated = [], []
+    for b in range(n_bins):
+        m600, ci600 = curves[600][0][b], curves[600][1][b]
+        m1200, ci1200 = curves[1200][0][b], curves[1200][1][b]
+        if m600 is None or m1200 is None:
+            continue
+        above.append(bool(m1200 > m600))
+        separated.append(bool(ci1200[0] > ci600[1]))
+    curve_entry["pointwise_1200_vs_600"] = {
+        "bins_compared": len(above),
+        "bins_where_1200_above_600": int(sum(above)),
+        "bins_ci_separated": int(sum(separated)),
+    }
+    curve_entry["high_edge"] = HIGH_EDGE
+    curve_entry["last_bin"] = {
+        str(n): {
+            "total": int(sum(c[-1] for _, c, *_ in fine[n])),
+            "discordant": int(sum(d[-1] for _, _, _, d, _ in fine[n])),
+        } for n in LADDER
+    }
+    summary["curve"] = curve_entry
+
+    frozen_dir = (Path(__file__).resolve().parents[2]
+                  / "docs" / "prereg" / "frozen" / "p10_stage_bprime")
+    try:
+        frozen = json.loads(
+            (frozen_dir / "p10_bprime0_summary.json").read_text(
+                encoding="utf-8")
+        )
+        fr = frozen["top_minus_bottom"]["truth_restricted"]
+        ft = frozen["top_minus_bottom"]["truth"]
+        summary["comparison_to_frozen"] = {
+            "frozen_restricted": fr, "frozen_truth": ft,
+            "restricted_sign_replicates": bool(
+                drop is not None and fr["diff"] is not None
+                and (drop > 0) == (fr["diff"] > 0)
+            ),
+            "truth_sign_replicates": bool(
+                tdrop is not None and ft["diff"] is not None
+                and (tdrop > 0) == (ft["diff"] > 0)
+            ),
+        }
+    except OSError:
+        summary["comparison_to_frozen"] = None
+
+    def _de_nan(obj):
+        if isinstance(obj, float) and np.isnan(obj):
+            return None
+        if isinstance(obj, dict):
+            return {key: _de_nan(val) for key, val in obj.items()}
+        if isinstance(obj, list):
+            return [_de_nan(val) for val in obj]
+        return obj
+
+    summary = _de_nan(summary)
+    (output_dir / "p10_bprime_spaced_summary.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"window_map": summary["window_map"],
+                      "gate": summary["gate"],
+                      "mix_matched": summary["mix_matched"],
+                      "comparison_to_frozen":
+                          summary["comparison_to_frozen"]}, indent=2))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage",
                         choices=["b0", "b1", "diagnostic", "curve",
-                                 "seedfix"],
+                                 "seedfix", "spaced"],
                         default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
@@ -964,6 +1235,8 @@ def main() -> None:
         run_margin_curve_diagnostic(args.output_dir)
     elif args.stage == "seedfix":
         run_seedfix_rescore(args.output_dir)
+    elif args.stage == "spaced":
+        run_spaced_replication(args.output_dir)
     elif args.stage == "b1":
         raise SystemExit(
             "B'1 is gated on the frozen B'0 record (prereg Section 9) and "

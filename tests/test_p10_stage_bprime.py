@@ -24,8 +24,13 @@ from p10_stage_bprime import (  # noqa: E402
     DELTA_MARGIN,
     FINE_BIN_EDGES,
     HIGH_EDGE,
+    INSTRUMENT_DERIVED_OFFSETS,
     SEEDFIX_SCORE_SEED_BASE,
+    SPACED_SCORE_OFFSET,
+    SPACED_STRIDE,
     _seed_collision_map,
+    _spaced_seed,
+    _spaced_window_map,
     bprime_gate_verdict,
     margin_restricted_order_error,
 )
@@ -170,3 +175,31 @@ def test_the_high_edge_is_the_actual_bin_edge_not_a_rounded_literal():
 
     assert HIGH_EDGE == FINE_BIN_EDGES[11]
     assert abs(HIGH_EDGE - 0.4784) < 1e-12
+
+
+def test_the_spaced_windows_are_private_and_fresh():
+    """Round eight: every stream the instrument derives (offsets 0, 3,
+    5, 9, 61, 100) and the spaced scorer (+150) must live inside its
+    own row's stride-200 window; the 60 windows must be pairwise
+    disjoint and clear of every namespace ever used, including the
+    B'0 spans and the seedfix namespace."""
+
+    diag = _spaced_window_map()
+    assert diag["pairwise_disjoint"]
+    assert diag["offsets_inside_stride"]
+    assert max(INSTRUMENT_DERIVED_OFFSETS) < SPACED_SCORE_OFFSET
+    assert SPACED_SCORE_OFFSET < SPACED_STRIDE
+    assert SPACED_SCORE_OFFSET not in INSTRUMENT_DERIVED_OFFSETS
+
+    used = (set(range(0, 10)) | set(range(100, 120)) | set(range(400, 420))
+            | set(range(500, 520)) | set(range(820, 960))
+            | set(range(1000, 1020)) | set(range(1100, 1160))
+            | set(range(9001, 9060)) | set(range(30000, 30380))
+            | set(range(40000, 40169)) | set(range(41000, 41060)))
+    spaced_all = {
+        _spaced_seed(n, k) + off
+        for n in B0PRIME_SEED_BASE
+        for k in range(20)
+        for off in (*INSTRUMENT_DERIVED_OFFSETS, SPACED_SCORE_OFFSET)
+    }
+    assert not (spaced_all & used)
