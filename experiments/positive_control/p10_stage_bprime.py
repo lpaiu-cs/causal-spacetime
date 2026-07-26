@@ -525,7 +525,7 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
     if star is not None:
         totals_600_above_star = 0
         wrong_600_above_star = 0
-        for _, c, _, d, dm in per_sample[600]:
+        for _, c, _, _d, dm in per_sample[600]:
             for b in range(n_bins):
                 if FINE_BIN_EDGES[b + 1] <= star:
                     continue
