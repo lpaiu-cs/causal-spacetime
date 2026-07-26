@@ -966,7 +966,11 @@ The seedfix stage (`--stage seedfix`, regression-pinned collision map)
 replays the same 60 fits and re-scores **every published B' quantity**
 under both namespaces — the original (an exact replay check) and a
 disjoint one, 41000-41059, fresh against everything including
-ourselves. Frozen artifacts:
+ourselves. *(Corrected on seventh review: the first seedfix run copied
+the unrestricted truth from the instrument's own output — which is
+scored internally at `seed + 9`, the same colliding stream — so
+exactly one published quantity had escaped this sweep while this
+paragraph said "every". Re-scored in 9.12.)* Frozen artifacts:
 `docs/prereg/frozen/p10_stage_bprime/p10_bprime_seedfix.csv` and
 `_summary.json` (stamp `b5b0af5`). Replay: the old-namespace medians
 reproduce the frozen B'0 summary to 0.0 and the pooled curve counts
@@ -1000,4 +1004,35 @@ hoc, labelled; the frozen record stands as run, the gate stays
 failed-as-frozen, and the terminal mechanism claim of 9.10 is
 unchanged — now measured to be robust to the scorer-seed namespace,
 rather than argued to be.
+
+### 9.12 Seventh round: the unrestricted arm, the one quantity the
+sweep had missed (2026-07-27)
+
+Review caught 9.11 doing what it had just corrected others for: the
+first seedfix run copied `row["truth"]` from the instrument — which
+scores truth INTERNALLY at `seed + 9`, the same colliding stream — so
+the unrestricted arm (the Stage A replication reading) was the one
+published quantity outside the robustness sweep, under a paragraph
+saying "every". Conceded; the run now re-scores it under both
+namespaces, with an in-run assertion that the old-namespace
+recomputation equals the instrument's own output bit for bit (it
+does; and the old truth medians reproduce the frozen B'0 summary to
+0.0). Artifacts refrozen at stamp `702f4a5`; the disjointness test now
+also clears the instrument's other derived windows (`seed + 100` fit
+learning).
+
+| unrestricted (8,000-comparison budget) | old | clean |
+|---|---|---|
+| median truth 600 / 900 / 1200 | 0.1462 / 0.1367 / 0.1703 | 0.1513 / 0.1369 / 0.1676 |
+| top-minus-bottom | +0.0241 [+0.0051, +0.0461] | +0.0163 [+0.0069, +0.0404] |
+
+The ordering (1200 > 600 > 900, the Stage A shape) and the
+top-minus-bottom sign with an all-positive CI hold in both namespaces.
+The point estimate moves by 0.008 and the row-level maxima of
+|clean − old| are 0.010-0.016 — three to four times the restricted
+quantities' shifts, exactly as the 8,000-comparison budget predicts
+(per-row pair-selection SE ~ 0.004 against the restricted scorers'
+~ 0.002): the unrestricted arm is the noisiest published quantity, and
+its namespace sensitivity is pair-sampling noise at that budget, with
+no direction or verdict change anywhere.
 
