@@ -1,157 +1,6 @@
 {
-  "code_version": "c43bdfe",
-  "per_n": {
-    "600": {
-      "E": {
-        "n_ok": 20,
-        "n_total": 20,
-        "median_heldout": 0.040625,
-        "ci_heldout": [
-          0.034375,
-          0.04375
-        ],
-        "median_null_gap": 0.20875,
-        "ci_null_gap": [
-          0.17562499999999998,
-          0.231875
-        ],
-        "median_truth": 0.13796940138789537,
-        "ci_truth": [
-          0.13085525963908856,
-          0.15112979827476475
-        ],
-        "median_G": 1.0,
-        "ci_G": [
-          1.0,
-          1.0
-        ]
-      },
-      "S": {
-        "n_ok": 20,
-        "n_total": 20,
-        "median_heldout": 0.038125,
-        "ci_heldout": [
-          0.033125,
-          0.045
-        ],
-        "median_null_gap": 0.2175,
-        "ci_null_gap": [
-          0.1925,
-          0.253125
-        ],
-        "median_truth": 0.1487782560734347,
-        "ci_truth": [
-          0.13782768053226577,
-          0.1697963528400585
-        ],
-        "median_G": 1.0,
-        "ci_G": [
-          0.994470619028923,
-          1.0
-        ]
-      }
-    },
-    "900": {
-      "E": {
-        "n_ok": 20,
-        "n_total": 20,
-        "median_heldout": 0.040625,
-        "ci_heldout": [
-          0.03375,
-          0.04875
-        ],
-        "median_null_gap": 0.235,
-        "ci_null_gap": [
-          0.20625,
-          0.248125
-        ],
-        "median_truth": 0.15725789929509496,
-        "ci_truth": [
-          0.1332189143114949,
-          0.1677474949493979
-        ],
-        "median_G": 1.0,
-        "ci_G": [
-          0.9875,
-          1.0
-        ]
-      },
-      "S": {
-        "n_ok": 20,
-        "n_total": 20,
-        "median_heldout": 0.038125,
-        "ci_heldout": [
-          0.0275,
-          0.044375
-        ],
-        "median_null_gap": 0.231875,
-        "ci_null_gap": [
-          0.208125,
-          0.23812500000000003
-        ],
-        "median_truth": 0.15200128090505294,
-        "ci_truth": [
-          0.14045087827755565,
-          0.16724815496961515
-        ],
-        "median_G": 1.0,
-        "ci_G": [
-          1.0,
-          1.0
-        ]
-      }
-    },
-    "1200": {
-      "E": {
-        "n_ok": 20,
-        "n_total": 20,
-        "median_heldout": 0.036250000000000004,
-        "ci_heldout": [
-          0.0325,
-          0.04125
-        ],
-        "median_null_gap": 0.24437499999999998,
-        "ci_null_gap": [
-          0.196875,
-          0.26937500000000003
-        ],
-        "median_truth": 0.16881399732606883,
-        "ci_truth": [
-          0.15454503796805447,
-          0.2043101015976712
-        ],
-        "median_G": 1.0,
-        "ci_G": [
-          0.9678693480546793,
-          1.0
-        ]
-      },
-      "S": {
-        "n_ok": 20,
-        "n_total": 20,
-        "median_heldout": 0.041874999999999996,
-        "ci_heldout": [
-          0.03375,
-          0.04875
-        ],
-        "median_null_gap": 0.22812500000000002,
-        "ci_null_gap": [
-          0.196875,
-          0.25375000000000003
-        ],
-        "median_truth": 0.16130301146567205,
-        "ci_truth": [
-          0.15051030944419302,
-          0.1798890121520182
-        ],
-        "median_G": 1.0,
-        "ci_G": [
-          0.98125,
-          1.0
-        ]
-      }
-    }
-  },
+  "code_version": "233d8e8",
+  "reading_convention": "per_n_screened applies the frozen prereg-6c mixing screen (failing chains excluded; a rung with no surviving chain is null) and is the PRIMARY reading. per_n_pooled ignores the screen and is secondary, kept because the screen itself is documented as degenerate at m = 10 (prereg 6d). Differences are median(E) - median(S) with bootstrap CIs; a CI covering zero is a failure to detect, never equivalence.",
   "chains": [
     {
       "n": 600,
@@ -201,5 +50,436 @@
       "first_sample_in_random_band": true,
       "acceptance": 0.9910383333333334
     }
-  ]
+  ],
+  "per_n_screened": {
+    "600": {
+      "E": {
+        "n_ok": 10,
+        "n_total": 10,
+        "median_heldout": 0.040625,
+        "ci_heldout": [
+          0.0275,
+          0.04375
+        ],
+        "median_null_gap": 0.20124999999999998,
+        "ci_null_gap": [
+          0.173125,
+          0.23
+        ],
+        "median_truth": 0.14362137141597986,
+        "ci_truth": [
+          0.1321051829322453,
+          0.17113212503283426
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.9967999472156241,
+          1.0
+        ]
+      },
+      "S": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.038125,
+        "ci_heldout": [
+          0.033125,
+          0.045
+        ],
+        "median_null_gap": 0.2175,
+        "ci_null_gap": [
+          0.1925,
+          0.253125
+        ],
+        "median_truth": 0.1487782560734347,
+        "ci_truth": [
+          0.13732948583420776,
+          0.1697963528400585
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.994470619028923,
+          1.0
+        ]
+      },
+      "E_minus_S_heldout": {
+        "diff": 0.0025000000000000022,
+        "ci": [
+          -0.0125,
+          0.009999999999999995
+        ]
+      },
+      "E_minus_S_truth": {
+        "diff": -0.005156884657454841,
+        "ci": [
+          -0.030318936917339723,
+          0.024151730016806733
+        ]
+      },
+      "E_minus_S_G": {
+        "diff": 0.0,
+        "ci": [
+          -0.003200052784375851,
+          0.005529380971077025
+        ]
+      }
+    },
+    "900": {
+      "E": {
+        "n_ok": 10,
+        "n_total": 10,
+        "median_heldout": 0.039375,
+        "ci_heldout": [
+          0.027500000000000004,
+          0.0525
+        ],
+        "median_null_gap": 0.226875,
+        "ci_null_gap": [
+          0.19937499999999997,
+          0.25625
+        ],
+        "median_truth": 0.13992218234114906,
+        "ci_truth": [
+          0.11217906517445687,
+          0.177958327873149
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.9750000000000001,
+          1.0
+        ]
+      },
+      "S": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.038125,
+        "ci_heldout": [
+          0.0275,
+          0.044375
+        ],
+        "median_null_gap": 0.231875,
+        "ci_null_gap": [
+          0.208125,
+          0.23812500000000003
+        ],
+        "median_truth": 0.15200128090505294,
+        "ci_truth": [
+          0.14045087827755565,
+          0.16802769861410943
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          1.0,
+          1.0
+        ]
+      },
+      "E_minus_S_heldout": {
+        "diff": 0.0012500000000000011,
+        "ci": [
+          -0.009999999999999995,
+          0.017499999999999995
+        ]
+      },
+      "E_minus_S_truth": {
+        "diff": -0.012079098563903878,
+        "ci": [
+          -0.04484752167609754,
+          0.031065288040211747
+        ]
+      },
+      "E_minus_S_G": {
+        "diff": 0.0,
+        "ci": [
+          -0.02499999999999991,
+          0.0
+        ]
+      }
+    },
+    "1200": {
+      "E": {
+        "n_ok": 0,
+        "n_total": 0,
+        "note": "no chain survives the frozen mixing screen; this rung is null in the primary reading",
+        "median_heldout": NaN,
+        "ci_heldout": [
+          NaN,
+          NaN
+        ],
+        "median_null_gap": NaN,
+        "ci_null_gap": [
+          NaN,
+          NaN
+        ],
+        "median_truth": NaN,
+        "ci_truth": [
+          NaN,
+          NaN
+        ],
+        "median_G": NaN,
+        "ci_G": [
+          NaN,
+          NaN
+        ]
+      },
+      "S": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.041874999999999996,
+        "ci_heldout": [
+          0.03375,
+          0.04875
+        ],
+        "median_null_gap": 0.22812500000000002,
+        "ci_null_gap": [
+          0.196875,
+          0.25375000000000003
+        ],
+        "median_truth": 0.16130301146567205,
+        "ci_truth": [
+          0.1500327868852459,
+          0.1798890121520182
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.98125,
+          1.0
+        ]
+      },
+      "E_minus_S_heldout": {
+        "diff": NaN,
+        "ci": [
+          NaN,
+          NaN
+        ]
+      },
+      "E_minus_S_truth": {
+        "diff": NaN,
+        "ci": [
+          NaN,
+          NaN
+        ]
+      },
+      "E_minus_S_G": {
+        "diff": NaN,
+        "ci": [
+          NaN,
+          NaN
+        ]
+      }
+    }
+  },
+  "per_n_pooled": {
+    "600": {
+      "E": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.040625,
+        "ci_heldout": [
+          0.034375,
+          0.04375
+        ],
+        "median_null_gap": 0.20875,
+        "ci_null_gap": [
+          0.17562499999999998,
+          0.231875
+        ],
+        "median_truth": 0.13796940138789537,
+        "ci_truth": [
+          0.13085525963908856,
+          0.15112979827476475
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          1.0,
+          1.0
+        ]
+      },
+      "S": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.038125,
+        "ci_heldout": [
+          0.033125,
+          0.045
+        ],
+        "median_null_gap": 0.2175,
+        "ci_null_gap": [
+          0.1925,
+          0.253125
+        ],
+        "median_truth": 0.1487782560734347,
+        "ci_truth": [
+          0.13782768053226577,
+          0.1697963528400585
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.994470619028923,
+          1.0
+        ]
+      },
+      "E_minus_S_heldout": {
+        "diff": 0.0025000000000000022,
+        "ci": [
+          -0.006249999999999999,
+          0.009999999999999995
+        ]
+      },
+      "E_minus_S_truth": {
+        "diff": -0.010808854685539326,
+        "ci": [
+          -0.03241188509078824,
+          0.009036168285104413
+        ]
+      },
+      "E_minus_S_G": {
+        "diff": 0.0,
+        "ci": [
+          0.0,
+          0.005529380971077025
+        ]
+      }
+    },
+    "900": {
+      "E": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.040625,
+        "ci_heldout": [
+          0.03375,
+          0.04875
+        ],
+        "median_null_gap": 0.235,
+        "ci_null_gap": [
+          0.20625,
+          0.248125
+        ],
+        "median_truth": 0.15725789929509496,
+        "ci_truth": [
+          0.1332189143114949,
+          0.1677474949493979
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.99375,
+          1.0
+        ]
+      },
+      "S": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.038125,
+        "ci_heldout": [
+          0.0275,
+          0.044375
+        ],
+        "median_null_gap": 0.231875,
+        "ci_null_gap": [
+          0.208125,
+          0.23812500000000003
+        ],
+        "median_truth": 0.15200128090505294,
+        "ci_truth": [
+          0.14045087827755565,
+          0.16724815496961515
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          1.0,
+          1.0
+        ]
+      },
+      "E_minus_S_heldout": {
+        "diff": 0.0025000000000000022,
+        "ci": [
+          -0.006874999999999992,
+          0.018125
+        ]
+      },
+      "E_minus_S_truth": {
+        "diff": 0.005256618390042017,
+        "ci": [
+          -0.022216726646651974,
+          0.02451465933716853
+        ]
+      },
+      "E_minus_S_G": {
+        "diff": 0.0,
+        "ci": [
+          -0.012499999999999956,
+          0.0
+        ]
+      }
+    },
+    "1200": {
+      "E": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.036250000000000004,
+        "ci_heldout": [
+          0.0325,
+          0.04125
+        ],
+        "median_null_gap": 0.24437499999999998,
+        "ci_null_gap": [
+          0.196875,
+          0.26937500000000003
+        ],
+        "median_truth": 0.16881399732606883,
+        "ci_truth": [
+          0.15454503796805447,
+          0.2043101015976712
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.9687061371169623,
+          1.0
+        ]
+      },
+      "S": {
+        "n_ok": 20,
+        "n_total": 20,
+        "median_heldout": 0.041874999999999996,
+        "ci_heldout": [
+          0.03375,
+          0.04875
+        ],
+        "median_null_gap": 0.22812500000000002,
+        "ci_null_gap": [
+          0.196875,
+          0.25375000000000003
+        ],
+        "median_truth": 0.16130301146567205,
+        "ci_truth": [
+          0.15051030944419302,
+          0.1798890121520182
+        ],
+        "median_G": 1.0,
+        "ci_G": [
+          0.98125,
+          1.0
+        ]
+      },
+      "E_minus_S_heldout": {
+        "diff": -0.005624999999999991,
+        "ci": [
+          -0.013749999999999998,
+          0.0049999999999999975
+        ]
+      },
+      "E_minus_S_truth": {
+        "diff": 0.007510985860396779,
+        "ci": [
+          -0.0192488845385896,
+          0.04610813726549226
+        ]
+      },
+      "E_minus_S_G": {
+        "diff": 0.0,
+        "ci": [
+          -0.031293862883037704,
+          0.018750000000000044
+        ]
+      }
+    }
+  }
 }

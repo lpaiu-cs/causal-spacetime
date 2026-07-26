@@ -162,6 +162,41 @@ def _median_and_bootstrap(values, seed, draws=4000):
     )
 
 
+def _stable_seed(*parts) -> int:
+    """Deterministic across interpreter processes.
+
+    ``hash()`` on anything containing a string is salted per process
+    (PYTHONHASHSEED), so seeding the bootstrap from it made the archived
+    confidence intervals unreproducible -- a review finding. CRC32 of the
+    joined label is stable everywhere.
+    """
+
+    import zlib
+
+    return zlib.crc32(":".join(str(p) for p in parts).encode("utf-8"))
+
+
+def _difference_ci(e_values, s_values, seed, draws=4000):
+    """Bootstrap CI on median(E) - median(S). Descriptive only: a CI
+    containing zero is a FAILURE TO DETECT a difference at this sample
+    size, not demonstrated equivalence -- equivalence would need a
+    prespecified margin, which Stage A deliberately does not have."""
+
+    e = np.asarray(e_values, dtype=float)
+    s = np.asarray(s_values, dtype=float)
+    if e.size == 0 or s.size == 0:
+        return float("nan"), (float("nan"), float("nan"))
+    rng = np.random.default_rng(seed)
+    diffs = (
+        np.median(e[rng.integers(0, e.size, size=(draws, e.size))], axis=1)
+        - np.median(s[rng.integers(0, s.size, size=(draws, s.size))], axis=1)
+    )
+    return float(np.median(e) - np.median(s)), (
+        float(np.percentile(diffs, 2.5)),
+        float(np.percentile(diffs, 97.5)),
+    )
+
+
 def aggregate(output_dir: Path) -> None:
     import csv
 
@@ -169,9 +204,24 @@ def aggregate(output_dir: Path) -> None:
     for path in sorted(output_dir.glob("p10_e_n*.csv")) + [output_dir / "p10_s.csv"]:
         if path.exists():
             rows.extend(csv.DictReader(path.open(encoding="utf-8")))
-    summary: dict = {"code_version": git_describe(), "per_n": {}, "chains": []}
+    summary: dict = {
+        "code_version": git_describe(),
+        "reading_convention": (
+            "per_n_screened applies the frozen prereg-6c mixing screen "
+            "(failing chains excluded; a rung with no surviving chain is "
+            "null) and is the PRIMARY reading. per_n_pooled ignores the "
+            "screen and is secondary, kept because the screen itself is "
+            "documented as degenerate at m = 10 (prereg 6d). Differences "
+            "are median(E) - median(S) with bootstrap CIs; a CI covering "
+            "zero is a failure to detect, never equivalence."
+        ),
+        "chains": [],
+        "per_n_screened": {},
+        "per_n_pooled": {},
+    }
 
     # mixing screen, reported per chain (prereg 6c)
+    screen_pass: dict = {}
     for n in LADDER:
         chains = {}
         for r in rows:
@@ -189,32 +239,57 @@ def aggregate(output_dir: Path) -> None:
                 band is not None
                 and band[0] * 0.9 <= n0s[0] <= band[1] * 1.1
             ) if start == "bipartite" else True
+            passed = bool(ess >= MIN_ESS)
+            screen_pass[(n, start)] = passed
             summary["chains"].append({
                 "n": n, "start": start, "ess_n0": round(ess, 1),
-                "ess_pass": bool(ess >= MIN_ESS),
+                "ess_pass": passed,
                 "first_sample_in_random_band": bool(melted),
                 "acceptance": float(chain_rows[0]["acceptance"]),
             })
 
-    for n in LADDER:
-        per_arm = {}
-        for arm in ("E", "S"):
-            ok = [
-                r for r in rows
-                if r["arm"] == arm and int(float(r["n"])) == n
-                and r.get("status") == "ok"
-            ]
-            entry = {"n_ok": len(ok), "n_total": sum(
-                1 for r in rows if r["arm"] == arm and int(float(r["n"])) == n
-            )}
-            for key in ("heldout", "null_gap", "truth", "G"):
-                med, ci = _median_and_bootstrap(
-                    [float(r[key]) for r in ok], seed=hash((n, arm, key)) % 2**31
+    def build_reading(apply_screen: bool) -> dict:
+        per_n: dict = {}
+        for n in LADDER:
+            per_arm: dict = {}
+            values: dict = {}
+            for arm in ("E", "S"):
+                candidates = [
+                    r for r in rows
+                    if r["arm"] == arm and int(float(r["n"])) == n
+                ]
+                if apply_screen and arm == "E":
+                    candidates = [
+                        r for r in candidates
+                        if screen_pass.get((n, r["start"]), False)
+                    ]
+                ok = [r for r in candidates if r.get("status") == "ok"]
+                entry = {"n_ok": len(ok), "n_total": len(candidates)}
+                if not ok:
+                    entry["note"] = (
+                        "no chain survives the frozen mixing screen; "
+                        "this rung is null in the primary reading"
+                    )
+                for key in ("heldout", "null_gap", "truth", "G"):
+                    med, ci = _median_and_bootstrap(
+                        [float(r[key]) for r in ok],
+                        seed=_stable_seed("median", apply_screen, n, arm, key),
+                    )
+                    entry[f"median_{key}"] = med
+                    entry[f"ci_{key}"] = ci
+                    values[(arm, key)] = [float(r[key]) for r in ok]
+                per_arm[arm] = entry
+            for key in ("heldout", "truth", "G"):
+                diff, ci = _difference_ci(
+                    values.get(("E", key), []), values.get(("S", key), []),
+                    seed=_stable_seed("diff", apply_screen, n, key),
                 )
-                entry[f"median_{key}"] = med
-                entry[f"ci_{key}"] = ci
-            per_arm[arm] = entry
-        summary["per_n"][str(n)] = per_arm
+                per_arm[f"E_minus_S_{key}"] = {"diff": diff, "ci": ci}
+            per_n[str(n)] = per_arm
+        return per_n
+
+    summary["per_n_screened"] = build_reading(apply_screen=True)
+    summary["per_n_pooled"] = build_reading(apply_screen=False)
 
     (output_dir / "p10_stage_a_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"

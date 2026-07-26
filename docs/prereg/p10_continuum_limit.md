@@ -1,13 +1,20 @@
 # P10: does the emergent geometry deepen toward a continuum?
 
-Status: **STAGE A COMPLETE** (2026-07-26). Headline: across N in
-{600, 900, 1200}, the continuum phase is statistically indistinguishable
-from genuine sprinklings through the frozen instrument -- 120/120 samples
-pass, E tracks S within CI at every size. Two design defects found by the
-data are owned in Section 6d: the ESS screen was degenerate at m = 10
-(voiding the N = 1200 rung under the frozen rule), and the instrument is
-scale-covariant at frozen constants, so this ladder tests indistinguishability
-under scaling, not resolution accumulation.
+Status: **STAGE A COMPLETE** (2026-07-26). Headline, primary reading
+(frozen mixing screen applied): at N = 600 and N = 900 the continuum
+phase shows **no detectable difference** from genuine sprinklings through
+the frozen instrument -- 120/120 samples pass the gates, and the E - S
+median-truth differences are -0.005 [-0.030, +0.024] and -0.012
+[-0.045, +0.031] -- while the N = 1200 rung is **null under the frozen
+rule** (both its chains fail the mixing screen; the pooled secondary
+reading at 1200 shows the same no-detectable-difference pattern,
++0.008 [-0.019, +0.046]). "No detectable difference" is a failure to
+detect at this sample size, NOT demonstrated equivalence: Stage A
+prespecified no equivalence margin, deliberately, and any equivalence
+claim is deferred to a Stage B with one. Two design defects found by
+the data are owned in Section 6d: the ESS screen was degenerate at
+m = 10, and the instrument is scale-covariant at frozen constants, so
+this ladder tests behaviour under scaling, not resolution accumulation.
 
 This is the first experiment of the post-T1 programme, and it is aimed at
 the programme's founding question rather than at the instrument. It is
@@ -188,31 +195,49 @@ Estimated cost from the measured rates: `2.2 / 4.4 / 6.1` hours of MCMC
 per `N` respectively (discriminator time negligible), run as six
 parallel chains.
 
-## 6d. Stage A outcome (factual record, 2026-07-26)
+## 6d. Stage A outcome (factual record, 2026-07-26; corrected same day
+after review — see the correction note at the end of this section)
 
 All six chains and the arm-S sweep ran to completion; **120/120 samples
 returned `status = ok` and every one of them passes the frozen gates**
-(`G >= 0.5`; minimum observed `G = 0.56`, on an arm-E sample at
-`N = 600`).
+(`G >= 0.5`). Minimum observed `G`: **0.5125, on an arm-S sample at
+`N = 900`** (the arm-E minimum is 0.5625, at `N = 600`).
 
-**Pooled reading** (all chains; median [95% bootstrap CI]):
+**Primary reading — the frozen mixing screen applied** (failing chains
+excluded per prereg 6c; the E column at each rung is what survives):
 
-| `N` | arm | heldout | truth | `G` |
+| `N` | arm E truth (surviving) | arm S truth | E − S diff [95% CI] |
+|---|---|---|---|
+| 600 | 0.1436 (10 samples) | 0.1488 | −0.005 [−0.030, +0.024] |
+| 900 | 0.1399 (10 samples) | 0.1520 | −0.012 [−0.045, +0.031] |
+| 1200 | **null — no chain survives** | 0.1613 | — |
+
+**Secondary reading — pooled, ignoring the screen** (kept only because
+the screen itself is documented below as degenerate; median [95% CI]):
+
+| `N` | arm | heldout | truth | E − S truth diff |
 |---|---|---|---|---|
-| 600 | S | 0.0381 [0.0331, 0.0450] | 0.1488 [0.1378, 0.1698] | 1.000 |
-| 600 | E | 0.0406 [0.0344, 0.0437] | 0.1380 [0.1309, 0.1511] | 1.000 |
-| 900 | S | 0.0381 [0.0275, 0.0444] | 0.1520 [0.1405, 0.1672] | 1.000 |
-| 900 | E | 0.0406 [0.0338, 0.0488] | 0.1573 [0.1332, 0.1677] | 1.000 |
-| 1200 | S | 0.0419 [0.0338, 0.0488] | 0.1613 [0.1505, 0.1799] | 1.000 |
-| 1200 | E | 0.0363 [0.0325, 0.0413] | 0.1688 [0.1545, 0.2043] | 1.000 |
+| 600 | S | 0.0381 [0.0331, 0.0450] | 0.1488 [0.1378, 0.1698] | |
+| 600 | E | 0.0406 [0.0344, 0.0437] | 0.1380 [0.1309, 0.1511] | −0.011 [−0.032, +0.009] |
+| 900 | S | 0.0381 [0.0275, 0.0444] | 0.1520 [0.1405, 0.1672] | |
+| 900 | E | 0.0406 [0.0338, 0.0488] | 0.1573 [0.1332, 0.1677] | +0.005 [−0.022, +0.025] |
+| 1200 | S | 0.0419 [0.0338, 0.0488] | 0.1613 [0.1505, 0.1799] | |
+| 1200 | E | 0.0363 [0.0325, 0.0413] | 0.1688 [0.1545, 0.2043] | +0.008 [−0.019, +0.046] |
 
-**Arm E is statistically indistinguishable from genuine sprinklings at
-every size measured** — the E and S intervals overlap on every
-observable at every rung, and the per-start medians agree within noise
-(the dual starts bracket each other at all three sizes). Of the three
-outcomes named in Section 2, the data sit on **"deepening" in its
-paired form**: no fading, no floor relative to the reference, over a
-factor of two in size and forty fresh ensemble samples.
+**What may be claimed, stated with its statistical character.** At every
+rung where the primary reading is defined, and at every rung of the
+secondary reading, the E − S difference CI covers zero: **no difference
+was detected** between the emergent phase and genuine sprinklings, at
+sample sizes able to detect a median-truth shift of roughly 0.03-0.05.
+That is a *failure to detect*, not equivalence — Stage A prespecified no
+equivalence margin (deliberately: a characterization stage has nothing
+to tune, and a margin chosen now would be chosen after seeing the
+spread). An equivalence claim needs a Stage B with a preregistered
+margin, exactly as P9 treated its no-improvement leg. Within that
+limit: of the outcomes named in Section 2, the data sit on the paired
+form of "deepening" — no fading and no floor relative to the reference
+was detected over a factor of two in size, on forty fresh ensemble
+samples, with the dual starts bracketing each other at every size.
 
 ### Two design defects, found by the data and owned here
 
@@ -225,21 +250,13 @@ fails **25% of the time** (measured: 20,000 iid trials, `P(ESS >= 10)
 `tau <= 1.45` — mild at worst; under a pure-iid null, 4-of-6 failures
 has `p ~ 0.04`, so some residual autocorrelation may be real but small).
 The rule as frozen — "a failing chain is reported and its samples
-excluded" — was applied, and its reading is:
-
-| `N` | screen-applied arm E | arm S |
-|---|---|---|
-| 600 | truth 0.1436 (10 samples) | 0.1488 |
-| 900 | truth 0.1399 (10 samples) | 0.1520 |
-| 1200 | **no chain survives** | 0.1613 |
-
-The conclusions above are unchanged where the screen-applied reading is
-defined, and the `N = 1200` rung is formally void under the frozen rule.
-The defect is the screen's design (P7's rule was transplanted from
-`m = 48`, where `ESS >= 20` is a real bar, to `m = 10`, where
-`ESS >= 10` is the degenerate ceiling), not the chains. A successor
-stage must retain enough samples per chain (`~48`) for the screen to
-mean something.
+excluded" — is now the **primary** reading above; the `N = 1200` rung is
+void under it, and the pooled table is retained as secondary only
+because the screen is defective in the way just quantified. The defect
+is the screen's design (P7's rule was transplanted from `m = 48`, where
+`ESS >= 20` is a real bar, to `m = 10`, where `ESS >= 10` is the
+degenerate ceiling), not the chains. A successor stage must retain
+enough samples per chain (`~48`) for the screen to mean something.
 
 **(2) The yardstick premise failed, informatively.** Section 2 assumed
 arm S's error would *fall* with `N` — "what converging looks like".
@@ -258,6 +275,25 @@ that is the concrete design input for any Stage B.
 Artifacts: `docs/prereg/frozen/p10_stage_a/` (six arm-E chain CSVs, the
 arm-S CSV, and the aggregator summary). Stage 0 and Stage A ran at
 commit `c43bdfe`; grid frozen in 6c before any chain ran.
+
+**Correction note (same day, after automated review of PR #23).** Four
+review findings were applied to this record; the measurement rows are
+untouched. (i) The first version of this section claimed "statistically
+indistinguishable" from overlapping marginal intervals — an equivalence
+claim that overlap cannot support. Rewritten as "no difference
+detected", with explicit E − S difference CIs and the failure-to-detect
+character stated. (ii) The first aggregator pooled all chains despite
+the frozen screen; the screen-applied reading is now computed by the
+code and is primary, with the `N = 1200` rung null. (iii) The
+aggregator's bootstrap seeds came from Python's per-process salted
+`hash()`, making the archived intervals unreproducible; seeds now come
+from CRC32 of fixed labels, verified identical across processes, and
+the frozen summary was regenerated accordingly (the earlier archived
+intervals differ in the third decimal at most). (iv) The minimum-`G`
+record misattributed the global minimum to arm E at `N = 600`
+(`0.5625`); the global minimum is `0.5125`, on an arm-S sample at
+`N = 900`. The gate-pass claim (120/120 above 0.5) was and remains
+true.
 
 ## 7. What this can and cannot answer
 
