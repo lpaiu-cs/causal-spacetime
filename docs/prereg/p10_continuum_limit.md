@@ -868,7 +868,13 @@ absoluteness:
    answered correctly at `N = 600` (and all 4,799 at `N = 900`);
    `N = 1200` errs there 15 times. No median is involved and no
    within-bin reweighting story survives an empirical error of exactly
-   zero across the whole sampled bin.
+   zero across the whole sampled bin. *(Corrected on fifth review:
+   "the whole sampled bin" is the pool's sampled support, not the bin —
+   the rungs sample different comparison sets, and the artifact records
+   different last-bin mean margins (0.9756 vs 1.0045). The zero is an
+   empirical pooled sample fact; it does not establish an
+   identically-zero response function over `[0.914, inf)`. Scoped
+   properly in 9.10.)*
 2. **Every tail bin's pooled rate rises 2.3-9.9x** from `N = 600` to
    `N = 1200`, on counts in the tens of thousands. Pooled comparisons
    share fits, so these are exact sample facts rather than fresh
@@ -893,5 +899,38 @@ thousands of sampled comparisons and `N = 1200` is not; and by 2-10x
 pooled-rate rises across the tail, with the pointwise CI separations of
 9.7 in the mid bins. What a mix-drift alternative would now require has
 no support in any recorded quantity and cannot operate at all in the
-last bin.
+last bin. *(Corrected on fifth review: "cannot operate at all"
+overstates — a reweighting account confined to within-bin regions
+unrepresented in the `N = 600` sample is not excluded by a
+sample-scoped zero. The terminal scoped form is 9.10.)*
+
+### 9.10 Fifth round: the zero-fact scoped to its sample (2026-07-27)
+
+Review pressed on 9.9's statement 1, and the point is right: the
+`N = 600` and `N = 1200` pools sample different target geometries and
+different comparisons, and the artifact itself records different
+last-bin mean margins (0.9756 versus 1.0045). Zero observed errors
+over the 3,871 comparisons the `N = 600` pool sampled is an empirical
+pooled sample result — it does not establish an identically-zero
+response function over `[0.914, inf)`, and a reweighting account in
+which the `N = 1200` errors sit in within-bin regions unrepresented in
+the `N = 600` sample is not excluded by it. "Cannot operate at all in
+the last bin" is withdrawn.
+
+Two recorded quantities bear on that account, both descriptive: the
+only measured within-bin location statistic, the mean margin, moves
+toward larger margins at `N = 1200` (0.9756 -> 1.0045) — recorded as
+description, since a mean does not localize mass; and the degradation
+is CI-separated per sample in six mid bins (9.7), where the claim is
+inferential rather than support-dependent.
+
+The mechanism claim in its terminal form, claiming nothing beyond
+sampled support: **the frozen gates failed as frozen; per-question
+accuracy in continuum units degrades with `N` — inferentially in the
+mid bins (9.7's bootstrap-separated pointwise rises), and as exact
+sample facts in the tail (pooled rates rising 2.3-9.9x on tens of
+thousands of counts; `N = 600` error-free over its 3,871 sampled
+last-bin comparisons while `N = 1200` errs 15 times in 11,184).**
+Each escalation of this review cycle has now been driven to a quantity
+that is exact over its stated scope, and to no claim beyond it.
 
