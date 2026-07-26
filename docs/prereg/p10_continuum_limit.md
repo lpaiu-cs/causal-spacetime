@@ -945,3 +945,59 @@ last-bin comparisons while `N = 1200` errs 15 times in 11,184).**
 Each escalation of this review cycle has now been driven to a quantity
 that is exact over its stated scope, and to no claim beyond it.
 
+### 9.11 Sixth round: the scorer-seed namespace collision, conceded
+and measured (2026-07-27)
+
+Review found a seed-hygiene violation in the B'0 design itself, and it
+is real: the derived scorer seeds `base + k + 9` sit inside the
+consecutive chain-seed spans, so **51 of the 60 scorer streams
+coincide with some sample's chain stream** (values 40009-40059 — e.g.
+40020 selects scoring pairs for `N = 600` sample 11 AND drives
+`N = 900` sample 0's chain; 40009 scores `N = 600` sample 0 and drives
+its sample 9). The freshness test checked derived seeds against every
+EARLIER range and never against the B'0 chain seeds themselves — the
+same class of hole as the B1 collision of Section 8, one level deeper.
+Rows entering the gate bootstrap as independent replicates therefore
+shared deterministic RNG streams. The fits are untouched by this: the
+chain seeds are mutually distinct, and the only colliding randomness
+is the scorer's pair SELECTION.
+
+The seedfix stage (`--stage seedfix`, regression-pinned collision map)
+replays the same 60 fits and re-scores **every published B' quantity**
+under both namespaces — the original (an exact replay check) and a
+disjoint one, 41000-41059, fresh against everything including
+ourselves. Frozen artifacts:
+`docs/prereg/frozen/p10_stage_bprime/p10_bprime_seedfix.csv` and
+`_summary.json` (stamp `b5b0af5`). Replay: the old-namespace medians
+reproduce the frozen B'0 summary to 0.0 and the pooled curve counts
+match the frozen artifact exactly, so the comparison is
+apples-to-apples. The results, old vs clean:
+
+| quantity | old namespace | clean namespace |
+|---|---|---|
+| gate: restricted top-minus-bottom | +0.0372 [+0.0091, +0.0630] | +0.0379 [+0.0097, +0.0624] |
+| gate verdict (falls) | NO (rise) | NO (rise) |
+| eligible floors | met (>= 16847) | met (>= 16847) |
+| 9.6 mix-matched rise | +0.0358 [+0.0125, +0.0589] | +0.0340 [+0.0129, +0.0577] |
+| 9.7 pointwise: bins 1200 above 600 | 14/16, 6 CI-separated | 14/16, 6 CI-separated |
+| 9.9 last bin, N = 600 | 0/3871 | 0/3967 |
+| 9.9 last bin, N = 900 | 0/4799 | 2/4749 |
+| 9.9 last bin, N = 1200 | 15/11184 | 28/11066 |
+
+Row-level maxima of |clean − old| are 0.0036 / 0.0044 / 0.0069
+(restricted, by rung) and at most 0.0044 (mix-matched) — the
+pair-sampling noise scale, an order below the between-sample spread
+that drives every interval. Every direction, verdict, and CI sign is
+unchanged; the pooled tail rates rise 2.5-19x under clean seeds
+(sparser top bins swing the ratio; the direction is identical).
+
+Owned rather than smoothed: under fresh pair draws `N = 900`'s last
+bin reads 2/4749 where the old draw read 0/4799 — a pooled zero is a
+sample fact that need not replicate, exactly as 9.10 scoped it; the
+`N = 600` zero DID replicate (0/3967), and `N = 1200`'s last-bin rate
+is ten times `N = 900`'s under the same clean namespace. Status: post
+hoc, labelled; the frozen record stands as run, the gate stays
+failed-as-frozen, and the terminal mechanism claim of 9.10 is
+unchanged — now measured to be robust to the scorer-seed namespace,
+rather than argued to be.
+
