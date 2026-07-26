@@ -188,9 +188,30 @@ def run_b0(output_dir: Path) -> None:
 #: gate is enforced here in code, the same way P8-B refuses to run
 #: without frozen constants -- a documented rule a CLI can bypass is not
 #: a rule.
-B0_FROZEN_SUMMARY = Path(
-    "docs/prereg/frozen/p10_stage_b/p10_b0_summary.json"
-)
+B0_FROZEN_DIR = Path("docs/prereg/frozen/p10_stage_b")
+B0_FROZEN_SUMMARY = B0_FROZEN_DIR / "p10_b0_summary.json"
+B0_FROZEN_CSV = B0_FROZEN_DIR / "p10_b0_yardstick.csv"
+
+
+def require_all_chains(present: set) -> None:
+    """All six preregistered chains, before any hypothesis is evaluated.
+
+    A run aggregated from random-start shards alone would auto-satisfy
+    the melt criterion (which needs the bipartite chain to test) and
+    report the frozen hypotheses from half the design, unable even to
+    detect start disagreement (review finding). Presence is required for
+    every (rung, start); whether a present chain *survives* is then the
+    screen's job -- the dual-start design demands both be run and
+    checked, not that both pass.
+    """
+
+    expected = {(n, start) for n in LADDER for start in STARTS}
+    missing = sorted(expected - present)
+    if missing:
+        raise SystemExit(
+            "B1 aggregation requires all six preregistered chains before "
+            f"any hypothesis is evaluated; missing: {missing}"
+        )
 
 
 def _require_b0_gate() -> None:
@@ -389,10 +410,15 @@ def aggregate(output_dir: Path) -> None:
 
     import csv as _csv
 
-    b0 = json.loads((output_dir / "p10_b0_summary.json").read_text(
-        encoding="utf-8"))
+    # The FROZEN B0 artifacts, not whatever sits in output_dir: the gate
+    # authorizes against the frozen record, so the hypotheses must be
+    # evaluated against the same pilot that passed it -- a stale or
+    # rerun output-directory copy would silently decouple the two
+    # (review finding).
+    require_all_chains(set(screen_pass))
+    b0 = json.loads(B0_FROZEN_SUMMARY.read_text(encoding="utf-8"))
     b0_rows = list(_csv.DictReader(
-        (output_dir / "p10_b0_yardstick.csv").open(encoding="utf-8")
+        B0_FROZEN_CSV.open(encoding="utf-8")
     ))
     e_truth_by_n: dict = {}
     s_truth_by_n: dict = {}

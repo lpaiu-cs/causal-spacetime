@@ -22,11 +22,14 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p10_stage_b import (  # noqa: E402
+    LADDER,
     SAMPLES_PER_CHAIN,
+    STARTS,
     TOST_MARGIN,
     _require_b0_gate,
     chain_is_complete,
     evaluate_frozen_hypotheses,
+    require_all_chains,
     scaled_constants,
 )
 
@@ -110,6 +113,20 @@ def test_a_shortened_chain_is_incomplete():
     assert not chain_is_complete(full[:-1])                # short
     flagged = full[:-1] + [{"chain_complete": "False"}]
     assert not chain_is_complete(flagged)                  # runner flagged it
+
+
+def test_random_start_shards_alone_cannot_reach_the_hypotheses():
+    """Aggregating three random-start chains would auto-satisfy the melt
+    criterion and evaluate the frozen hypotheses from half the design.
+    Presence of all six (rung, start) chains is required first; whether
+    a present chain survives is then the screen's job."""
+
+    all_six = {(n, s) for n in LADDER for s in STARTS}
+    require_all_chains(all_six)                       # complete: no exit
+    with pytest.raises(SystemExit, match="missing"):
+        require_all_chains({(n, "random") for n in LADDER})
+    with pytest.raises(SystemExit, match="1200"):
+        require_all_chains(all_six - {(1200, "bipartite")})
 
 
 def test_the_anchor_operating_point_is_the_frozen_instrument():
