@@ -824,3 +824,63 @@ prior freezes; and diagnostic stamps are now dirty-aware
 (`-dirty` suffix), so an uncommitted implementation can never again
 stamp a commit it is not in.
 
+### 9.9 Fourth round: both 9.8 arguments corrected, and the exact
+pooled analysis that replaces them (2026-07-27)
+
+Review corrected both of 9.8's arguments, and both corrections are
+right. The "drift bound" was not a bound — a mean-margin shift times a
+neighbour-bin slope bounds nothing, since equal means can hide mass
+reallocation and the neighbour slope is no Lipschitz constant; it is
+demoted to a labelled descriptive indicator. And a zero MEDIAN of
+per-sample rates does not mean zero discordance — concretely so: the
+pooled counts reveal 499 discordant comparisons at `N = 600` in the
+high-margin region whose bin medians read 0.0000. The 9.8 "zero bins"
+claim is withdrawn as stated.
+
+What replaces them is exact and assumption-free: **pooled discordant
+counts over every sampled comparison**, per rung per bin —
+
+| margin bin | N=600 | N=900 | N=1200 | rate ratio 1200/600 |
+|---|---|---|---|---|
+| [0.416, 0.478) | 772/36167 (.0213) | 754/36232 (.0208) | 1885/37905 (.0497) | 2.3x |
+| [0.478, 0.550) | 347/30786 (.0113) | 416/33377 (.0125) | 1114/34930 (.0319) | 2.8x |
+| [0.550, 0.637) | 121/26060 (.0046) | 189/28930 (.0065) | 538/32159 (.0167) | 3.6x |
+| [0.637, 0.747) | 26/20414 (.0013) | 46/23151 (.0020) | 200/27596 (.0072) | 5.7x |
+| [0.747, 0.914) | 5/13333 (.0004) | 17/15594 (.0011) | 84/22518 (.0037) | 9.9x |
+| **[0.914, inf)** | **0/3871** | **0/4799** | **15/11184** | — |
+
+Three statements now carry the mechanism claim, in decreasing order of
+absoluteness:
+
+1. **The last bin is a true zero-fact at the per-comparison level.**
+   Every one of the 3,871 sampled comparisons at margins `>= 0.914` was
+   answered correctly at `N = 600` (and all 4,799 at `N = 900`);
+   `N = 1200` errs there 15 times. No median is involved and no
+   within-bin reweighting story survives an empirical error of exactly
+   zero across the whole sampled bin.
+2. **Every tail bin's pooled rate rises 2.3-9.9x** from `N = 600` to
+   `N = 1200`, on counts in the tens of thousands. Pooled comparisons
+   share fits, so these are exact sample facts rather than fresh
+   inference — the inferential statements remain the per-sample
+   bootstrap results of 9.7.
+3. The within-bin mean-margin shifts (0.00001-0.00125) remain recorded
+   as a **descriptive indicator only**.
+
+Also recorded rather than hidden: the m* construction of the previous
+commit was uninformative as designed — `m* = 0.4792`, essentially the
+region edge, because `N = 600` errs near the edge too; the per-bin
+pooled table above supersedes it. Artifact regenerated at a commit
+containing its implementation (stamp `3a9edc3`, medians verified
+identical to the prior freeze), under the now-structural dirty-aware
+provenance rule.
+
+**The closure claim, in its final calibrated form.** The frozen gates
+failed as frozen (unchanged throughout). The mechanism reading is:
+per-question accuracy in continuum units degrades with `N` — exactly,
+at the highest margins, where `N = 600` is empirically error-free over
+thousands of sampled comparisons and `N = 1200` is not; and by 2-10x
+pooled-rate rises across the tail, with the pointwise CI separations of
+9.7 in the mid bins. What a mix-drift alternative would now require has
+no support in any recorded quantity and cannot operate at all in the
+last bin.
+
