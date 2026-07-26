@@ -494,25 +494,40 @@ chain runs and the frozen 8.3 hypotheses are not evaluated.** Artifacts:
 **What this is a finding about.** Two instrument families have now been
 tried against the same premise and both refuse it: frozen constants
 leave the sprinkled curve flat (Stage A — scale-covariance), and
-continuum-scaled constants make it rise (B0). The pattern has a
-candidate explanation worth recording, clearly labelled post hoc: the
-truth observable is *sign discordance over target pairs*, and densifying
-the target set shrinks typical pair separations at the same rate the
-chain resolution improves — the instrument asks proportionally harder
-ordering questions exactly as fast as it gets better at answering them,
-and the fixed fit-iteration budget (`STEPS = 1500`, unscaled in this
-family — a design gap this outcome exposed) plausibly supplies the
-rising remainder. On this reading the discriminator's truth error is
-**scale-referenced by construction**, and no constant-scaling of the
-present observable produces the falling yardstick the Section 2 table
-presupposes.
+continuum-scaled constants make it rise (B0). **Why it rises is not
+established.** A first version of this note offered a mechanism — that
+densifying targets shrinks typical pair separations, so the instrument
+asks harder questions as fast as it improves — and that mechanism is
+**wrong for this observable and is withdrawn**: the truth error samples
+comparison pairs *uniformly over all targets*
+(`embedding_distance_order_error`), so the typical separation of a
+sampled pair is set by the region, not by the target count, and does
+not shrink as targets densify (review finding). What survives as a
+candidate, still labelled post hoc and untested: the fit-optimization
+budget is unscaled in this family (`STEPS = 1500`, `RESTARTS = 5` fixed
+while free parameters and constraints double), so larger fits may
+simply be less converged. Distinguishing that from an intrinsic effect
+is a diagnostic for any successor stage, not something this record can
+assert.
 
-**What would, and what it would take.** A *scale-fixed* observable —
-e.g. discordance restricted to pairs whose true continuum separation
-exceeds a threshold held fixed across `N` — asks the same question at
-every size while the resolution improves, and is the natural candidate
-for a Stage B′. That is a new observable, so it requires its own design
-section with the same discipline (gate first on arm S, hypotheses
-frozen before any E chain), not a quiet swap inside this one. Whether
-to open Stage B′ is a programme decision, recorded here as the open
-question this stage ends on.
+**What would make the Section 2 table decidable, and what it would
+take.** A *scale-fixed* observable — e.g. discordance restricted to
+pairs whose true continuum separation exceeds a threshold held fixed
+across `N` — asks the same question at every size while the resolution
+improves. That motivation stands on its own construction and does not
+depend on the withdrawn mechanism. It is a new observable, so it
+requires its own design section with the same discipline (gate first on
+arm S, hypotheses frozen before any E chain), not a quiet swap inside
+this one; and its arm-S gate is a genuine test, since this stage has
+now twice failed to produce a falling yardstick by rescaling alone.
+Whether to open that Stage B′ is a programme decision, recorded here as
+the open question this stage ends on.
+
+*Correction note (2026-07-27, review round on PR #24).* (i) The
+mechanism paragraph above originally asserted "scale-referenced by
+construction" via the pair-separation argument; withdrawn as described
+— what is measured is flat-then-rising, and the explanation is open.
+(ii) The `--stage b1` path originally trusted the documentation to
+prevent post-gate runs; it now reads the frozen B0 record and refuses
+unless `yardstick_falls` is true, the same enforcement pattern as
+P8-B's constants guard.

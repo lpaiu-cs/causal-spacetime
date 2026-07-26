@@ -184,6 +184,31 @@ def run_b0(output_dir: Path) -> None:
     print(json.dumps(summary, indent=2))
 
 
+#: The authoritative B0 record. B1 is gated on it (prereg 8.2), and the
+#: gate is enforced here in code, the same way P8-B refuses to run
+#: without frozen constants -- a documented rule a CLI can bypass is not
+#: a rule.
+B0_FROZEN_SUMMARY = Path(
+    "docs/prereg/frozen/p10_stage_b/p10_b0_summary.json"
+)
+
+
+def _require_b0_gate() -> None:
+    if not B0_FROZEN_SUMMARY.exists():
+        raise SystemExit(
+            f"frozen B0 record not found at {B0_FROZEN_SUMMARY}; B1 may only "
+            "run after B0 has been run, frozen, and PASSED (prereg 8.2)"
+        )
+    record = json.loads(B0_FROZEN_SUMMARY.read_text(encoding="utf-8"))
+    if record.get("yardstick_falls") is not True:
+        raise SystemExit(
+            "the frozen B0 record says yardstick_falls = "
+            f"{record.get('yardstick_falls')!r}: the 8.2 gate FAILED, no B1 "
+            "chain may run, and Stage B is closed at 8.5. This refusal is "
+            "the preregistration operating, not an error."
+        )
+
+
 def run_b1_chain(n: int, start: str, output_dir: Path) -> None:
     seed = B1_CHAIN_SEEDS[(n, start)]
     eps = EPS_TIMES_N / n
@@ -302,6 +327,7 @@ def main() -> None:
     elif args.stage == "b1":
         if args.n is None or args.start is None:
             raise SystemExit("--stage b1 requires --n and --start")
+        _require_b0_gate()
         run_b1_chain(args.n, args.start, args.output_dir)
     else:
         raise SystemExit("choose --stage b0/--stage b1/--aggregate")
