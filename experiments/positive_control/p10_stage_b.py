@@ -236,14 +236,81 @@ def run_b1_chain(n: int, start: str, output_dir: Path) -> None:
     write_rows_csv(output_dir / f"p10_b1_n{n}_{start}.csv", rows)
 
 
+#: The frozen 8.3 equivalence margin: P2/P9's standing saturation
+#: tolerance, chosen a priori (see the prereg for the provenance).
+TOST_MARGIN = 0.05
+
+
+def evaluate_frozen_hypotheses(
+    e_truth_by_n: dict, s_truth_by_n: dict, seed_fn=_stable_seed
+) -> dict:
+    """The preregistered 8.3 decision block, as a pure function.
+
+    ``e_truth_by_n`` maps each rung to the surviving arm-E truth values,
+    ``s_truth_by_n`` to the B0 arm-S truth values. Kept side-effect-free
+    so the verdict logic is testable on synthetic data before any real
+    B1 run exists -- the P9 pattern, applied here because a review found
+    the first aggregator claimed to compute these verdicts and emitted a
+    stub instead.
+
+    * H-TRACK: at EVERY rung, the E - S median-difference 95% CI must
+      lie inside [-TOST_MARGIN, +TOST_MARGIN]. A rung with no surviving
+      E samples cannot be evaluated and H-TRACK is NOT supported.
+    * H-DEEPEN: arm E's own top-rung minus bottom-rung median difference
+      has its 95% CI entirely below zero.
+    """
+
+    rungs = sorted(e_truth_by_n)
+    per_rung = {}
+    track_passes = []
+    for n in rungs:
+        diff, ci = _difference_ci(
+            e_truth_by_n[n], s_truth_by_n.get(n, []),
+            seed=seed_fn("b1-tost", n),
+        )
+        evaluable = diff is not None
+        tost_pass = bool(
+            evaluable
+            and -TOST_MARGIN <= ci[0]
+            and ci[1] <= TOST_MARGIN
+        )
+        per_rung[str(n)] = {
+            "E_minus_S_diff": diff, "ci": list(ci),
+            "evaluable": evaluable, "tost_pass": tost_pass,
+        }
+        track_passes.append(tost_pass)
+    h_track = bool(rungs) and all(track_passes)
+
+    top, bottom = (rungs[-1], rungs[0]) if rungs else (None, None)
+    deepen_diff, deepen_ci = _difference_ci(
+        e_truth_by_n.get(top, []), e_truth_by_n.get(bottom, []),
+        seed=seed_fn("b1-deepen"),
+    ) if rungs else (None, (None, None))
+    h_deepen = bool(
+        deepen_diff is not None and deepen_ci[1] is not None
+        and deepen_ci[1] < 0.0
+    )
+    return {
+        "tost_margin": TOST_MARGIN,
+        "per_rung": per_rung,
+        "h_track_supported": h_track,
+        "h_deepen_diff": deepen_diff,
+        "h_deepen_ci": list(deepen_ci),
+        "h_deepen_supported": h_deepen,
+        "consistent_with_continuum_limit": bool(h_track and h_deepen),
+    }
+
+
 def aggregate(output_dir: Path) -> None:
     """B1 aggregation: inherited diagnostics, strict band, both frozen
-    criteria combined -- every Stage A review lesson pre-applied. The
-    TOST verdicts belong to the prereg's Section 8 hypotheses and are
-    computed only when B1 data exist."""
+    criteria combined -- every Stage A review lesson pre-applied -- and
+    the frozen 8.3 hypotheses evaluated via the pure decision block
+    above. Gated on the B0 record exactly as running B1 is: evaluating
+    hypotheses on post-gate-invalid data is as bad as generating it."""
 
     import csv
 
+    _require_b0_gate()
     rows = []
     for path in sorted(output_dir.glob("p10_b1_n*.csv")):
         rows.extend(csv.DictReader(path.open(encoding="utf-8")))
@@ -283,26 +350,36 @@ def aggregate(output_dir: Path) -> None:
                 "acceptance": float(chain_rows[0]["acceptance"]),
             })
 
+    import csv as _csv
+
     b0 = json.loads((output_dir / "p10_b0_summary.json").read_text(
         encoding="utf-8"))
+    b0_rows = list(_csv.DictReader(
+        (output_dir / "p10_b0_yardstick.csv").open(encoding="utf-8")
+    ))
+    e_truth_by_n: dict = {}
+    s_truth_by_n: dict = {}
     for n in LADDER:
         surviving = [
             r for r in rows
             if int(float(r["n"])) == n and r.get("status") == "ok"
             and screen_pass.get((n, r["start"]), False)
         ]
-        e_truth = [float(r["truth"]) for r in surviving]
-        s_entry = b0["per_n"][str(n)]
-        diff, ci = (None, (None, None))
+        e_truth_by_n[n] = [float(r["truth"]) for r in surviving]
+        s_truth_by_n[n] = [
+            float(r["truth"]) for r in b0_rows
+            if int(float(r["n"])) == n and r.get("status") == "ok"
+        ]
         summary["per_n"][str(n)] = {
-            "E_n_ok": len(e_truth),
-            "E_median_truth": float(np.median(e_truth)) if e_truth else None,
-            "S_median_truth": s_entry["median_truth"],
-            "note": "E-S difference and TOST are computed by the prereg "
-                    "Section 8 decision block once frozen; this aggregate "
-                    "records the ingredients",
+            "E_n_ok": len(e_truth_by_n[n]),
+            "E_median_truth": (
+                float(np.median(e_truth_by_n[n])) if e_truth_by_n[n] else None
+            ),
+            "S_median_truth": b0["per_n"][str(n)]["median_truth"],
         }
-        _ = (diff, ci)
+    summary["frozen_hypotheses"] = evaluate_frozen_hypotheses(
+        e_truth_by_n, s_truth_by_n
+    )
 
     (output_dir / "p10_b1_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
