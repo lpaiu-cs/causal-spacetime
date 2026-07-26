@@ -172,9 +172,13 @@ Per `N` in `{600, 900, 1200}`:
 
 - **Arm E**: two chains at `beta = 2`, `eps = 12/N` — one random start,
   one bipartite start. Burn **100k** steps (twice the observed melt),
-  then **10 retained samples per chain at 50k-step spacing** (twice the
-  decorrelated spacing) -> 1.1M steps per chain, **20 discriminator
-  samples per `N`**.
+  then **10 retained samples per chain at 50k-step spacing** ->
+  **600k steps per chain** *(corrected: this line originally said
+  "1.1M", a wrong sum of its own stated inputs — `100k + 10 x 50k =
+  600k`. The runner implements the stated inputs exactly; the archived
+  CSVs record retained samples at steps 100k through 550k. The inputs,
+  not the mis-summed total, were always the frozen content)*, **20
+  discriminator samples per `N`**.
 - **Arm S**: 20 uniform permutations, direct sampling.
 - Every sample judged by the frozen P3 discriminator via
   `order_inputs` (heldout, null_gap, truth, and P7's frozen `G`).
@@ -266,9 +270,10 @@ frozen constants (`MIN_CHAIN_LEN = 25`, target cap 44) stay fixed while
 the order's natural scales grow (the longest chain grows like
 `~ 2 sqrt(N)`), so the instrument is **scale-covariant** — it reads the
 same relative window at every size and the density gain is normalized
-away. The ladder therefore measures *"does the phase stay
-indistinguishable from sprinklings as size doubles"* (it does), *not*
-*"does resolution accumulate"* (untestable at frozen constants).
+away. The ladder therefore measures *"is a difference from sprinklings
+detected as size doubles"* (none was, at the sensitivity stated above —
+which is a failure to detect, not equivalence), *not* *"does resolution
+accumulate"* (untestable at frozen constants).
 A true resolution ladder needs constants scaled in continuum units —
 that is the concrete design input for any Stage B.
 
@@ -294,6 +299,21 @@ record misattributed the global minimum to arm E at `N = 600`
 (`0.5625`); the global minimum is `0.5125`, on an arm-S sample at
 `N = 900`. The gate-pass claim (120/120 above 0.5) was and remains
 true.
+
+**Second correction note (same day, second review round).** (v) The
+6c chain-length line said "1.1M steps per chain" — a wrong sum of its
+own stated inputs (`100k + 10 x 50k = 600k`); the runner and the
+archived step columns implement the stated inputs, and 6c now carries
+the arithmetic correction inline. (vi) The aggregator's `screen_pass`
+used the ESS criterion alone, so an unmelted chain with clean ESS
+would have entered the primary reading; it now requires melt AND ESS
+(no archived verdict changes — all six chains melted). (vii) Undefined
+statistics were serialized as bare `NaN` tokens, which are outside
+strict JSON; they are now `null`, and the frozen summary was
+regenerated and verified against a strict parser. (viii) One sentence
+in defect note (2) still concluded "indistinguishable … (it does)";
+it now uses the same failure-to-detect wording as the rest of the
+record.
 
 ## 7. What this can and cannot answer
 

@@ -151,7 +151,9 @@ def _ess(values: list[float]) -> float:
 def _median_and_bootstrap(values, seed, draws=4000):
     x = np.asarray(values, dtype=float)
     if x.size == 0:
-        return float("nan"), (float("nan"), float("nan"))
+        # None, not nan: json.dumps writes nan as a bare NaN token, which
+        # is outside strict JSON and breaks consumers like JSON.parse.
+        return None, (None, None)
     rng = np.random.default_rng(seed)
     medians = np.median(
         x[rng.integers(0, x.size, size=(draws, x.size))], axis=1
@@ -185,7 +187,7 @@ def _difference_ci(e_values, s_values, seed, draws=4000):
     e = np.asarray(e_values, dtype=float)
     s = np.asarray(s_values, dtype=float)
     if e.size == 0 or s.size == 0:
-        return float("nan"), (float("nan"), float("nan"))
+        return None, (None, None)   # strict-JSON null, never a NaN token
     rng = np.random.default_rng(seed)
     diffs = (
         np.median(e[rng.integers(0, e.size, size=(draws, e.size))], axis=1)
@@ -239,12 +241,18 @@ def aggregate(output_dir: Path) -> None:
                 band is not None
                 and band[0] * 0.9 <= n0s[0] <= band[1] * 1.1
             ) if start == "bipartite" else True
-            passed = bool(ess >= MIN_ESS)
-            screen_pass[(n, start)] = passed
+            ess_ok = bool(ess >= MIN_ESS)
+            # The frozen screen (prereg 6c) has TWO criteria -- melt and
+            # ESS -- and a chain must clear both to enter the primary
+            # reading. The first version keyed screen_pass on ESS alone,
+            # so an unmelted chain with clean ESS would have been pooled
+            # into the primary reading; review finding.
+            screen_pass[(n, start)] = ess_ok and bool(melted)
             summary["chains"].append({
                 "n": n, "start": start, "ess_n0": round(ess, 1),
-                "ess_pass": passed,
+                "ess_pass": ess_ok,
                 "first_sample_in_random_band": bool(melted),
+                "screen_pass": screen_pass[(n, start)],
                 "acceptance": float(chain_rows[0]["acceptance"]),
             })
 

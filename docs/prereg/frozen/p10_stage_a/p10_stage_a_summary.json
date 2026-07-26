@@ -1,5 +1,5 @@
 {
-  "code_version": "233d8e8",
+  "code_version": "786becf",
   "reading_convention": "per_n_screened applies the frozen prereg-6c mixing screen (failing chains excluded; a rung with no surviving chain is null) and is the PRIMARY reading. per_n_pooled ignores the screen and is secondary, kept because the screen itself is documented as degenerate at m = 10 (prereg 6d). Differences are median(E) - median(S) with bootstrap CIs; a CI covering zero is a failure to detect, never equivalence.",
   "chains": [
     {
@@ -8,6 +8,7 @@
       "ess_n0": 6.9,
       "ess_pass": false,
       "first_sample_in_random_band": true,
+      "screen_pass": false,
       "acceptance": 0.9748633333333333
     },
     {
@@ -16,6 +17,7 @@
       "ess_n0": 10.0,
       "ess_pass": true,
       "first_sample_in_random_band": true,
+      "screen_pass": true,
       "acceptance": 0.9784366666666666
     },
     {
@@ -24,6 +26,7 @@
       "ess_n0": 8.1,
       "ess_pass": false,
       "first_sample_in_random_band": true,
+      "screen_pass": false,
       "acceptance": 0.9856016666666667
     },
     {
@@ -32,6 +35,7 @@
       "ess_n0": 10.0,
       "ess_pass": true,
       "first_sample_in_random_band": true,
+      "screen_pass": true,
       "acceptance": 0.9875016666666667
     },
     {
@@ -40,6 +44,7 @@
       "ess_n0": 9.0,
       "ess_pass": false,
       "first_sample_in_random_band": true,
+      "screen_pass": false,
       "acceptance": 0.9897233333333333
     },
     {
@@ -48,6 +53,7 @@
       "ess_n0": 8.1,
       "ess_pass": false,
       "first_sample_in_random_band": true,
+      "screen_pass": false,
       "acceptance": 0.9910383333333334
     }
   ],
@@ -199,25 +205,25 @@
         "n_ok": 0,
         "n_total": 0,
         "note": "no chain survives the frozen mixing screen; this rung is null in the primary reading",
-        "median_heldout": NaN,
+        "median_heldout": null,
         "ci_heldout": [
-          NaN,
-          NaN
+          null,
+          null
         ],
-        "median_null_gap": NaN,
+        "median_null_gap": null,
         "ci_null_gap": [
-          NaN,
-          NaN
+          null,
+          null
         ],
-        "median_truth": NaN,
+        "median_truth": null,
         "ci_truth": [
-          NaN,
-          NaN
+          null,
+          null
         ],
-        "median_G": NaN,
+        "median_G": null,
         "ci_G": [
-          NaN,
-          NaN
+          null,
+          null
         ]
       },
       "S": {
@@ -245,24 +251,24 @@
         ]
       },
       "E_minus_S_heldout": {
-        "diff": NaN,
+        "diff": null,
         "ci": [
-          NaN,
-          NaN
+          null,
+          null
         ]
       },
       "E_minus_S_truth": {
-        "diff": NaN,
+        "diff": null,
         "ci": [
-          NaN,
-          NaN
+          null,
+          null
         ]
       },
       "E_minus_S_G": {
-        "diff": NaN,
+        "diff": null,
         "ci": [
-          NaN,
-          NaN
+          null,
+          null
         ]
       }
     }
