@@ -805,7 +805,12 @@ distribution has almost no room to move — so the maximal drift
 contribution is at most 0.0007 in every bin, while the observed rises
 are 0.002-0.074: **the rise exceeds the maximal drift contribution in
 all 14 nonzero bins, by one to three orders of magnitude** (bin 4:
-+0.0743 against a bound of 0.00003).
++0.0743 against a bound of 0.00003). *(Corrected on fourth review:
+this is not a bound — equal mean margins can hide mass reallocation
+within a bin, and a neighbour-bin slope is no Lipschitz constant for
+the within-bin error curve. The "maximally 0.0007" figure and the
+"eliminated" conclusion drawn from it are withdrawn; the quantity is
+retained in the artifact as a descriptive indicator only. See 9.9.)*
 
 **The zero bins.** In bins 12-13 (margins 0.478-0.637... and the
 adjacent 0.637-0.747 in the medians table) the `N = 600` error is
@@ -813,7 +818,13 @@ identically zero: an average of nonnegative indicators equal to zero
 means zero discordance at every sampled margin in the bin, and no
 reweighting of an identically-zero function is positive. `N = 1200` is
 positive there. At those margins, fixed-difficulty degradation holds
-with no binning assumption of any kind.
+with no binning assumption of any kind. *(Corrected on fourth review:
+those table entries are MEDIANS of 20 per-sample rates, not pooled
+averages — a zero median only means at least half the per-sample rates
+are zero. The pooled counts show 499 discordant `N = 600` comparisons
+in this region; the identically-zero claim is withdrawn as stated. The
+per-comparison zero-fact that does hold — 0/3,871 in the last bin — is
+established from pooled counts in 9.9.)*
 
 **Provenance correction (same round).** Both diagnostic artifacts had
 been produced from then-uncommitted implementations and stamped a clean
