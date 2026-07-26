@@ -133,6 +133,57 @@ def margin_restricted_order_error(
     )
 
 
+#: A-priori bin edges for the POST-HOC mix-matched diagnostic: the
+#: conditional quartiles of the continuum margin GIVEN margin >= delta,
+#: same pure-geometry stream and seed as DELTA_MARGIN (reproducible to
+#: 2.1e-4 or better across seeds). Equal-weighting the four bins asks
+#: the same margin MIX at every size, which a common cutoff alone does
+#: not (review finding: the surviving distribution above the cutoff can
+#: drift with the targets' spatial configuration, and the realized
+#: eligible rates 62.6% -> 66.2% show it does).
+MARGIN_BIN_EDGES = (0.1399, 0.2633, 0.4160, 0.6367, float("inf"))
+
+
+def margin_binned_order_error(
+    estimated, reference_x, num_pair_comparisons: int, seed: int,
+) -> tuple[list, list]:
+    """Per-bin discordance over the a-priori margin bins; returns
+    (errors_by_bin, counts_by_bin). Same sampling stream as the
+    restricted scorer; the equal-weight mean of the four bin errors is
+    the mix-matched error."""
+
+    estimate = np.asarray(estimated, dtype=float)
+    if estimate.ndim == 1:
+        estimate = estimate.reshape(-1, 1)
+    reference = np.asarray(reference_x, dtype=float).reshape(-1, 1)
+    rng = np.random.default_rng(seed)
+    n = reference.shape[0]
+    first = rng.integers(0, n, size=(num_pair_comparisons, 2))
+    second = rng.integers(0, n, size=(num_pair_comparisons, 2))
+    valid = (first[:, 0] != first[:, 1]) & (second[:, 0] != second[:, 1])
+    first = first[valid]
+    second = second[valid]
+    ref_d = squared_distance_matrix(reference)
+    est_d = squared_distance_matrix(estimate)
+    ref_first = ref_d[first[:, 0], first[:, 1]]
+    ref_second = ref_d[second[:, 0], second[:, 1]]
+    est_sign = np.sign(
+        est_d[first[:, 0], first[:, 1]] - est_d[second[:, 0], second[:, 1]]
+    )
+    ref_sign = np.sign(ref_first - ref_second)
+    margin = np.abs(np.sqrt(ref_first) - np.sqrt(ref_second))
+    errors, counts = [], []
+    for lo, hi in zip(MARGIN_BIN_EDGES[:-1], MARGIN_BIN_EDGES[1:],
+                      strict=True):
+        keep = (margin >= lo) & (margin < hi) & (ref_sign != 0.0)
+        counts.append(int(keep.sum()))
+        errors.append(
+            float(np.mean(ref_sign[keep] != est_sign[keep]))
+            if counts[-1] else float("nan")
+        )
+    return errors, counts
+
+
 def evaluate_perm_dual(pi: np.ndarray, seed: int) -> dict:
     """The FROZEN instrument once, two truth scorings on the same fit.
 
@@ -257,15 +308,101 @@ def run_b0prime(output_dir: Path) -> None:
     print(json.dumps(summary, indent=2))
 
 
+def run_mix_matched_diagnostic(output_dir: Path) -> None:
+    """POST-HOC robustness for the 9.5 closure, labelled as such.
+
+    Re-runs the exact B'0 samples (same seeds, deterministic) and scores
+    each fit per a-priori margin bin; the equal-weight bin mean is the
+    mix-matched error, immune to drift in the surviving-margin
+    distribution that a common cutoff admits. If the rise survives
+    mix-matching, the closure claim strengthens (per-question accuracy
+    degrades bin by bin); if it vanishes, the B'0 rise was partly a mix
+    artifact and the record must weaken accordingly. Either way it is a
+    diagnostic run AFTER the frozen gate failed -- it can reword the
+    conclusion, never reopen the gate.
+    """
+
+    rows = []
+    for n in LADDER:
+        base = B0PRIME_SEED_BASE[n]
+        for k in range(B0PRIME_SAMPLES):
+            pi = np.random.default_rng(base + k).permutation(n)
+            causal, times, coords = order_inputs(pi)
+            row, coords_fit, targets = analyze_order(
+                causal, times, coords, seed=base + k, want_truth=True,
+                return_fit=True,
+            )
+            out = {"n": float(n), "sample_index": float(k),
+                   "chain_seed": float(base + k),
+                   "code_version": git_describe(),
+                   "status": row.get("status")}
+            if row.get("status") == "ok":
+                errors, counts = margin_binned_order_error(
+                    coords_fit, coords[targets] / float(n),
+                    num_pair_comparisons=BPRIME_COMPARISONS,
+                    seed=base + k + 9,
+                )
+                for b, (err, cnt) in enumerate(
+                        zip(errors, counts, strict=True)):
+                    out[f"bin{b}_error"] = err
+                    out[f"bin{b}_count"] = float(cnt)
+                finite = [e for e in errors if not np.isnan(e)]
+                out["mix_matched_error"] = (
+                    float(np.mean(errors)) if len(finite) == len(errors)
+                    else float("nan")
+                )
+            rows.append(out)
+        done = [r for r in rows if r["n"] == n and r["status"] == "ok"]
+        print(f"diag n={n}: {len(done)}/{B0PRIME_SAMPLES} ok, mix-matched "
+              f"median {np.median([r['mix_matched_error'] for r in done]):.4f}",
+              flush=True)
+    write_rows_csv(output_dir / "p10_bprime_mixmatched.csv", rows)
+
+    ok = [r for r in rows if r["status"] == "ok"
+          and not np.isnan(r["mix_matched_error"])]
+    summary: dict = {"code_version": git_describe(),
+                     "bin_edges": list(MARGIN_BIN_EDGES[:-1]) + ["inf"],
+                     "per_n": {}}
+    for n in LADDER:
+        sub = [r for r in ok if r["n"] == n]
+        entry = {"n_ok": len(sub)}
+        vals = [r["mix_matched_error"] for r in sub]
+        rng = np.random.default_rng(_stable_seed("mixmatch", n))
+        boots = np.median(np.asarray(vals)[
+            rng.integers(0, len(vals), size=(4000, len(vals)))], axis=1)
+        entry["median_mix_matched"] = float(np.median(vals))
+        entry["ci"] = [float(np.percentile(boots, 2.5)),
+                       float(np.percentile(boots, 97.5))]
+        for b in range(4):
+            bvals = [r[f"bin{b}_error"] for r in sub]
+            entry[f"median_bin{b}"] = float(np.median(bvals))
+        summary["per_n"][str(n)] = entry
+    drop, ci = _difference_ci(
+        [r["mix_matched_error"] for r in ok if r["n"] == LADDER[-1]],
+        [r["mix_matched_error"] for r in ok if r["n"] == LADDER[0]],
+        seed=_stable_seed("mixmatch-drop"),
+    )
+    summary["top_minus_bottom_mix_matched"] = {"diff": drop, "ci": list(ci)}
+    summary["rise_survives_mix_matching"] = bool(
+        drop is not None and ci[0] is not None and ci[0] > 0.0
+    )
+    (output_dir / "p10_bprime_mixmatched_summary.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(summary, indent=2))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", choices=["b0", "b1"], default=None)
+    parser.add_argument("--stage", choices=["b0", "b1", "diagnostic"],
+                        default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     if args.stage == "b0":
         run_b0prime(args.output_dir)
+    elif args.stage == "diagnostic":
+        run_mix_matched_diagnostic(args.output_dir)
     elif args.stage == "b1":
         raise SystemExit(
             "B'1 is gated on the frozen B'0 record (prereg Section 9) and "

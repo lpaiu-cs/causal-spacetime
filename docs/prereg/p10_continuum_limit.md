@@ -5,9 +5,9 @@ programme's founding continuum-limit question is UNDECIDABLE BY THIS
 INSTRUMENT FAMILY: through the frozen discriminator, truth accuracy in
 continuum units does not improve — and measurably degrades — as the
 order grows, under every combination tried of instrument scaling
-(frozen / continuum-scaled) and question fixing (full mix /
-margin-restricted). Three gates, three failures, three eliminated
-mechanisms; every per-size result in the programme stands unchanged.
+(frozen / continuum-scaled) and question restriction (full mix /
+margin-cutoff / mix-matched bins — see 9.5-9.6). Three gates, three
+failures; every per-size result in the programme stands unchanged.
 What a continuum-limit test now requires is a reconstruction whose
 continuum accuracy grows with density — a different instrument.
 The Stage A record below is preserved as written.
@@ -662,17 +662,26 @@ curve and here crossing into significance; the rise is driven by the
 scorings.) Per the frozen 9.2 rule, **B'1 is not implemented, its
 hypotheses are never evaluated, and P10 closes.**
 
-**The three-sided finding.** The margin restriction did exactly what it
-was designed to do at every individual size — the fixed question set is
-about three times easier than the full mix (0.05-0.09 against
-0.14-0.17) — and the improvement with `N` still never came. Three
-distinct mechanisms have now been eliminated by direct measurement:
+**The three-sided finding.** The margin restriction did what it was
+designed to do at every individual size — the cutoff-restricted
+questions are about three times easier than the full mix (0.05-0.09
+against 0.14-0.17) — and the improvement with `N` still never came.
+**A scope correction from review, applied before closing:** a common
+cutoff restricts the question set but does not FIX its distribution —
+the surviving margin mix above the cutoff can drift with the targets'
+spatial configuration across sizes, and the realized eligible rates
+(62.6% at `N = 600` to 66.2% at `N = 1200`, against the continuum 75%)
+show that it does. The frozen gate's verdict is unaffected — the gate
+was defined on the cutoff-restricted observable and failed as frozen —
+but the mechanism-elimination claim needed the mix drift addressed,
+which the post-hoc stratified diagnostic of 9.6 does. Three
+measurements so far:
 
 | attempt | instrument | question mix | sprinkled curve |
 |---|---|---|---|
 | Stage A | frozen (scale-covariant) | full | flat |
 | Stage B0 | continuum-scaled | full | rising |
-| Stage B'0 | frozen | **fixed by margin** | **rising** |
+| Stage B'0 | frozen | **cutoff-restricted** | **rising** |
 
 The positive characterization, which is what P10 ends on: **through
 this discriminator family, truth accuracy in continuum units does not
@@ -698,4 +707,37 @@ fixed-size statement and stands unchanged. What closed is the road
 from this instrument to a continuum limit.
 
 Artifacts: `docs/prereg/frozen/p10_stage_bprime/`.
+
+### 9.6 Post-hoc stratified diagnostic (2026-07-27): the rise survives
+mix-matching, bin by bin
+
+Review of 9.5 identified a scope error: a common margin cutoff
+restricts the question set but does not fix its distribution, so the
+B'0 rise could in principle have been drift in the surviving-margin mix
+rather than degrading accuracy. This diagnostic settles that. The same
+60 samples (identical seeds, deterministic) were re-scored per a-priori
+margin bin — conditional quartiles of the continuum margin given
+`margin >= delta`, edges `0.2633 / 0.4160 / 0.6367` from the same
+pure-geometry stream as `DELTA_MARGIN` — and the equal-weight bin mean
+is the mix-matched error, immune to mix drift by construction.
+
+| `N` | mix-matched [95% CI] | bin 1 | bin 2 | bin 3 | bin 4 |
+|---|---|---|---|---|---|
+| 600 | 0.0392 [0.0189, 0.0609] | 0.1234 | 0.0340 | 0.0011 | 0.0000 |
+| 900 | 0.0346 [0.0226, 0.0561] | 0.1037 | 0.0259 | 0.0010 | 0.0000 |
+| 1200 | 0.0750 [0.0696, 0.0908] | 0.1930 | 0.0898 | 0.0175 | 0.0012 |
+
+Top-minus-bottom, mix-matched: **+0.036 [+0.012, +0.060]** — the rise
+survives, and the per-bin rows sharpen it: at `N = 1200` the error is
+higher than at `N = 600` in **every one of the four bins**, including
+the widest-margin questions the instrument answers essentially
+perfectly at the smaller sizes (bin 3: 0.0011 -> 0.0175; bin 4:
+0.0000 -> 0.0012). The mix-drift explanation is eliminated;
+**per-question accuracy in continuum units degrades with `N`**, which
+is the strengthened form of the closure claim.
+
+Status of this subsection: post hoc, run after the frozen 9.2 gate had
+already failed; it rewords the closure's mechanism claim and cannot
+reopen the gate. Artifacts alongside the B'0 record in
+`docs/prereg/frozen/p10_stage_bprime/`.
 
