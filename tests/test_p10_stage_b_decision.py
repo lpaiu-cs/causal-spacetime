@@ -22,12 +22,14 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p10_stage_b import (  # noqa: E402
+    B0_SAMPLES,
     B1_CHAIN_SEEDS,
     LADDER,
     SAMPLES_PER_CHAIN,
     STARTS,
     TOST_MARGIN,
     _require_b0_gate,
+    b0_gate_verdict,
     chain_is_complete,
     evaluate_frozen_hypotheses,
     require_all_chains,
@@ -157,6 +159,21 @@ def test_stale_or_wrong_seed_chains_are_rejected():
                              [{"chain_seed": 1000.0} for _ in range(3)])
     with pytest.raises(SystemExit, match="not one of the six"):
         require_frozen_chain(600, "uniform", good)
+
+
+def test_the_b0_gate_requires_full_rungs_not_just_a_falling_ci():
+    """A run whose instrument structurally blocked most samples could
+    otherwise authorize B1 from whatever it happened to measure -- one
+    surviving sample per endpoint yields a degenerate 'passing' CI.
+    The gate is completeness AND fall, never fall alone."""
+
+    full = {600: B0_SAMPLES, 900: B0_SAMPLES, 1200: B0_SAMPLES}
+    falling = (-0.03, (-0.05, -0.01))
+    assert b0_gate_verdict(full, *falling)
+    assert not b0_gate_verdict(full, -0.03, (-0.05, +0.01))   # CI touches 0
+    short = dict(full, **{1200: B0_SAMPLES - 1})
+    assert not b0_gate_verdict(short, *falling)               # one block
+    assert not b0_gate_verdict({600: 1, 900: 1, 1200: 1}, *falling)
 
 
 def test_the_anchor_operating_point_is_the_frozen_instrument():

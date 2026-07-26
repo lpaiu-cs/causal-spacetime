@@ -125,6 +125,28 @@ def evaluate_perm_scaled(pi: np.ndarray, seed: int) -> dict:
     return row
 
 
+def b0_gate_verdict(n_ok_by_rung: dict, drop, drop_ci) -> bool:
+    """The 8.2 gate, as a pure function.
+
+    The gate may pass only when BOTH hold: every rung retained its full
+    `B0_SAMPLES` successful measurements, and the top-minus-bottom CI
+    sits entirely below zero. Without the completeness half, a run in
+    which the instrument structurally blocked most samples could still
+    authorize B1 from whatever it happened to measure — even one
+    surviving sample per endpoint yields a degenerate 'passing' CI
+    (review finding). A gate conditioned on the cases the instrument
+    could measure is not the preregistered gate.
+    """
+
+    complete = all(
+        n_ok_by_rung.get(n, 0) == B0_SAMPLES for n in LADDER
+    )
+    falls = bool(
+        drop is not None and drop_ci[1] is not None and drop_ci[1] < 0.0
+    )
+    return complete and falls
+
+
 def run_b0(output_dir: Path) -> None:
     """Arm S under the scaled instrument: the yardstick pilot."""
 
@@ -174,8 +196,11 @@ def run_b0(output_dir: Path) -> None:
         seed=_stable_seed("b0-drop"),
     )
     summary["top_minus_bottom_truth"] = {"diff": drop, "ci": drop_ci}
-    summary["yardstick_falls"] = (
-        bool(drop is not None and drop_ci[1] is not None and drop_ci[1] < 0.0)
+    summary["all_rungs_complete"] = all(
+        summary["per_n"][str(n)]["n_ok"] == B0_SAMPLES for n in LADDER
+    )
+    summary["yardstick_falls"] = b0_gate_verdict(
+        {n: summary["per_n"][str(n)]["n_ok"] for n in LADDER}, drop, drop_ci
     )
     summary["note"] = (
         "B0 is the prerequisite Stage A assumed and then failed: the "
@@ -427,8 +452,18 @@ def aggregate(output_dir: Path) -> None:
                 band is not None and band[0] <= n0s[0] <= band[1]
             ) if start == "bipartite" else True
             complete = chain_is_complete(chain_rows)
+            # Retention completeness is not measurement completeness: a
+            # chain can keep all 48 MCMC states while the discriminator
+            # structurally blocks on some of them, silently shrinking
+            # the basis the hypotheses are computed from (review
+            # finding). Every retained state must also have evaluated.
+            n_evals_ok = sum(
+                1 for r in chain_rows if r.get("status") == "ok"
+            )
+            evals_ok = n_evals_ok == SAMPLES_PER_CHAIN
             screen_pass[(n, start)] = (
-                bool(ess >= MIN_ESS) and bool(melted) and complete
+                bool(ess >= MIN_ESS) and bool(melted)
+                and complete and evals_ok
             )
             summary["chains"].append({
                 "n": n, "start": start, "ess_n0": round(float(ess), 1),
@@ -436,6 +471,8 @@ def aggregate(output_dir: Path) -> None:
                 "first_sample_in_random_band": bool(melted),
                 "chain_complete": complete,
                 "n_retained": len(chain_rows),
+                "n_evals_ok": n_evals_ok,
+                "evals_complete": evals_ok,
                 "screen_pass": screen_pass[(n, start)],
                 "acceptance": float(chain_rows[0]["acceptance"]),
             })
