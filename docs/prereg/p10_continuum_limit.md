@@ -8,6 +8,13 @@ order grows, under every combination tried of instrument scaling
 (frozen / continuum-scaled) and question restriction (full mix /
 margin-cutoff / mix-matched bins — see 9.5-9.6). Three gates, three
 failures; every per-size result in the programme stands unchanged.
+*(Calibrated 2026-07-27, 9.13: a fully stream-separated fresh
+replication reproduces "does not improve" — no quantity improves in a
+fourth independent arm — and the degradation's sign, ordering, and
+dense-tail rise, but no aggregate CI separates at 20 samples per rung
+and the sparse extreme-tail structure does not replicate.
+"Measurably degrades" is a frozen-sample result; the replication grade
+is "directionally consistent, not separated".)*
 What a continuum-limit test now requires is a reconstruction whose
 continuum accuracy grows with density — a different instrument.
 The Stage A record below is preserved as written.
@@ -1035,4 +1042,68 @@ quantities' shifts, exactly as the 8,000-comparison budget predicts
 ~ 0.002): the unrestricted arm is the noisiest published quantity, and
 its namespace sensitivity is pair-sampling noise at that budget, with
 no direction or verdict change anywhere.
+
+### 9.13 Eighth round: full stream separation, and what a fresh
+replication kept and did not keep (2026-07-27)
+
+Review escalated once more, and the finding is again real: the frozen
+instrument ITSELF derives `seed+3` (margin), `seed+5` (split),
+`seed+9` (truth scorer), `seed+61` (null shuffle) and `seed+100` (fit
+learning) from every chain seed, so CONSECUTIVE chain seeds share
+derived streams across rows no matter what the external scorers do —
+the round-six fix separated the scorers and left the fits' windows
+packed. The internal offsets are frozen with the instrument; the
+allocation fix is spacing. The spaced arm (`--stage spaced`,
+stride-200 chain seeds 43000-54800, every derived stream and the
+scorer at `s+150` inside each row's private window `[s, s+199]`,
+window privacy and freshness regression-pinned) is therefore a
+REPLICATION with fresh samples, not a replay — and it changed the
+record, which is what this document is for. Artifacts:
+`p10_bprime_spaced.csv` / `_summary.json`, stamp `ce27fce`.
+
+What replicates:
+
+- **"Does not improve" — everywhere, again.** Medians 0.0575 /
+  0.0468 / 0.0822 (restricted), 0.1461 / 0.1383 / 0.1677
+  (unrestricted): the 1200 > 600 > 900 shape, positive top-minus-
+  bottom point estimates (+0.0247 restricted, +0.0216 unrestricted,
+  +0.0200 mix-matched), the gate verdict NO FALL, floors met. A
+  fourth independent arm in which nothing improves with `N`.
+- **The dense-tail rise.** In the well-populated tail bins 10-11
+  (30-37k comparisons each) the `N = 1200` pooled rate again sits
+  above `N = 600`: 0.0403 vs 0.0290 and 0.0238 vs 0.0179 — ratios
+  1.39x and 1.33x against the frozen samples' 2.3x and 2.8x.
+
+What does not replicate:
+
+- **No aggregate CI separates.** Restricted +0.0247 [-0.0096,
+  +0.0517]; unrestricted +0.0216 [-0.0063, +0.0504]; mix-matched
+  +0.0200 [-0.0076, +0.0471] — every interval covers zero at 20
+  samples per rung, where the frozen samples' restricted and
+  mix-matched intervals were all-positive. Pointwise, 13/16 bins sit
+  above with **zero** CI separations against the frozen samples' 6.
+- **The sparse extreme tail inverts.** Bins 12-15 read 600-vs-1200 as
+  0.0127/0.0120, 0.0072/0.0054, 0.0032/0.0023, and in the last bin
+  8/5946 against 1/8530 — `N = 600` errs MORE there, where the frozen
+  samples read 0/3871 against 15/11184. The frozen last-bin zero and
+  the 3.6-9.9x sparse-bin ratios were sample facts of those 60 fits,
+  exactly as 9.10's scoping said, and they do not generalize: counts
+  of 1-28 against tens of thousands are carried by handfuls of
+  comparisons whose across-sample attribution this record does not
+  resolve.
+
+The calibrated conclusion, replacing 9.10's terminal form as the
+record's last word on mechanism: **closure is reinforced — in four
+independent arms (frozen gate, seed-fixed re-scoring, and a fully
+stream-separated fresh replication) continuum-unit accuracy never
+improves with `N` — while "measurably degrades" is downgraded from a
+CI-separated result to a frozen-sample result that replicates in sign,
+ordering, and dense-tail direction, but not in separation or in
+sparse-tail structure.** The gate never depended on the degradation
+claim (it failed on non-improvement, as frozen), so the closure
+stands untouched; 9.10's sample-scoped language needed no correction,
+which is what scoping is for. The reviewer's seed-hygiene escalation
+did real scientific work here: it forced the replication that
+measured the mechanism claim's generalization, and the record is
+better calibrated for it.
 
