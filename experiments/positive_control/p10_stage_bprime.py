@@ -62,6 +62,20 @@ from pc_common import DEFAULT_OUTPUT_DIR, git_describe, write_rows_csv
 
 from causal_spacetime_lab.ordinal_embedding import squared_distance_matrix
 
+
+def _diag_code_version() -> str:
+    """git_describe plus a dirty marker. Two diagnostic artifacts were
+    produced from uncommitted implementations and stamped a clean HEAD
+    that could not reproduce them (review finding); this makes that
+    state visible instead of silent."""
+
+    import subprocess
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"],
+        capture_output=True, text=True,
+    ).stdout.strip()
+    return git_describe() + ("-dirty" if dirty else "")
+
 #: A priori, from pure continuum geometry (uniform iid points in the
 #: unit (u, v) square; margin = ||x_a-x_b| - |x_c-x_d||, x = u - v):
 #: the 25th percentile, 4M draws, seed 2718281828, reproducible to
@@ -349,7 +363,7 @@ def fine_binned_order_error(
     )
     ref_sign = np.sign(ref_first - ref_second)
     margin = np.abs(np.sqrt(ref_first) - np.sqrt(ref_second))
-    errors, counts = [], []
+    errors, counts, mean_margins = [], [], []
     for lo, hi in zip(FINE_BIN_EDGES[:-1], FINE_BIN_EDGES[1:], strict=True):
         keep = (margin >= lo) & (margin < hi) & (ref_sign != 0.0)
         counts.append(int(keep.sum()))
@@ -357,7 +371,10 @@ def fine_binned_order_error(
             float(np.mean(ref_sign[keep] != est_sign[keep]))
             if counts[-1] else float("nan")
         )
-    return errors, counts
+        mean_margins.append(
+            float(np.mean(margin[keep])) if counts[-1] else float("nan")
+        )
+    return errors, counts, mean_margins
 
 
 def run_margin_curve_diagnostic(output_dir: Path) -> None:
@@ -382,18 +399,18 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
                 return_fit=True,
             )
             if row.get("status") == "ok":
-                errors, counts = fine_binned_order_error(
+                errors, counts, mean_margins = fine_binned_order_error(
                     coords_fit, coords[targets] / float(n),
                     num_pair_comparisons=BPRIME_COMPARISONS,
                     seed=base + k + 9,
                 )
-                per_sample[n].append((errors, counts))
+                per_sample[n].append((errors, counts, mean_margins))
         print(f"curve n={n}: {len(per_sample[n])}/{B0PRIME_SAMPLES} ok",
               flush=True)
 
     n_bins = len(FINE_BIN_EDGES) - 1
     summary: dict = {
-        "code_version": git_describe(),
+        "code_version": _diag_code_version(),
         "fine_bin_edges": list(FINE_BIN_EDGES[:-1]) + ["inf"],
         "curves": {}, "pointwise_1200_vs_600": {},
     }
@@ -402,7 +419,7 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
         medians, cis, min_counts = [], [], []
         for b in range(n_bins):
             vals = np.array([
-                e[b] for e, _ in per_sample[n] if not np.isnan(e[b])
+                e[b] for e, _, _ in per_sample[n] if not np.isnan(e[b])
             ])
             rng = np.random.default_rng(_stable_seed("curve", n, b))
             boots = np.median(vals[
@@ -414,12 +431,17 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
                 float(np.percentile(boots, 97.5)),
             ] if vals.size else [None, None])
             min_counts.append(min(
-                (c[b] for _, c in per_sample[n]), default=0
+                (c[b] for _, c, _ in per_sample[n]), default=0
             ))
+        mean_margin_by_bin = [
+            float(np.nanmean([m[b] for _, _, m in per_sample[n]]))
+            for b in range(n_bins)
+        ]
         curves[n] = (medians, cis)
         summary["curves"][str(n)] = {
             "median_by_bin": medians, "ci_by_bin": cis,
             "min_count_by_bin": min_counts,
+            "mean_margin_by_bin": mean_margin_by_bin,
         }
     above, separated = [], []
     for b in range(n_bins):
@@ -434,6 +456,48 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
         "bins_where_1200_above_600": int(sum(above)),
         "bins_ci_separated": int(sum(separated)),
     }
+
+    # Within-bin drift bound (review escalation three). The most a
+    # within-bin margin shift can move a bin average is
+    # |shift| x |local slope of the N = 600 curve|; both factors are
+    # measured here. Alongside, the zero-bins fact: an average of
+    # nonnegative indicators equal to zero means zero discordance at
+    # EVERY sampled margin in the bin, and no reweighting of an
+    # identically-zero function is positive.
+    m600 = summary["curves"]["600"]["mean_margin_by_bin"]
+    m1200 = summary["curves"]["1200"]["mean_margin_by_bin"]
+    e600 = curves[600][0]
+    e1200 = curves[1200][0]
+    drift_rows = []
+    for b in range(n_bins):
+        if e600[b] is None or e1200[b] is None:
+            continue
+        neighbours = []
+        if b > 0 and e600[b - 1] is not None:
+            dm = abs(m600[b] - m600[b - 1])
+            if dm > 0:
+                neighbours.append(abs(e600[b - 1] - e600[b]) / dm)
+        if b + 1 < n_bins and e600[b + 1] is not None:
+            dm = abs(m600[b + 1] - m600[b])
+            if dm > 0:
+                neighbours.append(abs(e600[b + 1] - e600[b]) / dm)
+        slope = max(neighbours) if neighbours else 0.0
+        shift = abs(m1200[b] - m600[b])
+        bound = shift * slope
+        rise = e1200[b] - e600[b]
+        drift_rows.append({
+            "bin": b, "rise": round(rise, 5),
+            "within_bin_margin_shift": round(shift, 5),
+            "local_slope_600": round(slope, 4),
+            "max_drift_contribution": round(bound, 5),
+            "rise_exceeds_bound": bool(rise > bound),
+        })
+    summary["within_bin_drift_bounds"] = drift_rows
+    zero_bins = [
+        b for b in range(n_bins)
+        if e600[b] == 0.0 and e1200[b] is not None and e1200[b] > 0.0
+    ]
+    summary["zero_bins_600_positive_1200"] = zero_bins
     (output_dir / "p10_bprime_margincurve_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary["pointwise_1200_vs_600"], indent=2))
@@ -465,7 +529,7 @@ def run_mix_matched_diagnostic(output_dir: Path) -> None:
             )
             out = {"n": float(n), "sample_index": float(k),
                    "chain_seed": float(base + k),
-                   "code_version": git_describe(),
+                   "code_version": _diag_code_version(),
                    "status": row.get("status")}
             if row.get("status") == "ok":
                 errors, counts = margin_binned_order_error(
@@ -491,7 +555,7 @@ def run_mix_matched_diagnostic(output_dir: Path) -> None:
 
     ok = [r for r in rows if r["status"] == "ok"
           and not np.isnan(r["mix_matched_error"])]
-    summary: dict = {"code_version": git_describe(),
+    summary: dict = {"code_version": _diag_code_version(),
                      "bin_edges": list(MARGIN_BIN_EDGES[:-1]) + ["inf"],
                      "per_n": {}}
     for n in LADDER:
