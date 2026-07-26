@@ -728,16 +728,66 @@ is the mix-matched error, immune to mix drift by construction.
 | 1200 | 0.0750 [0.0696, 0.0908] | 0.1930 | 0.0898 | 0.0175 | 0.0012 |
 
 Top-minus-bottom, mix-matched: **+0.036 [+0.012, +0.060]** — the rise
-survives, and the per-bin rows sharpen it: at `N = 1200` the error is
-higher than at `N = 600` in **every one of the four bins**, including
-the widest-margin questions the instrument answers essentially
-perfectly at the smaller sizes (bin 3: 0.0011 -> 0.0175; bin 4:
-0.0000 -> 0.0012). The mix-drift explanation is eliminated;
-**per-question accuracy in continuum units degrades with `N`**, which
-is the strengthened form of the closure claim.
+survives, and at `N = 1200` the error is higher than at `N = 600` in
+every one of the four bins. *(Corrected on second review: four broad
+bins still admit WITHIN-bin drift, and error varies sharply with
+margin, so this subsection alone reduces rather than eliminates the
+mix-drift explanation. The elimination is done properly by the
+pointwise curve of 9.7.)*
 
 Status of this subsection: post hoc, run after the frozen 9.2 gate had
 already failed; it rewords the closure's mechanism claim and cannot
 reopen the gate. Artifacts alongside the B'0 record in
 `docs/prereg/frozen/p10_stage_bprime/`.
+
+### 9.7 Post-hoc pointwise curve (2026-07-27): domination across the
+margin axis, which no reweighting objection can touch
+
+Second review escalation on 9.6: equal-weighting four broad bins leaves
+within-bin drift, and the steep dependence of error on margin makes
+that a live concern. The decisive form is the pointwise
+error-versus-margin curve — nothing is aggregated across margins, so
+there is nothing to reweight. Same 60 samples, 16 a-priori fine bins
+(continuum 16-quantiles of the full margin range, same geometry stream,
+cross-seed delta <= 5e-4), per-bin medians over the 20 samples with
+bootstrap intervals.
+
+| margin bin | E(600) | E(900) | E(1200) | 1200 above 600 | CI-sep |
+|---|---|---|---|---|---|
+| [0.000, 0.033) | 0.4548 | 0.4550 | 0.4691 | Y | |
+| [0.033, 0.067) | 0.3558 | 0.3600 | 0.3956 | Y | Y |
+| [0.067, 0.103) | 0.2761 | 0.2826 | 0.3383 | Y | |
+| [0.103, 0.140) | 0.2165 | 0.2110 | 0.2855 | Y | Y |
+| [0.140, 0.179) | 0.1608 | 0.1435 | 0.2351 | Y | Y |
+| [0.179, 0.220) | 0.1241 | 0.0995 | 0.1907 | Y | Y |
+| [0.220, 0.263) | 0.0879 | 0.0603 | 0.1581 | Y | Y |
+| [0.263, 0.310) | 0.0531 | 0.0374 | 0.1196 | Y | |
+| [0.310, 0.361) | 0.0318 | 0.0290 | 0.0905 | Y | Y |
+| [0.361, 0.416) | 0.0135 | 0.0113 | 0.0625 | Y | |
+| [0.416, 0.478) | 0.0023 | 0.0025 | 0.0308 | Y | |
+| [0.478, 0.550) | 0.0006 | 0.0006 | 0.0154 | Y | |
+| [0.550, 0.637) | 0.0000 | 0.0000 | 0.0060 | Y | |
+| [0.637, 0.747) | 0.0000 | 0.0000 | 0.0022 | Y | |
+| [0.747, 0.914) | 0.0000 | 0.0000 | 0.0000 | | |
+| [0.914, inf) | 0.0000 | 0.0000 | 0.0000 | | |
+
+**The `N = 1200` curve sits above the `N = 600` curve in 14 of 16
+bins — every bin in which either curve is nonzero — with CI separation
+in 6.** The two exceptions are the widest-margin bins where both
+curves are exactly zero, leaving no room to be above. (The `N = 900`
+curve dips at or below `N = 600` through the mid bins, consistent with
+the 900 dip seen on every aggregate; the rise is a 1200 phenomenon,
+now visible pointwise.) Sparse-bin caveat: the widest bins carry few
+comparisons per sample for bracketed targets, and per-bin minimum
+counts are recorded in the artifact; the domination conclusion rests
+on the well-populated bins.
+
+This settles the mechanism claim in its strongest available form:
+**at fixed question difficulty — pointwise in margin — the frozen
+instrument answers less accurately at `N = 1200` than at `N = 600`.**
+Per-question accuracy in continuum units degrades with `N`; no
+mix-drift account survives a pointwise comparison. Status as 9.6:
+post hoc, after the frozen gate failed; rewords the mechanism claim,
+cannot reopen the gate. Artifact:
+`docs/prereg/frozen/p10_stage_bprime/p10_bprime_margincurve_summary.json`.
 

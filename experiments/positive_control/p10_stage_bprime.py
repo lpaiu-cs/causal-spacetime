@@ -308,6 +308,137 @@ def run_b0prime(output_dir: Path) -> None:
     print(json.dumps(summary, indent=2))
 
 
+#: 16 a-priori fine bins over the FULL margin range (continuum
+#: 16-quantiles, same geometry stream as DELTA_MARGIN, cross-seed delta
+#: <= 5e-4). Review escalation on 9.6: four broad bins leave room for
+#: WITHIN-bin drift, and error varies sharply with margin, so an
+#: aggregate -- however reweighted -- can always be questioned. The
+#: pointwise error-versus-margin CURVE cannot: if E_1200(m) sits above
+#: E_600(m) bin by fine bin, no mix-matching objection applies, because
+#: nothing is being mixed.
+FINE_BIN_EDGES = (
+    0.0, 0.0330, 0.0673, 0.1028, 0.1399, 0.1788, 0.2198, 0.2633,
+    0.3100, 0.3606, 0.4160, 0.4784, 0.5503, 0.6367, 0.7473, 0.9144,
+    float("inf"),
+)
+
+
+def fine_binned_order_error(
+    estimated, reference_x, num_pair_comparisons: int, seed: int,
+) -> tuple[list, list]:
+    """Per-bin discordance over the 16 fine a-priori bins (full margin
+    range); same sampling stream as the other scorers."""
+
+    estimate = np.asarray(estimated, dtype=float)
+    if estimate.ndim == 1:
+        estimate = estimate.reshape(-1, 1)
+    reference = np.asarray(reference_x, dtype=float).reshape(-1, 1)
+    rng = np.random.default_rng(seed)
+    n = reference.shape[0]
+    first = rng.integers(0, n, size=(num_pair_comparisons, 2))
+    second = rng.integers(0, n, size=(num_pair_comparisons, 2))
+    valid = (first[:, 0] != first[:, 1]) & (second[:, 0] != second[:, 1])
+    first = first[valid]
+    second = second[valid]
+    ref_d = squared_distance_matrix(reference)
+    est_d = squared_distance_matrix(estimate)
+    ref_first = ref_d[first[:, 0], first[:, 1]]
+    ref_second = ref_d[second[:, 0], second[:, 1]]
+    est_sign = np.sign(
+        est_d[first[:, 0], first[:, 1]] - est_d[second[:, 0], second[:, 1]]
+    )
+    ref_sign = np.sign(ref_first - ref_second)
+    margin = np.abs(np.sqrt(ref_first) - np.sqrt(ref_second))
+    errors, counts = [], []
+    for lo, hi in zip(FINE_BIN_EDGES[:-1], FINE_BIN_EDGES[1:], strict=True):
+        keep = (margin >= lo) & (margin < hi) & (ref_sign != 0.0)
+        counts.append(int(keep.sum()))
+        errors.append(
+            float(np.mean(ref_sign[keep] != est_sign[keep]))
+            if counts[-1] else float("nan")
+        )
+    return errors, counts
+
+
+def run_margin_curve_diagnostic(output_dir: Path) -> None:
+    """POST-HOC, second escalation: the pointwise error-vs-margin curve.
+
+    Same 60 samples, deterministic. Per rung and per fine bin, the
+    median error over the 20 samples with a bootstrap interval; the
+    deliverable is the pointwise comparison of the N = 1200 curve
+    against the N = 600 curve. Pointwise domination is immune to mix
+    drift at ANY granularity by construction. Like 9.6, this can reword
+    the closure's mechanism claim and cannot reopen the frozen gate.
+    """
+
+    per_sample: dict = {n: [] for n in LADDER}
+    for n in LADDER:
+        base = B0PRIME_SEED_BASE[n]
+        for k in range(B0PRIME_SAMPLES):
+            pi = np.random.default_rng(base + k).permutation(n)
+            causal, times, coords = order_inputs(pi)
+            row, coords_fit, targets = analyze_order(
+                causal, times, coords, seed=base + k, want_truth=True,
+                return_fit=True,
+            )
+            if row.get("status") == "ok":
+                errors, counts = fine_binned_order_error(
+                    coords_fit, coords[targets] / float(n),
+                    num_pair_comparisons=BPRIME_COMPARISONS,
+                    seed=base + k + 9,
+                )
+                per_sample[n].append((errors, counts))
+        print(f"curve n={n}: {len(per_sample[n])}/{B0PRIME_SAMPLES} ok",
+              flush=True)
+
+    n_bins = len(FINE_BIN_EDGES) - 1
+    summary: dict = {
+        "code_version": git_describe(),
+        "fine_bin_edges": list(FINE_BIN_EDGES[:-1]) + ["inf"],
+        "curves": {}, "pointwise_1200_vs_600": {},
+    }
+    curves: dict = {}
+    for n in LADDER:
+        medians, cis, min_counts = [], [], []
+        for b in range(n_bins):
+            vals = np.array([
+                e[b] for e, _ in per_sample[n] if not np.isnan(e[b])
+            ])
+            rng = np.random.default_rng(_stable_seed("curve", n, b))
+            boots = np.median(vals[
+                rng.integers(0, vals.size, size=(4000, vals.size))
+            ], axis=1) if vals.size else np.array([])
+            medians.append(float(np.median(vals)) if vals.size else None)
+            cis.append([
+                float(np.percentile(boots, 2.5)),
+                float(np.percentile(boots, 97.5)),
+            ] if vals.size else [None, None])
+            min_counts.append(min(
+                (c[b] for _, c in per_sample[n]), default=0
+            ))
+        curves[n] = (medians, cis)
+        summary["curves"][str(n)] = {
+            "median_by_bin": medians, "ci_by_bin": cis,
+            "min_count_by_bin": min_counts,
+        }
+    above, separated = [], []
+    for b in range(n_bins):
+        m600, ci600 = curves[600][0][b], curves[600][1][b]
+        m1200, ci1200 = curves[1200][0][b], curves[1200][1][b]
+        if m600 is None or m1200 is None:
+            continue
+        above.append(bool(m1200 > m600))
+        separated.append(bool(ci1200[0] > ci600[1]))
+    summary["pointwise_1200_vs_600"] = {
+        "bins_compared": len(above),
+        "bins_where_1200_above_600": int(sum(above)),
+        "bins_ci_separated": int(sum(separated)),
+    }
+    (output_dir / "p10_bprime_margincurve_summary.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(summary["pointwise_1200_vs_600"], indent=2))
+
+
 def run_mix_matched_diagnostic(output_dir: Path) -> None:
     """POST-HOC robustness for the 9.5 closure, labelled as such.
 
@@ -393,7 +524,8 @@ def run_mix_matched_diagnostic(output_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", choices=["b0", "b1", "diagnostic"],
+    parser.add_argument("--stage",
+                        choices=["b0", "b1", "diagnostic", "curve"],
                         default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
@@ -403,6 +535,8 @@ def main() -> None:
         run_b0prime(args.output_dir)
     elif args.stage == "diagnostic":
         run_mix_matched_diagnostic(args.output_dir)
+    elif args.stage == "curve":
+        run_margin_curve_diagnostic(args.output_dir)
     elif args.stage == "b1":
         raise SystemExit(
             "B'1 is gated on the frozen B'0 record (prereg Section 9) and "
