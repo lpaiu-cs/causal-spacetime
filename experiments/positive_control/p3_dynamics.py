@@ -88,7 +88,8 @@ def analyze_order(causal, times, coords, seed, want_truth, extra_truth_coords=No
                   max_targets: int = MAX_TARGETS,
                   min_targets: int = MIN_TARGETS,
                   train_c: int = TRAIN_C,
-                  heldout_c: int = HELDOUT_C):
+                  heldout_c: int = HELDOUT_C,
+                  return_fit: bool = False):
     """Return a result dict for one causal order (structural blocks recorded).
 
     The keyword defaults ARE the frozen P3 instrument, and every frozen
@@ -98,19 +99,25 @@ def analyze_order(causal, times, coords, seed, want_truth, extra_truth_coords=No
     points, never a re-implementation.
     """
 
+    def _out(row_dict, fit=None, tgt=None):
+        # return_fit exists for P10 Stage B-prime, which scores the SAME
+        # fit with a second observable; default callers see the frozen
+        # single-dict return unchanged.
+        return (row_dict, fit, tgt) if return_fit else row_dict
+
     chains = select_disjoint_chains(causal, times, chain_count, min_chain_len)
     if len(chains) < chain_count:
-        return {"status": f"structural_block: only {len(chains)} chains"}
+        return _out({"status": f"structural_block: only {len(chains)} chains"})
     targets = select_bracketed_targets(causal, chains, max_targets, seed)
     if targets.size < min_targets:
-        return {"status": f"structural_block: {targets.size} targets"}
+        return _out({"status": f"structural_block: {targets.size} targets"})
     profiles = measure_order_intrinsic_profiles(causal, chains, targets)
     try:
         coords_fit, heldout = _fit_heldout(profiles, seed, train_c, heldout_c)
         shuffled = _column_shuffle(profiles, seed + 61)
         _, null_heldout = _fit_heldout(shuffled, seed, train_c, heldout_c)
     except ValueError as error:
-        return {"status": f"structural_block: {str(error)[:40]}"}
+        return _out({"status": f"structural_block: {str(error)[:40]}"})
     row = {
         "status": "ok",
         "n_targets": float(targets.size),
@@ -132,7 +139,7 @@ def analyze_order(causal, times, coords, seed, want_truth, extra_truth_coords=No
                 num_pair_comparisons=8000, seed=seed + 9,
             )
         )
-    return row
+    return _out(row, coords_fit, targets)
 
 
 def _rnd(v):

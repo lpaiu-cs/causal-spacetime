@@ -552,3 +552,80 @@ replaced by 30000-30050, verified clean including the derived streams;
 and the aggregator now validates every chain against the frozen table
 (membership and a uniform matching `chain_seed`), so a stale, extra,
 or wrong-seed CSV exits instead of entering the screen.
+
+## 9. Stage B': the scale-fixed observable (designed 2026-07-27;
+B'0 not yet run)
+
+Stage B ended on a diagnosis: both instrument families kept the same
+observable — sign discordance over uniformly sampled target pairs —
+whose difficulty mix is fixed by the continuum distribution of
+comparison margins and therefore never eases as resolution improves.
+B' inverts the design: **the instrument is the frozen P3 discriminator,
+verbatim and unscaled** (which also removes B0's unscaled-fit-budget
+confound: same constants, same convergence regime at every size), and
+only the truth *scoring* changes.
+
+### 9.1 The observable, and its two anchors
+
+**Margin-restricted discordance**: the same pair-pair comparisons as
+the frozen scorer, restricted to quadruples whose TRUE comparison
+margin `||x_a - x_b| - |x_c - x_d||` (continuum units, `x = (i -
+pi_i)/N`) is at least `DELTA_MARGIN`. Every size is asked the same
+fixed question set while per-question precision improves with density.
+
+Two anchors keep it honest:
+
+- **To the frozen observable**: at `delta = 0`, same seed and count,
+  the scorer reproduces the frozen scorer *bit for bit* (same pair
+  stream, same reference-tie exclusion) — pinned by regression. It is
+  a restriction of the frozen observable, not a second definition.
+- **To pure geometry**: `DELTA_MARGIN = 0.1399` is the 25th percentile
+  of the comparison-margin distribution of the exact continuum model
+  (uniform iid points in the unit `(u, v)` square), computed from
+  geometry alone — 4M draws, seed 2718281828, reproducible to 3.5e-6
+  across seeds. **No experiment data was consulted in choosing it.**
+  Eligible fraction is 75% by construction under the continuum model;
+  the realized fraction is reported per sample with a floor of 8,000
+  eligible comparisons out of 32,000 sampled.
+
+### 9.2 Stage B'0 — the gate, third attempt at the yardstick
+
+Arm S through the frozen instrument, both scorings per sample (the
+unrestricted scoring rides along as the replication of Stage A's flat
+curve on the very same fits). 20 samples per size, seeds 40000-40059,
+fresh against every range in the programme including P6-B's 1000-1019
+and the B1 envelope 30000-30379 (pinned by regression).
+
+**Gate**: the restricted discordance's top-minus-bottom CI entirely
+below zero, with full completeness at every rung and the eligible floor
+met on every sample — completeness-conditioned verdicts are not
+verdicts (the B0 lesson, inherited into `bprime_gate_verdict`).
+
+If this gate fails too, the scale-referenced behaviour is not a
+property of the question mix either, three distinct mechanisms have
+been eliminated (instrument scale-covariance, instrument rescaling,
+question-mix fixity), and P10 closes on that three-sided instrument
+finding.
+
+### 9.3 Stage B'1 — frozen now, runnable only on a B'0 pass
+
+Identical in structure to the (never-run) 8.3, with the restricted
+observable substituting for the unrestricted one end to end: six
+chains at fresh seeds (to be drawn clear of every used range and
+listed before any chain runs), 48 retained samples at 25k spacing,
+the corrected Stage B machinery verbatim — code-enforced B'0 gate,
+frozen-chain validation, index-set completeness, measurement
+completeness, dual-start presence, within-chain block bootstrap on the
+restricted truth series, ESS >= 20 at m = 48. Hypotheses: **H-TRACK'**
+(TOST at margin 0.05 per rung on restricted E - S differences; the
+margin is P2/P9's standing tolerance, same provenance as 8.3) and
+**H-DEEPEN'** (arm E's own top-minus-bottom restricted CI entirely
+below zero); conjunction for "consistent with a continuum limit over
+the measured range". The B'1 runner is deliberately NOT implemented
+until the gate passes — a 17-chain-hour path with nothing to authorize
+it is an invitation.
+
+### 9.4 Cost
+
+B'0: minutes (direct sampling; the dual scoring adds one 32k-comparison
+pass per sample). B'1 if authorized: the 8.4 budget unchanged.
