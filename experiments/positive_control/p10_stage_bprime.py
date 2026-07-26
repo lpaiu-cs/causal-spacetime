@@ -536,27 +536,30 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
     # a discordant comparison above the threshold below; the N = 600
     # pool's comparisons at margins >= m* are then counted exactly.
     pooled = {}
+    full_wrong: dict = {}
     for n in LADDER:
         total = sum(
             c[b] for _, c, *_ in per_sample[n] for b in range(n_bins)
             if FINE_BIN_EDGES[b] >= HIGH_EDGE
         )
-        wrong_margins = sorted(
+        # full precision for computation; rounding is display-only in
+        # the serialized list (review finding: a 4-decimal threshold
+        # leaked into the m* count, making 'exact at >= m*' false off
+        # the representable grid)
+        full_wrong[n] = sorted(
             m
             for _, _, _, _, dm in per_sample[n]
             for b in range(n_bins) if FINE_BIN_EDGES[b] >= HIGH_EDGE
             for m in dm[b]
         )
         pooled[n] = {"total_at_or_above_high": int(total),
-                     "discordant_at_or_above_high": len(wrong_margins),
+                     "discordant_at_or_above_high": len(full_wrong[n]),
                      "discordant_margins": [round(m, 4)
-                                            for m in wrong_margins[:50]]}
+                                            for m in full_wrong[n][:50]]}
     summary["pooled_high_margin"] = {
         "high_edge": HIGH_EDGE, **{str(n): pooled[n] for n in LADDER}
     }
-    star = None
-    if pooled[1200]["discordant_at_or_above_high"]:
-        star = pooled[1200]["discordant_margins"][0]
+    star = full_wrong[1200][0] if full_wrong[1200] else None
     if star is not None:
         totals_600_above_star = 0
         wrong_600_above_star = 0

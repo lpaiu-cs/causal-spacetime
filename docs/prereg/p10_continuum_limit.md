@@ -8,13 +8,15 @@ order grows, under every combination tried of instrument scaling
 (frozen / continuum-scaled) and question restriction (full mix /
 margin-cutoff / mix-matched bins — see 9.5-9.6). Three gates, three
 failures; every per-size result in the programme stands unchanged.
-*(Calibrated 2026-07-27, 9.13: a fully stream-separated fresh
-replication reproduces "does not improve" — no quantity improves in a
-fourth independent arm — and the degradation's sign, ordering, and
-dense-tail rise, but no aggregate CI separates at 20 samples per rung
-and the sparse extreme-tail structure does not replicate.
-"Measurably degrades" is a frozen-sample result; the replication grade
-is "directionally consistent, not separated".)*
+*(Calibrated 2026-07-27, 9.13; revised same day on tenth review: a
+fully stream-separated fresh replication detects no improvement
+anywhere and keeps the degradation's sign, ordering, and dense-tail
+rise, but its intervals include both signs — the replication is
+directionally consistent and INCONCLUSIVE, neither establishing nor
+excluding improvement, where the frozen arms' all-positive intervals
+had excluded it at their samples. "Measurably degrades" is a
+frozen-sample result; failing a frozen gate is a stopping rule
+operating, not evidence for the null.)*
 What a continuum-limit test now requires is a reconstruction whose
 continuum accuracy grows with density — a different instrument.
 The Stage A record below is preserved as written.
@@ -1076,6 +1078,11 @@ What replicates:
   bottom point estimates (+0.0247 restricted, +0.0216 unrestricted,
   +0.0200 mix-matched), the gate verdict NO FALL, floors met. A
   fourth independent arm in which nothing improves with `N`.
+  *(Tenth review: overstated — these intervals include negative
+  values, so improvement remains COMPATIBLE with these 20 samples.
+  The accurate statement: no improvement is detected, and the arm is
+  inconclusive on exclusion — unlike the frozen arms, whose
+  all-positive intervals excluded improvement at their samples.)*
 - **The dense-tail rise.** In the well-populated tail bins 10-11
   (30-37k comparisons each) the `N = 1200` pooled rate again sits
   above `N = 600`: 0.0403 vs 0.0290 and 0.0238 vs 0.0179 — ratios
@@ -1112,5 +1119,14 @@ stands untouched; 9.10's sample-scoped language needed no correction,
 which is what scoping is for. The reviewer's seed-hygiene escalation
 did real scientific work here: it forced the replication that
 measured the mechanism claim's generalization, and the record is
-better calibrated for it.
+better calibrated for it. *(Tenth review: "reinforced" and "never
+improves" overclaim — an interval that includes both signs cannot
+reinforce a scientific conclusion, and gate failure is a stopping
+rule operating, not evidence for the null. The closure is PROCEDURAL:
+three frozen gates failed as frozen, and the programme stops. The
+spaced arm's contribution is a directionally consistent, inconclusive
+fresh estimate: it detects no improvement and excludes nothing. The
+frozen arms' all-positive intervals excluded improvement at their
+samples; the replication leaves exclusion open. This paragraph, so
+marked, is the record's last word.)*
 
