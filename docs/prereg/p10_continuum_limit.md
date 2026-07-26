@@ -951,6 +951,13 @@ thousands of counts; `N = 600` error-free over its 3,871 sampled
 last-bin comparisons while `N = 1200` errs 15 times in 11,184).**
 Each escalation of this review cycle has now been driven to a quantity
 that is exact over its stated scope, and to no claim beyond it.
+*(Superseded as the record's last word by 9.13: in the fully
+stream-separated fresh replication the pointwise separations do not
+replicate — 0 of 16 bins — and the sparse extreme tail inverts, so
+the inferential leg of this paragraph is a frozen-sample result and
+the claim's replication grade is "directionally consistent, not
+separated". The sample-scoped exact facts above remain true as
+stated, of those samples.)*
 
 ### 9.11 Sixth round: the scorer-seed namespace collision, conceded
 and measured (2026-07-27)
