@@ -22,8 +22,10 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p10_stage_b import (  # noqa: E402
+    SAMPLES_PER_CHAIN,
     TOST_MARGIN,
     _require_b0_gate,
+    chain_is_complete,
     evaluate_frozen_hypotheses,
     scaled_constants,
 )
@@ -95,6 +97,19 @@ def test_the_b0_gate_locks_b1_under_the_committed_record():
 
     with pytest.raises(SystemExit, match="gate FAILED"):
         _require_b0_gate()
+
+
+def test_a_shortened_chain_is_incomplete():
+    """The frozen sampler can silently drop a scheduled retention point
+    (an i == j draw lands on it, ~1/N per point), and the sampler may
+    not be touched. A 47-row chain must therefore fail completeness --
+    its m = 48 diagnostic basis and its nominal step labels are gone."""
+
+    full = [{"chain_complete": "True"} for _ in range(SAMPLES_PER_CHAIN)]
+    assert chain_is_complete(full)
+    assert not chain_is_complete(full[:-1])                # short
+    flagged = full[:-1] + [{"chain_complete": "False"}]
+    assert not chain_is_complete(flagged)                  # runner flagged it
 
 
 def test_the_anchor_operating_point_is_the_frozen_instrument():

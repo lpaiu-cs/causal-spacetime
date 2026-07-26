@@ -209,6 +209,27 @@ def _require_b0_gate() -> None:
         )
 
 
+def chain_is_complete(chain_rows: list) -> bool:
+    """True iff a B1 chain retained every scheduled sample.
+
+    The frozen sampler draws ``(i, j)`` BEFORE its sampling check and
+    ``continue``s on ``i == j``, so a scheduled retention point silently
+    vanishes with probability ``1/N`` — about a 4-8% event per 48-sample
+    chain at these sizes (review finding). The sampler cannot be touched
+    (P5's exact-replay validation pins its trajectory), so completeness
+    is enforced here: a shortened chain no longer carries the ``m = 48``
+    diagnostic basis the screen claims, and its nominal step labels are
+    shifted from the true iterations, so it must not enter the frozen
+    hypotheses.
+    """
+
+    return (
+        len(chain_rows) == SAMPLES_PER_CHAIN
+        and all(str(r.get("chain_complete")) in ("True", "1.0", "1")
+                for r in chain_rows)
+    )
+
+
 def run_b1_chain(n: int, start: str, output_dir: Path) -> None:
     seed = B1_CHAIN_SEEDS[(n, start)]
     eps = EPS_TIMES_N / n
@@ -219,12 +240,23 @@ def run_b1_chain(n: int, start: str, output_dir: Path) -> None:
         sample_every=SAMPLE_SPACING, burn_frac=BURN_STEPS / TOTAL_STEPS,
         collect_perms=True,
     )
+    complete = len(samples) == SAMPLES_PER_CHAIN
+    if not complete:
+        print(f"B1 n={n} {start}: SHORT CHAIN -- {len(samples)} of "
+              f"{SAMPLES_PER_CHAIN} scheduled samples retained (an i == j "
+              "draw landed on a retention point); nominal steps are "
+              "unreliable and the screen will exclude this chain",
+              flush=True)
     rows = []
     for k, (obs, pi) in enumerate(zip(samples, perms, strict=True)):
         row = {
             "arm": "E-scaled", "n": float(n), "start": start,
             "chain_seed": float(seed), "sample_index": float(k),
-            "step": float(BURN_STEPS + k * SAMPLE_SPACING),
+            # the nominal schedule; only trustworthy when the chain is
+            # complete, which chain_complete records per row
+            "step": (float(BURN_STEPS + k * SAMPLE_SPACING)
+                     if complete else float("nan")),
+            "chain_complete": bool(complete),
             "n0": float(obs["n0"]), "action": float(obs["S"]),
             "acceptance": float(acceptance),
             "code_version": git_describe(),
@@ -341,11 +373,16 @@ def aggregate(output_dir: Path) -> None:
             melted = (
                 band is not None and band[0] <= n0s[0] <= band[1]
             ) if start == "bipartite" else True
-            screen_pass[(n, start)] = bool(ess >= MIN_ESS) and bool(melted)
+            complete = chain_is_complete(chain_rows)
+            screen_pass[(n, start)] = (
+                bool(ess >= MIN_ESS) and bool(melted) and complete
+            )
             summary["chains"].append({
                 "n": n, "start": start, "ess_n0": round(float(ess), 1),
                 "ess_pass": bool(ess >= MIN_ESS),
                 "first_sample_in_random_band": bool(melted),
+                "chain_complete": complete,
+                "n_retained": len(chain_rows),
                 "screen_pass": screen_pass[(n, start)],
                 "acceptance": float(chain_rows[0]["acceptance"]),
             })
