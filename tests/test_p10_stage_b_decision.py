@@ -171,7 +171,7 @@ def test_the_b0_gate_requires_full_rungs_not_just_a_falling_ci():
     falling = (-0.03, (-0.05, -0.01))
     assert b0_gate_verdict(full, *falling)
     assert not b0_gate_verdict(full, -0.03, (-0.05, +0.01))   # CI touches 0
-    short = dict(full, **{1200: B0_SAMPLES - 1})
+    short = {**full, 1200: B0_SAMPLES - 1}
     assert not b0_gate_verdict(short, *falling)               # one block
     assert not b0_gate_verdict({600: 1, 900: 1, 1200: 1}, *falling)
 
