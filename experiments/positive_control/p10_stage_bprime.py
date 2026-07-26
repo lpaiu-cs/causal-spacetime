@@ -70,11 +70,16 @@ def _diag_code_version() -> str:
     """git_describe plus a dirty marker. Two diagnostic artifacts were
     produced from uncommitted implementations and stamped a clean HEAD
     that could not reproduce them (review finding); this makes that
-    state visible instead of silent."""
+    state visible instead of silent. Untracked files count as dirty
+    too (second review finding): a diagnostic depending on a NEW,
+    never-committed module is exactly as unreproducible as one
+    depending on an edited file, and ``--untracked-files=no`` hid
+    that case. Ignored paths (``outputs/``) stay excluded, so runtime
+    artifacts do not false-positive the stamp."""
 
     import subprocess
     dirty = subprocess.run(
-        ["git", "status", "--porcelain", "--untracked-files=no"],
+        ["git", "status", "--porcelain"],
         capture_output=True, text=True,
     ).stdout.strip()
     return git_describe() + ("-dirty" if dirty else "")
