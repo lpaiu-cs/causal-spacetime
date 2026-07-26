@@ -1,5 +1,5 @@
 {
-  "code_version": "1ae9f61",
+  "code_version": "a68d4d4",
   "reading_convention": "per_n_screened applies the frozen prereg-6c mixing screen (failing chains excluded; a rung with no surviving chain is null) and is the PRIMARY reading. per_n_pooled ignores the screen and is secondary, kept because the screen itself is documented as degenerate at m = 10 (prereg 6d). Differences are median(E) - median(S) with bootstrap CIs; a CI covering zero is a failure to detect, never equivalence.",
   "chains": [
     {
