@@ -22,6 +22,7 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p10_stage_b import (  # noqa: E402
+    B1_CHAIN_SEEDS,
     LADDER,
     SAMPLES_PER_CHAIN,
     STARTS,
@@ -30,6 +31,7 @@ from p10_stage_b import (  # noqa: E402
     chain_is_complete,
     evaluate_frozen_hypotheses,
     require_all_chains,
+    require_frozen_chain,
     scaled_constants,
 )
 
@@ -127,6 +129,34 @@ def test_random_start_shards_alone_cannot_reach_the_hypotheses():
         require_all_chains({(n, "random") for n in LADDER})
     with pytest.raises(SystemExit, match="1200"):
         require_all_chains(all_six - {(1200, "bipartite")})
+
+
+def test_b1_seeds_do_not_collide_with_p6b_reference_orders():
+    """The first table used 1000-1050; P6-B's uniform reference orders
+    are exactly default_rng(1000..1019).permutation(600), and every B1
+    random start is default_rng(seed + 1).permutation(N) -- so the
+    (600, random) chain would have literally reused a P6-B reference
+    order. Pin the whole derived-stream envelope clear of that range."""
+
+    p6b_reference = set(range(1000, 1020))
+    for (n, start), seed in B1_CHAIN_SEEDS.items():
+        derived = {seed, seed + 1} | {seed + 7 * k for k in range(48)}
+        assert not (derived & p6b_reference), (n, start)
+
+
+def test_stale_or_wrong_seed_chains_are_rejected():
+    """Grouping by (n, start) alone would let a correctly named CSV
+    produced with a different seed replace the preregistered chain, or
+    a seventh chain slip in. Both must exit."""
+
+    good_seed = float(B1_CHAIN_SEEDS[(600, "random")])
+    good = [{"chain_seed": good_seed} for _ in range(3)]
+    require_frozen_chain(600, "random", good)          # no exit
+    with pytest.raises(SystemExit, match="not the preregistered chain"):
+        require_frozen_chain(600, "random",
+                             [{"chain_seed": 1000.0} for _ in range(3)])
+    with pytest.raises(SystemExit, match="not one of the six"):
+        require_frozen_chain(600, "uniform", good)
 
 
 def test_the_anchor_operating_point_is_the_frozen_instrument():

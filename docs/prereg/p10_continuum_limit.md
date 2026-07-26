@@ -444,7 +444,11 @@ is frozen until B0 passes.
 ### 8.3 Stage B1 — frozen only after B0, stated now so the shape is on record
 
 - Six chains as in Stage A (dual starts, `beta = 2`, `eps N = 12`),
-  seeds 1000-1050 (fresh), burn 100k, **48 retained samples per chain
+  seeds **30000-30050** *(corrected: the original table said 1000-1050
+  and was not fresh -- P6-B's uniform reference orders are exactly
+  `default_rng(1000..1019).permutation(600)`, so the (600, random)
+  start would have literally reused one; see the 8.5 correction
+  note)*, burn 100k, **48 retained samples per chain
   at 25k spacing** (Stage 0 measured 25k decorrelated) -> 1.3M steps
   per chain. `m = 48` restores the inherited screen to P7's actual bar
   (`ESS >= 20` at `m = 48`), ending the Stage A degeneracy.
@@ -530,4 +534,10 @@ construction" via the pair-separation argument; withdrawn as described
 (ii) The `--stage b1` path originally trusted the documentation to
 prevent post-gate runs; it now reads the frozen B0 record and refuses
 unless `yardstick_falls` is true, the same enforcement pattern as
-P8-B's constants guard.
+P8-B's constants guard. (iii) The B1 seed table 1000-1050 collided
+with P6-B's uniform reference seeds 1000-1019 — the (600, random)
+start would have reused a P6-B reference order exactly — and is
+replaced by 30000-30050, verified clean including the derived streams;
+and the aggregator now validates every chain against the frozen table
+(membership and a uniform matching `chain_seed`), so a stale, extra,
+or wrong-seed CSV exits instead of entering the screen.

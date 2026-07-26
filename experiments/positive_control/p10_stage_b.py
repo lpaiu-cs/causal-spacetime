@@ -73,12 +73,18 @@ SAMPLES_PER_CHAIN = 48
 TOTAL_STEPS = BURN_STEPS + SAMPLES_PER_CHAIN * SAMPLE_SPACING  # 1.3M
 MIN_ESS = 20.0
 
-#: Frozen seed table (prereg Section 8). Fresh against every range used
-#: anywhere in the programme, Stage A's 820-959 included.
+#: Frozen seed table (prereg Section 8, corrected). The first table used
+#: 1000-1050 and was NOT fresh: P6-B's uniform reference orders are
+#: exactly ``default_rng(1000..1019).permutation(600)``, so the
+#: (600, random) chain's ``seed + 1`` start would have literally reused
+#: a P6-B reference order (review finding). 30000-30050 is verified
+#: clean against every seed range in the programme, including the
+#: derived streams (``seed + 1`` starts, ``seed + 7k`` discriminator
+#: seeds up to 30379).
 B1_CHAIN_SEEDS = {
-    (600, "random"): 1000, (600, "bipartite"): 1010,
-    (900, "random"): 1020, (900, "bipartite"): 1030,
-    (1200, "random"): 1040, (1200, "bipartite"): 1050,
+    (600, "random"): 30000, (600, "bipartite"): 30010,
+    (900, "random"): 30020, (900, "bipartite"): 30030,
+    (1200, "random"): 30040, (1200, "bipartite"): 30050,
 }
 B0_SEED_BASE = {600: 1100, 900: 1120, 1200: 1140}
 B0_SAMPLES = 20
@@ -191,6 +197,31 @@ def run_b0(output_dir: Path) -> None:
 B0_FROZEN_DIR = Path("docs/prereg/frozen/p10_stage_b")
 B0_FROZEN_SUMMARY = B0_FROZEN_DIR / "p10_b0_summary.json"
 B0_FROZEN_CSV = B0_FROZEN_DIR / "p10_b0_yardstick.csv"
+
+
+def require_frozen_chain(n: int, start: str, chain_rows: list) -> None:
+    """Every aggregated chain must BE one of the six frozen chains.
+
+    Grouping by ``(n, start)`` alone would let a stale or extra CSV --
+    a correctly named start produced with a different seed, or a
+    seventh chain -- slip into the screen and the hypotheses (review
+    finding). Membership in the frozen table and a uniform, matching
+    ``chain_seed`` on every row are required; anything else exits.
+    """
+
+    if (n, start) not in B1_CHAIN_SEEDS:
+        raise SystemExit(
+            f"chain ({n}, {start!r}) is not one of the six frozen B1 "
+            "chains; remove the extra CSV before aggregating"
+        )
+    expected = float(B1_CHAIN_SEEDS[(n, start)])
+    seeds = {float(r["chain_seed"]) for r in chain_rows}
+    if seeds != {expected}:
+        raise SystemExit(
+            f"chain ({n}, {start!r}) carries chain_seed(s) "
+            f"{sorted(seeds)} but the frozen table says {expected}; "
+            "this CSV is not the preregistered chain"
+        )
 
 
 def require_all_chains(present: set) -> None:
@@ -388,6 +419,7 @@ def aggregate(output_dir: Path) -> None:
         ]
         band = (min(random_tail), max(random_tail)) if random_tail else None
         for start, chain_rows in chains.items():
+            require_frozen_chain(n, start, chain_rows)
             chain_rows.sort(key=lambda r: float(r["sample_index"]))
             n0s = [float(r["n0"]) for r in chain_rows]
             ess = integrated_autocorrelation(n0s)[1]
