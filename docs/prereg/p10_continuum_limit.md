@@ -251,11 +251,23 @@ That is a *failure to detect*, not equivalence — Stage A prespecified no
 equivalence margin (deliberately: a characterization stage has nothing
 to tune, and a margin chosen now would be chosen after seeing the
 spread). An equivalence claim needs a Stage B with a preregistered
-margin, exactly as P9 treated its no-improvement leg. Within that
-limit: of the outcomes named in Section 2, the data sit on the paired
-form of "deepening" — no fading and no floor relative to the reference
-was detected over a factor of two in size, on forty fresh ensemble
-samples, with the dual starts bracketing each other at every size.
+margin, exactly as P9 treated its no-improvement leg.
+
+**Against the frozen outcome table of Section 2: unclassifiable.** All
+three preregistered signatures share a premise — that arm S's error
+falls with `N` — and that premise failed (S runs 0.149 → 0.152 →
+0.161). Neither arm falls, so "deepening"'s signature was not met;
+arm S does not fall, so "floor"'s was not; arm E neither grows beyond
+the reference nor loses passes, so "fading"'s was not. An earlier
+version of this record called the result "the paired form of
+deepening", which was a post-hoc fourth category wearing the friendliest
+frozen label; that classification is withdrawn. What stands is the
+descriptive result above — no E − S difference detected at any size, at
+the stated sensitivity, on forty fresh ensemble samples, with the dual
+starts bracketing each other — and the design finding that the frozen
+outcome table was built on a yardstick premise the instrument does not
+satisfy at frozen constants. A successor stage with constants scaled in
+continuum units is where the Section 2 table becomes decidable.
 
 ### Two design defects, found by the data and owned here
 
@@ -353,6 +365,21 @@ mis-paired one). (x) The melt criterion silently widened the frozen
 "inside the random tail band" by 10% each way; it is now the strict
 band. No archived melt verdict changes — all three bipartite first
 samples lie strictly inside their bands.
+
+**Fourth correction note (same day, fourth review round).** (xi) Two
+earlier versions of this record classified the outcome as "the paired
+form of deepening". Under the frozen Section 2 table that was wrong:
+all three preregistered signatures presuppose a falling arm-S curve,
+which did not occur, so **the ladder is unclassifiable under its own
+frozen outcome table** and the descriptive difference result is what
+stands. The friendly label was a post-hoc category and is withdrawn —
+the same discipline P8 applied when it declined to invent a passing
+rule after the fact. (xii) The archived summary's `code_version`
+stamped a commit (`1ae9f61`) whose aggregator still carried the
+mis-paired ESS, so checking out the recorded version could not
+reproduce the recorded reading. The summary is regenerated at a commit
+that contains the corrected aggregator, and reproduction is: check out
+the stamped commit, run `--aggregate`, compare.
 
 ## 7. What this can and cannot answer
 
