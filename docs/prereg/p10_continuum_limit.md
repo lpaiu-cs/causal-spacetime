@@ -263,7 +263,8 @@ version of this record called the result "the paired form of
 deepening", which was a post-hoc fourth category wearing the friendliest
 frozen label; that classification is withdrawn. What stands is the
 descriptive result above — no E − S difference detected at any size, at
-the stated sensitivity, on forty fresh ensemble samples, with the dual
+the stated sensitivity, on **60 fresh ensemble samples in the pooled
+reading (30 surviving the frozen screen in the primary)**, with the dual
 starts bracketing each other — and the design finding that the frozen
 outcome table was built on a yardstick premise the instrument does not
 satisfy at frozen constants. A successor stage with constants scaled in
