@@ -300,8 +300,16 @@ def chain_is_complete(chain_rows: list) -> bool:
     hypotheses.
     """
 
+    indices = sorted(
+        int(float(r.get("sample_index", -1))) for r in chain_rows
+    )
     return (
         len(chain_rows) == SAMPLES_PER_CHAIN
+        # exactly 0..47, each once: a row count alone would accept a
+        # duplicated row papering over a missing scheduled state, which
+        # biases the medians while wearing the right length (review
+        # finding)
+        and indices == list(range(SAMPLES_PER_CHAIN))
         and all(str(r.get("chain_complete")) in ("True", "1.0", "1")
                 for r in chain_rows)
     )

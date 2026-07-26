@@ -117,11 +117,19 @@ def test_a_shortened_chain_is_incomplete():
     not be touched. A 47-row chain must therefore fail completeness --
     its m = 48 diagnostic basis and its nominal step labels are gone."""
 
-    full = [{"chain_complete": "True"} for _ in range(SAMPLES_PER_CHAIN)]
+    full = [{"chain_complete": "True", "sample_index": float(k)}
+            for k in range(SAMPLES_PER_CHAIN)]
     assert chain_is_complete(full)
     assert not chain_is_complete(full[:-1])                # short
-    flagged = full[:-1] + [{"chain_complete": "False"}]
+    flagged = full[:-1] + [dict(full[-1], chain_complete="False")]
     assert not chain_is_complete(flagged)                  # runner flagged it
+    # 48 rows of the right length, but index 5 duplicated and 47 missing:
+    # a duplicate papering over a missing scheduled state must fail
+    forged = full[:-1] + [dict(full[5])]
+    assert len(forged) == SAMPLES_PER_CHAIN
+    assert not chain_is_complete(forged)
+    shuffled = list(reversed(full))                        # order-free check
+    assert chain_is_complete(shuffled)
 
 
 def test_random_start_shards_alone_cannot_reach_the_hypotheses():
