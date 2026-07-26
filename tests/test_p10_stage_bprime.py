@@ -152,10 +152,15 @@ def test_the_seedfix_namespace_is_disjoint_from_everything():
     chain = {b + k for b in B0PRIME_SEED_BASE.values() for k in range(20)}
     old_scorer = {b + k + 9 for b in B0PRIME_SEED_BASE.values()
                   for k in range(20)}
+    # the frozen instrument itself derives seed+9 (truth scorer) and
+    # seed+100 (fit learning) from every chain seed -- the clean
+    # namespace must clear those derived windows too
+    instrument_derived = {b + k + 100 for b in B0PRIME_SEED_BASE.values()
+                          for k in range(20)}
     clean = {b + k for b in SEEDFIX_SCORE_SEED_BASE.values()
              for k in range(20)}
     assert len(clean) == 60
-    assert not (clean & (chain | old_scorer | used))
+    assert not (clean & (chain | old_scorer | instrument_derived | used))
     assert _seed_collision_map()["clean_disjoint_from_all"]
 
 

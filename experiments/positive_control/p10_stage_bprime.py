@@ -60,7 +60,10 @@ from p5_two_orders_emergence import order_inputs
 from p10_continuum_ladder import LADDER, _difference_ci, _stable_seed
 from pc_common import DEFAULT_OUTPUT_DIR, git_describe, write_rows_csv
 
-from causal_spacetime_lab.ordinal_embedding import squared_distance_matrix
+from causal_spacetime_lab.ordinal_embedding import (
+    embedding_distance_order_error,
+    squared_distance_matrix,
+)
 
 
 def _diag_code_version() -> str:
@@ -700,7 +703,29 @@ def run_seedfix_rescore(output_dir: Path) -> None:
                    "status": row.get("status")}
             if row.get("status") == "ok":
                 true_x = coords[targets] / float(n)
-                out["truth"] = row["truth"]
+                # The UNRESTRICTED truth arm (round-seven finding): the
+                # frozen instrument scores it internally at seed+9 --
+                # the same colliding stream -- so it must be re-scored
+                # here too, not copied from the row. The old-namespace
+                # recomputation must equal the instrument's own output
+                # bit for bit, or the replay is broken.
+                truth_ref = coords[targets].reshape(-1, 1)
+                truth_old = float(embedding_distance_order_error(
+                    coords_fit, truth_ref,
+                    num_pair_comparisons=8000, seed=base + k + 9,
+                ))
+                if truth_old != row["truth"]:
+                    raise RuntimeError(
+                        f"truth replay mismatch at n={n} k={k}: "
+                        f"{truth_old} != {row['truth']}"
+                    )
+                out["truth_old"] = truth_old
+                out["truth_clean"] = float(embedding_distance_order_error(
+                    coords_fit, truth_ref,
+                    num_pair_comparisons=8000,
+                    seed=SEEDFIX_SCORE_SEED_BASE[n] + k,
+                ))
+                out["delta_truth"] = out["truth_clean"] - out["truth_old"]
                 for tag, seed in (
                     ("old", base + k + 9),
                     ("clean", SEEDFIX_SCORE_SEED_BASE[n] + k),
@@ -749,31 +774,29 @@ def run_seedfix_rescore(output_dir: Path) -> None:
         sub = [r for r in ok if r["n"] == n]
         entry: dict = {"n_ok": len(sub)}
         for tag in ("old", "clean"):
-            vals = [r[f"restricted_{tag}"] for r in sub]
-            rng = np.random.default_rng(
-                _stable_seed("seedfix-restricted", n, tag)
-            )
-            boots = np.median(np.asarray(vals)[
-                rng.integers(0, len(vals), size=(4000, len(vals)))
-            ], axis=1) if vals else np.array([])
-            entry[f"median_restricted_{tag}"] = (
-                float(np.median(vals)) if vals else None
-            )
-            entry[f"ci_restricted_{tag}"] = [
-                float(np.percentile(boots, 2.5)),
-                float(np.percentile(boots, 97.5)),
-            ] if vals else [None, None]
+            for quantity in ("restricted", "truth"):
+                vals = [r[f"{quantity}_{tag}"] for r in sub]
+                rng = np.random.default_rng(
+                    _stable_seed("seedfix", quantity, n, tag)
+                )
+                boots = np.median(np.asarray(vals)[
+                    rng.integers(0, len(vals), size=(4000, len(vals)))
+                ], axis=1) if vals else np.array([])
+                entry[f"median_{quantity}_{tag}"] = (
+                    float(np.median(vals)) if vals else None
+                )
+                entry[f"ci_{quantity}_{tag}"] = [
+                    float(np.percentile(boots, 2.5)),
+                    float(np.percentile(boots, 97.5)),
+                ] if vals else [None, None]
             entry[f"min_eligible_{tag}"] = (
                 int(min(r[f"eligible_{tag}"] for r in sub)) if sub else None
             )
-        entry["max_abs_delta_restricted"] = (
-            float(max(abs(r["delta_restricted"]) for r in sub))
-            if sub else None
-        )
-        entry["max_abs_delta_mix_matched"] = (
-            float(max(abs(r["delta_mix_matched"]) for r in sub))
-            if sub else None
-        )
+        for quantity in ("restricted", "mix_matched", "truth"):
+            entry[f"max_abs_delta_{quantity}"] = (
+                float(max(abs(r[f"delta_{quantity}"]) for r in sub))
+                if sub else None
+            )
         summary["per_n"][str(n)] = entry
 
     for tag in ("old", "clean"):
@@ -785,8 +808,16 @@ def run_seedfix_rescore(output_dir: Path) -> None:
         floors = all(
             r[f"eligible_{tag}"] >= MIN_ELIGIBLE for r in ok
         )
+        tdrop, tci = _difference_ci(
+            [r[f"truth_{tag}"] for r in ok if r["n"] == LADDER[-1]],
+            [r[f"truth_{tag}"] for r in ok if r["n"] == LADDER[0]],
+            seed=_stable_seed("seedfix-truthdrop", tag),
+        )
         summary["gate"][tag] = {
             "top_minus_bottom_restricted": {"diff": drop, "ci": list(ci)},
+            "top_minus_bottom_truth_unrestricted": {
+                "diff": tdrop, "ci": list(tci),
+            },
             "all_floors_met": bool(floors),
             "yardstick_falls_restricted": bprime_gate_verdict(
                 {n: sum(1 for r in ok if r["n"] == n) for n in LADDER},
@@ -875,8 +906,14 @@ def run_seedfix_rescore(output_dir: Path) -> None:
                 - frozen["per_n"][str(n)]["median_truth_restricted"])
             for n in LADDER
         )
+        replay["b0prime_median_truth_max_abs_diff"] = max(
+            abs(summary["per_n"][str(n)]["median_truth_old"]
+                - frozen["per_n"][str(n)]["median_truth"])
+            for n in LADDER
+        )
     except OSError:
         replay["b0prime_median_restricted_max_abs_diff"] = None
+        replay["b0prime_median_truth_max_abs_diff"] = None
     try:
         frozen_curve = json.loads(
             (frozen_dir / "p10_bprime_margincurve_summary.json").read_text(
