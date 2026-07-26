@@ -394,7 +394,9 @@ one. If the outcome is "deepening", the honest statement is
 "consistent with a continuum limit over the measured range" — and the
 next octave is the follow-up, not a victory lap.
 
-## 8. Stage B: the resolution ladder (designed 2026-07-26; B0 not yet run)
+## 8. Stage B: the resolution ladder (designed 2026-07-26; **B0 ran
+2026-07-27 and its gate FAILED — Stage B stopped at 8.5; no B1 chain
+ever ran**)
 
 Stage A's findings dictate this design item by item, and every review
 lesson from PR #23's five rounds is pre-applied rather than rediscovered.
@@ -471,3 +473,46 @@ B0: minutes (direct sampling; the scaled fit at `N = 1200` costs a few
 seconds per sample). B1: 1.3M steps per chain at the measured rates —
 1.3/2.6/4.5 hours per chain at 600/900/1200 — about 17 chain-hours,
 run as six parallel processes, wall ~5 h.
+
+### 8.5 Stage B0 outcome (factual record, 2026-07-27): the gate FAILED
+and Stage B stops here
+
+Seeds 1100-1159, 60/60 samples ok. Under the scaled instrument the
+sprinkled arm's truth error does not fall — it **rises, significantly**:
+
+| `N` | median truth [95% CI] | targets | chain floor |
+|---|---|---|---|
+| 600 | 0.1599 [0.1335, 0.1807] | 44 | 25 |
+| 900 | 0.1623 [0.1428, 0.1816] | 66 | 31 |
+| 1200 | 0.1907 [0.1807, 0.2011] | 88 | 35 |
+
+Top-minus-bottom: **+0.031 [+0.004, +0.058]** — the entire CI above
+zero, the opposite sign of the gate's requirement. Per 8.2, **no B1
+chain runs and the frozen 8.3 hypotheses are not evaluated.** Artifacts:
+`docs/prereg/frozen/p10_stage_b/`.
+
+**What this is a finding about.** Two instrument families have now been
+tried against the same premise and both refuse it: frozen constants
+leave the sprinkled curve flat (Stage A — scale-covariance), and
+continuum-scaled constants make it rise (B0). The pattern has a
+candidate explanation worth recording, clearly labelled post hoc: the
+truth observable is *sign discordance over target pairs*, and densifying
+the target set shrinks typical pair separations at the same rate the
+chain resolution improves — the instrument asks proportionally harder
+ordering questions exactly as fast as it gets better at answering them,
+and the fixed fit-iteration budget (`STEPS = 1500`, unscaled in this
+family — a design gap this outcome exposed) plausibly supplies the
+rising remainder. On this reading the discriminator's truth error is
+**scale-referenced by construction**, and no constant-scaling of the
+present observable produces the falling yardstick the Section 2 table
+presupposes.
+
+**What would, and what it would take.** A *scale-fixed* observable —
+e.g. discordance restricted to pairs whose true continuum separation
+exceeds a threshold held fixed across `N` — asks the same question at
+every size while the resolution improves, and is the natural candidate
+for a Stage B′. That is a new observable, so it requires its own design
+section with the same discipline (gate first on arm S, hypotheses
+frozen before any E chain), not a quiet swap inside this one. Whether
+to open Stage B′ is a programme decision, recorded here as the open
+question this stage ends on.
