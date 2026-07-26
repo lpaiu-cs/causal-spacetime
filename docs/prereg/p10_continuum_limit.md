@@ -1,7 +1,13 @@
 # P10: does the emergent geometry deepen toward a continuum?
 
-Status: **STAGE 0 COMPLETE; STAGE A GRID FROZEN BELOW, NOT YET RUN**
-(2026-07-26).
+Status: **STAGE A COMPLETE** (2026-07-26). Headline: across N in
+{600, 900, 1200}, the continuum phase is statistically indistinguishable
+from genuine sprinklings through the frozen instrument -- 120/120 samples
+pass, E tracks S within CI at every size. Two design defects found by the
+data are owned in Section 6d: the ESS screen was degenerate at m = 10
+(voiding the N = 1200 rung under the frozen rule), and the instrument is
+scale-covariant at frozen constants, so this ladder tests indistinguishability
+under scaling, not resolution accumulation.
 
 This is the first experiment of the post-T1 programme, and it is aimed at
 the programme's founding question rather than at the instrument. It is
@@ -181,6 +187,77 @@ Per `N` in `{600, 900, 1200}`:
 Estimated cost from the measured rates: `2.2 / 4.4 / 6.1` hours of MCMC
 per `N` respectively (discriminator time negligible), run as six
 parallel chains.
+
+## 6d. Stage A outcome (factual record, 2026-07-26)
+
+All six chains and the arm-S sweep ran to completion; **120/120 samples
+returned `status = ok` and every one of them passes the frozen gates**
+(`G >= 0.5`; minimum observed `G = 0.56`, on an arm-E sample at
+`N = 600`).
+
+**Pooled reading** (all chains; median [95% bootstrap CI]):
+
+| `N` | arm | heldout | truth | `G` |
+|---|---|---|---|---|
+| 600 | S | 0.0381 [0.0331, 0.0450] | 0.1488 [0.1378, 0.1698] | 1.000 |
+| 600 | E | 0.0406 [0.0344, 0.0437] | 0.1380 [0.1309, 0.1511] | 1.000 |
+| 900 | S | 0.0381 [0.0275, 0.0444] | 0.1520 [0.1405, 0.1672] | 1.000 |
+| 900 | E | 0.0406 [0.0338, 0.0488] | 0.1573 [0.1332, 0.1677] | 1.000 |
+| 1200 | S | 0.0419 [0.0338, 0.0488] | 0.1613 [0.1505, 0.1799] | 1.000 |
+| 1200 | E | 0.0363 [0.0325, 0.0413] | 0.1688 [0.1545, 0.2043] | 1.000 |
+
+**Arm E is statistically indistinguishable from genuine sprinklings at
+every size measured** — the E and S intervals overlap on every
+observable at every rung, and the per-start medians agree within noise
+(the dual starts bracket each other at all three sizes). Of the three
+outcomes named in Section 2, the data sit on **"deepening" in its
+paired form**: no fading, no floor relative to the reference, over a
+factor of two in size and forty fresh ensemble samples.
+
+### Two design defects, found by the data and owned here
+
+**(1) The frozen ESS screen is degenerate at `m = 10` and the frozen
+rule voids the top rung.** ESS cannot exceed the sample count, so
+requiring `ESS >= 10` from 10 retained samples demands the estimator
+find *exactly zero* positive autocorrelation — which perfectly iid data
+fails **25% of the time** (measured: 20,000 iid trials, `P(ESS >= 10)
+= 0.747`). Four of six chains fail the screen (ESS 6.9-9.0, i.e.
+`tau <= 1.45` — mild at worst; under a pure-iid null, 4-of-6 failures
+has `p ~ 0.04`, so some residual autocorrelation may be real but small).
+The rule as frozen — "a failing chain is reported and its samples
+excluded" — was applied, and its reading is:
+
+| `N` | screen-applied arm E | arm S |
+|---|---|---|
+| 600 | truth 0.1436 (10 samples) | 0.1488 |
+| 900 | truth 0.1399 (10 samples) | 0.1520 |
+| 1200 | **no chain survives** | 0.1613 |
+
+The conclusions above are unchanged where the screen-applied reading is
+defined, and the `N = 1200` rung is formally void under the frozen rule.
+The defect is the screen's design (P7's rule was transplanted from
+`m = 48`, where `ESS >= 20` is a real bar, to `m = 10`, where
+`ESS >= 10` is the degenerate ceiling), not the chains. A successor
+stage must retain enough samples per chain (`~48`) for the screen to
+mean something.
+
+**(2) The yardstick premise failed, informatively.** Section 2 assumed
+arm S's error would *fall* with `N` — "what converging looks like".
+Measured, arm S is flat to slightly rising (truth 0.149 → 0.152 →
+0.161). The reason is the caveat Section 3 half-saw: the discriminator's
+frozen constants (`MIN_CHAIN_LEN = 25`, target cap 44) stay fixed while
+the order's natural scales grow (the longest chain grows like
+`~ 2 sqrt(N)`), so the instrument is **scale-covariant** — it reads the
+same relative window at every size and the density gain is normalized
+away. The ladder therefore measures *"does the phase stay
+indistinguishable from sprinklings as size doubles"* (it does), *not*
+*"does resolution accumulate"* (untestable at frozen constants).
+A true resolution ladder needs constants scaled in continuum units —
+that is the concrete design input for any Stage B.
+
+Artifacts: `docs/prereg/frozen/p10_stage_a/` (six arm-E chain CSVs, the
+arm-S CSV, and the aggregator summary). Stage 0 and Stage A ran at
+commit `c43bdfe`; grid frozen in 6c before any chain ran.
 
 ## 7. What this can and cannot answer
 
