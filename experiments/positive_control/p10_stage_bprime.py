@@ -363,18 +363,22 @@ def fine_binned_order_error(
     )
     ref_sign = np.sign(ref_first - ref_second)
     margin = np.abs(np.sqrt(ref_first) - np.sqrt(ref_second))
-    errors, counts, mean_margins = [], [], []
+    errors, counts, mean_margins, discordant = [], [], [], []
+    disc_margins: list = []
     for lo, hi in zip(FINE_BIN_EDGES[:-1], FINE_BIN_EDGES[1:], strict=True):
         keep = (margin >= lo) & (margin < hi) & (ref_sign != 0.0)
+        wrong = keep & (ref_sign != est_sign)
         counts.append(int(keep.sum()))
+        discordant.append(int(wrong.sum()))
         errors.append(
-            float(np.mean(ref_sign[keep] != est_sign[keep]))
-            if counts[-1] else float("nan")
+            float(discordant[-1] / counts[-1]) if counts[-1]
+            else float("nan")
         )
         mean_margins.append(
             float(np.mean(margin[keep])) if counts[-1] else float("nan")
         )
-    return errors, counts, mean_margins
+        disc_margins.append([float(m) for m in margin[wrong]])
+    return errors, counts, mean_margins, discordant, disc_margins
 
 
 def run_margin_curve_diagnostic(output_dir: Path) -> None:
@@ -399,12 +403,15 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
                 return_fit=True,
             )
             if row.get("status") == "ok":
-                errors, counts, mean_margins = fine_binned_order_error(
+                (errors, counts, mean_margins, discordant,
+                 disc_margins) = fine_binned_order_error(
                     coords_fit, coords[targets] / float(n),
                     num_pair_comparisons=BPRIME_COMPARISONS,
                     seed=base + k + 9,
                 )
-                per_sample[n].append((errors, counts, mean_margins))
+                per_sample[n].append(
+                    (errors, counts, mean_margins, discordant, disc_margins)
+                )
         print(f"curve n={n}: {len(per_sample[n])}/{B0PRIME_SAMPLES} ok",
               flush=True)
 
@@ -419,7 +426,7 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
         medians, cis, min_counts = [], [], []
         for b in range(n_bins):
             vals = np.array([
-                e[b] for e, _, _ in per_sample[n] if not np.isnan(e[b])
+                e[b] for e, *_ in per_sample[n] if not np.isnan(e[b])
             ])
             rng = np.random.default_rng(_stable_seed("curve", n, b))
             boots = np.median(vals[
@@ -431,10 +438,18 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
                 float(np.percentile(boots, 97.5)),
             ] if vals.size else [None, None])
             min_counts.append(min(
-                (c[b] for _, c, _ in per_sample[n]), default=0
+                (c[b] for _, c, *_ in per_sample[n]), default=0
             ))
         mean_margin_by_bin = [
-            float(np.nanmean([m[b] for _, _, m in per_sample[n]]))
+            float(np.nanmean([m[b] for _, _, m, *_ in per_sample[n]]))
+            for b in range(n_bins)
+        ]
+        pooled_total_by_bin = [
+            int(sum(c[b] for _, c, *_ in per_sample[n]))
+            for b in range(n_bins)
+        ]
+        pooled_discordant_by_bin = [
+            int(sum(d[b] for _, _, _, d, _ in per_sample[n]))
             for b in range(n_bins)
         ]
         curves[n] = (medians, cis)
@@ -442,6 +457,8 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
             "median_by_bin": medians, "ci_by_bin": cis,
             "min_count_by_bin": min_counts,
             "mean_margin_by_bin": mean_margin_by_bin,
+            "pooled_total_by_bin": pooled_total_by_bin,
+            "pooled_discordant_by_bin": pooled_discordant_by_bin,
         }
     above, separated = [], []
     for b in range(n_bins):
@@ -457,47 +474,72 @@ def run_margin_curve_diagnostic(output_dir: Path) -> None:
         "bins_ci_separated": int(sum(separated)),
     }
 
-    # Within-bin drift bound (review escalation three). The most a
-    # within-bin margin shift can move a bin average is
-    # |shift| x |local slope of the N = 600 curve|; both factors are
-    # measured here. Alongside, the zero-bins fact: an average of
-    # nonnegative indicators equal to zero means zero discordance at
-    # EVERY sampled margin in the bin, and no reweighting of an
-    # identically-zero function is positive.
+    # Heuristic indicator, NOT a bound (review corrected the earlier
+    # claim: a mean shift times a neighbour slope bounds nothing --
+    # equal means can hide mass reallocation, and the neighbour slope
+    # is no Lipschitz constant). Kept as a descriptive indicator only.
     m600 = summary["curves"]["600"]["mean_margin_by_bin"]
     m1200 = summary["curves"]["1200"]["mean_margin_by_bin"]
     e600 = curves[600][0]
     e1200 = curves[1200][0]
-    drift_rows = []
+    indicator_rows = []
     for b in range(n_bins):
         if e600[b] is None or e1200[b] is None:
             continue
-        neighbours = []
-        if b > 0 and e600[b - 1] is not None:
-            dm = abs(m600[b] - m600[b - 1])
-            if dm > 0:
-                neighbours.append(abs(e600[b - 1] - e600[b]) / dm)
-        if b + 1 < n_bins and e600[b + 1] is not None:
-            dm = abs(m600[b + 1] - m600[b])
-            if dm > 0:
-                neighbours.append(abs(e600[b + 1] - e600[b]) / dm)
-        slope = max(neighbours) if neighbours else 0.0
-        shift = abs(m1200[b] - m600[b])
-        bound = shift * slope
-        rise = e1200[b] - e600[b]
-        drift_rows.append({
-            "bin": b, "rise": round(rise, 5),
-            "within_bin_margin_shift": round(shift, 5),
-            "local_slope_600": round(slope, 4),
-            "max_drift_contribution": round(bound, 5),
-            "rise_exceeds_bound": bool(rise > bound),
+        indicator_rows.append({
+            "bin": b, "rise": round(e1200[b] - e600[b], 5),
+            "within_bin_mean_margin_shift": round(abs(m1200[b] - m600[b]), 5),
         })
-    summary["within_bin_drift_bounds"] = drift_rows
-    zero_bins = [
-        b for b in range(n_bins)
-        if e600[b] == 0.0 and e1200[b] is not None and e1200[b] > 0.0
-    ]
-    summary["zero_bins_600_positive_1200"] = zero_bins
+    summary["within_bin_shift_indicator"] = indicator_rows
+
+    # The EXACT pooled analysis, which is what settles the high-margin
+    # region without any binning or distributional assumption. Facts
+    # about every sampled comparison, not medians of per-sample rates:
+    # pooled discordant counts per rung, and the m* construction --
+    # m* = the smallest true margin at which the N = 1200 pool contains
+    # a discordant comparison above the threshold below; the N = 600
+    # pool's comparisons at margins >= m* are then counted exactly.
+    HIGH = 0.478  # bin-12 lower edge, where the earlier claim lived
+    pooled = {}
+    for n in LADDER:
+        total = sum(
+            c[b] for _, c, *_ in per_sample[n] for b in range(n_bins)
+            if FINE_BIN_EDGES[b] >= HIGH
+        )
+        wrong_margins = sorted(
+            m
+            for _, _, _, _, dm in per_sample[n]
+            for b in range(n_bins) if FINE_BIN_EDGES[b] >= HIGH
+            for m in dm[b]
+        )
+        pooled[n] = {"total_at_or_above_high": int(total),
+                     "discordant_at_or_above_high": len(wrong_margins),
+                     "discordant_margins": [round(m, 4)
+                                            for m in wrong_margins[:50]]}
+    summary["pooled_high_margin"] = {
+        "high_edge": HIGH, **{str(n): pooled[n] for n in LADDER}
+    }
+    star = None
+    if pooled[1200]["discordant_at_or_above_high"]:
+        star = pooled[1200]["discordant_margins"][0]
+    if star is not None:
+        totals_600_above_star = 0
+        wrong_600_above_star = 0
+        for _, c, _, d, dm in per_sample[600]:
+            for b in range(n_bins):
+                if FINE_BIN_EDGES[b + 1] <= star:
+                    continue
+                totals_600_above_star += c[b]
+                wrong_600_above_star += sum(
+                    1 for m in dm[b] if m >= star
+                )
+        summary["m_star_analysis"] = {
+            "m_star": star,
+            "note": "totals for N=600 use whole bins overlapping "
+                    "[m*, inf); discordant counts are exact at >= m*",
+            "n600_comparisons_in_overlapping_bins": int(totals_600_above_star),
+            "n600_discordant_at_or_above_m_star": int(wrong_600_above_star),
+        }
     (output_dir / "p10_bprime_margincurve_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary["pointwise_1200_vs_600"], indent=2))
