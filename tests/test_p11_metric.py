@@ -231,6 +231,35 @@ def test_dual_box_is_reproduced_by_pure_order_forcing():
     assert checked >= 5
 
 
+def test_dual_box_certificate_certifies_scored_samples():
+    """The production certificate: every scored pair's box membership
+    must be order-forced via the two-step Gamma witnesses. At the
+    experiment's densities the certificate should hold; a certified
+    member is a box member by soundness, so certifying all members
+    verifies exactly what the scorer consumes."""
+
+    from p11_metric import (
+        dual_box_order_certificate,
+        eligible_pool_spacelike,
+        run_sample_spacelike,
+    )
+
+    rng = np.random.default_rng(97)
+    certified = 0
+    for _trial in range(4):
+        n = 300
+        pi = rng.permutation(n)
+        u, v = continuum_uv(pi)
+        pool = eligible_pool_spacelike(u, v)
+        i, j = (int(x) for x in pool[rng.integers(0, pool.shape[0])])
+        certified += int(dual_box_order_certificate(u, v, i, j))
+    assert certified == 4
+
+    record, complete = run_sample_spacelike(600, 600100,
+                                            single_stream=True)
+    assert complete and record["box_order_certified"]
+
+
 def test_stage_b_windows_are_private_and_fresh():
     from p11_metric import (
         PILOT_B_BLOCKS,

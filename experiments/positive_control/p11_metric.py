@@ -673,9 +673,55 @@ def score_pair_spacelike(u: np.ndarray, v: np.ndarray,
     }
 
 
+def dual_box_order_certificate(u: np.ndarray, v: np.ndarray,
+                               i: int, j: int,
+                               comp: np.ndarray | None = None) -> bool:
+    """Order-only certificate that the causal order FORCES every
+    interior member of the dual box (Section 10 amendment; review:
+    the forcing regression sampled pairs, production must certify
+    every scored pair).
+
+    Anchored percolation to the fixed point: under the two Gamma
+    rules every derived pair keeps one endpoint of its parent, so the
+    full forcing's x-anchored closure equals iterating
+    S <- S ∪ {c : c || x, c comparable to some b in S} from S = {y}
+    (and dually T from {x} for the y-anchor). This is EXACT relative
+    to Gamma-forcing for the anchored pairs, not a k-step truncation.
+    An event certified on both sides is a box member by soundness, so
+    certifying all members verifies exactly what the scorer uses."""
+
+    n = u.size
+    if comp is None:
+        causal = (u[:, None] < u[None, :]) & (v[:, None] < v[None, :])
+        comp = causal | causal.T
+    members = np.flatnonzero(
+        (u > u[i]) & (u < u[j]) & (v > v[j]) & (v < v[i])
+    )
+    if members.size == 0:
+        return True
+    comp_u8 = comp.astype(np.uint8)
+    idx = np.arange(n)
+    incomp_x = ~comp[i] & (idx != i)
+    incomp_y = ~comp[j] & (idx != j)
+    reach_x = np.zeros(n, dtype=bool)
+    reach_x[j] = True
+    reach_y = np.zeros(n, dtype=bool)
+    reach_y[i] = True
+    while True:
+        grow_x = reach_x | (incomp_x
+                            & (comp_u8 @ reach_x.astype(np.uint8) > 0))
+        grow_y = reach_y | (incomp_y
+                            & (comp_u8 @ reach_y.astype(np.uint8) > 0))
+        if (grow_x == reach_x).all() and (grow_y == reach_y).all():
+            break
+        reach_x, reach_y = grow_x, grow_y
+    return bool(np.all(reach_x[members]) and np.all(reach_y[members]))
+
+
 def run_sample_spacelike(n: int, seed: int, single_stream: bool = False):
     """One Stage B sample; mirrors run_sample with the spacelike pool
-    and the dual-box scorer, same record schema."""
+    and the dual-box scorer, same record schema, plus the per-pair
+    order certificate."""
 
     rng = np.random.default_rng(seed)
     pi = rng.permutation(n)
@@ -694,6 +740,12 @@ def run_sample_spacelike(n: int, seed: int, single_stream: bool = False):
     if not complete:
         return record, False
     scored = [score_pair_spacelike(u, v, i, j) for i, j in pairs]
+    causal_full = (u[:, None] < u[None, :]) & (v[:, None] < v[None, :])
+    comp_full = causal_full | causal_full.T
+    record["box_order_certified"] = bool(all(
+        dual_box_order_certificate(u, v, i, j, comp=comp_full)
+        for i, j in pairs
+    ))
     record["y"] = float(np.log10(
         np.median([s["relerr_chain"] for s in scored])
     ))
@@ -926,6 +978,12 @@ def run_stage_b(output_dir: Path) -> None:
         "skipped_seeds": {str(n): skipped_seeds[n] for n in P11_LADDER},
         "selection_caveat": bool(any(
             skip_counts[n] > 0 for n in P11_LADDER
+        )),
+        # every scored pair carries the order-only membership
+        # certificate (Section 10 amendment); a count above zero
+        # scopes the verdict as coordinate-assisted for those samples
+        "box_uncertified_samples": int(sum(
+            1 for r in rows if not r.get("box_order_certified", False)
         )),
         "delta": delta, "delta_ci": [lo, hi],
         "verdict": verdict(lo, hi, flat_available),
