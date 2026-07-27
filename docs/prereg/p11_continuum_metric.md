@@ -23,6 +23,50 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.9 review corrections (pre-data): (xxiii) the Bonett bound is
+labelled what it is — an asymptotic approximation, not a
+finite-sample distribution-free guarantee (no such variance bound
+exists) — and is VALIDATED on the realized distribution instead of
+trusted by construction: the pilot bootstrap-checks the bound's
+coverage on its own samples (2000 resamples per rung) and, when the
+nominal z falls short of 95% measured coverage, raises z until it is
+met; the calibration record (coverage at nominal, z used) is
+published in the pilot artifact, and the residual limitation — tail
+mass absent from 200 pilot observations — is stated rather than
+claimed away. (xxiv) provenance stamps reading "unknown" (git
+unavailable: archives, copied trees) are refused by the preflight
+exactly like dirty stamps — two unknowns would otherwise even pass
+the prerequisite equality check.
+
+v1.8 review corrections (pre-data): (xxii) the v1.7 chi-square
+variance bound was itself a Gaussian-pivot result — the same class of
+assumption v1.4 removed from the median factor, reintroduced one
+level up (review). Replaced by a distribution-robust construction:
+the pilot grows to 200 samples per endpoint rung (the 12-sample size
+was priced for an MCMC-era cost model that the frozen verification
+record falsified — 200 samples cost ~20 seconds), and each rung's
+variance takes its kurtosis-adaptive Bonett upper bound at one-sided
+95%, summed with Bonferroni so the pair-level guarantee is >= 90%
+with no normal model anywhere. Seed windows renumbered for the
+larger pilot blocks (nothing has run).
+
+v1.7 review corrections (pre-data; the implementation exists but no
+stage has run): (xix) the power formulas size from a conservative
+variance bound, not the 12-sample point estimates — each pilot
+variance is inflated to its one-sided 90% chi-square upper bound
+(factor `11 / chi2_{0.10, 11} = 1.972` at nu = 11), so a downward
+sampling error in a small pilot can no longer smuggle an infeasible
+design past the cap or declare an unaffordable flat verdict
+available. (xx) the first-`n`-complete estimand is named for what it
+is — conditional on successful pair packing — with the frozen guard
+that makes it innocuous: the verification record bounds per-sample
+completion below one expected skip per campaign, zero realized skips
+(the generic case) makes the conditional and unconditional estimands
+coincide on the data, and any realized skip stamps the gate summary
+with a SELECTION-CAVEAT label. (xxi) the introduction's "finding
+about the limit" sentence is rewritten to defer to 1.4's
+interpretation scope — one conservative voice, no contradiction.
+
 v1.6 review corrections (pre-freeze, pre-data): (xvii) the contrast
 variance uses BOTH endpoint rungs — Stage P now pilots `N = 600` and
 `N = 2400` (variance and wall time only, cross-rung statistics
@@ -115,7 +159,12 @@ estimators whose convergence as density grows is not a hope but a
 theorem — the longest-chain law. If the continuum limit is real for
 emergent geometry, THIS instrument family is one through which it can
 appear; if accuracy fails to improve even here, that is a finding
-about the limit, not about an instrument's resolution.
+about this estimator family over this finite-density ladder — a
+sharper indictment than P10's, because here asymptotic convergence is
+a theorem — but, per the interpretation scope frozen in 1.4, never
+evidence that the continuum limit itself is absent. *(v1.7: this
+sentence originally said "a finding about the limit"; review flagged
+the contradiction with 1.4, and 1.4 is the voice of record.)*
 
 ---
 
@@ -153,15 +202,42 @@ TOP rungs (both piloted — v1.6; the v1.5 `2 sigma_600^2` assumed an
 equal-variance model this pre-asymptotic ladder is owed nowhere), by
 the plain two-sample CLT with no distributional factor (v1.4), two
 requirements are computed (v1.5 — the design must be able to AFFORD
-every verdict it promises):
+every verdict it promises) from a CONSERVATIVE variance bound. The
+bound is distribution-robust (v1.8; the v1.7 chi-square factor was a
+Gaussian pivot, invalid for exactly the `y` this document says is
+non-Gaussian): per endpoint rung, with `n_pilot = 200` samples,
+sample variance `s^2`, and the kurtosis estimate
+`g4 = n * sum((y - ybar)^4) / (sum((y - ybar)^2))^2`, the Bonett
+upper bound
 
-    S^2   = sigma_b_hat^2 + sigma_t_hat^2
+    se     = sqrt( ( g4 - (n-3)/n ) / (n-1) )
+    bound  = s^2 * exp( 1.6449 * se )     # one-sided 95% per rung
 
-    n_sup = ceil( S^2 * (1.960 + 1.282)^2 / Delta*^2 )
-          = ceil( 260.9 * S^2 )               # 90% power at Delta*
+    S^2_90 = bound_b + bound_t
+             # Bonferroni at the NOMINAL levels; the pair-level 90%
+             # is calibrated-approximate, not exact (v1.9)
 
-    n_eq  = ceil( S^2 * (1.960 + 1.645)^2 / delta_eq^2 )
-          = ceil( 2895.2 * S^2 )              # 90% P(FLAT) at Delta = 0
+    n_sup = ceil( S^2_90 * (1.960 + 1.282)^2 / Delta*^2 )
+          = ceil( 260.9 * S^2_90 )            # 90% power at Delta*
+
+    n_eq  = ceil( S^2_90 * (1.960 + 1.645)^2 / delta_eq^2 )
+          = ceil( 2895.2 * S^2_90 )           # 90% P(FLAT) at Delta = 0
+
+For Gaussian-kurtosis `y` the per-rung inflation is ~1.18 — cheaper
+than the invalid 1.972 and honest; heavy tails raise `g4` and the
+bound inflates adaptively, which is the point.
+
+Validation instead of trust (v1.9): the Bonett interval is an
+asymptotic approximation — no finite-sample distribution-free
+variance bound exists — so the pilot validates it on its own
+samples: 2000 bootstrap resamples per rung measure how often the
+bound at the nominal `z = 1.6449` covers the full-pilot variance;
+if measured coverage is below 0.95 the pilot raises `z`
+(monotonically, bisection to the smallest sufficient value) and uses
+THAT bound, publishing the coverage and `z` in its artifact. What no
+construction can exclude — rare tail mass entirely absent from 200
+observations — is recorded here as the bound's stated limitation,
+not claimed away.
 
 Frozen selection rule, floor 12 / cap 60:
 
@@ -176,20 +252,25 @@ If `n_sup` alone exceeds the cap, Stage A is INFEASIBLE-AS-DESIGNED
 and stops before running — that refusal is this preregistration
 operating, exactly as P10's gates were.
 
-Worked anchors (illustrative only, the pilot decides; `S^2` is the
-two-rung variance sum, so equal SDs of 0.10 give `S^2 = 0.02`):
-S^2 = 0.02 -> n_sup 6, n_eq 58 -> n = 58, flat available;
-0.0207 -> n 60, flat available at the cap edge; 0.045 -> n_eq
-131 > cap -> n = 12, flat declared unavailable; 0.08 -> n = 21,
-flat unavailable; 0.22 -> n = 58, flat unavailable;
-0.23 -> INFEASIBLE.
+Worked anchors (illustrative at GAUSSIAN kurtosis, factor ~1.18; the
+realized `g4` decides, and heavier tails shift every threshold down):
+equal sigma = 0.09 -> S^2_90 ~ 0.0191, n_eq 56 -> n = 56, flat
+available; 0.095 -> n_eq > cap -> n = 12, flat declared unavailable;
+0.15 -> n = 14; 0.20 -> n = 25; 0.31 -> n = 60 at the cap;
+0.315 -> INFEASIBLE. The bound's price now scales with the measured
+non-normality instead of a flat Gaussian-only factor — a 200-sample
+pilot costs ~20 seconds by the frozen verification record, so the
+added samples are free where the invalid assumption was not.
 
 ### 1.3 Stage P: the pilot, variance-only, quarantined
 
-- BOTH endpoint rungs (v1.6): `n_pilot = 12` samples at `N = 600`
-  and 12 at `N = 2400`, separate seed windows (Section 5).
-- Records: per-sample `y`, the per-rung SDs `sigma_b_hat`,
-  `sigma_t_hat`, and wall times. **Computing any cross-rung mean or
+- BOTH endpoint rungs (v1.6): `n_pilot = 200` samples at `N = 600`
+  and 200 at `N = 2400` (v1.8 — the 12-sample size was an MCMC-era
+  cost assumption; the frozen verification record prices 200 samples
+  at ~20 seconds, and the robust variance bound of 1.2 needs the
+  kurtosis resolution), separate seed windows (Section 5).
+- Records: per-sample `y`, the per-rung variances and kurtosis
+  estimates feeding the 1.2 bound, and wall times. **Computing any cross-rung mean or
   contrast is forbidden by frozen rule** — the pilot script does not
   implement it, and the pilot artifact contains per-rung SDs and
   times only.
@@ -212,7 +293,7 @@ flat unavailable; 0.22 -> n = 58, flat unavailable;
 `d_hat` carries locator variability the timelike estimator does not,
 so Stage B is powered from ITS OWN variance, never Stage A's (v1.2,
 review): a second variance-only, quarantined pilot — BOTH endpoint
-rungs, `n_pilot = 12` spacelike samples each, under the Stage B pair
+rungs, `n_pilot = 200` spacelike samples each (v1.8), under the Stage B pair
 protocol (v1.6: the same both-variances rule as Stage P) — feeds the
 formula of 1.2 with the ADDENDUM'S target effect
 `Delta*_B` (v1.4, review: a merely-consistent `d_hat` may converge
@@ -412,8 +493,17 @@ has always run.
   pair-packing geometry BEFORE any estimator evaluation — `y` is
   never computed for an incomplete sample, by frozen order of
   operations — and per-block skip counts are published with the
-  gate, which is how the no-completeness-conditioning lesson of P10
-  is honoured while the campaign is still guaranteed to fill.
+  gate. The estimand, named for what it is (v1.7, review):
+  first-`n`-complete estimates performance CONDITIONAL on successful
+  pair packing, since completeness and the chain error share the
+  permutation's geometry, and computing `y` afterward does not undo
+  that selection. The frozen guard that keeps it innocuous: the
+  verification pin bounds expected skips per campaign below one, and
+  when the realized skip count is ZERO — the generic case — the
+  conditional and unconditional estimands coincide on the data. Any
+  realized skip stamps the stage summary with a **SELECTION-CAVEAT**
+  label carried alongside the verdict, and the skip cap bounds how
+  far the conditioning can reach before the campaign stops.
   Before Stage P may run, the synthetic completeness pin must pass:
   at least **1998 of 2000** synthetic samples complete at EVERY rung
   (bounding the expected skips per 180-sample campaign below one),
@@ -434,23 +524,24 @@ implementation may ever take (pair selection at `s + 150`, any future
 offset < 200) stays inside its own row's window. Windows:
 
 Every block carries reserve slots for the first-`n`-complete rule of
-Section 4 (v1.6): pilots hold 16 windows for 12 samples, stage rungs
-hold 80 windows for up to 60.
+Section 4: pilots hold 220 windows for 200 samples (v1.8), stage
+rungs hold 80 windows for up to 60. Experimental windows begin at
+200000 (v1.8 renumber for the larger pilots; nothing has run).
 
 | block | base | fills | window span |
 |---|---|---|---|
 | design verification (non-experimental) | 190000 | 2000 per rung | 190000-195999, note below |
-| Stage P pilot, N=600 | 60000 | 12 of 16 | 60000-63199 |
-| Stage P pilot, N=2400 | 63200 | 12 of 16 | 63200-66399 |
-| Stage A, N=600 | 68000 | <= 60 of 80 | 68000-83999 |
-| Stage A, N=1200 | 84000 | <= 60 of 80 | 84000-99999 |
-| Stage A, N=2400 | 100000 | <= 60 of 80 | 100000-115999 |
-| Stage P-B pilot, N=600 | 116000 | 12 of 16 | 116000-119199 |
-| Stage P-B pilot, N=2400 | 119200 | 12 of 16 | 119200-122399 |
-| Stage B, N=600 | 124000 | <= 60 of 80 | 124000-139999 |
-| Stage B, N=1200 | 140000 | <= 60 of 80 | 140000-155999 |
-| Stage B, N=2400 | 156000 | <= 60 of 80 | 156000-171999 |
-| Stage C blocks | 172000+ | — | frozen with Stage C's addendum |
+| Stage P pilot, N=600 | 200000 | 200 of 220 | 200000-243999 |
+| Stage P pilot, N=2400 | 244000 | 200 of 220 | 244000-287999 |
+| Stage A, N=600 | 288000 | <= 60 of 80 | 288000-303999 |
+| Stage A, N=1200 | 304000 | <= 60 of 80 | 304000-319999 |
+| Stage A, N=2400 | 320000 | <= 60 of 80 | 320000-335999 |
+| Stage P-B pilot, N=600 | 336000 | 200 of 220 | 336000-379999 |
+| Stage P-B pilot, N=2400 | 380000 | 200 of 220 | 380000-423999 |
+| Stage B, N=600 | 424000 | <= 60 of 80 | 424000-439999 |
+| Stage B, N=1200 | 440000 | <= 60 of 80 | 440000-455999 |
+| Stage B, N=2400 | 456000 | <= 60 of 80 | 456000-471999 |
+| Stage C blocks | 472000+ | — | frozen with Stage C's addendum |
 
 All spans sit above every range the programme has ever used (documented
 maxima: 30000-30379, 40000-40168, 41000-41059, 43000-54999); a

@@ -1,0 +1,22 @@
+{
+  "code_version": "d9921e7",
+  "pin_required": 1998,
+  "per_n": {
+    "600": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.00567026055000315
+    },
+    "1200": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.021589253350000944
+    },
+    "2400": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.08302126644999953
+    }
+  },
+  "pin_passed": true
+}
