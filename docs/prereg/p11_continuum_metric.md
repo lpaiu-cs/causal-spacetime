@@ -699,6 +699,61 @@ Claims beyond the tested ladder and estimator remain unclaimed.
 Next per Section 6: the Stage B addendum (spacelike), to be frozen
 before any Stage B data.
 
+
+### 9.5 Stage C verification, Stage P-C, and Stage C (2026-07-27): **IMPROVES**
+
+The coordinate reconstruction, run exactly as the Section 11 v2.1
+addendum froze it (the v1 design having been withdrawn before running).
+
+- **Verification-C**: 2000/2000 complete at every rung (pin 1998),
+  wall times 0.015 / 0.059 / 0.237 s per sample. Artifact
+  `p11_verification_c_summary.json`.
+- **Stage P-C**: 200 samples per endpoint rung, zero skips.
+  Variances 0.0282 / 0.0193, `g4 = 3.35 / 3.23`; the calibration
+  fired a third time (coverage 0.932 / 0.931 at nominal ->
+  `z = 1.784 / 1.842`). `S^2_90 = 0.0577`, `n_sup = 16`,
+  `n_eq = 168 > cap` — flat verdict declared unavailable ex ante;
+  `n_per_rung = 16`; projected Stage C wall 5.0 s. FEASIBLE.
+- **Stage C**: 16 complete samples per rung, zero skips, no
+  selection caveat. Mean `y`: -0.801 / -0.962 / -1.077, monotone.
+
+      Delta = -0.276 dex,  95% CI [-0.384, -0.171]  ->  IMPROVES
+
+  Median coordinate error falls 0.156 -> 0.107 -> 0.089 across the
+  ladder. The slope reads -0.458, CI [-0.637, -0.275] — steeper than
+  `-1/3`, and the addendum said so IN ADVANCE (design checks
+  measured -0.40 to -0.45; the fit compounds three measurements),
+  so the steep reading is the predicted pre-asymptotic behaviour and
+  not an anomaly. The contrast exceeds the derived
+  `Delta*_C = -0.2007`, i.e. the campaign was powered
+  conservatively. One `N = 2400` sample (seed 654000) carries an
+  uncertified spacelike third measurement (Section 10's caveat, 1 of
+  48 samples); it is flagged, never dropped. Unlike Stage B's
+  uncertified sample, this one sits in a rung the gate contrast USES,
+  so its influence is quantified rather than argued: leaving it out
+  gives `Delta = -0.294`, CI `[-0.396, -0.190]` — still entirely
+  below zero, IMPROVES either way — and since its `y = -0.810` is
+  WORSE than its rung's mean `-1.077`, the frozen include-everything
+  rule is the conservative choice here. Artifacts `p11_stage_c.csv`,
+  `p11_stage_c_summary.json`, stamp `36385e1`.
+
+**All three gates of the metric instrument now read IMPROVES.** As
+scoped in 1.4, Sections 10 and 11: over the tested densities, from
+relabeling-invariant order quantities plus the count as density
+calibration — with one Stage C sample in 48 realizer-assisted, whose
+removal leaves the verdict unchanged and whose inclusion is the
+conservative direction — continuum-unit accuracy improves as the
+sprinkling densifies — in proper time (Stage A), in spacelike distance (Stage
+B), and in the COORDINATES themselves (Stage C), whose reconstruction
+uses only the metric measurements and therefore inherits, rather than
+assumes, the convergence the first two stages certified. The loop
+order -> metric -> coordinates closes. P10's discriminator family
+could not decide the continuum question; this instrument family
+answers it in the affirmative over the tested ladder, at the rate the
+longest-chain theorem predicts, with every claim scoped to that
+ladder and estimator.
+
+
 ## 10. Stage B addendum (frozen 2026-07-27, before any Stage B data)
 
 Per Sections 3 and 6, this addendum freezes `d_hat`, its support, its
@@ -859,3 +914,167 @@ AND space — deepens toward the continuum through this instrument
 family, exactly where the P10 discriminator family could not decide.
 Remaining per Section 6: Stage C (coordinates), gated on its own
 addendum.
+
+## 11. Stage C addendum (v2, frozen 2026-07-27, before any Stage C data)
+
+Per Section 6, this addendum freezes the coordinate reconstruction,
+its rate, and `Delta*_C`, before any Stage C data.
+
+**v1 was withdrawn before running, by design review.** Its two-post
+trilateration paired anchors on the SAME static worldline (both v1
+fiducials sat on `u = v`), which is degenerate for the spatial
+coordinate: with `A = (u-u1)(v-v1) = a^2 - w^2`, the spatial offset
+`w` enters only through `w^2`, so the linear regime `w^2 >> noise`
+fails across the whole target square at this ladder's `m ~ 24-240`,
+and the third anchor was spent on ROOT SELECTION rather than
+precision. Two independent quarantined design checks (seeds
+900000+, outside every experimental window) measured the realized
+contrast at `-0.11` to `-0.15` against the `-0.2007` the power
+design assumed - a campaign designed to land UNRESOLVED. The v1
+grid was also unenumerated and contained on-diagonal targets whose
+discriminant vanishes identically (independently flagged in review).
+Both defects are fixed below; the withdrawal is recorded rather than
+silently overwritten.
+
+**The anti-circularity principle** (unchanged from v1, the design's
+foundation): reading realizer ranks back as coordinates would be an
+identity, not an estimator - the dictionary DEFINES truth as the rank
+grid, so rank-readout has error identically zero at every `N` and
+tests nothing. Stage C reconstructs coordinates FROM THE METRIC
+MEASUREMENTS ONLY, inheriting exactly the noise whose decay Stages A
+and B certified, and closes the loop order -> metric -> coordinates.
+
+**The estimator: a constrained three-measurement fit.** Per sample:
+
+- Anchors: the events nearest in rank distance to `a1 = (0.15, 0.15)`,
+  `a2 = (0.85, 0.85)`, `a3 = (0.15, 0.85)`. Targets: the events
+  nearest to the six frozen fiducials, all OFF the diagonal so no
+  target's two-post discriminant vanishes identically:
+
+      (0.38, 0.44)  (0.38, 0.56)  (0.50, 0.41)
+      (0.50, 0.59)  (0.62, 0.44)  (0.62, 0.56)
+
+  The nine selected events must be distinct; a sample failing that is
+  ineligible (pure eligibility, decided before any measurement).
+- Measurements: `m1 = tau_hat(a1, e)`, `m2 = tau_hat(e, a2)` (both
+  timelike by the eligibility rule `a1 < e < a2`), and `m3` to `a3` -
+  `tau_hat` when related, `d_hat` (Section 10, with its tiered order
+  certificate) when spacelike. Write `A = m1^2/4`, `B = m2^2/4`,
+  `C = m3^2/4`, and `s3 = +1` if `a3` is related to `e`, else `-1`.
+- Initializer: the two-post quadratic `Q p^2 - (P Q + A - B) p + P A`
+  in `p = u - u1` (`P = u2 - u1`, `Q = v2 - v1`), with the frozen
+  degenerate handling: **`D := max(D, 0)`** (adopt the tangency root
+  when noise pushes the discriminant negative - the review-flagged
+  path that certainly occurs, rare but nonzero at 0.1-0.3% of fits
+  under the frozen grid). `Q > 0` is implied by the eligibility rule
+  `a1 < e < a2`, so the initializer has no measurement-dependent
+  failure branch at all — recorded for completeness, unreachable in
+  a complete sample, and deliberately so: nothing here may make
+  eligibility depend on a measured value. Of the (at most two)
+  roots, take the one whose
+  third-measurement residual `|s3 (u - u3)(v - v3) - C|` is smaller -
+  squared units, frozen, so the choice cannot flip with a units
+  convention.
+- **Refinement (the fix): Gauss-Newton on all three residuals,**
+  iterated to convergence (step norm `< 1e-12`, hard cap 20
+  iterations; **reaching the cap is a routine path, not an
+  exception** — the design checks hit it in 39-58% of fits, where
+  the iterate is already at the noise floor, final steps `1e-8` and
+  below against a `~0.15` error scale — and the frozen rule is that
+  **the iterate at the cap IS the estimate**, deterministic and
+  never a rejection), with
+
+      r_k = s_k (u - u_k)(v - v_k) - m_k^2/4,
+      J_k = [ s_k (v - v_k),  s_k (u - u_k) ],
+      s_1 = s_2 = +1, s_3 as above.
+
+  The sign multiplies the PRODUCT, not each difference - squaring
+  cancels it otherwise, which silently inverts the third constraint
+  (a defect found and fixed during the design check). This promotes
+  `a3` from a root selector to a CONSTRAINT, which is what makes the
+  Jacobian the well-conditioned three-measurement one the rate
+  derivation assumes.
+- Per-sample statistic:
+  `y = log10( median over the six targets of
+  ||(u_hat, v_hat) - (u, v)|| )`. No within-sample independence is
+  claimed (targets share anchors); the samples are the replicates, as
+  everywhere in this document. A sample is COMPLETE iff all six
+  targets are eligible; eligibility is geometric and decided before
+  measurement, so completeness never conditions on measurement noise
+  (the Section 4 rule, restated because the discriminant path made it
+  tempting to violate).
+
+**Rate and the derived `Delta*_C`.** Every measurement is a Stage
+A/B chain estimator over a `Theta(1)` continuum separation, carrying
+relative error `m^(-1/3)` with `m` proportional to `N`. With `a3` a
+constraint, the fit's Jacobian at the frozen geometry is
+`N`-independent and well-conditioned, so the coordinate error
+inherits the measurement rate:
+
+    Delta*_C = -(1/3) log10(4) = -0.2007 dex,
+
+derived - the SAME derivation v1 attempted, now resting on a
+Jacobian that is actually nonsingular.
+
+The Jacobian-conditioning step is an ARGUMENT, not a measurement, and
+the labelled slope check against `-1/3` is where the data audits it —
+the same audit hook that condemned v1 (its slope read `-0.19` to
+`-0.25`). Expectation stated in advance so a steep reading is not
+misread as an anomaly: at this pre-asymptotic ladder the slope
+should come out STEEPER than `-1/3`, around `-0.40` to `-0.45` in
+the design checks. Stages A and B are the precedent for point
+estimates DEPARTING from `-1/3` while their CIs still contain it
+(A read `-0.311`, shallower; B `-0.354`, steeper) — the departure
+here is expected in the steep direction and larger, because the
+coordinate fit compounds three such measurements. The constant-level
+check carries a band, never a gate.
+
+Disclosed for honesty: the
+quarantined design checks that killed v1 also measured this
+estimator, at `-0.21` (one GN step) and `-0.26` (converged), i.e. at
+or beyond the derived target; `Delta*_C` remains the DERIVED value,
+not the measured one, so the power design stays theory-anchored and
+conservative. Those runs used seeds far outside every experimental
+window and produced no Stage C data.
+
+**Frame and mirror, stated exactly.** Anchor coordinates enter as
+their realizer positions: the claim is reconstruction of everything
+else, from metric data, TO A THREE-EVENT FRAME. The fiducial set is
+not mirror-symmetric, so under the global mirror a different physical
+event can be selected as `a3` or as a target; `y` is therefore
+invariant in distribution, not realization-by-realization. This is
+the Section 10 situation exactly - the realizer is read as a pinned
+computational shortcut, with the caveat labelled - and Section 9.4
+records that caveat materializing once in 216 pairs, so the record is
+consistent about it.
+
+**Protocol.** No pair pool and no draws - anchors and targets are
+deterministic given the sample. The first-`n`-complete fill, skip
+caps, verification pin (`>= 1998 of 2000`, wall times), calibrated
+Bonett pilot (both endpoint rungs, 200 samples, cross-rung statistics
+forbidden), and the 1.4 verdict table apply verbatim; Stage P-C runs
+only after Stage B's frozen IMPROVES with a reachable stamp, through
+the Section 6 cross-stage gate. Spacelike `m3` measurements carry the
+Section 10 tiered order certificate, and uncertified samples are
+FLAGGED exactly as in Stage B — `box_order_certified` per sample,
+uncertified counts per rung in the stage summary, any nonzero count
+scoping those samples as realizer-assisted — never dropped, since
+dropping would condition the record on a measured property.
+
+**Seed windows (frozen; all above every documented range).**
+
+| block | base | fills | window span |
+|---|---|---|---|
+| Stage P-C pilot, N=600 | 472000 | 200 of 220 | 472000-515999 |
+| Stage P-C pilot, N=2400 | 516000 | 200 of 220 | 516000-559999 |
+| Stage C, N=600 | 620000 | <= 60 of 80 | 620000-635999 |
+| Stage C, N=1200 | 636000 | <= 60 of 80 | 636000-651999 |
+| Stage C, N=2400 | 652000 | <= 60 of 80 | 652000-667999 |
+| verification-C (non-experimental) | 700000 | 2000 per rung | 700000-705999 |
+
+(The 560000-619999 gap steps around the Section 10 verification-B
+block at 600000-605999; nothing is allocated inside it. The design
+checks used 900000+, disjoint from all of the above.)
+
+Implementation note: the runner lands only after this addendum is
+approved; the verification-C pin must pass before Stage P-C may run.

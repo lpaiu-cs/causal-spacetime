@@ -521,3 +521,105 @@ def test_windows_are_private_fresh_and_reserve_sized():
         assert max(verify_span) < experimental_bottom
         assert not (verify_span & used)
     assert SKIP_CAP == 20 and K_PAIRS == 6
+
+
+def test_stage_c_fiducials_are_off_diagonal_and_frozen():
+    """Section 11 v2: every target fiducial must sit off u = v, where
+    the two-post discriminant vanishes identically -- the defect that
+    killed v1's unenumerated endpoint grid."""
+
+    from p11_metric import ANCHOR_FIDUCIALS, TARGET_FIDUCIALS
+
+    assert ANCHOR_FIDUCIALS == ((0.15, 0.15), (0.85, 0.85), (0.15, 0.85))
+    assert TARGET_FIDUCIALS == ((0.38, 0.44), (0.38, 0.56), (0.50, 0.41),
+                                (0.50, 0.59), (0.62, 0.44), (0.62, 0.56))
+    for fu, fv in TARGET_FIDUCIALS:
+        assert abs(fu - fv) >= 0.05           # off the degenerate axis
+        assert 0.35 <= fu <= 0.65 and 0.35 <= fv <= 0.65
+        # strictly inside the anchor cone, so eligibility is generic
+        assert 0.15 < fu < 0.85 and 0.15 < fv < 0.85
+
+
+def test_two_post_roots_clamp_the_negative_discriminant():
+    """The frozen D := max(D, 0) path: a measurement pair that admits
+    no real intersection must still yield the tangency root, never an
+    exception and never a completeness rejection."""
+
+    from p11_metric import two_post_roots
+
+    # exact-geometry case: a target at (0.5, 0.45) between the posts
+    u1, v1, u2, v2 = 0.15, 0.15, 0.85, 0.85
+    A = (0.5 - u1) * (0.45 - v1)
+    B = (u2 - 0.5) * (v2 - 0.45)
+    roots = two_post_roots(A, B, u1, v1, u2, v2)
+    assert roots
+    assert min(abs(r[0] - 0.5) + abs(r[1] - 0.45) for r in roots) < 1e-9
+
+    # inflate both measurements so no real intersection exists
+    bad = two_post_roots(A * 4.0, B * 4.0, u1, v1, u2, v2)
+    assert bad and all(np.isfinite(r).all() for r in bad)
+
+
+def test_gauss_newton_sign_convention_and_exactness():
+    """The sign multiplies the PRODUCT, not each difference (the bug
+    that inverted the third constraint). With exact measurements the
+    fit must return the true point."""
+
+    from p11_metric import gauss_newton_fit
+
+    true_u, true_v = 0.5, 0.42
+    a1, a2, a3 = (0.15, 0.15), (0.85, 0.85), (0.15, 0.85)
+    A = (true_u - a1[0]) * (true_v - a1[1])
+    B = (a2[0] - true_u) * (a2[1] - true_v)
+    # a3 is spacelike to the target: the product is negative
+    prod3 = (true_u - a3[0]) * (true_v - a3[1])
+    assert prod3 < 0
+    C = -prod3
+    fit = gauss_newton_fit((0.45, 0.5), (A, B, C),
+                           ((a1[0], a1[1], 1.0), (a2[0], a2[1], 1.0),
+                            (a3[0], a3[1], -1.0)))
+    assert abs(fit[0] - true_u) < 1e-9 and abs(fit[1] - true_v) < 1e-9
+
+
+def test_stage_c_sample_is_metric_only_not_rank_readout():
+    """The anti-circularity property, checked on data: a rank-readout
+    estimator would have error identically zero. Stage C's error must
+    be strictly positive and finite, and its record must carry the
+    order certificate."""
+
+    from p11_metric import run_sample_coordinates
+
+    record, complete = run_sample_coordinates(600, 700000)
+    assert complete
+    assert 0.0 < record["median_coord_error"] < 1.0
+    assert np.isfinite(record["y"])
+    assert "box_order_certified" in record
+
+
+def test_stage_c_windows_are_private_and_fresh():
+    from p11_metric import (
+        PILOT_C_BLOCKS,
+        STAGE_C_BLOCKS,
+        VERIFY_C_BASE,
+    )
+
+    earlier = set()
+    for base, slots in (list(PILOT_BLOCKS.values())
+                        + list(STAGE_A_BLOCKS.values())):
+        earlier |= set(range(base, base + STRIDE * slots))
+    c_spans = []
+    for base, slots in (list(PILOT_C_BLOCKS.values())
+                        + list(STAGE_C_BLOCKS.values())):
+        span = set(range(base, base + STRIDE * slots))
+        assert not (span & earlier)
+        c_spans.append(span)
+    for a in c_spans:
+        for b in c_spans:
+            assert a is b or not (a & b)
+    # verification-C is quarantined above every experimental window
+    top = max(base + STRIDE * slots
+              for base, slots in (list(PILOT_C_BLOCKS.values())
+                                  + list(STAGE_C_BLOCKS.values())))
+    for n in P11_LADDER:
+        vspan = set(range(VERIFY_C_BASE[n], VERIFY_C_BASE[n] + 2000))
+        assert min(vspan) >= top
