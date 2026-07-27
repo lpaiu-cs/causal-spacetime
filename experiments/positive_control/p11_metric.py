@@ -457,6 +457,10 @@ def run_pilot(output_dir: Path) -> None:
             "variance_bound_95": rung_bound["bound"],
             "skipped_seeds": skipped,
             "mean_seconds_per_sample": elapsed / len(records),
+            # the raw per-sample statistics behind the variance and
+            # calibration (review: without them the artifact could
+            # not be audited or recalibrated)
+            "y": [float(val) for val in ys[n]],
         }
         print(f"pilot n={n}: var={rung_bound['s2']:.5f} "
               f"g4={rung_bound['g4']:.2f} "
@@ -498,7 +502,7 @@ def run_stage_a(output_dir: Path) -> None:
     flat_available = bool(pilot["power"]["flat_available"])
 
     rows, per_rung_y, per_rung_y_vol = [], {}, {}
-    skip_counts = {}
+    skip_counts, skipped_seeds = {}, {}
     for n, (base, slots) in STAGE_A_BLOCKS.items():
         records, skipped, filled = fill_block(n, base, slots, n_per_rung)
         if not filled:
@@ -514,6 +518,7 @@ def run_stage_a(output_dir: Path) -> None:
         per_rung_y[n] = np.array([r["y"] for r in records])
         per_rung_y_vol[n] = np.array([r["y_vol"] for r in records])
         skip_counts[n] = len(skipped)
+        skipped_seeds[n] = [int(s) for s in skipped]
         print(f"stage A n={n}: {len(records)} complete | "
               f"mean y {per_rung_y[n].mean():.4f} | skips {len(skipped)}",
               flush=True)
@@ -557,6 +562,9 @@ def run_stage_a(output_dir: Path) -> None:
         "n_per_rung": n_per_rung,
         "flat_available": flat_available,
         "skip_counts": {str(n): skip_counts[n] for n in P11_LADDER},
+        # the identities, not just the counts (review): which seeds
+        # were excluded is what a selection audit needs
+        "skipped_seeds": {str(n): skipped_seeds[n] for n in P11_LADDER},
         # any realized skip conditions the estimand on pair packing
         # (prereg Section 4, v1.7) -- carried beside the verdict
         "selection_caveat": bool(any(
