@@ -23,6 +23,23 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.5 review corrections (pre-freeze, pre-data): (xiv) the design is
+sized for the flat verdict too — v1.4's superiority-only `n` made
+FLAT-WITHIN-MARGIN unreachable (at `sigma = 0.20`, `n = 21` gives CI
+half-width 0.121 against the 0.067 margin, so a truly flat world
+would read INCONCLUSIVE and be mis-blamed on the pilot); `n` now
+takes the max of the superiority and equivalence requirements, and
+when the equivalence requirement exceeds the cap the pilot DECLARES
+the flat verdict unavailable ex ante, which re-scopes INCONCLUSIVE.
+(xv) the feasibility projection uses measured per-rung wall times
+from the verification block instead of a scaling model — the v1.4
+eligible-pool scan is `O(N^2)` per sample, so the linear `1+2+4`
+weighting was wrong and any frozen exponent model would just invite
+the next correction. (xvi) the endpoint-conditioned interval mean is
+stated exactly — `(a-1)(b-1)/(N-2)` for rank gaps `a, b`, about 1.3%
+below the asymptotic `N tau^2 / 4` at the bottom rung — and
+`N tau^2 / 4` is labelled asymptotic wherever it appears.
+
 v1.4 review corrections (pre-freeze, pre-data): (x) the rung
 statistic is the MEAN of per-sample `y`, powered by the exact CLT
 formula — v1.3's median-with-`pi/2` assumed a Gaussian parent the
@@ -113,23 +130,35 @@ normalization), so at fixed continuum separation:
 
 ### 1.2 Sample-size formula (frozen before the pilot)
 
-With `sigma` the per-sample SD of `y` at the bottom rung, the
-two-rung mean contrast needs, for two-sided alpha = 0.05 and power
-0.90 (`z = 1.960 + 1.282 = 3.242`), by the plain two-sample CLT with
-no distributional factor (v1.4):
+With `sigma` the per-sample SD of `y` at the bottom rung, by the
+plain two-sample CLT with no distributional factor (v1.4), two
+requirements are computed (v1.5 — the design must be able to AFFORD
+every verdict it promises, and v1.4 priced only superiority):
 
-    n_per_rung = ceil( 2 * sigma^2 * 3.242^2 / Delta*^2 )
-               = ceil( 521.9 * sigma_hat^2 )
+    n_sup = ceil( 2 * sigma^2 * (1.960 + 1.282)^2 / Delta*^2 )
+          = ceil( 521.9 * sigma_hat^2 )        # 90% power at Delta*
 
-bounded by **floor 12** and **cap 60**. The pilot (1.3) supplies
-`sigma_hat`. If the formula demands more than the cap, Stage A is
-declared INFEASIBLE-AS-DESIGNED and stops before running — that
-refusal is this preregistration operating, exactly as P10's gates
-were.
+    n_eq  = ceil( 2 * sigma^2 * (1.960 + 1.645)^2 / delta_eq^2 )
+          = ceil( 5790.4 * sigma_hat^2 )       # 90% P(FLAT) at Delta = 0
+
+Frozen selection rule, floor 12 / cap 60:
+
+- if `n_eq <= 60`: `n_per_rung = clamp(max(n_sup, n_eq))` and the
+  FLAT verdict is AVAILABLE;
+- else: `n_per_rung = clamp(n_sup)` and the pilot DECLARES, ex ante,
+  that the flat verdict is unavailable at this variance — the
+  vocabulary for that campaign is IMPROVES / DEGRADES / UNRESOLVED,
+  and an UNRESOLVED there does not indict the pilot (1.4).
+
+If `n_sup` alone exceeds the cap, Stage A is INFEASIBLE-AS-DESIGNED
+and stops before running — that refusal is this preregistration
+operating, exactly as P10's gates were.
 
 Worked anchors (illustrative only, the pilot decides): sigma_hat =
-0.10 or 0.15 -> n = 12 (floor); 0.20 -> 21; 0.25 -> 33; 0.33 -> 57;
-0.34 -> cap.
+0.10 -> n_sup 6, n_eq 58 -> n = 58, flat available; 0.101 -> n 60,
+flat available at the cap edge; 0.15 -> n_eq 131 > cap -> n = 12,
+flat declared unavailable; 0.20 -> n = 21, flat unavailable;
+0.33 -> n = 57, flat unavailable; 0.34 -> INFEASIBLE.
 
 ### 1.3 Stage P: the pilot, variance-only, quarantined
 
@@ -139,15 +168,18 @@ Worked anchors (illustrative only, the pilot decides): sigma_hat =
 - **Quarantine**: the pilot computes NO cross-rung contrast (it runs
   one rung, so none exists), and its samples are never reused in any
   stage. Its two outputs are `n_per_rung` (via 1.2) and feasibility.
-- Feasibility rule (frozen; v1.3 corrected the rung weighting):
-  per-pair work scales linearly in `N` (interval extraction `O(N)`,
-  interior LIS near-linear in `m ∝ N`), so the projection weights
-  each rung by `N_r / 600`: projected Stage A wall time
-  `= n_per_rung * (pilot wall time / 12) * (1 + 2 + 4)` — seven
-  bottom-rung units per sample-set, not the v1.2 `3x` that priced
-  every rung at bottom-rung cost. If it exceeds 12 hours,
-  INFEASIBLE-AS-DESIGNED is recorded and the design returns to the
-  drawing board without any outcome having been read.
+- Feasibility rule (frozen; v1.5 replaced the scaling model with
+  measurement): the verification block (Section 4) already runs 100
+  samples at EVERY rung for the completeness pin, and it records
+  mean wall time per sample per rung, `t_600, t_1200, t_2400` —
+  outcome-free quantities from discarded samples. Projected Stage A
+  wall time `= n_per_rung * (t_600 + t_1200 + t_2400)`. No exponent
+  model is frozen at all: v1.3 priced every rung at bottom-rung
+  cost, v1.4's linear `1+2+4` was falsified by v1.4's own `O(N^2)`
+  eligible-pool scan, and the correct lesson is to project from
+  measured costs, not from the next model. If the projection exceeds
+  12 hours, INFEASIBLE-AS-DESIGNED is recorded and the design
+  returns to the drawing board without any outcome having been read.
 
 **Stage P-B (power protocol frozen now; estimator by addendum).**
 `d_hat` carries locator variability the timelike estimator does not,
@@ -177,8 +209,8 @@ verdict — the categories are mutually exclusive by precedence:
 |---|---|---|
 | 1 | `hi < 0` | **IMPROVES** — gate passes (a small established improvement still passes; its size against theory is the labelled slope/constant check, not the gate) |
 | 2 | `lo > 0` | **DEGRADES** — gate fails, informative |
-| 3 | `-0.067 < lo` and `hi < +0.067` (CI straddles 0 inside the margin) | **FLAT-WITHIN-MARGIN** — gate fails, informative |
-| 4 | otherwise | **INCONCLUSIVE** — gate fails; indicts the pilot variance estimate; record and stop |
+| 3 | `-0.067 < lo` and `hi < +0.067` (CI straddles 0 inside the margin) | **FLAT-WITHIN-MARGIN** — gate fails, informative; row available only when the pilot declared the flat verdict affordable (1.2) |
+| 4 | otherwise | **INCONCLUSIVE** — gate fails; when the flat verdict was declared AVAILABLE this indicts the pilot variance estimate; when it was declared unavailable ex ante, the verdict reads **UNRESOLVED** and indicts nothing (the margin was priced and not purchasable at the cap — 1.2). Record and stop either way |
 
 The equivalence margin `delta_eq = |Delta*|/3 = 0.067 dex` is frozen
 NOW, before any data, so that a flat result is a verdict rather than a
@@ -235,9 +267,16 @@ re-implemented; the shared-definition rule). Ensemble, stated
 precisely (v1.3): this equals a sprinkling of the unit diamond
 CONDITIONED on the count `N`, and the `(u, v) = (i, pi(i))/N`
 coordinates form its rank grid — exactly one event per null-coordinate
-rank, so interval counts have the same means as Poisson
-(`E|I| = N du dv`) but sub-Poisson, negatively associated
-fluctuations. The chain law needs no translation — the LIS theorems
+rank, with sub-Poisson, negatively associated count fluctuations.
+Interval means, stated exactly (v1.5): conditioned on a pair of
+endpoint events with integer rank gaps `a = Delta i`, `b = Delta pi`,
+the OPEN interval's expected count is `(a-1)(b-1)/(N-2)` — about
+1.3% below the asymptotic `N du dv = ab/N` at the bottom rung's
+typical gaps — and every `N tau^2 / 4` in this document is that
+asymptotic approximation, adequate for effect-size targets (the
+`4^(-1/3)` ratio is unchanged) and labelled wherever it feeds a
+finite-`N` quantity (the volume estimator's constant-level check
+carries the conditioned mean). The chain law needs no translation — the LIS theorems
 of Section 7 are permutation theorems, i.e. theorems about THIS
 ensemble; Poisson-flavoured variance intuitions are used nowhere as
 gates and are labelled where they appear (the volume estimator's
@@ -269,7 +308,9 @@ any implementation).
   without the correction the estimator carries a `+2/(sqrt(N) tau)`
   relative bias — 0.20 at the bottom rung falling to 0.10 at the top,
   a systematic that would have faked improvement in the primary gate's
-  own direction. Interior expected cardinality `m = N tau^2 / 4`; the
+  own direction. Interior expected cardinality `m = N tau^2 / 4`
+  (asymptotic; the endpoint-conditioned exact mean is Section 3's
+  `(a-1)(b-1)/(N-2)`); the
   interior longest chain converges to `2 sqrt(m) = sqrt(N) tau`
   (Section 7). Computed exactly: 2D dominance order makes it a
   longest increasing subsequence.
@@ -378,10 +419,11 @@ samples, whose streams feed frozen quantities.
   outcomes; produces `n_per_rung`.
 - **Stage A** (timelike): the primary gate of the experiment —
   `Delta` for tau_hat_chain per 1.4. Secondary, labelled consistency
-  checks, never gates: (a) OLS slope of median `y` on `log10 N`
+  checks, never gates: (a) OLS slope of mean `y` on `log10 N`
   across the three rungs, with bootstrap CI, against the predicted
   `-1/3` (chain) and `-1/2` (volume); (b) the constant-level band
-  `median relerr ~ 0.89 m^(-1/3)`; (c) middle-rung monotonicity (the
+  `median relerr ~ 0.89 m^(-1/3)`, with `m` the endpoint-conditioned
+  mean of Section 3 (v1.5); (c) middle-rung monotonicity (the
   900-dip watch). Stage B runs only if Stage A passes.
 - **Stage B addendum** (after Stage A reports, before any Stage B
   data): freezes `d_hat`, its support, and its Stage B seed use,
