@@ -1,0 +1,23 @@
+{
+  "code_version": "a688c03",
+  "pin_required": 1998,
+  "patch_volume": 1.5000000000109373,
+  "per_n": {
+    "600": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.008737243950003176
+    },
+    "1200": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.03192837774999498
+    },
+    "2400": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.12166346059998613
+    }
+  },
+  "pin_passed": true
+}

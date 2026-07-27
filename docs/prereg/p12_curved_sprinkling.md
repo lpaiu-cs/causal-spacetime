@@ -304,3 +304,84 @@ including the assertion `sqrt(dU dV) == 2 sqrt(du dv)` at
 band membership; window privacy and freshness; verdict-table
 precedence. Stage P-12 runs only from a clean commit containing all
 of it, and only after the verification pin passes.
+
+---
+
+## 9. Stage records (results)
+
+### 9.1 Verification-12 and Stage P-12 (2026-07-28)
+
+- **Verification-12**: 2000/2000 complete at every rung against the
+  1998 pin — the v1.1 completeness fix holds at pin resolution, where
+  v1.0's constants completed 12-22%. Measured wall times ~0.009 /
+  ~0.03 / ~0.1 s per sample (one significant figure, per P11 9.6).
+- **Stage P-12**: 200 samples per endpoint rung, zero skips. The
+  calibration fired on both rungs (coverage 0.948 / 0.865 at nominal
+  -> `z = 1.693 / 2.522`; the top rung's 0.865 is the largest
+  under-coverage the programme has recorded, and the calibration
+  absorbing it is exactly why P11 v1.9 replaced the nominal bound).
+  `n_sup = 12`, `n_eq = 127 > cap` — flat verdict declared
+  unavailable ex ante, so this campaign's fourth verdict is
+  UNRESOLVED (the caveat Section 1.3 wrote down in advance).
+  `n_per_rung = 12`; projected Stage A ~2 s. FEASIBLE.
+
+### 9.2 Stage A-12 (2026-07-28): gate **IMPROVES**, mechanism checks say **bias floor**
+
+12 complete samples per rung, zero skips, no selection caveat.
+
+    Delta = -0.104 dex,  95% CI [-0.177, -0.041]  ->  IMPROVES
+
+The gate passes as frozen. **The labelled checks do not support
+reading this as the theory rate**, and the record says so plainly:
+
+| labelled check | reading | expectation |
+|---|---|---|
+| mean `y` by rung | -0.567 / -0.712 / -0.671 | monotone |
+| middle rung between endpoints | **NO** — the top rung is worse than the middle | yes |
+| median relative error | 0.282 / 0.218 / 0.230 | falling |
+| slope vs `log10 N` | **-0.173, CI [-0.295, -0.060]** | contains `-1/3` |
+| `Delta` against derived `Delta*_A` | -0.104, about HALF of -0.2007 | at or beyond |
+| mean interval count `m` | 18.8 / 38.7 / 75.8 | (as designed) |
+
+Three of these fail together and in the same direction: the error
+falls from the bottom rung to the middle and then STOPS, the slope
+excludes the predicted `-1/3`, and the contrast is half the derived
+size. That is the signature Section 1.3 described in advance —
+**a curvature bias floor**: the discreteness error keeps shrinking
+with density, but the flat-normalized estimator carries a bias set by
+`tau / ell`, not by `m`, and once discreteness falls below it the
+total stops improving. The gate's IMPROVES is real but is measuring
+the approach to that floor, not convergence to the truth.
+
+**Prediction miss, recorded rather than absorbed.** The flat-comparison
+arm was frozen at `0.42-0.49` (Section 4, from the design check); it
+read **0.401 / 0.390 / 0.381** — outside the frozen band and slightly
+FALLING where the prediction said flat. The likely cause is post hoc
+and labelled as such: the design check measured all band-eligible
+pairs, while the campaign scores only pairs that survive disjoint
+packing, which is not a uniform sample of the band. The arm still does
+its job — the flat reading is far worse than the curved one at every
+rung, so curvature is unmistakably being read — but the frozen number
+was wrong, and freezing it is what made that visible.
+
+**What this establishes, and what it does not.** Establishes: over
+this ladder, the P11 chain estimator applied to a genuinely curved
+sprinkling reads CURVED proper time to ~20-28% and improves with
+density; the flat reading is much worse at every rung, so the
+instrument is reading geometry rather than a flat template. Does not
+establish: that the improvement follows the longest-chain rate here —
+the slope excludes `-1/3` and the sequence is non-monotone at the top
+rung, both consistent with a bias floor at `tau / ell ~ 0.3`. Claims
+bind to this estimator, this patch, and this band.
+
+**The lever this hands over**, already named in Section 7: the next
+ladder should sweep `tau / ell` at fixed density rather than density
+at fixed `tau / ell`. If the floor is curvature bias, the error at
+fixed `m` must grow with `tau / ell`, and the exponent should return
+as `tau / ell` shrinks. Stage B (curvature recovery) is unaffected in
+design — its flat-twin differencing (Section 5, requirement 5) is
+aimed precisely at a universal bias of this kind — but it now has a
+measured reason to exist rather than a hypothetical one.
+
+Artifacts: `docs/prereg/frozen/p12/` (verification, pilot, Stage A),
+stamp recorded in each.
