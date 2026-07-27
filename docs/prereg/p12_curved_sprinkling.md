@@ -325,7 +325,8 @@ of it, and only after the verification pin passes.
   UNRESOLVED (the caveat Section 1.3 wrote down in advance).
   `n_per_rung = 12`; projected Stage A ~2 s. FEASIBLE.
 
-### 9.2 Stage A-12 (2026-07-28): gate **IMPROVES**, mechanism checks say **bias floor**
+### 9.2 Stage A-12 (2026-07-28): gate **IMPROVES**; the campaign's
+apparent plateau was small-sample fluctuation
 
 12 complete samples per rung, zero skips, no selection caveat.
 
@@ -343,45 +344,77 @@ reading this as the theory rate**, and the record says so plainly:
 | `Delta` against derived `Delta*_A` | -0.104, about HALF of -0.2007 | at or beyond |
 | mean interval count `m` | 18.8 / 38.7 / 75.8 | (as designed) |
 
-Three of these fail together and in the same direction: the error
-falls from the bottom rung to the middle and then STOPS, the slope
+Three of these depart together and in the same direction: the error
+falls from the bottom rung to the middle and then stops, the slope
 excludes the predicted `-1/3`, and the contrast is half the derived
-size. That is the signature Section 1.3 described in advance —
-**a curvature bias floor**: the discreteness error keeps shrinking
-with density, but the flat-normalized estimator carries a bias set by
-`tau / ell`, not by `m`, and once discreteness falls below it the
-total stops improving. The gate's IMPROVES is real but is measuring
-the approach to that floor, not convergence to the truth.
+size.
 
-**Prediction miss, recorded rather than absorbed.** The flat-comparison
-arm was frozen at `0.42-0.49` (Section 4, from the design check); it
-read **0.401 / 0.390 / 0.381** — outside the frozen band and slightly
-FALLING where the prediction said flat. The likely cause is post hoc
-and labelled as such: the design check measured all band-eligible
-pairs, while the campaign scores only pairs that survive disjoint
-packing, which is not a uniform sample of the band. The arm still does
-its job — the flat reading is far worse than the curved one at every
-rung, so curvature is unmistakably being read — but the frozen number
-was wrong, and freezing it is what made that visible.
+**First reading, WITHDRAWN on review (2026-07-28).** This record
+originally called that pattern the signature of a curvature bias
+floor and wrote that "the gate's IMPROVES is measuring the approach
+to that floor, not convergence to the truth." Two objections, both
+correct, and the second decisive:
 
-**What this establishes, and what it does not.** Establishes: over
-this ladder, the P11 chain estimator applied to a genuinely curved
-sprinkling reads CURVED proper time to ~20-28% and improves with
-density; the flat reading is much worse at every rung, so the
-instrument is reading geometry rather than a flat template. Does not
-establish: that the improvement follows the longest-chain rate here —
-the slope excludes `-1/3` and the sequence is non-monotone at the top
-rung, both consistent with a bias floor at `tau / ell ~ 0.3`. Claims
-bind to this estimator, this patch, and this band.
+1. The three checks are not three observations. All three are
+   functions of the SAME three rung means at `n_per_rung = 12` (the
+   floor value of Section 1.2), so they are one correlated
+   observation, and the entire signature rests on a single 12-sample
+   rung. The middle-to-top reversal is under one rung standard error.
+2. A non-decaying floor is not available theoretically: at fixed
+   geometry the chain law's convergence `L / sqrt(2 rho) -> tau_geo`
+   holds in curved spacetime too (Section 7), so curvature can inflate
+   a PRE-ASYMPTOTIC plateau but cannot stop convergence. The
+   withdrawn sentence asserted a mechanism the data could not
+   distinguish.
 
-**The lever this hands over**, already named in Section 7: the next
-ladder should sweep `tau / ell` at fixed density rather than density
-at fixed `tau / ell`. If the floor is curvature bias, the error at
-fixed `m` must grow with `tau / ell`, and the exponent should return
-as `tau / ell` shrinks. Stage B (curvature recovery) is unaffected in
-design — its flat-twin differencing (Section 5, requirement 5) is
-aimed precisely at a universal bias of this kind — but it now has a
-measured reason to exist rather than a hypothetical one.
+**The adjudicating diagnostic (post hoc, quarantined, labelled).**
+Run at 200 samples per rung in the design-check seed space
+(`2000000+`, disjoint from every experimental window), with an extra
+`N = 4800` rung, through the runner's own code path:
+
+| `N` | mean `y` | median relative error | mean `m` |
+|---|---|---|---|
+| 600 | -0.5673 +/- 0.0084 | 0.278 | 18.7 |
+| 1200 | -0.6578 +/- 0.0094 | 0.228 | 37.5 |
+| 2400 | -0.7605 +/- 0.0084 | 0.179 | 76.2 |
+| 4800 | -0.8386 +/- 0.0077 | 0.149 | 152.0 |
+
+**Monotone across all four rungs; slope `-0.304` over the four, and
+`-0.321` over the campaign's three — both consistent with `-1/3`;
+`Delta(600 -> 2400) = -0.193`, i.e. the derived `-0.2007`.** The
+plateau was small-sample fluctuation at `n = 12`. No bias floor is
+detected out to `m ~ 152` and `tau / ell ~ 0.3`.
+
+**What the campaign therefore establishes**: over this ladder the
+unchanged P11 chain estimator reads CURVED proper time on a genuinely
+curved sprinkling, at 15-28% relative error, improving with density,
+with the flat template far worse at every rung. The frozen gate says
+IMPROVES and the diagnostic says the improvement runs at the
+longest-chain rate. **What it does not establish**: anything about
+`tau / ell` regimes other than ~0.3, and nothing about a floor —
+neither its presence nor its absence beyond `m ~ 152`.
+
+**Flat-arm prediction miss, and its real cause.** The arm was frozen
+at `0.42-0.49`; the campaign read `0.401 / 0.390 / 0.381` and the
+high-`n` diagnostic reads `0.394 / 0.385 / 0.396 / 0.390` — flat in
+`N`, as the prediction's SHAPE said, but about 10% below its LEVEL.
+The first explanation offered here (packing-restricted versus
+all-band pairs) is withdrawn: the diagnostic uses the runner's own
+packed pairs and still reads 0.39. The actual defect is provenance —
+**the frozen band was taken from a design-review measurement that
+this record never reproduced with the runner before freezing it.**
+Freezing a number measured by someone else's code path is the same
+class of error as quoting a narrative figure that no artifact
+supports; the correct procedure, followed from here, is that any
+frozen prediction must first be produced by the code that will later
+be tested against it.
+
+**The lever this hands over**, already named in Section 7: sweep
+`tau / ell` at fixed density. That experiment no longer rests on a
+measured floor — there is none to rest on — but on the sharper
+question the diagnostic leaves open: how large `tau / ell` may grow
+before the flat-normalized reading degrades, and whether the
+exponent survives there.
 
 Artifacts: `docs/prereg/frozen/p12/` (verification, pilot, Stage A),
 stamp recorded in each.
