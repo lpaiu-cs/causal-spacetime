@@ -746,6 +746,21 @@ one component (generic for sprinkled diamonds; the regression
 exercises it empirically, and a failure there would surface as a
 non-reproduced box, not silently).
 
+**Production certification** (amended again same day, review: a
+sampled regression does not certify production pairs). Every scored
+Stage B pair carries an order-only membership certificate, tiered:
+(tier 1) anchored Gamma percolation to its fixed point — a sound
+under-approximation, since derived pairs keep a parent endpoint but
+anchors accumulate across generations; (tier 2) on an anchored miss,
+the FULL Gamma fixed point over all oriented pairs. A pair failing
+both tiers is genuinely unforced from the seed orientation — the
+caveat above materialized — and flags its sample:
+`box_order_certified` per sample, uncertified counts per rung in the
+stage summary, and any nonzero count scopes the verdict for those
+samples as realizer-assisted. Certified members are box members by
+soundness, so certifying all members verifies exactly what the
+scorer consumes.
+
 **Constraint (1) — consistency, rate, and the derived `Delta*_B`.**
 In 1+1D the meet-join interval's proper time EQUALS the spacelike
 separation: `d = 2 sqrt((u_y - u_x)(v_x - v_y))`. The box's interior

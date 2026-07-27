@@ -260,6 +260,54 @@ def test_dual_box_certificate_certifies_scored_samples():
     assert complete and record["box_order_certified"]
 
 
+def test_certificate_tiers_pinned_on_the_two_production_cases():
+    """The two Stage B samples the anchored tier flagged, pinned:
+    (600, 425200) has a pair the anchored closure misses but the full
+    Gamma fixed point certifies (the truncation artifact — anchors
+    accumulate across generations); (1200, 442200) has one pair of
+    six that BOTH tiers refuse — a genuine forcing failure, the
+    Section 10 caveat in production, carried as the sample flag."""
+
+    from p11_metric import (
+        SCORE_OFFSET,
+        draw_disjoint_pairs,
+        dual_box_order_certificate,
+        eligible_pool_spacelike,
+        full_gamma_certificate,
+        run_sample_spacelike,
+    )
+
+    def pairs_for(n, seed):
+        rng = np.random.default_rng(seed)
+        pi = rng.permutation(n)
+        u, v = continuum_uv(pi)
+        pool = eligible_pool_spacelike(u, v)
+        draw_rng = np.random.default_rng(seed + SCORE_OFFSET)
+        pairs, complete, _ = draw_disjoint_pairs(pool, u, v, draw_rng)
+        assert complete
+        return u, v, pairs
+
+    u, v, pairs = pairs_for(600, 425200)
+    anchored = [dual_box_order_certificate(u, v, i, j) for i, j in pairs]
+    assert not all(anchored)
+    assert all(
+        a or full_gamma_certificate(u, v, i, j)
+        for a, (i, j) in zip(anchored, pairs, strict=True)
+    )
+    record, complete = run_sample_spacelike(600, 425200)
+    assert complete and record["box_order_certified"]
+
+    u, v, pairs = pairs_for(1200, 442200)
+    tiered = [
+        dual_box_order_certificate(u, v, i, j)
+        or full_gamma_certificate(u, v, i, j)
+        for i, j in pairs
+    ]
+    assert tiered.count(False) == 1
+    record, complete = run_sample_spacelike(1200, 442200)
+    assert complete and not record["box_order_certified"]
+
+
 def test_stage_b_windows_are_private_and_fresh():
     from p11_metric import (
         PILOT_B_BLOCKS,

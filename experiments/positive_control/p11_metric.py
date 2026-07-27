@@ -718,6 +718,38 @@ def dual_box_order_certificate(u: np.ndarray, v: np.ndarray,
     return bool(np.all(reach_x[members]) and np.all(reach_y[members]))
 
 
+def full_gamma_certificate(u: np.ndarray, v: np.ndarray,
+                           i: int, j: int) -> bool:
+    """The FULL Gamma fixed point over all oriented pairs — the
+    escalation tier when the anchored certificate fails. The anchored
+    closure is a sound under-approximation (derived pairs keep a
+    parent endpoint, but anchors accumulate across generations, so
+    e.g. x < z can arrive via a z-anchored parent the anchored
+    iteration never forms). float32 matmuls keep the O(n^3) per
+    iteration in BLAS; run only on the rare anchored failures."""
+
+    n = u.size
+    causal = (u[:, None] < u[None, :]) & (v[:, None] < v[None, :])
+    comp = (causal | causal.T).astype(np.float32)
+    incomp = (comp == 0) & ~np.eye(n, dtype=bool)
+    members = np.flatnonzero(
+        (u > u[i]) & (u < u[j]) & (v > v[j]) & (v < v[i])
+    )
+    if members.size == 0:
+        return True
+    oriented = np.zeros((n, n), dtype=np.float32)
+    oriented[i, j] = 1.0
+    while True:
+        grown = np.minimum(1.0, oriented
+                           + ((oriented @ comp) * incomp)
+                           + ((comp @ oriented) * incomp))
+        if np.array_equal(grown > 0, oriented > 0):
+            break
+        oriented = grown
+    mask = oriented > 0
+    return bool(np.all(mask[i, members]) and np.all(mask[members, j]))
+
+
 def run_sample_spacelike(n: int, seed: int, single_stream: bool = False):
     """One Stage B sample; mirrors run_sample with the spacelike pool
     and the dual-box scorer, same record schema, plus the per-pair
@@ -742,8 +774,13 @@ def run_sample_spacelike(n: int, seed: int, single_stream: bool = False):
     scored = [score_pair_spacelike(u, v, i, j) for i, j in pairs]
     causal_full = (u[:, None] < u[None, :]) & (v[:, None] < v[None, :])
     comp_full = causal_full | causal_full.T
+    # tiered certificate: anchored percolation first (fast, sound
+    # under-approximation), full Gamma fixed point on the rare
+    # anchored failures; a pair failing BOTH is genuinely unforced
+    # and flags the sample
     record["box_order_certified"] = bool(all(
         dual_box_order_certificate(u, v, i, j, comp=comp_full)
+        or full_gamma_certificate(u, v, i, j)
         for i, j in pairs
     ))
     record["y"] = float(np.log10(
@@ -985,6 +1022,12 @@ def run_stage_b(output_dir: Path) -> None:
         "box_uncertified_samples": int(sum(
             1 for r in rows if not r.get("box_order_certified", False)
         )),
+        "box_uncertified_by_rung": {
+            str(n): int(sum(
+                1 for r in rows
+                if r["n"] == n and not r.get("box_order_certified", False)
+            )) for n in P11_LADDER
+        },
         "delta": delta, "delta_ci": [lo, hi],
         "verdict": verdict(lo, hi, flat_available),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
