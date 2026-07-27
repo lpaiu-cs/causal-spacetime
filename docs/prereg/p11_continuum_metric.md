@@ -698,3 +698,71 @@ deepening is measured, with the theory exponent inside the interval.
 Claims beyond the tested ladder and estimator remain unclaimed.
 Next per Section 6: the Stage B addendum (spacelike), to be frozen
 before any Stage B data.
+
+## 10. Stage B addendum (frozen 2026-07-27, before any Stage B data)
+
+Per Sections 3 and 6, this addendum freezes `d_hat`, its support, its
+rate, and `Delta*_B`, meeting the three constraints in writing.
+
+**The estimator: the dual-box chain.** For a spacelike pair `x, y`
+(order them so `u_x < u_y`, hence `v_x > v_y`), the continuum meet
+and join are the CORNERS `(u_x, v_y)` and `(u_y, v_x)` — determined
+by the pair's own coordinates, so no discrete meet/join elements are
+searched at all (the v1.2/v1.3 failure mode — Pareto frontiers
+spanning the null arms — never arises). The meet-join interval is the
+open rank box `B(x, y) = (u_x, u_y) x (v_y, v_x)`, and
+
+    d_hat = L_box / sqrt(N)
+
+with `L_box` the longest chain among the events interior to
+`B(x, y)` (unanchored: the box has NO endpoint events — `x` and `y`
+sit on its closed boundary — so there is no endpoint correction to
+apply; through the shared definition with
+`chain_counts_endpoints = False`, i.e. `L_box / sqrt(2 rho)` at
+`rho = N/2`).
+
+**Constraint (1) — consistency, rate, and the derived `Delta*_B`.**
+In 1+1D the meet-join interval's proper time EQUALS the spacelike
+separation: `d = 2 sqrt((u_y - u_x)(v_x - v_y))`. The box's interior
+is a uniform sub-permutation with asymptotic expected count
+`m = N (u_y - u_x)(v_x - v_y) = N d^2 / 4` (endpoint-conditioned
+exact mean `(a - 1)(b - 1)/(N - 2)` for rank gaps
+`a = N (u_y - u_x)`, `b = N (v_x - v_y)`, as in Section 3), so
+`E L_box = 2 sqrt(m) = sqrt(N) d` by the same Vershik-Kerov law, with
+the same BDJ `m^(-1/3)` relative bias and fluctuation. The estimator
+is STRUCTURALLY IDENTICAL to Stage A's — the same LIS statistic on a
+rank box of expected count `N (separation)^2 / 4` — so the rate is
+the chain rate and
+
+    Delta*_B = -(1/3) log10(4) = -0.2007 dex,
+
+derived, not borrowed. The known asymmetry with Stage A: no endpoint
+correction (no endpoints exist in the box), and the box is anchored
+by construction rather than by relatedness.
+
+**Constraint (2) — support and realizability.** The support IS the
+closed dual box `[u_x, u_y] x [v_y, v_x]` — a bounding box of area
+`d^2/4`, the same statistic as Stage A's timelike support, so
+pairwise disjointness has the same packing behaviour that the Stage A
+verification measured at 2000/2000. Pair protocol: the pool is all
+spacelike pairs with `d_true` in the SAME frozen band
+`[0.35, 0.45]`; `K = 6`; greedy without-replacement draws; the
+200-cap counts support-overlap rejections; first-`n`-complete fill;
+all unchanged from Section 4. The Stage B verification block (2000
+single-stream samples per rung, completeness pin `>= 1998`, wall
+times for the feasibility projection) uses consecutive seeds
+600000-601999 / 602000-603999 / 604000-605999 — far above every
+experimental window, quarantined, discarded.
+
+**Constraint (3) — the power protocol.** Stage P-B runs the Section
+1.3 protocol UNCHANGED (both endpoint rungs, 200 spacelike samples
+each, calibrated Bonett bounds, cross-rung statistics forbidden) in
+its frozen windows (Section 5), and feeds the Section 1.2 formulas
+with the `Delta*_B` above. The verdict table, interpretation scope,
+and stage gating of Sections 1.4 and 6 apply verbatim, with the
+Stage B verification pin gating Stage P-B exactly as Section 4's pin
+gated Stage P.
+
+Implementation note: the runner lands only after this addendum
+merges (design-first, as Stage A's did); the Stage B verification
+pin must pass before Stage P-B may run.
