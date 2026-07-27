@@ -967,9 +967,12 @@ the same audit hook that condemned v1 (its slope read `-0.19` to
 `-0.25`). Expectation stated in advance so a steep reading is not
 misread as an anomaly: at this pre-asymptotic ladder the slope
 should come out STEEPER than `-1/3`, around `-0.40` to `-0.45` in
-the design checks, the same character as Stage A's `-0.31` and Stage
-B's `-0.354` against their own `-1/3`. The constant-level check
-carries a band, never a gate.
+the design checks. Stages A and B are the precedent for point
+estimates DEPARTING from `-1/3` while their CIs still contain it
+(A read `-0.311`, shallower; B `-0.354`, steeper) — the departure
+here is expected in the steep direction and larger, because the
+coordinate fit compounds three such measurements. The constant-level
+check carries a band, never a gate.
 
 Disclosed for honesty: the
 quarantined design checks that killed v1 also measured this
