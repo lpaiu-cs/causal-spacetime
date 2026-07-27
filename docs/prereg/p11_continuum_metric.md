@@ -831,7 +831,20 @@ The spacelike chain, run exactly as the Section 10 addendum froze it.
   [-0.501, -0.201] containing the predicted `-1/3`; volume slope
   -0.464 with CI [-0.742, -0.204] containing `-1/2`; constant level
   within ~20% of `0.89 m_cond^(-1/3)` at every rung. Artifacts
-  `p11_stage_b.csv`, `p11_stage_b_summary.json`, stamp `f339dc7`.
+  `p11_stage_b.csv`, `p11_stage_b_summary.json` (regenerated with
+  the Section 10 production certificates at stamp `994bca5`; gate
+  numbers bit-identical to the first freeze).
+- **Order certification of the scored boxes** (Section 10
+  amendment, run over the full record): of the 216 scored pairs,
+  215 are certified order-forced (anchored tier, plus one
+  full-Gamma escalation at `(600, 425200)` — the truncation
+  artifact, pinned); ONE pair, in one `N = 1200` sample
+  (`442200`), is refused by both tiers — the Section 10
+  mirror-uniqueness caveat materialized, once in 216. That sample
+  sits in the MIDDLE rung, which the gate contrast never uses, so
+  the IMPROVES verdict rests entirely on fully certified samples;
+  the labelled slope check carries the flag
+  (`box_uncertified_by_rung = {600: 0, 1200: 1, 2400: 0}`).
 
 **Both gates of the metric instrument now read IMPROVES.** As scoped
 in 1.4 and Section 10: over the tested densities, continuum-unit

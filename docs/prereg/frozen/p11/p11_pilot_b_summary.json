@@ -1,5 +1,5 @@
 {
-  "code_version": "f339dc7",
+  "code_version": "994bca5",
   "per_rung": {
     "600": {
       "n_samples": 200,
@@ -7,7 +7,7 @@
       "kurtosis_g4": 2.756013933384359,
       "variance_bound_95": 0.014751675900619874,
       "skipped_seeds": [],
-      "mean_seconds_per_sample": 0.006286780000082217,
+      "mean_seconds_per_sample": 0.014605456499994033,
       "y": [
         -0.5983208544874508,
         -0.5881471682408684,
@@ -217,7 +217,7 @@
       "kurtosis_g4": 3.7826273686924794,
       "variance_bound_95": 0.013949002597817771,
       "skipped_seeds": [],
-      "mean_seconds_per_sample": 0.0944703440000012,
+      "mean_seconds_per_sample": 0.23753163000001223,
       "y": [
         -0.7973623993308917,
         -0.5508269894075444,
@@ -443,6 +443,6 @@
     "flat_available": false,
     "infeasible": false
   },
-  "projected_stage_b_hours": 0.0004264189286666806,
+  "projected_stage_b_hours": 0.0010651720948332514,
   "feasible": true
 }

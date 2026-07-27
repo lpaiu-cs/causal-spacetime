@@ -1,5 +1,5 @@
 {
-  "code_version": "f339dc7",
+  "code_version": "994bca5",
   "n_per_rung": 12,
   "flat_available": false,
   "skip_counts": {
@@ -13,6 +13,12 @@
     "2400": []
   },
   "selection_caveat": false,
+  "box_uncertified_samples": 1,
+  "box_uncertified_by_rung": {
+    "600": 0,
+    "1200": 1,
+    "2400": 0
+  },
   "delta": -0.2132753945828184,
   "delta_ci": [
     -0.30313255390520694,
