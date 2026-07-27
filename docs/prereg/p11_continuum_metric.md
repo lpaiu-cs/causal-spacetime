@@ -23,6 +23,24 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.6 review corrections (pre-freeze, pre-data): (xvii) the contrast
+variance uses BOTH endpoint rungs — Stage P now pilots `N = 600` and
+`N = 2400` (variance and wall time only, cross-rung statistics
+forbidden), and the formulas take `sigma_b^2 + sigma_t^2` in place
+of `2 sigma_600^2`, which had assumed an equal-variance model the
+pre-asymptotic ladder is owed nowhere. (xviii) completeness is
+handled at campaign level: a per-sample 0.95 pin admits designs that
+die almost surely (`0.95^180 ~ 1e-4`) under the all-complete gate;
+the frozen rule is now seeds-in-order-first-`n`-complete with
+per-window reserve slots and a skip cap, the verification pin is
+raised to `>= 1998 of 2000` per rung (bounding expected skips below
+one per campaign), and the no-completeness-conditioning concern is
+answered structurally: completeness is decided by pair-packing
+geometry BEFORE any estimator evaluation, `y` is never computed on
+an incomplete sample, and skip counts are reported per rung. Seed
+windows renumbered for the reserve slots (design phase; nothing has
+run).
+
 v1.5 review corrections (pre-freeze, pre-data): (xiv) the design is
 sized for the flat verdict too — v1.4's superiority-only `n` made
 FLAT-WITHIN-MARGIN unreachable (at `sigma = 0.20`, `n = 21` gives CI
@@ -130,16 +148,20 @@ normalization), so at fixed continuum separation:
 
 ### 1.2 Sample-size formula (frozen before the pilot)
 
-With `sigma` the per-sample SD of `y` at the bottom rung, by the
-plain two-sample CLT with no distributional factor (v1.4), two
+With `sigma_b`, `sigma_t` the per-sample SDs of `y` at the BOTTOM and
+TOP rungs (both piloted — v1.6; the v1.5 `2 sigma_600^2` assumed an
+equal-variance model this pre-asymptotic ladder is owed nowhere), by
+the plain two-sample CLT with no distributional factor (v1.4), two
 requirements are computed (v1.5 — the design must be able to AFFORD
-every verdict it promises, and v1.4 priced only superiority):
+every verdict it promises):
 
-    n_sup = ceil( 2 * sigma^2 * (1.960 + 1.282)^2 / Delta*^2 )
-          = ceil( 521.9 * sigma_hat^2 )        # 90% power at Delta*
+    S^2   = sigma_b_hat^2 + sigma_t_hat^2
 
-    n_eq  = ceil( 2 * sigma^2 * (1.960 + 1.645)^2 / delta_eq^2 )
-          = ceil( 5790.4 * sigma_hat^2 )       # 90% P(FLAT) at Delta = 0
+    n_sup = ceil( S^2 * (1.960 + 1.282)^2 / Delta*^2 )
+          = ceil( 260.9 * S^2 )               # 90% power at Delta*
+
+    n_eq  = ceil( S^2 * (1.960 + 1.645)^2 / delta_eq^2 )
+          = ceil( 2895.2 * S^2 )              # 90% P(FLAT) at Delta = 0
 
 Frozen selection rule, floor 12 / cap 60:
 
@@ -154,20 +176,25 @@ If `n_sup` alone exceeds the cap, Stage A is INFEASIBLE-AS-DESIGNED
 and stops before running — that refusal is this preregistration
 operating, exactly as P10's gates were.
 
-Worked anchors (illustrative only, the pilot decides): sigma_hat =
-0.10 -> n_sup 6, n_eq 58 -> n = 58, flat available; 0.101 -> n 60,
-flat available at the cap edge; 0.15 -> n_eq 131 > cap -> n = 12,
-flat declared unavailable; 0.20 -> n = 21, flat unavailable;
-0.33 -> n = 57, flat unavailable; 0.34 -> INFEASIBLE.
+Worked anchors (illustrative only, the pilot decides; `S^2` is the
+two-rung variance sum, so equal SDs of 0.10 give `S^2 = 0.02`):
+S^2 = 0.02 -> n_sup 6, n_eq 58 -> n = 58, flat available;
+0.0207 -> n 60, flat available at the cap edge; 0.045 -> n_eq
+131 > cap -> n = 12, flat declared unavailable; 0.08 -> n = 21,
+flat unavailable; 0.22 -> n = 58, flat unavailable;
+0.23 -> INFEASIBLE.
 
 ### 1.3 Stage P: the pilot, variance-only, quarantined
 
-- Bottom rung only (`N = 600`), `n_pilot = 12` samples, seed window
-  Section 5.
-- Records: per-sample `y`, its SD `sigma_hat`, and wall time.
-- **Quarantine**: the pilot computes NO cross-rung contrast (it runs
-  one rung, so none exists), and its samples are never reused in any
-  stage. Its two outputs are `n_per_rung` (via 1.2) and feasibility.
+- BOTH endpoint rungs (v1.6): `n_pilot = 12` samples at `N = 600`
+  and 12 at `N = 2400`, separate seed windows (Section 5).
+- Records: per-sample `y`, the per-rung SDs `sigma_b_hat`,
+  `sigma_t_hat`, and wall times. **Computing any cross-rung mean or
+  contrast is forbidden by frozen rule** — the pilot script does not
+  implement it, and the pilot artifact contains per-rung SDs and
+  times only.
+- **Quarantine**: pilot samples are never reused in any stage. The
+  outputs are `n_per_rung` (via 1.2) and feasibility.
 - Feasibility rule (frozen; v1.5 replaced the scaling model with
   measurement): the verification block (Section 4) already runs 100
   samples at EVERY rung for the completeness pin, and it records
@@ -184,16 +211,18 @@ flat declared unavailable; 0.20 -> n = 21, flat unavailable;
 **Stage P-B (power protocol frozen now; estimator by addendum).**
 `d_hat` carries locator variability the timelike estimator does not,
 so Stage B is powered from ITS OWN variance, never Stage A's (v1.2,
-review): a second variance-only, quarantined pilot — bottom rung,
-`n_pilot = 12` spacelike samples under the Stage B pair protocol —
-feeds the formula of 1.2 with the ADDENDUM'S target effect
+review): a second variance-only, quarantined pilot — BOTH endpoint
+rungs, `n_pilot = 12` spacelike samples each, under the Stage B pair
+protocol (v1.6: the same both-variances rule as Stage P) — feeds the
+formula of 1.2 with the ADDENDUM'S target effect
 `Delta*_B` (v1.4, review: a merely-consistent `d_hat` may converge
 slower than the chain rate, and reusing `-0.2007` would then
 underpower the gate by construction; the addendum must derive its
 estimator's rate and the implied `Delta*_B`, constraint (1) in
 Section 3), giving Stage B its own `n_per_rung`, floor 12 / cap 60,
-and the rung-weighted feasibility stop above. Quarantine as in
-Stage P: one rung, no contrast computable, samples never reused. The
+and the measured-cost feasibility stop above. Quarantine as in
+Stage P: per-rung SDs and times only, cross-rung statistics
+forbidden, samples never reused. The
 `d_hat` definition and `Delta*_B` this pilot runs are the Stage B
 addendum's — the power protocol SHAPE here does not change when that
 addendum lands, which is constraint (3) on it.
@@ -231,9 +260,13 @@ continuum limit itself is absent. P10's closure discipline, adopted
 here before data instead of after review.
 
 Completeness is part of every gate: a sample that cannot supply all
-`K` pairs under the frozen pair rule is recorded incomplete, and gates
-require full completeness at every rung (no
-completeness-conditioning; the P10 Stage B lesson).
+`K` pairs under the frozen pair rule is recorded incomplete and is
+never scored; the campaign fills to `n` complete samples per rung by
+the frozen first-`n`-complete rule of Section 4, whose skip counts
+are published with the gate and whose skip cap stops the campaign
+(v1.6). No verdict conditions silently on completeness — the P10
+Stage B lesson, honoured by structure rather than by an
+all-or-nothing rule the pair geometry cannot guarantee.
 
 ---
 
@@ -369,11 +402,24 @@ has always run.
   stream (Section 5), accepted greedily if the support is disjoint
   from all previously accepted supports; **the 200-draw cap counts
   these eligible-pool draws only** (i.e. rejections for support
-  overlap), else the sample is INCOMPLETE. Before Stage P may run,
-  a synthetic completeness pin must pass: at least 95 of 100
-  synthetic samples complete at EVERY rung, generated from the
-  verification-only seed block of Section 5 — quarantined from all
-  experimental windows and carrying no outcome reading. The support: **Stage A**: the closed
+  overlap), else the sample is INCOMPLETE. Campaign-level handling
+  (v1.6 — a per-sample 0.95 pin admits designs that die almost
+  surely under an all-complete gate, `0.95^180 ~ 1e-4`): each block's
+  samples are taken as **seeds in window order, first `n` complete**;
+  the reserve slots of Section 5 supply the overflow, every skipped
+  seed is recorded, and more than 20 skips in any block stops the
+  campaign as INFEASIBLE-INCOMPLETE. Completeness is decided by
+  pair-packing geometry BEFORE any estimator evaluation — `y` is
+  never computed for an incomplete sample, by frozen order of
+  operations — and per-block skip counts are published with the
+  gate, which is how the no-completeness-conditioning lesson of P10
+  is honoured while the campaign is still guaranteed to fill.
+  Before Stage P may run, the synthetic completeness pin must pass:
+  at least **1998 of 2000** synthetic samples complete at EVERY rung
+  (bounding the expected skips per 180-sample campaign below one),
+  generated from the verification-only seed block of Section 5 —
+  quarantined from all experimental windows and carrying no outcome
+  reading. The support: **Stage A**: the closed
   causal interval `I(x, y)`, which in `(u, v)` IS the pair's bounding
   box. **Stage B**: frozen with the Stage B addendum (v1.3 — the v1.2
   `{x, y} ∪ M ∪ J` box rule was checked infeasible, and its estimator
@@ -387,31 +433,39 @@ Stride 200; every sample owns `[s, s + 199]`; every derived stream an
 implementation may ever take (pair selection at `s + 150`, any future
 offset < 200) stays inside its own row's window. Windows:
 
-| block | base | samples | window span |
+Every block carries reserve slots for the first-`n`-complete rule of
+Section 4 (v1.6): pilots hold 16 windows for 12 samples, stage rungs
+hold 80 windows for up to 60.
+
+| block | base | fills | window span |
 |---|---|---|---|
-| design verification (non-experimental) | 59000 | 100 per rung | 59000-59299 |
-| Stage P pilot (N=600) | 60000 | 12 | 60000-62399 |
-| Stage A, N=600 | 64000 | <= 60 | 64000-75999 |
-| Stage A, N=1200 | 76000 | <= 60 | 76000-87999 |
-| Stage A, N=2400 | 88000 | <= 60 | 88000-99999 |
-| Stage P-B pilot (N=600) | 100000 | 12 | 100000-102399 |
-| Stage B, N=600 | 104000 | <= 60 | 104000-115999 |
-| Stage B, N=1200 | 116000 | <= 60 | 116000-127999 |
-| Stage B, N=2400 | 128000 | <= 60 | 128000-139999 |
-| Stage C blocks | 140000+ | — | frozen with Stage C's addendum |
+| design verification (non-experimental) | 190000 | 2000 per rung | 190000-195999, note below |
+| Stage P pilot, N=600 | 60000 | 12 of 16 | 60000-63199 |
+| Stage P pilot, N=2400 | 63200 | 12 of 16 | 63200-66399 |
+| Stage A, N=600 | 68000 | <= 60 of 80 | 68000-83999 |
+| Stage A, N=1200 | 84000 | <= 60 of 80 | 84000-99999 |
+| Stage A, N=2400 | 100000 | <= 60 of 80 | 100000-115999 |
+| Stage P-B pilot, N=600 | 116000 | 12 of 16 | 116000-119199 |
+| Stage P-B pilot, N=2400 | 119200 | 12 of 16 | 119200-122399 |
+| Stage B, N=600 | 124000 | <= 60 of 80 | 124000-139999 |
+| Stage B, N=1200 | 140000 | <= 60 of 80 | 140000-155999 |
+| Stage B, N=2400 | 156000 | <= 60 of 80 | 156000-171999 |
+| Stage C blocks | 172000+ | — | frozen with Stage C's addendum |
 
 All spans sit above every range the programme has ever used (documented
 maxima: 30000-30379, 40000-40168, 41000-41059, 43000-54999); a
 regression test pins pairwise-disjoint windows and freshness against
 the full documented list before the pilot may run.
 
-The verification block (v1.4) is one seed per sample, 100 per rung
-(59000-59099 / 59100-59199 / 59200-59299 for N = 600 / 1200 / 2400),
-each sample using a SINGLE generator for permutation and pair draws —
-no derived offsets, hence no collision surface — because these
-samples exist only to pass or fail the Section 4 completeness pin and
-are discarded; the stride-window discipline binds experimental
-samples, whose streams feed frozen quantities.
+The verification block (v1.4; enlarged and relocated v1.6) is one
+consecutive seed per sample, 2000 per rung: 190000-191999 (`N = 600`),
+192000-193999 (`N = 1200`), 194000-195999 (`N = 2400`) — far above
+every experimental window and free to grow if a later revision
+enlarges the pin. Each sample uses a SINGLE generator for permutation
+and pair draws — no derived offsets, hence no collision surface —
+because these samples exist only to pass or fail the Section 4
+completeness pin and are discarded; the stride-window discipline
+binds experimental samples, whose streams feed frozen quantities.
 
 ## 6. Stages and gates
 
@@ -487,8 +541,9 @@ same convention. Nothing re-implemented. Tests
 before any run: LIS against brute force on small posets; tau_hat
 normalization pinned on constructed intervals (including the endpoint
 subtraction); pair-disjointness and incompleteness paths; the
-Section 4 synthetic completeness pin (>= 95/100 at every rung, from
-the verification seed block); seed-window privacy and freshness
+Section 4 synthetic completeness pin (>= 1998/2000 at every rung,
+from the verification seed block); the first-n-complete fill and
+skip-cap paths; seed-window privacy and freshness
 against the full documented list; verdict-table precedence logic on
 synthetic inputs, including CIs matching two rows. Stage P runs only
 from a clean commit containing all of it.
