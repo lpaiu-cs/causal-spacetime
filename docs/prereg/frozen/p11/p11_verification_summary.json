@@ -1,0 +1,22 @@
+{
+  "code_version": "a737f1d",
+  "pin_required": 1998,
+  "per_n": {
+    "600": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.005777587500007939
+    },
+    "1200": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.021865497899998445
+    },
+    "2400": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.08633320059999823
+    }
+  },
+  "pin_passed": true
+}
