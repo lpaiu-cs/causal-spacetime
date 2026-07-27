@@ -21,7 +21,14 @@ events to be found, so their chains were truncated by an
 but corrupting the constant, the flat arm, and (fatally) Stage B's
 volume counts. P11's unit diamond is UV-convex so this was free
 there; this patch is not. (iii) the null convention is pinned and the
-flat arm's formula corrected (a spurious factor 2). (iv) the Stage B
+flat arm's formula corrected (a spurious factor 2), with the
+flat arm's expected level frozen as a prediction and the
+convention identity asserted by the degeneracy test *(applied in
+v1.1a: the v1.1 commit claimed this correction in its log while
+the body still carried the old formula -- a patch whose match
+silently failed. The narrative-versus-artifact defect class this
+programme hunts, committed against its own correction log; every
+substitution is now assert-guarded)*. (iv) the Stage B
 addendum gains two requirements against a second-order signal being
 swamped by an amplified bias. (v) wording and cross-reference pins.
 
@@ -173,10 +180,26 @@ assumption before freezing" rule that killed Stage C v1.
 - Gate: the 1.4 verdict table on `Delta`. Labelled, never gating:
   the slope of mean `y` on `log10 N` against `-1/3`; the median
   relative error per rung; and **the flat-comparison arm** — the
-  same 60 samples scored against the FLAT proper time
-  `2 sqrt(dU dV)` a naive analyst would use, whose error should be
+  same samples scored against the FLAT proper time
+  `sqrt(dU dV)` a naive analyst would use, whose error should be
   large and NOT improving, quantifying how much of the result is
-  curvature actually being read.
+  curvature actually being read. Its expected level is fixed by the
+  patch geometry alone, so it is FROZEN here as a prediction rather
+  than read off afterwards: **relative error `0.42` to `0.49`**
+  (design-check measurement at the v1.1 constants), large and flat
+  in `N`.
+
+**Null convention, pinned (v1.1).** This document uses FULL-null
+coordinates `U = eta + x`, `V = eta - x`, in which the flat proper
+time is `sqrt(dU dV)`. P11's shared routines use the HALF-null
+convention `u = U/2`, `v = V/2`, in which the same number reads
+`2 sqrt(du dv)`. Every call into a P11 routine therefore passes
+`U/2, V/2`, and the `ell -> infinity` degeneracy test of Section 8
+asserts that identity numerically. v1.0 mixed the two (it quoted the
+half-null formula against full-null coordinates), which would have
+inflated the flat arm by a factor 2 and diluted the curvature
+diagnostic; the assertion exists so the clash cannot recur
+silently.
 
 ## 5. Stage B: recover the curvature itself (declared; frozen by addendum)
 
@@ -239,7 +262,7 @@ and one-significant-figure quoting of every measured timing.
 | Stage A-12, N=600 | 1120000 | <= 60 of 80 | 1120000-1135999 |
 | Stage A-12, N=1200 | 1136000 | <= 60 of 80 | 1136000-1151999 |
 | Stage A-12, N=2400 | 1152000 | <= 60 of 80 | 1152000-1167999 |
-| Stage B-12 blocks | 1200000+ | — | frozen with the Stage B addendum |
+| Stage B-12 blocks | 1200000-1999999 | — | frozen with the Stage B addendum |
 
 All spans sit above every range the programme has used (documented
 maxima: P11's experimental windows to 705999, its design checks at
@@ -275,7 +298,9 @@ P11 — imported, never re-implemented. Tests before any run: the
 truth formula against numerical geodesic integration; the sprinkler's
 realized density profile against `Omega^2` (chi-square, frozen
 tolerance); the causal-order rule against the flat P11 routine on a
-degenerate patch (`ell -> infinity` must reproduce Minkowski); pool
+degenerate patch (`ell -> infinity` must reproduce Minkowski,
+including the assertion `sqrt(dU dV) == 2 sqrt(du dv)` at
+`u = U/2, v = V/2`, which pins the Section 4 convention); pool
 band membership; window privacy and freshness; verdict-table
 precedence. Stage P-12 runs only from a clean commit containing all
 of it, and only after the verification pin passes.
