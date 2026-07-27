@@ -1,8 +1,17 @@
 # P11: a metric instrument for the continuum limit — power-first preregistration
 
-Status: **DESIGN v1.0** (2026-07-27). Nothing below has been run.
-Dates in this record are local dates (UTC+9, Asia/Seoul); commit
-timestamps carry their +09:00 offset.
+Status: **DESIGN v1.1** (2026-07-27; v1.0 same day). Nothing below has
+been run. Dates in this record are local dates (UTC+9, Asia/Seoul);
+commit timestamps carry their +09:00 offset.
+
+v1.1 review corrections (pre-freeze, pre-data): (i) the coordinate
+normalization is now frozen explicitly — the unit-diamond `/N`
+convention gives `E|I| = N tau^2 / 4`, so the chain estimator is
+`L / sqrt(N)`, not the v1.0 `L / sqrt(2N)` whose assumed
+`E|I| = N tau^2 / 2` matched no convention in the repository; (ii)
+the verdict table is evaluated by precedence, making the categories
+mutually exclusive (v1.0's IMPROVES and FLAT could both match a small
+all-negative CI).
 
 Lineage. P10 closed with: "What a continuum-limit test now requires is
 a reconstruction whose continuum accuracy grows with density — a
@@ -43,8 +52,8 @@ samples. Primary contrast:
     Delta = median_y(N = 2400) - median_y(N = 600)
 
 Theory (Section 7) predicts relative error `~ m^(-1/3)` with
-`m = E|I| = N tau^2 / 2` the interval cardinality, so at fixed
-continuum separation:
+`m = E|I| = N tau^2 / 4` the interval cardinality (Section 3's frozen
+normalization), so at fixed continuum separation:
 
     Delta* = -(1/3) * log10(4) = -0.2007 dex   (primary, chain estimator)
     Delta* = -(1/2) * log10(4) = -0.3010 dex   (secondary, volume estimator)
@@ -83,15 +92,17 @@ Worked anchors (illustrative only, the pilot decides): sigma_hat =
 
 ### 1.4 Verdict logic (frozen for every stage gate)
 
-Each stage's gate reads the 95% bootstrap CI of its `Delta`
-(4000 resamples, `_stable_seed` labels fresh to this experiment):
+Each stage's gate reads the 95% bootstrap CI `[lo, hi]` of its
+`Delta` (4000 resamples, `_stable_seed` labels fresh to this
+experiment). Rows are evaluated IN ORDER and the first match is the
+verdict — the categories are mutually exclusive by precedence:
 
-| CI position | verdict |
-|---|---|
-| entirely < 0 | **IMPROVES** — gate passes |
-| inside (-0.067, +0.067) | **FLAT-WITHIN-MARGIN** — gate fails, informative |
-| entirely > 0 | **DEGRADES** — gate fails, informative |
-| otherwise | **INCONCLUSIVE** — gate fails; indicts the pilot variance estimate; record and stop |
+| # | condition | verdict |
+|---|---|---|
+| 1 | `hi < 0` | **IMPROVES** — gate passes (a small established improvement still passes; its size against theory is the labelled slope/constant check, not the gate) |
+| 2 | `lo > 0` | **DEGRADES** — gate fails, informative |
+| 3 | `-0.067 < lo` and `hi < +0.067` (CI straddles 0 inside the margin) | **FLAT-WITHIN-MARGIN** — gate fails, informative |
+| 4 | otherwise | **INCONCLUSIVE** — gate fails; indicts the pilot variance estimate; record and stop |
 
 The equivalence margin `delta_eq = |Delta*|/3 = 0.067 dex` is frozen
 NOW, before any data, so that a flat result is a verdict rather than a
@@ -122,18 +133,31 @@ unit causal diamond at density `N`, via the frozen null-coordinate
 dictionary (`order_inputs` — imported, never re-implemented; the
 shared-definition rule).
 
+**Frozen coordinate convention (v1.1).** `order_inputs` returns
+order-unit values `t = i + pi(i)`, `x = i - pi(i)`. The continuum
+frame is the repository's `/N` convention: null coordinates
+`(u, v) = (i, pi(i)) / N`, uniform on the unit square at density `N`.
+The metric is `ds^2 = dt^2 - dx^2 = 4 du dv`, so for a related pair
+`tau_true = 2 sqrt(du dv)` and for a spacelike pair
+`d_true = 2 sqrt(|du dv|)`; a causal interval of proper time `tau`
+occupies `(u, v)`-area `tau^2 / 4` and therefore has expected
+cardinality **`E|I| = N tau^2 / 4`**. Every formula below uses this
+and only this convention (v1.0 assumed `N tau^2 / 2`, which matches
+no convention in the repository — review finding, corrected before
+any implementation).
+
 - **tau_hat (timelike, PRIMARY — the chain estimator).** For related
   events `x < y`: `L(x, y)` = longest chain in the closed interval
   `I(x, y)`; then
 
-      tau_hat_chain = L / sqrt(2 N)
+      tau_hat_chain = L / sqrt(N)
 
-  (In dictionary units the interval of proper time `tau` has expected
-  cardinality `N tau^2 / 2`, and the longest chain over a uniform
-  2D-order interval of `m` points converges to `2 sqrt(m)`.) Computed
-  exactly: 2D dominance order makes the longest chain a longest
-  increasing subsequence — patience sorting, `O(m log m)`.
-- **tau_hat_vol (timelike, secondary).** `sqrt(2 |I(x, y)| / N)` —
+  (Expected interval cardinality `m = N tau^2 / 4`; the longest chain
+  over a uniform 2D-order interval of `m` points converges to
+  `2 sqrt(m) = sqrt(N) tau`.) Computed exactly: 2D dominance order
+  makes the longest chain a longest increasing subsequence — patience
+  sorting, `O(m log m)`.
+- **tau_hat_vol (timelike, secondary).** `2 sqrt(|I(x, y)| / N)` —
   the volume estimator; faster predicted convergence (`m^(-1/2)`),
   less theory-rich fluctuations.
 - **d_hat (spacelike, Stage B).** For spacelike `x, y`: let `M` = the
@@ -161,9 +185,12 @@ has always run.
 
 - Separation band: `tau_true in [0.35, 0.45]` (timelike pairs,
   Stage A); `d_true in [0.35, 0.45]` (spacelike, Stage B). Continuum
-  units, chosen a priori: `m ~ 48` at `N = 600` and `~ 192` at
-  `N = 2400` — inside the law's working range, away from both the
-  discreteness floor and the diamond boundary.
+  units, chosen a priori: with `m = N tau^2 / 4`, `m ~ 24` at
+  `N = 600` and `~ 96` at `N = 2400` — clear of the discreteness
+  floor and the diamond boundary, but deeper in the pre-asymptotic
+  regime than v1.0's miscounted anchors suggested, which is one more
+  reason the `-1/3` exponent is a labelled consistency check and
+  never the gate.
 - `K = 6` pairs per sample, drawn by the sample's own scoring stream
   (Section 5), accepted only if their closed intervals are pairwise
   disjoint (kills within-sample dependence); up to 200 rejection
@@ -221,7 +248,8 @@ For a uniform random 2D order, the longest chain across an interval of
 `m` points is the longest increasing subsequence of a uniform random
 permutation: `E L_m = 2 sqrt(m)` (Vershik-Kerov; Logan-Shepp), with
 fluctuations `m^(1/6)` and Tracy-Widom limit law, mean shift
-`mu_1 ~ -1.77` (Baik-Deift-Johansson). Hence
+`mu_1 ~ -1.77` (Baik-Deift-Johansson). With the Section 3 convention
+(`m = N tau^2 / 4`, `2 sqrt(m) = sqrt(N) tau`),
 
     relative error of tau_hat_chain ~ ( |mu_1| + O_P(1) ) * m^(-1/3) / 2,
 
