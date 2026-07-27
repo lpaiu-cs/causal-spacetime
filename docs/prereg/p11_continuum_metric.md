@@ -815,9 +815,12 @@ The spacelike chain, run exactly as the Section 10 addendum froze it.
   wall times comparable to Stage A's. Artifact
   `p11_verification_b_summary.json`.
 - **Stage P-B**: 200 spacelike samples per endpoint rung, zero
-  skips. Variances 0.0126 / 0.0115, `g4 = 4.2 / 3.8`; the
-  calibration fired again (coverage 0.944 / 0.920 at nominal ->
-  `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
+  skips. Variances 0.0126 / 0.0115, `g4 = 2.76 / 3.78` — the bottom
+  rung LIGHTER-tailed than Gaussian, the top heavier *(corrected:
+  the first freeze narrated 4.2/3.8 from a misread console tail;
+  review checked the artifact — the artifact was always right)*;
+  the calibration fired on both (coverage 0.944 / 0.920 at nominal
+  -> `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
   `n_eq = 85 > cap` — flat verdict declared unavailable ex ante,
   same vocabulary as Stage A. Projected Stage B wall 1.5 s.
   FEASIBLE. Artifact `p11_pilot_b_summary.json`.
