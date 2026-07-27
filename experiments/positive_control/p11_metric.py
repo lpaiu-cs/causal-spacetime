@@ -1,6 +1,7 @@
 """P11: the metric instrument for the continuum limit — stage runners.
 
-Implements docs/prereg/p11_continuum_metric.md v1.6 and nothing else.
+Implements docs/prereg/p11_continuum_metric.md (v1.9 at this
+writing) and nothing else.
 Every estimator goes through the repository's shared definitions
 (longest_chain_length, estimate_tau_from_longest_chain_1p1,
 estimate_tau_from_interval_count) — the shared-definition rule; the
@@ -248,11 +249,12 @@ def verdict(lo: float, hi: float, flat_available: bool) -> str:
     return "INCONCLUSIVE" if flat_available else "UNRESOLVED"
 
 
-def bonett_variance_bound(y: np.ndarray) -> dict:
-    """One-sided 95% kurtosis-adaptive upper bound on the variance
-    (Section 1.2, v1.8) — Bonett's log-variance interval, valid
-    without a normal model: heavier tails raise the kurtosis estimate
-    and the bound inflates with them."""
+def bonett_variance_bound(y: np.ndarray, z: float = BONETT_Z) -> dict:
+    """Kurtosis-adaptive upper bound on the variance (Section 1.2) —
+    Bonett's log-variance interval at nominal one-sided 95%. This is
+    an ASYMPTOTIC approximation, not a finite-sample guarantee (v1.9,
+    review); the calibrated wrapper below validates it against the
+    realized distribution."""
 
     y = np.asarray(y, dtype=float)
     n = y.size
@@ -260,31 +262,88 @@ def bonett_variance_bound(y: np.ndarray) -> dict:
     s2 = float(np.sum(centered ** 2) / (n - 1))
     g4 = float(n * np.sum(centered ** 4) / np.sum(centered ** 2) ** 2)
     se = float(np.sqrt((g4 - (n - 3) / n) / (n - 1)))
-    return {"s2": s2, "g4": g4,
-            "bound": float(s2 * np.exp(BONETT_Z * se))}
+    return {"s2": s2, "g4": g4, "se": se,
+            "bound": float(s2 * np.exp(z * se))}
+
+
+CALIBRATION_RESAMPLES = 2000
+CALIBRATION_TARGET = 0.95
+
+
+def calibrated_variance_bound(y: np.ndarray, label: str) -> dict:
+    """Section 1.2 (v1.9): the Bonett bound, VALIDATED on the realized
+    distribution instead of trusted by construction. Bootstrap
+    coverage check: resample the pilot, ask how often the resample's
+    bound covers the full-pilot variance; if the nominal z falls short
+    of the target, raise z until coverage is met (monotone). The
+    residual limitation is stated in the prereg: tail mass absent from
+    the 200 pilot observations is beyond any construction's reach."""
+
+    y = np.asarray(y, dtype=float)
+    n = y.size
+    base = bonett_variance_bound(y)
+    rng = np.random.default_rng(_stable_seed("p11-bonett-cal", label))
+    resamples = [
+        y[rng.integers(0, n, size=n)] for _ in range(CALIBRATION_RESAMPLES)
+    ]
+
+    def coverage(z: float) -> float:
+        hits = sum(
+            1 for r in resamples
+            if bonett_variance_bound(r, z=z)["bound"] >= base["s2"]
+        )
+        return hits / CALIBRATION_RESAMPLES
+
+    coverage_nominal = coverage(BONETT_Z)
+    z_used = BONETT_Z
+    if coverage_nominal < CALIBRATION_TARGET:
+        lo, hi = BONETT_Z, 8.0
+        for _ in range(40):
+            mid = 0.5 * (lo + hi)
+            if coverage(mid) >= CALIBRATION_TARGET:
+                hi = mid
+            else:
+                lo = mid
+        z_used = hi
+    return {
+        **bonett_variance_bound(y, z=z_used),
+        "coverage_at_nominal": coverage_nominal,
+        "z_used": float(z_used),
+        "calibrated": bool(z_used > BONETT_Z),
+    }
 
 
 def power_requirements(y_b: np.ndarray, y_t: np.ndarray) -> dict:
-    """Section 1.2 (v1.8): per-rung Bonett bounds summed (Bonferroni
-    >= 90% for the pair), frozen literals, the selection rule, and the
-    ex-ante flat-availability declaration."""
+    """Section 1.2 (v1.9): per-rung calibrated Bonett bounds summed
+    (Bonferroni at the nominal levels — labelled calibrated-
+    approximate, not exact), frozen literals, the selection rule, and
+    the ex-ante flat-availability declaration."""
 
-    bound_b = bonett_variance_bound(y_b)
-    bound_t = bonett_variance_bound(y_t)
+    bound_b = calibrated_variance_bound(y_b, "bottom")
+    bound_t = calibrated_variance_bound(y_t, "top")
     s2 = bound_b["s2"] + bound_t["s2"]
     s2_90 = bound_b["bound"] + bound_t["bound"]
+    calibration = {
+        "bottom": {k: bound_b[k] for k in
+                   ("coverage_at_nominal", "z_used", "calibrated")},
+        "top": {k: bound_t[k] for k in
+                ("coverage_at_nominal", "z_used", "calibrated")},
+    }
     n_sup = int(np.ceil(N_SUP_COEFF * s2_90))
     n_eq = int(np.ceil(N_EQ_COEFF * s2_90))
     clamp = lambda k: int(min(max(k, N_FLOOR), N_CAP))  # noqa: E731
     if n_sup > N_CAP:
-        return {"s2": s2, "s2_90": s2_90, "n_sup": n_sup, "n_eq": n_eq,
+        return {"s2": s2, "s2_90": s2_90, "calibration": calibration,
+                "n_sup": n_sup, "n_eq": n_eq,
                 "n_per_rung": None, "flat_available": False,
                 "infeasible": True}
     if n_eq <= N_CAP:
-        return {"s2": s2, "s2_90": s2_90, "n_sup": n_sup, "n_eq": n_eq,
+        return {"s2": s2, "s2_90": s2_90, "calibration": calibration,
+                "n_sup": n_sup, "n_eq": n_eq,
                 "n_per_rung": clamp(max(n_sup, n_eq)),
                 "flat_available": True, "infeasible": False}
-    return {"s2": s2, "s2_90": s2_90, "n_sup": n_sup, "n_eq": n_eq,
+    return {"s2": s2, "s2_90": s2_90, "calibration": calibration,
+            "n_sup": n_sup, "n_eq": n_eq,
             "n_per_rung": clamp(n_sup), "flat_available": False,
             "infeasible": False}
 
@@ -331,6 +390,14 @@ def _preflight_clean() -> str:
         raise SystemExit(
             f"working tree is dirty ({stamp}) -- stages run only from "
             "clean commits; commit first, then run."
+        )
+    if not stamp or stamp.startswith("unknown"):
+        # git failed (source archive, copied directory): "unknown"
+        # carries no provenance, and two unknown stamps would even
+        # pass the prerequisite equality check (review) -- refuse.
+        raise SystemExit(
+            "no git provenance available (stamp 'unknown') -- stages "
+            "run only from a clean git checkout."
         )
     return stamp
 

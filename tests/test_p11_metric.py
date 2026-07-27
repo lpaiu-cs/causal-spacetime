@@ -214,6 +214,43 @@ def test_preflight_refuses_a_dirty_worktree(monkeypatch, tmp_path):
         mod.run_verify(tmp_path)
 
 
+def test_preflight_refuses_an_unknown_stamp(monkeypatch, tmp_path):
+    """git-less environments stamp 'unknown', which carries no
+    provenance and would even satisfy the prerequisite equality check
+    against another unknown — refused like dirty."""
+
+    import p11_metric as mod
+
+    monkeypatch.setattr(mod, "_diag_code_version", lambda: "unknown")
+    with pytest.raises(SystemExit, match="unknown"):
+        mod.run_verify(tmp_path)
+
+
+def test_calibrated_bound_records_coverage_and_never_shrinks():
+    from p11_metric import (
+        BONETT_Z,
+        bonett_variance_bound,
+        calibrated_variance_bound,
+    )
+
+    gaussian = calibrated_variance_bound(_gaussian_pilot(0.10, 11), "t1")
+    assert 0.0 <= gaussian["coverage_at_nominal"] <= 1.0
+    assert gaussian["z_used"] >= BONETT_Z
+    assert (gaussian["bound"]
+            >= bonett_variance_bound(_gaussian_pilot(0.10, 11))["bound"]
+            - 1e-12)
+    # calibration flag consistent with z
+    assert gaussian["calibrated"] == (gaussian["z_used"] > BONETT_Z)
+
+    # a heavy-tailed pilot: if nominal coverage misses the target, the
+    # calibrated z must exceed nominal and coverage at z_used meets it
+    rng = np.random.default_rng(12)
+    heavy = rng.standard_t(df=3, size=200)
+    result = calibrated_variance_bound(0.1 * heavy, "t2")
+    if result["coverage_at_nominal"] < 0.95:
+        assert result["z_used"] > BONETT_Z
+
+
 def test_windows_are_private_fresh_and_reserve_sized():
     """Stride-200 privacy, the documented spans, and freshness against
     every seed range the programme has ever used."""

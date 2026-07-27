@@ -23,6 +23,21 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.9 review corrections (pre-data): (xxiii) the Bonett bound is
+labelled what it is — an asymptotic approximation, not a
+finite-sample distribution-free guarantee (no such variance bound
+exists) — and is VALIDATED on the realized distribution instead of
+trusted by construction: the pilot bootstrap-checks the bound's
+coverage on its own samples (2000 resamples per rung) and, when the
+nominal z falls short of 95% measured coverage, raises z until it is
+met; the calibration record (coverage at nominal, z used) is
+published in the pilot artifact, and the residual limitation — tail
+mass absent from 200 pilot observations — is stated rather than
+claimed away. (xxiv) provenance stamps reading "unknown" (git
+unavailable: archives, copied trees) are refused by the preflight
+exactly like dirty stamps — two unknowns would otherwise even pass
+the prerequisite equality check.
+
 v1.8 review corrections (pre-data): (xxii) the v1.7 chi-square
 variance bound was itself a Gaussian-pivot result — the same class of
 assumption v1.4 removed from the median factor, reintroduced one
@@ -199,8 +214,8 @@ upper bound
     bound  = s^2 * exp( 1.6449 * se )     # one-sided 95% per rung
 
     S^2_90 = bound_b + bound_t
-             # Bonferroni: the pair-level guarantee is >= 90%
-             # with no normal model anywhere
+             # Bonferroni at the NOMINAL levels; the pair-level 90%
+             # is calibrated-approximate, not exact (v1.9)
 
     n_sup = ceil( S^2_90 * (1.960 + 1.282)^2 / Delta*^2 )
           = ceil( 260.9 * S^2_90 )            # 90% power at Delta*
@@ -211,6 +226,18 @@ upper bound
 For Gaussian-kurtosis `y` the per-rung inflation is ~1.18 — cheaper
 than the invalid 1.972 and honest; heavy tails raise `g4` and the
 bound inflates adaptively, which is the point.
+
+Validation instead of trust (v1.9): the Bonett interval is an
+asymptotic approximation — no finite-sample distribution-free
+variance bound exists — so the pilot validates it on its own
+samples: 2000 bootstrap resamples per rung measure how often the
+bound at the nominal `z = 1.6449` covers the full-pilot variance;
+if measured coverage is below 0.95 the pilot raises `z`
+(monotonically, bisection to the smallest sufficient value) and uses
+THAT bound, publishing the coverage and `z` in its artifact. What no
+construction can exclude — rare tail mass entirely absent from 200
+observations — is recorded here as the bound's stated limitation,
+not claimed away.
 
 Frozen selection rule, floor 12 / cap 60:
 
