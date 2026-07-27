@@ -41,6 +41,11 @@ DELTA_STAR = -0.2007
 DELTA_EQ = 0.067
 N_SUP_COEFF = 260.9
 N_EQ_COEFF = 2895.2
+#: v1.7: a 12-sample SD is itself noisy; sizing uses the one-sided
+#: 90% chi-square upper bound of each pilot variance (nu = 11,
+#: factor 11 / chi2_{0.10, 11}), so a lucky-low pilot cannot undersize
+#: the experiment past the cap or mis-declare the flat verdict.
+VARIANCE_INFLATION = 1.972
 N_FLOOR = 12
 N_CAP = 60
 PROJECTION_LIMIT_HOURS = 12.0
@@ -240,22 +245,24 @@ def verdict(lo: float, hi: float, flat_available: bool) -> str:
 
 
 def power_requirements(sigma_b: float, sigma_t: float) -> dict:
-    """Section 1.2 (v1.6): both-rung variance sum, frozen literals,
-    the selection rule, and the ex-ante flat-availability declaration."""
+    """Section 1.2 (v1.7): both-rung variance sum inflated to its
+    one-sided 90% chi-square upper bound, frozen literals, the
+    selection rule, and the ex-ante flat-availability declaration."""
 
     s2 = sigma_b ** 2 + sigma_t ** 2
-    n_sup = int(np.ceil(N_SUP_COEFF * s2))
-    n_eq = int(np.ceil(N_EQ_COEFF * s2))
+    s2_90 = VARIANCE_INFLATION * s2
+    n_sup = int(np.ceil(N_SUP_COEFF * s2_90))
+    n_eq = int(np.ceil(N_EQ_COEFF * s2_90))
     clamp = lambda k: int(min(max(k, N_FLOOR), N_CAP))  # noqa: E731
     if n_sup > N_CAP:
-        return {"s2": s2, "n_sup": n_sup, "n_eq": n_eq,
+        return {"s2": s2, "s2_90": s2_90, "n_sup": n_sup, "n_eq": n_eq,
                 "n_per_rung": None, "flat_available": False,
                 "infeasible": True}
     if n_eq <= N_CAP:
-        return {"s2": s2, "n_sup": n_sup, "n_eq": n_eq,
+        return {"s2": s2, "s2_90": s2_90, "n_sup": n_sup, "n_eq": n_eq,
                 "n_per_rung": clamp(max(n_sup, n_eq)),
                 "flat_available": True, "infeasible": False}
-    return {"s2": s2, "n_sup": n_sup, "n_eq": n_eq,
+    return {"s2": s2, "s2_90": s2_90, "n_sup": n_sup, "n_eq": n_eq,
             "n_per_rung": clamp(n_sup), "flat_available": False,
             "infeasible": False}
 
@@ -265,7 +272,8 @@ def run_verify(output_dir: Path) -> None:
     (Sections 4 and 1.3). Outcomes are computed to price the pipeline
     and then discarded; only completeness and time are recorded."""
 
-    summary: dict = {"code_version": _diag_code_version(),
+    stamp = _preflight_clean()
+    summary: dict = {"code_version": stamp,
                      "pin_required": VERIFY_PIN, "per_n": {}}
     for n in P11_LADDER:
         base = VERIFY_BASE[n]
@@ -290,14 +298,42 @@ def run_verify(output_dir: Path) -> None:
     print(json.dumps({"pin_passed": summary["pin_passed"]}, indent=2))
 
 
-def _load_gate_artifact(output_dir: Path, name: str) -> dict:
+def _preflight_clean() -> str:
+    """Stages run only from clean commits (prereg Section 8); a dirty
+    stamp aborts BEFORE any quarantined seed window is consumed
+    (review: running dirty burned windows and merely marked the
+    artifact, which is a record of the damage, not a guard)."""
+
+    stamp = _diag_code_version()
+    if stamp.endswith("-dirty"):
+        raise SystemExit(
+            f"working tree is dirty ({stamp}) -- stages run only from "
+            "clean commits; commit first, then run."
+        )
+    return stamp
+
+
+def _load_gate_artifact(output_dir: Path, name: str, stamp: str) -> dict:
+    """Prerequisites must exist AND have been produced by the current
+    implementation: the artifact's stamp must equal this clean HEAD's.
+    This also catches a crashed rerun leaving a stale predecessor --
+    its old stamp cannot equal the current one."""
+
     path = output_dir / name
     if not path.exists():
         raise SystemExit(
             f"{name} not found -- the prerequisite stage has not run; "
             "the stage order is frozen (verify -> pilot -> a)."
         )
-    return json.loads(path.read_text(encoding="utf-8"))
+    artifact = json.loads(path.read_text(encoding="utf-8"))
+    if artifact.get("code_version") != stamp:
+        raise SystemExit(
+            f"{name} was produced at {artifact.get('code_version')} but "
+            f"HEAD is {stamp} -- the implementation changed after the "
+            "prerequisite ran; regenerate it (verify and pilot are "
+            "cheap by the frozen wall-time record)."
+        )
+    return artifact
 
 
 def run_pilot(output_dir: Path) -> None:
@@ -306,11 +342,12 @@ def run_pilot(output_dir: Path) -> None:
     computes a mean difference, and the artifact holds per-rung SDs
     and times only."""
 
-    verification = _load_gate_artifact(output_dir, VERIFY_ARTIFACT)
+    stamp = _preflight_clean()
+    verification = _load_gate_artifact(output_dir, VERIFY_ARTIFACT, stamp)
     if not verification.get("pin_passed"):
         raise SystemExit("verification pin failed -- pilot refuses to run")
 
-    summary: dict = {"code_version": _diag_code_version(), "per_rung": {}}
+    summary: dict = {"code_version": stamp, "per_rung": {}}
     for n, (base, slots) in PILOT_BLOCKS.items():
         start = time.perf_counter()
         records, skipped, filled = fill_block(n, base, slots, PILOT_SAMPLES)
@@ -360,14 +397,15 @@ def run_stage_a(output_dir: Path) -> None:
     n, with the frozen verdict table; slope, constant-level, and
     middle-rung checks ride along labelled, never gating."""
 
-    pilot = _load_gate_artifact(output_dir, PILOT_ARTIFACT)
+    stamp = _preflight_clean()
+    pilot = _load_gate_artifact(output_dir, PILOT_ARTIFACT, stamp)
     if not pilot.get("feasible"):
         raise SystemExit("pilot declared the design infeasible -- "
                          "Stage A refuses to run")
     n_per_rung = int(pilot["power"]["n_per_rung"])
     flat_available = bool(pilot["power"]["flat_available"])
 
-    rows, per_rung_y = [], {}
+    rows, per_rung_y, per_rung_y_vol = [], {}, {}
     skip_counts = {}
     for n, (base, slots) in STAGE_A_BLOCKS.items():
         records, skipped, filled = fill_block(n, base, slots, n_per_rung)
@@ -379,9 +417,10 @@ def run_stage_a(output_dir: Path) -> None:
             )
         for r in records:
             r["stage"] = "A"
-            r["code_version"] = _diag_code_version()
+            r["code_version"] = stamp
         rows.extend(records)
         per_rung_y[n] = np.array([r["y"] for r in records])
+        per_rung_y_vol[n] = np.array([r["y_vol"] for r in records])
         skip_counts[n] = len(skipped)
         print(f"stage A n={n}: {len(records)} complete | "
               f"mean y {per_rung_y[n].mean():.4f} | skips {len(skipped)}",
@@ -400,21 +439,37 @@ def run_stage_a(output_dir: Path) -> None:
 
     log_n = np.log10(np.array(P11_LADDER, dtype=float))
     means = np.array([per_rung_y[n].mean() for n in P11_LADDER])
-    slope = float(np.polyfit(log_n, means, 1)[0])
-    srng = np.random.default_rng(_stable_seed("p11-a-slope"))
-    slope_boots = []
-    for _ in range(4000):
-        resampled = [
-            srng.choice(per_rung_y[n], size=n_per_rung, replace=True).mean()
-            for n in P11_LADDER
-        ]
-        slope_boots.append(float(np.polyfit(log_n, resampled, 1)[0]))
+
+    def _slope_with_ci(per_rung: dict, label: str):
+        point = float(np.polyfit(
+            log_n, [per_rung[n].mean() for n in P11_LADDER], 1
+        )[0])
+        srng = np.random.default_rng(_stable_seed(label))
+        boots = []
+        for _ in range(4000):
+            resampled = [
+                srng.choice(per_rung[n], size=n_per_rung,
+                            replace=True).mean()
+                for n in P11_LADDER
+            ]
+            boots.append(float(np.polyfit(log_n, resampled, 1)[0]))
+        return point, [float(np.percentile(boots, 2.5)),
+                       float(np.percentile(boots, 97.5))]
+
+    slope, slope_ci = _slope_with_ci(per_rung_y, "p11-a-slope")
+    slope_vol, slope_vol_ci = _slope_with_ci(per_rung_y_vol,
+                                             "p11-a-slope-vol")
 
     summary = {
-        "code_version": _diag_code_version(),
+        "code_version": stamp,
         "n_per_rung": n_per_rung,
         "flat_available": flat_available,
         "skip_counts": {str(n): skip_counts[n] for n in P11_LADDER},
+        # any realized skip conditions the estimand on pair packing
+        # (prereg Section 4, v1.7) -- carried beside the verdict
+        "selection_caveat": bool(any(
+            skip_counts[n] > 0 for n in P11_LADDER
+        )),
         "delta": delta, "delta_ci": [lo, hi],
         "verdict": verdict(lo, hi, flat_available),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
@@ -424,9 +479,11 @@ def run_stage_a(output_dir: Path) -> None:
         ),
         "labelled_checks": {
             "slope_mean_y_vs_log10N": slope,
-            "slope_ci": [float(np.percentile(slope_boots, 2.5)),
-                         float(np.percentile(slope_boots, 97.5))],
+            "slope_ci": slope_ci,
             "predicted_slope_chain": -1.0 / 3.0,
+            "slope_mean_y_vol_vs_log10N": slope_vol,
+            "slope_vol_ci": slope_vol_ci,
+            "predicted_slope_vol": -1.0 / 2.0,
             "constant_level_by_rung": {
                 str(n): {
                     "median_relerr_chain": float(np.median(

@@ -146,19 +146,50 @@ def test_verdict_precedence_is_single_valued():
 
 
 def test_power_selection_rule_branches():
-    # flat affordable: equal sigmas 0.10 -> S2 = 0.02
+    """v1.7: sizing uses the chi-square-inflated variance bound
+    S2_90 = 1.972 * (sigma_b^2 + sigma_t^2)."""
+
+    # flat affordable: equal sigmas 0.07 -> S2_90 = 0.01933, n_eq 56
+    p = power_requirements(0.07, 0.07)
+    assert p["n_eq"] == 56 and p["n_per_rung"] == 56 and p["flat_available"]
+    # equal sigmas 0.10: n_eq 115 > cap -> flat unavailable, floor
     p = power_requirements(0.10, 0.10)
-    assert p["n_eq"] == 58 and p["n_per_rung"] == 58 and p["flat_available"]
-    # flat unaffordable: S2 = 0.045 -> n_eq 131 > cap, n = floor
-    p = power_requirements(0.15, 0.15)
     assert p["n_eq"] > 60 and p["n_per_rung"] == 12
     assert not p["flat_available"] and not p["infeasible"]
+    # equal sigmas 0.15 -> superiority sizing, n = 24
+    p = power_requirements(0.15, 0.15)
+    assert p["n_per_rung"] == 24 and not p["flat_available"]
     # superiority alone breaches the cap -> infeasible
-    p = power_requirements(0.34, 0.34)
+    p = power_requirements(0.2415, 0.2415)
     assert p["infeasible"] and p["n_per_rung"] is None
-    # asymmetric variances enter as a sum
-    assert (power_requirements(0.05, 0.13)["s2"]
-            == pytest.approx(0.05 ** 2 + 0.13 ** 2))
+    # asymmetric variances enter as a sum, inflated
+    p = power_requirements(0.05, 0.13)
+    assert p["s2"] == pytest.approx(0.05 ** 2 + 0.13 ** 2)
+    assert p["s2_90"] == pytest.approx(1.972 * p["s2"])
+
+
+def test_stage_gate_rejects_stale_prerequisite(tmp_path, monkeypatch):
+    """A prerequisite artifact stamped by an older implementation (or
+    left behind by a crashed rerun) must be refused, not consumed."""
+
+    import p11_metric as mod
+
+    (tmp_path / "p11_verification_summary.json").write_text(
+        '{"code_version": "0ld5tamp", "pin_passed": true}\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(mod, "_diag_code_version", lambda: "abc1234")
+    with pytest.raises(SystemExit, match="implementation changed"):
+        mod.run_pilot(tmp_path)
+
+
+def test_preflight_refuses_a_dirty_worktree(monkeypatch, tmp_path):
+    import p11_metric as mod
+
+    monkeypatch.setattr(mod, "_diag_code_version",
+                        lambda: "abc1234-dirty")
+    with pytest.raises(SystemExit, match="dirty"):
+        mod.run_verify(tmp_path)
 
 
 def test_windows_are_private_fresh_and_reserve_sized():

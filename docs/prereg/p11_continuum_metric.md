@@ -23,6 +23,23 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.7 review corrections (pre-data; the implementation exists but no
+stage has run): (xix) the power formulas size from a conservative
+variance bound, not the 12-sample point estimates — each pilot
+variance is inflated to its one-sided 90% chi-square upper bound
+(factor `11 / chi2_{0.10, 11} = 1.972` at nu = 11), so a downward
+sampling error in a small pilot can no longer smuggle an infeasible
+design past the cap or declare an unaffordable flat verdict
+available. (xx) the first-`n`-complete estimand is named for what it
+is — conditional on successful pair packing — with the frozen guard
+that makes it innocuous: the verification record bounds per-sample
+completion below one expected skip per campaign, zero realized skips
+(the generic case) makes the conditional and unconditional estimands
+coincide on the data, and any realized skip stamps the gate summary
+with a SELECTION-CAVEAT label. (xxi) the introduction's "finding
+about the limit" sentence is rewritten to defer to 1.4's
+interpretation scope — one conservative voice, no contradiction.
+
 v1.6 review corrections (pre-freeze, pre-data): (xvii) the contrast
 variance uses BOTH endpoint rungs — Stage P now pilots `N = 600` and
 `N = 2400` (variance and wall time only, cross-rung statistics
@@ -115,7 +132,12 @@ estimators whose convergence as density grows is not a hope but a
 theorem — the longest-chain law. If the continuum limit is real for
 emergent geometry, THIS instrument family is one through which it can
 appear; if accuracy fails to improve even here, that is a finding
-about the limit, not about an instrument's resolution.
+about this estimator family over this finite-density ladder — a
+sharper indictment than P10's, because here asymptotic convergence is
+a theorem — but, per the interpretation scope frozen in 1.4, never
+evidence that the continuum limit itself is absent. *(v1.7: this
+sentence originally said "a finding about the limit"; review flagged
+the contradiction with 1.4, and 1.4 is the voice of record.)*
 
 ---
 
@@ -153,15 +175,19 @@ TOP rungs (both piloted — v1.6; the v1.5 `2 sigma_600^2` assumed an
 equal-variance model this pre-asymptotic ladder is owed nowhere), by
 the plain two-sample CLT with no distributional factor (v1.4), two
 requirements are computed (v1.5 — the design must be able to AFFORD
-every verdict it promises):
+every verdict it promises) from the CONSERVATIVE variance bound
+(v1.7 — a 12-sample SD is itself noisy, and plugging the point
+estimate in undersizes exactly when the pilot got lucky):
 
-    S^2   = sigma_b_hat^2 + sigma_t_hat^2
+    S^2_90 = 1.972 * ( sigma_b_hat^2 + sigma_t_hat^2 )
+             # one-sided 90% chi-square upper bound per rung,
+             # nu = 11, factor 11 / chi2_{0.10, 11}
 
-    n_sup = ceil( S^2 * (1.960 + 1.282)^2 / Delta*^2 )
-          = ceil( 260.9 * S^2 )               # 90% power at Delta*
+    n_sup = ceil( S^2_90 * (1.960 + 1.282)^2 / Delta*^2 )
+          = ceil( 260.9 * S^2_90 )            # 90% power at Delta*
 
-    n_eq  = ceil( S^2 * (1.960 + 1.645)^2 / delta_eq^2 )
-          = ceil( 2895.2 * S^2 )              # 90% P(FLAT) at Delta = 0
+    n_eq  = ceil( S^2_90 * (1.960 + 1.645)^2 / delta_eq^2 )
+          = ceil( 2895.2 * S^2_90 )           # 90% P(FLAT) at Delta = 0
 
 Frozen selection rule, floor 12 / cap 60:
 
@@ -176,13 +202,14 @@ If `n_sup` alone exceeds the cap, Stage A is INFEASIBLE-AS-DESIGNED
 and stops before running — that refusal is this preregistration
 operating, exactly as P10's gates were.
 
-Worked anchors (illustrative only, the pilot decides; `S^2` is the
-two-rung variance sum, so equal SDs of 0.10 give `S^2 = 0.02`):
-S^2 = 0.02 -> n_sup 6, n_eq 58 -> n = 58, flat available;
-0.0207 -> n 60, flat available at the cap edge; 0.045 -> n_eq
-131 > cap -> n = 12, flat declared unavailable; 0.08 -> n = 21,
-flat unavailable; 0.22 -> n = 58, flat unavailable;
-0.23 -> INFEASIBLE.
+Worked anchors (illustrative only, the pilot decides; equal SDs
+`sigma` give `S^2_90 = 1.972 * 2 sigma^2`): sigma = 0.07 ->
+S^2_90 = 0.0193, n_eq 56 -> n = 56, flat available; 0.073 ->
+n_eq 61 > cap -> n = 12, flat declared unavailable; 0.15 -> n = 24;
+0.20 -> n = 42; 0.24 -> n = 60 at the cap; 0.2415 -> INFEASIBLE.
+The conservative bound roughly halves the flat-affordability
+threshold relative to v1.6's point-estimate anchors — that is the
+price of a 12-observation pilot, paid where it belongs, in `n`.
 
 ### 1.3 Stage P: the pilot, variance-only, quarantined
 
@@ -412,8 +439,17 @@ has always run.
   pair-packing geometry BEFORE any estimator evaluation — `y` is
   never computed for an incomplete sample, by frozen order of
   operations — and per-block skip counts are published with the
-  gate, which is how the no-completeness-conditioning lesson of P10
-  is honoured while the campaign is still guaranteed to fill.
+  gate. The estimand, named for what it is (v1.7, review):
+  first-`n`-complete estimates performance CONDITIONAL on successful
+  pair packing, since completeness and the chain error share the
+  permutation's geometry, and computing `y` afterward does not undo
+  that selection. The frozen guard that keeps it innocuous: the
+  verification pin bounds expected skips per campaign below one, and
+  when the realized skip count is ZERO — the generic case — the
+  conditional and unconditional estimands coincide on the data. Any
+  realized skip stamps the stage summary with a **SELECTION-CAVEAT**
+  label carried alongside the verdict, and the skip cap bounds how
+  far the conditioning can reach before the campaign stops.
   Before Stage P may run, the synthetic completeness pin must pass:
   at least **1998 of 2000** synthetic samples complete at EVERY rung
   (bounding the expected skips per 180-sample campaign below one),
