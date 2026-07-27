@@ -1,0 +1,476 @@
+"""P11: the metric instrument for the continuum limit — stage runners.
+
+Implements docs/prereg/p11_continuum_metric.md v1.6 and nothing else.
+Every estimator goes through the repository's shared definitions
+(longest_chain_length, estimate_tau_from_longest_chain_1p1,
+estimate_tau_from_interval_count) — the shared-definition rule; the
+frozen coordinate convention is the unit-diamond rank grid
+(u, v) = (i, pi(i)) / N with density rho = N/2 in (t, x).
+
+Stage order is gated: verify (completeness pin + wall times) must pass
+before pilot; pilot must be feasible before Stage A. Stage B and C
+refuse by design until their addenda are frozen.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+from p5_two_orders_emergence import order_inputs
+from p10_continuum_ladder import _stable_seed
+from p10_stage_bprime import _diag_code_version
+from pc_common import DEFAULT_OUTPUT_DIR, write_rows_csv
+
+from causal_spacetime_lab.chains import longest_chain_length
+from causal_spacetime_lab.estimators import estimate_tau_from_longest_chain_1p1
+from causal_spacetime_lab.metrics import estimate_tau_from_interval_count
+
+#: Ladder and pair protocol (prereg Sections 1.1 and 4).
+P11_LADDER = (600, 1200, 2400)
+TAU_BAND = (0.35, 0.45)
+K_PAIRS = 6
+DRAW_REJECTION_CAP = 200
+SKIP_CAP = 20
+
+#: Power design (prereg Section 1.2; the literals ARE the frozen spec).
+DELTA_STAR = -0.2007
+DELTA_EQ = 0.067
+N_SUP_COEFF = 260.9
+N_EQ_COEFF = 2895.2
+N_FLOOR = 12
+N_CAP = 60
+PROJECTION_LIMIT_HOURS = 12.0
+
+#: Seed windows (prereg Section 5, v1.6): stride-200 private windows,
+#: pilots fill 12 of 16 slots, stage rungs fill up to 60 of 80.
+STRIDE = 200
+SCORE_OFFSET = 150
+PILOT_BLOCKS = {600: (60000, 16), 2400: (63200, 16)}
+STAGE_A_BLOCKS = {600: (68000, 80), 1200: (84000, 80), 2400: (100000, 80)}
+PILOT_SAMPLES = 12
+
+#: Verification block (prereg Sections 4 and 5): consecutive seeds,
+#: single generator per sample, discarded after the pin.
+VERIFY_BASE = {600: 190000, 1200: 192000, 2400: 194000}
+VERIFY_COUNT = 2000
+VERIFY_PIN = 1998
+
+VERIFY_ARTIFACT = "p11_verification_summary.json"
+PILOT_ARTIFACT = "p11_pilot_summary.json"
+
+
+def continuum_uv(pi: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """The frozen convention: (u, v) = (i, pi(i)) / N on the unit square.
+
+    Derived from the shared dictionary's (t, x) = (i + pi, i - pi) so
+    the construction cannot drift from order_inputs: u = (t + x) / 2N,
+    v = (t - x) / 2N.
+    """
+
+    _causal, t, x = order_inputs(pi)
+    n = float(pi.size)
+    return (t + x) / (2.0 * n), (t - x) / (2.0 * n)
+
+
+def tau_true_pairs(u: np.ndarray, v: np.ndarray, first, second) -> np.ndarray:
+    du = u[second] - u[first]
+    dv = v[second] - v[first]
+    return 2.0 * np.sqrt(du * dv)
+
+
+def eligible_pool(u: np.ndarray, v: np.ndarray) -> np.ndarray:
+    """All ordered related pairs whose true proper time lies in the
+    frozen band — the precomputed candidate pool of Section 4 (v1.4).
+    Returns an array of (first, second) index pairs."""
+
+    du = u[None, :] - u[:, None]
+    dv = v[None, :] - v[:, None]
+    related = (du > 0) & (dv > 0)
+    tau = np.where(related, 2.0 * np.sqrt(np.abs(du * dv)), np.nan)
+    keep = related & (tau >= TAU_BAND[0]) & (tau <= TAU_BAND[1])
+    first, second = np.nonzero(keep)
+    return np.column_stack([first, second])
+
+
+def supports_disjoint(box_a, box_b) -> bool:
+    """Stage A supports are the pairs' (u, v) bounding boxes (== the
+    closed causal intervals); two boxes are disjoint iff they are
+    disjoint in u OR in v."""
+
+    au0, au1, av0, av1 = box_a
+    bu0, bu1, bv0, bv1 = box_b
+    u_disjoint = (au1 < bu0) or (bu1 < au0)
+    v_disjoint = (av1 < bv0) or (bv1 < av0)
+    return u_disjoint or v_disjoint
+
+
+def draw_disjoint_pairs(pool: np.ndarray, u: np.ndarray, v: np.ndarray,
+                        rng: np.random.Generator):
+    """Greedy accept from a uniform without-replacement ordering of the
+    eligible pool; the frozen cap counts support-overlap REJECTIONS
+    only (Section 4, v1.4). Returns (pairs, complete, rejections)."""
+
+    accepted: list = []
+    boxes: list = []
+    rejections = 0
+    if pool.shape[0] == 0:
+        return accepted, False, 0
+    for idx in rng.permutation(pool.shape[0]):
+        i, j = int(pool[idx, 0]), int(pool[idx, 1])
+        box = (u[i], u[j], v[i], v[j])
+        if all(supports_disjoint(box, other) for other in boxes):
+            accepted.append((i, j))
+            boxes.append(box)
+            if len(accepted) == K_PAIRS:
+                return accepted, True, rejections
+        else:
+            rejections += 1
+            if rejections >= DRAW_REJECTION_CAP:
+                return accepted, False, rejections
+    return accepted, False, rejections
+
+
+def score_pair(u: np.ndarray, v: np.ndarray, i: int, j: int) -> dict:
+    """Both estimators on one pair, through the shared definitions."""
+
+    n = u.size
+    inside = ((u > u[i]) & (u < u[j]) & (v > v[i]) & (v < v[j]))
+    interior = np.flatnonzero(inside)
+    members = np.concatenate(([i], interior, [j]))
+    su, sv = u[members], v[members]
+    causal_sub = (su[:, None] < su[None, :]) & (sv[:, None] < sv[None, :])
+    chain = longest_chain_length(
+        causal_sub, start=0, end=members.size - 1, event_times=su,
+    )
+    rho = n / 2.0
+    tau_chain = estimate_tau_from_longest_chain_1p1(chain, rho=rho)
+    tau_vol = estimate_tau_from_interval_count(int(interior.size), rho=rho)
+    du, dv = u[j] - u[i], v[j] - v[i]
+    tau_ref = 2.0 * float(np.sqrt(du * dv))
+    # endpoint-conditioned expected interior count (Section 3, v1.5):
+    # rank gaps a = N du, b = N dv
+    a, b = round(n * du), round(n * dv)
+    m_cond = (a - 1) * (b - 1) / (n - 2)
+    return {
+        "tau_true": tau_ref,
+        "tau_chain": float(tau_chain),
+        "tau_vol": float(tau_vol),
+        "relerr_chain": abs(float(tau_chain) - tau_ref) / tau_ref,
+        "relerr_vol": abs(float(tau_vol) - tau_ref) / tau_ref,
+        "m_open": int(interior.size),
+        "m_conditioned": float(m_cond),
+        "chain_length": int(chain),
+    }
+
+
+def run_sample(n: int, seed: int, single_stream: bool = False):
+    """One sample: permutation, pool, draw, score. Returns (record,
+    complete). ``single_stream`` is the verification mode of Section 5:
+    one generator for permutation and draws, no derived offsets."""
+
+    rng = np.random.default_rng(seed)
+    pi = rng.permutation(n)
+    u, v = continuum_uv(pi)
+    pool = eligible_pool(u, v)
+    draw_rng = rng if single_stream else np.random.default_rng(
+        seed + SCORE_OFFSET
+    )
+    pairs, complete, rejections = draw_disjoint_pairs(pool, u, v, draw_rng)
+    record = {
+        "n": float(n), "seed": float(seed),
+        "pool_size": float(pool.shape[0]),
+        "rejections": float(rejections),
+        "complete": bool(complete),
+    }
+    if not complete:
+        # y is never computed for an incomplete sample -- the frozen
+        # order of operations that keeps completeness decisions ahead
+        # of any estimator evaluation (Section 4, v1.6)
+        return record, False
+    scored = [score_pair(u, v, i, j) for i, j in pairs]
+    record["y"] = float(np.log10(
+        np.median([s["relerr_chain"] for s in scored])
+    ))
+    record["y_vol"] = float(np.log10(
+        np.median([s["relerr_vol"] for s in scored])
+    ))
+    record["median_relerr_chain"] = float(
+        np.median([s["relerr_chain"] for s in scored])
+    )
+    record["mean_m_conditioned"] = float(
+        np.mean([s["m_conditioned"] for s in scored])
+    )
+    record["min_m_open"] = float(min(s["m_open"] for s in scored))
+    return record, True
+
+
+def fill_block(n: int, base: int, slots: int, needed: int):
+    """Seeds in window order, first ``needed`` complete (Section 4,
+    v1.6). Returns (records, skipped_seeds, filled)."""
+
+    records, skipped = [], []
+    for k in range(slots):
+        seed = base + STRIDE * k
+        record, complete = run_sample(n, seed)
+        if complete:
+            records.append(record)
+            if len(records) == needed:
+                return records, skipped, True
+        else:
+            skipped.append(seed)
+            if len(skipped) > SKIP_CAP:
+                return records, skipped, False
+    return records, skipped, False
+
+
+def verdict(lo: float, hi: float, flat_available: bool) -> str:
+    """The frozen table of Section 1.4: rows in order, first match."""
+
+    if hi < 0.0:
+        return "IMPROVES"
+    if lo > 0.0:
+        return "DEGRADES"
+    if flat_available and (-DELTA_EQ < lo) and (hi < DELTA_EQ):
+        return "FLAT-WITHIN-MARGIN"
+    return "INCONCLUSIVE" if flat_available else "UNRESOLVED"
+
+
+def power_requirements(sigma_b: float, sigma_t: float) -> dict:
+    """Section 1.2 (v1.6): both-rung variance sum, frozen literals,
+    the selection rule, and the ex-ante flat-availability declaration."""
+
+    s2 = sigma_b ** 2 + sigma_t ** 2
+    n_sup = int(np.ceil(N_SUP_COEFF * s2))
+    n_eq = int(np.ceil(N_EQ_COEFF * s2))
+    clamp = lambda k: int(min(max(k, N_FLOOR), N_CAP))  # noqa: E731
+    if n_sup > N_CAP:
+        return {"s2": s2, "n_sup": n_sup, "n_eq": n_eq,
+                "n_per_rung": None, "flat_available": False,
+                "infeasible": True}
+    if n_eq <= N_CAP:
+        return {"s2": s2, "n_sup": n_sup, "n_eq": n_eq,
+                "n_per_rung": clamp(max(n_sup, n_eq)),
+                "flat_available": True, "infeasible": False}
+    return {"s2": s2, "n_sup": n_sup, "n_eq": n_eq,
+            "n_per_rung": clamp(n_sup), "flat_available": False,
+            "infeasible": False}
+
+
+def run_verify(output_dir: Path) -> None:
+    """The completeness pin and the measured per-rung wall times
+    (Sections 4 and 1.3). Outcomes are computed to price the pipeline
+    and then discarded; only completeness and time are recorded."""
+
+    summary: dict = {"code_version": _diag_code_version(),
+                     "pin_required": VERIFY_PIN, "per_n": {}}
+    for n in P11_LADDER:
+        base = VERIFY_BASE[n]
+        complete_count = 0
+        start = time.perf_counter()
+        for k in range(VERIFY_COUNT):
+            _record, complete = run_sample(n, base + k, single_stream=True)
+            complete_count += int(complete)
+        elapsed = time.perf_counter() - start
+        summary["per_n"][str(n)] = {
+            "complete": complete_count, "total": VERIFY_COUNT,
+            "mean_seconds_per_sample": elapsed / VERIFY_COUNT,
+        }
+        print(f"verify n={n}: {complete_count}/{VERIFY_COUNT} complete | "
+              f"{elapsed / VERIFY_COUNT:.3f} s/sample", flush=True)
+    summary["pin_passed"] = bool(all(
+        summary["per_n"][str(n)]["complete"] >= VERIFY_PIN
+        for n in P11_LADDER
+    ))
+    (output_dir / VERIFY_ARTIFACT).write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"pin_passed": summary["pin_passed"]}, indent=2))
+
+
+def _load_gate_artifact(output_dir: Path, name: str) -> dict:
+    path = output_dir / name
+    if not path.exists():
+        raise SystemExit(
+            f"{name} not found -- the prerequisite stage has not run; "
+            "the stage order is frozen (verify -> pilot -> a)."
+        )
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def run_pilot(output_dir: Path) -> None:
+    """Stage P (Section 1.3, v1.6): BOTH endpoint rungs, variance and
+    wall time only. Cross-rung statistics are forbidden: nothing here
+    computes a mean difference, and the artifact holds per-rung SDs
+    and times only."""
+
+    verification = _load_gate_artifact(output_dir, VERIFY_ARTIFACT)
+    if not verification.get("pin_passed"):
+        raise SystemExit("verification pin failed -- pilot refuses to run")
+
+    summary: dict = {"code_version": _diag_code_version(), "per_rung": {}}
+    for n, (base, slots) in PILOT_BLOCKS.items():
+        start = time.perf_counter()
+        records, skipped, filled = fill_block(n, base, slots, PILOT_SAMPLES)
+        elapsed = time.perf_counter() - start
+        if not filled:
+            raise SystemExit(
+                f"pilot block n={n} could not fill {PILOT_SAMPLES} "
+                f"complete samples (skips: {len(skipped)}) -- "
+                "INFEASIBLE-INCOMPLETE"
+            )
+        ys = [r["y"] for r in records]
+        summary["per_rung"][str(n)] = {
+            "n_samples": len(records),
+            "sigma": float(np.std(ys, ddof=1)),
+            "skipped_seeds": skipped,
+            "mean_seconds_per_sample": elapsed / len(records),
+        }
+        print(f"pilot n={n}: sigma={summary['per_rung'][str(n)]['sigma']:.4f}"
+              f" | skips={len(skipped)}", flush=True)
+
+    power = power_requirements(
+        summary["per_rung"]["600"]["sigma"],
+        summary["per_rung"]["2400"]["sigma"],
+    )
+    times = verification["per_n"]
+    projected_hours = None
+    if power["n_per_rung"] is not None:
+        projected_hours = power["n_per_rung"] * sum(
+            times[str(n)]["mean_seconds_per_sample"] for n in P11_LADDER
+        ) / 3600.0
+    summary["power"] = power
+    summary["projected_stage_a_hours"] = projected_hours
+    summary["feasible"] = bool(
+        not power["infeasible"]
+        and projected_hours is not None
+        and projected_hours <= PROJECTION_LIMIT_HOURS
+    )
+    (output_dir / PILOT_ARTIFACT).write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"power": power,
+                      "projected_stage_a_hours": projected_hours,
+                      "feasible": summary["feasible"]}, indent=2))
+
+
+def run_stage_a(output_dir: Path) -> None:
+    """Stage A (Sections 1.4 and 6): the primary gate, at the pilot's
+    n, with the frozen verdict table; slope, constant-level, and
+    middle-rung checks ride along labelled, never gating."""
+
+    pilot = _load_gate_artifact(output_dir, PILOT_ARTIFACT)
+    if not pilot.get("feasible"):
+        raise SystemExit("pilot declared the design infeasible -- "
+                         "Stage A refuses to run")
+    n_per_rung = int(pilot["power"]["n_per_rung"])
+    flat_available = bool(pilot["power"]["flat_available"])
+
+    rows, per_rung_y = [], {}
+    skip_counts = {}
+    for n, (base, slots) in STAGE_A_BLOCKS.items():
+        records, skipped, filled = fill_block(n, base, slots, n_per_rung)
+        if not filled:
+            raise SystemExit(
+                f"stage A block n={n} could not fill {n_per_rung} "
+                f"complete samples (skips: {len(skipped)}) -- "
+                "INFEASIBLE-INCOMPLETE"
+            )
+        for r in records:
+            r["stage"] = "A"
+            r["code_version"] = _diag_code_version()
+        rows.extend(records)
+        per_rung_y[n] = np.array([r["y"] for r in records])
+        skip_counts[n] = len(skipped)
+        print(f"stage A n={n}: {len(records)} complete | "
+              f"mean y {per_rung_y[n].mean():.4f} | skips {len(skipped)}",
+              flush=True)
+    write_rows_csv(output_dir / "p11_stage_a.csv", rows)
+
+    delta = float(per_rung_y[2400].mean() - per_rung_y[600].mean())
+    rng = np.random.default_rng(_stable_seed("p11-a-delta"))
+    boots = []
+    for _ in range(4000):
+        top = rng.choice(per_rung_y[2400], size=n_per_rung, replace=True)
+        bot = rng.choice(per_rung_y[600], size=n_per_rung, replace=True)
+        boots.append(top.mean() - bot.mean())
+    lo, hi = (float(np.percentile(boots, 2.5)),
+              float(np.percentile(boots, 97.5)))
+
+    log_n = np.log10(np.array(P11_LADDER, dtype=float))
+    means = np.array([per_rung_y[n].mean() for n in P11_LADDER])
+    slope = float(np.polyfit(log_n, means, 1)[0])
+    srng = np.random.default_rng(_stable_seed("p11-a-slope"))
+    slope_boots = []
+    for _ in range(4000):
+        resampled = [
+            srng.choice(per_rung_y[n], size=n_per_rung, replace=True).mean()
+            for n in P11_LADDER
+        ]
+        slope_boots.append(float(np.polyfit(log_n, resampled, 1)[0]))
+
+    summary = {
+        "code_version": _diag_code_version(),
+        "n_per_rung": n_per_rung,
+        "flat_available": flat_available,
+        "skip_counts": {str(n): skip_counts[n] for n in P11_LADDER},
+        "delta": delta, "delta_ci": [lo, hi],
+        "verdict": verdict(lo, hi, flat_available),
+        "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
+                           for n in P11_LADDER},
+        "middle_rung_between_endpoints": bool(
+            min(means[0], means[2]) <= means[1] <= max(means[0], means[2])
+        ),
+        "labelled_checks": {
+            "slope_mean_y_vs_log10N": slope,
+            "slope_ci": [float(np.percentile(slope_boots, 2.5)),
+                         float(np.percentile(slope_boots, 97.5))],
+            "predicted_slope_chain": -1.0 / 3.0,
+            "constant_level_by_rung": {
+                str(n): {
+                    "median_relerr_chain": float(np.median(
+                        [r["median_relerr_chain"] for r in rows
+                         if r["n"] == n]
+                    )),
+                    "predicted_0.89_m_cond^-1/3": float(0.89 * np.mean(
+                        [r["mean_m_conditioned"] for r in rows
+                         if r["n"] == n]
+                    ) ** (-1.0 / 3.0)),
+                } for n in P11_LADDER
+            },
+        },
+    }
+    (output_dir / "p11_stage_a_summary.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"delta": delta, "delta_ci": [lo, hi],
+                      "verdict": summary["verdict"]}, indent=2))
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--stage", choices=["verify", "pilot", "a", "b", "c"],
+                        default=None)
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    args = parser.parse_args()
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.stage == "verify":
+        run_verify(args.output_dir)
+    elif args.stage == "pilot":
+        run_pilot(args.output_dir)
+    elif args.stage == "a":
+        run_stage_a(args.output_dir)
+    elif args.stage in ("b", "c"):
+        raise SystemExit(
+            f"stage {args.stage} is gated on its frozen addendum "
+            "(prereg Sections 3 and 6) and has no runner until that "
+            "addendum lands -- this refusal is the preregistration "
+            "operating."
+        )
+    else:
+        raise SystemExit("choose --stage verify/pilot/a")
+
+
+if __name__ == "__main__":
+    main()
