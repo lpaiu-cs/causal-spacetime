@@ -646,7 +646,8 @@ from a clean commit containing all of it.
 2000/2000 complete at every rung against the 1998 pin — zero
 incomplete samples anywhere, so the Section 4 conditional estimand
 coincides with the unconditional one on everything that follows.
-Measured wall times 0.006 / 0.022 / 0.083 s per sample. Artifact
+Measured wall times ~0.005 / ~0.02 / ~0.08 s per sample (one
+significant figure, per 9.6). Artifact
 `docs/prereg/frozen/p11/p11_verification_summary.json`, stamp
 `535a5b7` (regenerated at each implementation change under the
 stamp-equality gate; completeness identical every time).
@@ -707,7 +708,8 @@ The coordinate reconstruction, run exactly as the Section 11 v2.1
 addendum froze it (the v1 design having been withdrawn before running).
 
 - **Verification-C**: 2000/2000 complete at every rung (pin 1998),
-  wall times 0.015 / 0.059 / 0.237 s per sample. Artifact
+  wall times ~0.02 / ~0.07 / ~0.3 s per sample (one significant
+  figure, per 9.6). Artifact
   `p11_verification_c_summary.json`.
 - **Stage P-C**: 200 samples per endpoint rung, zero skips.
   Variances 0.0282 / 0.0193, `g4 = 3.35 / 3.23`; the calibration
@@ -767,11 +769,16 @@ a precise second-count therefore guarantees a future mismatch with
 the frozen artifact it cites - which is exactly what happened when
 the certificate round tripled the per-sample cost, and again when the
 P2 refreeze re-timed everything. The record's rule from here: quote
-wall times to one significant figure with a `~` (the first pass at
-this rule wrote two figures - ~1.3 / ~3.7 / ~5.3 - which review
-caught as the same staleness risk one refreeze later; they now read
-~1 / ~4 / ~5), and read the exact value from
-`projected_stage_*_hours` in the artifact when it matters.
+EVERY measured timing to one significant figure with a `~` - the
+projections AND the per-sample verification times, since both are
+machine measurements that move on each refreeze. The rule took two
+review rounds to get right: the first pass wrote two figures
+(~1.3 / ~3.7 / ~5.3, now ~1 / ~4 / ~5), and the second pass covered
+only the projections while the per-sample verification trios in 9.1
+and 9.5 still carried three-decimal quotes that the same refreeze had
+already invalidated. Exact values live in the artifacts
+(`projected_stage_*_hours`, `per_n.*.mean_seconds_per_sample`) and
+are read from there when they matter.
 The feasibility GATE was never at risk in any of these cases - the
 projections run 1-6 seconds against a 12-hour stop, four orders of
 magnitude of headroom.
