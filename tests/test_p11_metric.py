@@ -135,6 +135,204 @@ def test_verification_mode_smoke_completeness():
     assert complete_count == 20
 
 
+def test_spacelike_pool_and_dual_box_normalization():
+    """Reversed permutation: every pair is spacelike. For the extreme
+    pair (0, N-1) the dual box is the whole open square and its
+    unanchored LIS is the estimator with NO endpoint correction:
+    d_hat must equal L/sqrt(N) exactly."""
+
+    from p11_metric import (
+        eligible_pool_spacelike,
+        run_sample_spacelike,
+        score_pair_spacelike,
+    )
+
+    n = 60
+    pi = np.arange(n)[::-1]
+    u, v = continuum_uv(pi)
+    pool = eligible_pool_spacelike(u, v)
+    dists = 2.0 * np.sqrt(
+        (u[pool[:, 1]] - u[pool[:, 0]]) * (v[pool[:, 0]] - v[pool[:, 1]])
+    )
+    assert pool.shape[0] > 0
+    assert np.all(dists >= TAU_BAND[0]) and np.all(dists <= TAU_BAND[1])
+    assert np.all(v[pool[:, 0]] > v[pool[:, 1]])   # spacelike ordering
+
+    scored = score_pair_spacelike(u, v, 0, n - 1)
+    assert scored["tau_chain"] == pytest.approx(
+        scored["chain_length"] / np.sqrt(n)
+    )
+    assert scored["tau_true"] == pytest.approx(
+        2.0 * np.sqrt((u[n - 1] - u[0]) * (v[0] - v[n - 1]))
+    )
+
+    record, complete = run_sample_spacelike(600, 600000, single_stream=True)
+    assert complete and np.isfinite(record["y"])
+
+
+def test_dual_box_is_reproduced_by_pure_order_forcing():
+    """Section 10 amendment: box membership must be order data. Start
+    from the single oriented incomparable pair x ⊏ y and propagate the
+    spatial orientation by Gallai's Gamma-forcing, using ONLY the
+    causal relation (soundness derivable case by case in 1+1D):
+
+        a ⊏ b  and  a || c  and  b comparable to c   =>   a ⊏ c
+        a ⊏ b  and  c || b  and  a comparable to c   =>   c ⊏ b
+
+    The forced set {z : x ⊏ z ⊏ y, z || x, z || y} must equal the
+    rank-window box the implementation uses. No coordinates enter the
+    forcing — only the causal matrix."""
+
+    from p11_metric import eligible_pool_spacelike, score_pair_spacelike
+
+    rng = np.random.default_rng(41)
+    checked = 0
+    for _trial in range(6):
+        n = 200   # dense enough for the forcing witnesses; at n = 80
+        #           one of six trials fails to percolate (soundness
+        #           always holds) -- the Section 10 caveat, measured
+        pi = rng.permutation(n)
+        u, v = continuum_uv(pi)
+        pool = eligible_pool_spacelike(u, v)
+        if pool.shape[0] == 0:
+            continue
+        i, j = (int(x) for x in pool[rng.integers(0, pool.shape[0])])
+        # causal matrix from ranks -- the order relation itself
+        causal = (u[:, None] < u[None, :]) & (v[:, None] < v[None, :])
+        incomp = ~causal & ~causal.T & ~np.eye(n, dtype=bool)
+        comp = causal | causal.T
+
+        # Vectorized fixed point over the two Gamma rules:
+        #   rule 1: (O @ comp) masked to incomparable pairs
+        #   rule 2: (comp @ O) masked to incomparable pairs
+        oriented = np.zeros((n, n), dtype=bool)
+        oriented[i, j] = True
+        while True:
+            grown = (oriented
+                     | ((oriented @ comp) & incomp)
+                     | ((comp @ oriented) & incomp))
+            if (grown == oriented).all():
+                break
+            oriented = grown
+        forced_box = {
+            z for z in range(n)
+            if oriented[i, z] and oriented[z, j]
+            and incomp[i, z] and incomp[j, z]
+        }
+        rank_box = {
+            z for z in range(n)
+            if u[i] < u[z] < u[j] and v[j] < v[z] < v[i]
+        }
+        assert forced_box <= rank_box      # soundness, unconditionally
+        assert forced_box == rank_box      # completeness at this density
+        scored = score_pair_spacelike(u, v, i, j)
+        assert scored["m_open"] == len(rank_box)
+        checked += 1
+    assert checked >= 5
+
+
+def test_dual_box_certificate_certifies_scored_samples():
+    """The production certificate: every scored pair's box membership
+    must be order-forced via the two-step Gamma witnesses. At the
+    experiment's densities the certificate should hold; a certified
+    member is a box member by soundness, so certifying all members
+    verifies exactly what the scorer consumes."""
+
+    from p11_metric import (
+        dual_box_order_certificate,
+        eligible_pool_spacelike,
+        run_sample_spacelike,
+    )
+
+    rng = np.random.default_rng(97)
+    certified = 0
+    for _trial in range(4):
+        n = 300
+        pi = rng.permutation(n)
+        u, v = continuum_uv(pi)
+        pool = eligible_pool_spacelike(u, v)
+        i, j = (int(x) for x in pool[rng.integers(0, pool.shape[0])])
+        certified += int(dual_box_order_certificate(u, v, i, j))
+    assert certified == 4
+
+    record, complete = run_sample_spacelike(600, 600100,
+                                            single_stream=True)
+    assert complete and record["box_order_certified"]
+
+
+def test_certificate_tiers_pinned_on_the_two_production_cases():
+    """The two Stage B samples the anchored tier flagged, pinned:
+    (600, 425200) has a pair the anchored closure misses but the full
+    Gamma fixed point certifies (the truncation artifact — anchors
+    accumulate across generations); (1200, 442200) has one pair of
+    six that BOTH tiers refuse — a genuine forcing failure, the
+    Section 10 caveat in production, carried as the sample flag."""
+
+    from p11_metric import (
+        SCORE_OFFSET,
+        draw_disjoint_pairs,
+        dual_box_order_certificate,
+        eligible_pool_spacelike,
+        full_gamma_certificate,
+        run_sample_spacelike,
+    )
+
+    def pairs_for(n, seed):
+        rng = np.random.default_rng(seed)
+        pi = rng.permutation(n)
+        u, v = continuum_uv(pi)
+        pool = eligible_pool_spacelike(u, v)
+        draw_rng = np.random.default_rng(seed + SCORE_OFFSET)
+        pairs, complete, _ = draw_disjoint_pairs(pool, u, v, draw_rng)
+        assert complete
+        return u, v, pairs
+
+    u, v, pairs = pairs_for(600, 425200)
+    anchored = [dual_box_order_certificate(u, v, i, j) for i, j in pairs]
+    assert not all(anchored)
+    assert all(
+        a or full_gamma_certificate(u, v, i, j)
+        for a, (i, j) in zip(anchored, pairs, strict=True)
+    )
+    record, complete = run_sample_spacelike(600, 425200)
+    assert complete and record["box_order_certified"]
+
+    u, v, pairs = pairs_for(1200, 442200)
+    tiered = [
+        dual_box_order_certificate(u, v, i, j)
+        or full_gamma_certificate(u, v, i, j)
+        for i, j in pairs
+    ]
+    assert tiered.count(False) == 1
+    record, complete = run_sample_spacelike(1200, 442200)
+    assert complete and not record["box_order_certified"]
+
+
+def test_stage_b_windows_are_private_and_fresh():
+    from p11_metric import (
+        PILOT_B_BLOCKS,
+        STAGE_B_BLOCKS,
+        VERIFY_B_BASE,
+    )
+
+    assert PILOT_B_BLOCKS == {600: (336000, 220), 2400: (380000, 220)}
+    assert STAGE_B_BLOCKS == {600: (424000, 80), 1200: (440000, 80),
+                              2400: (456000, 80)}
+    spans = []
+    for base, slots in {**PILOT_BLOCKS, **STAGE_A_BLOCKS,
+                        **PILOT_B_BLOCKS, **STAGE_B_BLOCKS}.values():
+        spans.append(set(range(base, base + STRIDE * slots)))
+    for x in spans:
+        for w in spans:
+            assert x is w or not (x & w)
+    experimental_top = max(max(s) for s in spans)
+    for n in P11_LADDER:
+        vspan = set(range(VERIFY_B_BASE[n], VERIFY_B_BASE[n] + VERIFY_COUNT))
+        assert min(vspan) > experimental_top
+        for s in spans:
+            assert not (vspan & s)
+
+
 def test_verdict_precedence_is_single_valued():
     assert verdict(-0.05, -0.01, True) == "IMPROVES"      # also in margin
     assert verdict(0.01, 0.05, True) == "DEGRADES"        # also in margin
@@ -212,6 +410,47 @@ def test_preflight_refuses_a_dirty_worktree(monkeypatch, tmp_path):
                         lambda: "abc1234-dirty")
     with pytest.raises(SystemExit, match="dirty"):
         mod.run_verify(tmp_path)
+
+
+def test_stage_pass_gate_requires_improves_and_reachable_stamp(
+        monkeypatch, tmp_path):
+    """Section 6: pilot-B may not consume its quarantined windows
+    unless Stage A's FROZEN record reads IMPROVES with a stamp
+    reachable from HEAD."""
+
+    import subprocess
+
+    import p11_metric as mod
+
+    monkeypatch.setattr(mod, "FROZEN_P11_DIR", tmp_path)
+    # missing record refuses
+    with pytest.raises(SystemExit, match="has not run"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    # failing verdict refuses
+    (tmp_path / "p11_stage_a_summary.json").write_text(
+        '{"verdict": "DEGRADES", "code_version": "whatever"}\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(SystemExit, match="not\\s+IMPROVES"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    # unreachable stamp refuses even with a passing verdict
+    (tmp_path / "p11_stage_a_summary.json").write_text(
+        '{"verdict": "IMPROVES", "code_version": "0000000"}\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(SystemExit, match="not an ancestor"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    # passing verdict with a reachable stamp is accepted
+    head = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    (tmp_path / "p11_stage_a_summary.json").write_text(
+        f'{{"verdict": "IMPROVES", "code_version": "{head}"}}\n',
+        encoding="utf-8",
+    )
+    result = mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    assert result["verdict"] == "IMPROVES"
 
 
 def test_preflight_refuses_an_unknown_stamp(monkeypatch, tmp_path):

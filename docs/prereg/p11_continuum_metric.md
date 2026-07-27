@@ -721,6 +721,46 @@ apply; through the shared definition with
 `chain_counts_endpoints = False`, i.e. `L_box / sqrt(2 rho)` at
 `rho = N/2`).
 
+**Box membership is order data** (amended same day, review: the
+membership predicate must not smuggle in oracle coordinates).
+Unlike the timelike interval — whose membership IS the causal
+relation — the spacelike box needs the conjugate structure, and the
+causal order supplies it: in a 1+1D order the incomparability graph's
+transitive orientation is the SPATIAL order `⊏` (unique up to the
+global mirror, generically), and
+
+    z in B(x, y)  <=>  z incomparable to both x and y,
+                       and x ⊏ z ⊏ y
+
+— spacelike betweenness, a purely order-theoretic predicate. The
+mirror choice flips `⊏` globally and maps the condition to
+`y ⊏ z ⊏ x`: the SET is invariant. The implementation reads the
+`(u, v)` ranks directly, which is exactly the realizer the order
+determines up to that mirror — a computational shortcut for an
+order-determined quantity, not an extra input. A regression pins the
+equivalence: a cone-forcing construction that starts from the single
+oriented pair `x ⊏ y` and uses only causal relations reproduces the
+box on random samples. Caveat, labelled: uniqueness-up-to-mirror of
+the orientation needs the incomparability structure to force through
+one component (generic for sprinkled diamonds; the regression
+exercises it empirically, and a failure there would surface as a
+non-reproduced box, not silently).
+
+**Production certification** (amended again same day, review: a
+sampled regression does not certify production pairs). Every scored
+Stage B pair carries an order-only membership certificate, tiered:
+(tier 1) anchored Gamma percolation to its fixed point — a sound
+under-approximation, since derived pairs keep a parent endpoint but
+anchors accumulate across generations; (tier 2) on an anchored miss,
+the FULL Gamma fixed point over all oriented pairs. A pair failing
+both tiers is genuinely unforced from the seed orientation — the
+caveat above materialized — and flags its sample:
+`box_order_certified` per sample, uncertified counts per rung in the
+stage summary, and any nonzero count scopes the verdict for those
+samples as realizer-assisted. Certified members are box members by
+soundness, so certifying all members verifies exactly what the
+scorer consumes.
+
 **Constraint (1) — consistency, rate, and the derived `Delta*_B`.**
 In 1+1D the meet-join interval's proper time EQUALS the spacelike
 separation: `d = 2 sqrt((u_y - u_x)(v_x - v_y))`. The box's interior
@@ -766,3 +806,56 @@ gated Stage P.
 Implementation note: the runner lands only after this addendum
 merges (design-first, as Stage A's did); the Stage B verification
 pin must pass before Stage P-B may run.
+
+### 9.4 Stage B verification, Stage P-B, and Stage B (2026-07-27): **IMPROVES**
+
+The spacelike chain, run exactly as the Section 10 addendum froze it.
+
+- **Verification-B**: 2000/2000 complete at every rung (pin 1998);
+  wall times comparable to Stage A's. Artifact
+  `p11_verification_b_summary.json`.
+- **Stage P-B**: 200 spacelike samples per endpoint rung, zero
+  skips. Variances 0.0126 / 0.0115, `g4 = 2.76 / 3.78` — the bottom
+  rung LIGHTER-tailed than Gaussian, the top heavier *(corrected:
+  the first freeze narrated 4.2/3.8 from a misread console tail;
+  review checked the artifact — the artifact was always right)*;
+  the calibration fired on both (coverage 0.944 / 0.920 at nominal
+  -> `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
+  `n_eq = 85 > cap` — flat verdict declared unavailable ex ante,
+  same vocabulary as Stage A. Projected Stage B wall 1.5 s.
+  FEASIBLE. Artifact `p11_pilot_b_summary.json`.
+- **Stage B**: 12 complete samples per rung, zero skips, no
+  selection caveat. Mean `y`: -0.560 / -0.700 / -0.773, monotone.
+
+      Delta = -0.213 dex,  95% CI [-0.303, -0.122]  ->  IMPROVES
+
+  The point estimate lands within 6% of the DERIVED
+  `Delta*_B = -0.2007`. Labelled checks: chain slope -0.354 with CI
+  [-0.501, -0.201] containing the predicted `-1/3`; volume slope
+  -0.464 with CI [-0.742, -0.204] containing `-1/2`; constant level
+  within ~20% of `0.89 m_cond^(-1/3)` at every rung. Artifacts
+  `p11_stage_b.csv`, `p11_stage_b_summary.json` (regenerated with
+  the Section 10 production certificates at stamp `994bca5`; gate
+  numbers bit-identical to the first freeze).
+- **Order certification of the scored boxes** (Section 10
+  amendment, run over the full record): of the 216 scored pairs,
+  215 are certified order-forced (anchored tier, plus one
+  full-Gamma escalation at `(600, 425200)` — the truncation
+  artifact, pinned); ONE pair, in one `N = 1200` sample
+  (`442200`), is refused by both tiers — the Section 10
+  mirror-uniqueness caveat materialized, once in 216. That sample
+  sits in the MIDDLE rung, which the gate contrast never uses, so
+  the IMPROVES verdict rests entirely on fully certified samples;
+  the labelled slope check carries the flag
+  (`box_uncertified_by_rung = {600: 0, 1200: 1, 2400: 0}`).
+
+**Both gates of the metric instrument now read IMPROVES.** As scoped
+in 1.4 and Section 10: over the tested densities, continuum-unit
+accuracy from order plus count improves with density at the
+longest-chain rate in BOTH the timelike direction (proper time,
+Stage A) and the spacelike direction (distance via the meet-join
+dual box, Stage B). The emergent geometry's metric content — time
+AND space — deepens toward the continuum through this instrument
+family, exactly where the P10 discriminator family could not decide.
+Remaining per Section 6: Stage C (coordinates), gated on its own
+addendum.
