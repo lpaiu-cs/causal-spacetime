@@ -1,7 +1,8 @@
 # P12: does the instrument read CURVED geometry? — power-first preregistration
 
 Status: **DESIGN v1.1 (2026-07-28), for in-session review. Nothing
-below has been run.**
+below has been run.** Dates are local (UTC+9); commit timestamps
+carry their +09:00 offset.
 
 v1.1 corrections, all pre-freeze and pre-data, from design review
 (each independently reproduced before being applied):
@@ -22,8 +23,7 @@ volume counts. P11's unit diamond is UV-convex so this was free
 there; this patch is not. (iii) the null convention is pinned and the
 flat arm's formula corrected (a spurious factor 2). (iv) the Stage B
 addendum gains two requirements against a second-order signal being
-swamped by an amplified bias. (v) wording and cross-reference pins. Dates are local (UTC+9); commit timestamps
-carry their +09:00 offset.
+swamped by an amplified bias. (v) wording and cross-reference pins.
 
 Lineage. P11 established, over its tested ladder, that continuum-unit
 proper time, spacelike distance, and coordinates are reconstructible
@@ -85,13 +85,18 @@ the chain law is asymptotic in `interval size / curvature radius`, so
 a flat-normalized estimator can carry a bias that does NOT shrink
 with density. That would show as FLAT-WITHIN-MARGIN or as a
 positive-`Delta` DEGRADES, and it is an informative finding, not a
-failure. Caveat carried from P11-C, where `n_eq = 168` exceeded the
-cap: if the pilot declares the flat verdict unavailable, a bias floor
-reads UNRESOLVED rather than FLAT, and the information is carried by
-the labelled per-rung medians and the slope, not by the verdict word — it would locate the boundary of the instrument's reach
+failure — it would locate the boundary of the instrument's reach
 exactly where theory says the boundary is. The frozen band of
 Section 4 keeps `tau / ell ~ 0.3`: curvature is unmistakably present,
 and the law is still expected to apply.
+
+Verdict-word caveat carried from P11 Stage C, where `n_eq = 168`
+exceeded the cap: if the pilot declares the flat verdict unavailable
+ex ante, a bias floor reads UNRESOLVED rather than FLAT-WITHIN-
+MARGIN. The information then lives in the labelled per-rung medians
+and the slope, not in the verdict word, and this record says so in
+advance so that an UNRESOLVED is not later mistaken for an
+uninformative campaign.
 
 ---
 
