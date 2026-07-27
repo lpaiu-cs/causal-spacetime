@@ -23,6 +23,22 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.4 review corrections (pre-freeze, pre-data): (x) the rung
+statistic is the MEAN of per-sample `y`, powered by the exact CLT
+formula — v1.3's median-with-`pi/2` assumed a Gaussian parent the
+statistic does not have; (xi) the pair-candidate pool is the
+precomputed band-eligible set, with the 200-draw cap counting only
+support-overlap rejections — review's 1000-sample check showed
+uniform endpoint proposals complete only ~34% of samples; a synthetic
+completeness pin (>= 95/100 per rung, verification-only seed block)
+must pass before Stage P; (xii) the Stage B addendum must derive a
+rate and a Stage-B-specific target effect `Delta*_B`, which Stage
+P-B's formula uses instead of the chain contrast; (xiii) a frozen
+interpretation-scope clause: only IMPROVES supports the existence
+claim; FLAT / DEGRADES / INCONCLUSIVE are statements about this
+estimator over this finite-density ladder (m ~ 24-96,
+pre-asymptotic), never about the continuum limit itself.
+
 v1.3 review corrections (pre-freeze, pre-data): (vi) the chain
 estimator subtracts the closed-interval endpoints — v1.2's
 `L / sqrt(N)` carried a `+2/(sqrt(N) tau)` relative bias that FALLS
@@ -78,10 +94,15 @@ dip of P10 — and takes no part in the gate).
 
 Per-sample statistic: `y = log10( median over K pairs of the relative
 proper-time error |tau_hat - tau_true| / tau_true )`, with the pair
-protocol of Section 4. Rung statistic: median of `y` over the `n`
-samples. Primary contrast:
+protocol of Section 4 — the within-sample median keeps single-pair
+outliers from owning a sample. Rung statistic (v1.4): the MEAN of `y`
+over the `n` samples — the across-sample aggregator is the mean
+precisely so the power formula rests on the CLT and not on a
+distributional model of `y` (review: the `pi/2` median factor is a
+Gaussian-parent result, and `y` — the log of a six-pair median of
+integer-LIS errors — has no entitlement to it). Primary contrast:
 
-    Delta = median_y(N = 2400) - median_y(N = 600)
+    Delta = mean_y(N = 2400) - mean_y(N = 600)
 
 Theory (Section 7) predicts relative error `~ m^(-1/3)` with
 `m = E|I| = N tau^2 / 4` the interval cardinality (Section 3's frozen
@@ -92,13 +113,13 @@ normalization), so at fixed continuum separation:
 
 ### 1.2 Sample-size formula (frozen before the pilot)
 
-With `sigma` the per-sample SD of `y` at the bottom rung and medians
-carrying the normal-approximation efficiency factor `pi/2`, the
-two-rung contrast needs, for two-sided alpha = 0.05 and power 0.90
-(`z = 1.960 + 1.282 = 3.242`):
+With `sigma` the per-sample SD of `y` at the bottom rung, the
+two-rung mean contrast needs, for two-sided alpha = 0.05 and power
+0.90 (`z = 1.960 + 1.282 = 3.242`), by the plain two-sample CLT with
+no distributional factor (v1.4):
 
-    n_per_rung = ceil( pi * sigma^2 * 3.242^2 / Delta*^2 )
-               = ceil( 819.8 * sigma_hat^2 )
+    n_per_rung = ceil( 2 * sigma^2 * 3.242^2 / Delta*^2 )
+               = ceil( 521.9 * sigma_hat^2 )
 
 bounded by **floor 12** and **cap 60**. The pilot (1.3) supplies
 `sigma_hat`. If the formula demands more than the cap, Stage A is
@@ -107,7 +128,8 @@ refusal is this preregistration operating, exactly as P10's gates
 were.
 
 Worked anchors (illustrative only, the pilot decides): sigma_hat =
-0.10 -> n = 12 (floor); 0.15 -> 19; 0.20 -> 33; 0.27 -> cap.
+0.10 or 0.15 -> n = 12 (floor); 0.20 -> 21; 0.25 -> 33; 0.33 -> 57;
+0.34 -> cap.
 
 ### 1.3 Stage P: the pilot, variance-only, quarantined
 
@@ -132,13 +154,17 @@ Worked anchors (illustrative only, the pilot decides): sigma_hat =
 so Stage B is powered from ITS OWN variance, never Stage A's (v1.2,
 review): a second variance-only, quarantined pilot — bottom rung,
 `n_pilot = 12` spacelike samples under the Stage B pair protocol —
-feeds the SAME formula (1.2) with the SAME `Delta* = -0.2007`,
-giving Stage B its own `n_per_rung`, floor 12 / cap 60, and the
-rung-weighted feasibility stop above. Quarantine as in Stage P: one
-rung, no contrast computable, samples never reused. The `d_hat`
-DEFINITION this pilot runs is the Stage B addendum's (Section 3,
-v1.3) — the power protocol here does not change when that addendum
-lands, which is constraint (3) on it.
+feeds the formula of 1.2 with the ADDENDUM'S target effect
+`Delta*_B` (v1.4, review: a merely-consistent `d_hat` may converge
+slower than the chain rate, and reusing `-0.2007` would then
+underpower the gate by construction; the addendum must derive its
+estimator's rate and the implied `Delta*_B`, constraint (1) in
+Section 3), giving Stage B its own `n_per_rung`, floor 12 / cap 60,
+and the rung-weighted feasibility stop above. Quarantine as in
+Stage P: one rung, no contrast computable, samples never reused. The
+`d_hat` definition and `Delta*_B` this pilot runs are the Stage B
+addendum's — the power protocol SHAPE here does not change when that
+addendum lands, which is constraint (3) on it.
 
 ### 1.4 Verdict logic (frozen for every stage gate)
 
@@ -159,6 +185,18 @@ NOW, before any data, so that a flat result is a verdict rather than a
 shrug — the vocabulary P10 lacked until its post-hoc rounds. A
 DEGRADES verdict from THIS instrument (a consistent estimator family)
 would be a major anomaly and is left representable.
+
+**Interpretation scope (frozen, v1.4).** The verdicts bind to this
+estimator family over this ladder, whose tested intervals
+(`m ~ 24-96`) are pre-asymptotic. **IMPROVES** supports the
+existence claim of Section 2 — an instrument through which
+continuum-unit accuracy demonstrably grows over the tested densities,
+with the theory rate as corroboration. **FLAT-WITHIN-MARGIN**,
+**DEGRADES**, and **INCONCLUSIVE** are statements about this
+estimator in this finite-density regime — grounds to extend the
+ladder or change the estimator, and NEVER evidence that the
+continuum limit itself is absent. P10's closure discipline, adopted
+here before data instead of after review.
 
 Completeness is part of every gate: a sample that cannot supply all
 `K` pairs under the frozen pair rule is recorded incomplete, and gates
@@ -252,11 +290,15 @@ any implementation).
   written. Spacelike distance from order data is a recognized hard
   problem; a candidate is frozen by ADDENDUM after Stage A reports
   and before any Stage B data, and must satisfy, in writing, all of:
-  (1) a consistency argument for `d_hat -> d_true` as `N` grows;
-  (2) a disjointness support that six pairs can realize at the
-  bottom rung, demonstrated on synthetic checks that are quarantined
-  from Stage B's seeds; (3) compatibility with the Stage P-B power
-  protocol of 1.3 unchanged.
+  (1) a consistency argument for `d_hat -> d_true` as `N` grows,
+  WITH a convergence-rate argument and the derived Stage-B target
+  effect `Delta*_B` it implies over the ladder (v1.4 — consistency
+  alone could hide a rate slower than the chain's, silently
+  underpowering the gate); (2) a disjointness support that six pairs
+  can realize at the bottom rung, demonstrated on synthetic checks
+  that are quarantined from Stage B's seeds; (3) compatibility with
+  the Stage P-B power protocol SHAPE of 1.3 unchanged, `Delta*_B`
+  being the one number it supplies.
 - **Coordinates (Stage C).** Declared here, frozen later (staged
   freezing, the B' precedent): reconstruction of per-event `(t, x)`
   from tau_hat / d_hat to anchor sets, gated on the continuum
@@ -277,10 +319,20 @@ has always run.
   regime than v1.0's miscounted anchors suggested, which is one more
   reason the `-1/3` exponent is a labelled consistency check and
   never the gate.
-- `K = 6` pairs per sample, drawn by the sample's own scoring stream
-  (Section 5), accepted only if their SUPPORTS are pairwise disjoint
-  (kills within-sample dependence); up to 200 rejection draws, else
-  the sample is INCOMPLETE. The support: **Stage A**: the closed
+- `K = 6` pairs per sample. Candidate pool and draw semantics
+  (v1.4, frozen — review's 1000-sample check showed uniform endpoint
+  proposals with a 200-draw cap complete only ~34% of samples): the
+  pool is the PRECOMPUTED set of all band-eligible pairs (relatedness
+  plus the `tau_true` band, an `O(N^2)` scan); draws are uniform
+  without replacement from that pool by the sample's own scoring
+  stream (Section 5), accepted greedily if the support is disjoint
+  from all previously accepted supports; **the 200-draw cap counts
+  these eligible-pool draws only** (i.e. rejections for support
+  overlap), else the sample is INCOMPLETE. Before Stage P may run,
+  a synthetic completeness pin must pass: at least 95 of 100
+  synthetic samples complete at EVERY rung, generated from the
+  verification-only seed block of Section 5 — quarantined from all
+  experimental windows and carrying no outcome reading. The support: **Stage A**: the closed
   causal interval `I(x, y)`, which in `(u, v)` IS the pair's bounding
   box. **Stage B**: frozen with the Stage B addendum (v1.3 — the v1.2
   `{x, y} ∪ M ∪ J` box rule was checked infeasible, and its estimator
@@ -296,6 +348,7 @@ offset < 200) stays inside its own row's window. Windows:
 
 | block | base | samples | window span |
 |---|---|---|---|
+| design verification (non-experimental) | 59000 | 100 per rung | 59000-59299 |
 | Stage P pilot (N=600) | 60000 | 12 | 60000-62399 |
 | Stage A, N=600 | 64000 | <= 60 | 64000-75999 |
 | Stage A, N=1200 | 76000 | <= 60 | 76000-87999 |
@@ -310,6 +363,14 @@ All spans sit above every range the programme has ever used (documented
 maxima: 30000-30379, 40000-40168, 41000-41059, 43000-54999); a
 regression test pins pairwise-disjoint windows and freshness against
 the full documented list before the pilot may run.
+
+The verification block (v1.4) is one seed per sample, 100 per rung
+(59000-59099 / 59100-59199 / 59200-59299 for N = 600 / 1200 / 2400),
+each sample using a SINGLE generator for permutation and pair draws —
+no derived offsets, hence no collision surface — because these
+samples exist only to pass or fail the Section 4 completeness pin and
+are discarded; the stride-window discipline binds experimental
+samples, whose streams feed frozen quantities.
 
 ## 6. Stages and gates
 
@@ -382,7 +443,10 @@ the `metrics.py` cardinality estimator ("rho supplies metric scale;
 the causal order alone provides the interval count") mapped to the
 same convention. Nothing re-implemented. Tests
 before any run: LIS against brute force on small posets; tau_hat
-normalization pinned on constructed intervals; pair-disjointness and
-incompleteness paths; seed-window privacy and freshness against the
-full documented list; verdict-table logic on synthetic inputs. Stage P
-runs only from a clean commit containing all of it.
+normalization pinned on constructed intervals (including the endpoint
+subtraction); pair-disjointness and incompleteness paths; the
+Section 4 synthetic completeness pin (>= 95/100 at every rung, from
+the verification seed block); seed-window privacy and freshness
+against the full documented list; verdict-table precedence logic on
+synthetic inputs, including CIs matching two rows. Stage P runs only
+from a clean commit containing all of it.
