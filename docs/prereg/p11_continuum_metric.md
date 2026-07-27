@@ -726,17 +726,24 @@ addendum froze it (the v1 design having been withdrawn before running).
   so the steep reading is the predicted pre-asymptotic behaviour and
   not an anomaly. The contrast exceeds the derived
   `Delta*_C = -0.2007`, i.e. the campaign was powered
-  conservatively. One `N = 2400` sample carries an uncertified
-  spacelike third measurement (Section 10's caveat, 1 of 48 samples);
-  it is flagged, never dropped, and the top rung's mean is the only
-  quantity it touches. Artifacts `p11_stage_c.csv`,
+  conservatively. One `N = 2400` sample (seed 654000) carries an
+  uncertified spacelike third measurement (Section 10's caveat, 1 of
+  48 samples); it is flagged, never dropped. Unlike Stage B's
+  uncertified sample, this one sits in a rung the gate contrast USES,
+  so its influence is quantified rather than argued: leaving it out
+  gives `Delta = -0.294`, CI `[-0.396, -0.190]` — still entirely
+  below zero, IMPROVES either way — and since its `y = -0.810` is
+  WORSE than its rung's mean `-1.077`, the frozen include-everything
+  rule is the conservative choice here. Artifacts `p11_stage_c.csv`,
   `p11_stage_c_summary.json`, stamp `36385e1`.
 
 **All three gates of the metric instrument now read IMPROVES.** As
 scoped in 1.4, Sections 10 and 11: over the tested densities, from
 relabeling-invariant order quantities plus the count as density
-calibration, continuum-unit accuracy improves as the sprinkling
-densifies — in proper time (Stage A), in spacelike distance (Stage
+calibration — with one Stage C sample in 48 realizer-assisted, whose
+removal leaves the verdict unchanged and whose inclusion is the
+conservative direction — continuum-unit accuracy improves as the
+sprinkling densifies — in proper time (Stage A), in spacelike distance (Stage
 B), and in the COORDINATES themselves (Stage C), whose reconstruction
 uses only the metric measurements and therefore inherits, rather than
 assumes, the convergence the first two stages certified. The loop
