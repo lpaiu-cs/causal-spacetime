@@ -859,3 +859,96 @@ AND space — deepens toward the continuum through this instrument
 family, exactly where the P10 discriminator family could not decide.
 Remaining per Section 6: Stage C (coordinates), gated on its own
 addendum.
+
+## 11. Stage C addendum (frozen 2026-07-27, before any Stage C data)
+
+Per Section 6, this addendum freezes the coordinate reconstruction,
+its rate, and `Delta*_C`, before any Stage C data.
+
+**What Stage C must NOT be** (stated first, because the trap is
+real): reading the realizer ranks back as coordinates would be an
+identity, not an estimator — the dictionary DEFINES the truth as the
+rank grid, so rank-readout has error identically zero at every `N`
+and tests nothing. Stage C therefore reconstructs coordinates FROM
+THE METRIC MEASUREMENTS ONLY — the Stage A/B estimators' `tau_hat`
+and `d_hat` to a fixed anchor set — so the reconstruction inherits
+exactly the measurement noise whose decay Stages A and B certified,
+and closes the loop: order -> metric -> coordinates.
+
+**The estimator: three-anchor trilateration in null coordinates.**
+Per sample:
+
+- Anchors `a1, a2, a3` = the events nearest in rank distance to the
+  frozen fiducials `(0.15, 0.15)`, `(0.85, 0.85)`, `(0.15, 0.85)`
+  (two timelike frame posts and one off-axis resolver). Targets
+  `e_1..e_6` = the events nearest to the frozen 2x3 fiducial grid in
+  the central square `[0.35, 0.65]^2`. Anchor and target selection
+  reads the realizer — order data up to the global mirror (Section
+  10), and the coordinate ERROR is mirror-invariant because the
+  mirror maps estimate and truth identically.
+- Eligibility (completeness, the Section 4 machinery): every target
+  must satisfy `a1 < e < a2` (causally); measurement to `a3` uses
+  `tau_hat` when related, `d_hat` when spacelike (the Section 10
+  estimator, with its tiered order certificate).
+- Reconstruction: solve the two-post system
+
+      tau_hat(a1, e)^2 / 4 = (u - u_1)(v - v_1)
+      tau_hat(e, a2)^2 / 4 = (u_2 - u)(v_2 - v)
+
+  for `(u, v)` (two roots), and disambiguate by the smaller residual
+  against the third measurement to `a3`. Anchor coordinates enter as
+  their realizer positions — the anchors ARE the frame, and the
+  claim is about reconstructing everything else from metric data to
+  that frame.
+- Per-sample statistic:
+  `y = log10( median over the six targets of the Euclidean continuum
+  coordinate error ||(u_hat, v_hat) - (u, v)|| )`. No within-sample
+  independence is claimed (all targets share the three anchors); the
+  independent replicates are the samples, as everywhere in this
+  document.
+
+**Rate and the derived `Delta*_C`.** Every measurement entering the
+reconstruction is a Stage A/B chain estimator over a separation that
+is `Theta(1)` in continuum units under the frozen fiducial geometry,
+so each carries the `m^(-1/3)` relative error with `m ∝ N` (Sections
+7 and 10) — the rates Stages A and B measured with slope CIs
+containing `-1/3`. The trilateration Jacobian at the frozen geometry
+(central targets, corner posts) is `N`-independent and
+well-conditioned, so the coordinate error inherits the measurement
+rate:
+
+    Delta*_C = -(1/3) log10(4) = -0.2007 dex,
+
+derived. The Jacobian-boundedness step is an argument, not a
+measurement — the labelled slope check against `-1/3` is where the
+data audits it, and the constant-level check carries a band, not a
+gate.
+
+**Protocol.** No pair pool and no draws — anchors and targets are
+deterministic given the sample, so completeness is pure eligibility;
+the first-`n`-complete fill, skip caps, verification pin
+(`>= 1998 of 2000`, wall times), and the 1.4 verdict table apply
+verbatim. Stage P-C: both endpoint rungs, 200 samples each,
+calibrated Bonett bounds, cross-rung statistics forbidden, feeding
+Section 1.2 with `Delta*_C`; it runs only after Stage B's frozen
+IMPROVES (reachable stamp), through the Section 6 cross-stage gate.
+Spacelike measurements to `a3` carry the Section 10 tiered
+certificate; uncertified samples are flagged exactly as in Stage B.
+
+**Seed windows (frozen; all above every documented range).**
+
+| block | base | fills | window span |
+|---|---|---|---|
+| Stage P-C pilot, N=600 | 472000 | 200 of 220 | 472000-515999 |
+| Stage P-C pilot, N=2400 | 516000 | 200 of 220 | 516000-559999 |
+| Stage C, N=600 | 620000 | <= 60 of 80 | 620000-635999 |
+| Stage C, N=1200 | 636000 | <= 60 of 80 | 636000-651999 |
+| Stage C, N=2400 | 652000 | <= 60 of 80 | 652000-667999 |
+| verification-C (non-experimental) | 700000 | 2000 per rung | 700000-705999 |
+
+(The 560000-619999 gap steps around the Section 10 verification-B
+block at 600000-605999; nothing is allocated inside it.)
+
+Implementation note: the runner lands only after this addendum
+merges (design-first, as Stages A and B did); the verification-C pin
+must pass before Stage P-C may run.
