@@ -1,13 +1,16 @@
 {
-  "code_version": "99e7889",
+  "code_version": "535a5b7",
   "per_rung": {
     "600": {
       "n_samples": 200,
       "variance": 0.011870946887503541,
       "kurtosis_g4": 4.011108271710331,
-      "variance_bound_95": 0.014540454357474041,
+      "variance_bound_95_nominal": 0.014540454357474041,
+      "variance_bound_95_calibrated": 0.015159645534153537,
+      "calibration_z_used": 1.9830770136511129,
+      "calibration_coverage_at_nominal": 0.914,
       "skipped_seeds": [],
-      "mean_seconds_per_sample": 0.005606069999921601,
+      "mean_seconds_per_sample": 0.005422289999987697,
       "y": [
         -0.42841827793100873,
         -0.5005071719784672,
@@ -215,9 +218,12 @@
       "n_samples": 200,
       "variance": 0.012460171000006468,
       "kurtosis_g4": 4.2409286006818565,
-      "variance_bound_95": 0.015378024293589572,
+      "variance_bound_95_nominal": 0.015378024293589572,
+      "variance_bound_95_calibrated": 0.015965073582153676,
+      "calibration_z_used": 1.9377886462046314,
+      "calibration_coverage_at_nominal": 0.918,
       "skipped_seeds": [],
-      "mean_seconds_per_sample": 0.08332930200005649,
+      "mean_seconds_per_sample": 0.0802743415000441,
       "y": [
         -0.6709486066128872,
         -0.8370432272173266,
@@ -443,6 +449,6 @@
     "flat_available": false,
     "infeasible": false
   },
-  "projected_stage_a_hours": 0.0003873053060000044,
+  "projected_stage_a_hours": 0.0003486814153333156,
   "feasible": true
 }
