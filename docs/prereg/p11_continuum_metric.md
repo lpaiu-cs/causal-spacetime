@@ -910,15 +910,24 @@ and B certified, and closes the loop order -> metric -> coordinates.
   in `p = u - u1` (`P = u2 - u1`, `Q = v2 - v1`), with the frozen
   degenerate handling: **`D := max(D, 0)`** (adopt the tangency root
   when noise pushes the discriminant negative - the review-flagged
-  path that certainly occurs), and if `Q = 0` or both roots are
-  non-finite the sample is INELIGIBLE by geometry, never by
-  measurement value. Of the (at most two) roots, take the one whose
+  path that certainly occurs, rare but nonzero at 0.1-0.3% of fits
+  under the frozen grid). `Q > 0` is implied by the eligibility rule
+  `a1 < e < a2`, so the initializer has no measurement-dependent
+  failure branch at all — recorded for completeness, unreachable in
+  a complete sample, and deliberately so: nothing here may make
+  eligibility depend on a measured value. Of the (at most two)
+  roots, take the one whose
   third-measurement residual `|s3 (u - u3)(v - v3) - C|` is smaller -
   squared units, frozen, so the choice cannot flip with a units
   convention.
 - **Refinement (the fix): Gauss-Newton on all three residuals,**
   iterated to convergence (step norm `< 1e-12`, hard cap 20
-  iterations), with
+  iterations; **reaching the cap is a routine path, not an
+  exception** — the design checks hit it in 39-58% of fits, where
+  the iterate is already at the noise floor, final steps `1e-8` and
+  below against a `~0.15` error scale — and the frozen rule is that
+  **the iterate at the cap IS the estimate**, deterministic and
+  never a rejection), with
 
       r_k = s_k (u - u_k)(v - v_k) - m_k^2/4,
       J_k = [ s_k (v - v_k),  s_k (u - u_k) ],
@@ -950,7 +959,19 @@ inherits the measurement rate:
     Delta*_C = -(1/3) log10(4) = -0.2007 dex,
 
 derived - the SAME derivation v1 attempted, now resting on a
-Jacobian that is actually nonsingular. Disclosed for honesty: the
+Jacobian that is actually nonsingular.
+
+The Jacobian-conditioning step is an ARGUMENT, not a measurement, and
+the labelled slope check against `-1/3` is where the data audits it —
+the same audit hook that condemned v1 (its slope read `-0.19` to
+`-0.25`). Expectation stated in advance so a steep reading is not
+misread as an anomaly: at this pre-asymptotic ladder the slope
+should come out STEEPER than `-1/3`, around `-0.40` to `-0.45` in
+the design checks, the same character as Stage A's `-0.31` and Stage
+B's `-0.354` against their own `-1/3`. The constant-level check
+carries a band, never a gate.
+
+Disclosed for honesty: the
 quarantined design checks that killed v1 also measured this
 estimator, at `-0.21` (one GN step) and `-0.26` (converged), i.e. at
 or beyond the derived target; `Delta*_C` remains the DERIVED value,
@@ -975,7 +996,12 @@ caps, verification pin (`>= 1998 of 2000`, wall times), calibrated
 Bonett pilot (both endpoint rungs, 200 samples, cross-rung statistics
 forbidden), and the 1.4 verdict table apply verbatim; Stage P-C runs
 only after Stage B's frozen IMPROVES with a reachable stamp, through
-the Section 6 cross-stage gate.
+the Section 6 cross-stage gate. Spacelike `m3` measurements carry the
+Section 10 tiered order certificate, and uncertified samples are
+FLAGGED exactly as in Stage B — `box_order_certified` per sample,
+uncertified counts per rung in the stage summary, any nonzero count
+scoping those samples as realizer-assisted — never dropped, since
+dropping would condition the record on a measured property.
 
 **Seed windows (frozen; all above every documented range).**
 
