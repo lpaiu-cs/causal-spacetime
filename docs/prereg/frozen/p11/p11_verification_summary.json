@@ -1,21 +1,21 @@
 {
-  "code_version": "a737f1d",
+  "code_version": "5676137",
   "pin_required": 1998,
   "per_n": {
     "600": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.005777587500007939
+      "mean_seconds_per_sample": 0.005898468049999792
     },
     "1200": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.021865497899998445
+      "mean_seconds_per_sample": 0.022421696700010214
     },
     "2400": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.08633320059999823
+      "mean_seconds_per_sample": 0.08647498780000024
     }
   },
   "pin_passed": true
