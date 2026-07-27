@@ -699,6 +699,61 @@ Claims beyond the tested ladder and estimator remain unclaimed.
 Next per Section 6: the Stage B addendum (spacelike), to be frozen
 before any Stage B data.
 
+
+### 9.5 Stage C verification, Stage P-C, and Stage C (2026-07-27): **IMPROVES**
+
+The coordinate reconstruction, run exactly as the Section 11 v2.1
+addendum froze it (the v1 design having been withdrawn before running).
+
+- **Verification-C**: 2000/2000 complete at every rung (pin 1998),
+  wall times 0.015 / 0.059 / 0.237 s per sample. Artifact
+  `p11_verification_c_summary.json`.
+- **Stage P-C**: 200 samples per endpoint rung, zero skips.
+  Variances 0.0282 / 0.0193, `g4 = 3.35 / 3.23`; the calibration
+  fired a third time (coverage 0.932 / 0.931 at nominal ->
+  `z = 1.784 / 1.842`). `S^2_90 = 0.0577`, `n_sup = 16`,
+  `n_eq = 168 > cap` — flat verdict declared unavailable ex ante;
+  `n_per_rung = 16`; projected Stage C wall 5.0 s. FEASIBLE.
+- **Stage C**: 16 complete samples per rung, zero skips, no
+  selection caveat. Mean `y`: -0.801 / -0.962 / -1.077, monotone.
+
+      Delta = -0.276 dex,  95% CI [-0.384, -0.171]  ->  IMPROVES
+
+  Median coordinate error falls 0.156 -> 0.107 -> 0.089 across the
+  ladder. The slope reads -0.458, CI [-0.637, -0.275] — steeper than
+  `-1/3`, and the addendum said so IN ADVANCE (design checks
+  measured -0.40 to -0.45; the fit compounds three measurements),
+  so the steep reading is the predicted pre-asymptotic behaviour and
+  not an anomaly. The contrast exceeds the derived
+  `Delta*_C = -0.2007`, i.e. the campaign was powered
+  conservatively. One `N = 2400` sample (seed 654000) carries an
+  uncertified spacelike third measurement (Section 10's caveat, 1 of
+  48 samples); it is flagged, never dropped. Unlike Stage B's
+  uncertified sample, this one sits in a rung the gate contrast USES,
+  so its influence is quantified rather than argued: leaving it out
+  gives `Delta = -0.294`, CI `[-0.396, -0.190]` — still entirely
+  below zero, IMPROVES either way — and since its `y = -0.810` is
+  WORSE than its rung's mean `-1.077`, the frozen include-everything
+  rule is the conservative choice here. Artifacts `p11_stage_c.csv`,
+  `p11_stage_c_summary.json`, stamp `36385e1`.
+
+**All three gates of the metric instrument now read IMPROVES.** As
+scoped in 1.4, Sections 10 and 11: over the tested densities, from
+relabeling-invariant order quantities plus the count as density
+calibration — with one Stage C sample in 48 realizer-assisted, whose
+removal leaves the verdict unchanged and whose inclusion is the
+conservative direction — continuum-unit accuracy improves as the
+sprinkling densifies — in proper time (Stage A), in spacelike distance (Stage
+B), and in the COORDINATES themselves (Stage C), whose reconstruction
+uses only the metric measurements and therefore inherits, rather than
+assumes, the convergence the first two stages certified. The loop
+order -> metric -> coordinates closes. P10's discriminator family
+could not decide the continuum question; this instrument family
+answers it in the affirmative over the tested ladder, at the rate the
+longest-chain theorem predicts, with every claim scoped to that
+ladder and estimator.
+
+
 ## 10. Stage B addendum (frozen 2026-07-27, before any Stage B data)
 
 Per Sections 3 and 6, this addendum freezes `d_hat`, its support, its

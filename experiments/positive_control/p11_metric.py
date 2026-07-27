@@ -84,6 +84,23 @@ VERIFY_B_BASE = {600: 600000, 1200: 602000, 2400: 604000}
 VERIFY_B_ARTIFACT = "p11_verification_b_summary.json"
 PILOT_B_ARTIFACT = "p11_pilot_b_summary.json"
 
+#: Stage C (the Section 11 addendum v2.1): coordinates reconstructed
+#: from METRIC MEASUREMENTS ONLY -- three-anchor constrained fit,
+#: never rank readout (which would be an identity, not an estimator).
+#: The six target fiducials are all off the u = v diagonal, where the
+#: two-post discriminant vanishes identically (the v1 defect).
+ANCHOR_FIDUCIALS = ((0.15, 0.15), (0.85, 0.85), (0.15, 0.85))
+TARGET_FIDUCIALS = ((0.38, 0.44), (0.38, 0.56), (0.50, 0.41),
+                    (0.50, 0.59), (0.62, 0.44), (0.62, 0.56))
+GN_TOL = 1e-12
+GN_MAX_STEPS = 20
+PILOT_C_BLOCKS = {600: (472000, 220), 2400: (516000, 220)}
+STAGE_C_BLOCKS = {600: (620000, 80), 1200: (636000, 80),
+                  2400: (652000, 80)}
+VERIFY_C_BASE = {600: 700000, 1200: 702000, 2400: 704000}
+VERIFY_C_ARTIFACT = "p11_verification_c_summary.json"
+PILOT_C_ARTIFACT = "p11_pilot_c_summary.json"
+
 
 def continuum_uv(pi: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """The frozen convention: (u, v) = (i, pi(i)) / N on the unit square.
@@ -1062,11 +1079,347 @@ def run_stage_b(output_dir: Path) -> None:
                       "verdict": summary["verdict"]}, indent=2))
 
 
+
+def _de_nan(obj):
+    """NaN -> None so strict JSON parsers can read the artifacts."""
+
+    if isinstance(obj, float) and np.isnan(obj):
+        return None
+    if isinstance(obj, dict):
+        return {k: _de_nan(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_de_nan(v) for v in obj]
+    return obj
+
+def _nearest_event(u: np.ndarray, v: np.ndarray, fiducial) -> int:
+    """The event nearest a frozen fiducial in the realizer plane --
+    selection only (Section 11: the realizer is a pinned shortcut for
+    an order-determined quantity; the ESTIMATE uses measurements)."""
+
+    du = u - fiducial[0]
+    dv = v - fiducial[1]
+    return int(np.argmin(du * du + dv * dv))
+
+
+def _measure(u: np.ndarray, v: np.ndarray, i: int, j: int):
+    """tau_hat if the pair is related, d_hat (Section 10) if
+    spacelike; returns (measurement, sign) with sign = +1 timelike,
+    -1 spacelike, and the order certificate for the spacelike case."""
+
+    if u[i] < u[j] and v[i] < v[j]:
+        return score_pair(u, v, i, j)["tau_chain"], 1.0, True
+    if u[j] < u[i] and v[j] < v[i]:
+        return score_pair(u, v, j, i)["tau_chain"], 1.0, True
+    a, b = (i, j) if u[i] < u[j] else (j, i)
+    certified = dual_box_order_certificate(u, v, a, b) or \
+        full_gamma_certificate(u, v, a, b)
+    return score_pair_spacelike(u, v, a, b)["tau_chain"], -1.0, certified
+
+
+def two_post_roots(A: float, B: float, u1: float, v1: float,
+                   u2: float, v2: float) -> list:
+    """Initializer for the constrained fit: the quadratic in
+    p = u - u1 from (u-u1)(v-v1) = A and (u2-u)(v2-v) = B, with the
+    frozen degenerate handling D := max(D, 0) (adopt the tangency
+    root when noise pushes the discriminant negative)."""
+
+    P, Q = u2 - u1, v2 - v1
+    if Q <= 0.0:
+        return []
+    b = -(P * Q + A - B)
+    disc = max(b * b - 4.0 * Q * (P * A), 0.0)
+    root = np.sqrt(disc)
+    out = []
+    for p in ((-b + root) / (2.0 * Q), (-b - root) / (2.0 * Q)):
+        if abs(p) < 1e-15 or not np.isfinite(p):
+            continue
+        out.append((u1 + p, v1 + A / p))
+    return out
+
+
+def gauss_newton_fit(start, measures, anchors):
+    """Section 11: GN on all three squared-interval residuals,
+
+        r_k = s_k (u - u_k)(v - v_k) - m_k^2 / 4,
+
+    the sign multiplying the PRODUCT (squaring cancels it otherwise,
+    which silently inverts the third constraint). Reaching the cap is
+    a routine path and the iterate at the cap IS the estimate."""
+
+    u, v = start
+    for _ in range(GN_MAX_STEPS):
+        jac, res = [], []
+        for (au, av, s), m in zip(anchors, measures, strict=True):
+            du, dv = u - au, v - av
+            res.append(s * du * dv - m)
+            jac.append([s * dv, s * du])
+        step, *_ = np.linalg.lstsq(np.asarray(jac), -np.asarray(res),
+                                   rcond=None)
+        u, v = u + step[0], v + step[1]
+        if float(np.hypot(step[0], step[1])) < GN_TOL:
+            break
+    return float(u), float(v)
+
+
+def run_sample_coordinates(n: int, seed: int, single_stream: bool = False):
+    """One Stage C sample. Selection is deterministic given the
+    sample (no pool, no draws), so completeness is pure eligibility,
+    decided by geometry before any measurement is taken."""
+
+    del single_stream        # no draws in Stage C; kept for symmetry
+    rng = np.random.default_rng(seed)
+    pi = rng.permutation(n)
+    u, v = continuum_uv(pi)
+    anchors = [_nearest_event(u, v, f) for f in ANCHOR_FIDUCIALS]
+    targets = [_nearest_event(u, v, f) for f in TARGET_FIDUCIALS]
+    record = {"n": float(n), "seed": float(seed), "complete": False}
+    chosen = anchors + targets
+    if len(set(chosen)) != len(chosen):
+        return record, False                     # nine distinct events
+    a1, a2, a3 = anchors
+    eligible = all(
+        u[a1] < u[e] < u[a2] and v[a1] < v[e] < v[a2] for e in targets
+    )
+    if not eligible:
+        return record, False
+    errors, certified = [], True
+    for e in targets:
+        m1, _s1, _c1 = _measure(u, v, a1, e)
+        m2, _s2, _c2 = _measure(u, v, e, a2)
+        m3, s3, c3 = _measure(u, v, a3, e)
+        certified = certified and c3
+        big_a, big_b, big_c = m1 * m1 / 4.0, m2 * m2 / 4.0, m3 * m3 / 4.0
+        roots = two_post_roots(big_a, big_b, u[a1], v[a1], u[a2], v[a2])
+        if not roots:
+            return record, False                 # geometry, unreachable
+        start = min(roots, key=lambda r: abs(
+            s3 * (r[0] - u[a3]) * (r[1] - v[a3]) - big_c
+        ))
+        fit = gauss_newton_fit(
+            start, (big_a, big_b, big_c),
+            ((u[a1], v[a1], 1.0), (u[a2], v[a2], 1.0),
+             (u[a3], v[a3], s3)),
+        )
+        errors.append(float(np.hypot(fit[0] - u[e], fit[1] - v[e])))
+    record["complete"] = True
+    record["y"] = float(np.log10(np.median(errors)))
+    record["median_coord_error"] = float(np.median(errors))
+    record["max_coord_error"] = float(max(errors))
+    record["box_order_certified"] = bool(certified)
+    return record, True
+
+
+def _fill_block_generic(n: int, base: int, slots: int, needed: int,
+                        sampler):
+    records, skipped = [], []
+    for k in range(slots):
+        seed = base + STRIDE * k
+        record, complete = sampler(n, seed)
+        if complete:
+            records.append(record)
+            if len(records) == needed:
+                return records, skipped, True
+        else:
+            skipped.append(seed)
+            if len(skipped) > SKIP_CAP:
+                return records, skipped, False
+    return records, skipped, False
+
+
+def run_verify_c(output_dir: Path) -> None:
+    """Stage C completeness pin and wall times (Section 11)."""
+
+    stamp = _preflight_clean()
+    summary: dict = {"code_version": stamp, "pin_required": VERIFY_PIN,
+                     "per_n": {}}
+    for n in P11_LADDER:
+        base = VERIFY_C_BASE[n]
+        complete_count = 0
+        start = time.perf_counter()
+        for k in range(VERIFY_COUNT):
+            _record, complete = run_sample_coordinates(n, base + k)
+            complete_count += int(complete)
+        elapsed = time.perf_counter() - start
+        summary["per_n"][str(n)] = {
+            "complete": complete_count, "total": VERIFY_COUNT,
+            "mean_seconds_per_sample": elapsed / VERIFY_COUNT,
+        }
+        print(f"verify-C n={n}: {complete_count}/{VERIFY_COUNT} complete "
+              f"| {elapsed / VERIFY_COUNT:.3f} s/sample", flush=True)
+    summary["pin_passed"] = bool(all(
+        summary["per_n"][str(n)]["complete"] >= VERIFY_PIN
+        for n in P11_LADDER
+    ))
+    (output_dir / VERIFY_C_ARTIFACT).write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"pin_passed": summary["pin_passed"]}, indent=2))
+
+
+def run_pilot_c(output_dir: Path) -> None:
+    """Stage P-C: both endpoint rungs, variance and wall time only,
+    cross-rung statistics forbidden. Gated on Stage B's frozen
+    IMPROVES (Section 6 cross-stage gate)."""
+
+    stamp = _preflight_clean()
+    _require_stage_pass("p11_stage_b_summary.json", "Stage B")
+    verification = _load_gate_artifact(output_dir, VERIFY_C_ARTIFACT, stamp)
+    if not verification.get("pin_passed"):
+        raise SystemExit("C verification pin failed -- pilot-c refuses")
+
+    summary: dict = {"code_version": stamp, "per_rung": {}}
+    ys: dict = {}
+    for n, (base, slots) in PILOT_C_BLOCKS.items():
+        start = time.perf_counter()
+        records, skipped, filled = _fill_block_generic(
+            n, base, slots, PILOT_SAMPLES, run_sample_coordinates)
+        elapsed = time.perf_counter() - start
+        if not filled:
+            raise SystemExit(
+                f"pilot-C block n={n} could not fill {PILOT_SAMPLES} "
+                f"(skips: {len(skipped)}) -- INFEASIBLE-INCOMPLETE")
+        ys[n] = np.array([r["y"] for r in records])
+        rung_bound = bonett_variance_bound(ys[n])
+        summary["per_rung"][str(n)] = {
+            "n_samples": len(records),
+            "variance": rung_bound["s2"],
+            "kurtosis_g4": rung_bound["g4"],
+            "variance_bound_95_nominal": rung_bound["bound"],
+            "skipped_seeds": skipped,
+            "mean_seconds_per_sample": elapsed / len(records),
+            "y": [float(val) for val in ys[n]],
+        }
+        print(f"pilot-C n={n}: var={rung_bound['s2']:.5f} "
+              f"g4={rung_bound['g4']:.2f} | skips={len(skipped)}",
+              flush=True)
+
+    power = power_requirements(ys[600], ys[2400])
+    times = verification["per_n"]
+    projected = None
+    if power["n_per_rung"] is not None:
+        projected = power["n_per_rung"] * sum(
+            times[str(n)]["mean_seconds_per_sample"] for n in P11_LADDER
+        ) / 3600.0
+    summary["power"] = power
+    summary["projected_stage_c_hours"] = projected
+    summary["feasible"] = bool(
+        not power["infeasible"] and projected is not None
+        and projected <= PROJECTION_LIMIT_HOURS
+    )
+    (output_dir / PILOT_C_ARTIFACT).write_text(
+        json.dumps(_de_nan(summary), indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"power": power,
+                      "projected_stage_c_hours": projected,
+                      "feasible": summary["feasible"]}, indent=2))
+
+
+def run_stage_c(output_dir: Path) -> None:
+    """Stage C: the coordinate gate, at the pilot's n, under the
+    frozen verdict table."""
+
+    stamp = _preflight_clean()
+    pilot = _load_gate_artifact(output_dir, PILOT_C_ARTIFACT, stamp)
+    if not pilot.get("feasible"):
+        raise SystemExit("pilot-C declared the design infeasible -- "
+                         "Stage C refuses to run")
+    n_per_rung = int(pilot["power"]["n_per_rung"])
+    flat_available = bool(pilot["power"]["flat_available"])
+
+    rows, per_rung_y, skip_counts, skipped_seeds = [], {}, {}, {}
+    for n, (base, slots) in STAGE_C_BLOCKS.items():
+        records, skipped, filled = _fill_block_generic(
+            n, base, slots, n_per_rung, run_sample_coordinates)
+        if not filled:
+            raise SystemExit(
+                f"stage C block n={n} could not fill {n_per_rung} "
+                f"(skips: {len(skipped)}) -- INFEASIBLE-INCOMPLETE")
+        for r in records:
+            r["stage"] = "C"
+            r["code_version"] = stamp
+        rows.extend(records)
+        per_rung_y[n] = np.array([r["y"] for r in records])
+        skip_counts[n] = len(skipped)
+        skipped_seeds[n] = [int(s) for s in skipped]
+        print(f"stage C n={n}: {len(records)} complete | mean y "
+              f"{per_rung_y[n].mean():.4f} | skips {len(skipped)}",
+              flush=True)
+    write_rows_csv(output_dir / "p11_stage_c.csv", rows)
+
+    delta = float(per_rung_y[2400].mean() - per_rung_y[600].mean())
+    rng = np.random.default_rng(_stable_seed("p11-c-delta"))
+    boots = [
+        float(rng.choice(per_rung_y[2400], size=n_per_rung,
+                         replace=True).mean()
+               - rng.choice(per_rung_y[600], size=n_per_rung,
+                            replace=True).mean())
+        for _ in range(4000)
+    ]
+    lo, hi = (float(np.percentile(boots, 2.5)),
+              float(np.percentile(boots, 97.5)))
+
+    log_n = np.log10(np.array(P11_LADDER, dtype=float))
+    means = np.array([per_rung_y[n].mean() for n in P11_LADDER])
+    slope = float(np.polyfit(log_n, means, 1)[0])
+    srng = np.random.default_rng(_stable_seed("p11-c-slope"))
+    slope_boots = [
+        float(np.polyfit(log_n, [
+            srng.choice(per_rung_y[n], size=n_per_rung,
+                        replace=True).mean() for n in P11_LADDER
+        ], 1)[0])
+        for _ in range(4000)
+    ]
+
+    summary = {
+        "code_version": stamp,
+        "n_per_rung": n_per_rung,
+        "flat_available": flat_available,
+        "skip_counts": {str(n): skip_counts[n] for n in P11_LADDER},
+        "skipped_seeds": {str(n): skipped_seeds[n] for n in P11_LADDER},
+        "selection_caveat": bool(any(skip_counts[n] > 0
+                                     for n in P11_LADDER)),
+        "box_uncertified_samples": int(sum(
+            1 for r in rows if not r.get("box_order_certified", False)
+        )),
+        "box_uncertified_by_rung": {
+            str(n): int(sum(
+                1 for r in rows
+                if r["n"] == n and not r.get("box_order_certified", False)
+            )) for n in P11_LADDER
+        },
+        "delta": delta, "delta_ci": [lo, hi],
+        "verdict": verdict(lo, hi, flat_available),
+        "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
+                           for n in P11_LADDER},
+        "middle_rung_between_endpoints": bool(
+            min(means[0], means[2]) <= means[1] <= max(means[0], means[2])
+        ),
+        "labelled_checks": {
+            "slope_mean_y_vs_log10N": slope,
+            "slope_ci": [float(np.percentile(slope_boots, 2.5)),
+                         float(np.percentile(slope_boots, 97.5))],
+            "predicted_slope_measurement_rate": -1.0 / 3.0,
+            "design_check_expectation": "steeper than -1/3 at this "
+                                        "pre-asymptotic ladder "
+                                        "(-0.40 to -0.45 measured on "
+                                        "quarantined design seeds)",
+            "median_coord_error_by_rung": {
+                str(n): float(np.median(
+                    [r["median_coord_error"] for r in rows if r["n"] == n]
+                )) for n in P11_LADDER
+            },
+        },
+    }
+    (output_dir / "p11_stage_c_summary.json").write_text(
+        json.dumps(_de_nan(summary), indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"delta": delta, "delta_ci": [lo, hi],
+                      "verdict": summary["verdict"]}, indent=2))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage",
                         choices=["verify", "pilot", "a",
-                                 "verify-b", "pilot-b", "b", "c"],
+                                 "verify-b", "pilot-b", "b",
+                                 "verify-c", "pilot-c", "c"],
                         default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
@@ -1084,14 +1437,17 @@ def main() -> None:
         run_pilot_b(args.output_dir)
     elif args.stage == "b":
         run_stage_b(args.output_dir)
+    elif args.stage == "verify-c":
+        run_verify_c(args.output_dir)
+    elif args.stage == "pilot-c":
+        run_pilot_c(args.output_dir)
     elif args.stage == "c":
-        raise SystemExit(
-            "stage c is gated on its frozen addendum (prereg Section 6) "
-            "and has no runner until that addendum lands -- this "
-            "refusal is the preregistration operating."
-        )
+        run_stage_c(args.output_dir)
     else:
-        raise SystemExit("choose --stage verify/pilot/a/verify-b/pilot-b/b")
+        raise SystemExit(
+            "choose --stage verify/pilot/a/verify-b/pilot-b/b/"
+            "verify-c/pilot-c/c"
+        )
 
 
 if __name__ == "__main__":

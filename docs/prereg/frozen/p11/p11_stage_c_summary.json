@@ -1,0 +1,48 @@
+{
+  "code_version": "36385e1",
+  "n_per_rung": 16,
+  "flat_available": false,
+  "skip_counts": {
+    "600": 0,
+    "1200": 0,
+    "2400": 0
+  },
+  "skipped_seeds": {
+    "600": [],
+    "1200": [],
+    "2400": []
+  },
+  "selection_caveat": false,
+  "box_uncertified_samples": 1,
+  "box_uncertified_by_rung": {
+    "600": 0,
+    "1200": 0,
+    "2400": 1
+  },
+  "delta": -0.27585940096292705,
+  "delta_ci": [
+    -0.38375555345668466,
+    -0.17050894004642075
+  ],
+  "verdict": "IMPROVES",
+  "mean_y_by_rung": {
+    "600": -0.8011377956349904,
+    "1200": -0.9620653883719245,
+    "2400": -1.0769971965979175
+  },
+  "middle_rung_between_endpoints": true,
+  "labelled_checks": {
+    "slope_mean_y_vs_log10N": -0.4581925471487714,
+    "slope_ci": [
+      -0.6369699169980773,
+      -0.274832584325012
+    ],
+    "predicted_slope_measurement_rate": -0.3333333333333333,
+    "design_check_expectation": "steeper than -1/3 at this pre-asymptotic ladder (-0.40 to -0.45 measured on quarantined design seeds)",
+    "median_coord_error_by_rung": {
+      "600": 0.1562772420325263,
+      "1200": 0.1073344080361299,
+      "2400": 0.08919292991887674
+    }
+  }
+}
