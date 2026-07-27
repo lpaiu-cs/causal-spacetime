@@ -721,6 +721,31 @@ apply; through the shared definition with
 `chain_counts_endpoints = False`, i.e. `L_box / sqrt(2 rho)` at
 `rho = N/2`).
 
+**Box membership is order data** (amended same day, review: the
+membership predicate must not smuggle in oracle coordinates).
+Unlike the timelike interval — whose membership IS the causal
+relation — the spacelike box needs the conjugate structure, and the
+causal order supplies it: in a 1+1D order the incomparability graph's
+transitive orientation is the SPATIAL order `⊏` (unique up to the
+global mirror, generically), and
+
+    z in B(x, y)  <=>  z incomparable to both x and y,
+                       and x ⊏ z ⊏ y
+
+— spacelike betweenness, a purely order-theoretic predicate. The
+mirror choice flips `⊏` globally and maps the condition to
+`y ⊏ z ⊏ x`: the SET is invariant. The implementation reads the
+`(u, v)` ranks directly, which is exactly the realizer the order
+determines up to that mirror — a computational shortcut for an
+order-determined quantity, not an extra input. A regression pins the
+equivalence: a cone-forcing construction that starts from the single
+oriented pair `x ⊏ y` and uses only causal relations reproduces the
+box on random samples. Caveat, labelled: uniqueness-up-to-mirror of
+the orientation needs the incomparability structure to force through
+one component (generic for sprinkled diamonds; the regression
+exercises it empirically, and a failure there would surface as a
+non-reproduced box, not silently).
+
 **Constraint (1) — consistency, rate, and the derived `Delta*_B`.**
 In 1+1D the meet-join interval's proper time EQUALS the spacelike
 separation: `d = 2 sqrt((u_y - u_x)(v_x - v_y))`. The box's interior
