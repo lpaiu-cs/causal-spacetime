@@ -623,3 +623,18 @@ def test_stage_c_windows_are_private_and_fresh():
     for n in P11_LADDER:
         vspan = set(range(VERIFY_C_BASE[n], VERIFY_C_BASE[n] + 2000))
         assert min(vspan) >= top
+
+
+def test_published_calibrated_bound_matches_the_power_input():
+    """Deferred P2 (1): the artifact must publish the bound power
+    actually consumed. The per-rung calibrated bounds must sum to the
+    power step's s2_90 exactly -- the mismatch that recurred in all
+    three pilots."""
+
+    from p11_metric import calibrated_variance_bound, power_requirements
+
+    y_b = _gaussian_pilot(0.12, 21)
+    y_t = _gaussian_pilot(0.14, 22)
+    published = (calibrated_variance_bound(y_b, "bottom")["bound"]
+                 + calibrated_variance_bound(y_t, "top")["bound"])
+    assert power_requirements(y_b, y_t)["s2_90"] == pytest.approx(published)

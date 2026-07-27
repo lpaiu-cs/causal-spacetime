@@ -484,11 +484,22 @@ def run_pilot(output_dir: Path) -> None:
             )
         ys[n] = np.array([r["y"] for r in records])
         rung_bound = bonett_variance_bound(ys[n])
+        # the calibrated bound is what power_requirements consumes;
+        # publishing only the nominal one made the artifact
+        # unreproducible from its own fields (deferred P2, recurring
+        # in all three pilots)
+        rung_calibrated = calibrated_variance_bound(
+            ys[n], "bottom" if n == P11_LADDER[0] else "top"
+        )
         summary["per_rung"][str(n)] = {
             "n_samples": len(records),
             "variance": rung_bound["s2"],
             "kurtosis_g4": rung_bound["g4"],
-            "variance_bound_95": rung_bound["bound"],
+            "variance_bound_95_nominal": rung_bound["bound"],
+            "variance_bound_95_calibrated": rung_calibrated["bound"],
+            "calibration_z_used": rung_calibrated["z_used"],
+            "calibration_coverage_at_nominal":
+                rung_calibrated["coverage_at_nominal"],
             "skipped_seeds": skipped,
             "mean_seconds_per_sample": elapsed / len(records),
             # the raw per-sample statistics behind the variance and
@@ -917,11 +928,22 @@ def run_pilot_b(output_dir: Path) -> None:
             )
         ys[n] = np.array([r["y"] for r in records])
         rung_bound = bonett_variance_bound(ys[n])
+        # the calibrated bound is what power_requirements consumes;
+        # publishing only the nominal one made the artifact
+        # unreproducible from its own fields (deferred P2, recurring
+        # in all three pilots)
+        rung_calibrated = calibrated_variance_bound(
+            ys[n], "bottom" if n == P11_LADDER[0] else "top"
+        )
         summary["per_rung"][str(n)] = {
             "n_samples": len(records),
             "variance": rung_bound["s2"],
             "kurtosis_g4": rung_bound["g4"],
-            "variance_bound_95": rung_bound["bound"],
+            "variance_bound_95_nominal": rung_bound["bound"],
+            "variance_bound_95_calibrated": rung_calibrated["bound"],
+            "calibration_z_used": rung_calibrated["z_used"],
+            "calibration_coverage_at_nominal":
+                rung_calibrated["coverage_at_nominal"],
             "skipped_seeds": skipped,
             "mean_seconds_per_sample": elapsed / len(records),
             "y": [float(val) for val in ys[n]],
@@ -1279,11 +1301,22 @@ def run_pilot_c(output_dir: Path) -> None:
                 f"(skips: {len(skipped)}) -- INFEASIBLE-INCOMPLETE")
         ys[n] = np.array([r["y"] for r in records])
         rung_bound = bonett_variance_bound(ys[n])
+        # the calibrated bound is what power_requirements consumes;
+        # publishing only the nominal one made the artifact
+        # unreproducible from its own fields (deferred P2, recurring
+        # in all three pilots)
+        rung_calibrated = calibrated_variance_bound(
+            ys[n], "bottom" if n == P11_LADDER[0] else "top"
+        )
         summary["per_rung"][str(n)] = {
             "n_samples": len(records),
             "variance": rung_bound["s2"],
             "kurtosis_g4": rung_bound["g4"],
             "variance_bound_95_nominal": rung_bound["bound"],
+            "variance_bound_95_calibrated": rung_calibrated["bound"],
+            "calibration_z_used": rung_calibrated["z_used"],
+            "calibration_coverage_at_nominal":
+                rung_calibrated["coverage_at_nominal"],
             "skipped_seeds": skipped,
             "mean_seconds_per_sample": elapsed / len(records),
             "y": [float(val) for val in ys[n]],

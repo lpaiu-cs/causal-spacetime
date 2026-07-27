@@ -877,8 +877,10 @@ The spacelike chain, run exactly as the Section 10 addendum froze it.
   the calibration fired on both (coverage 0.944 / 0.920 at nominal
   -> `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
   `n_eq = 85 > cap` — flat verdict declared unavailable ex ante,
-  same vocabulary as Stage A. Projected Stage B wall 1.5 s.
-  FEASIBLE. Artifact `p11_pilot_b_summary.json`.
+  same vocabulary as Stage A. Projected Stage B wall 3.8 s
+  *(corrected: the first freeze narrated 1.5 s from the
+  pre-certificate run; the frozen artifact records
+  `projected_stage_b_hours = 0.0010652`)*. FEASIBLE. Artifact `p11_pilot_b_summary.json`.
 - **Stage B**: 12 complete samples per rung, zero skips, no
   selection caveat. Mean `y`: -0.560 / -0.700 / -0.773, monotone.
 

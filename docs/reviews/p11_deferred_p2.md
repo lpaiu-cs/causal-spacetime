@@ -1,4 +1,4 @@
-# Deferred P2 review items (P11 campaign)
+# Deferred P2 review items (P11 campaign) -- CLEARED 2026-07-27
 
 Tracking document for P2-severity review findings deliberately
 deferred during the P11 merge cycle (user policy 2026-07-27: P1 and
@@ -35,3 +35,5 @@ until they do.
   correction marker, same class as the g4 misread fixed in 9f97328
   (narrative numbers must be read from artifacts, never from console
   tails or memory).
+- **Done**: Section 9.4 now reads 3.8 s with the correction marker
+  and the artifact field quoted.
