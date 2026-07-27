@@ -638,3 +638,63 @@ skip-cap paths; seed-window privacy and freshness
 against the full documented list; verdict-table precedence logic on
 synthetic inputs, including CIs matching two rows. Stage P runs only
 from a clean commit containing all of it.
+
+## 9. Stage records (results)
+
+### 9.1 Verification (2026-07-27)
+
+2000/2000 complete at every rung against the 1998 pin — zero
+incomplete samples anywhere, so the Section 4 conditional estimand
+coincides with the unconditional one on everything that follows.
+Measured wall times 0.006 / 0.022 / 0.083 s per sample. Artifact
+`docs/prereg/frozen/p11/p11_verification_summary.json`, stamp
+`99e7889` (regenerated at each implementation change under the
+stamp-equality gate; completeness identical every time).
+
+### 9.2 Stage P, the pilot (2026-07-27)
+
+Both endpoint rungs, 200 samples each, zero skips. Variances
+0.01187 / 0.01246 (per-sample `y` SD ~ 0.11 dex), kurtosis
+`g4 = 4.01 / 4.24` — heavier-tailed than Gaussian, and the v1.9
+calibration FIRED on its first live run: measured coverage of the
+nominal Bonett bound was 0.914 / 0.918, short of the 0.95 target, so
+`z` self-calibrated to 1.983 / 1.938. The invalid v1.7 chi-square
+factor and the uncalibrated v1.8 nominal bound would both have
+under-covered here; the review escalation that forced validation was
+right on the data.
+
+Power: `S^2_90 = 0.0311`, `n_sup = 9 -> floor 12`, `n_eq = 91 > cap`
+— **the flat verdict was declared unavailable ex ante**; this
+campaign's vocabulary is IMPROVES / DEGRADES / UNRESOLVED. Projected
+Stage A wall time 1.4 s against the 12-hour stop. FEASIBLE. Artifact
+`p11_pilot_summary.json` (with the 200 per-rung `y` values).
+
+### 9.3 Stage A, the primary gate (2026-07-27): **IMPROVES**
+
+12 complete samples per rung, zero skips, no selection caveat.
+Mean `y` (log10 of the per-sample median relative proper-time
+error): -0.618 / -0.637 / -0.805 — monotone in `N`, the middle rung
+between the endpoints (no analogue of P10's 900 dip).
+
+    Delta = -0.187 dex,  95% CI [-0.289, -0.091]  ->  IMPROVES
+
+The interval sits entirely below zero, and the point estimate lands
+within 7% of the frozen theoretical target `Delta* = -0.2007`.
+Labelled consistency checks, none gating: the chain slope is
+-0.311 with CI [-0.474, -0.150], containing the predicted `-1/3`;
+the volume slope is -0.346 with CI [-0.567, -0.129], containing its
+predicted `-1/2`; the constant-level check sits within ~25% of
+`0.89 m_cond^(-1/3)` at every rung. Artifacts `p11_stage_a.csv`,
+`p11_stage_a_summary.json`, stamp `99e7889`.
+
+**What this establishes, exactly as scoped in 1.4**: the Section 2
+existence claim is SUPPORTED over the tested densities — there is an
+instrument, taking relabeling-invariant order quantities plus the
+count as density calibration, whose continuum-unit proper-time
+accuracy IMPROVES as the sprinkling densifies, at a rate consistent
+with the longest-chain theorem. Through the P10 discriminator the
+continuum limit was undecidable; through the chain estimator the
+deepening is measured, with the theory exponent inside the interval.
+Claims beyond the tested ladder and estimator remain unclaimed.
+Next per Section 6: the Stage B addendum (spacelike), to be frozen
+before any Stage B data.
