@@ -1,0 +1,22 @@
+{
+  "code_version": "f339dc7",
+  "pin_required": 1998,
+  "per_n": {
+    "600": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.006306812100010575
+    },
+    "1200": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.02492696490000526
+    },
+    "2400": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.09669190159998835
+    }
+  },
+  "pin_passed": true
+}

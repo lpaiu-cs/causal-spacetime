@@ -766,3 +766,40 @@ gated Stage P.
 Implementation note: the runner lands only after this addendum
 merges (design-first, as Stage A's did); the Stage B verification
 pin must pass before Stage P-B may run.
+
+### 9.4 Stage B verification, Stage P-B, and Stage B (2026-07-27): **IMPROVES**
+
+The spacelike chain, run exactly as the Section 10 addendum froze it.
+
+- **Verification-B**: 2000/2000 complete at every rung (pin 1998);
+  wall times comparable to Stage A's. Artifact
+  `p11_verification_b_summary.json`.
+- **Stage P-B**: 200 spacelike samples per endpoint rung, zero
+  skips. Variances 0.0126 / 0.0115, `g4 = 4.2 / 3.8`; the
+  calibration fired again (coverage 0.944 / 0.920 at nominal ->
+  `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
+  `n_eq = 85 > cap` — flat verdict declared unavailable ex ante,
+  same vocabulary as Stage A. Projected Stage B wall 1.5 s.
+  FEASIBLE. Artifact `p11_pilot_b_summary.json`.
+- **Stage B**: 12 complete samples per rung, zero skips, no
+  selection caveat. Mean `y`: -0.560 / -0.700 / -0.773, monotone.
+
+      Delta = -0.213 dex,  95% CI [-0.303, -0.122]  ->  IMPROVES
+
+  The point estimate lands within 6% of the DERIVED
+  `Delta*_B = -0.2007`. Labelled checks: chain slope -0.354 with CI
+  [-0.501, -0.201] containing the predicted `-1/3`; volume slope
+  -0.464 with CI [-0.742, -0.204] containing `-1/2`; constant level
+  within ~20% of `0.89 m_cond^(-1/3)` at every rung. Artifacts
+  `p11_stage_b.csv`, `p11_stage_b_summary.json`, stamp `f339dc7`.
+
+**Both gates of the metric instrument now read IMPROVES.** As scoped
+in 1.4 and Section 10: over the tested densities, continuum-unit
+accuracy from order plus count improves with density at the
+longest-chain rate in BOTH the timelike direction (proper time,
+Stage A) and the spacelike direction (distance via the meet-join
+dual box, Stage B). The emergent geometry's metric content — time
+AND space — deepens toward the continuum through this instrument
+family, exactly where the P10 discriminator family could not decide.
+Remaining per Section 6: Stage C (coordinates), gated on its own
+addendum.
