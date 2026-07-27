@@ -13,6 +13,16 @@ the verdict table is evaluated by precedence, making the categories
 mutually exclusive (v1.0's IMPROVES and FLAT could both match a small
 all-negative CI).
 
+v1.2 review corrections (pre-freeze, pre-data): (iii) the hypothesis
+no longer says "pure order" — the count supplies the density
+calibration, so a pass supports order-plus-density reconstruction
+(Sections 2, 3); (iv) Stage B's pair-disjointness support is now
+defined (the realized meet-join bounding box — v1.1's causal-interval
+rule was undefined for spacelike pairs); (v) Stage B gets its own
+quarantined variance pilot, sample-size formula, and frozen seed
+windows instead of inheriting Stage A's `n` computed from a different
+estimator's variance.
+
 Lineage. P10 closed with: "What a continuum-limit test now requires is
 a reconstruction whose continuum accuracy grows with density — a
 different instrument." This document designs that instrument. P10's
@@ -90,6 +100,20 @@ Worked anchors (illustrative only, the pilot decides): sigma_hat =
   12 hours, INFEASIBLE-AS-DESIGNED is recorded and the design returns
   to the drawing board without any outcome having been read.
 
+**Stage P-B (frozen now, run only after Stage A passes).** `d_hat`
+carries frontier-locator variability the timelike estimator does not,
+so Stage B is powered from ITS OWN variance, never Stage A's (v1.2,
+review): a second variance-only, quarantined pilot — bottom rung,
+`n_pilot = 12` spacelike samples under the Stage B pair protocol,
+seed window Section 5 — feeds the SAME formula (1.2) with the SAME
+`Delta* = -0.2007`, giving Stage B its own `n_per_rung`, floor 12 /
+cap 60, and the same 12-hour feasibility stop. Reusing `Delta*` is
+conservative for power: the locator noise decays as `N^(-1/2)`,
+faster than the chain noise's `m^(-1/3)`, so the composite top-to-
+bottom fall is predicted at least as large as the chain-only effect.
+Quarantine as in Stage P: one rung, no contrast computable, samples
+never reused.
+
 ### 1.4 Verdict logic (frozen for every stage gate)
 
 Each stage's gate reads the 95% bootstrap CI `[lo, hi]` of its
@@ -120,13 +144,26 @@ completeness-conditioning; the P10 Stage B lesson).
 ## 2. The question
 
 Does emergent geometry deepen toward a continuum? Operationally here:
-does there exist a pure-order instrument whose continuum-unit metric
+does there exist an instrument — inputs: relabeling-invariant order
+quantities (chain lengths, interval cardinalities) PLUS the event
+count as the density calibration — whose continuum-unit metric
 accuracy IMPROVES as sprinkling density grows, at the rate theory
-predicts? Scope: 1+1D first (the dictionary regime where the
-longest-chain law is a sharp theorem); higher dimensions are a listed
-lever, not part of this preregistration.
+predicts?
 
-## 3. The instrument (all inputs pure order)
+Scope of a pass, stated before any data (v1.2, review): causal order
+alone fixes only the conformal structure; the count supplies the
+volume scale — the repository's own convention
+(`src/causal_spacetime_lab/metrics.py`: order supplies the interval
+count, density supplies the metric scale), and the causal-set thesis
+"order + number = geometry". A passing experiment therefore supports
+**reconstruction from order plus density calibration**, never a
+pure-order metric claim: the same order with a rescaled diamond would
+carry different proper times, and it is `N` in `tau_hat = L/sqrt(N)`
+that fixes the scale. Dimensional scope: 1+1D first (the dictionary
+regime where the longest-chain law is a sharp theorem); higher
+dimensions are a listed lever, not part of this preregistration.
+
+## 3. The instrument (inputs: order invariants + the count as scale)
 
 Setting: uniform random order of size `N` == Poisson sprinkling of the
 unit causal diamond at density `N`, via the frozen null-coordinate
@@ -192,9 +229,17 @@ has always run.
   reason the `-1/3` exponent is a labelled consistency check and
   never the gate.
 - `K = 6` pairs per sample, drawn by the sample's own scoring stream
-  (Section 5), accepted only if their closed intervals are pairwise
-  disjoint (kills within-sample dependence); up to 200 rejection
-  draws, else the sample is INCOMPLETE.
+  (Section 5), accepted only if their SUPPORTS are pairwise disjoint
+  (kills within-sample dependence); up to 200 rejection draws, else
+  the sample is INCOMPLETE. The support is frozen per stage (v1.2 —
+  the v1.1 "closed intervals" rule was undefined for spacelike
+  pairs): **Stage A**: the closed causal interval `I(x, y)`, which in
+  `(u, v)` IS the pair's bounding box. **Stage B**: the `(u, v)`
+  bounding box of `{x, y} ∪ M(x, y) ∪ J(x, y)` — the realized meet
+  and join sets included — which contains every interval `I(a, b)`,
+  `(a, b) in M x J`, that the estimator touches, so disjoint supports
+  imply disjoint estimator inputs with no tuning parameter. Pairs
+  with `M` or `J` empty are ineligible before the disjointness test.
 - Everything above is frozen before any run; the band never adapts to
   data (the B' scale-referencing lesson made structural).
 
@@ -210,7 +255,11 @@ offset < 200) stays inside its own row's window. Windows:
 | Stage A, N=600 | 64000 | <= 60 | 64000-75999 |
 | Stage A, N=1200 | 76000 | <= 60 | 76000-87999 |
 | Stage A, N=2400 | 88000 | <= 60 | 88000-99999 |
-| Stage B blocks | 100000+ | — | frozen with Stage B's addendum |
+| Stage P-B pilot (N=600) | 100000 | 12 | 100000-102399 |
+| Stage B, N=600 | 104000 | <= 60 | 104000-115999 |
+| Stage B, N=1200 | 116000 | <= 60 | 116000-127999 |
+| Stage B, N=2400 | 128000 | <= 60 | 128000-139999 |
+| Stage C blocks | 140000+ | — | frozen with Stage C's addendum |
 
 All spans sit above every range the programme has ever used (documented
 maxima: 30000-30379, 40000-40168, 41000-41059, 43000-54999); a
@@ -228,10 +277,14 @@ the full documented list before the pilot may run.
   `-1/3` (chain) and `-1/2` (volume); (b) the constant-level band
   `median relerr ~ 0.89 m^(-1/3)`; (c) middle-rung monotonicity (the
   900-dip watch). Stage B runs only if Stage A passes.
-- **Stage B** (spacelike): same contrast for d_hat. Superiority gate
-  only — the meet-join construction adds an `O(N^(-1/2))` locator
-  noise whose pre-asymptotic mixing makes an exponent gate
-  overconfident; the slope is recorded, labelled.
+- **Stage P-B** (spacelike pilot): variance + feasibility only, per
+  1.3 — supplies Stage B's own `n_per_rung`. Runs only after Stage A
+  passes.
+- **Stage B** (spacelike): the 1.4 verdict logic applied to d_hat's
+  `Delta`, at Stage P-B's `n`. Superiority gate only — the meet-join
+  construction adds an `O(N^(-1/2))` locator noise whose
+  pre-asymptotic mixing makes an exponent gate overconfident; the
+  slope is recorded, labelled.
 - **Stage C** (coordinates): gate declared (continuum coordinate
   error falls, same verdict table), estimator frozen by addendum
   after Stage B, before any Stage C data.
@@ -269,7 +322,13 @@ the programme, it located the ground it stands on.
 
 New module `experiments/positive_control/p11_metric.py`: interval
 extraction by 2D dominance (`O(N)` per pair), LIS by patience sorting,
-the three estimators, the pair protocol, stage runners P/A. Tests
+the three estimators, the pair protocol, stage runners P/A. The
+shared-definition rule applies from the start:
+`src/causal_spacetime_lab/metrics.py` already defines a
+cardinality-based proper-time estimator ("rho supplies metric scale;
+the causal order alone provides the interval count"), and
+`tau_hat_vol` goes through that definition — mapped to the frozen
+Section 3 convention — never re-implemented. Tests
 before any run: LIS against brute force on small posets; tau_hat
 normalization pinned on constructed intervals; pair-disjointness and
 incompleteness paths; seed-window privacy and freshness against the
