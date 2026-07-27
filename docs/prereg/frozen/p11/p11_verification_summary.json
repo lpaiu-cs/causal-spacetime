@@ -1,21 +1,21 @@
 {
-  "code_version": "7ba6d0d",
+  "code_version": "d9921e7",
   "pin_required": 1998,
   "per_n": {
     "600": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.005539815500000259
+      "mean_seconds_per_sample": 0.00567026055000315
     },
     "1200": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.02258278335000796
+      "mean_seconds_per_sample": 0.021589253350000944
     },
     "2400": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.08900502640000195
+      "mean_seconds_per_sample": 0.08302126644999953
     }
   },
   "pin_passed": true
