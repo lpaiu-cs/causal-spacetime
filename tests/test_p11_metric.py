@@ -135,6 +135,66 @@ def test_verification_mode_smoke_completeness():
     assert complete_count == 20
 
 
+def test_spacelike_pool_and_dual_box_normalization():
+    """Reversed permutation: every pair is spacelike. For the extreme
+    pair (0, N-1) the dual box is the whole open square and its
+    unanchored LIS is the estimator with NO endpoint correction:
+    d_hat must equal L/sqrt(N) exactly."""
+
+    from p11_metric import (
+        eligible_pool_spacelike,
+        run_sample_spacelike,
+        score_pair_spacelike,
+    )
+
+    n = 60
+    pi = np.arange(n)[::-1]
+    u, v = continuum_uv(pi)
+    pool = eligible_pool_spacelike(u, v)
+    dists = 2.0 * np.sqrt(
+        (u[pool[:, 1]] - u[pool[:, 0]]) * (v[pool[:, 0]] - v[pool[:, 1]])
+    )
+    assert pool.shape[0] > 0
+    assert np.all(dists >= TAU_BAND[0]) and np.all(dists <= TAU_BAND[1])
+    assert np.all(v[pool[:, 0]] > v[pool[:, 1]])   # spacelike ordering
+
+    scored = score_pair_spacelike(u, v, 0, n - 1)
+    assert scored["tau_chain"] == pytest.approx(
+        scored["chain_length"] / np.sqrt(n)
+    )
+    assert scored["tau_true"] == pytest.approx(
+        2.0 * np.sqrt((u[n - 1] - u[0]) * (v[0] - v[n - 1]))
+    )
+
+    record, complete = run_sample_spacelike(600, 600000, single_stream=True)
+    assert complete and np.isfinite(record["y"])
+
+
+def test_stage_b_windows_are_private_and_fresh():
+    from p11_metric import (
+        PILOT_B_BLOCKS,
+        STAGE_B_BLOCKS,
+        VERIFY_B_BASE,
+    )
+
+    assert PILOT_B_BLOCKS == {600: (336000, 220), 2400: (380000, 220)}
+    assert STAGE_B_BLOCKS == {600: (424000, 80), 1200: (440000, 80),
+                              2400: (456000, 80)}
+    spans = []
+    for base, slots in {**PILOT_BLOCKS, **STAGE_A_BLOCKS,
+                        **PILOT_B_BLOCKS, **STAGE_B_BLOCKS}.values():
+        spans.append(set(range(base, base + STRIDE * slots)))
+    for x in spans:
+        for w in spans:
+            assert x is w or not (x & w)
+    experimental_top = max(max(s) for s in spans)
+    for n in P11_LADDER:
+        vspan = set(range(VERIFY_B_BASE[n], VERIFY_B_BASE[n] + VERIFY_COUNT))
+        assert min(vspan) > experimental_top
+        for s in spans:
+            assert not (vspan & s)
+
+
 def test_verdict_precedence_is_single_valued():
     assert verdict(-0.05, -0.01, True) == "IMPROVES"      # also in margin
     assert verdict(0.01, 0.05, True) == "DEGRADES"        # also in margin
