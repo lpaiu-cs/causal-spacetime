@@ -710,6 +710,47 @@ def run_sample_spacelike(n: int, seed: int, single_stream: bool = False):
     return record, True
 
 
+FROZEN_P11_DIR = (Path(__file__).resolve().parents[2]
+                  / "docs" / "prereg" / "frozen" / "p11")
+
+
+def _require_stage_pass(name: str, stage_label: str) -> dict:
+    """Cross-stage gate (Section 6): a later stage runs only after the
+    earlier stage's FROZEN record reads IMPROVES. The frozen copy is
+    the repo-canonical one, and its stamp must be REACHABLE from HEAD
+    (ancestry, not equality — the earlier stage's code legitimately
+    predates later commits; a squash-merge that orphaned the stamp
+    fails here loudly, review)."""
+
+    import subprocess
+
+    path = FROZEN_P11_DIR / name
+    if not path.exists():
+        raise SystemExit(
+            f"{name} not found in the frozen record -- {stage_label} "
+            "has not run and been frozen; the stage order of Section 6 "
+            "is frozen."
+        )
+    artifact = json.loads(path.read_text(encoding="utf-8"))
+    if artifact.get("verdict") != "IMPROVES":
+        raise SystemExit(
+            f"{stage_label} verdict is {artifact.get('verdict')!r}, not "
+            "IMPROVES -- the campaign stops at that stage (Section 6)."
+        )
+    stamp = str(artifact.get("code_version", ""))
+    reachable = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"],
+        capture_output=True,
+    ).returncode == 0
+    if not reachable:
+        raise SystemExit(
+            f"{stage_label}'s frozen stamp {stamp} is not an ancestor "
+            "of HEAD -- its producing commit is unreachable from this "
+            "history, so its provenance cannot be audited here."
+        )
+    return artifact
+
+
 def run_verify_b(output_dir: Path) -> None:
     """Stage B completeness pin and wall times (Section 10)."""
 
@@ -747,6 +788,9 @@ def run_pilot_b(output_dir: Path) -> None:
     (derived in Section 10). Cross-rung statistics forbidden."""
 
     stamp = _preflight_clean()
+    # Section 6: Stage P-B runs only after Stage A PASSES -- checking
+    # the verification pin alone let the sequence be bypassed (review)
+    _require_stage_pass("p11_stage_a_summary.json", "Stage A")
     verification = _load_gate_artifact(output_dir, VERIFY_B_ARTIFACT, stamp)
     if not verification.get("pin_passed"):
         raise SystemExit("B verification pin failed -- pilot-b refuses")

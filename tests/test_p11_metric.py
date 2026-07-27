@@ -274,6 +274,47 @@ def test_preflight_refuses_a_dirty_worktree(monkeypatch, tmp_path):
         mod.run_verify(tmp_path)
 
 
+def test_stage_pass_gate_requires_improves_and_reachable_stamp(
+        monkeypatch, tmp_path):
+    """Section 6: pilot-B may not consume its quarantined windows
+    unless Stage A's FROZEN record reads IMPROVES with a stamp
+    reachable from HEAD."""
+
+    import subprocess
+
+    import p11_metric as mod
+
+    monkeypatch.setattr(mod, "FROZEN_P11_DIR", tmp_path)
+    # missing record refuses
+    with pytest.raises(SystemExit, match="has not run"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    # failing verdict refuses
+    (tmp_path / "p11_stage_a_summary.json").write_text(
+        '{"verdict": "DEGRADES", "code_version": "whatever"}\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(SystemExit, match="not\\s+IMPROVES"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    # unreachable stamp refuses even with a passing verdict
+    (tmp_path / "p11_stage_a_summary.json").write_text(
+        '{"verdict": "IMPROVES", "code_version": "0000000"}\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(SystemExit, match="not an ancestor"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    # passing verdict with a reachable stamp is accepted
+    head = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    (tmp_path / "p11_stage_a_summary.json").write_text(
+        f'{{"verdict": "IMPROVES", "code_version": "{head}"}}\n',
+        encoding="utf-8",
+    )
+    result = mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    assert result["verdict"] == "IMPROVES"
+
+
 def test_preflight_refuses_an_unknown_stamp(monkeypatch, tmp_path):
     """git-less environments stamp 'unknown', which carries no
     provenance and would even satisfy the prerequisite equality check
