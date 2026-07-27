@@ -666,7 +666,8 @@ right on the data.
 Power: `S^2_90 = 0.0311`, `n_sup = 9 -> floor 12`, `n_eq = 91 > cap`
 — **the flat verdict was declared unavailable ex ante**; this
 campaign's vocabulary is IMPROVES / DEGRADES / UNRESOLVED. Projected
-Stage A wall time 1.4 s against the 12-hour stop. FEASIBLE. Artifact
+Stage A wall time ~1.3 s against the 12-hour stop (see the
+wall-time note below). FEASIBLE. Artifact
 `p11_pilot_summary.json` (with the 200 per-rung `y` values).
 
 ### 9.3 Stage A, the primary gate (2026-07-27): **IMPROVES**
@@ -713,7 +714,8 @@ addendum froze it (the v1 design having been withdrawn before running).
   fired a third time (coverage 0.932 / 0.931 at nominal ->
   `z = 1.784 / 1.842`). `S^2_90 = 0.0577`, `n_sup = 16`,
   `n_eq = 168 > cap` — flat verdict declared unavailable ex ante;
-  `n_per_rung = 16`; projected Stage C wall 5.0 s. FEASIBLE.
+  `n_per_rung = 16`; projected Stage C wall ~5.3 s (see the
+  wall-time note below). FEASIBLE.
 - **Stage C**: 16 complete samples per rung, zero skips, no
   selection caveat. Mean `y`: -0.801 / -0.962 / -1.077, monotone.
 
@@ -752,6 +754,24 @@ could not decide the continuum question; this instrument family
 answers it in the affirmative over the tested ladder, at the rate the
 longest-chain theorem predicts, with every claim scoped to that
 ladder and estimator.
+
+
+
+### 9.6 Wall-time figures are measurements, not reproducible values
+
+Recorded once, because the same defect recurred three times: every
+projected-wall figure in Sections 9.2-9.5 is a MEASURED timing on the
+machine that produced the artifact, so it changes on every
+regeneration while the gate quantities stay bit-identical. Narrating
+a precise second-count therefore guarantees a future mismatch with
+the frozen artifact it cites - which is exactly what happened when
+the certificate round tripled the per-sample cost, and again when the
+P2 refreeze re-timed everything. The record's rule from here: quote
+wall times to one significant figure with a `~`, and read the exact
+value from `projected_stage_*_hours` in the artifact when it matters.
+The feasibility GATE was never at risk in any of these cases - the
+projections run 1-6 seconds against a 12-hour stop, four orders of
+magnitude of headroom.
 
 
 ## 10. Stage B addendum (frozen 2026-07-27, before any Stage B data)
@@ -877,10 +897,11 @@ The spacelike chain, run exactly as the Section 10 addendum froze it.
   the calibration fired on both (coverage 0.944 / 0.920 at nominal
   -> `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
   `n_eq = 85 > cap` — flat verdict declared unavailable ex ante,
-  same vocabulary as Stage A. Projected Stage B wall 3.8 s
-  *(corrected: the first freeze narrated 1.5 s from the
-  pre-certificate run; the frozen artifact records
-  `projected_stage_b_hours = 0.0010652`)*. FEASIBLE. Artifact `p11_pilot_b_summary.json`.
+  same vocabulary as Stage A. Projected Stage B wall ~3.7 s
+  *(corrected twice: the first freeze narrated 1.5 s from the
+  pre-certificate run, then a precise figure that the next
+  regeneration invalidated -- see the wall-time note below)*.
+  FEASIBLE. Artifact `p11_pilot_b_summary.json`.
 - **Stage B**: 12 complete samples per rung, zero skips, no
   selection caveat. Mean `y`: -0.560 / -0.700 / -0.773, monotone.
 
