@@ -646,9 +646,10 @@ from a clean commit containing all of it.
 2000/2000 complete at every rung against the 1998 pin — zero
 incomplete samples anywhere, so the Section 4 conditional estimand
 coincides with the unconditional one on everything that follows.
-Measured wall times 0.006 / 0.022 / 0.083 s per sample. Artifact
+Measured wall times ~0.005 / ~0.02 / ~0.08 s per sample (one
+significant figure, per 9.6). Artifact
 `docs/prereg/frozen/p11/p11_verification_summary.json`, stamp
-`99e7889` (regenerated at each implementation change under the
+`535a5b7` (regenerated at each implementation change under the
 stamp-equality gate; completeness identical every time).
 
 ### 9.2 Stage P, the pilot (2026-07-27)
@@ -666,7 +667,8 @@ right on the data.
 Power: `S^2_90 = 0.0311`, `n_sup = 9 -> floor 12`, `n_eq = 91 > cap`
 — **the flat verdict was declared unavailable ex ante**; this
 campaign's vocabulary is IMPROVES / DEGRADES / UNRESOLVED. Projected
-Stage A wall time 1.4 s against the 12-hour stop. FEASIBLE. Artifact
+Stage A wall time ~1 s against the 12-hour stop (see the
+wall-time note below). FEASIBLE. Artifact
 `p11_pilot_summary.json` (with the 200 per-rung `y` values).
 
 ### 9.3 Stage A, the primary gate (2026-07-27): **IMPROVES**
@@ -685,7 +687,7 @@ Labelled consistency checks, none gating: the chain slope is
 the volume slope is -0.346 with CI [-0.567, -0.129], containing its
 predicted `-1/2`; the constant-level check sits within ~25% of
 `0.89 m_cond^(-1/3)` at every rung. Artifacts `p11_stage_a.csv`,
-`p11_stage_a_summary.json`, stamp `99e7889`.
+`p11_stage_a_summary.json`, stamp `535a5b7`.
 
 **What this establishes, exactly as scoped in 1.4**: the Section 2
 existence claim is SUPPORTED over the tested densities — there is an
@@ -706,14 +708,16 @@ The coordinate reconstruction, run exactly as the Section 11 v2.1
 addendum froze it (the v1 design having been withdrawn before running).
 
 - **Verification-C**: 2000/2000 complete at every rung (pin 1998),
-  wall times 0.015 / 0.059 / 0.237 s per sample. Artifact
+  wall times ~0.02 / ~0.07 / ~0.3 s per sample (one significant
+  figure, per 9.6). Artifact
   `p11_verification_c_summary.json`.
 - **Stage P-C**: 200 samples per endpoint rung, zero skips.
   Variances 0.0282 / 0.0193, `g4 = 3.35 / 3.23`; the calibration
   fired a third time (coverage 0.932 / 0.931 at nominal ->
   `z = 1.784 / 1.842`). `S^2_90 = 0.0577`, `n_sup = 16`,
   `n_eq = 168 > cap` — flat verdict declared unavailable ex ante;
-  `n_per_rung = 16`; projected Stage C wall 5.0 s. FEASIBLE.
+  `n_per_rung = 16`; projected Stage C wall ~5 s (see the
+  wall-time note below). FEASIBLE.
 - **Stage C**: 16 complete samples per rung, zero skips, no
   selection caveat. Mean `y`: -0.801 / -0.962 / -1.077, monotone.
 
@@ -735,7 +739,7 @@ addendum froze it (the v1 design having been withdrawn before running).
   below zero, IMPROVES either way — and since its `y = -0.810` is
   WORSE than its rung's mean `-1.077`, the frozen include-everything
   rule is the conservative choice here. Artifacts `p11_stage_c.csv`,
-  `p11_stage_c_summary.json`, stamp `36385e1`.
+  `p11_stage_c_summary.json`, stamp `535a5b7`.
 
 **All three gates of the metric instrument now read IMPROVES.** As
 scoped in 1.4, Sections 10 and 11: over the tested densities, from
@@ -752,6 +756,32 @@ could not decide the continuum question; this instrument family
 answers it in the affirmative over the tested ladder, at the rate the
 longest-chain theorem predicts, with every claim scoped to that
 ladder and estimator.
+
+
+
+### 9.6 Wall-time figures are measurements, not reproducible values
+
+Recorded once, because the same defect recurred three times: every
+projected-wall figure in Sections 9.2-9.5 is a MEASURED timing on the
+machine that produced the artifact, so it changes on every
+regeneration while the gate quantities stay bit-identical. Narrating
+a precise second-count therefore guarantees a future mismatch with
+the frozen artifact it cites - which is exactly what happened when
+the certificate round tripled the per-sample cost, and again when the
+P2 refreeze re-timed everything. The record's rule from here: quote
+EVERY measured timing to one significant figure with a `~` - the
+projections AND the per-sample verification times, since both are
+machine measurements that move on each refreeze. The rule took two
+review rounds to get right: the first pass wrote two figures
+(~1.3 / ~3.7 / ~5.3, now ~1 / ~4 / ~5), and the second pass covered
+only the projections while the per-sample verification trios in 9.1
+and 9.5 still carried three-decimal quotes that the same refreeze had
+already invalidated. Exact values live in the artifacts
+(`projected_stage_*_hours`, `per_n.*.mean_seconds_per_sample`) and
+are read from there when they matter.
+The feasibility GATE was never at risk in any of these cases - the
+projections run 1-6 seconds against a 12-hour stop, four orders of
+magnitude of headroom.
 
 
 ## 10. Stage B addendum (frozen 2026-07-27, before any Stage B data)
@@ -877,7 +907,10 @@ The spacelike chain, run exactly as the Section 10 addendum froze it.
   the calibration fired on both (coverage 0.944 / 0.920 at nominal
   -> `z = 1.705 / 1.953`). `S^2_90 = 0.0293`, `n_sup = 8 -> floor 12`,
   `n_eq = 85 > cap` — flat verdict declared unavailable ex ante,
-  same vocabulary as Stage A. Projected Stage B wall 1.5 s.
+  same vocabulary as Stage A. Projected Stage B wall ~4 s
+  *(corrected twice: the first freeze narrated 1.5 s from the
+  pre-certificate run, then a precise figure that the next
+  regeneration invalidated -- see the wall-time note below)*.
   FEASIBLE. Artifact `p11_pilot_b_summary.json`.
 - **Stage B**: 12 complete samples per rung, zero skips, no
   selection caveat. Mean `y`: -0.560 / -0.700 / -0.773, monotone.
@@ -890,7 +923,8 @@ The spacelike chain, run exactly as the Section 10 addendum froze it.
   -0.464 with CI [-0.742, -0.204] containing `-1/2`; constant level
   within ~20% of `0.89 m_cond^(-1/3)` at every rung. Artifacts
   `p11_stage_b.csv`, `p11_stage_b_summary.json` (regenerated with
-  the Section 10 production certificates at stamp `994bca5`; gate
+  the Section 10 production certificates, refrozen at stamp
+  `535a5b7`; gate
   numbers bit-identical to the first freeze).
 - **Order certification of the scored boxes** (Section 10
   amendment, run over the full record): of the 216 scored pairs,
