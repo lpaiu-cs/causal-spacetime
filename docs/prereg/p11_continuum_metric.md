@@ -23,6 +23,28 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.3 review corrections (pre-freeze, pre-data): (vi) the chain
+estimator subtracts the closed-interval endpoints — v1.2's
+`L / sqrt(N)` carried a `+2/(sqrt(N) tau)` relative bias that FALLS
+with `N` (0.20 to 0.10 across the ladder), i.e. it would have faked
+part of the improvement the gate exists to test; the estimator now
+goes through the repository's shared definition
+(`estimate_tau_from_longest_chain_1p1`, which subtracts the endpoint
+contributions), per the shared-definition rule. (vii) Stage B's
+estimator and support are DE-FROZEN to an addendum: review checked
+100 samples per rung and found the v1.2 bounding-box rule cannot
+yield 6 disjoint supports (the meet/join frontiers are Pareto
+staircases spanning the null arms), and in-house derivation found the
+v1.2 median-over-`M x J` estimator biased upward (far-from-corner
+candidates contribute `tau > d`); constraints for the addendum are
+recorded in Section 3. (viii) the feasibility projection weights
+rungs by cost (`1 + 2 + 4`), not `3x` the bottom rung. (ix) the
+ensemble language is corrected: the uniform permutation is a
+sprinkling CONDITIONED on `N`, and `(i, pi(i))/N` is its rank grid —
+the permutation-based chain theorems apply verbatim, but count
+fluctuations are sub-Poisson and are labelled as rank-ensemble
+statements.
+
 Lineage. P10 closed with: "What a continuum-limit test now requires is
 a reconstruction whose continuum accuracy grows with density — a
 different instrument." This document designs that instrument. P10's
@@ -95,24 +117,28 @@ Worked anchors (illustrative only, the pilot decides): sigma_hat =
 - **Quarantine**: the pilot computes NO cross-rung contrast (it runs
   one rung, so none exists), and its samples are never reused in any
   stage. Its two outputs are `n_per_rung` (via 1.2) and feasibility.
-- Feasibility rule (frozen): projected Stage A wall time
-  `= 3 * n_per_rung * (pilot wall time / 12)`, and if it exceeds
-  12 hours, INFEASIBLE-AS-DESIGNED is recorded and the design returns
-  to the drawing board without any outcome having been read.
+- Feasibility rule (frozen; v1.3 corrected the rung weighting):
+  per-pair work scales linearly in `N` (interval extraction `O(N)`,
+  interior LIS near-linear in `m ∝ N`), so the projection weights
+  each rung by `N_r / 600`: projected Stage A wall time
+  `= n_per_rung * (pilot wall time / 12) * (1 + 2 + 4)` — seven
+  bottom-rung units per sample-set, not the v1.2 `3x` that priced
+  every rung at bottom-rung cost. If it exceeds 12 hours,
+  INFEASIBLE-AS-DESIGNED is recorded and the design returns to the
+  drawing board without any outcome having been read.
 
-**Stage P-B (frozen now, run only after Stage A passes).** `d_hat`
-carries frontier-locator variability the timelike estimator does not,
+**Stage P-B (power protocol frozen now; estimator by addendum).**
+`d_hat` carries locator variability the timelike estimator does not,
 so Stage B is powered from ITS OWN variance, never Stage A's (v1.2,
 review): a second variance-only, quarantined pilot — bottom rung,
-`n_pilot = 12` spacelike samples under the Stage B pair protocol,
-seed window Section 5 — feeds the SAME formula (1.2) with the SAME
-`Delta* = -0.2007`, giving Stage B its own `n_per_rung`, floor 12 /
-cap 60, and the same 12-hour feasibility stop. Reusing `Delta*` is
-conservative for power: the locator noise decays as `N^(-1/2)`,
-faster than the chain noise's `m^(-1/3)`, so the composite top-to-
-bottom fall is predicted at least as large as the chain-only effect.
-Quarantine as in Stage P: one rung, no contrast computable, samples
-never reused.
+`n_pilot = 12` spacelike samples under the Stage B pair protocol —
+feeds the SAME formula (1.2) with the SAME `Delta* = -0.2007`,
+giving Stage B its own `n_per_rung`, floor 12 / cap 60, and the
+rung-weighted feasibility stop above. Quarantine as in Stage P: one
+rung, no contrast computable, samples never reused. The `d_hat`
+DEFINITION this pilot runs is the Stage B addendum's (Section 3,
+v1.3) — the power protocol here does not change when that addendum
+lands, which is constraint (3) on it.
 
 ### 1.4 Verdict logic (frozen for every stage gate)
 
@@ -158,17 +184,26 @@ count, density supplies the metric scale), and the causal-set thesis
 "order + number = geometry". A passing experiment therefore supports
 **reconstruction from order plus density calibration**, never a
 pure-order metric claim: the same order with a rescaled diamond would
-carry different proper times, and it is `N` in `tau_hat = L/sqrt(N)`
-that fixes the scale. Dimensional scope: 1+1D first (the dictionary
+carry different proper times, and it is `N` in
+`tau_hat = (L-2)/sqrt(N)` that fixes the scale. Dimensional scope: 1+1D first (the dictionary
 regime where the longest-chain law is a sharp theorem); higher
 dimensions are a listed lever, not part of this preregistration.
 
 ## 3. The instrument (inputs: order invariants + the count as scale)
 
-Setting: uniform random order of size `N` == Poisson sprinkling of the
-unit causal diamond at density `N`, via the frozen null-coordinate
-dictionary (`order_inputs` — imported, never re-implemented; the
-shared-definition rule).
+Setting: uniform random order of size `N`, via the frozen
+null-coordinate dictionary (`order_inputs` — imported, never
+re-implemented; the shared-definition rule). Ensemble, stated
+precisely (v1.3): this equals a sprinkling of the unit diamond
+CONDITIONED on the count `N`, and the `(u, v) = (i, pi(i))/N`
+coordinates form its rank grid — exactly one event per null-coordinate
+rank, so interval counts have the same means as Poisson
+(`E|I| = N du dv`) but sub-Poisson, negatively associated
+fluctuations. The chain law needs no translation — the LIS theorems
+of Section 7 are permutation theorems, i.e. theorems about THIS
+ensemble; Poisson-flavoured variance intuitions are used nowhere as
+gates and are labelled where they appear (the volume estimator's
+noise reads conservative under sub-Poisson counts).
 
 **Frozen coordinate convention (v1.1).** `order_inputs` returns
 order-unit values `t = i + pi(i)`, `x = i - pi(i)`. The continuum
@@ -185,29 +220,43 @@ any implementation).
 
 - **tau_hat (timelike, PRIMARY — the chain estimator).** For related
   events `x < y`: `L(x, y)` = longest chain in the closed interval
-  `I(x, y)`; then
+  `I(x, y)` (endpoints included, the convention of the shared
+  `longest_chain_length`); then, through the repository's shared
+  definition `estimate_tau_from_longest_chain_1p1(L, rho = N/2)`:
 
-      tau_hat_chain = L / sqrt(N)
+      tau_hat_chain = (L - 2) / sqrt(N)
 
-  (Expected interval cardinality `m = N tau^2 / 4`; the longest chain
-  over a uniform 2D-order interval of `m` points converges to
-  `2 sqrt(m) = sqrt(N) tau`.) Computed exactly: 2D dominance order
-  makes the longest chain a longest increasing subsequence — patience
-  sorting, `O(m log m)`.
-- **tau_hat_vol (timelike, secondary).** `2 sqrt(|I(x, y)| / N)` —
-  the volume estimator; faster predicted convergence (`m^(-1/2)`),
-  less theory-rich fluctuations.
-- **d_hat (spacelike, Stage B).** For spacelike `x, y`: let `M` = the
-  maximal elements of `past(x) ∩ past(y)` and `J` = the minimal
-  elements of `future(x) ∩ future(y)`;
-
-      d_hat = median over (a, b) in M x J of tau_hat_chain(a, b)
-
-  In 1+1D continuum the meet-join interval's proper time EQUALS the
-  spatial separation; the median over the discrete ambiguity set is
-  the frozen tie-break. Samples where `M` or `J` is empty (pair too
-  close to the boundary) are excluded by the pair rule, not by the
-  estimator.
+  The endpoint subtraction is load-bearing (v1.3): the closed-interval
+  `L` exceeds the interior LIS by exactly the two endpoints, and
+  without the correction the estimator carries a `+2/(sqrt(N) tau)`
+  relative bias — 0.20 at the bottom rung falling to 0.10 at the top,
+  a systematic that would have faked improvement in the primary gate's
+  own direction. Interior expected cardinality `m = N tau^2 / 4`; the
+  interior longest chain converges to `2 sqrt(m) = sqrt(N) tau`
+  (Section 7). Computed exactly: 2D dominance order makes it a
+  longest increasing subsequence.
+- **tau_hat_vol (timelike, secondary).** `2 sqrt(|I_open(x, y)| / N)`
+  with `|I_open|` the interior count, via the shared
+  `metrics.py` cardinality estimator mapped to this convention;
+  faster predicted convergence (`m^(-1/2)`), noise labelled
+  rank-ensemble (sub-Poisson).
+- **d_hat (spacelike, Stage B) — NOT YET FROZEN (v1.3).** Two defects
+  killed the v1.2 candidate before implementation: (a) review checked
+  100 samples per rung under the frozen ensemble and the
+  bounding-box-of-`{x, y} ∪ M ∪ J` supports cannot yield 6 disjoint
+  pairs (the meet/join frontiers are Pareto staircases spanning the
+  null arms, so each support covers most of the diamond); (b)
+  in-house derivation: the median over `M x J` of interval proper
+  times is biased upward — candidates far from the continuum corners
+  contribute `tau > d`, so the estimator was not consistent as
+  written. Spacelike distance from order data is a recognized hard
+  problem; a candidate is frozen by ADDENDUM after Stage A reports
+  and before any Stage B data, and must satisfy, in writing, all of:
+  (1) a consistency argument for `d_hat -> d_true` as `N` grows;
+  (2) a disjointness support that six pairs can realize at the
+  bottom rung, demonstrated on synthetic checks that are quarantined
+  from Stage B's seeds; (3) compatibility with the Stage P-B power
+  protocol of 1.3 unchanged.
 - **Coordinates (Stage C).** Declared here, frozen later (staged
   freezing, the B' precedent): reconstruction of per-event `(t, x)`
   from tau_hat / d_hat to anchor sets, gated on the continuum
@@ -231,15 +280,11 @@ has always run.
 - `K = 6` pairs per sample, drawn by the sample's own scoring stream
   (Section 5), accepted only if their SUPPORTS are pairwise disjoint
   (kills within-sample dependence); up to 200 rejection draws, else
-  the sample is INCOMPLETE. The support is frozen per stage (v1.2 —
-  the v1.1 "closed intervals" rule was undefined for spacelike
-  pairs): **Stage A**: the closed causal interval `I(x, y)`, which in
-  `(u, v)` IS the pair's bounding box. **Stage B**: the `(u, v)`
-  bounding box of `{x, y} ∪ M(x, y) ∪ J(x, y)` — the realized meet
-  and join sets included — which contains every interval `I(a, b)`,
-  `(a, b) in M x J`, that the estimator touches, so disjoint supports
-  imply disjoint estimator inputs with no tuning parameter. Pairs
-  with `M` or `J` empty are ineligible before the disjointness test.
+  the sample is INCOMPLETE. The support: **Stage A**: the closed
+  causal interval `I(x, y)`, which in `(u, v)` IS the pair's bounding
+  box. **Stage B**: frozen with the Stage B addendum (v1.3 — the v1.2
+  `{x, y} ∪ M ∪ J` box rule was checked infeasible, and its estimator
+  inconsistent; Section 3), under constraint (2) there.
 - Everything above is frozen before any run; the band never adapts to
   data (the B' scale-referencing lesson made structural).
 
@@ -277,14 +322,16 @@ the full documented list before the pilot may run.
   `-1/3` (chain) and `-1/2` (volume); (b) the constant-level band
   `median relerr ~ 0.89 m^(-1/3)`; (c) middle-rung monotonicity (the
   900-dip watch). Stage B runs only if Stage A passes.
+- **Stage B addendum** (after Stage A reports, before any Stage B
+  data): freezes `d_hat`, its support, and its Stage B seed use,
+  meeting the three constraints of Section 3 in writing.
 - **Stage P-B** (spacelike pilot): variance + feasibility only, per
   1.3 — supplies Stage B's own `n_per_rung`. Runs only after Stage A
-  passes.
+  passes and the addendum is frozen.
 - **Stage B** (spacelike): the 1.4 verdict logic applied to d_hat's
-  `Delta`, at Stage P-B's `n`. Superiority gate only — the meet-join
-  construction adds an `O(N^(-1/2))` locator noise whose
-  pre-asymptotic mixing makes an exponent gate overconfident; the
-  slope is recorded, labelled.
+  `Delta`, at Stage P-B's `n`. Superiority gate only — locator noise
+  makes an exponent gate overconfident; the slope is recorded,
+  labelled.
 - **Stage C** (coordinates): gate declared (continuum coordinate
   error falls, same verdict table), estimator frozen by addendum
   after Stage B, before any Stage C data.
@@ -321,14 +368,19 @@ the programme, it located the ground it stands on.
 ## 8. Implementation plan (after this document merges, before Stage P)
 
 New module `experiments/positive_control/p11_metric.py`: interval
-extraction by 2D dominance (`O(N)` per pair), LIS by patience sorting,
-the three estimators, the pair protocol, stage runners P/A. The
-shared-definition rule applies from the start:
-`src/causal_spacetime_lab/metrics.py` already defines a
-cardinality-based proper-time estimator ("rho supplies metric scale;
-the causal order alone provides the interval count"), and
-`tau_hat_vol` goes through that definition — mapped to the frozen
-Section 3 convention — never re-implemented. Tests
+extraction by 2D dominance (`O(N)` per pair), the estimators, the
+pair protocol, stage runners P/A. The shared-definition rule applies
+from the start, three times over (v1.3): chain lengths through
+`causal_spacetime_lab.chains.longest_chain_length` (whose
+endpoints-included convention is exactly why the correction exists),
+`tau_hat_chain` through
+`causal_spacetime_lab.estimators.estimate_tau_from_longest_chain_1p1`
+with `rho = N/2` (which performs the endpoint subtraction and the
+`sqrt(2 rho)` normalization — equal to `(L-2)/sqrt(N)` under the
+frozen convention, verified by a pin test), and `tau_hat_vol` through
+the `metrics.py` cardinality estimator ("rho supplies metric scale;
+the causal order alone provides the interval count") mapped to the
+same convention. Nothing re-implemented. Tests
 before any run: LIS against brute force on small posets; tau_hat
 normalization pinned on constructed intervals; pair-disjointness and
 incompleteness paths; seed-window privacy and freshness against the
