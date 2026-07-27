@@ -41,11 +41,14 @@ DELTA_STAR = -0.2007
 DELTA_EQ = 0.067
 N_SUP_COEFF = 260.9
 N_EQ_COEFF = 2895.2
-#: v1.7: a 12-sample SD is itself noisy; sizing uses the one-sided
-#: 90% chi-square upper bound of each pilot variance (nu = 11,
-#: factor 11 / chi2_{0.10, 11}), so a lucky-low pilot cannot undersize
-#: the experiment past the cap or mis-declare the flat verdict.
-VARIANCE_INFLATION = 1.972
+#: v1.8: the v1.7 chi-square factor was a Gaussian pivot — invalid
+#: for the non-Gaussian y this experiment scores. Each rung's
+#: variance now takes its kurtosis-adaptive Bonett upper bound at
+#: one-sided 95% (z below), and the two bounds are summed so the
+#: pair-level guarantee is >= 90% by Bonferroni, no normal model
+#: anywhere. The pilot grows to 200 per endpoint rung to resolve the
+#: kurtosis (~20 seconds by the frozen verification record).
+BONETT_Z = 1.6449
 N_FLOOR = 12
 N_CAP = 60
 PROJECTION_LIMIT_HOURS = 12.0
@@ -54,9 +57,10 @@ PROJECTION_LIMIT_HOURS = 12.0
 #: pilots fill 12 of 16 slots, stage rungs fill up to 60 of 80.
 STRIDE = 200
 SCORE_OFFSET = 150
-PILOT_BLOCKS = {600: (60000, 16), 2400: (63200, 16)}
-STAGE_A_BLOCKS = {600: (68000, 80), 1200: (84000, 80), 2400: (100000, 80)}
-PILOT_SAMPLES = 12
+PILOT_BLOCKS = {600: (200000, 220), 2400: (244000, 220)}
+STAGE_A_BLOCKS = {600: (288000, 80), 1200: (304000, 80),
+                  2400: (320000, 80)}
+PILOT_SAMPLES = 200
 
 #: Verification block (prereg Sections 4 and 5): consecutive seeds,
 #: single generator per sample, discarded after the pin.
@@ -244,13 +248,31 @@ def verdict(lo: float, hi: float, flat_available: bool) -> str:
     return "INCONCLUSIVE" if flat_available else "UNRESOLVED"
 
 
-def power_requirements(sigma_b: float, sigma_t: float) -> dict:
-    """Section 1.2 (v1.7): both-rung variance sum inflated to its
-    one-sided 90% chi-square upper bound, frozen literals, the
-    selection rule, and the ex-ante flat-availability declaration."""
+def bonett_variance_bound(y: np.ndarray) -> dict:
+    """One-sided 95% kurtosis-adaptive upper bound on the variance
+    (Section 1.2, v1.8) — Bonett's log-variance interval, valid
+    without a normal model: heavier tails raise the kurtosis estimate
+    and the bound inflates with them."""
 
-    s2 = sigma_b ** 2 + sigma_t ** 2
-    s2_90 = VARIANCE_INFLATION * s2
+    y = np.asarray(y, dtype=float)
+    n = y.size
+    centered = y - y.mean()
+    s2 = float(np.sum(centered ** 2) / (n - 1))
+    g4 = float(n * np.sum(centered ** 4) / np.sum(centered ** 2) ** 2)
+    se = float(np.sqrt((g4 - (n - 3) / n) / (n - 1)))
+    return {"s2": s2, "g4": g4,
+            "bound": float(s2 * np.exp(BONETT_Z * se))}
+
+
+def power_requirements(y_b: np.ndarray, y_t: np.ndarray) -> dict:
+    """Section 1.2 (v1.8): per-rung Bonett bounds summed (Bonferroni
+    >= 90% for the pair), frozen literals, the selection rule, and the
+    ex-ante flat-availability declaration."""
+
+    bound_b = bonett_variance_bound(y_b)
+    bound_t = bonett_variance_bound(y_t)
+    s2 = bound_b["s2"] + bound_t["s2"]
+    s2_90 = bound_b["bound"] + bound_t["bound"]
     n_sup = int(np.ceil(N_SUP_COEFF * s2_90))
     n_eq = int(np.ceil(N_EQ_COEFF * s2_90))
     clamp = lambda k: int(min(max(k, N_FLOOR), N_CAP))  # noqa: E731
@@ -348,6 +370,7 @@ def run_pilot(output_dir: Path) -> None:
         raise SystemExit("verification pin failed -- pilot refuses to run")
 
     summary: dict = {"code_version": stamp, "per_rung": {}}
+    ys: dict = {}
     for n, (base, slots) in PILOT_BLOCKS.items():
         start = time.perf_counter()
         records, skipped, filled = fill_block(n, base, slots, PILOT_SAMPLES)
@@ -358,20 +381,22 @@ def run_pilot(output_dir: Path) -> None:
                 f"complete samples (skips: {len(skipped)}) -- "
                 "INFEASIBLE-INCOMPLETE"
             )
-        ys = [r["y"] for r in records]
+        ys[n] = np.array([r["y"] for r in records])
+        rung_bound = bonett_variance_bound(ys[n])
         summary["per_rung"][str(n)] = {
             "n_samples": len(records),
-            "sigma": float(np.std(ys, ddof=1)),
+            "variance": rung_bound["s2"],
+            "kurtosis_g4": rung_bound["g4"],
+            "variance_bound_95": rung_bound["bound"],
             "skipped_seeds": skipped,
             "mean_seconds_per_sample": elapsed / len(records),
         }
-        print(f"pilot n={n}: sigma={summary['per_rung'][str(n)]['sigma']:.4f}"
-              f" | skips={len(skipped)}", flush=True)
+        print(f"pilot n={n}: var={rung_bound['s2']:.5f} "
+              f"g4={rung_bound['g4']:.2f} "
+              f"bound={rung_bound['bound']:.5f} | skips={len(skipped)}",
+              flush=True)
 
-    power = power_requirements(
-        summary["per_rung"]["600"]["sigma"],
-        summary["per_rung"]["2400"]["sigma"],
-    )
+    power = power_requirements(ys[600], ys[2400])
     times = verification["per_n"]
     projected_hours = None
     if power["n_per_rung"] is not None:

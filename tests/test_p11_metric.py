@@ -145,27 +145,49 @@ def test_verdict_precedence_is_single_valued():
     assert abs(DELTA_EQ - 0.067) < 1e-12
 
 
-def test_power_selection_rule_branches():
-    """v1.7: sizing uses the chi-square-inflated variance bound
-    S2_90 = 1.972 * (sigma_b^2 + sigma_t^2)."""
+def _gaussian_pilot(sigma: float, seed: int, n: int = 200) -> np.ndarray:
+    y = np.random.default_rng(seed).standard_normal(n)
+    y = (y - y.mean()) / y.std(ddof=1)          # exact sample sigma
+    return sigma * y
 
-    # flat affordable: equal sigmas 0.07 -> S2_90 = 0.01933, n_eq 56
-    p = power_requirements(0.07, 0.07)
-    assert p["n_eq"] == 56 and p["n_per_rung"] == 56 and p["flat_available"]
-    # equal sigmas 0.10: n_eq 115 > cap -> flat unavailable, floor
-    p = power_requirements(0.10, 0.10)
-    assert p["n_eq"] > 60 and p["n_per_rung"] == 12
+
+def test_bonett_bound_is_above_the_variance_and_kurtosis_adaptive():
+    from p11_metric import bonett_variance_bound
+
+    gaussian = bonett_variance_bound(_gaussian_pilot(0.10, 1))
+    assert gaussian["s2"] == pytest.approx(0.01)
+    # Gaussian-kurtosis inflation sits near 1.18, never below 1
+    assert 1.05 < gaussian["bound"] / gaussian["s2"] < 1.35
+
+    # heavy tails must widen the bound: same variance, Laplace-ish y
+    rng = np.random.default_rng(2)
+    heavy = rng.laplace(size=200)
+    heavy = 0.10 * (heavy - heavy.mean()) / heavy.std(ddof=1)
+    heavy_bound = bonett_variance_bound(heavy)
+    assert heavy_bound["g4"] > gaussian["g4"]
+    assert (heavy_bound["bound"] / heavy_bound["s2"]
+            > gaussian["bound"] / gaussian["s2"])
+
+
+def test_power_selection_rule_branches():
+    """v1.8: sizing from summed per-rung Bonett bounds; branch
+    structure exercised with exact-sample-sigma Gaussian pilots."""
+
+    # small sigmas -> n_eq drives, flat available
+    p = power_requirements(_gaussian_pilot(0.07, 3), _gaussian_pilot(0.07, 4))
+    assert p["flat_available"] and p["n_per_rung"] == p["n_eq"]
+    assert p["n_eq"] <= 60 and not p["infeasible"]
+    # moderate sigmas -> flat unaffordable, superiority sizing
+    p = power_requirements(_gaussian_pilot(0.15, 5), _gaussian_pilot(0.15, 6))
     assert not p["flat_available"] and not p["infeasible"]
-    # equal sigmas 0.15 -> superiority sizing, n = 24
-    p = power_requirements(0.15, 0.15)
-    assert p["n_per_rung"] == 24 and not p["flat_available"]
-    # superiority alone breaches the cap -> infeasible
-    p = power_requirements(0.2415, 0.2415)
+    assert p["n_per_rung"] == max(p["n_sup"], 12)
+    # large sigmas -> superiority breaches the cap -> infeasible
+    p = power_requirements(_gaussian_pilot(0.40, 7), _gaussian_pilot(0.40, 8))
     assert p["infeasible"] and p["n_per_rung"] is None
-    # asymmetric variances enter as a sum, inflated
-    p = power_requirements(0.05, 0.13)
+    # variances enter as sums; the bound exceeds the point estimate
+    p = power_requirements(_gaussian_pilot(0.05, 9), _gaussian_pilot(0.13, 10))
     assert p["s2"] == pytest.approx(0.05 ** 2 + 0.13 ** 2)
-    assert p["s2_90"] == pytest.approx(1.972 * p["s2"])
+    assert p["s2_90"] > p["s2"]
 
 
 def test_stage_gate_rejects_stale_prerequisite(tmp_path, monkeypatch):
@@ -211,16 +233,15 @@ def test_windows_are_private_fresh_and_reserve_sized():
     for _, _, a in blocks:
         for _, _, b in blocks:
             assert a is b or not (a & b)
-    assert PILOT_BLOCKS[600] == (60000, 16)
-    assert PILOT_BLOCKS[2400] == (63200, 16)
-    assert STAGE_A_BLOCKS == {600: (68000, 80), 1200: (84000, 80),
-                              2400: (100000, 80)}
-    experimental_top = max(
-        base + STRIDE * slots
-        for base, slots in {**PILOT_BLOCKS, **STAGE_A_BLOCKS}.values()
+    assert PILOT_BLOCKS[600] == (200000, 220)
+    assert PILOT_BLOCKS[2400] == (244000, 220)
+    assert STAGE_A_BLOCKS == {600: (288000, 80), 1200: (304000, 80),
+                              2400: (320000, 80)}
+    experimental_bottom = min(
+        base for base, _ in {**PILOT_BLOCKS, **STAGE_A_BLOCKS}.values()
     )
     for n in P11_LADDER:
         verify_span = set(range(VERIFY_BASE[n], VERIFY_BASE[n] + VERIFY_COUNT))
-        assert min(verify_span) >= experimental_top
+        assert max(verify_span) < experimental_bottom
         assert not (verify_span & used)
     assert SKIP_CAP == 20 and K_PAIRS == 6

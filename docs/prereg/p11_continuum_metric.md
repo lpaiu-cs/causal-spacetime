@@ -23,6 +23,18 @@ quarantined variance pilot, sample-size formula, and frozen seed
 windows instead of inheriting Stage A's `n` computed from a different
 estimator's variance.
 
+v1.8 review corrections (pre-data): (xxii) the v1.7 chi-square
+variance bound was itself a Gaussian-pivot result — the same class of
+assumption v1.4 removed from the median factor, reintroduced one
+level up (review). Replaced by a distribution-robust construction:
+the pilot grows to 200 samples per endpoint rung (the 12-sample size
+was priced for an MCMC-era cost model that the frozen verification
+record falsified — 200 samples cost ~20 seconds), and each rung's
+variance takes its kurtosis-adaptive Bonett upper bound at one-sided
+95%, summed with Bonferroni so the pair-level guarantee is >= 90%
+with no normal model anywhere. Seed windows renumbered for the
+larger pilot blocks (nothing has run).
+
 v1.7 review corrections (pre-data; the implementation exists but no
 stage has run): (xix) the power formulas size from a conservative
 variance bound, not the 12-sample point estimates — each pilot
@@ -175,19 +187,30 @@ TOP rungs (both piloted — v1.6; the v1.5 `2 sigma_600^2` assumed an
 equal-variance model this pre-asymptotic ladder is owed nowhere), by
 the plain two-sample CLT with no distributional factor (v1.4), two
 requirements are computed (v1.5 — the design must be able to AFFORD
-every verdict it promises) from the CONSERVATIVE variance bound
-(v1.7 — a 12-sample SD is itself noisy, and plugging the point
-estimate in undersizes exactly when the pilot got lucky):
+every verdict it promises) from a CONSERVATIVE variance bound. The
+bound is distribution-robust (v1.8; the v1.7 chi-square factor was a
+Gaussian pivot, invalid for exactly the `y` this document says is
+non-Gaussian): per endpoint rung, with `n_pilot = 200` samples,
+sample variance `s^2`, and the kurtosis estimate
+`g4 = n * sum((y - ybar)^4) / (sum((y - ybar)^2))^2`, the Bonett
+upper bound
 
-    S^2_90 = 1.972 * ( sigma_b_hat^2 + sigma_t_hat^2 )
-             # one-sided 90% chi-square upper bound per rung,
-             # nu = 11, factor 11 / chi2_{0.10, 11}
+    se     = sqrt( ( g4 - (n-3)/n ) / (n-1) )
+    bound  = s^2 * exp( 1.6449 * se )     # one-sided 95% per rung
+
+    S^2_90 = bound_b + bound_t
+             # Bonferroni: the pair-level guarantee is >= 90%
+             # with no normal model anywhere
 
     n_sup = ceil( S^2_90 * (1.960 + 1.282)^2 / Delta*^2 )
           = ceil( 260.9 * S^2_90 )            # 90% power at Delta*
 
     n_eq  = ceil( S^2_90 * (1.960 + 1.645)^2 / delta_eq^2 )
           = ceil( 2895.2 * S^2_90 )           # 90% P(FLAT) at Delta = 0
+
+For Gaussian-kurtosis `y` the per-rung inflation is ~1.18 — cheaper
+than the invalid 1.972 and honest; heavy tails raise `g4` and the
+bound inflates adaptively, which is the point.
 
 Frozen selection rule, floor 12 / cap 60:
 
@@ -202,21 +225,25 @@ If `n_sup` alone exceeds the cap, Stage A is INFEASIBLE-AS-DESIGNED
 and stops before running — that refusal is this preregistration
 operating, exactly as P10's gates were.
 
-Worked anchors (illustrative only, the pilot decides; equal SDs
-`sigma` give `S^2_90 = 1.972 * 2 sigma^2`): sigma = 0.07 ->
-S^2_90 = 0.0193, n_eq 56 -> n = 56, flat available; 0.073 ->
-n_eq 61 > cap -> n = 12, flat declared unavailable; 0.15 -> n = 24;
-0.20 -> n = 42; 0.24 -> n = 60 at the cap; 0.2415 -> INFEASIBLE.
-The conservative bound roughly halves the flat-affordability
-threshold relative to v1.6's point-estimate anchors — that is the
-price of a 12-observation pilot, paid where it belongs, in `n`.
+Worked anchors (illustrative at GAUSSIAN kurtosis, factor ~1.18; the
+realized `g4` decides, and heavier tails shift every threshold down):
+equal sigma = 0.09 -> S^2_90 ~ 0.0191, n_eq 56 -> n = 56, flat
+available; 0.095 -> n_eq > cap -> n = 12, flat declared unavailable;
+0.15 -> n = 14; 0.20 -> n = 25; 0.31 -> n = 60 at the cap;
+0.315 -> INFEASIBLE. The bound's price now scales with the measured
+non-normality instead of a flat Gaussian-only factor — a 200-sample
+pilot costs ~20 seconds by the frozen verification record, so the
+added samples are free where the invalid assumption was not.
 
 ### 1.3 Stage P: the pilot, variance-only, quarantined
 
-- BOTH endpoint rungs (v1.6): `n_pilot = 12` samples at `N = 600`
-  and 12 at `N = 2400`, separate seed windows (Section 5).
-- Records: per-sample `y`, the per-rung SDs `sigma_b_hat`,
-  `sigma_t_hat`, and wall times. **Computing any cross-rung mean or
+- BOTH endpoint rungs (v1.6): `n_pilot = 200` samples at `N = 600`
+  and 200 at `N = 2400` (v1.8 — the 12-sample size was an MCMC-era
+  cost assumption; the frozen verification record prices 200 samples
+  at ~20 seconds, and the robust variance bound of 1.2 needs the
+  kurtosis resolution), separate seed windows (Section 5).
+- Records: per-sample `y`, the per-rung variances and kurtosis
+  estimates feeding the 1.2 bound, and wall times. **Computing any cross-rung mean or
   contrast is forbidden by frozen rule** — the pilot script does not
   implement it, and the pilot artifact contains per-rung SDs and
   times only.
@@ -239,7 +266,7 @@ price of a 12-observation pilot, paid where it belongs, in `n`.
 `d_hat` carries locator variability the timelike estimator does not,
 so Stage B is powered from ITS OWN variance, never Stage A's (v1.2,
 review): a second variance-only, quarantined pilot — BOTH endpoint
-rungs, `n_pilot = 12` spacelike samples each, under the Stage B pair
+rungs, `n_pilot = 200` spacelike samples each (v1.8), under the Stage B pair
 protocol (v1.6: the same both-variances rule as Stage P) — feeds the
 formula of 1.2 with the ADDENDUM'S target effect
 `Delta*_B` (v1.4, review: a merely-consistent `d_hat` may converge
@@ -470,23 +497,24 @@ implementation may ever take (pair selection at `s + 150`, any future
 offset < 200) stays inside its own row's window. Windows:
 
 Every block carries reserve slots for the first-`n`-complete rule of
-Section 4 (v1.6): pilots hold 16 windows for 12 samples, stage rungs
-hold 80 windows for up to 60.
+Section 4: pilots hold 220 windows for 200 samples (v1.8), stage
+rungs hold 80 windows for up to 60. Experimental windows begin at
+200000 (v1.8 renumber for the larger pilots; nothing has run).
 
 | block | base | fills | window span |
 |---|---|---|---|
 | design verification (non-experimental) | 190000 | 2000 per rung | 190000-195999, note below |
-| Stage P pilot, N=600 | 60000 | 12 of 16 | 60000-63199 |
-| Stage P pilot, N=2400 | 63200 | 12 of 16 | 63200-66399 |
-| Stage A, N=600 | 68000 | <= 60 of 80 | 68000-83999 |
-| Stage A, N=1200 | 84000 | <= 60 of 80 | 84000-99999 |
-| Stage A, N=2400 | 100000 | <= 60 of 80 | 100000-115999 |
-| Stage P-B pilot, N=600 | 116000 | 12 of 16 | 116000-119199 |
-| Stage P-B pilot, N=2400 | 119200 | 12 of 16 | 119200-122399 |
-| Stage B, N=600 | 124000 | <= 60 of 80 | 124000-139999 |
-| Stage B, N=1200 | 140000 | <= 60 of 80 | 140000-155999 |
-| Stage B, N=2400 | 156000 | <= 60 of 80 | 156000-171999 |
-| Stage C blocks | 172000+ | — | frozen with Stage C's addendum |
+| Stage P pilot, N=600 | 200000 | 200 of 220 | 200000-243999 |
+| Stage P pilot, N=2400 | 244000 | 200 of 220 | 244000-287999 |
+| Stage A, N=600 | 288000 | <= 60 of 80 | 288000-303999 |
+| Stage A, N=1200 | 304000 | <= 60 of 80 | 304000-319999 |
+| Stage A, N=2400 | 320000 | <= 60 of 80 | 320000-335999 |
+| Stage P-B pilot, N=600 | 336000 | 200 of 220 | 336000-379999 |
+| Stage P-B pilot, N=2400 | 380000 | 200 of 220 | 380000-423999 |
+| Stage B, N=600 | 424000 | <= 60 of 80 | 424000-439999 |
+| Stage B, N=1200 | 440000 | <= 60 of 80 | 440000-455999 |
+| Stage B, N=2400 | 456000 | <= 60 of 80 | 456000-471999 |
+| Stage C blocks | 472000+ | — | frozen with Stage C's addendum |
 
 All spans sit above every range the programme has ever used (documented
 maxima: 30000-30379, 40000-40168, 41000-41059, 43000-54999); a
