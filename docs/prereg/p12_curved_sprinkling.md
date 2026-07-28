@@ -394,20 +394,50 @@ longest-chain rate. **What it does not establish**: anything about
 `tau / ell` regimes other than ~0.3, and nothing about a floor —
 neither its presence nor its absence beyond `m ~ 152`.
 
-**Flat-arm prediction miss, and its real cause.** The arm was frozen
-at `0.42-0.49`; the campaign read `0.401 / 0.390 / 0.381` and the
-high-`n` diagnostic reads `0.394 / 0.385 / 0.396 / 0.390` — flat in
-`N`, as the prediction's SHAPE said, but about 10% below its LEVEL.
-The first explanation offered here (packing-restricted versus
-all-band pairs) is withdrawn: the diagnostic uses the runner's own
-packed pairs and still reads 0.39. The actual defect is provenance —
-**the frozen band was taken from a design-review measurement that
-this record never reproduced with the runner before freezing it.**
-Freezing a number measured by someone else's code path is the same
-class of error as quoting a narrative figure that no artifact
-supports; the correct procedure, followed from here, is that any
-frozen prediction must first be produced by the code that will later
-be tested against it.
+**The flat arm, rebuilt — and the frozen prediction vindicated.**
+Review found that the arm as first implemented computed
+`|tau_flat - tau_curved| / tau_curved`, which never touches
+`tau_hat`: a property of the PATCH, not of the instrument, and
+therefore incapable of supporting the claim it was cited for. The arm
+is now the estimator's error against the flat template,
+`|tau_hat - tau_flat| / tau_flat`, and the old quantity is retained
+under an honest name as what it always was — how much curvature the
+band carries at all.
+
+| rung | error vs CURVED truth | error vs FLAT template | geometric gap |
+|---|---|---|---|
+| 600 | 0.282 | 0.464 | 0.401 |
+| 1200 | 0.218 | 0.430 | 0.390 |
+| 2400 | 0.230 | 0.442 | 0.381 |
+
+The estimator sits about twice as close to the curved truth as to the
+flat template at every rung, and the flat-template error is large and
+flat in `N` — which is what the design predicted, and now on a
+quantity that actually involves the estimator.
+
+The earlier "prediction miss" is therefore withdrawn twice over: the
+frozen band `0.42-0.49` was CORRECT — the corrected arm reads
+`0.464 / 0.430 / 0.442`, inside it — and what missed was this
+record's implementation, which measured a different quantity than the
+prediction described. The provenance lesson stands and sharpens: had
+the frozen prediction been reproduced with the runner before freezing,
+as the rule now requires, the implementation defect would have
+surfaced at design time instead of in review.
+
+**Two further corrections from the same round**, both silent-drift
+risks rather than wrong numbers: the estimator now CALLS
+`estimate_tau_from_longest_chain_1p1` instead of re-deriving its
+endpoint correction inline (a later recalibration would otherwise
+have split P11 and P12 while this module claimed they shared an
+instrument), and the truth regression now integrates the GEODESIC
+equation — `x` is cyclic, so `k = Omega^2 dx/dtau` is conserved and
+`Delta x` and `tau` follow by quadrature, shot on `k` — asserting
+`1e-9` as Section 3 requires, where the first version integrated a
+straight coordinate path at `2e-3`. The closed form passes at `1e-9`.
+The gate is unchanged to the last digit by all three fixes
+(`Delta = -0.104`, CI `[-0.177, -0.041]`), which is the evidence that
+they were publication and hygiene defects rather than measurement
+ones.
 
 **The lever this hands over**, already named in Section 7: sweep
 `tau / ell` at fixed density. That experiment no longer rests on a

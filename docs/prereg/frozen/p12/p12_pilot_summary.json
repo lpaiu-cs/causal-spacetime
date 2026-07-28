@@ -1,5 +1,5 @@
 {
-  "code_version": "a688c03",
+  "code_version": "6d1d1bf",
   "per_rung": {
     "600": {
       "n_samples": 200,
@@ -10,7 +10,7 @@
       "calibration_z_used": 1.6933540528292124,
       "calibration_coverage_at_nominal": 0.9475,
       "skipped_seeds": [],
-      "mean_seconds_per_sample": 0.007991336999984923,
+      "mean_seconds_per_sample": 0.007908837500144728,
       "y": [
         -0.5144186442386678,
         -0.4188672440054755,
@@ -223,7 +223,7 @@
       "calibration_z_used": 2.5219565675909736,
       "calibration_coverage_at_nominal": 0.8645,
       "skipped_seeds": [],
-      "mean_seconds_per_sample": 0.12179168100003153,
+      "mean_seconds_per_sample": 0.1269702334998874,
       "y": [
         -0.742049482167756,
         -0.7349803014678081,
@@ -449,6 +449,6 @@
     "flat_available": false,
     "infeasible": false
   },
-  "projected_stage_a_hours": 0.0005410969409999476,
+  "projected_stage_a_hours": 0.0005442246168332834,
   "feasible": true
 }

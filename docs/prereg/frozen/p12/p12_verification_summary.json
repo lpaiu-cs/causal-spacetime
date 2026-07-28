@@ -1,22 +1,22 @@
 {
-  "code_version": "a688c03",
+  "code_version": "6d1d1bf",
   "pin_required": 1998,
   "patch_volume": 1.5000000000109373,
   "per_n": {
     "600": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.008737243950003176
+      "mean_seconds_per_sample": 0.008687172150006518
     },
     "1200": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.03192837774999498
+      "mean_seconds_per_sample": 0.03196884580000187
     },
     "2400": {
       "complete": 2000,
       "total": 2000,
-      "mean_seconds_per_sample": 0.12166346059998613
+      "mean_seconds_per_sample": 0.12261136709997664
     }
   },
   "pin_passed": true
