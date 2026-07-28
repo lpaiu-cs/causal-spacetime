@@ -87,6 +87,10 @@ TWIN_BLOCKS = {0.30: (6300000, 220), 0.60: (6344000, 220),
                1.00: (6388000, 220), 1.50: (6432000, 220)}
 SCORE_OFFSET = 150
 
+#: P13's prerequisite record lives in P12's frozen directory.
+FROZEN_P12_DIR = (Path(__file__).resolve().parents[2]
+                  / "docs" / "prereg" / "frozen" / "p12")
+
 VERIFY_ARTIFACT = "p13_verification_summary.json"
 PILOT_ARTIFACT = "p13_pilot_summary.json"
 
@@ -340,7 +344,8 @@ def run_verify(output_dir: Path) -> None:
 
 def run_pilot(output_dir: Path) -> None:
     stamp = _preflight_clean()
-    _require_stage_pass("p12_stage_a_summary.json", "P12 Stage A")
+    _require_stage_pass("p12_stage_a_summary.json", "P12 Stage A",
+                        directory=FROZEN_P12_DIR)
     verification = _load_gate_artifact(output_dir, VERIFY_ARTIFACT, stamp)
     if not verification.get("pin_passed"):
         raise SystemExit("verification-13 pin failed -- pilot refuses")

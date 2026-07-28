@@ -831,7 +831,8 @@ FROZEN_P11_DIR = (Path(__file__).resolve().parents[2]
                   / "docs" / "prereg" / "frozen" / "p11")
 
 
-def _require_stage_pass(name: str, stage_label: str) -> dict:
+def _require_stage_pass(name: str, stage_label: str,
+                        directory: Path | None = None) -> dict:
     """Cross-stage gate (Section 6): a later stage runs only after the
     earlier stage's FROZEN record reads IMPROVES. The frozen copy is
     the repo-canonical one, and its stamp must be REACHABLE from HEAD
@@ -841,7 +842,10 @@ def _require_stage_pass(name: str, stage_label: str) -> dict:
 
     import subprocess
 
-    path = FROZEN_P11_DIR / name
+    # the frozen record lives with its own experiment; the default is
+    # P11's directory, and later experiments pass their own (P13 asks
+    # for P12's, which the hardcoded path would never have found)
+    path = (directory or FROZEN_P11_DIR) / name
     if not path.exists():
         raise SystemExit(
             f"{name} not found in the frozen record -- {stage_label} "
