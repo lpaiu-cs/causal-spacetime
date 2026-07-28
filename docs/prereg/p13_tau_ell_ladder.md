@@ -287,3 +287,161 @@ zero-contrast pin; verdict-table precedence including the new
 polarity and the ROBUST-unavailable branch; and window privacy and
 freshness against every documented range. Stage P-13 runs only from a
 clean commit containing all of it, after the verification pin passes.
+
+---
+
+## 9. Stage records (campaign v1)
+
+### 9.1 Verification-13 and Stage P-13 (2026-07-28)
+
+- **Verification-13**: 2000 / 2000 / 2000 / **1998** of 2000 complete
+  across the four rungs — the pin met exactly at the top rung, so the
+  v1.1 packing constants hold at pin resolution where v1.0's would
+  have collapsed. Measured wall times ~0.1 s per sample.
+- **Stage P-13**: 200 samples at each endpoint rung, zero skips. The
+  calibration fired hard at the top rung (coverage 0.833 at nominal,
+  `z = 2.86` — heavier tails than any earlier pilot), and the
+  realized variance came in ABOVE the design check: `n_sup = 21`,
+  **`n_eq = 231 > cap 200`**, so CURVATURE-ROBUST was declared
+  unavailable ex ante and the campaign ran at `n = 21` with the
+  reduced vocabulary. The cap was not raised at this point: the
+  pilot's variance is data, and changing a frozen rule after seeing
+  it is precisely what preregistration forbids.
+
+### 9.2 Stage A-13 (2026-07-28): **CONFOUNDED**
+
+21 samples per rung on both arms, zero skips.
+
+    Delta_13 = +0.014,  95% CI [-0.050, +0.077]
+    flat twin = +0.085, 95% CI [+0.032, +0.136]   <- gate 2 fails
+
+| gate | reading | result |
+|---|---|---|
+| `m`-matching | 73.9 / 74.4 / 75.8 / 79.5, grand 75.9 | PASS (top rung +4.7%, inside the 5% band) |
+| flat twin | `|Delta_twin| = 0.085 > delta_eq = 0.05` | **FAIL** |
+
+The frozen rule returns **CONFOUNDED**: a control whose true contrast
+is zero by construction read larger than the equivalence margin, and
+the curved contrast (+0.014) is SMALLER than the artifact the control
+reports, so nothing can be said about curvature from this campaign.
+The verdict stands as run; gates are not re-read.
+
+Labelled, for the record: the curved rungs' median relative errors
+were 0.200 / 0.182 / 0.184 / 0.196 — flat to within 10% while
+`(tau/ell)^2` moved 25-fold — and the `(tau/ell)^2` trend fit read
+`+0.021`, CI `[-0.008, +0.051]`, consistent with zero. The raw signal
+still points at curvature-insensitivity; the campaign simply has no
+standing to say so.
+
+### 9.3 Isolated diagnostic: the control was innocent (post hoc, quarantined)
+
+Run in design-check space (`7500000+`, `7600000+`), never touching an
+experimental window.
+
+**Pair level (720 pairs per rung).** Relative error
+0.201 / 0.192 / 0.186 / 0.192; `m = 74.5 +/- 12.2` identically at
+every rung; mean chain length 16.0-16.1; aspect-ratio distributions
+overlapping. **Conditioned on `m in [70, 82]`**: 0.192 / 0.184 /
+0.184 / 0.185. This is what theory demands and is stronger than a
+measurement: the LIS distribution of a uniform Poisson box is
+invariant under axis-wise monotone rescaling, so given the count it
+cannot know the box's size or aspect. The twin's implementation is
+therefore not broken, and the packing-selection worry closes too,
+since the `m` distributions coincide across rungs.
+
+**Sample level (150 samples per rung, the campaign's own code path).**
+Mean `y` = -0.759 / -0.739 / -0.751 / -0.744, giving
+**`Delta_twin = +0.015 +/- 0.030`** — consistent with zero.
+
+**Where +0.085 came from.** Resampling `n = 21` subsets of those 150
+gives a contrast SD of 0.037 and
+
+    P(|Delta_twin| > delta_eq | true value 0) = 0.218,
+    P(Delta_twin > 0.085 | true value 0) = 0.031.
+
+So a perfect protocol trips this control roughly one campaign in
+five, and the observed value is a 3%-tail draw. The campaign's CI
+excluded zero, which is why the CONFOUNDED verdict was correct as
+frozen; the grounds for now calling it a fluctuation are the
+150-per-rung diagnostic and the invariance theorem, not a re-reading
+of the campaign.
+
+**The defect, named.** v1.1 specified the twin's protocol but never
+its SAMPLE SIZE, so the control inherited the curved arm's `n_sup`,
+which was sized to detect `Delta = 0.15` — not to demonstrate that a
+control sits inside `delta_eq = 0.05`. An equivalence-grade
+requirement was given a superiority-grade sample. That is the same
+class as P11 v1.5's "the design promised a verdict it had not
+priced", recurring one level out: this time in the control rather
+than the gate.
+
+---
+
+## 10. Design v2 (2026-07-28): the control gets its own power and semantics
+
+Campaign v1's record above stands. v2 changes three frozen things and
+nothing else, each because of a fact now on the record rather than a
+preference.
+
+**(1) The twin gate becomes an equivalence test, evaluated by
+precedence.** A point-estimate threshold is a point test at any `n`,
+which is why a perfect control failed it. With `lo_t`, `hi_t` the
+twin's 95% bootstrap interval:
+
+| # | condition | control result |
+|---|---|---|
+| 1 | `-delta_eq < lo_t` and `hi_t < delta_eq` | **CONTROL-CLEAN** — equivalence demonstrated; the campaign's verdict stands |
+| 2 | `lo_t > delta_eq` or `hi_t < -delta_eq` | **CONFOUNDED** — a real artifact larger than the margin |
+| 3 | otherwise | **UNDERPOWERED-CONTROL** — a record, not a verdict: the campaign reports its contrast with the control's imprecision stated |
+
+Row 3 is the honest home for the reading v1 produced, and it cannot
+fire spuriously the way a point threshold does.
+
+**(2) The twin is piloted and sized like an arm.** Stage P-13B pilots
+BOTH twin endpoint rungs (200 samples each), and
+
+    n_twin = ceil( S^2_90(twin) * (1.960 + 1.645)^2 / delta_eq^2 ),
+
+the same equivalence formula the curved arm uses, clamped to the same
+floor and cap. The twin's measured `s(y) ~ 0.11-0.14` puts this near
+`n ~ 170-230`, which is the point: demonstrating a control is clean
+costs as much as demonstrating equivalence anywhere else.
+
+**(3) The cap rises to 300, ex ante.** This is legitimate now and was
+not before: `n_eq = 231` is disclosed pre-freeze information for v2,
+where in v1 it was pilot data arriving after the rule was frozen. At
+300 the curved arm can again buy CURVATURE-ROBUST, and the total cost
+is about `2 * 231 * 4 * 0.1 s`, a few minutes.
+
+**(4) The `m`-gate's false-firing rate is stated rather than
+assumed** (same class check, applied to the other control): at
+`n = 21` the sample-level spread of per-rung mean `m` made the
+top rung's `+4.7%` a near miss of the `5%` band; at the v2 sample
+sizes the standard error of a rung's mean `m` is under `1%`, so the
+gate fires on drift rather than on noise. The realized figures are
+published per rung either way.
+
+**Fresh windows (v2, frozen).** Campaign v1's seeds are spent, so v2
+runs entirely in `8000000-8799999`; design-check space remains
+`7000000-7999999` and `9000000+`.
+
+| block | base | slots | span |
+|---|---|---|---|
+| verification-13B | 8000000 | 2000 per rung | 8000000-8007999 |
+| pilot, curved 0.30 | 8020000 | 320 | 8020000-8083999 |
+| pilot, curved 1.50 | 8084000 | 320 | 8084000-8147999 |
+| pilot, twin 0.30 | 8148000 | 320 | 8148000-8211999 |
+| pilot, twin 1.50 | 8212000 | 320 | 8212000-8275999 |
+| Stage A, curved 0.30 | 8280000 | 320 | 8280000-8343999 |
+| Stage A, curved 0.60 | 8344000 | 320 | 8344000-8407999 |
+| Stage A, curved 1.00 | 8408000 | 320 | 8408000-8471999 |
+| Stage A, curved 1.50 | 8472000 | 320 | 8472000-8535999 |
+| twin 0.30 | 8540000 | 320 | 8540000-8603999 |
+| twin 0.60 | 8604000 | 320 | 8604000-8667999 |
+| twin 1.00 | 8668000 | 320 | 8668000-8731999 |
+| twin 1.50 | 8732000 | 320 | 8732000-8795999 |
+
+Everything else — the ladder, the patch constants, the bands, the
+estimator, both eligibility conditions, the verdict table of Section
+1.2, `delta_eq`, and the detection target — is unchanged from v1.1
+and is NOT re-opened by this revision.
