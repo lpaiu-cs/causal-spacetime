@@ -411,18 +411,31 @@ band carries at all.
 | 2400 | 0.230 | 0.442 | 0.381 |
 
 The estimator sits about twice as close to the curved truth as to the
-flat template at every rung, and the flat-template error is large and
-flat in `N` — which is what the design predicted, and now on a
-quantity that actually involves the estimator.
+flat template at every rung — the claim the arm was cited for, now
+resting on a quantity that involves the estimator.
 
-The earlier "prediction miss" is therefore withdrawn twice over: the
-frozen band `0.42-0.49` was CORRECT — the corrected arm reads
-`0.464 / 0.430 / 0.442`, inside it — and what missed was this
-record's implementation, which measured a different quantity than the
-prediction described. The provenance lesson stands and sharpens: had
-the frozen prediction been reproduced with the runner before freezing,
-as the rule now requires, the implementation defect would have
-surfaced at design time instead of in review.
+**But the "flat and vindicated" reading of it is withdrawn (same
+round, second finding).** Once the arm is `|tau_hat - tau_flat| /
+tau_flat` it is DENSITY-DEPENDENT by definition: as `tau_hat`
+converges to `tau_curved` the arm tends to
+`|tau_curved - tau_flat| / tau_flat`, not to a constant. Here
+`tau_flat = 1.39 tau_curved` on the band, so that limit is
+`0.39 / 1.39 ~ 0.28`, and the arm must FALL toward it. The
+quarantined 200-per-rung diagnostic confirms it does —
+`0.489 / 0.457 / 0.410 / 0.391` across `N = 600 / 1200 / 2400 / 4800`,
+monotone — so the apparent flatness of the campaign's three
+12-sample medians was noise, and the agreement with the frozen band
+`0.42-0.49` was coincidence of the ladder's middle, not confirmation.
+
+The frozen prediction is therefore RETIRED for this quantity rather
+than scored: Section 4's rationale ("its expected level is fixed by
+the patch geometry alone") is true of the geometric gap and false of
+the estimator-based arm, so the prediction described one quantity
+while the claim needed the other. What the arm does support, and
+more strongly than flatness would, is that the SEPARATION widens with
+density: curved-truth error `0.278 -> 0.149` while the flat-template
+error stays above `0.39`, so the reading tracks the curved metric
+better and better while never approaching the flat one.
 
 **Two further corrections from the same round**, both silent-drift
 risks rather than wrong numbers: the estimator now CALLS
