@@ -207,3 +207,18 @@ def test_windows_are_private_and_fresh_and_clear_of_design_space():
     for n in P12_LADDER:
         vspan = set(range(VERIFY_BASE[n], VERIFY_BASE[n] + 2000))
         assert max(vspan) < min(min(s) for s in spans)
+
+
+def test_numpy_floor_matches_the_apis_the_package_uses():
+    """np.trapezoid is a NumPy 2.0 API used by the library core and by
+    P12 at import time, so a 1.26 install would fail immediately. The
+    declared floor must not promise less than the code needs."""
+
+    import tomllib
+
+    pyproject = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    with pyproject.open("rb") as handle:
+        deps = tomllib.load(handle)["project"]["dependencies"]
+    numpy_req = next(d for d in deps if d.startswith("numpy"))
+    assert numpy_req == "numpy>=2.0"
+    assert hasattr(np, "trapezoid")
