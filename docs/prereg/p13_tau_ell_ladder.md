@@ -81,6 +81,12 @@ which "the reading did not notice the curvature" is a fair
 description. It is a design choice, stated as one, not a derived
 quantity.
 
+Rows 1 and 2 can fire on a significant contrast SMALLER than
+`delta_eq` — significance and size are different questions, and the
+table answers only the first. Section 9's narration must therefore
+state the magnitude against `delta_eq` alongside the verdict word,
+never the word alone.
+
 ### 1.3 Sample size, and affording both verdicts
 
 From the pilot's calibrated Bonett bounds (P11 Section 1.2 machinery,
