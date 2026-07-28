@@ -304,3 +304,160 @@ including the assertion `sqrt(dU dV) == 2 sqrt(du dv)` at
 band membership; window privacy and freshness; verdict-table
 precedence. Stage P-12 runs only from a clean commit containing all
 of it, and only after the verification pin passes.
+
+---
+
+## 9. Stage records (results)
+
+### 9.1 Verification-12 and Stage P-12 (2026-07-28)
+
+- **Verification-12**: 2000/2000 complete at every rung against the
+  1998 pin — the v1.1 completeness fix holds at pin resolution, where
+  v1.0's constants completed 12-22%. Measured wall times ~0.009 /
+  ~0.03 / ~0.1 s per sample (one significant figure, per P11 9.6).
+- **Stage P-12**: 200 samples per endpoint rung, zero skips. The
+  calibration fired on both rungs (coverage 0.948 / 0.865 at nominal
+  -> `z = 1.693 / 2.522`; the top rung's 0.865 is the largest
+  under-coverage the programme has recorded, and the calibration
+  absorbing it is exactly why P11 v1.9 replaced the nominal bound).
+  `n_sup = 12`, `n_eq = 127 > cap` — flat verdict declared
+  unavailable ex ante, so this campaign's fourth verdict is
+  UNRESOLVED (the caveat Section 1.3 wrote down in advance).
+  `n_per_rung = 12`; projected Stage A ~2 s. FEASIBLE.
+
+### 9.2 Stage A-12 (2026-07-28): gate **IMPROVES**; the campaign's
+apparent plateau was small-sample fluctuation
+
+12 complete samples per rung, zero skips, no selection caveat.
+
+    Delta = -0.104 dex,  95% CI [-0.177, -0.041]  ->  IMPROVES
+
+The gate passes as frozen. **The labelled checks do not support
+reading this as the theory rate**, and the record says so plainly:
+
+| labelled check | reading | expectation |
+|---|---|---|
+| mean `y` by rung | -0.567 / -0.712 / -0.671 | monotone |
+| middle rung between endpoints | **NO** — the top rung is worse than the middle | yes |
+| median relative error | 0.282 / 0.218 / 0.230 | falling |
+| slope vs `log10 N` | **-0.173, CI [-0.295, -0.060]** | contains `-1/3` |
+| `Delta` against derived `Delta*_A` | -0.104, about HALF of -0.2007 | at or beyond |
+| mean interval count `m` | 18.8 / 38.7 / 75.8 | (as designed) |
+
+Three of these depart together and in the same direction: the error
+falls from the bottom rung to the middle and then stops, the slope
+excludes the predicted `-1/3`, and the contrast is half the derived
+size.
+
+**First reading, WITHDRAWN on review (2026-07-28).** This record
+originally called that pattern the signature of a curvature bias
+floor and wrote that "the gate's IMPROVES is measuring the approach
+to that floor, not convergence to the truth." Two objections, both
+correct, and the second decisive:
+
+1. The three checks are not three observations. All three are
+   functions of the SAME three rung means at `n_per_rung = 12` (the
+   floor value of Section 1.2), so they are one correlated
+   observation, and the entire signature rests on a single 12-sample
+   rung. The middle-to-top reversal is under one rung standard error.
+2. A non-decaying floor is not available theoretically: at fixed
+   geometry the chain law's convergence `L / sqrt(2 rho) -> tau_geo`
+   holds in curved spacetime too (Section 7), so curvature can inflate
+   a PRE-ASYMPTOTIC plateau but cannot stop convergence. The
+   withdrawn sentence asserted a mechanism the data could not
+   distinguish.
+
+**The adjudicating diagnostic (post hoc, quarantined, labelled).**
+Run at 200 samples per rung in the design-check seed space
+(`2000000+`, disjoint from every experimental window), with an extra
+`N = 4800` rung, through the runner's own code path:
+
+| `N` | mean `y` | median relative error | mean `m` |
+|---|---|---|---|
+| 600 | -0.5673 +/- 0.0084 | 0.278 | 18.7 |
+| 1200 | -0.6578 +/- 0.0094 | 0.228 | 37.5 |
+| 2400 | -0.7605 +/- 0.0084 | 0.179 | 76.2 |
+| 4800 | -0.8386 +/- 0.0077 | 0.149 | 152.0 |
+
+**Monotone across all four rungs; slope `-0.304` over the four, and
+`-0.321` over the campaign's three — both consistent with `-1/3`;
+`Delta(600 -> 2400) = -0.193`, i.e. the derived `-0.2007`.** The
+plateau was small-sample fluctuation at `n = 12`. No bias floor is
+detected out to `m ~ 152` and `tau / ell ~ 0.3`.
+
+**What the campaign therefore establishes**: over this ladder the
+unchanged P11 chain estimator reads CURVED proper time on a genuinely
+curved sprinkling, at 15-28% relative error, improving with density,
+with the flat template far worse at every rung. The frozen gate says
+IMPROVES and the diagnostic says the improvement runs at the
+longest-chain rate. **What it does not establish**: anything about
+`tau / ell` regimes other than ~0.3, and nothing about a floor —
+neither its presence nor its absence beyond `m ~ 152`.
+
+**The flat arm, rebuilt — and the frozen prediction vindicated.**
+Review found that the arm as first implemented computed
+`|tau_flat - tau_curved| / tau_curved`, which never touches
+`tau_hat`: a property of the PATCH, not of the instrument, and
+therefore incapable of supporting the claim it was cited for. The arm
+is now the estimator's error against the flat template,
+`|tau_hat - tau_flat| / tau_flat`, and the old quantity is retained
+under an honest name as what it always was — how much curvature the
+band carries at all.
+
+| rung | error vs CURVED truth | error vs FLAT template | geometric gap |
+|---|---|---|---|
+| 600 | 0.282 | 0.464 | 0.401 |
+| 1200 | 0.218 | 0.430 | 0.390 |
+| 2400 | 0.230 | 0.442 | 0.381 |
+
+The estimator sits about twice as close to the curved truth as to the
+flat template at every rung — the claim the arm was cited for, now
+resting on a quantity that involves the estimator.
+
+**But the "flat and vindicated" reading of it is withdrawn (same
+round, second finding).** Once the arm is `|tau_hat - tau_flat| /
+tau_flat` it is DENSITY-DEPENDENT by definition: as `tau_hat`
+converges to `tau_curved` the arm tends to
+`|tau_curved - tau_flat| / tau_flat`, not to a constant. Here
+`tau_flat = 1.39 tau_curved` on the band, so that limit is
+`0.39 / 1.39 ~ 0.28`, and the arm must FALL toward it. The
+quarantined 200-per-rung diagnostic confirms it does —
+`0.489 / 0.457 / 0.410 / 0.391` across `N = 600 / 1200 / 2400 / 4800`,
+monotone — so the apparent flatness of the campaign's three
+12-sample medians was noise, and the agreement with the frozen band
+`0.42-0.49` was coincidence of the ladder's middle, not confirmation.
+
+The frozen prediction is therefore RETIRED for this quantity rather
+than scored: Section 4's rationale ("its expected level is fixed by
+the patch geometry alone") is true of the geometric gap and false of
+the estimator-based arm, so the prediction described one quantity
+while the claim needed the other. What the arm does support, and
+more strongly than flatness would, is that the SEPARATION widens with
+density: curved-truth error `0.278 -> 0.149` while the flat-template
+error stays above `0.39`, so the reading tracks the curved metric
+better and better while never approaching the flat one.
+
+**Two further corrections from the same round**, both silent-drift
+risks rather than wrong numbers: the estimator now CALLS
+`estimate_tau_from_longest_chain_1p1` instead of re-deriving its
+endpoint correction inline (a later recalibration would otherwise
+have split P11 and P12 while this module claimed they shared an
+instrument), and the truth regression now integrates the GEODESIC
+equation — `x` is cyclic, so `k = Omega^2 dx/dtau` is conserved and
+`Delta x` and `tau` follow by quadrature, shot on `k` — asserting
+`1e-9` as Section 3 requires, where the first version integrated a
+straight coordinate path at `2e-3`. The closed form passes at `1e-9`.
+The gate is unchanged to the last digit by all three fixes
+(`Delta = -0.104`, CI `[-0.177, -0.041]`), which is the evidence that
+they were publication and hygiene defects rather than measurement
+ones.
+
+**The lever this hands over**, already named in Section 7: sweep
+`tau / ell` at fixed density. That experiment no longer rests on a
+measured floor — there is none to rest on — but on the sharper
+question the diagnostic leaves open: how large `tau / ell` may grow
+before the flat-normalized reading degrades, and whether the
+exponent survives there.
+
+Artifacts: `docs/prereg/frozen/p12/` (verification, pilot, Stage A),
+stamp recorded in each.
