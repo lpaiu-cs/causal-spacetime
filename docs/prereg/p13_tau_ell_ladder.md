@@ -397,6 +397,17 @@ twin's 95% bootstrap interval:
 Row 3 is the honest home for the reading v1 produced, and it cannot
 fire spuriously the way a point threshold does.
 
+**What row 3 does to the curved verdict word, pinned so it cannot be
+read two ways** (the ambiguity v1 paid for elsewhere): on row 3 **the
+verdict word IS issued** and carries UNDERPOWERED-CONTROL beside it,
+exactly as P11's SELECTION-CAVEAT rides alongside a verdict rather
+than replacing it, and Section 9's narration must print the twin's
+interval next to the verdict word every time. Withholding the word
+would kill a campaign twice over for a control that is merely
+imprecise; with `n_twin` sized as in (2), row 3 fires only when the
+realized variance badly overruns the pilot, which is rare and is
+itself worth reporting.
+
 **(2) The twin is piloted and sized like an arm.** Stage P-13B pilots
 BOTH twin endpoint rungs (200 samples each), and
 
