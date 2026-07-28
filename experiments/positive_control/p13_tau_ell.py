@@ -66,25 +66,29 @@ BAND_REL = 0.10
 M_TARGET = 76.0
 M_TOLERANCE = 0.05          # Section 5 gate: +/- 5% of the grand mean
 
-#: Power design (Section 1). The cap is 200 here, not P11's 60: the
-#: design-check variance puts n_eq around 170, and a design that
-#: cannot buy its own expected verdict is not a design.
+#: Power design (Sections 1 and 10). v2 raises the cap to 300 ex
+#: ante: campaign v1's pilot returned n_eq = 231, which is disclosed
+#: pre-freeze information for v2 (in v1 it was pilot data arriving
+#: after the rule was frozen, so the cap stayed at 200 and
+#: CURVATURE-ROBUST was unpurchasable).
 DELTA_DETECT = 0.15
 DELTA_EQ = 0.05
 N_FLOOR = 12
-N_CAP = 200
+N_CAP = 300
 N_SUP_COEFF = (1.960 + 1.282) ** 2 / DELTA_DETECT ** 2
 N_EQ_COEFF = (1.960 + 1.645) ** 2 / DELTA_EQ ** 2
 
-#: Seed windows (Section 6). Design-check space is 7000000+ and is
-#: never touched by a runner.
-VERIFY_BASE = {0.30: 6000000, 0.60: 6002000, 1.00: 6004000,
-               1.50: 6006000}
-PILOT_BLOCKS = {0.30: (6020000, 220), 1.50: (6064000, 220)}
-STAGE_A_BLOCKS = {0.30: (6120000, 220), 0.60: (6164000, 220),
-                  1.00: (6208000, 220), 1.50: (6252000, 220)}
-TWIN_BLOCKS = {0.30: (6300000, 220), 0.60: (6344000, 220),
-               1.00: (6388000, 220), 1.50: (6432000, 220)}
+#: Seed windows (Section 10, v2). Campaign v1's seeds (6000000+) are
+#: spent, so v2 runs entirely in 8000000-8795999; design-check space
+#: remains 7000000+ and 9000000+, never touched by a runner.
+VERIFY_BASE = {0.30: 8000000, 0.60: 8002000, 1.00: 8004000,
+               1.50: 8006000}
+PILOT_BLOCKS = {0.30: (8020000, 320), 1.50: (8084000, 320)}
+PILOT_TWIN_BLOCKS = {0.30: (8148000, 320), 1.50: (8212000, 320)}
+STAGE_A_BLOCKS = {0.30: (8280000, 320), 0.60: (8344000, 320),
+                  1.00: (8408000, 320), 1.50: (8472000, 320)}
+TWIN_BLOCKS = {0.30: (8540000, 320), 0.60: (8604000, 320),
+               1.00: (8668000, 320), 1.50: (8732000, 320)}
 SCORE_OFFSET = 150
 
 #: P13's prerequisite record lives in P12's frozen directory.
@@ -267,6 +271,48 @@ def verdict(lo: float, hi: float, robust_available: bool) -> str:
     return "INCONCLUSIVE" if robust_available else "UNRESOLVED"
 
 
+def control_result(lo_t: float, hi_t: float) -> str:
+    """The v2 twin gate (Section 10): an EQUIVALENCE test by
+    precedence, not a point threshold.
+
+    v1 asked whether a point estimate cleared delta_eq, which a
+    perfect control fails about one campaign in five at n = 21 -- an
+    equivalence-grade requirement given a superiority-grade sample.
+    Row 3 is the honest home for an imprecise control: the campaign's
+    verdict word is still ISSUED and carries this label beside it, the
+    way P11's SELECTION-CAVEAT rides along rather than replacing a
+    verdict.
+    """
+
+    if (-DELTA_EQ < lo_t) and (hi_t < DELTA_EQ):
+        return "CONTROL-CLEAN"
+    if (lo_t > DELTA_EQ) or (hi_t < -DELTA_EQ):
+        return "CONFOUNDED"
+    return "UNDERPOWERED-CONTROL"
+
+
+def twin_sample_size(y_bottom: np.ndarray, y_top: np.ndarray) -> dict:
+    """Section 10 (2): the twin is piloted and sized like an arm, by
+    the same equivalence formula, so demonstrating the control is
+    clean costs what demonstrating equivalence costs anywhere else."""
+
+    bottom = calibrated_variance_bound(y_bottom, "twin-bottom")
+    top = calibrated_variance_bound(y_top, "twin-top")
+    s2_90 = bottom["bound"] + top["bound"]
+    n_twin = int(np.ceil(N_EQ_COEFF * s2_90))
+    return {
+        "s2": bottom["s2"] + top["s2"], "s2_90": s2_90,
+        "n_twin_required": n_twin,
+        "n_twin": int(min(max(n_twin, N_FLOOR), N_CAP)),
+        "equivalence_affordable": bool(n_twin <= N_CAP),
+        "calibration": {
+            side: {k: data[k] for k in
+                   ("coverage_at_nominal", "z_used", "calibrated")}
+            for side, data in (("bottom", bottom), ("top", top))
+        },
+    }
+
+
 def power_requirements(y_bottom: np.ndarray, y_top: np.ndarray) -> dict:
     """Section 1.3: calibrated Bonett bounds summed, then the two
     requirements, then the frozen selection rule with cap 200."""
@@ -382,15 +428,40 @@ def run_pilot(output_dir: Path) -> None:
         print(f"pilot-13 tau/ell={tau_c}: var={nominal['s2']:.5f} "
               f"g4={nominal['g4']:.2f} | skips={len(skipped)}", flush=True)
 
+    twin_ys: dict = {}
+    for tau_c, (base, slots) in PILOT_TWIN_BLOCKS.items():
+        records, skipped, filled = _fill_block(
+            tau_c, base, slots, PILOT_SAMPLES, flat=True)
+        if not filled:
+            raise SystemExit(
+                f"pilot-13B twin rung {tau_c} could not fill "
+                f"{PILOT_SAMPLES} (skips: {len(skipped)}) -- "
+                "INFEASIBLE-INCOMPLETE")
+        twin_ys[tau_c] = np.array([r["y"] for r in records])
+        summary["per_rung"][f"twin-{tau_c}"] = {
+            "n_samples": len(records),
+            "variance": float(twin_ys[tau_c].var(ddof=1)),
+            "mean_m": float(np.mean([r["mean_m"] for r in records])),
+            "skipped_seeds": skipped,
+            "y": [float(val) for val in twin_ys[tau_c]],
+        }
+        print(f"pilot-13B twin tau/ell={tau_c}: "
+              f"var={twin_ys[tau_c].var(ddof=1):.5f} | "
+              f"skips={len(skipped)}", flush=True)
+
     power = power_requirements(ys[RUNGS[0]], ys[RUNGS[-1]])
+    twin_power = twin_sample_size(twin_ys[RUNGS[0]], twin_ys[RUNGS[-1]])
     times = verification["per_rung"]
     projected = None
     if power["n_per_rung"] is not None:
         # four curved rungs plus four twin rungs
-        projected = 2.0 * power["n_per_rung"] * sum(
+        per_sample = sum(
             times[str(t)]["mean_seconds_per_sample"] for t in RUNGS
-        ) / 3600.0
+        )
+        projected = ((power["n_per_rung"] + twin_power["n_twin"])
+                     * per_sample / 3600.0)
     summary["power"] = power
+    summary["twin_power"] = twin_power
     summary["projected_stage_a_hours"] = projected
     summary["feasible"] = bool(
         not power["infeasible"] and projected is not None
@@ -398,7 +469,8 @@ def run_pilot(output_dir: Path) -> None:
     )
     (output_dir / PILOT_ARTIFACT).write_text(
         json.dumps(_de_nan(summary), indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"power": power, "feasible": summary["feasible"],
+    print(json.dumps({"power": power, "twin_power": twin_power,
+                      "feasible": summary["feasible"],
                       "projected_stage_a_hours": projected}, indent=2))
 
 
@@ -409,6 +481,7 @@ def run_stage_a(output_dir: Path) -> None:
         raise SystemExit("pilot-13 declared the design infeasible")
     n_per_rung = int(pilot["power"]["n_per_rung"])
     robust_available = bool(pilot["power"]["robust_available"])
+    n_twin = int(pilot["twin_power"]["n_twin"])
 
     rows, per_rung, twin_rows, twin_y = [], {}, [], {}
     skip_counts, skipped_seeds = {}, {}
@@ -433,10 +506,10 @@ def run_stage_a(output_dir: Path) -> None:
 
         tbase, tslots = TWIN_BLOCKS[tau_c]
         trecords, tskipped, tfilled = _fill_block(
-            tau_c, tbase, tslots, n_per_rung, flat=True)
+            tau_c, tbase, tslots, n_twin, flat=True)
         if not tfilled:
             raise SystemExit(
-                f"flat twin rung {tau_c} could not fill {n_per_rung} "
+                f"flat twin rung {tau_c} could not fill {n_twin} "
                 f"(skips: {len(tskipped)}) -- INFEASIBLE-INCOMPLETE")
         for r in trecords:
             r["stage"] = "A13-twin"
@@ -447,21 +520,21 @@ def run_stage_a(output_dir: Path) -> None:
               f"mean y {twin_y[tau_c].mean():.4f}", flush=True)
     write_rows_csv(output_dir / "p13_stage_a.csv", rows + twin_rows)
 
-    def contrast(per, label):
+    def contrast(per, label, size):
         delta = float(per[RUNGS[-1]].mean() - per[RUNGS[0]].mean())
         rng = np.random.default_rng(_stable_seed(label))
         boots = [
-            float(rng.choice(per[RUNGS[-1]], size=n_per_rung,
+            float(rng.choice(per[RUNGS[-1]], size=size,
                              replace=True).mean()
-                  - rng.choice(per[RUNGS[0]], size=n_per_rung,
+                  - rng.choice(per[RUNGS[0]], size=size,
                                replace=True).mean())
             for _ in range(4000)
         ]
         return delta, [float(np.percentile(boots, 2.5)),
                        float(np.percentile(boots, 97.5))]
 
-    delta, (lo, hi) = contrast(per_rung, "p13-delta")
-    twin_delta, twin_ci = contrast(twin_y, "p13-twin-delta")
+    delta, (lo, hi) = contrast(per_rung, "p13-delta", n_per_rung)
+    twin_delta, twin_ci = contrast(twin_y, "p13-twin-delta", n_twin)
 
     # Section 5 gate 1: m matching
     mean_m = {t: float(np.mean([r["mean_m"] for r in rows
@@ -469,8 +542,9 @@ def run_stage_a(output_dir: Path) -> None:
     grand = float(np.mean(list(mean_m.values())))
     m_ok = all(abs(mean_m[t] - grand) / grand <= M_TOLERANCE
                for t in RUNGS)
-    # Section 5 gate 2: the twin's contrast must be within delta_eq
-    twin_ok = abs(twin_delta) <= DELTA_EQ
+    # Section 10 (1): the twin gate is an EQUIVALENCE test, and its
+    # UNDERPOWERED row labels the verdict rather than withholding it
+    control = control_result(twin_ci[0], twin_ci[1])
 
     # labelled: the (tau/ell)^2 trend across all four rungs
     x2 = np.array(RUNGS, dtype=float) ** 2
@@ -491,13 +565,17 @@ def run_stage_a(output_dir: Path) -> None:
         "robust_available": robust_available,
         "delta": delta, "delta_ci": [lo, hi],
         "delta_eq": DELTA_EQ,
-        "verdict": (verdict(lo, hi, robust_available)
-                    if (m_ok and twin_ok) else "CONFOUNDED"),
+        "verdict": ("CONFOUNDED"
+                    if (control == "CONFOUNDED" or not m_ok)
+                    else verdict(lo, hi, robust_available)),
+        "control_result": control,
+        "control_caveat": control == "UNDERPOWERED-CONTROL",
+        "n_twin": n_twin,
         "confound_gates": {
             "m_matched": m_ok, "mean_m_by_rung": mean_m,
             "m_grand_mean": grand, "m_tolerance": M_TOLERANCE,
             "flat_twin_delta": twin_delta, "flat_twin_ci": twin_ci,
-            "flat_twin_within_delta_eq": twin_ok,
+            "control_result": control,
         },
         "mean_y_by_rung": {str(t): float(per_rung[t].mean())
                            for t in RUNGS},
@@ -525,8 +603,10 @@ def run_stage_a(output_dir: Path) -> None:
         json.dumps(_de_nan(summary), indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"delta": delta, "delta_ci": [lo, hi],
                       "verdict": summary["verdict"],
+                      "control_result": control,
                       "m_matched": m_ok,
-                      "flat_twin_delta": twin_delta}, indent=2))
+                      "flat_twin_delta": twin_delta,
+                      "flat_twin_ci": twin_ci}, indent=2))
 
 
 def main() -> None:

@@ -25,6 +25,7 @@ from p13_tau_ell import (  # noqa: E402
     N_CAP,
     PATCH,
     PILOT_BLOCKS,
+    PILOT_TWIN_BLOCKS,
     RUNGS,
     STAGE_A_BLOCKS,
     STRIDE,
@@ -32,6 +33,7 @@ from p13_tau_ell import (  # noqa: E402
     TWIN_BLOCKS,
     TWIN_RHO,
     VERIFY_BASE,
+    control_result,
     eligible_pairs,
     patch_proper_volume,
     run_sample,
@@ -137,18 +139,49 @@ def test_inverted_verdict_table_is_single_valued():
     # rows 1 and 2 fire on significance, not size -- the pin the
     # prereg added under the table
     assert verdict(0.001, 0.004, True) == "CURVATURE-DEGRADES"
-    assert DELTA_EQ == 0.05 and N_CAP == 200
+    assert DELTA_EQ == 0.05 and N_CAP == 300
+
+
+def test_control_gate_is_an_equivalence_test_with_a_label_row():
+    """v2 Section 10: the point threshold that failed a perfect
+    control one campaign in five is replaced by a three-way
+    equivalence test, evaluated by precedence."""
+
+    # clean: the whole interval sits inside the margin
+    assert control_result(-0.03, 0.03) == "CONTROL-CLEAN"
+    # confounded: the interval lies wholly outside it
+    assert control_result(0.06, 0.20) == "CONFOUNDED"
+    assert control_result(-0.20, -0.06) == "CONFOUNDED"
+    # the ROW 3 BOUNDARY CASE the review asked for: the interval
+    # excludes zero but straddles the margin -- v1 would have called
+    # this CONFOUNDED, v2 labels it and lets the verdict stand
+    assert control_result(0.03, 0.20) == "UNDERPOWERED-CONTROL"
+    # and the campaign v1 reading itself lands on row 3
+    assert control_result(0.0318, 0.1355) == "UNDERPOWERED-CONTROL"
+    # merely wide but centred is also row 3, not clean
+    assert control_result(-0.09, 0.09) == "UNDERPOWERED-CONTROL"
+
+
+def test_v2_cap_and_windows_moved_off_the_spent_campaign():
+    from p13_tau_ell import N_CAP as cap
+    assert cap == 300
+    for base, _slots in (list(PILOT_BLOCKS.values())
+                         + list(PILOT_TWIN_BLOCKS.values())
+                         + list(STAGE_A_BLOCKS.values())
+                         + list(TWIN_BLOCKS.values())):
+        assert base >= 8_000_000      # campaign v1's seeds are spent
 
 
 def test_windows_are_private_and_clear_of_design_space():
     spans = []
     for base, slots in (list(PILOT_BLOCKS.values())
+                        + list(PILOT_TWIN_BLOCKS.values())
                         + list(STAGE_A_BLOCKS.values())
                         + list(TWIN_BLOCKS.values())):
         span = set(range(base, base + STRIDE * slots))
         spans.append(span)
-        assert min(span) >= 6_000_000
-        assert max(span) < 7_000_000     # design-check space starts here
+        assert min(span) >= 8_000_000
+        assert max(span) < 9_000_000     # 9M+ is design-check space
     for a in spans:
         for b in spans:
             assert a is b or not (a & b)
