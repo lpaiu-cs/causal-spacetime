@@ -1,8 +1,26 @@
 # P13: how far does curvature let the flat-normalized reading go? — power-first preregistration
 
-Status: **DESIGN v1.0 (2026-07-28), for in-session review. Nothing
-below has been run.** Dates are local (UTC+9); commit timestamps carry
-their +09:00 offset.
+Status: **DESIGN v1.1 (2026-07-28), for in-session review. Nothing
+below has been run.** Dates are local (UTC+9); commit timestamps
+carry their +09:00 offset.
+
+v1.1 corrections, pre-freeze and pre-data, from design review (the
+central one reproduced independently before it was applied): **the
+sample cap rises to 200 for P13, because at cap 60 this design could
+not afford its own most likely outcome.** Two independent
+design-check runs put the endpoint contrast at zero
+(`+0.006 +/- 0.025` and `+0.0074 +/- 0.0296`) with per-rung
+`s(y) ~ 0.11`, i.e. `S^2 ~ 0.025-0.027`, which makes `n_eq ~ 143`
+before calibration and ~170 after — far above 60. Under v1.0 the
+pilot would therefore have declared CURVATURE-ROBUST unavailable ex
+ante and a 12-sample campaign would have produced intervals too wide
+for rows 1 and 2, so the near-certain reading would have been
+UNRESOLVED by construction. Cap 60 is a P11 inheritance from an era
+when a sample cost minutes; a P13 sample costs about 0.2 s, so 200
+per rung across four rungs plus the flat twin is a few minutes. Seed
+windows are re-cut for 200-of-220 blocks (Section 6), and the
+design-check contrast is disclosed here rather than discovered later
+(the P12 precedent for quarantined design numbers).
 
 Lineage and the question. P12 showed that the unchanged P11 chain
 estimator reads CURVED proper time in `dS_2` at `tau / ell ~ 0.3`,
@@ -74,9 +92,15 @@ power consumes):
     n_eq  = ceil( S^2_90 * (1.960 + 1.645)^2 / 0.05^2 )   # 90% P(ROBUST)
                                                           # at Delta = 0
 
-`n_per_rung = clamp(max(n_sup, n_eq), 12, 60)` when `n_eq` fits the
+`n_per_rung = clamp(max(n_sup, n_eq), 12, 200)` when `n_eq` fits the
 cap, else `clamp(n_sup)` with CURVATURE-ROBUST declared unavailable
-ex ante. The detectable effect `0.15` dex is a design choice too: it
+ex ante. **The cap is 200 here, not P11's 60** (v1.1): with the
+design-check variance, `n_eq ~ 170` after calibration, so a cap of 60
+would have made the experiment's most likely verdict unpurchasable —
+a design that cannot buy its own expected conclusion is not a design.
+The frozen power computation is unchanged; only the affordability
+ceiling moves, and it moves because a P13 sample costs about 0.2 s
+where P11's cost minutes. The detectable effect `0.15` dex is a design choice too: it
 is roughly the size a `(tau/ell)^2` correction with an order-unity
 coefficient would produce at the top rung (Section 7), stated as an
 order-of-magnitude expectation and NOT frozen as a target — the
@@ -85,6 +109,18 @@ P11's Stage C v1.
 
 Stage P-13 pilots the two ENDPOINT rungs (0.30 and 1.50), 200 samples
 each, cross-rung statistics forbidden.
+
+**What this experiment is really testing, stated plainly.** The
+design checks say the contrast is zero to within `+/- 0.03`, so the
+likely reading is CURVATURE-ROBUST: at fixed discreteness the
+flat-normalized chain reading does not notice curvature out to
+`R tau^2 = 4.5`. That is the strong form of this programme's thesis —
+curvature entering the order only through the counting measure — and
+P13 exists to establish or refute it with frozen power, not to
+discover it. Those design numbers are quarantined (seeds `7000000+`
+and `9000000+`, disjoint from every experimental window) and are
+disclosed here precisely so that a later ROBUST verdict cannot be
+mistaken for a surprise.
 
 ---
 
@@ -125,9 +161,13 @@ Design-check seed space: `7000000-7999999` (the runs above used
 Truth is P12's exact `dS_2` geodesic proper time via the de Sitter
 invariant, already pinned against an independent geodesic integration
 at `1e-9` (P12 tests). The estimator is P11's, CALLED through
-`estimate_tau_from_longest_chain_1p1` with the rung's `rho` — never
-re-derived (the P12 review finding), so a recalibration of the shared
-definition reaches all three experiments at once.
+`estimate_tau_from_longest_chain_1p1` — never re-derived (the P12
+review finding), so a recalibration of the shared definition reaches
+all three experiments at once. The `rho` it is given is the P12
+convention, pinned here to remove the ambiguity (v1.1): **the
+realized event count divided by the rung's frozen patch proper
+volume**, `ell^2 (1 - 1/|eta_lo|) * 2X`, not the nominal `rho` of the
+Section 2 table (which sets the sprinkler's intensity).
 
 ## 4. Protocol
 
@@ -151,15 +191,29 @@ two controls gate the verdict rather than decorating it:
    reports **CONFOUNDED** instead of a verdict: the contrast would be
    mixing curvature with discreteness. (Design check: 75.8 to 77.0,
    a spread of 1.6%.)
-2. **Flat twin.** The same protocol run in FLAT Minkowski at matched
-   `m` and matched coordinate box sizes, where the true `Delta` is
-   zero by construction. If the flat twin's contrast exceeds
-   `delta_eq` in magnitude, the protocol itself has a size-dependent
-   artifact and the record reports **CONFOUNDED**. This is the
-   control P12's Stage B addendum asked for, promoted to a gate.
+2. **Flat twin**, operationally defined (v1.1, so the control is
+   reproducible rather than gestural). For each rung: the SAME
+   coordinate rectangle (`eta_lo`, `X`); a UNIFORM intensity
+   `rho_twin` calibrated by design check so the realized mean `m` is
+   76; a band on `tau_flat = sqrt(dU dV)` of `+/- 10%`, centred on
+   the curved rung's design-check mean box area, so the
+   box-to-patch ratio — the packing pressure — matches; and the same
+   eligibility conditions, `K`, rejection cap, fill rule and
+   `m`-gate. The true `Delta` is then zero by construction, so a
+   twin contrast exceeding `delta_eq` in magnitude means the
+   protocol has a size-dependent artifact and the record reports
+   **CONFOUNDED**. What is NOT matched, and is published rather than
+   glossed: the VARIANCE of box areas, which is larger on the curved
+   side.
 
-Labelled, never gating: the estimator's error against the flat
-template, and the geometric gap. P12's lesson stands — the first of
+Labelled, never gating: a **`(tau/ell)^2` trend fit across all four
+rungs** with a bootstrap CI on its slope (v1.1) — the endpoint
+contrast discards the two middle rungs, and in a small-coefficient
+regime the trend fit is what rescues an INCONCLUSIVE endpoint
+reading; the per-rung dispersion of `m` (so the mean-matching
+assumption of Section 5 is auditable rather than asserted); and the
+estimator's error against the flat template together with the
+geometric gap. P12's lesson stands — the first of
 these is density- and geometry-dependent, so no level is frozen for
 it this time; it is reported, not scored.
 
@@ -170,11 +224,17 @@ it this time; it is reported, not scored.
 | verification-13 (non-experimental) | 6000000 | 2000 per rung | 6000000-6007999 |
 | Stage P-13 pilot, tau/ell = 0.30 | 6020000 | 200 of 220 | 6020000-6063999 |
 | Stage P-13 pilot, tau/ell = 1.50 | 6064000 | 200 of 220 | 6064000-6107999 |
-| Stage A-13, tau/ell = 0.30 | 6120000 | <= 60 of 80 | 6120000-6135999 |
-| Stage A-13, tau/ell = 0.60 | 6136000 | <= 60 of 80 | 6136000-6151999 |
-| Stage A-13, tau/ell = 1.00 | 6152000 | <= 60 of 80 | 6152000-6167999 |
-| Stage A-13, tau/ell = 1.50 | 6168000 | <= 60 of 80 | 6168000-6183999 |
-| flat-twin control | 6200000 | <= 60 of 80 per rung | 6200000-6263999 |
+| Stage A-13, tau/ell = 0.30 | 6120000 | <= 200 of 220 | 6120000-6163999 |
+| Stage A-13, tau/ell = 0.60 | 6164000 | <= 200 of 220 | 6164000-6207999 |
+| Stage A-13, tau/ell = 1.00 | 6208000 | <= 200 of 220 | 6208000-6251999 |
+| Stage A-13, tau/ell = 1.50 | 6252000 | <= 200 of 220 | 6252000-6295999 |
+| flat twin, tau/ell = 0.30 | 6300000 | <= 200 of 220 | 6300000-6343999 |
+| flat twin, tau/ell = 0.60 | 6344000 | <= 200 of 220 | 6344000-6387999 |
+| flat twin, tau/ell = 1.00 | 6388000 | <= 200 of 220 | 6388000-6431999 |
+| flat twin, tau/ell = 1.50 | 6432000 | <= 200 of 220 | 6432000-6475999 |
+
+(Re-cut in v1.1 for the raised cap: 220 slots of stride 200 per
+block, 44000 seeds each, all inside `6000000-6999999`.)
 
 All spans are disjoint from P11's (to 705999), P12's experimental
 (1000000-1999999) and design (2000000-5999999) spaces, and from
@@ -195,8 +255,15 @@ zone. Both are publishable readings of the same experiment, which is
 the property a good gate has.
 
 What this design cannot see: any effect that is not monotone in
-`tau / ell`, and anything beyond `tau / ell = 1.5`, where the patch
-would have to grow faster than the `O(N^2)` pool scan can afford. The
+`tau / ell`, and anything beyond `tau / ell = 1.5`. The stopping
+point is a scope decision, not a cost one (v1.1 — the `O(N^2)` scan
+would only roughly double at `tau/ell = 2`): `R tau^2 = 4.5` already
+violates the small-diamond premise by more than a factor of two, so
+the ladder answers "outside the theory's comfort zone" and closes.
+If the reading is ROBUST there, the natural successor sweeps
+`tau/ell in {1.5, 2.0, 2.5, 3.0}`, where the conjugate point at
+`pi ell ~ 3.14` is a hard ceiling — a different experiment with a
+different failure mode, not an extension of this one. The
 `m = 76` operating point is also a choice; a floor that appears only
 at larger `m` would be invisible here, and Section 9 will say so
 rather than generalize.
