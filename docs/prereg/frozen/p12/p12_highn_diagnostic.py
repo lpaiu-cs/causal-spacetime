@@ -5,7 +5,9 @@ plateau or n=12 fluctuation, adds an N=4800 rung, and reconciles the
 flat-arm level using the RUNNER's own code path.
 """
 import sys
+
 import numpy as np
+
 sys.path.insert(0, "experiments/positive_control")
 from p12_curved import run_sample  # noqa: E402
 
@@ -22,8 +24,10 @@ for k, n in enumerate(NS):
         if not ok:
             skips += 1
             continue
-        ys.append(rec["y"]); curved.append(rec["median_relerr_curved"])
-        flat.append(rec["median_relerr_flat_arm"]); ms.append(rec["mean_m_open"])
+        ys.append(rec["y"])
+        curved.append(rec["median_relerr_curved"])
+        flat.append(rec["median_relerr_vs_flat_template"])
+        ms.append(rec["mean_m_open"])
     ys = np.array(ys)
     rows[n] = dict(mean_y=ys.mean(), se=ys.std(ddof=1)/np.sqrt(ys.size),
                    curved=float(np.median(curved)), flat=float(np.median(flat)),
@@ -35,9 +39,9 @@ for k, n in enumerate(NS):
 
 logn = np.log10(np.array(NS, dtype=float))
 means = np.array([rows[n]["mean_y"] for n in NS])
-print("\nslope over all four rungs: %+.4f" % np.polyfit(logn, means, 1)[0])
-print("slope over 600-2400 only : %+.4f" % np.polyfit(logn[:3], means[:3], 1)[0])
-print("Delta 600->2400: %+.4f | 600->4800: %+.4f"
-      % (means[2]-means[0], means[3]-means[0]))
+print(f"\nslope over all four rungs: {np.polyfit(logn, means, 1)[0]:+.4f}")
+print(f"slope over 600-2400 only : {np.polyfit(logn[:3], means[:3], 1)[0]:+.4f}")
+print(f"Delta 600->2400: {means[2]-means[0]:+.4f} | "
+      f"600->4800: {means[3]-means[0]:+.4f}")
 mono = all(means[i] > means[i+1] for i in range(3))
 print("monotone decreasing across all four rungs:", mono)

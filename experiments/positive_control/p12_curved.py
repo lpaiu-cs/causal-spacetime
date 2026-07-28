@@ -48,6 +48,10 @@ from p11_metric import (
 )
 from pc_common import DEFAULT_OUTPUT_DIR, write_rows_csv
 
+from causal_spacetime_lab.estimators import (
+    estimate_tau_from_longest_chain_1p1,
+)
+
 #: Frozen patch constants (prereg Section 2, v1.1).
 ELL = 1.0
 ETA_RANGE = (-2.0, -1.0)
@@ -168,18 +172,30 @@ def score_curved_pair(eta, x, i, j, rho):
     u_half, v_half = (eta + x) / 2.0, (eta - x) / 2.0
     scored = score_pair(u_half, v_half, i, j)
     chain = scored["chain_length"]
-    tau_hat = max(chain - 2, 0) / np.sqrt(2.0 * rho)
+    # the SHARED estimator, called (not re-derived): it owns the
+    # endpoint correction and the sqrt(2 rho) normalization, so a
+    # future recalibration reaches P11 and P12 together
+    tau_hat = float(estimate_tau_from_longest_chain_1p1(chain, rho=rho))
     tau_true = float(tau_curved(eta[i], x[i], eta[j], x[j]))
     tau_flat = float(np.sqrt(
         ((eta[j] + x[j]) - (eta[i] + x[i]))
         * ((eta[j] - x[j]) - (eta[i] - x[i]))
     ))
     return {
-        "tau_hat": float(tau_hat),
+        "tau_hat": tau_hat,
         "tau_curved": tau_true,
         "tau_flat": tau_flat,
         "relerr_curved": abs(tau_hat - tau_true) / tau_true,
-        "relerr_flat_arm": abs(tau_flat - tau_true) / tau_true,
+        # the ESTIMATOR's error against the flat template -- the arm
+        # that can actually say whether the chain reading follows the
+        # curved metric rather than the flat one (review: the first
+        # version compared tau_flat with tau_curved and never touched
+        # tau_hat, so it was a property of the patch, not of the
+        # instrument)
+        "relerr_vs_flat_template": abs(tau_hat - tau_flat) / tau_flat,
+        # kept, correctly named: a pure geometry statistic saying how
+        # much curvature the band carries at all
+        "flat_curved_geometric_gap": abs(tau_flat - tau_true) / tau_true,
         "m_open": int(scored["m_open"]),
         "chain_length": int(chain),
     }
@@ -210,8 +226,11 @@ def run_sample(n_expected: int, seed: int, single_stream: bool = False):
     record["median_relerr_curved"] = float(
         np.median([s["relerr_curved"] for s in scored])
     )
-    record["median_relerr_flat_arm"] = float(
-        np.median([s["relerr_flat_arm"] for s in scored])
+    record["median_relerr_vs_flat_template"] = float(
+        np.median([s["relerr_vs_flat_template"] for s in scored])
+    )
+    record["median_flat_curved_gap"] = float(
+        np.median([s["flat_curved_geometric_gap"] for s in scored])
     )
     record["min_m_open"] = float(min(s["m_open"] for s in scored))
     record["mean_m_open"] = float(np.mean([s["m_open"] for s in scored]))
@@ -399,13 +418,18 @@ def run_stage_a(output_dir: Path) -> None:
                      if r["n_expected"] == n]
                 )) for n in P12_LADDER
             },
-            "flat_arm_median_relerr_by_rung": {
+            "estimator_vs_flat_template_by_rung": {
                 str(n): float(np.median(
-                    [r["median_relerr_flat_arm"] for r in rows
+                    [r["median_relerr_vs_flat_template"] for r in rows
                      if r["n_expected"] == n]
                 )) for n in P12_LADDER
             },
-            "flat_arm_frozen_prediction": [0.42, 0.49],
+            "flat_curved_geometric_gap_by_rung": {
+                str(n): float(np.median(
+                    [r["median_flat_curved_gap"] for r in rows
+                     if r["n_expected"] == n]
+                )) for n in P12_LADDER
+            },
             "mean_m_open_by_rung": {
                 str(n): float(np.mean(
                     [r["mean_m_open"] for r in rows if r["n_expected"] == n]

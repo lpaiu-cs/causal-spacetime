@@ -38,40 +38,71 @@ from p12_curved import (  # noqa: E402
 )
 
 
-def _geodesic_proper_time(e1, x1, e2, x2, steps=400001):
-    """Numerical proper time along the straight coordinate path, which
-    lower-bounds the geodesic; for the short separations used here the
-    two agree to the tested tolerance."""
+def _geodesic_proper_time(e1, x1, e2, x2):
+    """INDEPENDENT geodesic integration for ds^2 = Omega^2(-deta^2+dx^2)
+    with Omega = ell/|eta| -- no de Sitter invariant, no embedding.
 
-    s = np.linspace(0.0, 1.0, steps)
-    eta = e1 + (e2 - e1) * s
-    x = x1 + (x2 - x1) * s
-    d_eta = np.gradient(eta, s)
-    d_x = np.gradient(x, s)
-    integrand = (ELL / np.abs(eta)) * np.sqrt(
-        np.maximum(d_eta ** 2 - d_x ** 2, 0.0)
+    x is cyclic, so k = Omega^2 dx/dtau is conserved; the normalization
+    Omega^2(deta^2 - dx^2) = 1 then gives
+
+        dx/deta   = k / sqrt(Omega^2 + k^2),
+        dtau/deta = Omega^2 / sqrt(Omega^2 + k^2).
+
+    Shoot on k until the integrated Delta x matches the endpoints, then
+    integrate the proper time. This is a solution of the geodesic
+    equation, not a straight coordinate path, and the prereg requires
+    agreement at 1e-9.
+    """
+
+    nodes, weights = np.polynomial.legendre.leggauss(512)
+    lo, hi = min(e1, e2), max(e1, e2)
+    grid = 0.5 * (hi - lo) * nodes + 0.5 * (hi + lo)
+    scale = 0.5 * (hi - lo)
+    omega2 = ELL ** 2 / grid ** 2
+    target = abs(x2 - x1)
+
+    def dx_of_k(k):
+        return float(np.sum(weights * (k / np.sqrt(omega2 + k ** 2))) * scale)
+
+    if target == 0.0:
+        k = 0.0
+    else:
+        k_hi = 1.0
+        while dx_of_k(k_hi) < target:
+            k_hi *= 2.0
+            assert k_hi < 1e12, "no geodesic reaches this separation"
+        k_lo = 0.0
+        for _ in range(200):
+            mid = 0.5 * (k_lo + k_hi)
+            if dx_of_k(mid) < target:
+                k_lo = mid
+            else:
+                k_hi = mid
+        k = 0.5 * (k_lo + k_hi)
+    return float(
+        np.sum(weights * (omega2 / np.sqrt(omega2 + k ** 2))) * scale
     )
-    return float(np.trapezoid(integrand, s))
 
 
 def test_truth_matches_numerical_geodesic_integration():
-    """Prereg Section 3: the closed form must agree with integrating
-    the metric, on a frozen grid of separations."""
+    """Prereg Section 3: the closed form must agree with an independent
+    integration of the GEODESIC equation to 1e-9 relative, on a frozen
+    grid of separations (the first version integrated a straight
+    coordinate path at 2e-3, which could have accepted a materially
+    wrong truth formula)."""
 
     cases = [
         (-1.9, 0.0, -1.6, 0.05),
         (-1.8, -0.2, -1.5, -0.1),
         (-1.5, 0.3, -1.2, 0.35),
         (-2.0, 0.0, -1.7, 0.0),
+        (-1.95, -0.4, -1.05, 0.4),
     ]
     for e1, x1, e2, x2 in cases:
         closed = float(tau_curved(e1, x1, e2, x2))
         numeric = _geodesic_proper_time(e1, x1, e2, x2)
         assert np.isfinite(closed)
-        # the straight path is a lower bound and, at these
-        # separations, tight
-        assert numeric <= closed + 1e-9
-        assert abs(closed - numeric) / closed < 2e-3
+        assert abs(closed - numeric) / closed < 1e-9
 
 
 def test_truth_reduces_to_the_local_metric_at_short_separation():
@@ -152,10 +183,14 @@ def test_sample_scores_curved_truth_not_flat():
     record, complete = run_sample(1200, VERIFY_BASE[1200], single_stream=True)
     assert complete
     assert np.isfinite(record["y"])
-    # the flat arm must be large and clearly worse than the curved
-    # reading -- otherwise the patch carries no curvature signal
-    assert record["median_relerr_flat_arm"] > record["median_relerr_curved"]
-    assert 0.3 < record["median_relerr_flat_arm"] < 0.7
+    # the estimator must sit closer to the CURVED truth than to the
+    # flat template -- the arm that actually involves tau_hat (the
+    # first version compared two truths and never touched the
+    # estimator, so it could not support this claim at all)
+    assert (record["median_relerr_vs_flat_template"]
+            > record["median_relerr_curved"])
+    # and the band must carry real curvature to compare against
+    assert 0.3 < record["median_flat_curved_gap"] < 0.7
 
 
 def test_windows_are_private_and_fresh_and_clear_of_design_space():
