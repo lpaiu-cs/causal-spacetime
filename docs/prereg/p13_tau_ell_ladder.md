@@ -1,8 +1,14 @@
 # P13: how far does curvature let the flat-normalized reading go? — power-first preregistration
 
-Status: **DESIGN v1.1 (2026-07-28), for in-session review. Nothing
-below has been run.** Dates are local (UTC+9); commit timestamps
-carry their +09:00 offset.
+Status: **DESIGN v2 (2026-07-28), approved in session. Campaign v1
+HAS RUN and returned CONFOUNDED — its record is Section 9 and is not
+re-read; Section 10's v2 revisions are what the next campaign runs.**
+Dates are local (UTC+9); commit timestamps carry their +09:00 offset.
+
+Sections 1 through 8 describe the design as frozen for campaign v1.
+Where v2 changes a frozen rule it says so in Section 10; everything
+those sections state that Section 10 does not touch remains in force
+verbatim.
 
 v1.1 corrections, pre-freeze and pre-data, from design review (the
 central one reproduced independently before it was applied): **the
