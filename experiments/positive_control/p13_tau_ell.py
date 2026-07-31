@@ -81,11 +81,24 @@ M_TOLERANCE = 0.05          # Section 5 gate: +/- 5% of the grand mean
 #: certify what is no longer in doubt.
 #:
 #: The equivalence power target rises from 90% to 99%, z 1.645 ->
-#: 2.326 (Section 12.3). The 10% beta is not slack -- it is the
+#: 2.576 (Section 12.3). The 10% beta is not slack -- it is the
 #: probability a null ladder's interval pokes outside the margin, and
 #: v2 spent most of it on one +2.3 sigma draw whose upper end landed
 #: 0.0044 short. That thinness scales WITH delta_eq, so tightening
 #: the margin does not fix it; only power does.
+#:
+#: The quantile in that slot is TWO-SIDED, and the derivation is
+#: written here because v3 first got it wrong (review C2). ROBUST
+#: requires BOTH bounds inside the margin, i.e.
+#: |Delta_hat| < delta_eq - 1.960 se, so with
+#: delta_eq / se = 1.960 + z the power at Delta = 0 is
+#: P(|Z| < z) = 2 Phi(z) - 1, not Phi(z). A central 99% therefore
+#: needs z = Phi^-1(0.995) = 2.576; z = 2.326 = Phi^-1(0.99) delivers
+#: 98.0%. Note the 90% slot's 1.645 was ALREADY Phi^-1(0.95) and
+#: therefore already two-sided-correct, so substituting a one-sided
+#: quantile broke a convention that was right rather than sharpening
+#: a loose one. test_equivalence_coefficient_is_two_sided derives the
+#: delivered power back out of the constant so the slip cannot recur.
 #:
 #: n_sup measures against DELTA_DETECT - DELTA_EQ because row 1 now
 #: requires clearing the margin rather than clearing zero. It is
@@ -102,7 +115,7 @@ DELTA_EQ = 0.02
 N_FLOOR = 12
 N_CAP = 3000
 N_SUP_COEFF = (1.960 + 1.282) ** 2 / (DELTA_DETECT - DELTA_EQ) ** 2
-N_EQ_COEFF = (1.960 + 2.326) ** 2 / DELTA_EQ ** 2
+N_EQ_COEFF = (1.960 + 2.576) ** 2 / DELTA_EQ ** 2
 
 #: Seed windows (Section 12.4, v3). Campaign v1 spent 6000000-6475999
 #: and v2 spent 8000000-8795999; 11.3's diagnostic reached 14550000 in

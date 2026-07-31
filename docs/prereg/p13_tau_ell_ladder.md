@@ -6,7 +6,12 @@ answered.** The result is Section 13:
 `Delta_13 = +0.0072` with CI `[-0.0004, +0.0148]`, and a flat twin that
 reproduces the curved arm's entire residual drift to `+0.00007`. At
 fixed discreteness `m ~ 76` the flat-normalized chain reading does not
-notice curvature out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`.
+notice curvature out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`. **This
+is a result about the INSTRUMENT in 1+1D de Sitter, one conformal
+patch.** A 1+1D metric is conformally flat, so it does not and cannot
+establish the general thesis that curvature enters causal order only
+through the counting measure — 13.3 says why, and that generality needs
+`d >= 3`.
 
 Getting there took three campaigns, and each verdict stands at its own
 stamp, none re-read. v1 **CONFOUNDED** (Section 9): the control had no
@@ -145,7 +150,12 @@ flat-normalized chain reading does not notice curvature out to
 `R tau^2 = 4.5`. That is the strong form of this programme's thesis —
 curvature entering the order only through the counting measure — and
 P13 exists to establish or refute it with frozen power, not to
-discover it. Those design numbers are quarantined (seeds `7000000+`
+discover it. **[Forward marker, v3.1, per the in-place convention:
+this framing is SUPERSEDED by 13.3. A 1+1D metric is conformally flat,
+so in this model curvature can reach the order only through the measure
+as a matter of geometry rather than of measurement; the general thesis
+needs `d >= 3`, and what P13 establishes is about the instrument.]**
+Those design numbers are quarantined (seeds `7000000+`
 and `9000000+`, disjoint from every experimental window) and are
 disclosed here precisely so that a later ROBUST verdict cannot be
 mistaken for a surprise.
@@ -741,9 +751,12 @@ discreteness `m ~ 76`, no degradation of the flat-normalized chain
 reading is detected out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`, with
 the endpoint contrast bounded inside `[-0.0066, +0.0179]` dex at 95%
 — well inside `delta_eq = 0.05`. That interval satisfies the
-numerical condition of row 3 of the 1.2 table, and it is the strong
-form of this programme's thesis: curvature entering the order only
-through the counting measure. **But a diagnostic cannot award a
+numerical condition of row 3 of the 1.2 table. **[v3.1, review C4: the
+first version of this paragraph continued "and it is the strong form of
+this programme's thesis: curvature entering the order only through the
+counting measure." That clause is WITHDRAWN. A 1+1D patch is
+conformally flat, so the reading bears on the instrument and not on the
+thesis; 13.3 gives the argument.]** **And a diagnostic cannot award a
 verdict.** It carries no verification pin, its `n` is not
 pilot-derived, and it ran after the campaign's data were seen.
 CURVATURE-ROBUST remains unawarded, and awarding it requires a
@@ -813,13 +826,30 @@ which is the honest home for an imprecise campaign.
 the only guard, and 11.2 is the reason to keep it: it is what stopped
 a scale-free trigger from being published as a mechanism.
 
-**What this table may not be used for.** Applied to campaign v2's
-frozen interval `[+0.0044, +0.0456]` it returns CURVATURE-ROBUST. That
-is a demonstration that the repair targets the real defect, and it is
-**not** a re-scoring. v2's verdict was issued under v2's rules and
-stands as CURVATURE-DEGRADES. A rule change that flips one's own
-verdict may only touch data not yet seen; that is why v3 gets fresh
-windows and why this paragraph is here rather than discovered later.
+**What this table would have said about campaign v2** (corrected in
+v3.1, review C3; the first version of this paragraph said
+CURVATURE-ROBUST and was wrong). Applied to v2's frozen interval
+`[+0.0044, +0.0456]` against `delta_eq = 0.02`, row 1 does not fire
+(`lo = 0.0044` does not clear the margin), row 2 does not fire, and row
+3 does not fire either (`hi = 0.0456` is outside the margin). The table
+returns **INCONCLUSIVE** — row 4, which is where an interval that
+straddles a margin edge belongs. `test_a_significant_but_sub_margin_-`
+`contrast_no_longer_says_degrades` pins exactly that, and the error
+here was a number carried across from a superseded variant of this
+design in which `delta_eq` stayed at 0.05.
+
+The correction strengthens the argument rather than weakening it. Had
+the repair converted v2's DEGRADES into a ROBUST, it would be fair to
+ask whether the new rules were chosen to make an old campaign come out
+nicely. They do not: under v3's rules v2 gets **no verdict at all**,
+because v2's precision was not equal to v3's margin. The repair
+withholds a word rather than upgrading one.
+
+And either way this is **not** a re-scoring: v2's verdict was issued
+under v2's rules and stands as CURVATURE-DEGRADES. A rule change that
+touches one's own verdict may only be applied to data not yet seen,
+which is why v3 gets fresh windows and why this paragraph is here
+rather than discovered later.
 
 ### 12.2 The upgrade: `delta_eq` falls from 0.05 to 0.02 dex
 
@@ -864,14 +894,51 @@ does.
 
     n_sup = ceil( S^2_90 * (1.960 + 1.282)^2
                   / (DELTA_DETECT - delta_eq)^2 )    # 90% power
-    n_eq  = ceil( S^2_90 * (1.960 + 2.326)^2
+    n_eq  = ceil( S^2_90 * (1.960 + 2.576)^2
                   / delta_eq^2 )                     # 99% P(ROBUST)
-    n_twin = ceil( S^2_90(twin) * (1.960 + 2.326)^2 / delta_eq^2 )
+    n_twin = ceil( S^2_90(twin) * (1.960 + 2.576)^2 / delta_eq^2 )
 
 `n_sup` now measures against `DELTA_DETECT - delta_eq`, because row 1
 requires clearing the margin rather than clearing zero. At this
 variance it is about 30 and is not binding; it is corrected for
 accuracy, not for effect.
+
+**The quantile in the equivalence slot is TWO-SIDED, and the 2.576
+above is a post-campaign correction (v3.1, review C2, 2026-07-31).**
+The derivation, written out here because v3 shipped it wrong: ROBUST
+requires BOTH bounds inside the margin, that is
+`|Delta_hat| < delta_eq - 1.960 se`, so with
+`delta_eq / se = 1.960 + z` the power at `Delta = 0` is
+`P(|Z| < z) = 2 Phi(z) - 1`, not `Phi(z)`. A central 99% therefore
+needs `z = Phi^-1(0.995) = 2.576`. **v3 wrote
+`z = Phi^-1(0.99) = 2.326`, which delivers 98.0%**, so the coefficient
+rises 12% and the design-point requirements become `n_eq = 1939` and
+`n_twin = 1848` where the campaign computed 1731 and 1650.
+
+Two things make that worse and one makes it better, and the record
+carries all three. Worse: the 90% slot's `1.645` was already
+`Phi^-1(0.95)`, i.e. already the two-sided quantile, so substituting a
+one-sided one broke a convention that was right rather than sharpening
+a loose one — the defect is a *label* read as a *derivation*, which is
+this programme's recurring class in yet another dress. Worse again: the
+mistake reached a frozen design and a run campaign before review caught
+it. Better: because `S^2_90` is a deliberately conservative 95% upper
+bound, the realized precision beat the design point, and the campaign
+that ran achieved **99.86%** equivalence power on the curved arm and
+**99.68%** on the twin — above the promised 99% (13.1 records the
+arithmetic). The corrected coefficient governs every future campaign;
+`test_equivalence_coefficient_is_two_sided` now derives the delivered
+power back out of the constant so a quantile cannot be swapped in by
+label again.
+
+**Campaign v3 is NOT re-run for this.** Its verdict rests on a 95%
+interval lying inside the margin, which is a statement about that
+interval and not about the power that was targeted, and the realized
+power exceeded the promise anyway. Beyond that, re-running a FAVOURABLE
+result to improve its power label is the asymmetry preregistration
+exists to prevent; the v1 precedent settles it, since v1 ran
+under-powered as frozen rather than raising a cap after seeing pilot
+data. The shortfall is recorded, the constant is fixed forward.
 
 **The cap rises from 300 to 3000, ex ante.** This has the same
 standing v2's raise from 200 to 300 had: the variance that sets `n_eq`
@@ -965,8 +1032,28 @@ across the whole chain. The three campaigns keep three directories --
   Projected Stage A 0.4 h. FEASIBLE.
 
 The realized variance came in BELOW 12.3's projection — `n_eq = 1731`
-where v2's bounds projected 2172 — so the 99% target and the tightened
-margin were bought with room to spare rather than at the cap.
+where v2's bounds projected 2172 — so the tightened margin was bought
+with room to spare rather than at the cap.
+
+**Realized equivalence power, and the shortfall behind it** (added in
+v3.1, review C2). The campaign computed its sample sizes with a
+one-sided quantile in a two-sided slot, so its DESIGN POINT bought
+98.0% rather than the 99% 12.3 promised; the corrected requirements
+would have been `n_eq = 1939` and `n_twin = 1848`. What the campaign
+actually achieved is a different number, and it is higher, because
+`S^2_90` is a conservative upper bound and the realized spread came in
+under it. From the frozen intervals:
+
+| arm | realized `se` | `delta_eq / se` | realized `P(ROBUST | Delta = 0)` |
+|---|---|---|---|
+| curved | 0.003878 | 5.157 | **0.9986** |
+| twin | 0.004072 | 4.912 | **0.9968** |
+
+(`se` from each interval's half-width over 1.960; power as
+`2 Phi(delta_eq/se - 1.960) - 1`.) Both exceed 99%, so the promise was
+met in realization even though the design point understated what it
+required. The defect is recorded rather than repaired by a re-run, for
+the reasons 12.3 gives.
 
 ### 13.2 Stage A-13C (2026-07-31): **CURVATURE-ROBUST**, control CLEAN
 
@@ -1048,19 +1135,48 @@ error — against a margin of 0.02 dex, with a flat control that
 reproduces the entire residual to `+0.00007` and an `m`-gate flat to
 0.31%.
 
-This is the strong form of the programme's thesis: curvature enters the
-order only through the counting measure. P12 established that the
-unchanged P11 estimator reads CURVED proper time at `tau/ell ~ 0.3` and
-improves with density at the longest-chain rate. P13 establishes that
-the same reading survives a 25-fold growth in `(tau/ell)^2`, well past
-the point where the small-diamond premise the chain law rests on has
-itself failed by more than a factor of two.
+That is a statement about an INSTRUMENT, and v3.1 confines it to one
+(review C4, applying AGENTS.md's conservatism rule). P12 established
+that the unchanged P11 estimator reads CURVED proper time at
+`tau/ell ~ 0.3` and improves with density at the longest-chain rate.
+P13 establishes that the same reading stays accurate through a 25-fold
+growth in `(tau/ell)^2`, well past the point where the small-diamond
+premise the chain law rests on has itself failed by more than a factor
+of two. That is the finding, and it is quantitative and about the
+estimator.
+
+**What this experiment does NOT establish, stated because the first
+version of this section claimed it.** It does not establish the general
+thesis that curvature enters causal order only through the counting
+measure. The reason is structural and belongs in the record rather than
+in a hedge: **in 1+1D every metric is conformally flat**, so `dS_2`'s
+causal order is conformally equivalent to the flat twin's by
+construction, and the curvature can only reach the order through the
+conformal factor — that is, through the volume and hence the count. In
+this model the general claim is close to a theorem about the geometry
+rather than a measurement about the instrument, and the twin's exact
+reproduction of the residual (13.2) is the experiment showing that
+structure operating, not evidence that it generalizes.
+
+The general claim needs `d >= 3`, where a metric is not generally
+conformally flat and Weyl curvature is non-trivial, so curvature can in
+principle enter the causal order without passing through the measure at
+all. Whether the flat-normalized reading survives there is an open
+question and a different experiment; nothing in P13 bears on it. The
+programme's thesis in that generality is therefore still a hypothesis,
+and this record does not promote it. (Section 1.3's framing of a ROBUST
+reading as "the strong form of this programme's thesis" was written
+before the campaign and is superseded here, per the in-place
+convention.)
 
 Scope, carried and not smoothed:
 
 - the claim binds to this estimator family at this operating point,
   `m ~ 76`. A floor appearing only at larger `m` would be invisible
   here, as Section 7 said in advance;
+- it binds to **1+1D de Sitter, one conformal patch**, for the reason
+  above. Dimension was a listed lever from P11 onward and is not part
+  of any P13 claim;
 - it binds to `tau/ell <= 1.5`. The successor sweeps
   `{1.5, 2.0, 2.5, 3.0}`, where the conjugate point at `pi ell ~ 3.14`
   is a hard ceiling — a different experiment with a different failure
@@ -1078,3 +1194,48 @@ v1 **CONFOUNDED** at `3f46313`; v2 **CURVATURE-DEGRADES** at
 **CURVATURE-ROBUST** at `33e371f`. None is re-read, and the reason
 three campaigns were needed is written down in each: a control that
 was not sized, then a trigger that was not scaled, then neither.
+
+### 13.4 Provenance: what this record needs from the history
+
+Added in v3.1 (review C1). Several claims in Sections 11 to 13 are
+claims about ORDER IN THE HISTORY, not about file contents, and each
+artifact's `code_version` names a commit rather than describing one. So
+the record is only verifiable while those commits stay reachable.
+
+The chain, in first-parent order from `origin/main` at `922f8b8`:
+
+| commit | what it fixes in time |
+|---|---|
+| `f42b6b3` | P13 implementation (design v1.1) |
+| `3f46313` | campaign v1 ran at this stamp |
+| `9fd0a56` | v1 record + the 9.3 diagnostic + design v2 |
+| `67e96aa` | row-3 semantics pinned |
+| `43e1587` | v1 status header corrected |
+| `d916f34` | v3 implementation of design v2; **campaign v2 ran here** |
+| `c72da8c` | campaign v2 frozen out of `outputs/` + Section 11 |
+| `7b1442d` | **the 11.3 diagnostic and its predictions, before it ran** |
+| `ce51588` | the 11.3 diagnostic's results + Section 11.3 |
+| `94377ec` | **design v3, before its implementation and before any v3 datum** |
+| `33e371f` | v3 implementation; **campaign v3 ran here** |
+| `3f562c1` | campaign v3 frozen + Section 13 |
+
+Two claims rest on that order and on nothing else. The diagnostic's
+two-sided prediction is pre-data because `7b1442d` precedes `ce51588`.
+Design v3 is pre-implementation and pre-data because `94377ec` precedes
+`33e371f`, which is the stamp on every v3 artifact. Both are checkable:
+
+    git merge-base --is-ancestor 7b1442d ce51588
+    git merge-base --is-ancestor 94377ec 33e371f
+    git log --oneline --first-parent 922f8b8..3f562c1
+
+**Requirement, therefore: this branch must merge with a MERGE COMMIT,
+not a squash.** A squash collapses the twelve commits into one, at
+which point every `code_version` in `frozen/p13/`, `frozen/p13v2/` and
+`frozen/p13v3/` names an object no checkout can resolve, the two
+ordering claims above become unverifiable assertions, and the
+cross-stage gate's own "reachable stamp" precondition silently stops
+meaning anything. The repository's practice is already merge commits
+(`Merge pull request #NN` throughout `main`), so this is a requirement
+that matches habit rather than one that changes it — but it is written
+down here because habit is not a guarantee and because the P13 record
+is unusually dependent on it.

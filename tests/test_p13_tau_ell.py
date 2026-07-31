@@ -13,6 +13,7 @@ was v2's defect.
 
 from __future__ import annotations
 
+import math
 import sys
 from pathlib import Path
 
@@ -172,6 +173,28 @@ def test_a_significant_but_sub_margin_contrast_no_longer_says_degrades():
     assert verdict(0.004444, 0.045607, True) == "INCONCLUSIVE"
 
 
+def test_equivalence_coefficient_is_two_sided():
+    """Review C2, and the guard is written the way the rule demands --
+    it derives the DELIVERED power back out of the constant instead of
+    trusting the label beside it.
+
+    ROBUST needs BOTH bounds inside the margin, so at Delta = 0 the
+    probability is P(|Z| < z) = 2 Phi(z) - 1 with
+    delta_eq / se = 1.960 + z. v3 first wrote z = Phi^-1(0.99) = 2.326
+    into that slot, which delivers 98.0% while the design claimed 99%.
+    The 90% slot's 1.645 was already Phi^-1(0.95), i.e. already
+    two-sided, so the slip broke a convention that was right."""
+
+    def phi(z):
+        return 0.5 * (1.0 + math.erf(z / math.sqrt(2.0)))
+
+    z = math.sqrt(N_EQ_COEFF) * DELTA_EQ - 1.960
+    assert z == pytest.approx(2.576, abs=1e-3)
+    assert 2.0 * phi(z) - 1.0 == pytest.approx(0.99, abs=5e-4)
+    # the one-sided quantile is what this test exists to reject
+    assert 2.0 * phi(2.326) - 1.0 == pytest.approx(0.98, abs=5e-4)
+
+
 def test_single_margin_invariant():
     """v2's resolution mismatch existed because the verdict keyed to 0
     while the control keyed to delta_eq. The invariant that would have
@@ -192,7 +215,7 @@ def test_single_margin_invariant():
     # the equivalence sizing reads the same margin, so lowering
     # delta_eq cannot silently leave the sample size behind
     assert N_EQ_COEFF == pytest.approx(
-        (1.960 + 2.326) ** 2 / DELTA_EQ ** 2
+        (1.960 + 2.576) ** 2 / DELTA_EQ ** 2
     )
     # and the superiority requirement measures against the margin too,
     # because row 1 now clears it rather than clearing zero
