@@ -84,9 +84,19 @@ TWIN_BASE = {"600": 2_300_000, "1200": 2_400_000, "2400": 2_500_000}
 #: is CALIBRATED per rung against the curved arm's realized m, on its
 #: own seed blocks, and the residual offset is gated.
 CAL_BASE = {"600": 2_600_000, "1200": 2_700_000, "2400": 2_800_000}
-N_CALIBRATE = 150
-CAL_SPACING = 40_000
-CAL_ITERATIONS = 4
+#: The probe must be able to SEE the tolerance it calibrates to. At the
+#: bottom rung m ~ 19 has ~23% per-pair dispersion, so a 150-sample
+#: probe measures the mean to ~2% -- four times the 0.5% criterion the
+#: first version used, which made the Newton step chase noise
+#: (-3.79% -> -0.87% -> +2.06% -> -1.00%), exhaust its iterations, and
+#: return a rho it had never probed. The probe is now 400 samples
+#: (~0.5% on the mean) and the criterion is the GATE's tolerance rather
+#: than half of it, since calibrating below the probe's own resolution
+#: is not calibration. The arm run plus the cross-arm gate remain the
+#: real validation.
+N_CALIBRATE = 400
+CAL_SPACING = 100_000
+CAL_ITERATIONS = 6
 CROSS_ARM_TOLERANCE = 0.01        # +/- 1% on the twin-vs-curved m ratio
 DESIGN_FLOOR, DESIGN_CEIL = 2_000_000, 5_999_999
 
@@ -239,14 +249,25 @@ def main() -> None:
             print(f"  {rung} step {it}: rho {rho:8.4f} -> m"
                   f" {realized:6.2f} (target {target:6.2f}, offset"
                   f" {realized / target - 1.0:+.2%})", flush=True)
-            if abs(realized / target - 1.0) <= CROSS_ARM_TOLERANCE / 2.0:
+            if abs(realized / target - 1.0) <= CROSS_ARM_TOLERANCE:
                 break
             rho = rho * target / realized
-        cal[rung] = {"rho_start": float(rho0), "rho": float(rho),
+        # Return the rho that was actually MEASURED to be best, never an
+        # unprobed Newton step: the first version returned the trailing
+        # update after exhausting its iterations, so the bottom rung ran
+        # at a value no probe had ever evaluated.
+        best = min(steps, key=lambda s: abs(s["offset"]))
+        cal[rung] = {"rho_start": float(rho0), "rho": float(best["rho"]),
                      "target_m": target, "steps": steps,
-                     "converged": abs(steps[-1]["offset"])
-                     <= CROSS_ARM_TOLERANCE / 2.0}
-        twin_rho[rung] = rho
+                     "best_probed_offset": best["offset"],
+                     "converged": abs(best["offset"])
+                     <= CROSS_ARM_TOLERANCE}
+        if not cal[rung]["converged"]:
+            print(f"    WARNING: {rung} did not reach"
+                  f" {CROSS_ARM_TOLERANCE:.0%}; best probed offset"
+                  f" {best['offset']:+.2%} at rho {best['rho']:.4f}",
+                  flush=True)
+        twin_rho[rung] = float(best["rho"])
     results["twin_calibration"] = cal
     results["twin_ladder_rho_calibrated"] = {k: float(v) for k, v
                                              in twin_rho.items()}
