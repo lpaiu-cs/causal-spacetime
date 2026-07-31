@@ -181,6 +181,66 @@ SPENT_RANGES = (
     ("P13 design-check reservation", 22_000_000, 29_999_999),
 )
 
+# --------------------------------------------------------------------
+# Verification-B's completeness pin, PER RUNG. Section 10.10 first wrote
+# P11's single `VERIFY_PIN = 1998`; that is amended, and the amendment is
+# disclosed rather than applied quietly because a preregistered threshold
+# is being moved.
+#
+# WHAT WAS WRONG. 1998 of 2000 demands completion 0.999, and 10.5's own
+# frozen artifact had already measured the bottom rung at 0.997 (3988 of
+# 4000). Worse, 1998 sits ON the median of Bin(2000, 0.999): at exactly
+# the rate it demands it fails half the time, and it needs better than
+# 0.9995 to be reliably clearable. No rung was ever measured there. So
+# 10.5 and 10.10 contradicted each other inside one section -- 10.5 says
+# "12 samples in 4000 fail to pack and the frozen fill rule replaces them
+# from reserve slots, well inside the skip cap", and even notes "the true
+# rate is not zero", while 10.10 required it to be nearly zero.
+#
+# The fragility was not new and had already been grazed at THIS operating
+# point: P13 campaign v1's tau/ell = 1.5 verification read 1998 of 2000,
+# clearing the pin by exactly zero, and v3's 1.0 rung by one.
+#
+# WHAT THE PIN IS FOR, which is what fixes the calibration. It is a smoke
+# test run before any quarantined window is spent. It is NOT the
+# feasibility gate: the fill rule is, and the fill rule is exact -- 1320
+# slots, SKIP_CAP 20, needing 1300, aborting INFEASIBLE-INCOMPLETE on the
+# real campaign. At n = 2000 the healthy rate and the rate at which the
+# campaign starts aborting (~0.990) are 2.68 sigma apart, so NO pin on
+# 2000 samples can be both clearable and a feasibility gate. 1998 was
+# calibrated as though it were one.
+#
+# THE RULE, and it may only ever loosen:
+#
+#     pin(rung) = min( 1998, largest k with
+#                      P(X >= k | X ~ Bin(2000, p_lo)) >= 0.999 )
+#
+# with p_lo the one-sided 95% Clopper-Pearson lower bound on that rung's
+# frozen CURVED completion (verification runs the curved arm; the twin's
+# frozen rate is at least as high at every rung, so the curved arm binds).
+# Two levels, both conventional rather than tuned: 95% on the rate so the
+# pin survives the frozen estimate sitting at the pessimistic end of its
+# own sample, and 99.9% clearance so a healthy pipeline fails at most once
+# in a thousand runs.
+#
+# The inputs are frozen data ONLY. 3988/4000, 2000/2000 and 1000/1000
+# predate any Stage B run, so the pins below are not tuned to a measured
+# verification -- and test_verification_pins_are_derived_from_frozen_data
+# recomputes them from the artifact rather than trusting these literals,
+# which is review C25's lesson applied before it can recur.
+#
+# WHAT IT COSTS, stated because it is not nothing. Against a drift to
+# 0.990-0.995 the derived pin has little power where 1998 had nearly all;
+# against a collapse to 0.985 or below, which is where the campaign
+# actually aborts, it retains 0.95-1.00. The sensitivity given up is to
+# drifts that do not threaten the campaign, and the fill rule catches
+# those exactly at fill time.
+VERIFY_PIN_B = {600: 1979, 1200: 1990, 2400: 1985}
+assert all(pin <= VERIFY_PIN for pin in VERIFY_PIN_B.values()), (
+    "the pin derivation may only LOOSEN the inherited 1998, never tighten "
+    "it -- otherwise it could be used to make a later stage easier to "
+    "reach")
+
 VERIFY_ARTIFACT = "p12_verification_b_summary.json"
 PILOT_ARTIFACT = "p12_pilot_b_summary.json"
 STAGE_ARTIFACT = "p12_stage_b_summary.json"
@@ -678,15 +738,27 @@ def cross_stage_gate() -> dict:
 def run_verify_b(output_dir: Path) -> None:
     """Verification-B (Section 10.10): completeness pin and wall times.
 
-    2000 single-stream samples per rung, pin >= 1998. Outcomes are
-    computed to price the pipeline and then discarded; only
-    completeness and time are recorded.
+    2000 single-stream samples per rung against the PER-RUNG pins
+    derived above. Outcomes are computed to price the pipeline and then
+    discarded; only completeness and time are recorded.
     """
 
     stamp = _preflight_clean()
     assert_windows_disjoint_and_fresh()
-    summary: dict = {"code_version": stamp, "pin_required": VERIFY_PIN,
-                     "tau_over_ell": TAU_ELL, "per_rung": {}}
+    summary: dict = {
+        "code_version": stamp, "tau_over_ell": TAU_ELL,
+        "pin_required": {str(r): VERIFY_PIN_B[r] for r in P12B_LADDER},
+        # the inherited value is recorded beside the derived ones so the
+        # amendment is legible in the artifact, not only in the prose
+        "pin_inherited_single_value": VERIFY_PIN,
+        "pin_note": (
+            "PER-RUNG, amended: the inherited 1998 demanded completion "
+            "0.999 while 10.5's frozen artifact measured 0.997 at the "
+            "bottom rung, and 1998 sits on the median of Bin(2000, "
+            "0.999). Derived from frozen completions only; the pin is a "
+            "smoke test and the fill rule is the feasibility gate."),
+        "per_rung": {},
+    }
     for rung in P12B_LADDER:
         base = VERIFY_B_BASE[rung]
         done, start = 0, time.perf_counter()
@@ -696,12 +768,17 @@ def run_verify_b(output_dir: Path) -> None:
         elapsed = time.perf_counter() - start
         summary["per_rung"][str(rung)] = {
             "complete": done, "total": VERIFY_COUNT,
+            "pin": VERIFY_PIN_B[rung],
+            "pin_margin": done - VERIFY_PIN_B[rung],
+            "completion": done / VERIFY_COUNT,
             "mean_seconds_per_sample": elapsed / VERIFY_COUNT,
         }
         print(f"verify-12B rung={rung}: {done}/{VERIFY_COUNT} complete "
+              f"(pin {VERIFY_PIN_B[rung]}, margin "
+              f"{done - VERIFY_PIN_B[rung]:+d}) "
               f"| {elapsed / VERIFY_COUNT:.3f} s/sample", flush=True)
     summary["pin_passed"] = bool(all(
-        summary["per_rung"][str(r)]["complete"] >= VERIFY_PIN
+        summary["per_rung"][str(r)]["complete"] >= VERIFY_PIN_B[r]
         for r in P12B_LADDER
     ))
     (output_dir / VERIFY_ARTIFACT).write_text(

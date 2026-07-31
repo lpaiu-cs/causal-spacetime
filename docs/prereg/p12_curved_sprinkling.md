@@ -262,6 +262,15 @@ cross-stage gate on P11 Stage A's frozen IMPROVES (P12's instrument
 IS that estimator, so its flat certification is the prerequisite),
 and one-significant-figure quoting of every measured timing.
 
+**"Verbatim" is where a later defect entered, so it is flagged here at
+the source.** The pin held for Stage A, which completed 2000 of 2000 at
+every rung (9.1). It does not hold for Stage B, whose bottom density rung
+completes 0.997 by 10.5's own measurement, and 10.10 first inherited
+`1998` through this clause without checking it against that. 10.10 now
+carries a per-rung pin and its derivation. Inheriting a constant verbatim
+inherits its calibration too, and that calibration was P11's ensemble,
+not this one.
+
 | block | base | fills | window span |
 |---|---|---|---|
 | verification-12 (non-experimental) | 1000000 | 2000 per rung | 1000000-1005999 |
@@ -722,7 +731,18 @@ is thinnest — completes 3988 of 4000, so 12 samples in 4000 fail to pack
 and the frozen fill rule replaces them from reserve slots. That is well
 inside the skip cap and it is quoted rather than rounded to 1.000,
 because at 400 samples it read as exactly 1.000 and the true rate is not
-zero. The packing budget is not the binding constraint at this operating
+zero.
+
+**That last sentence turned out to be load-bearing, and 10.10 ignored
+it.** This table says the bottom-rung rate is `0.997` and not zero;
+10.10's verification pin, as first written, required it to be better
+than `0.999`. The two clauses were in flat contradiction inside one
+section for six review rounds. 10.10 now carries the amendment and its
+derivation. The general lesson is recorded there: when a re-measurement
+changes a number — here review C22 raising the design check from 400
+samples, where `400/400` could not distinguish `0.997` from `0.999`, to
+4000 — every clause calibrated against the old number has to be
+re-derived, not just the ones the review round happened to name. The packing budget is not the binding constraint at this operating
 point, which is a consequence of 10.8's move: P13's `tau/ell = 1.5`
 patch is large (`X = 17`) precisely because six boxes had to stack along
 `x` there.
@@ -1043,9 +1063,82 @@ IMPROVES and P13 Stage A-13C's frozen CURVATURE-ROBUST, both with
 reachable stamps — the first because the estimator is that one, the
 second because the operating point is that one.
 
-**Verification-B.** 2000 single-stream samples per rung, completeness
-pin `>= 1998`, measured wall times for the feasibility projection,
-quoted to one significant figure. Must pass before Stage P-B may run.
+**Verification-B.** 2000 single-stream samples per rung, measured wall
+times for the feasibility projection, quoted to one significant figure.
+Must pass before Stage P-B may run. The completeness pin is **PER RUNG**:
+
+| rung | frozen curved completion (10.5) | `p_lo` at 95% | **pin** |
+|---|---|---|---|
+| 600 | 0.99700 (3988 of 4000) | 0.995144 | **1979** |
+| 1200 | 1.00000 (2000 of 2000) | 0.998503 | **1990** |
+| 2400 | 1.00000 (1000 of 1000) | 0.997009 | **1985** |
+
+**AMENDMENT, disclosed because a preregistered threshold is being
+moved.** This clause first read `>= 1998`, P11's single `VERIFY_PIN`
+carried over. That was wrong, and wrong against this very section:
+
+- 1998 of 2000 demands completion `0.999`, while **10.5's own frozen
+  artifact measured the bottom rung at `0.997`**. 10.5 says the twelve
+  failures in four thousand are "well inside the skip cap" and even notes
+  that "the true rate is not zero" — so 10.5 and 10.10 contradicted each
+  other, and the contradiction was legible without running anything.
+- Worse, **1998 sits on the MEDIAN of `Bin(2000, 0.999)`**: at exactly
+  the rate it demands it fails about half the time (0.677), and it needs
+  better than `0.9995` to be reliably clearable. No rung of this
+  programme was ever measured there.
+- The fragility had already been grazed **at this operating point**: P13
+  campaign v1's `tau/ell = 1.5` verification read 1998 of 2000, clearing
+  the pin by exactly zero, and v3's `1.0` rung by one.
+
+**Why it was mis-set: the pin was calibrated as though it were the
+feasibility gate. It is not.** The feasibility gate is the fill rule —
+1320 slots, skip cap 20, needing 1300 — and that gate is exact, aborting
+INFEASIBLE-INCOMPLETE on the real campaign. At `n = 2000` the healthy
+rate and the rate at which the campaign starts aborting (`~0.990`) are
+only `2.68 sigma` apart, so **no pin on 2000 samples can be both
+clearable and a reliable feasibility test.** The pin is a smoke test: it
+refuses to spend quarantined windows on a pipeline that is grossly
+broken.
+
+**The rule, which may only ever loosen:**
+
+    pin(rung) = min( 1998,
+                     largest k with P(X >= k | X ~ Bin(2000, p_lo)) >= 0.999 )
+
+with `p_lo` the one-sided 95% Clopper-Pearson lower bound on that rung's
+frozen CURVED completion. Verification runs the curved arm, and the
+twin's frozen rate is at least as high at every rung (0.99975 / 1.000 /
+1.000), so the curved arm binds. Two levels, both conventional round
+values rather than tuned: **95%** on the rate, so the pin survives the
+frozen estimate itself sitting at the pessimistic end of its own sample;
+**99.9%** clearance, so a healthy pipeline fails at most once in a
+thousand runs. The `min` forbids the derivation from ever TIGHTENING a
+pin, so it cannot be used to make a later stage easier to reach by
+lowering an earlier one.
+
+**The inputs are frozen data only** — 3988/4000, 2000/2000 and 1000/1000
+all predate any Stage B sample — so these pins are not tuned to a
+measured verification, and
+`test_verification_pins_are_derived_from_frozen_data` recomputes them
+from the artifact rather than trusting the literals. That is review
+C25's lesson applied before it can recur: a preregistered threshold
+typed twice drifts from its own derivation.
+
+**What the loosening costs, stated because it is not nothing:**
+
+| completion | caught at 1998 | caught at 1979 | campaign aborts |
+|---|---|---|---|
+| 0.995 | 0.997 | 0.001 | 0.000 |
+| 0.990 | 1.000 | 0.356 | 0.028 |
+| 0.985 | 1.000 | 0.947 | 0.423 |
+| 0.980 | 1.000 | 0.999 | 0.880 |
+
+Read the last two columns together. Where the derived pin loses power the
+campaign does not abort, so nothing that mattered was given up; where the
+campaign does abort the derived pin catches it. The sensitivity
+surrendered is to drifts the campaign survives, and the fill rule
+measures those exactly at fill time rather than guessing at them from a
+smoke test.
 
 **Stage P-B.** Both endpoint rungs and both twin endpoint rungs, 200
 samples each, cross-rung statistics forbidden, calibrated Bonett bounds
@@ -1155,7 +1248,15 @@ catch:
 7. window privacy and freshness against every documented spent range,
    asserted against the ranges themselves rather than against a floor;
 8. the co-requirement of 10.7 returning RATE-ONLY when (i) passes and
-   (ii) fails.
+   (ii) fails;
+9. **added with 10.10's pin amendment**: the per-rung verification pins
+   RECOMPUTED from the frozen design-check completions by 10.10's stated
+   rule and asserted equal to the module's literals, each pin shown
+   clearable at `>= 0.999` against its own `p_lo`, the inherited 1998
+   shown NOT clearable at the bottom rung (so the amendment loses its
+   justification loudly if that ever changes), and the division of labour
+   pinned — the fill rule is comfortable at `0.997` and does abort at
+   `0.98`, which is what makes a smoke-test pin the right instrument.
 
 Stage P-B runs only from a clean commit containing all of it, and only
 after Verification-B's pin passes.

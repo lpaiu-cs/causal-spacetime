@@ -797,3 +797,163 @@ def test_g_hat_is_order_plus_count_only():
     assert g_hat(38, 2.0, 3.0) == pytest.approx(38 / (2.0 * 9.0))
     assert g_hat(38, 4.0, 3.0) == pytest.approx(
         0.5 * g_hat(38, 2.0, 3.0))
+
+
+# ====================================================================
+# the amended Verification-B pin, re-derived rather than trusted
+# ====================================================================
+
+def _binom_upper_tail(k, n, p):
+    """P(X >= k) for X ~ Bin(n, p), exact finite sum (no scipy here)."""
+
+    if p >= 1.0:
+        return 1.0 if k <= n else 0.0
+    if p <= 0.0:
+        return 1.0 if k <= 0 else 0.0
+    return min(1.0, sum(math.comb(n, j) * p ** j * (1.0 - p) ** (n - j)
+                        for j in range(k, n + 1)))
+
+
+def _clopper_pearson_lower(k, n, alpha=0.05):
+    """One-sided lower bound: the p solving P(X >= k | n, p) = alpha."""
+
+    if k >= n:
+        return alpha ** (1.0 / n)
+    lo, hi = 0.0, k / n
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if _binom_upper_tail(k, n, mid) > alpha:
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
+
+
+def _negbinom_failures_upper_tail(c, successes, p):
+    """P(failures > c) before the successes-th success, exact sum."""
+
+    return max(0.0, 1.0 - sum(
+        math.comb(f + successes - 1, f) * p ** successes * (1.0 - p) ** f
+        for f in range(0, c + 1)))
+
+
+def _frozen_curved_completions():
+    import json
+
+    path = (FROZEN_P13V3_DIR.parent / "p12"
+            / "p12_stage_b_ensemble_check.json")
+    ens = json.loads(path.read_text(encoding="utf-8"))
+    return {int(rung): (ens["curved"][rung]["n_complete"],
+                        ens["curved"][rung]["n_attempted"])
+            for rung in ("600", "1200", "2400")}
+
+
+def test_verification_pins_are_derived_from_frozen_data():
+    """The case, and it is review C25's shape caught before it bit: a
+    preregistered threshold typed as a literal drifts from its own
+    derivation. So the pins are RECOMPUTED here from the frozen
+    design-check completions by the stated rule, and the literals in the
+    module are asserted equal to the result.
+
+    The rule:  pin = min(1998, largest k with
+                         P(X >= k | Bin(2000, p_lo)) >= 0.999)
+    with p_lo the one-sided 95% Clopper-Pearson lower bound on the frozen
+    curved completion. Inputs are frozen data only, so this test would
+    have produced the same pins before any Stage B sample was drawn.
+    """
+
+    import p12_stage_b as B
+
+    for rung, (k, n) in _frozen_curved_completions().items():
+        p_lo = _clopper_pearson_lower(k, n)
+        pin = B.VERIFY_COUNT
+        while pin > 0 and _binom_upper_tail(
+                pin, B.VERIFY_COUNT, p_lo) < 0.999:
+            pin -= 1
+        expected = min(1998, pin)
+        assert B.VERIFY_PIN_B[rung] == expected, (
+            f"rung {rung}: frozen {k}/{n} gives p_lo={p_lo:.6f} and "
+            f"pin {expected}, module says {B.VERIFY_PIN_B[rung]}")
+
+
+def test_each_pin_is_clearable_at_its_own_frozen_rate():
+    """The case, which is the defect being repaired: 1998 of 2000 demands
+    0.999 and SITS ON THE MEDIAN of Bin(2000, 0.999), so at exactly the
+    rate it demands it fails half the time. Every derived pin must be
+    clearable with probability >= 0.999 at the pessimistic end of its own
+    frozen rate, and the inherited value must be shown NOT to be -- if
+    that second half ever passed, the amendment would have lost its
+    reason.
+    """
+
+    import p12_stage_b as B
+
+    for rung, (k, n) in _frozen_curved_completions().items():
+        p_lo = _clopper_pearson_lower(k, n)
+        clears = _binom_upper_tail(B.VERIFY_PIN_B[rung], B.VERIFY_COUNT,
+                                  p_lo)
+        assert clears >= 0.999, (
+            f"rung {rung} pin {B.VERIFY_PIN_B[rung]} is cleared only "
+            f"{clears:.4f} of the time at p_lo={p_lo:.6f}")
+
+    # and the inherited single value is not clearable at the bottom rung
+    k, n = _frozen_curved_completions()[600]
+    p_lo = _clopper_pearson_lower(k, n)
+    inherited = _binom_upper_tail(1998, B.VERIFY_COUNT, p_lo)
+    assert inherited < 0.5, (
+        f"the inherited pin 1998 clears {inherited:.4f} of the time at "
+        "the bottom rung's frozen rate -- if this is no longer far below "
+        "0.999 the amendment is unjustified and should be reverted")
+    # the median property, stated directly
+    at_demanded_rate = _binom_upper_tail(1998, B.VERIFY_COUNT, 0.999)
+    assert 0.5 < at_demanded_rate < 0.8, (
+        "1998 should sit near the median of the very rate it demands")
+
+
+def test_pins_are_per_rung_and_only_ever_loosen():
+    """The case: a single pin across a 4x density sweep is the same
+    category of error as a grand-mean m gate, and a derivation that could
+    TIGHTEN a pin could be used to make a later stage easier to reach by
+    lowering an earlier one. Neither is allowed.
+    """
+
+    import p12_stage_b as B
+
+    assert set(B.VERIFY_PIN_B) == set(P12B_LADDER)
+    assert all(pin <= 1998 for pin in B.VERIFY_PIN_B.values())
+    # the rungs genuinely differ, which is why one value cannot serve
+    assert len(set(B.VERIFY_PIN_B.values())) > 1
+
+
+def test_the_pin_is_a_smoke_test_and_the_fill_rule_is_the_real_gate():
+    """The case, and the reason the loosening is defensible rather than
+    convenient. The pin cannot be the feasibility gate: at n = 2000 the
+    healthy rate and the rate at which the campaign starts aborting are
+    only about 2.7 sigma apart, so no threshold can be both clearable and
+    a reliable feasibility test. This pins the two facts that make the
+    division of labour correct -- the campaign is comfortable at the
+    frozen rate, and it does abort once the rate collapses.
+    """
+
+    need, slots, skipcap = 1300, 1320, 20
+    assert slots - need == skipcap, (
+        "the slot allowance and the skip cap must agree, since together "
+        "they are the feasibility gate")
+
+    # comfortable at the frozen bottom-rung rate
+    assert _negbinom_failures_upper_tail(skipcap, need, 0.997) < 1e-4
+    # and it really does abort when completion collapses
+    assert _negbinom_failures_upper_tail(skipcap, need, 0.98) > 0.5
+
+    # the derived bottom-rung pin catches the collapse that matters...
+    import p12_stage_b as B
+
+    caught = 1.0 - _binom_upper_tail(B.VERIFY_PIN_B[600],
+                                     B.VERIFY_COUNT, 0.98)
+    assert caught > 0.99, f"collapse to 0.98 caught only {caught:.4f}"
+    # ...and is NOT expected to catch a drift the campaign survives, so
+    # that limitation is asserted rather than left as a surprise
+    survivable = 1.0 - _binom_upper_tail(B.VERIFY_PIN_B[600],
+                                         B.VERIFY_COUNT, 0.995)
+    assert survivable < 0.1
+    assert _negbinom_failures_upper_tail(skipcap, need, 0.995) < 1e-3
