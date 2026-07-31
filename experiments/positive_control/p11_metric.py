@@ -832,13 +832,24 @@ FROZEN_P11_DIR = (Path(__file__).resolve().parents[2]
 
 
 def _require_stage_pass(name: str, stage_label: str,
-                        directory: Path | None = None) -> dict:
+                        directory: Path | None = None,
+                        expected: str = "IMPROVES") -> dict:
     """Cross-stage gate (Section 6): a later stage runs only after the
-    earlier stage's FROZEN record reads IMPROVES. The frozen copy is
-    the repo-canonical one, and its stamp must be REACHABLE from HEAD
-    (ancestry, not equality — the earlier stage's code legitimately
-    predates later commits; a squash-merge that orphaned the stamp
-    fails here loudly, review)."""
+    earlier stage's FROZEN record reads the verdict that licenses it.
+    The frozen copy is the repo-canonical one, and its stamp must be
+    REACHABLE from HEAD (ancestry, not equality — the earlier stage's
+    code legitimately predates later commits; a squash-merge that
+    orphaned the stamp fails here loudly, review).
+
+    ``expected`` defaults to P11's and P12's IMPROVES. P12 Stage B's
+    cross-stage gate (its Section 10.10) also requires P13's
+    CURVATURE-ROBUST, whose vocabulary is inverted, so the licensing
+    verdict is a parameter rather than a literal. It is REQUIRED to be
+    named by the caller in the sense that there is no "any verdict"
+    option: a gate that accepts whatever it finds is not a gate, and
+    P13's own frozen directory holds a CONFOUNDED record from campaign
+    v1 that such an option would have waved through.
+    """
 
     import subprocess
 
@@ -853,10 +864,11 @@ def _require_stage_pass(name: str, stage_label: str,
             "is frozen."
         )
     artifact = json.loads(path.read_text(encoding="utf-8"))
-    if artifact.get("verdict") != "IMPROVES":
+    if artifact.get("verdict") != expected:
         raise SystemExit(
             f"{stage_label} verdict is {artifact.get('verdict')!r}, not "
-            "IMPROVES -- the campaign stops at that stage (Section 6)."
+            f"{expected} -- the campaign stops at that stage "
+            "(Section 6)."
         )
     stamp = str(artifact.get("code_version", ""))
     reachable = subprocess.run(

@@ -445,8 +445,10 @@ def run_stage_a(output_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", choices=["verify", "pilot", "a", "b"],
-                        default=None)
+    parser.add_argument(
+        "--stage",
+        choices=["verify", "pilot", "a", "verify-b", "pilot-b", "b"],
+        default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -457,15 +459,21 @@ def main() -> None:
         run_pilot(args.output_dir)
     elif args.stage == "a":
         run_stage_a(args.output_dir)
-    elif args.stage == "b":
-        raise SystemExit(
-            "stage b is gated on its frozen addendum (prereg Section 5), "
-            "which must budget |R_hat - R|/R per rung and use flat-twin "
-            "differencing -- this refusal is the preregistration "
-            "operating."
-        )
+    elif args.stage in ("verify-b", "pilot-b", "b"):
+        # Stage B's refusal is DISCHARGED. It read "gated on its frozen
+        # addendum (prereg Section 5), which must budget |R_hat - R|/R
+        # per rung and use flat-twin differencing -- this refusal is the
+        # preregistration operating." That addendum is now Section 10,
+        # frozen before any Stage B datum and merged, so the gate opens
+        # rather than being edited away: the budget is 10.7's table, the
+        # flat twin is 10.6's, and the differencing became a RATIO for
+        # the reason 10.3 measures. The runners live in p12_stage_b.
+        import p12_stage_b
+
+        p12_stage_b.STAGES[args.stage](args.output_dir)
     else:
-        raise SystemExit("choose --stage verify/pilot/a")
+        raise SystemExit(
+            "choose --stage verify/pilot/a/verify-b/pilot-b/b")
 
 
 if __name__ == "__main__":
