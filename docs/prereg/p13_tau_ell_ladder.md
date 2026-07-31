@@ -4,8 +4,8 @@ Status: **CLOSED. Three campaigns have run and the question is
 answered.** The result is Section 13:
 **CURVATURE-ROBUST with the control CLEAN**, at `delta_eq = 0.02` dex,
 `Delta_13 = +0.0072` with CI `[-0.0004, +0.0148]`, and a flat twin that
-matches the curved arm's residual drift to `+0.00007`, bounding any
-geometry-specific part of that drift at `+/- 0.011` dex. At
+matches the curved arm's residual drift to `+0.00007`, with the two
+arms differing by no more than `+/- 0.011` dex. At
 fixed discreteness `m ~ 76` the flat-normalized chain reading does not
 notice curvature out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`. **This
 is a result about the INSTRUMENT in 1+1D de Sitter, one conformal
@@ -916,30 +916,38 @@ needs `z = Phi^-1(0.995) = 2.576`. **v3 wrote
 rises 12% and the design-point requirements become `n_eq = 1939` and
 `n_twin = 1848` where the campaign computed 1731 and 1650.
 
-Two things make that worse and one makes it better, and the record
-carries all three. Worse: the 90% slot's `1.645` was already
-`Phi^-1(0.95)`, i.e. already the two-sided quantile, so substituting a
-one-sided one broke a convention that was right rather than sharpening
-a loose one — the defect is a *label* read as a *derivation*, which is
-this programme's recurring class in yet another dress. Worse again: the
-mistake reached a frozen design and a run campaign before review caught
-it. Better: because `S^2_90` is a deliberately conservative 95% upper
-bound, the realized precision beat the design point, and the campaign
-that ran achieved **99.86%** equivalence power on the curved arm and
-**99.68%** on the twin — above the promised 99% (13.1 records the
-arithmetic). The corrected coefficient governs every future campaign;
-`test_equivalence_coefficient_is_two_sided` now derives the delivered
-power back out of the constant so a quantile cannot be swapped in by
-label again.
+Two things make it worse than a fresh slip. The 90% slot's `1.645` was
+already `Phi^-1(0.95)`, i.e. already the two-sided quantile, so
+substituting a one-sided one broke a convention that was right rather
+than sharpening a loose one — the defect is a *label* read as a
+*derivation*, which is this programme's recurring class in yet another
+dress. And the mistake reached a frozen design and a run campaign before
+review caught it. The corrected coefficient governs every future
+campaign; `test_equivalence_coefficient_is_two_sided` now derives the
+delivered power back out of the constant so a quantile cannot be swapped
+in by label again.
 
-**Campaign v3 is NOT re-run for this.** Its verdict rests on a 95%
-interval lying inside the margin, which is a statement about that
-interval and not about the power that was targeted, and the realized
-power exceeded the promise anyway. Beyond that, re-running a FAVOURABLE
-result to improve its power label is the asymmetry preregistration
-exists to prevent; the v1 precedent settles it, since v1 ran
-under-powered as frozen rather than raising a cap after seeing pilot
-data. The shortfall is recorded, the constant is fixed forward.
+**So campaign v3 missed its preregistered power target, and that stands
+on the record** (v3.3, review C8). v3.1 argued here that the
+conservative variance bound made the campaign achieve 99.86% in
+realization; **that argument is withdrawn.** Power computed from the
+observed interval is post-hoc — it conditions on an estimated variance
+and is a function of the result it would justify — so it cannot satisfy
+an ex-ante promise. The campaign ran `n = 1731 / 1650` where the
+corrected requirement is `1939 / 1848`, and a replication therefore has
+98% rather than 99% probability of reproducing ROBUST.
+
+**Campaign v3 is nonetheless NOT re-run here**, on two grounds and not
+three. Its verdict rests on a 95% interval lying inside the margin,
+which is a statement about that interval and not about the power that
+was targeted. And re-running a FAVOURABLE result is the asymmetry
+preregistration exists to prevent, which the v1 precedent settles: v1
+ran under-powered as frozen rather than raising a cap after seeing pilot
+data. **The remedy is named and available**, not foreclosed: a campaign
+at `n = 1939 / 1848` on fresh windows, about 40 minutes, would meet the
+corrected target and would be a genuine independent test since the
+correction is committed before any of its data exists. Whether to spend
+it is a scope decision this record does not make.
 
 **The cap rises from 300 to 3000, ex ante.** This has the same
 standing v2's raise from 200 to 300 had: the variance that sets `n_eq`
@@ -1036,25 +1044,38 @@ The realized variance came in BELOW 12.3's projection — `n_eq = 1731`
 where v2's bounds projected 2172 — so the tightened margin was bought
 with room to spare rather than at the cap.
 
-**Realized equivalence power, and the shortfall behind it** (added in
-v3.1, review C2). The campaign computed its sample sizes with a
-one-sided quantile in a two-sided slot, so its DESIGN POINT bought
-98.0% rather than the 99% 12.3 promised; the corrected requirements
-would have been `n_eq = 1939` and `n_twin = 1848`. What the campaign
-actually achieved is a different number, and it is higher, because
-`S^2_90` is a conservative upper bound and the realized spread came in
-under it. From the frozen intervals:
+**The preregistered power target was MISSED** (v3.1 review C2, restated
+correctly in v3.3 after review C8). The campaign computed its sample
+sizes with a one-sided quantile in a two-sided slot, so its design point
+bought 98.0% where 12.3 promised 99%. The corrected requirements are
+`n_eq = 1939` and `n_twin = 1848`; the campaign ran **1731 and 1650**.
+That is a shortfall against its own preregistration, it is not repaired
+by anything measured afterwards, and it stays on the record as a miss.
 
-| arm | realized `se` | `delta_eq / se` | realized `P(ROBUST | Delta = 0)` |
-|---|---|---|---|
-| curved | 0.003878 | 5.157 | **0.9986** |
-| twin | 0.004072 | 4.912 | **0.9968** |
+v3.1 wrote here that the campaign "achieved 99.86% and 99.68%" by
+substituting the observed interval half-widths for `se`. **That
+calculation is withdrawn.** Power computed from the realized data is a
+post-hoc quantity — it conditions on an estimated variance that is
+itself random, and it is a deterministic function of the result it is
+meant to justify. An ex-ante power promise cannot be satisfied
+retroactively by the draw that followed it.
 
-(`se` from each interval's half-width over 1.960; power as
-`2 Phi(delta_eq/se - 1.960) - 1`.) Both exceed 99%, so the promise was
-met in realization even though the design point understated what it
-required. The defect is recorded rather than repaired by a re-run, for
-the reasons 12.3 gives.
+What the frozen artifacts do support is narrower and is a statement
+about this realization only: the campaign's interval half-width came in
+at `0.0076` on the curved arm and `0.0080` on the twin, against a
+margin of `0.02`, so **this draw cleared the margin with room** rather
+than at its edge. That is a property of the draw, produced partly by
+`S^2_90` being a conservative upper bound, and it says nothing about
+the probability a replication would clear it.
+
+The consequence for reading P13, stated rather than left implied: the
+equivalence verdict rests on the observed interval lying inside the
+margin, which the artifact shows and which power does not affect. But a
+replication has the design-point probability of reproducing it, and that
+probability is 98% rather than the promised 99%. Closing the gap
+requires a campaign at `n = 1939 / 1848` on fresh windows — about 40
+minutes — which is named as an available remedy in 12.3 and is not
+taken here.
 
 ### 13.2 Stage A-13C (2026-07-31): **CURVATURE-ROBUST**, control CLEAN
 
@@ -1117,26 +1138,43 @@ a dex** — a striking point agreement in an arm where curvature cannot
 act at all. (`+/-` is one standard error; rung means are in the summary
 artifact, standard errors computed from the frozen CSV.)
 
-**The attribution is bounded by that interval, not by the point
-estimate** (corrected in v3.2, review C6; the first version of this
-paragraph said the residual "is therefore a property of the protocol,
-not of the geometry", which the data do not establish). The
-difference-of-differences carries a standard error of `0.0056`, so its
-approximate 95% interval is `[-0.0110, +0.0111]`: a geometry-specific
-contribution of up to about **0.011 dex in either direction is not
-excluded**. What the campaign supports is therefore the bound, not an
-exact causal separation — the residual drift is consistent with being
-entirely protocol, and any geometric part of it is smaller than 0.011
-dex.
+**What that number is, stated exactly** (v3.3, review C7; v3.2 had
+already withdrawn the claim that the residual "is therefore a property
+of the protocol, not of the geometry", and then over-corrected into
+calling the interval a geometry-specific bound, which it also is not).
+The difference-of-differences carries a standard error of `0.0056`, so
+its approximate 95% interval is `[-0.0110, +0.0111]`. **That interval
+is the uncertainty on the difference BETWEEN THESE TWO ARMS, and
+nothing narrower.** Reading it as a bound on the geometric contribution
+would require the arms to be equivalent in every respect except
+curvature, and Section 5 records in advance that they are not: the
+band, the eligibility rule, `K`, the rejection cap, the fill rule and
+the realized `m` are matched, but **the VARIANCE of box areas is not,
+and is larger on the curved side.** So the arm difference carries any
+protocol-by-box-distribution effect together with any curvature effect,
+and this campaign cannot separate them.
 
-Two things keep that from weakening the result. The bound is itself
-inside `delta_eq = 0.02`, so the ROBUST verdict does not rest on the
-attribution at all: whatever share of `+0.007` is geometry, the total
-contrast is still inside the margin. And the bound is 2.4 times tighter
-than the same statement in v2, which had `+/- 0.0167` on its
-difference-of-differences (11.2) — that is what `n_twin = 1650` against
-v2's 179 buys, and it is the honest form of "this time the control has
-the precision".
+Two partial bounds exist and are cited as partial, not as closing the
+gap. 11.3's D3 moved the box-to-patch RATIO by `+/- 32%` at fixed
+`tau/ell` and measured a shift of `+0.0008 +/- 0.0064` and
+`-0.0002 +/- 0.0065` on the curved arm, bounding that channel at
+`+/- 0.013` dex — but ratio is not variance. And 9.3's invariance
+argument (the LIS distribution of a uniform Poisson box does not depend
+on the box's size or aspect once the count is fixed) covers the FLAT
+arm exactly and does not transfer to the curved one, where the
+intensity inside a box is not uniform. **The geometric component is
+therefore not identified here.** What would identify it is a twin
+matched in the box-area DISTRIBUTION rather than only in its centre and
+in `m` — a design change for a future campaign, named here and not
+adopted.
+
+None of this touches the verdict. The arm difference is inside
+`delta_eq = 0.02` and so is the primary contrast, and the frozen gate
+tested the primary contrast against the margin: the ROBUST reading
+never depended on attributing the residual to anything. What the arm
+comparison does supply is a tighter *arm-difference* bound than v2's
+`+/- 0.0167` (11.2) by a factor of 2.4, which is what `n_twin = 1650`
+against v2's 179 buys.
 
 **How close v2's rule came to the wrong word again.** The contrast's
 lower bound is `-0.00039`. Under v2's table row 1 fired whenever
@@ -1170,8 +1208,9 @@ Over the tested ladder, at fixed discreteness `m ~ 76`:
 bounded inside `[-0.0004, +0.0148]` dex — under 3.5% in relative
 error — against a margin of 0.02 dex, with `m`-gates flat to 0.33% on
 the curved arm and 0.89% on the twin, and a flat control whose own
-contrast matches the curved arm's to `+0.00007` and bounds any
-geometry-specific share of the residual at `+/- 0.011` dex.
+contrast matches the curved arm's to `+0.00007`, the two arms differing
+by no more than `+/- 0.011` dex (an ARM difference, not an identified
+geometric one — 13.2 says why).
 
 That is a statement about an INSTRUMENT, and v3.1 confines it to one
 (review C4, applying AGENTS.md's conservatism rule). P12 established
@@ -1193,8 +1232,8 @@ construction, and the curvature can only reach the order through the
 conformal factor — that is, through the volume and hence the count. In
 this model the general claim is close to a theorem about the geometry
 rather than a measurement about the instrument, and the twin matching
-the curved arm's residual (13.2, to `+0.00007` with a `+/- 0.011` dex
-bound on any geometric share) is the experiment showing that structure
+the curved arm's residual (13.2, to `+0.00007`, the arms differing by
+no more than `+/- 0.011` dex) is the experiment showing that structure
 operating, not evidence that it generalizes.
 
 The general claim needs `d >= 3`, where a metric is not generally
@@ -1222,10 +1261,11 @@ Scope, carried and not smoothed:
   mode, not an extension of this one;
 - the `+0.007` residual drift is real at the edge of significance and
   is NOT explained here beyond "the flat arm has one of the same size".
-  It is CONSISTENT with being entirely protocol, and any geometric
-  share of it is bounded at `+/- 0.011` dex — a bound, not a
-  separation. Naming its mechanism would take its own design, and 11.3
-  already closed the two candidates that were
+  The two arms differ by no more than `+/- 0.011` dex, but that is an
+  ARM difference and not an identified geometric one, because Section 5
+  leaves the box-area variance unmatched between them (13.2). Naming
+  the drift's mechanism, or separating its geometric share, would each
+  take its own design; 11.3 already closed the two candidates that were
   on the table;
 - three samples of 6924 were replaced from reserve slots.
 
