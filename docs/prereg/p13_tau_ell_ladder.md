@@ -5,8 +5,14 @@ Status: **BOTH CAMPAIGNS HAVE RUN.** Campaign v1 returned CONFOUNDED
 **CURVATURE-DEGRADES with the control CLEAN and the effect at half
 the equivalence margin** (Section 11) — a verdict that must never be
 quoted without its magnitude, for the reason 1.2 wrote down in
-advance. Neither record is re-read. Dates are local (UTC+9); commit
-timestamps carry their +09:00 offset.
+advance. **A quarantined diagnostic at four times the precision does
+not reproduce that contrast** (11.3): the offset the verdict rested on
+reverses sign, the suspected mechanism measures zero, and the ladder
+is flat to 0.0146 dex while `(tau/ell)^2` moves 25-fold. The gate
+stands as frozen and is not re-read; what it may be read to MEAN is
+bounded by 11.3. CURVATURE-ROBUST remains unawarded — a diagnostic
+cannot award a verdict. Dates are local (UTC+9); commit timestamps
+carry their +09:00 offset.
 
 Sections 1 through 8 describe the design as frozen for campaign v1.
 Where v2 changes a frozen rule it says so in Section 10; everything
@@ -629,3 +635,134 @@ artifact already decides.**
 Candidate 2 has direct control-arm support, so it gets an isolated
 diagnostic, on the v1 precedent of 9.3: quarantined seed space, the
 campaign's own code path, labelled throughout, and no gate re-read.
+
+### 11.3 Isolated diagnostic: the offset does not replicate, and the mechanism has no effect
+
+Post hoc, quarantined, labelled. Design-check seeds `9000000+` per
+Section 10, no experimental window touched, no gate re-read. The
+script is `docs/prereg/frozen/p13v2/p13v2_rung1_diag.py`, committed at
+`7b1442d` with its predictions stated **before** it ran, and the
+results at that same stamp are in
+`p13v2_rung1_diag_results.json`. It calls `run_sample`, so
+eligibility, packing, the `rho` convention and the estimator are the
+campaign's. Every configuration completed 1.000 and every `rho`
+calibration converged, so nothing below is a selection or a
+discreteness artifact.
+
+**D1 and D2: the ladder at four times the campaign's precision.**
+1000 samples at the two rungs that carry the step, 500 at the
+plateau, both arms.
+
+| `tau/ell` | curved, campaign (n=246) | curved, diagnostic | flat, campaign (n=179) | flat, diagnostic |
+|---|---|---|---|---|
+| 0.30 | -0.7608 +/- 0.0075 | **-0.7432 +/- 0.0036** | -0.7552 +/- 0.0097 | -0.7533 +/- 0.0036 |
+| 0.60 | -0.7367 +/- 0.0071 | **-0.7514 +/- 0.0039** | -0.7373 +/- 0.0095 | -0.7485 +/- 0.0039 |
+| 1.00 | -0.7392 +/- 0.0071 | -0.7368 +/- 0.0049 | -0.7508 +/- 0.0078 | -0.7520 +/- 0.0053 |
+| 1.50 | -0.7364 +/- 0.0071 | -0.7376 +/- 0.0051 | -0.7489 +/- 0.0088 | -0.7455 +/- 0.0055 |
+
+The plateau rungs agree between the two samples to within a standard
+error. **The two bottom rungs swapped.** In the campaign rung 0.30 sat
+0.024 dex BELOW rung 0.60; in the diagnostic it sits 0.008 dex ABOVE
+it.
+
+| contrast | campaign | diagnostic | separation |
+|---|---|---|---|
+| curved, `0.30 -> 1.50` (the primary) | +0.0243 +/- 0.0105 | **+0.0056 +/- 0.0062**, CI `[-0.0066, +0.0179]` | 1.5 sigma |
+| curved, `0.30 -> 0.60` (the step) | +0.0241 +/- 0.0103 | **-0.0082 +/- 0.0054** | 2.8 sigma |
+| flat, `0.30 -> 1.50` | +0.0063 +/- 0.0133 | +0.0079 +/- 0.0066 | 0.1 sigma |
+| flat, `0.30 -> 0.60` | +0.0179 +/- 0.0136 | +0.0048 +/- 0.0053 | 0.9 sigma |
+| endpoint difference-of-differences | +0.0180 +/- 0.0167 | **-0.0022 +/- 0.0091** | — |
+
+So both offsets 11.2 reported were sampling noise at their own sample
+sizes: the twin's `+0.0179` falls to `+0.0048 +/- 0.0053`, and the
+curved arm's `+0.0241` — which was the entire primary contrast —
+reverses to `-0.0082 +/- 0.0054`. The endpoint contrasts are formally
+compatible between the two samples (1.5 sigma); the steps are in mild
+tension (2.8 sigma). Either way the higher-precision sample puts the
+primary contrast at about a quarter of the campaign's value with an
+interval that excludes nothing.
+
+Across the diagnostic's curved ladder the total spread is **0.0146
+dex** while `(tau/ell)^2` moves 25-fold, from 0.09 to 2.25.
+
+**D3: the suspected mechanism, measured directly.** Packing pressure
+moved at FIXED `tau/ell`, `rho` recalibrated so realized `m` stayed on
+the campaign's grand mean 75.755 (`m` turned out to be nearly
+`X`-insensitive on the curved arm — both curved calibrations converged
+at their frozen `rho` on the first probe, which is what a count in a
+band-fixed box should do).
+
+| variant | move | packing ratio | curved shift | flat shift |
+|---|---|---|---|---|
+| V-LOOSE | rung 0.60, `X` 4.0 -> 5.28 | 0.2217 -> 0.1679 | **+0.0008 +/- 0.0064** | +0.0061 +/- 0.0064 |
+| V-TIGHT | rung 0.30, `X` 1.8 -> 1.36 | 0.1680 -> 0.2224 | **-0.0002 +/- 0.0065** | +0.0070 +/- 0.0063 |
+
+Realized `m`: 76.33 / 74.86 / 75.32 / 74.52. Completion 1.000
+everywhere, including the narrowed patch.
+
+On the curved arm, a `+/- 32%` move in packing pressure shifts `y` by
+under 0.001 dex, bounding the mechanism at `+/- 0.013` dex at 95%. On
+the flat arm both shifts are about `+1 sigma` and — decisively — they
+have the SAME sign under OPPOSITE moves of the ratio, which is what
+noise looks like and is not what a mechanism looks like. The
+docstring's two-sided prediction (the variants CROSS if packing
+pressure drives the offset) is refuted on both arms.
+
+**All three candidates are now closed.**
+
+1. The `m` distribution: closed by the frozen artifact before any run
+   (`sd_m` flat to 2%; P12's measured slope makes a 2% `m` shift worth
+   0.003 dex).
+2. Packing pressure: closed by D3 above. Note this closes the
+   mechanism independently of the offset — even had the offset been
+   real, this is not what caused it.
+3. A real curvature effect not of `(tau/ell)^2` form: nothing is left
+   to explain. The high-precision curved ladder is flat to 0.0146 dex
+   across a 25-fold change in `(tau/ell)^2`.
+
+**What this means for the campaign's word.** The gate stands exactly
+as frozen and is not re-read: `Delta_13 = +0.0243`, CI
+`[+0.0044, +0.0456]`, CURVATURE-DEGRADES, control CLEAN, `m`-gate
+passed. What the diagnostic removes is the grounds for reading that
+word as a curvature effect. This is the P12 9.2 pattern repeating with
+a different number: a campaign-sized signature that a quarantined
+high-`n` diagnostic dissolves, and the honest record says so rather
+than letting the verdict word carry a mechanism it cannot support.
+
+**The substantive reading, labelled and not a verdict.** At fixed
+discreteness `m ~ 76`, no degradation of the flat-normalized chain
+reading is detected out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`, with
+the endpoint contrast bounded inside `[-0.0066, +0.0179]` dex at 95%
+— well inside `delta_eq = 0.05`. That interval satisfies the
+numerical condition of row 3 of the 1.2 table, and it is the strong
+form of this programme's thesis: curvature entering the order only
+through the counting measure. **But a diagnostic cannot award a
+verdict.** It carries no verification pin, its `n` is not
+pilot-derived, and it ran after the campaign's data were seen.
+CURVATURE-ROBUST remains unawarded, and awarding it requires a
+campaign.
+
+**The class, stated precisely this time.** Rows 1 and 2 are
+significance tests with no size floor, so a ladder with no true effect
+fires one of them in about one campaign in twenty by construction —
+that is the `alpha` of the test, not a defect in it. The campaign drew
+one. What the design did not require is that the trigger clear the
+resolution of the campaign's own controls: `n_per_rung = 246` gives
+`se ~ 0.010` on the contrast, `n_twin = 179` gives `+/- 0.026` on the
+control, and row 1 fired at `+0.024` — below the control's resolution
+and at twice the arm's. So the three recurrences read: P11 v1.5
+promised a verdict it had not priced; P13 v1 gave an equivalence-grade
+requirement a superiority-grade sample; P13 v2 let a scale-free
+trigger fire below the scale its controls could certify. Section
+1.2's magnitude pin is what kept this from being published as a
+mechanism, and it earned its place.
+
+**Named for the next design review, adopted by nothing here.** Two
+options, neither frozen: size the campaign on an equivalence
+requirement at a `delta_eq` near the effect scale that actually
+matters (~0.02 rather than 0.05), which at this variance costs
+`n ~ 1500` per rung and a few minutes; or give rows 1 and 2 a size
+floor, so a significant contrast must also exceed some stated fraction
+of `delta_eq` before it earns the word DEGRADES. The first buys
+precision, the second buys honesty in the vocabulary. Choosing between
+them is a design decision, and this record does not make it.
