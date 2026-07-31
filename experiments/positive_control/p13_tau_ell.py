@@ -595,12 +595,30 @@ def run_stage_a(output_dir: Path) -> None:
     delta, (lo, hi) = contrast(per_rung, "p13-delta", n_per_rung)
     twin_delta, twin_ci = contrast(twin_y, "p13-twin-delta", n_twin)
 
-    # Section 5 gate 1: m matching
-    mean_m = {t: float(np.mean([r["mean_m"] for r in rows
-                                if r["tau_ell"] == t])) for t in RUNGS}
-    grand = float(np.mean(list(mean_m.values())))
-    m_ok = all(abs(mean_m[t] - grand) / grand <= M_TOLERANCE
-               for t in RUNGS)
+    # Section 5 gate 1: m matching. BOTH arms, per review C5 (v3.2):
+    # Section 5 gives the twin "the same eligibility conditions, K,
+    # rejection cap, fill rule and m-gate", and the first
+    # implementation gated only the curved rows -- so a twin rung could
+    # drift in discreteness and still have its contrast used as a
+    # control. Each arm is gated against its OWN grand mean, because
+    # what the gate prevents is a WITHIN-arm contrast mixing curvature
+    # with discreteness. The cross-arm level offset is a different
+    # quantity, so it is published rather than gated.
+    def rung_means(source):
+        return {t: float(np.mean([r["mean_m"] for r in source
+                                  if r["tau_ell"] == t])) for t in RUNGS}
+
+    def m_gate(means):
+        grand_mean = float(np.mean(list(means.values())))
+        return grand_mean, all(
+            abs(means[t] - grand_mean) / grand_mean <= M_TOLERANCE
+            for t in RUNGS)
+
+    mean_m = rung_means(rows)
+    grand, m_ok_curved = m_gate(mean_m)
+    mean_m_twin = rung_means(twin_rows)
+    grand_twin, m_ok_twin = m_gate(mean_m_twin)
+    m_ok = bool(m_ok_curved and m_ok_twin)
     # Section 10 (1): the twin gate is an EQUIVALENCE test, and its
     # UNDERPOWERED row labels the verdict rather than withholding it
     control = control_result(twin_ci[0], twin_ci[1])
@@ -631,8 +649,19 @@ def run_stage_a(output_dir: Path) -> None:
         "control_caveat": control == "UNDERPOWERED-CONTROL",
         "n_twin": n_twin,
         "confound_gates": {
-            "m_matched": m_ok, "mean_m_by_rung": mean_m,
-            "m_grand_mean": grand, "m_tolerance": M_TOLERANCE,
+            "m_matched": m_ok,
+            "m_matched_curved": m_ok_curved,
+            "m_matched_twin": m_ok_twin,
+            "mean_m_by_rung": mean_m,
+            "m_grand_mean": grand,
+            "mean_m_by_rung_twin": mean_m_twin,
+            "m_grand_mean_twin": grand_twin,
+            # labelled, never gating: the arms sit at slightly
+            # different m LEVELS, which is not what the gate is for
+            # (it prevents within-arm drift). Published so the offset
+            # is auditable instead of hidden inside a passing gate.
+            "twin_vs_curved_level_offset": float(grand_twin / grand - 1.0),
+            "m_tolerance": M_TOLERANCE,
             "flat_twin_delta": twin_delta, "flat_twin_ci": twin_ci,
             "control_result": control,
         },

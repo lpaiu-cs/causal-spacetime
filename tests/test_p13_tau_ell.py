@@ -29,6 +29,7 @@ from p13_tau_ell import (  # noqa: E402
     DELTA_DETECT,
     DELTA_EQ,
     M_TARGET,
+    M_TOLERANCE,
     N_CAP,
     N_EQ_COEFF,
     N_SUP_COEFF,
@@ -171,6 +172,41 @@ def test_a_significant_but_sub_margin_contrast_no_longer_says_degrades():
     # CURVATURE-DEGRADES (Section 12.1's closing paragraph). What this
     # line pins is that the repair targets the real defect.
     assert verdict(0.004444, 0.045607, True) == "INCONCLUSIVE"
+
+
+def test_m_gate_covers_the_twin_arm():
+    """Review C5. Section 5 gives the twin "the same eligibility
+    conditions, K, rejection cap, fill rule and m-gate", and the first
+    implementation gated only the curved rows -- so a twin rung could
+    drift in discreteness and still have its contrast used as a
+    control. Tested against the case it is meant to catch: a twin arm
+    whose top rung drifts past tolerance must fail the gate even when
+    the curved arm is perfectly matched."""
+
+    def gate(curved, twin):
+        """The Section 5 gate as run_stage_a applies it: each arm
+        against its own grand mean."""
+        out = []
+        for means in (curved, twin):
+            grand = sum(means) / len(means)
+            out.append(all(abs(m - grand) / grand <= M_TOLERANCE
+                           for m in means))
+        return out[0] and out[1]
+
+    flat = [76.0, 76.0, 76.0, 76.0]
+    assert gate(flat, flat)
+    # curved clean, twin drifting: must NOT pass
+    assert not gate(flat, [76.0, 76.0, 76.0, 90.0])
+    assert not gate(flat, [60.0, 76.0, 76.0, 76.0])
+    # a pure LEVEL offset between the arms is not drift and must pass:
+    # the gate exists to stop within-arm confounding, and the campaigns
+    # ran with the twin about 1.7% below the curved arm
+    assert gate(flat, [74.6, 74.6, 74.6, 74.6])
+    # the campaigns' own realized figures, both arms
+    assert gate([75.64, 75.79, 76.12, 76.00],
+                [75.24, 74.66, 74.35, 74.05])       # v3
+    assert gate([75.57, 75.58, 75.98, 75.89],
+                [74.91, 74.72, 73.96, 74.16])       # v2
 
 
 def test_equivalence_coefficient_is_two_sided():

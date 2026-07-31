@@ -4,7 +4,8 @@ Status: **CLOSED. Three campaigns have run and the question is
 answered.** The result is Section 13:
 **CURVATURE-ROBUST with the control CLEAN**, at `delta_eq = 0.02` dex,
 `Delta_13 = +0.0072` with CI `[-0.0004, +0.0148]`, and a flat twin that
-reproduces the curved arm's entire residual drift to `+0.00007`. At
+matches the curved arm's residual drift to `+0.00007`, bounding any
+geometry-specific part of that drift at `+/- 0.011` dex. At
 fixed discreteness `m ~ 76` the flat-normalized chain reading does not
 notice curvature out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`. **This
 is a result about the INSTRUMENT in 1+1D de Sitter, one conformal
@@ -1064,9 +1065,26 @@ the reasons 12.3 gives.
 
 | gate | reading | result |
 |---|---|---|
-| `m`-matching | 75.64 / 75.79 / 76.12 / 76.00, grand 75.89 | PASS, widest rung +0.31% |
+| `m`-matching, curved | 75.64 / 75.79 / 76.12 / 76.00, grand 75.89 | PASS, widest rung -0.33% |
+| `m`-matching, twin | 75.24 / 74.66 / 74.35 / 74.05, grand 74.57 | PASS, widest rung +0.89% |
 | flat twin, equivalence at `delta_eq = 0.02` | interval inside `+/- 0.02` | **CONTROL-CLEAN** |
 | skips | 0 / 0 / 2 / 1 | selection caveat rides along |
+
+**The twin's `m`-gate was frozen and was not implemented** (v3.2,
+review C5). Section 5 gives the twin "the same eligibility conditions,
+`K`, rejection cap, fill rule and `m`-gate", and the runner as it ran
+computed the gate from the curved rows only — so a twin rung could have
+drifted in discreteness and still had its contrast used as a control.
+The omitted check is discharged rather than waived: computed from the
+frozen rows it **passes on both arms in both campaigns** (twin worst
+deviation `+0.89%` here, `-0.64%` in v2, against a 5% tolerance), so
+each campaign is compliant in substance with what its own design
+required, and the second row of the table above is that computation.
+The runner now gates both arms, each against its own grand mean,
+because within-arm drift is what the gate exists to prevent; the
+cross-arm LEVEL offset (`-1.73%` here, `-1.74%` in v2) is a different
+quantity and is now published as a labelled field rather than left
+invisible inside a passing gate.
 
 **The selection caveat, with its size.** Three samples of 6924 failed
 to pack and were replaced from reserve slots; their seeds are published
@@ -1094,12 +1112,31 @@ times tighter than either used.
     difference-of-differences  +0.00007 +/- 0.00562   (0.01 sigma)
 
 Both ladders drift monotonically upward by about `+0.007` dex, and the
-flat ensemble — where curvature cannot act — reproduces the curved
-arm's drift to **seven parts in a hundred thousand of a dex**. The
-residual is therefore a property of the protocol, not of the geometry,
-and this time the control has the precision to say so: `n_twin = 1650`
-against v2's 179. (`+/-` is one standard error; rung means are in the
-summary artifact, standard errors computed from the frozen CSV.)
+two endpoint contrasts agree to **seven parts in a hundred thousand of
+a dex** — a striking point agreement in an arm where curvature cannot
+act at all. (`+/-` is one standard error; rung means are in the summary
+artifact, standard errors computed from the frozen CSV.)
+
+**The attribution is bounded by that interval, not by the point
+estimate** (corrected in v3.2, review C6; the first version of this
+paragraph said the residual "is therefore a property of the protocol,
+not of the geometry", which the data do not establish). The
+difference-of-differences carries a standard error of `0.0056`, so its
+approximate 95% interval is `[-0.0110, +0.0111]`: a geometry-specific
+contribution of up to about **0.011 dex in either direction is not
+excluded**. What the campaign supports is therefore the bound, not an
+exact causal separation — the residual drift is consistent with being
+entirely protocol, and any geometric part of it is smaller than 0.011
+dex.
+
+Two things keep that from weakening the result. The bound is itself
+inside `delta_eq = 0.02`, so the ROBUST verdict does not rest on the
+attribution at all: whatever share of `+0.007` is geometry, the total
+contrast is still inside the margin. And the bound is 2.4 times tighter
+than the same statement in v2, which had `+/- 0.0167` on its
+difference-of-differences (11.2) — that is what `n_twin = 1650` against
+v2's 179 buys, and it is the honest form of "this time the control has
+the precision".
 
 **How close v2's rule came to the wrong word again.** The contrast's
 lower bound is `-0.00039`. Under v2's table row 1 fired whenever
@@ -1131,9 +1168,10 @@ Over the tested ladder, at fixed discreteness `m ~ 76`:
 **The flat-normalized chain reading does not notice curvature out to
 `tau/ell = 1.5`, that is `R tau^2 = 4.5`.** The endpoint contrast is
 bounded inside `[-0.0004, +0.0148]` dex — under 3.5% in relative
-error — against a margin of 0.02 dex, with a flat control that
-reproduces the entire residual to `+0.00007` and an `m`-gate flat to
-0.31%.
+error — against a margin of 0.02 dex, with `m`-gates flat to 0.33% on
+the curved arm and 0.89% on the twin, and a flat control whose own
+contrast matches the curved arm's to `+0.00007` and bounds any
+geometry-specific share of the residual at `+/- 0.011` dex.
 
 That is a statement about an INSTRUMENT, and v3.1 confines it to one
 (review C4, applying AGENTS.md's conservatism rule). P12 established
@@ -1154,9 +1192,10 @@ causal order is conformally equivalent to the flat twin's by
 construction, and the curvature can only reach the order through the
 conformal factor — that is, through the volume and hence the count. In
 this model the general claim is close to a theorem about the geometry
-rather than a measurement about the instrument, and the twin's exact
-reproduction of the residual (13.2) is the experiment showing that
-structure operating, not evidence that it generalizes.
+rather than a measurement about the instrument, and the twin matching
+the curved arm's residual (13.2, to `+0.00007` with a `+/- 0.011` dex
+bound on any geometric share) is the experiment showing that structure
+operating, not evidence that it generalizes.
 
 The general claim needs `d >= 3`, where a metric is not generally
 conformally flat and Weyl curvature is non-trivial, so curvature can in
@@ -1182,9 +1221,11 @@ Scope, carried and not smoothed:
   is a hard ceiling — a different experiment with a different failure
   mode, not an extension of this one;
 - the `+0.007` residual drift is real at the edge of significance and
-  is NOT explained here beyond "the flat arm has it identically". It is
-  a protocol property of the ladder; naming its mechanism would take
-  its own design, and 11.3 already closed the two candidates that were
+  is NOT explained here beyond "the flat arm has one of the same size".
+  It is CONSISTENT with being entirely protocol, and any geometric
+  share of it is bounded at `+/- 0.011` dex — a bound, not a
+  separation. Naming its mechanism would take its own design, and 11.3
+  already closed the two candidates that were
   on the table;
 - three samples of 6924 were replaced from reserve slots.
 
@@ -1228,14 +1269,21 @@ Design v3 is pre-implementation and pre-data because `94377ec` precedes
     git merge-base --is-ancestor 94377ec 33e371f
     git log --oneline --first-parent 922f8b8..3f562c1
 
-**Requirement, therefore: this branch must merge with a MERGE COMMIT,
-not a squash.** A squash collapses the twelve commits into one, at
-which point every `code_version` in `frozen/p13/`, `frozen/p13v2/` and
-`frozen/p13v3/` names an object no checkout can resolve, the two
-ordering claims above become unverifiable assertions, and the
-cross-stage gate's own "reachable stamp" precondition silently stops
-meaning anything. The repository's practice is already merge commits
-(`Merge pull request #NN` throughout `main`), so this is a requirement
-that matches habit rather than one that changes it — but it is written
-down here because habit is not a guarantee and because the P13 record
-is unusually dependent on it.
+**Requirement, therefore: this branch merges with a MERGE COMMIT.**
+Neither of the alternatives is safe. A squash collapses the twelve
+commits into one, at which point every `code_version` in `frozen/p13/`,
+`frozen/p13v2/` and `frozen/p13v3/` names an object no checkout can
+resolve and the two ordering claims above become unverifiable
+assertions. **A rebase-merge is no better and is worse for being
+subtle**: it keeps the individual commits but REWRITES their SHAs, so
+the stamps break just as completely while the history still looks
+intact. Either way the cross-stage gate's own "reachable stamp"
+precondition silently stops meaning anything rather than failing
+loudly.
+
+This is now enforced rather than requested: `allow_squash_merge` and
+`allow_rebase_merge` are off in the repository settings, and AGENTS.md
+carries the rule with its reason so the settings are not re-enabled by
+someone tidying them. The repository's practice was already merge
+commits (`Merge pull request #NN` throughout `main`) — habit is simply
+not a guarantee, and the P13 record is unusually dependent on it.

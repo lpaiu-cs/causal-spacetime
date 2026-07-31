@@ -106,3 +106,36 @@ causal-spacetime-lab/
   docs/
     research_notes.md
     references.md
+
+## Merge policy: never squash, never rebase-merge
+
+**Merge pull requests with a merge commit only.** Repository settings now
+enforce this (`allow_squash_merge` and `allow_rebase_merge` are both off), but
+the reason belongs here so it is not re-enabled by someone tidying settings.
+
+Every frozen artifact in `docs/prereg/frozen/` records a `code_version`: the
+short SHA of the commit that produced it. Those stamps are the programme's
+provenance mechanism, and several records make claims about ORDER IN THE
+HISTORY rather than about file contents — for example that a diagnostic's
+predictions were committed before it ran, or that a design was frozen before
+its implementation and before any data.
+
+- **Squash** collapses a branch into one commit, so every stamp names an object
+  no checkout can resolve and every ordering claim becomes an unverifiable
+  assertion.
+- **Rebase-merge** preserves the individual commits but REWRITES their SHAs,
+  which breaks the stamps just as thoroughly and less visibly.
+
+The cross-stage gate machinery also requires a *reachable* stamp, so both
+strategies silently turn that precondition into a no-op rather than failing
+loudly.
+
+Corollaries for anyone working in this repository:
+
+- Do not rewrite published history on a branch whose commits are already
+  referenced by a `code_version` (no `rebase`, no `--amend`, no force-push).
+- When a stage runs, commit first and run from a clean worktree, so the stamp
+  the artifact records is a commit that exists. The runners enforce this with a
+  preflight check that counts untracked files as dirty.
+- A record may cite a stamp only if
+  `git merge-base --is-ancestor <stamp> HEAD` succeeds.
