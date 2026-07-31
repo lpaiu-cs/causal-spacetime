@@ -106,6 +106,7 @@ causal-spacetime-lab/
   docs/
     research_notes.md
     references.md
+```
 
 ## Merge policy: never squash, never rebase-merge
 

@@ -174,6 +174,25 @@ def test_a_significant_but_sub_margin_contrast_no_longer_says_degrades():
     assert verdict(0.004444, 0.045607, True) == "INCONCLUSIVE"
 
 
+def test_selection_caveat_spans_both_arms():
+    """Review C14. _fill_block returns the twin's skipped seeds and the
+    first version discarded them, so a twin seed could be excluded for
+    failing to pack, a reserve could fill its place, and the artifact
+    could still publish selection_caveat: false with that identity
+    missing. Tested against the case it catches: a clean curved arm
+    beside a twin that skipped must still raise the caveat."""
+
+    def caveat(curved_skips, twin_skips):
+        return bool(any(c > 0 for c in curved_skips)
+                    or any(t > 0 for t in twin_skips))
+
+    assert not caveat([0, 0, 0, 0], [0, 0, 0, 0])
+    assert caveat([0, 0, 2, 1], [0, 0, 0, 0])       # v3's own reading
+    # the case the first version got wrong
+    assert caveat([0, 0, 0, 0], [0, 0, 1, 0])
+    assert caveat([1, 0, 0, 0], [0, 0, 0, 3])
+
+
 def test_m_gate_covers_the_twin_arm():
     """Review C5. Section 5 gives the twin "the same eligibility
     conditions, K, rejection cap, fill rule and m-gate", and the first

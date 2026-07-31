@@ -4,8 +4,10 @@ Status: **CLOSED. Three campaigns have run and the question is
 answered.** The result is Section 13:
 **CURVATURE-ROBUST with the control CLEAN**, at `delta_eq = 0.02` dex,
 `Delta_13 = +0.0072` with CI `[-0.0004, +0.0148]`, and a flat twin that
-matches the curved arm's residual drift to `+0.00007`, with the two
-arms differing by no more than `+/- 0.011` dex. At
+matches the curved arm's observed residual to `+0.00007`, with the two
+arms differing by no more than `+/- 0.011` dex. (Each arm's own
+`+0.007` rise has an interval including zero and is not established —
+13.2.) At
 fixed discreteness `m ~ 76` the flat-normalized chain reading does not
 notice curvature out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`. **This
 is a result about the INSTRUMENT in 1+1D de Sitter, one conformal
@@ -1113,6 +1115,19 @@ in the artifact (`17454000`, `17600600`, `18342600`). The flag fires on
 any skip at all, so its magnitude is stated for the same reason 1.2
 requires the contrast's: 3 in 6924 is 0.04%.
 
+**The twin arm's skips were dropped by the runner** (v3.4, review C14):
+`_fill_block` returns them and the summary published only the curved
+arm's, so a twin seed excluded for failing to pack could have gone
+unrecorded while `selection_caveat` still read from one arm. Same class
+as C5 one field over. **This campaign is unaffected, and that is checked
+rather than assumed**: every twin seed in `p13_stage_a.csv` is exactly
+`base + 200k` contiguous from its block base at all four rungs, so the
+twin arm skipped nothing and the published identities are complete. The
+runner now accumulates `twin_skip_counts` and `twin_skipped_seeds` and
+the caveat spans both arms, with
+`test_selection_caveat_spans_both_arms` pinning the case the first
+version got wrong.
+
 **This is the verdict the programme has been trying to buy since v1,
 and v3 is the first campaign that could afford it.** v1 could not
 (cap 200 against `n_eq = 231`); v2 could, and a scale-free trigger
@@ -1132,11 +1147,22 @@ times tighter than either used.
     twin endpoint contrast      +0.00713
     difference-of-differences  +0.00007 +/- 0.00562   (0.01 sigma)
 
-Both ladders drift monotonically upward by about `+0.007` dex, and the
-two endpoint contrasts agree to **seven parts in a hundred thousand of
-a dex** — a striking point agreement in an arm where curvature cannot
-act at all. (`+/-` is one standard error; rung means are in the summary
-artifact, standard errors computed from the frozen CSV.)
+Both ladders rise monotonically across the four rungs, by `+0.0072` on
+the curved arm and `+0.0071` on the twin, and the two endpoint contrasts
+agree to **seven parts in a hundred thousand of a dex** — a striking
+point agreement in an arm where curvature cannot act at all. (`+/-` is
+one standard error; rung means are in the summary artifact, standard
+errors computed from the frozen CSV.)
+
+**Neither rise is established, and that is stated before it is used**
+(v3.4, review C18). Each arm's endpoint interval includes zero — curved
+`[-0.0004, +0.0148]` at 1.9 sigma, twin `[-0.0007, +0.0153]` at 1.8
+sigma — as does the `(tau/ell)^2` trend, `[-0.0001, +0.0062]` at 1.9
+sigma. So the record reports an observed positive drift **compatible
+with no drift**, in both arms, and the monotone ordering across four
+rungs is not a frozen test and is not offered as one. What the two arms
+agreeing in sign and size does supply is the reason the ARM DIFFERENCE
+is the informative statistic here rather than either arm's drift.
 
 **What that number is, stated exactly** (v3.3, review C7; v3.2 had
 already withdrawn the claim that the residual "is therefore a property
@@ -1188,7 +1214,8 @@ and what separated them was less noise than a single sample carries.
 
 **Labelled checks.** The `(tau/ell)^2` trend fit reads `+0.0030`, CI
 `[-0.0001, +0.0062]` — at the edge of zero, an order below `delta_eq`,
-and consistent with the same protocol drift the twin carries. Median
+and consistent both with zero and with the same rise the twin
+observes. Median
 relative error `0.1839 / 0.1858 / 0.1878 / 0.1865`, a 2% spread while
 `(tau/ell)^2` moves 25-fold. `sd_m` = `11.74 / 11.71 / 11.65 / 11.16`,
 flat to 5%.
@@ -1259,13 +1286,19 @@ Scope, carried and not smoothed:
   `{1.5, 2.0, 2.5, 3.0}`, where the conjugate point at `pi ell ~ 3.14`
   is a hard ceiling — a different experiment with a different failure
   mode, not an extension of this one;
-- the `+0.007` residual drift is real at the edge of significance and
-  is NOT explained here beyond "the flat arm has one of the same size".
-  The two arms differ by no more than `+/- 0.011` dex, but that is an
-  ARM difference and not an identified geometric one, because Section 5
+- the `+0.007` residual drift is an OBSERVED point estimate whose
+  interval includes zero (v3.4, review C18 — an earlier draft called it
+  "real at the edge of significance", which asserts an existence the
+  data do not establish). Curved endpoint `+0.0072`, CI
+  `[-0.0004, +0.0148]`, 1.9 sigma; the `(tau/ell)^2` trend `+0.0030`,
+  CI `[-0.0001, +0.0062]`, 1.9 sigma. **Compatible with no drift.** It
+  is also not explained beyond "the flat arm observes one of the same
+  size", and the two arms differ by no more than `+/- 0.011` dex — an
+  ARM difference, not an identified geometric one, because Section 5
   leaves the box-area variance unmatched between them (13.2). Naming
   the drift's mechanism, or separating its geometric share, would each
-  take its own design; 11.3 already closed the two candidates that were
+  take its own design and would first need a campaign that establishes
+  the drift at all; 11.3 already closed the two candidates that were
   on the table;
 - three samples of 6924 were replaced from reserve slots.
 

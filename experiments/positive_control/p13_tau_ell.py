@@ -544,6 +544,14 @@ def run_stage_a(output_dir: Path) -> None:
 
     rows, per_rung, twin_rows, twin_y = [], {}, [], {}
     skip_counts, skipped_seeds = {}, {}
+    # Review C14: _fill_block returns the twin's skipped seeds too, and
+    # the first version discarded them -- they appeared only in the
+    # INFEASIBLE message. So a twin seed could be excluded for failing to
+    # pack, a reserve seed could fill its place, and the artifact could
+    # still publish selection_caveat: false with that identity missing,
+    # even though the control contrast was conditioned on packing. Same
+    # class as C5 one field over: the twin arm treated as decoration.
+    twin_skip_counts, twin_skipped_seeds = {}, {}
     for tau_c in RUNGS:
         base, slots = STAGE_A_BLOCKS[tau_c]
         records, skipped, filled = _fill_block(
@@ -574,6 +582,8 @@ def run_stage_a(output_dir: Path) -> None:
             r["stage"] = "A13-twin"
             r["code_version"] = stamp
         twin_rows.extend(trecords)
+        twin_skip_counts[tau_c] = len(tskipped)
+        twin_skipped_seeds[tau_c] = tskipped
         twin_y[tau_c] = np.array([r["y"] for r in trecords])
         print(f"    twin tau/ell={tau_c}: {len(trecords)} complete | "
               f"mean y {twin_y[tau_c].mean():.4f}", flush=True)
@@ -669,7 +679,15 @@ def run_stage_a(output_dir: Path) -> None:
                            for t in RUNGS},
         "skip_counts": {str(t): skip_counts[t] for t in RUNGS},
         "skipped_seeds": {str(t): skipped_seeds[t] for t in RUNGS},
-        "selection_caveat": bool(any(skip_counts[t] > 0 for t in RUNGS)),
+        "twin_skip_counts": {str(t): twin_skip_counts[t] for t in RUNGS},
+        "twin_skipped_seeds": {str(t): twin_skipped_seeds[t]
+                               for t in RUNGS},
+        # the caveat spans BOTH arms (review C14): either arm's contrast
+        # having been conditioned on successful packing is a selection
+        # the record must carry.
+        "selection_caveat": bool(
+            any(skip_counts[t] > 0 for t in RUNGS)
+            or any(twin_skip_counts[t] > 0 for t in RUNGS)),
         "labelled_checks": {
             "trend_vs_tau_ell_squared": trend,
             "trend_ci": [float(np.percentile(trend_boots, 2.5)),
