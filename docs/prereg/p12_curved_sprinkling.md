@@ -484,10 +484,14 @@ cannot be mistaken for a surprise.
 
 Design-check artifacts, both stamped and both containing no
 experimental seeds:
-`docs/prereg/frozen/p12/p12_stage_b_volume_check.json` (`a788836`;
-deterministic quadrature, no sprinkling at all) and
-`.../p12_stage_b_ensemble_check.json` (`627d481`; P12's design-check
-space `2000000-5999999`, Section 6). Their scripts write to the
+`docs/prereg/frozen/p12/p12_stage_b_volume_check.json` (deterministic
+quadrature, no sprinkling at all) and
+`.../p12_stage_b_ensemble_check.json` (P12's design-check space
+`2000000-5999999`, Section 6). **Both are stamped `11b0954`** — the two
+earlier stamps this paragraph advertised, `a788836` and `627d481`,
+belonged to superseded runs and were left behind when the checks were
+re-run (review C16). An audit follows the stamp in the artifact, never
+the one in prose; this sentence now agrees with both. Their scripts write to the
 gitignored `outputs/` tree and are frozen by a separate copy, because
 the preflight counts untracked files as dirty and a check writing
 straight into the repository makes the next check's stamp dirty — which
