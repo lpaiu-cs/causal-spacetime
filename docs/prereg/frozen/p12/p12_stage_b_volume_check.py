@@ -49,12 +49,25 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, "experiments/positive_control")
+from p11_metric import _preflight_clean  # noqa: E402
+
 OUT = Path("docs/prereg/frozen/p12/p12_stage_b_volume_check.json")
 TOLERANCE = 1e-9          # Section 3's pinned tolerance, reused here
+
+#: Review C12: the first version of this file used a midpoint rule at
+#: n = 4000, measured a worst relative error of 4.1e-9 against a pinned
+#: 1e-9, RECORDED it, and continued -- a guard that does not guard,
+#: while the addendum called the relation verified at the tolerance. The
+#: integrand 1/(U+V)^2 is smooth over the diamond, so Gauss-Legendre at
+#: modest order reaches machine precision, and the tolerance is now
+#: ASSERTED rather than reported.
+GL_NODES = 128
 
 
 def tau_curved(eta_p, x_p, eta_q, x_q, ell=1.0):
@@ -69,20 +82,24 @@ def volume_closed_form(tau, ell=1.0):
     return 4.0 * ell ** 2 * math.log(math.cosh(tau / (2.0 * ell)))
 
 
-def volume_quadrature(eta_p, x_p, eta_q, x_q, ell=1.0, n=4000):
-    """Brute force: integrate Omega^2 over the diamond in (U, V), with
-    no use of the closed form or of tau. Midpoint rule on a uniform
-    n x n grid; the integrand is smooth and bounded away from the
-    lightcone tip singularity because eta stays negative."""
+def volume_quadrature(eta_p, x_p, eta_q, x_q, ell=1.0, n=GL_NODES):
+    """Integrate Omega^2 over the diamond in (U, V) with no use of the
+    closed form and no use of tau. Tensor Gauss-Legendre; the integrand
+    is smooth over the rectangle and bounded away from the lightcone
+    tip because eta stays strictly negative, so this converges to
+    machine precision at moderate order."""
 
     u_p, v_p = eta_p + x_p, eta_p - x_p
     u_q, v_q = eta_q + x_q, eta_q - x_q
-    du, dv = (u_q - u_p) / n, (v_q - v_p) / n
-    u = u_p + (np.arange(n) + 0.5) * du
-    v = v_p + (np.arange(n) + 0.5) * dv
+    nodes, weights = np.polynomial.legendre.leggauss(n)
+    u = 0.5 * (u_q - u_p) * nodes + 0.5 * (u_q + u_p)
+    v = 0.5 * (v_q - v_p) * nodes + 0.5 * (v_q + v_p)
+    wu = 0.5 * (u_q - u_p) * weights
+    wv = 0.5 * (v_q - v_p) * weights
     eta = 0.5 * (u[:, None] + v[None, :])
     # Omega^2 d eta dx = Omega^2 * dU dV / 2
-    return float(np.sum(ell ** 2 / eta ** 2) * du * dv * 0.5)
+    return float(np.einsum("i,j,ij->", wu, wv,
+                           ell ** 2 / eta ** 2) * 0.5)
 
 
 def g_of_s(s):
@@ -118,9 +135,11 @@ def invert_g(g):
 
 def main() -> None:
     results: dict = {
+        "code_version": _preflight_clean(),
         "relation": "Vol = 4 ell^2 ln cosh(tau / (2 ell))",
         "expansion_coefficient_c": 1.0 / 48.0,
         "tolerance": TOLERANCE,
+        "quadrature": f"tensor Gauss-Legendre, {GL_NODES} nodes per axis",
     }
 
     # (a) the closed form against quadrature, at positions chosen so the
@@ -205,8 +224,28 @@ def main() -> None:
               f" | amplification {amp:.1f}x")
     results["inversion"] = inv
 
+    # Review C12: the tolerance is a GATE, not a field. Nothing is
+    # written unless every check meets it.
+    failures = [
+        f"quadrature worst rel error "
+        f"{results['worst_quadrature_rel_error']:.3e} > {TOLERANCE:.1e}"
+    ] if results["worst_quadrature_rel_error"] > TOLERANCE else []
+    if results["position_independence"]["spread"] > TOLERANCE:
+        failures.append(
+            f"position-independence spread "
+            f"{results['position_independence']['spread']:.3e}"
+            f" > {TOLERANCE:.1e}")
+    worst_inv = max(c["rel_error"] for c in results["inversion"])
+    if worst_inv > TOLERANCE:
+        failures.append(f"inversion worst rel error {worst_inv:.3e}"
+                        f" > {TOLERANCE:.1e}")
+    results["gate_passed"] = not failures
+    if failures:
+        raise SystemExit("volume check FAILED the pinned tolerance: "
+                         + "; ".join(failures))
+
     OUT.write_text(json.dumps(results, indent=2))
-    print(f"\nwrote {OUT}")
+    print(f"\ngate passed at {TOLERANCE:.0e}; wrote {OUT}")
 
 
 if __name__ == "__main__":

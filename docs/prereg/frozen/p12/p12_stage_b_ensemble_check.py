@@ -136,12 +136,15 @@ def run_arm(ladder, bases, flat):
     arm = {}
     for rung, rho in ladder.items():
         gs, taus, ms, complete = [], [], [], 0
+        tau_rows, m_rows = [], []
         for k in range(N_SAMPLES):
             got = sample_pairs(rho, bases[rung] + P.STRIDE * k, flat)
             if got is None:
                 continue
             complete += 1
             gs.append([p["g"] for p in got])
+            tau_rows.append([p["tau_hat"] for p in got])
+            m_rows.append([p["m"] for p in got])
             taus.extend(p["tau_hat"] for p in got)
             ms.extend(p["m"] for p in got)
         flatg = np.array([g for row in gs for g in row])
@@ -157,6 +160,9 @@ def run_arm(ladder, bases, flat):
             "mean_m": float(np.mean(ms)),
             "mean_tau_hat": float(np.mean(taus)),
             "per_sample_mean_g": [float(np.mean(row)) for row in gs],
+            "per_sample_mean_tau_hat": [float(np.mean(row))
+                                        for row in tau_rows],
+            "per_sample_mean_m": [float(np.mean(row)) for row in m_rows],
         }
         a = arm[rung]
         print(f"  {'twin' if flat else 'curved'} rung {rung}:"
@@ -173,6 +179,7 @@ def main() -> None:
         assert base + P.STRIDE * N_SAMPLES <= DESIGN_CEIL
 
     results: dict = {
+        "code_version": P._preflight_clean(),
         "tau_over_ell": TAU_ELL,
         "patch": {"eta_lo": ETA_LO, "xhalf": XHALF},
         "twin_band_centre": TWIN_CENTRE,
@@ -192,59 +199,128 @@ def main() -> None:
     print("=== flat twin ===")
     results["twin"] = run_arm(TWIN_LADDER, TWIN_BASE, flat=True)
 
+    # --- the PAIRED per-sample statistic (review C10) ----------------
+    # The first version divided each curved sample's g by the twin's
+    # RUNG MEAN, so every y_B shared one random denominator: the stored
+    # variance contained none of the twin arm's sampling variation while
+    # the power calculation treated the values as independent. The
+    # frozen statistic is therefore PAIRED -- curved sample i against
+    # twin sample i within a rung, pairing by index, which is arbitrary
+    # between two independent seed streams and so is harmless, and makes
+    # each y_B a genuine iid draw carrying BOTH arms' variation. Nothing
+    # rung-level leaks into it: tau_hat is the sample's own.
+    def paired_rel_errors(rung):
+        c, t = results["curved"][rung], results["twin"][rung]
+        n = min(len(c["per_sample_mean_g"]), len(t["per_sample_mean_g"]))
+        rels, boundary = [], 0
+        for i in range(n):
+            q_i = c["per_sample_mean_g"][i] / t["per_sample_mean_g"][i]
+            s_i = invert_g(q_i / 2.0)
+            if s_i is None:
+                boundary += 1
+                rels.append(1.0)            # boundary: R_hat = 0
+                continue
+            tau_i = c["per_sample_mean_tau_hat"][i]
+            rels.append(abs(8.0 * s_i ** 2 / tau_i ** 2 - 2.0) / 2.0)
+        return np.array(rels), boundary, n
+
     print("=== the budget Section 5 item 4 asks for ===")
     budget = {}
+    boot = np.random.default_rng(20260731)
     for rung in LADDER:
         c, t = results["curved"][rung], results["twin"][rung]
         q = c["mean_g"] / t["mean_g"]
         s = invert_g(q / 2.0)
         pooled = None
         if s is not None:
-            r_hat = 8.0 * s ** 2 / c["mean_tau_hat"] ** 2
-            pooled = abs(r_hat - 2.0) / 2.0
-        # per-SAMPLE recovery: each sample's own six pairs against the
-        # twin's rung mean, which is how the campaign statistic would be
-        # built if it followed the P11/P12 per-sample shape
-        per_sample, undefined = [], 0
-        for gm in c["per_sample_mean_g"]:
-            s_i = invert_g((gm / t["mean_g"]) / 2.0)
-            if s_i is None:
-                undefined += 1
-                continue
-            r_i = 8.0 * s_i ** 2 / c["mean_tau_hat"] ** 2
-            per_sample.append(abs(r_i - 2.0) / 2.0)
-        # the se on Q, and what it implies for the pooled recovery
-        rel_se_q = math.sqrt((c["se_mean_g"] / c["mean_g"]) ** 2
-                             + (t["se_mean_g"] / t["mean_g"]) ** 2)
+            pooled = abs(8.0 * s ** 2 / c["mean_tau_hat"] ** 2 - 2.0) / 2.0
+        # JOINT bootstrap over BOTH arms for the rung-level interval
+        # (review C10): resampling only the curved arm would understate
+        # it exactly as the fixed denominator did.
+        cg = np.array(c["per_sample_mean_g"])
+        tg = np.array(t["per_sample_mean_g"])
+        ct = np.array(c["per_sample_mean_tau_hat"])
+        boots_r, boots_q = [], []
+        for _ in range(2000):
+            ic = boot.integers(0, cg.size, cg.size)
+            it = boot.integers(0, tg.size, tg.size)
+            q_b = cg[ic].mean() / tg[it].mean()
+            boots_q.append(1.0 - q_b)
+            s_b = invert_g(q_b / 2.0)
+            boots_r.append(0.0 if s_b is None
+                           else 8.0 * s_b ** 2 / ct[ic].mean() ** 2)
+        rels, boundary, n_paired = paired_rel_errors(rung)
         budget[rung] = {
             "Q": q, "one_minus_Q": 1.0 - q,
+            "one_minus_Q_ci_joint_bootstrap": [
+                float(np.percentile(boots_q, 2.5)),
+                float(np.percentile(boots_q, 97.5))],
             "R_hat_pooled": (8.0 * s ** 2 / c["mean_tau_hat"] ** 2
                              if s is not None else None),
             "pooled_rel_error": pooled,
-            "rel_se_Q": rel_se_q,
-            "se_one_minus_Q": rel_se_q * q,
+            "R_hat_ci_joint_bootstrap": [
+                float(np.percentile(boots_r, 2.5)),
+                float(np.percentile(boots_r, 97.5))],
+            "se_one_minus_Q_joint": float(np.std(boots_q, ddof=1)),
             "signal_to_noise_one_minus_Q":
-                (1.0 - q) / (rel_se_q * q) if q > 0 else None,
-            "per_sample_median_rel_error":
-                float(np.median(per_sample)) if per_sample else None,
-            "per_sample_undefined_count": undefined,
-            "per_sample_undefined_fraction":
-                undefined / len(c["per_sample_mean_g"]),
+                (1.0 - q) / float(np.std(boots_q, ddof=1)),
+            # review C13: the boundary-constrained population, reported
+            # CONSISTENTLY -- boundary hits are error exactly 1 and are
+            # included in every summary below, where the first version
+            # excluded them from the median while including them in the
+            # power statistic.
+            "paired_n": n_paired,
+            "paired_median_rel_error": float(np.median(rels)),
+            "paired_mean_rel_error": float(rels.mean()),
+            "paired_boundary_hits": boundary,
+            "paired_boundary_fraction": boundary / n_paired,
+            "paired_fraction_below_one": float((rels < 1.0).mean()),
+            "paired_count_below_one": int((rels < 1.0).sum()),
         }
         b = budget[rung]
         pooled_txt = ("undefined" if b["pooled_rel_error"] is None
                       else f"{b['pooled_rel_error']:.3f}")
-        per_txt = ("n/a" if b["per_sample_median_rel_error"] is None
-                   else f"{b['per_sample_median_rel_error']:.2f}")
         print(f"  rung {rung}: 1-Q {b['one_minus_Q']:+.5f}"
-              f" (true {results['one_minus_Q_true']:.5f}, se"
-              f" {b['se_one_minus_Q']:.5f}, S/N"
+              f" (true {results['one_minus_Q_true']:.5f}, joint se"
+              f" {b['se_one_minus_Q_joint']:.5f}, S/N"
               f" {b['signal_to_noise_one_minus_Q']:.1f})"
               f" | pooled |R_hat-R|/R {pooled_txt}"
-              f" | per-sample median {per_txt}"
-              f" | undefined {b['per_sample_undefined_fraction']:.1%}",
+              f" | paired median {b['paired_median_rel_error']:.2f}"
+              f" | below 1: {b['paired_count_below_one']}"
+              f"/{n_paired} ({b['paired_fraction_below_one']:.1%})"
+              f" | boundary {b['paired_boundary_fraction']:.1%}",
               flush=True)
     results["budget"] = budget
+
+    # --- review C11: the CROSS-ARM m gate ----------------------------
+    # Q's bias cancellation needs the two arms evaluated at matched m.
+    # Within-arm gates cannot see a consistent offset between the arms,
+    # so the cross-arm difference is measured, gated, and its
+    # sensitivity is quantified from the arms' own bias factors.
+    cross = {}
+    for rung in LADDER:
+        c, t = results["curved"][rung], results["twin"][rung]
+        offset = t["mean_m"] / c["mean_m"] - 1.0
+        # the discreteness bias each arm actually carries, read off its
+        # own g against its own continuum value
+        bias_c = c["mean_g"] / g_of_s(TAU_ELL / 2.0)
+        bias_t = t["mean_g"] / 0.5
+        cross[rung] = {
+            "mean_m_curved": c["mean_m"], "mean_m_twin": t["mean_m"],
+            "cross_arm_offset": offset,
+            "bias_factor_curved": bias_c, "bias_factor_twin": bias_t,
+            "bias_mismatch": bias_t / bias_c - 1.0,
+            "bias_sensitivity_per_percent_m":
+                (bias_t / bias_c - 1.0) / (offset * 100.0)
+                if abs(offset) > 1e-9 else None,
+        }
+        x = cross[rung]
+        print(f"  rung {rung}: m curved {c['mean_m']:.2f} twin"
+              f" {t['mean_m']:.2f} -> offset {offset:+.2%}"
+              f" | bias factors {bias_c:.4f} / {bias_t:.4f}"
+              f" -> mismatch {x['bias_mismatch']:+.3%}")
+    results["cross_arm_m"] = cross
+    print("=== the paired per-sample statistic and its variance ===")
 
     # --- Section 5 item 2: Delta*_B derived, not borrowed ------------
     # The FORM is theory: g = m / (rho tau_hat^2) inherits a Poisson
@@ -299,24 +375,17 @@ def main() -> None:
     # fraction is published per rung.
     ys = {}
     for rung in LADDER:
-        c, t = results["curved"][rung], results["twin"][rung]
-        vals, hits = [], 0
-        for gm in c["per_sample_mean_g"]:
-            s_i = invert_g((gm / t["mean_g"]) / 2.0)
-            if s_i is None:
-                hits += 1
-                rel = 1.0
-            else:
-                rel = abs(8.0 * s_i ** 2 / c["mean_tau_hat"] ** 2
-                          - 2.0) / 2.0
-            vals.append(math.log10(rel) if rel > 0 else -12.0)
-        arr = np.array(vals)
+        rels, hits, n_paired = paired_rel_errors(rung)
+        arr = np.log10(np.where(rels > 0.0, rels, 1e-12))
         ys[rung] = {
             "n": int(arr.size), "mean_y": float(arr.mean()),
             "variance": float(arr.var(ddof=1)),
             "boundary_hits": hits,
-            "boundary_fraction": hits / arr.size,
+            "boundary_fraction": hits / n_paired,
             "median_rel_error": float(10 ** np.median(arr)),
+            "construction": "PAIRED: curved sample i over twin sample i, "
+                            "sample's own tau_hat, boundary hits at "
+                            "rel error 1 (reviews C10 and C13)",
         }
         print(f"  rung {rung}: mean y_B {ys[rung]['mean_y']:+.4f}"
               f" | var {ys[rung]['variance']:.5f}"
