@@ -499,11 +499,29 @@ the preflight counts untracked files as dirty and a check writing
 straight into the repository makes the next check's stamp dirty — which
 is what the first attempt did.
 
-**This section was revised after a review round on PR #36 found five
-defects in its first version, three of them P1.** Each is named where it
-applies rather than collected in a footnote, because two of them changed
-numbers this design depends on and one of them changed a claim that was
-false against its own artifact.
+**This section was revised across three review rounds on PR #36.** Each
+finding is named where it applies rather than collected in a footnote,
+because several changed numbers this design depends on and two changed
+claims that were false against their own artifact. The findings cited
+below are C10, C11, C12, C13, C16, C17, C21, C22, C24 and C25 (C5 is
+inherited from P13's review).
+
+**A pattern across those rounds, recorded because it is the failure mode
+this document exists to prevent.** In five instances the text that
+REPLACED a withdrawn over-claim carried a new over-claim of the same
+kind: C6 to C7, C18, and C22 to C24. Correcting "no sample recovers `R`"
+produced "the minority grows with density"; correcting "inside its own
+noise" produced "the mismatch decays with density". The first of each
+pair was false against the artifact and the second was a point-estimate
+difference presented as a trend — and only one of those four survived
+being tested (the boundary and below-one fractions are 6.2 and 10.1
+sigma; the mismatch trend is 1.7 to 1.9 and is withdrawn). The habit is
+not carelessness about any single number, it is reaching for the
+narrative that the corrected number suggests. **The countermeasure now
+applied throughout 10.6 and 10.7: any statement of the form "X changes
+with the rung" carries its own sigma in the same sentence, or it is not
+made.** Two further defects were found by that rule rather than by
+review, and are disclosed in 10.6.
 
 ### 10.1 Item 1: the diamond volume relation, exactly
 
@@ -643,8 +661,10 @@ rather than argued.
 **The cancellation is imperfect at every rung, and 10.6 prices it.**
 Once the arms' `m` is matched to better than 0.6%, the bias factors
 above still differ by `-2.08% / -2.08% / -1.17%`, which at this
-precision is `6.0 / 5.7 / 2.9 sigma` — real, decaying, and the reason
-the recovery is systematics-limited rather than statistics-limited.
+precision is `6.0 / 5.7 / 2.9 sigma` — real at every rung, and the
+reason the recovery is systematics-limited rather than
+statistics-limited. Whether it varies WITH the rung is a separate
+question and 10.6 answers it: not established.
 (An earlier draft, working from a 400-sample check, called the upper
 rungs' mismatch "inside its own noise". That was an artefact of the
 noise, not a property of the estimator; review C22 forced the
@@ -752,15 +772,25 @@ gate's own 1%. **The gate ABORTS the check** rather than recording a
 failure and continuing (review C21), and so does the calibration's
 convergence.
 
-**(3) The residual bias mismatch is real at every rung, measured rather
-than inferred, and it decays.** Matching `m` to better than 0.6% does
-not make the cancellation exact:
+**(3) The residual bias mismatch is real at every rung, and measured
+rather than inferred.** Matching `m` to better than 0.6% does not make
+the cancellation exact:
 
 | rung | cross-arm `m` offset | bias mismatch | significance | implied err in `R tau^2` | observed |
 |---|---|---|---|---|---|
 | 18.9 | +0.55% | **-2.078% +/- 0.348%** | 6.0 sigma | 31% | 26% |
 | 37.8 | -0.48% | **-2.080% +/- 0.365%** | 5.7 sigma | 31% | 26% |
 | 75.8 | -0.15% | **-1.171% +/- 0.399%** | 2.9 sigma | 15% | 15% |
+
+The mismatch is `g_bar_flat / g_bar_curved` referred to each arm's own
+continuum value, i.e. `bias_twin / bias_curved - 1` on the stored
+`mean_g`. Its uncertainty is the two arms' relative standard errors in
+quadrature, `hypot(se_twin/g_twin, se_curved/g_curved)`, which is
+legitimate because the arms run on **disjoint seed blocks**; the formula
+is written out because the value is not itself a stored field. The exact
+delta-method form carries an extra factor of the ratio (0.979) and gives
+`0.341 / 0.357 / 0.394` — a 2% difference that moves nothing here, and
+the larger figure is quoted.
 
 The implied column is `|mismatch| * Q/(1-Q)`; the observed column is
 10.7's dimensionless recovery. **They agree to within a few points, and
@@ -777,22 +807,57 @@ point process as the curved arm, and `Q_hat` would be identically 1. The
 gradient IS the signal, so the part of it the estimator mis-reads is
 inseparable from the part it reads correctly.
 
-**Consequence, and the two things this replaces** (review C22). Against
-the statistical noise on the same quantity — `4.0% / 4.2% / 4.4%` at
-these sample counts — the systematic is 6 to 7 times larger at every
-rung:
+**Consequence, and the two things this replaces** (review C22). Carrying
+both the mismatch and its uncertainty through the same `Q/(1-Q)`
+amplification gives the systematic and statistical parts of the
+recovery error on one scale:
 
-| rung | systematic | statistical | limited by | recovery |
-|---|---|---|---|---|
-| 18.9 | 31% | 4.0% | **systematics** | 26% |
-| 37.8 | 31% | 4.2% | **systematics** | 26% |
-| 75.8 | 15% | 4.4% | **systematics** | 15% |
+| rung | systematic | statistical | multiple | limited by | recovery |
+|---|---|---|---|---|---|
+| 18.9 | 31% | 5.2% | 6.0x | **systematics** | 26% |
+| 37.8 | 31% | 5.5% | 5.7x | **systematics** | 26% |
+| 75.8 | 15% | 5.2% | **2.9x** | **systematics** | 15% |
+
+The multiple column is necessarily the significance column of the table
+above — dividing both parts by the same amplification cancels it, so
+"how many times larger is the systematic" and "how many sigma from zero
+is the mismatch" are one quantity. Two corrections, found here rather
+than in review: this block previously gave the statistical part as
+`4.0% / 4.2% / 4.4%`, which is not reproducible from the frozen
+artifact by any propagation I can construct, and it claimed the
+systematic was "6 to 7 times larger at every rung" — true at the lower
+two rungs, **false at the top rung, where it is 2.9x**. The top rung is
+the one 10.7 evaluates its co-requirement on, so the overstatement sat
+exactly where it mattered most.
 
 So the recovery is systematics-limited at **every** rung, and adding
-samples narrows the interval without moving the centre. But the
-systematic **decays with density** — `-2.08%` at both lower rungs then
-`-1.17%` at the top — so raising the operating point does move it, which
-is a different and useful statement.
+samples narrows the interval without moving the centre.
+
+**Whether the systematic depends on density is NOT established** (review
+C24). The point estimates fall from `-2.08%` at both lower rungs to
+`-1.17%` at the top, but tested against their own uncertainties that
+difference is:
+
+| comparison | difference | combined se | sigma |
+|---|---|---|---|
+| `m ~ 19` -> `m ~ 76` | +0.907 pp | 0.529 | 1.71 |
+| `m ~ 38` -> `m ~ 76` | +0.909 pp | 0.541 | 1.68 |
+| pooled lower two -> top | +0.908 pp | 0.472 | 1.92 |
+
+Even pooling the two lower rungs, which is the most favourable
+comparison available, reaches 1.9 sigma. An earlier draft of this
+paragraph said the systematic "decays with density" and that raising the
+operating point "does move it" — **withdrawn**. What the check
+establishes is that the mismatch is real at every rung and lies between
+about 1.2% and 2.1%; its density dependence is suggestive and unresolved,
+and settling it would need roughly three times these counts (~50 minutes)
+for a question the design does not depend on.
+
+The design does not depend on it because 10.7's co-requirement is
+evaluated at the TOP rung on that rung's own MEASURED recovery, not on a
+trend: 15% there against 26% at the lower two is an observation about
+three measured numbers, and it would justify the choice of rung even if
+the differences between them were pure noise.
 
 Two earlier readings of this subsection are withdrawn, and both were the
 same error in opposite directions. It first read the floor as ~11% at
@@ -856,9 +921,11 @@ Splitting it shows what each contributes:
 `R tau^2 = 8 s^2` needs **no length at all** — it comes from `Q_hat`
 alone. It recovers to 26% / 26% / 15%, and 10.6's mismatch column
 predicts 31% / 31% / 15% from the bias mismatch alone, so **the recovery
-error is the systematic and almost nothing else** — the statistical noise
-is 4% at every rung. The sequence improves only between the middle and
-top rungs, which is where the mismatch itself falls. Dividing by
+error is the systematic and almost nothing else** — the statistical part
+is 5.2% / 5.5% / 5.2% (10.6). The sequence improves only between the
+middle and top rungs. Whether the underlying mismatch falls with density
+is **not** established (10.6, review C24) — the improvement is a
+property of these three measured numbers, quoted as such. Dividing by
 `tau_hat_bar^2` to reach `R` in continuum units then multiplies the error
 by `(tau/tau_hat)^2` — 1.56 at the top rung — and whether the two errors
 add or partly cancel at a given rung is arithmetic, not trend.
@@ -877,12 +944,16 @@ Section 11 record cost. Frozen:
 > recovered — the gate measured a decaying bias and nothing else.
 
 `0.25` is a design choice, stated as one, and the headroom it leaves is
-now measured rather than hoped: at the TOP rung the expected recovery is
-**15%** — the systematic, since the statistical part is 4% — with an
-uncertainty near 5% once the mismatch's own `+/- 0.40%` is propagated. So
-`P(pass) ~ 95%`, roughly `1.5 sigma` of margin, **not the factor of four
-an earlier draft claimed** on the strength of a fortunate 400-sample
-draw. The threshold is evaluated at the top rung because that is where
+now measured rather than hoped: at the TOP rung the measured recovery is
+**0.1496**, and propagating the mismatch's own `+/- 0.399%` through
+`Q/(1-Q) = 13.12` gives `+/- 5.23%`, so the margin to `0.25` is
+`(0.25 - 0.1496) / 0.0523 = 1.92 sigma` and `P(pass) ~ 97%`. **This is
+an UPPER bound on the confidence, not an estimate of it**, for two
+reasons stated here so a pass cannot later be read as having been
+comfortable: it propagates only the mismatch's uncertainty, and it takes
+the design check's sample counts rather than the campaign's. It is in
+any case **not the factor of four an earlier draft claimed** on the
+strength of a fortunate 400-sample draw. The threshold is evaluated at the top rung because that is where
 the systematic is smallest, and 0.25 is tight enough to exclude
 "recovering nothing", which sits near 1.
 
@@ -940,12 +1011,15 @@ quantity in this programme that is not a length or a time.
 
 **The expected accuracy is 26% / 26% / 15% down the ladder and it is
 SYSTEMATICS-limited at every rung** (10.6 item 3), with the statistical
-part at 4%. So a pass may not be written as "recoverable to arbitrary
+part at 5.2-5.5% — a factor of 6.0 / 5.7 / **2.9** below the systematic,
+so the margin is thinnest at the very rung 10.7 gates on. So a pass may
+not be written as "recoverable to arbitrary
 accuracy given enough samples": more samples narrow the interval and
-leave the centre where it is. What does move it is density — the
-mismatch falls from `-2.08%` to `-1.17%` between `m ~ 38` and `m ~ 76`
-— so the honest form of the claim is that the accuracy improves with
-the operating point, not with the sample count.
+leave the centre where it is. **Nor may it be written as improving with
+density** — the three measured recoveries differ, but the differences
+between the underlying mismatches are only 1.7-1.9 sigma (10.6), so a
+density-dependence claim is not available either. What the record may
+say is the three numbers and the limit they hit.
 
 The limit itself — a flat twin cannot reproduce a curved box's intra-box
 intensity gradient — is a property of the CONSTRUCTION, not of the
@@ -1070,8 +1144,12 @@ catch:
    variance than the paired one on the same data, so the test asserts
    the inequality rather than trusting the docstring;
 5. `Delta*_B` recomputed from the frozen `a`, `b` and the frozen `m`
-   ladder, asserted equal to the `-0.2516` this section freezes, so the
-   number cannot drift from its derivation;
+   ladder, asserted equal to the **`-0.2508`** this addendum freezes in
+   10.4, so the number cannot drift from its derivation. (Review C25:
+   this line still named `-0.2516`, the value from the superseded
+   400-sample check, so the test as specified would have rejected the
+   correct implementation — a stale expected value in a regression whose
+   whole job is to catch staleness);
 6. the equivalence coefficient's two-sided identity, `2 Phi(z) - 1 =
    0.90` at the frozen constant (P13's C2 regression, ported);
 7. window privacy and freshness against every documented spent range,
