@@ -1,0 +1,27 @@
+{
+  "code_version": "d916f34",
+  "pin_required": 1998,
+  "per_rung": {
+    "0.3": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.15320583635001095
+    },
+    "0.6": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.09372914934999425
+    },
+    "1.0": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.07769913670001552
+    },
+    "1.5": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.09884386389999418
+    }
+  },
+  "pin_passed": true
+}

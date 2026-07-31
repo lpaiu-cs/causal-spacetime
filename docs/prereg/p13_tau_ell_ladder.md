@@ -1,9 +1,12 @@
 # P13: how far does curvature let the flat-normalized reading go? — power-first preregistration
 
-Status: **DESIGN v2 (2026-07-28), approved in session. Campaign v1
-HAS RUN and returned CONFOUNDED — its record is Section 9 and is not
-re-read; Section 10's v2 revisions are what the next campaign runs.**
-Dates are local (UTC+9); commit timestamps carry their +09:00 offset.
+Status: **BOTH CAMPAIGNS HAVE RUN.** Campaign v1 returned CONFOUNDED
+(Section 9). Campaign v2, under the Section 10 revisions, returned
+**CURVATURE-DEGRADES with the control CLEAN and the effect at half
+the equivalence margin** (Section 11) — a verdict that must never be
+quoted without its magnitude, for the reason 1.2 wrote down in
+advance. Neither record is re-read. Dates are local (UTC+9); commit
+timestamps carry their +09:00 offset.
 
 Sections 1 through 8 describe the design as frozen for campaign v1.
 Where v2 changes a frozen rule it says so in Section 10; everything
@@ -462,3 +465,167 @@ Everything else — the ladder, the patch constants, the bands, the
 estimator, both eligibility conditions, the verdict table of Section
 1.2, `delta_eq`, and the detection target — is unchanged from v1.1
 and is NOT re-opened by this revision.
+
+---
+
+## 11. Stage records (campaign v2)
+
+Artifacts: `docs/prereg/frozen/p13v2/`. All four are stamped
+`d916f34`, so stamp-equality across the chain holds. Campaign v1's
+artifacts stay in `docs/prereg/frozen/p13/` and the two directories
+are never mixed in a quotation.
+
+### 11.1 Verification-13B and Stage P-13B (2026-07-28)
+
+- **Verification-13B**: 2000 / 2000 complete at every rung against
+  the 1998 pin, in the fresh `8000000+` windows. Measured wall times
+  ~0.2 / ~0.09 / ~0.08 / ~0.1 s per sample (one significant figure,
+  per 9.6).
+- **Stage P-13B**: 200 samples in each of FOUR pilot blocks — both
+  curved endpoint rungs and, new in v2, both twin endpoint rungs.
+  Curved: `s^2_90 = 0.0473` after calibration (bottom coverage 0.8805
+  -> `z = 2.756`; top 0.929 -> `z = 1.813`), giving `n_sup = 23` and
+  **`n_eq = 246`, inside the raised cap of 300**, so
+  CURVATURE-ROBUST was purchasable ex ante and `n_per_rung = 246`.
+  Twin: `s^2_90 = 0.0343`, `n_twin = 179`, equivalence affordable.
+  Projected Stage A 0.05 h. FEASIBLE.
+
+The cap is what bought the vocabulary. At v1's cap of 200 this
+pilot's `n_eq = 246` would again have declared ROBUST unavailable and
+the campaign would again have run at `n_sup = 23`.
+
+### 11.2 Stage A-13 v2 (2026-07-28): **CURVATURE-DEGRADES**, control CLEAN, effect at half the margin
+
+246 curved samples and 179 twin samples per rung, zero skips on
+either arm, no selection caveat.
+
+    Delta_13  = +0.0243,  95% CI [+0.0044, +0.0456]  ->  CURVATURE-DEGRADES
+    flat twin = +0.0063,  95% CI [-0.0194, +0.0328]  ->  CONTROL-CLEAN
+
+| gate | reading | result |
+|---|---|---|
+| `m`-matching | 75.57 / 75.58 / 75.98 / 75.89, grand 75.755 | PASS, widest rung at +0.30% |
+| flat twin (v2 equivalence test) | interval inside `+/- delta_eq` | **CONTROL-CLEAN** |
+
+Both v2 controls did what v2 was for. The `m`-gate now fires on drift
+rather than on noise — the widest rung sits at `+0.30%` where v1's
+`n = 21` put it at `+4.7%`, which is 10 (4) discharged as promised.
+And the twin, piloted and sized as an arm, demonstrated equivalence
+instead of failing a point threshold.
+
+**The magnitude, printed beside the verdict word because 1.2 requires
+it.** `Delta = +0.0243` is under HALF of `delta_eq = 0.05`, and even
+the interval's upper end (`+0.0456`) lies inside the margin. The
+campaign therefore says: the effect is statistically detected — zero
+is excluded — and it is SMALLER than the threshold below which "the
+reading did not notice the curvature" is a fair description. Quoting
+the verdict word alone inverts the finding. This is the exact
+situation 1.2 anticipated when it pinned that rows 1 and 2 can fire
+on a contrast smaller than `delta_eq`.
+
+**Where the contrast comes from, and it is not a trend.** The
+labelled checks: median relative error `0.1795 / 0.1916 / 0.1880 /
+0.1860`, a 6% spread while `(tau/ell)^2` moves 25-fold; the
+`(tau/ell)^2` trend fit reads `+0.0073`, CI `[-0.0013, +0.0158]`,
+consistent with zero. Both hold at once because of the rung profile:
+
+| `tau/ell` | mean `y`, curved (n = 246) | mean `y`, twin (n = 179) |
+|---|---|---|
+| 0.30 | -0.7608 +/- 0.0075 | -0.7552 +/- 0.0097 |
+| 0.60 | -0.7367 +/- 0.0071 | -0.7373 +/- 0.0095 |
+| 1.00 | -0.7392 +/- 0.0071 | -0.7508 +/- 0.0078 |
+| 1.50 | -0.7364 +/- 0.0071 | -0.7489 +/- 0.0088 |
+
+(`+/-` is one standard error. The curved rung means are in the
+summary artifact; the twin rung means and every standard error are
+computed from `p13_stage_a.csv`, the same frozen rows the gate
+scored. A labelled addition, not a re-reading of the gate.)
+
+Curved rungs 2, 3 and 4 agree to 0.003 dex. The `0.30 -> 0.60` step
+is `+0.0241 +/- 0.0103` and the primary contrast is `+0.0243`:
+**essentially the entire contrast is a bottom-rung offset.** A
+`(tau/ell)^2` correction does not have that shape.
+
+**And the control has the same offset.** The twin's `0.30 -> 0.60`
+step is `+0.0179 +/- 0.0136` — same sign, comparable size, in an
+ensemble whose true contrast is ZERO by construction. The twin's
+endpoint contrast stays small (`+0.0063`) only because its rungs 3
+and 4 come back down; the feature that produces the curved arm's
+signal is present in the control. Campaign v1's own 9.3 twin
+diagnostic, at 150 samples per rung in the disjoint design-check
+space `7600000+`, recorded `-0.759 / -0.739 / -0.751 / -0.744`: the
+same shape, so the offset replicates across two independent seed
+spaces.
+
+**The control is clean at its own resolution and silent at the
+effect's.** `n_twin = 179` was sized by the equivalence formula
+against `delta_eq = 0.05`, exactly as 10 (2) specifies, and its
+realized interval half-width is 0.026. The verdict, however, fires on
+`lo > 0`, which has no size floor. So the gate rang at `+0.0243`
+while the control can only certify the absence of artifacts at the
+`0.05` scale, and the twin's interval `[-0.0194, +0.0328]` contains
+`+0.0243` comfortably. **CONTROL-CLEAN is a true statement about
+0.05-scale artifacts and no statement at all about 0.024-scale
+ones.**
+
+That is this programme's recurring defect class, one level further
+out again. P11 v1.5: the design promised a verdict it had not priced.
+P13 v1: an equivalence-grade requirement was given a
+superiority-grade sample. P13 v2: **the verdict fires at a resolution
+finer than the control was sized to certify.** v2 gave the control
+power against `delta_eq` and left the trigger scale-free, so the
+mismatch moved rather than closed. Naming it here is not a
+re-reading of the gate; it is a bound on what the gate's word can be
+taken to mean.
+
+**Netting out the control** — a labelled calculation, not the frozen
+statistic, since P13 freezes the twin as a gate and not as a
+subtrahend:
+
+    endpoint difference-of-differences    +0.0180 +/- 0.0167   (1.1 sigma)
+    rung-1 step difference-of-differences +0.0062 +/- 0.0171   (0.4 sigma)
+
+Nothing survives either subtraction. The difference construction is
+in-programme — P12 Section 5 item 5 makes exactly this subtraction
+Stage B's primary, for exactly this reason — but P13 did not freeze
+it, so it is reported and not scored.
+
+**What the campaign establishes.** The frozen gate says
+CURVATURE-DEGRADES and it stands: the contrast excludes zero at 246
+samples per rung with both controls passing as frozen, and the
+verdict is not re-read. What the campaign does NOT establish is that
+curvature is the cause of it, and the reason is on the record above
+rather than in an objection: the whole contrast is a bottom-rung
+offset, and a zero-effect ensemble shows the same offset at
+comparable size.
+
+**Three candidates for the bottom-rung offset, and what the frozen
+artifact already decides.**
+
+1. **The band's absolute width, entering through the `m`
+   distribution.** The `+/- 10%` band is proportional, so its
+   absolute width grows with `tau`. **Excluded by the artifact**:
+   `sd_m = 11.52 / 11.74 / 11.53 / 11.59`, flat to 2% across the
+   ladder. And quantitatively — P12's measured `dy / dlog10 m ~
+   -0.304` makes a 2% shift in `m` worth about 0.003 dex, an order
+   below `+0.024`. No run was required to close this one.
+2. **The 0.30 rung's geometry at fixed `tau/ell`.** The candidate the
+   twin supports, and the quantity is packing pressure, which is not
+   flat across the ladder. With `K = 6` boxes of `(u,v)` area
+   `centre^2` in a patch of `(u,v)` area `4 (|eta_lo| - 1) X`, the
+   frozen constants give **0.168 / 0.222 / 0.263 / 0.263**. Two
+   notes, both corrections to the natural guess: the bottom rung has
+   the LOOSEST packing, not the tightest (Section 2's steeply growing
+   `X` is about the top rungs needing room, and the bottom rung ended
+   up with a surplus); and the relation to `y` is a step, not a
+   proportionality, since rung 2's ratio is intermediate while its
+   `y` already sits on the plateau. A correlation across rungs
+   therefore cannot settle it — only moving the ratio at fixed
+   `tau/ell` can, which is 11.3.
+3. **A real curvature effect that is not of `(tau/ell)^2` form.**
+   Still available. It has to beat candidate 2, and it has to explain
+   why a flat ensemble shows the same step.
+
+Candidate 2 has direct control-arm support, so it gets an isolated
+diagnostic, on the v1 precedent of 9.3: quarantined seed space, the
+campaign's own code path, labelled throughout, and no gate re-read.
