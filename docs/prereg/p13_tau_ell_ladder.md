@@ -11,8 +11,11 @@ reverses sign, the suspected mechanism measures zero, and the ladder
 is flat to 0.0146 dex while `(tau/ell)^2` moves 25-fold. The gate
 stands as frozen and is not re-read; what it may be read to MEAN is
 bounded by 11.3. CURVATURE-ROBUST remains unawarded — a diagnostic
-cannot award a verdict. Dates are local (UTC+9); commit timestamps
-carry their +09:00 offset.
+cannot award a verdict. **Section 12 is design v3**, which repairs the
+scale-free trigger, tightens `delta_eq` to 0.02, raises the
+equivalence power target to 99%, and runs on fresh windows at
+`15000000+`. Dates are local (UTC+9); commit timestamps carry their
++09:00 offset.
 
 Sections 1 through 8 describe the design as frozen for campaign v1.
 Where v2 changes a frozen rule it says so in Section 10; everything
@@ -766,3 +769,167 @@ floor, so a significant contrast must also exceed some stated fraction
 of `delta_eq` before it earns the word DEGRADES. The first buys
 precision, the second buys honesty in the vocabulary. Choosing between
 them is a design decision, and this record does not make it.
+
+---
+
+## 12. Design v3 (2026-07-31): one margin, and the trigger keyed to it
+
+Approved in session. 11.3 answered P13's scientific question at
+diagnostic grade and left the design owing one repair and offering one
+upgrade; both are taken, and the power target moves with them.
+Campaign v2's record stands and is not re-scored. Everything below is
+frozen before any v3 datum exists, and v3 runs on fresh windows.
+
+### 12.1 The repair: the trigger and the margin become the same number
+
+Section 10 (1) replaced the twin's point threshold with a three-way
+equivalence test, because a point test is a point test at any `n`. It
+did not carry that fix to the PRIMARY verdict table, and the module
+shows the asymmetry with the two functions side by side: the control
+asks `lo_t > delta_eq`, the verdict asks `lo > 0`. That gap IS 11.3's
+third recurrence, so the repair is to propagate a fix already made
+rather than to invent one.
+
+Frozen v3 table, by precedence as before:
+
+| # | condition | verdict |
+|---|---|---|
+| 1 | `lo > delta_eq` | **CURVATURE-DEGRADES** |
+| 2 | `hi < -delta_eq` | **CURVATURE-HELPS** |
+| 3 | `-delta_eq < lo` and `hi < delta_eq` | **CURVATURE-ROBUST** (available only if the pilot declared it affordable) |
+| 4 | otherwise | **INCONCLUSIVE** if row 3 was affordable, else **UNRESOLVED** |
+
+The vocabulary now matches the question. A contrast that does not clear
+the margin cannot earn the word DEGRADES, because "does not clear the
+margin" is the definition of the reading not noticing the curvature.
+Row 4 widens to hold every interval that straddles a margin edge,
+which is the honest home for an imprecise campaign.
+
+**1.2's magnitude pin STAYS.** It is now belt and braces rather than
+the only guard, and 11.2 is the reason to keep it: it is what stopped
+a scale-free trigger from being published as a mechanism.
+
+**What this table may not be used for.** Applied to campaign v2's
+frozen interval `[+0.0044, +0.0456]` it returns CURVATURE-ROBUST. That
+is a demonstration that the repair targets the real defect, and it is
+**not** a re-scoring. v2's verdict was issued under v2's rules and
+stands as CURVATURE-DEGRADES. A rule change that flips one's own
+verdict may only touch data not yet seen; that is why v3 gets fresh
+windows and why this paragraph is here rather than discovered later.
+
+### 12.2 The upgrade: `delta_eq` falls from 0.05 to 0.02 dex
+
+A margin should sit near the scale at which the answer would change.
+When v1 chose `delta_eq = 0.05` dex -- 12% in relative error -- that
+was where the answer would have changed, and it was stated as a design
+choice rather than a derived quantity. 11.3 moved that scale: the
+endpoint contrast is now bounded inside `[-0.0066, +0.0179]` dex, so a
+0.05 margin is three times wider than the best available bound and
+would certify something no longer in doubt.
+
+`delta_eq = 0.02` dex is 4.7% in relative error. Since the estimator's
+own error is 18-19% at `m ~ 76`, ROBUST at this margin says curvature
+moves that error by less than 4.7% OF ITSELF while `(tau/ell)^2` moves
+25-fold. That is a materially stronger claim than v2 could have made,
+and it is the claim the diagnostic suggests is true.
+
+**Affordability is not the justification.** A sample costing 0.1 s is
+what makes the stronger claim purchasable; it is not what makes 0.02
+the right margin. The argument for the number is the one above, and it
+would hold at any cost per sample.
+
+**Pre-freeze disclosure, per the v1.1 and P12 precedent.** The
+quarantined numbers that make ROBUST the likely v3 reading are
+11.3's, in design-check space `9000000+`: curved endpoint
+`+0.0056 +/- 0.0062`, interval `[-0.0066, +0.0179]`, already inside
+`+/- 0.02`; the curved ladder flat to 0.0146 dex; packing pressure
+bounded at `+/- 0.013` dex. They are disclosed here so that a v3
+ROBUST cannot later be mistaken for a surprise, and so that this
+design is on record as having been built to establish a reading it
+expects rather than to discover one.
+
+### 12.3 Power: the equivalence target rises from 90% to 99%
+
+`n_eq` is defined so that `P(ROBUST | Delta = 0) = 90%`. That 10% is
+not slack -- it is exactly the probability that a null ladder's
+interval pokes outside the margin. Campaign v2 drew a `+2.3 sigma`
+fluctuation and its upper end landed 0.0044 short of the margin:
+inside, but by a hair. **That thinness is the `beta`, and it scales
+with `delta_eq`, so tightening the margin does not fix it.** Only power
+does.
+
+    n_sup = ceil( S^2_90 * (1.960 + 1.282)^2
+                  / (DELTA_DETECT - delta_eq)^2 )    # 90% power
+    n_eq  = ceil( S^2_90 * (1.960 + 2.326)^2
+                  / delta_eq^2 )                     # 99% P(ROBUST)
+    n_twin = ceil( S^2_90(twin) * (1.960 + 2.326)^2 / delta_eq^2 )
+
+`n_sup` now measures against `DELTA_DETECT - delta_eq`, because row 1
+requires clearing the margin rather than clearing zero. At this
+variance it is about 30 and is not binding; it is corrected for
+accuracy, not for effect.
+
+**The cap rises from 300 to 3000, ex ante.** This has the same
+standing v2's raise from 200 to 300 had: the variance that sets `n_eq`
+is disclosed pre-freeze rather than arriving as pilot data after the
+rule is frozen. Projecting from v2's calibrated pilot bounds,
+`S^2_90 = 0.0473` gives `n_eq ~ 2172` and
+`S^2_90(twin) = 0.0343` gives `n_twin ~ 1575`; the cap absorbs a
+realized variance up to about `S^2_90 = 0.065` before ROBUST becomes
+unpurchasable again. Projected campaign cost is roughly 24,000
+samples, well under an hour.
+
+**One margin, three consumers.** `delta_eq` now sets the verdict
+trigger, the control's gate, the curved arm's size and the twin's size
+-- and that identity is the point. v2's resolution mismatch existed
+precisely because the trigger keyed to 0 while the control keyed to
+0.05. A test asserts the single-margin invariant, so the mismatch
+cannot reappear by editing one constant and forgetting the other.
+
+### 12.4 Fresh windows (frozen)
+
+Campaign v1 spent `6000000-6475999` and v2 spent `8000000-8795999`;
+11.3's diagnostic consumed design-check space up to `14550000`. So v3
+runs entirely at `15000000+`, and design-check space for anything after
+this is `22000000+`.
+
+| block | base | slots | span |
+|---|---|---|---|
+| verification-13C | 15000000 | 2000 per rung, consecutive | 15000000-15007999 |
+| pilot, curved 0.30 | 15100000 | 320 | 15100000-15163999 |
+| pilot, curved 1.50 | 15200000 | 320 | 15200000-15263999 |
+| pilot, twin 0.30 | 15300000 | 320 | 15300000-15363999 |
+| pilot, twin 1.50 | 15400000 | 320 | 15400000-15463999 |
+| Stage A, curved 0.30 | 16000000 | 3020 | 16000000-16603999 |
+| Stage A, curved 0.60 | 16700000 | 3020 | 16700000-17303999 |
+| Stage A, curved 1.00 | 17400000 | 3020 | 17400000-18003999 |
+| Stage A, curved 1.50 | 18100000 | 3020 | 18100000-18703999 |
+| twin 0.30 | 18800000 | 3020 | 18800000-19403999 |
+| twin 0.60 | 19500000 | 3020 | 19500000-20103999 |
+| twin 1.00 | 20200000 | 3020 | 20200000-20803999 |
+| twin 1.50 | 20900000 | 3020 | 20900000-21503999 |
+
+Slots are `cap + 20` at stride 200, the v2 pattern scaled to the new
+cap, so a Stage A rung can fill 3000 completions with reserve.
+
+### 12.5 What v3 does NOT change
+
+The ladder and its four rungs; every per-rung patch constant; the
+`+/- 10%` bands; the twin's construction, band centres and intensities;
+the estimator, called and never re-derived; both eligibility
+conditions; `K = 6`; the rejection cap; the first-`n`-complete fill
+with published skip identities; the `>= 1998 of 2000` verification pin;
+clean-worktree preflight and stamp equality; the `m`-gate at `+/- 5%`
+of the grand mean; `DELTA_DETECT = 0.15`; the three-way control
+semantics of 10 (1) including UNDERPOWERED-CONTROL riding beside a
+verdict; and 1.2's requirement that magnitude be printed with the
+word.
+
+### 12.6 A consequence, stated once
+
+`delta_eq` and the cap are module constants, and the module's comment
+calls the literals the frozen spec. Changing them means v1's and v2's
+verdicts are reproducible only at their own stamps -- `3f46313` and
+`d916f34` -- which is exactly why every artifact carries
+`code_version`. Nothing in Sections 9 or 11 is re-run, re-read or
+re-scored by this amendment.
