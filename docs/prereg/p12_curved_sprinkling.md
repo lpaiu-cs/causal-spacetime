@@ -568,11 +568,34 @@ this campaign is direct evidence that the withdrawal was right.
 Offsets `+0.366% / -0.770% / -0.326%` against a `1%` tolerance, all
 inside, with resolution ratios `2.28 / 2.93 / 3.63` so the gate was
 testing something at every rung. The spurious-trip probability recorded
-in the artifact is `0.152 / 0.093 / 0.051` — at the bottom rung roughly
-one campaign in seven would have halted here on correctly calibrated
-arms. That risk was disclosed before the run and the tolerance was not
-widened for it, because 10.6 chose `1%` on the grounds that a `1%` offset
-injects about 17% into the recovery.
+in the artifact is `0.154 / 0.064 / 0.001`, each rung computed against
+the offset the design check actually left in *that* rung
+(`+0.55% / -0.48% / -0.15%`): about one campaign in six would have
+halted at the bottom rung on correctly calibrated arms, and effectively
+none at the top. That risk was disclosed before the run and the
+tolerance was not widened for it, because 10.6 chose `1%` on the grounds
+that a `1%` offset injects about 17% into the recovery.
+
+**Review C28 corrected those three numbers**, and the correction is
+recorded here rather than in a footnote because they are published
+numbers. The first version centred all three rungs on the bottom rung's
+`+0.55%`, giving `0.093` and `0.051` where the rungs' own offsets give
+`0.064` and `0.001`. The error ran in the conservative direction — the
+disclosed risk was larger than the design's, not smaller — but a
+pessimistic number that does not describe the design it claims to is
+still not the disclosure 10.6 asked for. **No campaign data changed.**
+This field is not a measurement: it is a function of the frozen offset
+and the realized standard error, both of which were already in the
+artifact, so the three values were recomputed from it in place rather
+than obtained by re-running. **The artifact's `code_version` therefore
+still names the run that produced every measured field, and it is not
+bumped, because no run happened** — which is exactly why the record
+cannot be left to rest on that stamp here. What vouches for these three
+numbers instead is
+`test_spurious_trip_disclosure_is_centred_on_each_rungs_own_offset`,
+which recomputes them from the artifact's own standard errors on every
+CI run, so the published value and the code that defines it cannot
+drift apart again.
 
 **Selection caveat: YES.** Two curved seeds at rung 600 and one each at
 1200 and 2400 failed to pack and were replaced from reserve slots, with

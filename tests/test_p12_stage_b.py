@@ -34,6 +34,7 @@ from p12_stage_b import (  # noqa: E402
     DELTA_EQ_B,
     DELTA_STAR_B,
     ETA_LO,
+    FROZEN_CROSS_ARM_OFFSET,
     FROZEN_P13V3_DIR,
     M_TARGET,
     M_TOLERANCE,
@@ -46,6 +47,7 @@ from p12_stage_b import (  # noqa: E402
     RECOVERY_THRESHOLD,
     REL_SD_A,
     REL_SD_B,
+    S_MAX,
     SPENT_RANGES,
     TAU_ELL,
     WINDOW_CEIL,
@@ -54,9 +56,11 @@ from p12_stage_b import (  # noqa: E402
     _abort_on_gate_failure,
     assert_windows_disjoint_and_fresh,
     cross_arm_m_gate,
+    cross_arm_spurious_trip_probability,
     g_hat,
     g_of_s,
     invert_g,
+    log_cosh,
     m_gate,
     paired_recovery,
     power_requirements_b,
@@ -199,6 +203,38 @@ def test_operating_point_inverts_to_the_true_curvature():
     assert 8.0 * s ** 2 / TAU_ELL ** 2 == pytest.approx(R_TRUE, rel=1e-10)
 
 
+def test_log_cosh_continues_the_direct_form_past_where_it_exists():
+    """The case, review C29: `math.cosh` RAISES above `|x| ~ 710`, so
+    `ln cosh` had to be written twice -- and the second form is only
+    admissible if it is the same function as the first. Below 20 both
+    are computable and must agree to the last bits; at 1024 only one of
+    them exists at all.
+    """
+
+    for x in (0.0, 1e-8, 0.5, 1.0, 19.999, 20.0, 700.0):
+        assert log_cosh(x) == pytest.approx(
+            math.log(math.cosh(x)), rel=1e-15, abs=1e-300)
+    with pytest.raises(OverflowError):
+        math.cosh(1024.0)
+    assert log_cosh(1024.0) == pytest.approx(1024.0 - math.log(2.0),
+                                             rel=1e-15)
+
+
+@pytest.mark.parametrize("g", [0.4, 0.1, 0.01, 0.002, 0.001, 1e-5])
+def test_inversion_covers_the_domain_it_documents(g):
+    """The case, review C29: `invert_g` documents `0 < g < 1/2`, but the
+    bracket doubles 1, 2, 4 ... 1024 and `math.cosh(1024)` overflows --
+    so every `g` below about 0.002 raised OverflowError instead of
+    inverting, and the `hi > 1e6` escape written to catch a runaway
+    bracket could never be reached. 0.001 is the reviewer's case and
+    1e-5 is several doublings past it.
+    """
+
+    s = invert_g(g)
+    assert s is not None
+    assert g_of_s(s) == pytest.approx(g, rel=1e-9)
+
+
 # ====================================================================
 # 3. the boundary convention
 # ====================================================================
@@ -213,6 +249,27 @@ def test_boundary_returns_none_at_or_above_the_flat_value(g):
     """
 
     assert invert_g(g) is None
+
+
+def test_the_strongly_curved_end_raises_rather_than_borrowing_that_none():
+    """The case, review C29 continued: 10.2 gives `None` exactly one
+    meaning -- at or above the flat value, `R_hat = 0`, no curvature
+    recovered. A `g` too small for the bracket is the OPPOSITE reading,
+    the strongest curvature the instrument can state, and `recover`
+    turns any None into 0.0. Sharing one return value between the two
+    ends of the domain would file a maximal curvature as a flat one.
+    """
+
+    # the floor S_MAX's comment states, derived here rather than typed:
+    # the bracket doubles from 1, so it stops at the last power of two
+    # under the ceiling and that rung fixes the reachable domain
+    assert 2.0 ** 39 <= S_MAX < 2.0 ** 40
+    floor = g_of_s(2.0 ** 39)
+    assert floor == pytest.approx(1.8e-12, rel=0.05)
+    assert invert_g(floor) is not None
+    for g in (floor * 0.99, 1e-15):
+        with pytest.raises(ValueError, match="strongly curved end"):
+            invert_g(g)
 
 
 def test_boundary_samples_score_exactly_one_and_are_counted():
@@ -350,12 +407,19 @@ def test_cross_arm_gate_catches_arms_offset_from_one_another():
             pytest.approx(-0.03, abs=1e-9))
 
 
-def test_cross_arm_gate_failure_aborts_and_writes_nothing():
+def test_cross_arm_gate_failure_aborts_rather_than_recording():
     """The case, from review C21: the first fix for C11 RECORDED
     `gate_passed: false` and continued, so nothing stopped the artifact
     from being written and copied into frozen/. That is review C12's
     shape reappearing inside the repair for C11. Section 10.11 item 4b
     requires asserting the abort, not the flag.
+
+    This test checks the abort and the sentence it makes. Whether the
+    campaign actually writes nothing is a different claim about a
+    different function, and it is the test below -- review C27 found
+    this one named `..._and_writes_nothing` while asserting only that
+    the message said so, which is how a CSV written above the gates
+    survived a review round.
     """
 
     curved = {r: _records(4, 1.0, M_TARGET[r]) for r in P12B_LADDER}
@@ -366,6 +430,43 @@ def test_cross_arm_gate_failure_aborts_and_writes_nothing():
     with pytest.raises(SystemExit) as excinfo:
         _abort_on_gate_failure([gate])
     assert "nothing written" in str(excinfo.value)
+
+
+def test_stage_b_writes_no_campaign_files_when_a_gate_aborts(
+        monkeypatch, tmp_path):
+    """The case, review C27: `_abort_on_gate_failure` ends its message
+    with "nothing written" and the enforced gate's own note says it
+    "aborts before anything is written" -- and `run_stage_b` wrote
+    `p12_stage_b.csv` above the resolution check and all three m gates.
+    An aborted campaign therefore left a complete CSV that reads exactly
+    like a finished one and can be frozen by mistake.
+
+    The arms here are 3% apart: inside each within-arm tolerance, so
+    only the cross-arm gate fires, and with zero spread the offset's
+    standard error is 0, so the resolution check passes its `None` and
+    the abort under test is the m-gate one.
+    """
+
+    import p12_stage_b as B
+
+    monkeypatch.setattr(B, "_preflight_clean", lambda: "0" * 7)
+    monkeypatch.setattr(B, "assert_windows_disjoint_and_fresh", lambda: [])
+    monkeypatch.setattr(B, "cross_stage_gate", lambda: {})
+    monkeypatch.setattr(B, "_load_gate_artifact", lambda *a, **k: {
+        "feasible": True, "n_twin": 4,
+        "power": {"n_per_rung": 4, "flat_available": True}})
+
+    def _fill(rung, base, slots, needed, flat=False):
+        target = M_TARGET[rung] * (1.03 if flat else 1.0)
+        return _records(needed, 1.0, target), [], True
+
+    monkeypatch.setattr(B, "_fill_block", _fill)
+
+    with pytest.raises(SystemExit, match="ABORTS on its frozen m gates"):
+        B.run_stage_b(tmp_path)
+    assert not (tmp_path / "p12_stage_b.csv").exists()
+    assert not (tmp_path / B.STAGE_ARTIFACT).exists()
+    assert not list(tmp_path.iterdir())
 
 
 def test_cross_arm_tolerance_is_tighter_than_the_within_arm_one():
@@ -888,6 +989,56 @@ def _frozen_curved_completions():
     return {int(rung): (ens["curved"][rung]["n_complete"],
                         ens["curved"][rung]["n_attempted"])
             for rung in ("600", "1200", "2400")}
+
+
+def _frozen_p12(name):
+    import json
+
+    path = FROZEN_P13V3_DIR.parent / "p12" / name
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_frozen_cross_arm_offsets_match_the_design_check():
+    """The case, C25's shape and C28's actual defect: the module carries
+    the three expected offsets as literals, so they are read back out of
+    the design check here rather than trusted. Rounding is what did the
+    damage -- a rounded `+0.55%` is close enough to the bottom rung to
+    look like the bottom rung's constant, which is how it came to stand
+    for all three.
+    """
+
+    ens = _frozen_p12("p12_stage_b_ensemble_check.json")
+    assert FROZEN_CROSS_ARM_OFFSET == {
+        int(rung): ens["cross_arm_m"][rung]["cross_arm_offset"]
+        for rung in ("600", "1200", "2400")}
+
+
+def test_spurious_trip_disclosure_is_centred_on_each_rungs_own_offset():
+    """The case, review C28: one literal `+0.55%` -- the BOTTOM rung's
+    offset -- centred the disclosure at all three rungs, while the
+    frozen offsets are `+0.55% / -0.48% / -0.15%`. That substitution can
+    only ever inflate the upper rungs, whose offsets are negative and
+    smaller, and it did: the artifact and 9.3 published 0.093 where the
+    rung's own offset gives 0.064, and 0.051 where it gives 0.001.
+
+    Pinned against the committed artifact, so the number in the record
+    and the number the code computes cannot drift apart again.
+    """
+
+    summary = _frozen_p12("p12_stage_b_summary.json")
+    recorded = summary["cross_arm_spurious_trip_probability"]
+    per_rung = summary["cross_arm_m_gate"]["per_rung"]
+    for rung, row in per_rung.items():
+        assert recorded[rung] == pytest.approx(
+            cross_arm_spurious_trip_probability(
+                FROZEN_CROSS_ARM_OFFSET[int(rung)],
+                row["cross_arm_offset_se"]), rel=1e-12)
+
+    # and the bottom rung's offset does not stand in for the top one:
+    # on the same standard error it overstates the risk fifty-fold
+    assert cross_arm_spurious_trip_probability(
+        FROZEN_CROSS_ARM_OFFSET[600],
+        per_rung["2400"]["cross_arm_offset_se"]) > 10.0 * recorded["2400"]
 
 
 def test_verification_pins_are_derived_from_frozen_data():

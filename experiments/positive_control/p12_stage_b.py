@@ -120,6 +120,20 @@ M_TOLERANCE = P13.M_TOLERANCE
 #: because `Q_hat` divides one arm by the other.
 CROSS_ARM_TOLERANCE = 0.01
 
+#: The offset the design check actually left in each rung, from
+#: `p12_stage_b_ensemble_check.json` (`cross_arm_m[rung]`). This is the
+#: campaign's EXPECTED cross-arm offset on correctly calibrated arms,
+#: so it is what the spurious-trip disclosure has to be centred on --
+#: review C28 found one literal `+0.55%`, the bottom rung's, standing in
+#: for all three, which overstated the upper rungs' risk by 1.5x and
+#: 50x. Literals here rather than a run-time read of a 1 MB artifact,
+#: on VERIFY_PIN_B's precedent, and
+#: test_frozen_cross_arm_offsets_match_the_design_check recomputes them
+#: from that artifact rather than trusting these.
+FROZEN_CROSS_ARM_OFFSET = {600: 0.00552373710017573,
+                           1200: -0.004819043378003873,
+                           2400: -0.0014848054904806895}
+
 # --------------------------------------------------------------------
 # Power (Section 10.4 and 10.10). Delta*_B is DERIVED there, not
 # borrowed from P11: g_hat inherits a Poisson 1/m from the count and a
@@ -259,6 +273,33 @@ FROZEN_P13V3_DIR = (Path(__file__).resolve().parents[2]
 # The new mathematics: G, its inverse, and the boundary convention
 # ====================================================================
 
+_LOG_2 = math.log(2.0)
+
+#: Above this the asymptote below is exact to the last bit, and well
+#: below the `|x| ~ 710` where `math.cosh` overflows.
+_LOG_COSH_ASYMPTOTIC_FROM = 20.0
+
+
+def log_cosh(x: float) -> float:
+    """`ln cosh(x)`, finite wherever `x` is.
+
+    Review C29: `math.cosh` RAISES above `|x| ~ 710`, so the direct
+    quotient did not merely lose accuracy for strongly curved readings,
+    it aborted on them -- and `invert_g`'s bracket doubles through
+    `s = 1024` on any `g` below about `0.002`, so the documented domain
+    `0 < g < 1/2` was not covered and the `hi` ceiling that was supposed
+    to catch it could never run. Both ends need their own form: the
+    direct one keeps the significant figures the `s -> 0` limit needs,
+    and `ln((1 + e^-2|x|)/2)` carries the large-`x` tail without ever
+    forming `cosh` itself.
+    """
+
+    ax = abs(x)
+    if ax < _LOG_COSH_ASYMPTOTIC_FROM:
+        return math.log(math.cosh(ax))
+    return ax + math.log1p(math.exp(-2.0 * ax)) - _LOG_2
+
+
 def g_of_s(s: float) -> float:
     """`G(s) = ln cosh(s) / s^2`, with the `s -> 0` limit filled in.
 
@@ -270,7 +311,16 @@ def g_of_s(s: float) -> float:
 
     if s < 1e-8:
         return 0.5 - s ** 2 / 12.0
-    return math.log(math.cosh(s)) / s ** 2
+    return log_cosh(s) / s ** 2
+
+
+#: The bracket may not double past this. `G(s) ~ 1/s` out here, and the
+#: doubling stops at the last power of two under the ceiling, so the
+#: reachable domain is `g >= G(2^39) = 1.8e-12` -- nine orders below
+#: the smallest `Q_hat/2` these ladders can produce. It bounds the
+#: loop; it is NOT a second boundary convention, which is why hitting
+#: it raises rather than returning 10.2's None (C29).
+S_MAX = 1e12
 
 
 def invert_g(g: float) -> float | None:
@@ -282,6 +332,12 @@ def invert_g(g: float) -> float | None:
     the caller records `R_hat = 0` with relative error exactly 1. That
     is the EDGE OF THE PARAMETER SPACE, not a clamp over noise, and the
     boundary-hit fraction is published per rung rather than absorbed.
+
+    10.2 gives that None exactly ONE meaning, so the other end of the
+    domain may not borrow it: a `g` too small for `S_MAX` is the most
+    strongly curved reading the instrument can report, and returning
+    None would file it as `R_hat = 0` -- no curvature at all. It raises
+    instead.
     """
 
     if not (0.0 < g < 0.5):
@@ -289,8 +345,11 @@ def invert_g(g: float) -> float | None:
     lo, hi = 1e-8, 1.0
     while g_of_s(hi) > g:
         hi *= 2.0
-        if hi > 1e6:
-            return None
+        if hi > S_MAX:
+            raise ValueError(
+                f"G^-1({g!r}) lies past s = {S_MAX:g}. That is the "
+                "strongly curved end, NOT 10.2's flat boundary, and the "
+                "two may not share a return value.")
     for _ in range(200):
         mid = 0.5 * (lo + hi)
         if g_of_s(mid) > g:
@@ -310,7 +369,7 @@ def volume_closed_form(tau: float, ell: float = ELL) -> float:
     symmetry requires.
     """
 
-    return 4.0 * ell ** 2 * math.log(math.cosh(tau / (2.0 * ell)))
+    return 4.0 * ell ** 2 * log_cosh(tau / (2.0 * ell))
 
 
 def g_hat(m_open: int, rho_hat: float, tau_hat: float) -> float:
@@ -622,6 +681,35 @@ def cross_arm_m_gate(curved_by_rung: dict, twin_by_rung: dict,
     }
 
 
+def _resolution_ratio_text(ratio: float | None) -> str:
+    """Render `resolution_ratio`, which the gate types `float | None`.
+
+    Found by the first test that runs `run_stage_b` end to end (C27):
+    both runners printed this field as a bare float while the line
+    directly beneath tested it for None, so a zero standard error --
+    perfect resolution, the harmless end -- crashed the campaign in its
+    own progress log. One renderer rather than the same special case
+    written twice.
+    """
+
+    return "n/a (se = 0)" if ratio is None else f"{ratio:.2f}"
+
+
+def cross_arm_spurious_trip_probability(offset: float, se: float) -> float:
+    """P(the cross-arm gate trips) on arms calibrated to `offset`.
+
+    Two-tailed, because the gate reads `|realized| > tolerance`. The
+    realized offset is centred on what the design check left in THAT
+    rung; review C28 found the bottom rung's `+0.55%` centring all
+    three, which is the one substitution that can only ever inflate the
+    upper rungs -- their frozen offsets are negative and smaller.
+    """
+
+    scale = se * math.sqrt(2.0)
+    return (0.5 * (1.0 - math.erf((CROSS_ARM_TOLERANCE - offset) / scale))
+            + 0.5 * (1.0 + math.erf((-CROSS_ARM_TOLERANCE - offset) / scale)))
+
+
 def _abort_on_gate_failure(gates: list[dict]) -> None:
     """Gates ABORT; they do not record their own failure and continue.
 
@@ -910,8 +998,8 @@ def run_pilot_b(output_dir: Path) -> None:
               f"{row['cross_arm_offset']:+.2%} +/- "
               f"{row['cross_arm_offset_se']:.2%} (tolerance "
               f"{CROSS_ARM_TOLERANCE:.0%}, resolution ratio "
-              f"{row['resolution_ratio']:.2f}) -- measured, not gating",
-              flush=True)
+              f"{_resolution_ratio_text(row['resolution_ratio'])})"
+              " -- measured, not gating", flush=True)
     _abort_on_gate_failure(gates)
 
     power = power_requirements_b(ys[P12B_LADDER[0]], ys[P12B_LADDER[-1]])
@@ -1040,7 +1128,6 @@ def run_stage_b(output_dir: Path) -> None:
               f"{paired['boundary_fraction']:.1%} | below 1 "
               f"{paired['count_below_one']}/{paired['n']} | skips "
               f"{len(cskip)}/{len(tskip)}", flush=True)
-    write_rows_csv(output_dir / "p12_stage_b.csv", rows)
 
     cross = cross_arm_m_gate(curved_by_rung, twin_by_rung, enforce=True)
     # This is where the cross-arm gate binds, so this is where its
@@ -1053,7 +1140,8 @@ def run_stage_b(output_dir: Path) -> None:
         print(f"  cross-arm rung {rung}: offset "
               f"{row['cross_arm_offset']:+.2%} +/- "
               f"{row['cross_arm_offset_se']:.2%}"
-              f" | resolution ratio {ratio:.2f}", flush=True)
+              f" | resolution ratio {_resolution_ratio_text(ratio)}",
+              flush=True)
         if ratio is not None and ratio < 2.0:
             raise SystemExit(
                 f"cross-arm gate at rung {rung} cannot see its own "
@@ -1064,6 +1152,16 @@ def run_stage_b(output_dir: Path) -> None:
     gates = [m_gate(curved_by_rung, "curved"), m_gate(twin_by_rung, "twin"),
              cross]
     _abort_on_gate_failure(gates)
+
+    # ONLY here. Both the gate's note and the abort's own message say
+    # "nothing written", and review C27 found the campaign CSV going out
+    # above the resolution check and all three m gates -- so an aborted
+    # run left a complete, freezable-looking `p12_stage_b.csv` on disk
+    # and the two statements were false about their own function. This
+    # is C21's shape one layer out: there the guard wrote its failure
+    # and continued, here the guard was honest and the write beat it.
+    # Everything that can abort now runs above this line.
+    write_rows_csv(output_dir / "p12_stage_b.csv", rows)
 
     bottom, top = P12B_LADDER[0], P12B_LADDER[-1]
     delta = float(ys[top].mean() - ys[bottom].mean())
@@ -1112,21 +1210,19 @@ def run_stage_b(output_dir: Path) -> None:
         },
         "m_gate_curved": gates[0], "m_gate_twin": gates[1],
         "cross_arm_m_gate": cross,
-        # Disclosed pre-run rather than discovered on an abort: the frozen
-        # bottom-rung offset is +0.55% against a 1% tolerance, so with
-        # this arm's measured standard error the campaign has a real
-        # chance of tripping its own cross-arm gate on correctly
-        # calibrated arms. The tolerance is NOT loosened for it -- 10.6
-        # chose 1% because a 1% offset injects ~17% into the recovery --
-        # and if it trips, the halt is the record.
+        # Disclosed pre-run rather than discovered on an abort: each
+        # rung's frozen offset (+0.55% / -0.48% / -0.15%) sits inside a
+        # 1% tolerance by a margin comparable to this arm's standard
+        # error, so the campaign has a real chance of tripping its own
+        # cross-arm gate on correctly calibrated arms -- concentrated at
+        # the bottom rung, where the frozen offset is both the largest
+        # and the only positive one. The tolerance is NOT loosened for
+        # it -- 10.6 chose 1% because a 1% offset injects ~17% into the
+        # recovery -- and if it trips, the halt is the record.
         "cross_arm_spurious_trip_probability": {
-            rung: float(
-                0.5 * (1.0 - math.erf(
-                    (CROSS_ARM_TOLERANCE - 0.0055)
-                    / (row["cross_arm_offset_se"] * math.sqrt(2.0))))
-                + 0.5 * (1.0 + math.erf(
-                    (-CROSS_ARM_TOLERANCE - 0.0055)
-                    / (row["cross_arm_offset_se"] * math.sqrt(2.0)))))
+            rung: float(cross_arm_spurious_trip_probability(
+                FROZEN_CROSS_ARM_OFFSET[int(rung)],
+                row["cross_arm_offset_se"]))
             for rung, row in cross["per_rung"].items()
             if row["cross_arm_offset_se"] > 0
         },
