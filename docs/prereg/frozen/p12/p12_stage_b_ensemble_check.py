@@ -71,9 +71,28 @@ TWIN_RHO_TOP = P.TWIN_RHO[TAU_ELL]
 TWIN_LADDER = {"600": TWIN_RHO_TOP / 4.0, "1200": TWIN_RHO_TOP / 2.0,
                "2400": TWIN_RHO_TOP}
 
-N_SAMPLES = 400
-BASE = {"600": 2_000_000, "1200": 2_100_000, "2400": 2_200_000}
-TWIN_BASE = {"600": 2_300_000, "1200": 2_400_000, "2400": 2_500_000}
+#: Review C22 raised these from a flat 400. At 400 the bottom rung's
+#: bias mismatch measured -2.29% +/- 1.09% -- 2.1 sigma, with a 95%
+#: interval nearly reaching zero -- and the addendum then froze a 36%
+#: systematic floor from that point estimate and declared more samples
+#: could not move it. That pre-excuses a real campaign discrepancy.
+#:
+#: The count is now PER RUNG, because the precision is wanted where the
+#: question is and that is also where it is cheap: measured cost per
+#: sample summed over both arms is 0.046 / 0.123 / 0.552 s at the three
+#: rungs, so the bottom rung buys ten times the samples for a third of
+#: the wall time of the top. Each rung's mismatch standard error lands
+#: near 0.35-0.40%, which either establishes the residual at several
+#: sigma or collapses it.
+N_SAMPLES = {"600": 4000, "1200": 2000, "2400": 1000}
+#: Every block is sized to its own rung and pairwise disjointness is
+#: ASSERTED in main() rather than argued in a comment (review C17: the
+#: previous layout put rung 600's calibration iteration 1 on exactly
+#: rung 1200's iteration 0, and 14 cross-rung collisions followed, two
+#: of them among iterations that actually ran -- the comment claiming
+#: separation was simply wrong).
+BASE = {"600": 2_000_000, "1200": 2_800_000, "2400": 3_200_000}
+TWIN_BASE = {"600": 3_400_000, "1200": 4_200_000, "2400": 4_600_000}
 #: Review C11 made this necessary rather than optional. Scaling P13's
 #: twin intensity down the ladder leaves the twin's realized m about
 #: 2-3.4% BELOW the curved arm's, which shifts the twin's discreteness
@@ -83,7 +102,7 @@ TWIN_BASE = {"600": 2_300_000, "1200": 2_400_000, "2400": 2_500_000}
 #: exactly what a -1.8% bias mismatch predicts. So the twin's intensity
 #: is CALIBRATED per rung against the curved arm's realized m, on its
 #: own seed blocks, and the residual offset is gated.
-CAL_BASE = {"600": 2_600_000, "1200": 2_700_000, "2400": 2_800_000}
+CAL_BASE = {"600": 4_800_000, "1200": 5_200_000, "2400": 5_600_000}
 #: The probe must be able to SEE the tolerance it calibrates to. At the
 #: bottom rung m ~ 19 has ~23% per-pair dispersion, so a 150-sample
 #: probe measures the mean to ~2% -- four times the 0.5% criterion the
@@ -95,8 +114,8 @@ CAL_BASE = {"600": 2_600_000, "1200": 2_700_000, "2400": 2_800_000}
 #: is not calibration. The arm run plus the cross-arm gate remain the
 #: real validation.
 N_CALIBRATE = 400
-CAL_SPACING = 100_000
-CAL_ITERATIONS = 6
+CAL_SPACING = 80_000              # exactly N_CALIBRATE * STRIDE
+CAL_ITERATIONS = 4
 CROSS_ARM_TOLERANCE = 0.01        # +/- 1% on the twin-vs-curved m ratio
 DESIGN_FLOOR, DESIGN_CEIL = 2_000_000, 5_999_999
 
@@ -163,7 +182,8 @@ def run_arm(ladder, bases, flat):
     for rung, rho in ladder.items():
         gs, taus, ms, complete = [], [], [], 0
         tau_rows, m_rows = [], []
-        for k in range(N_SAMPLES):
+        n_target = N_SAMPLES[rung]
+        for k in range(n_target):
             got = sample_pairs(rho, bases[rung] + P.STRIDE * k, flat)
             if got is None:
                 continue
@@ -176,8 +196,8 @@ def run_arm(ladder, bases, flat):
         flatg = np.array([g for row in gs for g in row])
         arm[rung] = {
             "rho": float(rho),
-            "n_attempted": N_SAMPLES, "n_complete": complete,
-            "completion": complete / N_SAMPLES,
+            "n_attempted": n_target, "n_complete": complete,
+            "completion": complete / n_target,
             "pairs": int(flatg.size),
             "mean_g": float(flatg.mean()),
             "sd_g": float(flatg.std(ddof=1)),
@@ -199,14 +219,36 @@ def run_arm(ladder, bases, flat):
     return arm
 
 
+def seed_blocks():
+    """Every block this script consumes, as (label, lo, hi) inclusive.
+    Review C17: the previous layout was checked by eye in a comment and
+    the eye was wrong, so the blocks are enumerated and their
+    disjointness is asserted."""
+
+    blocks = []
+    for rung, base in BASE.items():
+        blocks.append((f"curved-{rung}", base,
+                       base + P.STRIDE * N_SAMPLES[rung] - 1))
+    for rung, base in TWIN_BASE.items():
+        blocks.append((f"twin-{rung}", base,
+                       base + P.STRIDE * N_SAMPLES[rung] - 1))
+    for rung, base in CAL_BASE.items():
+        for it in range(CAL_ITERATIONS):
+            lo = base + CAL_SPACING * it
+            blocks.append((f"cal-{rung}-it{it}", lo,
+                           lo + P.STRIDE * N_CALIBRATE - 1))
+    return blocks
+
+
 def main() -> None:
-    for base in (list(BASE.values()) + list(TWIN_BASE.values())
-                 + list(CAL_BASE.values())):
-        assert DESIGN_FLOOR <= base <= DESIGN_CEIL, base
-        assert base + P.STRIDE * N_SAMPLES <= DESIGN_CEIL
-    for base in CAL_BASE.values():
-        assert (base + CAL_SPACING * CAL_ITERATIONS
-                + P.STRIDE * N_CALIBRATE) <= DESIGN_CEIL
+    blocks = seed_blocks()
+    for label, lo, hi in blocks:
+        assert DESIGN_FLOOR <= lo and hi <= DESIGN_CEIL, (label, lo, hi)
+    for i, (la, loa, hia) in enumerate(blocks):
+        for lb, lob, hib in blocks[i + 1:]:
+            assert hia < lob or hib < loa, (
+                f"seed blocks overlap: {la} [{loa}..{hia}] vs "
+                f"{lb} [{lob}..{hib}]")
 
     results: dict = {
         "code_version": P._preflight_clean(),
@@ -400,6 +442,10 @@ def main() -> None:
               f"{'PASS' if x['gate_passed'] else 'FAIL'}")
     results["cross_arm_m"] = cross
     results["cross_arm_tolerance"] = CROSS_ARM_TOLERANCE
+    results["cross_arm_gate_passed"] = all(
+        c["gate_passed"] for c in cross.values())
+    results["calibration_converged"] = all(
+        c["converged"] for c in cal.values())
     print("=== the paired per-sample statistic and its variance ===")
 
     # --- Section 5 item 2: Delta*_B derived, not borrowed ------------
@@ -527,9 +573,33 @@ def main() -> None:
         "measured b sits below the uncorrelated analytic value because "
         "m and L rise together within a box, so their ratio disperses "
         "less than the independent sum would")
+    results["seed_blocks"] = [
+        {"label": la, "lo": lo, "hi": hi} for la, lo, hi in blocks]
 
+    # Review C21: the gates ABORT. The first corrected version recorded
+    # gate_passed and printed it, and nothing stopped the JSON from
+    # being written and copied into frozen/ when an arm-run offset
+    # exceeded the tolerance -- the same "records its own failure and
+    # continues" shape as the quadrature check of C12, reappearing in
+    # the fix for C11.
+    failures = []
+    if not results["calibration_converged"]:
+        failures += [f"twin calibration did not reach "
+                     f"{CROSS_ARM_TOLERANCE:.0%} at rung {r}"
+                     for r, c in cal.items() if not c["converged"]]
+    if not results["cross_arm_gate_passed"]:
+        failures += [f"cross-arm m offset at rung {r} is "
+                     f"{c['cross_arm_offset']:+.2%}, outside "
+                     f"{CROSS_ARM_TOLERANCE:.0%}"
+                     for r, c in cross.items() if not c["gate_passed"]]
+    results["gate_passed"] = not failures
+    if failures:
+        raise SystemExit("ensemble check FAILED its frozen gates: "
+                         + "; ".join(failures))
+
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(results, indent=2))
-    print(f"\nwrote {OUT}")
+    print(f"\ngates passed; wrote {OUT}")
 
 
 if __name__ == "__main__":

@@ -249,6 +249,10 @@ def main() -> None:
         raise SystemExit("volume check FAILED the pinned tolerance: "
                          + "; ".join(failures))
 
+    # Review C20: outputs/ is gitignored, so on a fresh checkout it does
+    # not exist and write_text does not create parents -- the script
+    # would finish its work and then raise FileNotFoundError.
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(results, indent=2))
     print(f"\ngate passed at {TOLERANCE:.0e}; wrote {OUT}")
 
