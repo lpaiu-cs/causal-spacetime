@@ -543,7 +543,8 @@ def m_gate(records_by_rung: dict, label: str) -> dict:
     }
 
 
-def cross_arm_m_gate(curved_by_rung: dict, twin_by_rung: dict) -> dict:
+def cross_arm_m_gate(curved_by_rung: dict, twin_by_rung: dict,
+                     enforce: bool = True) -> dict:
     """The CROSS-ARM `m` gate at +/- 1% (Section 10.6, review C11).
 
     `Q_hat` divides one arm by the other, so a consistent offset
@@ -557,28 +558,67 @@ def cross_arm_m_gate(curved_by_rung: dict, twin_by_rung: dict) -> dict:
     The bias mismatch is published alongside, read off each arm's own
     `g` against its own continuum value, because it is the systematic
     Section 10.6 prices the whole recovery with.
+
+    WHY `enforce` EXISTS, and it is 10.6's own principle applied to this
+    gate rather than only to the calibration probe. 10.6 says of the twin
+    calibration: "the probe must be able to SEE the tolerance it
+    calibrates to ... calibrating below the probe's own resolution is not
+    calibration". The same holds for gating. At Stage P-B's 200 samples
+    the offset's own standard error is about 0.94%, i.e. the tolerance
+    itself, so a 1% gate there would abort roughly a third of the time on
+    perfectly calibrated arms -- it would be noise with a verdict
+    attached. So the pilot MEASURES the offset and publishes it with its
+    standard error, and Stage B, at about 1300 samples and a standard
+    error near 0.37%, is where the gate binds. `offset_se` and
+    `resolution_ratio` are recorded either way so the gate's
+    meaningfulness is auditable from the artifact instead of argued in a
+    docstring.
     """
 
     g_curved_true = g_of_s(TAU_ELL / 2.0)
     per_rung = {}
     for rung in curved_by_rung:
         c, t = curved_by_rung[rung], twin_by_rung[rung]
-        m_c = float(np.mean([r["mean_m"] for r in c]))
-        m_t = float(np.mean([r["mean_m"] for r in t]))
+        m_c_all = np.array([r["mean_m"] for r in c], dtype=float)
+        m_t_all = np.array([r["mean_m"] for r in t], dtype=float)
+        m_c, m_t = float(m_c_all.mean()), float(m_t_all.mean())
+        se_c = float(m_c_all.std(ddof=1) / math.sqrt(m_c_all.size))
+        se_t = float(m_t_all.std(ddof=1) / math.sqrt(m_t_all.size))
         g_c = float(np.mean([r["mean_g"] for r in c]))
         g_t = float(np.mean([r["mean_g"] for r in t]))
-        offset = m_t / m_c - 1.0
+        ratio = m_t / m_c
+        offset = ratio - 1.0
+        # arms run on disjoint seed blocks, so independent propagation
+        offset_se = ratio * math.hypot(se_t / m_t, se_c / m_c)
         bias_c, bias_t = g_c / g_curved_true, g_t / 0.5
         per_rung[str(rung)] = {
             "mean_m_curved": m_c, "mean_m_twin": m_t,
+            "se_mean_m_curved": se_c, "se_mean_m_twin": se_t,
             "cross_arm_offset": offset,
+            "cross_arm_offset_se": offset_se,
+            "resolution_ratio": (CROSS_ARM_TOLERANCE / offset_se
+                                 if offset_se > 0 else None),
             "bias_factor_curved": bias_c, "bias_factor_twin": bias_t,
             "bias_mismatch": bias_t / bias_c - 1.0,
             "passed": bool(abs(offset) <= CROSS_ARM_TOLERANCE),
         }
     return {
-        "tolerance": CROSS_ARM_TOLERANCE, "per_rung": per_rung,
-        "passed": all(r["passed"] for r in per_rung.values()),
+        "name": "cross-arm m",
+        "tolerance": CROSS_ARM_TOLERANCE,
+        "enforced": bool(enforce),
+        "per_rung": per_rung,
+        # when the gate is not enforced its verdict must not be read as
+        # one, so `passed` is reported and the abort list ignores it
+        "passed": (all(r["passed"] for r in per_rung.values())
+                   if enforce else True),
+        "measured_passed": all(r["passed"] for r in per_rung.values()),
+        "note": (
+            "ENFORCED: a failure aborts before anything is written."
+            if enforce else
+            "MEASURED ONLY at this stage: the offset's standard error is "
+            "comparable to the tolerance at pilot sample sizes, so a "
+            "gate here would be noise with a verdict attached (10.6's "
+            "resolution principle). Stage B enforces it."),
     }
 
 
@@ -850,12 +890,28 @@ def run_pilot_b(output_dir: Path) -> None:
               f"{paired['boundary_fraction']:.1%} | skips "
               f"{len(cskip)}/{len(tskip)}", flush=True)
 
-    # The gates run on the pilot too: an offset that would abort Stage B
-    # should abort here, where it costs 400 samples instead of 7800.
-    gates = [m_gate(curved_by_rung, "curved"), m_gate(twin_by_rung, "twin"),
-             cross_arm_m_gate(curved_by_rung, twin_by_rung)]
+    # The WITHIN-arm gates run here: their tolerance is 5% against a
+    # pilot resolution near 0.7%, so they can see what they gate on, and
+    # an arm that has drifted off its design target should stop the
+    # sequence where it costs 400 samples instead of 7800.
+    #
+    # The CROSS-arm gate does NOT bind here. Its tolerance is 1% and the
+    # offset's standard error at 200 samples is about 0.94%, so gating on
+    # it would abort roughly a third of the time on correctly calibrated
+    # arms -- 10.6's own resolution principle, applied to the gate rather
+    # than only to the calibration probe. It is measured and published
+    # with its standard error, and Stage B enforces it.
+    cross = cross_arm_m_gate(curved_by_rung, twin_by_rung, enforce=False)
+    gates = [m_gate(curved_by_rung, "curved"), m_gate(twin_by_rung, "twin")]
     summary["m_gate_curved"], summary["m_gate_twin"] = gates[0], gates[1]
-    summary["cross_arm_m_gate"] = gates[2]
+    summary["cross_arm_m_gate_measured"] = cross
+    for rung, row in cross["per_rung"].items():
+        print(f"  cross-arm rung {rung}: offset "
+              f"{row['cross_arm_offset']:+.2%} +/- "
+              f"{row['cross_arm_offset_se']:.2%} (tolerance "
+              f"{CROSS_ARM_TOLERANCE:.0%}, resolution ratio "
+              f"{row['resolution_ratio']:.2f}) -- measured, not gating",
+              flush=True)
     _abort_on_gate_failure(gates)
 
     power = power_requirements_b(ys[P12B_LADDER[0]], ys[P12B_LADDER[-1]])
@@ -986,8 +1042,27 @@ def run_stage_b(output_dir: Path) -> None:
               f"{len(cskip)}/{len(tskip)}", flush=True)
     write_rows_csv(output_dir / "p12_stage_b.csv", rows)
 
+    cross = cross_arm_m_gate(curved_by_rung, twin_by_rung, enforce=True)
+    # This is where the cross-arm gate binds, so this is where its
+    # resolution has to be adequate. A gate whose tolerance is inside its
+    # own standard error is noise with a verdict attached, and it would be
+    # worse here than in the pilot because it would abort a full campaign.
+    # Refusing loudly beats gating meaninglessly.
+    for rung, row in cross["per_rung"].items():
+        ratio = row["resolution_ratio"]
+        print(f"  cross-arm rung {rung}: offset "
+              f"{row['cross_arm_offset']:+.2%} +/- "
+              f"{row['cross_arm_offset_se']:.2%}"
+              f" | resolution ratio {ratio:.2f}", flush=True)
+        if ratio is not None and ratio < 2.0:
+            raise SystemExit(
+                f"cross-arm gate at rung {rung} cannot see its own "
+                f"tolerance: {CROSS_ARM_TOLERANCE:.0%} against a standard "
+                f"error of {row['cross_arm_offset_se']:.2%} (ratio "
+                f"{ratio:.2f} < 2). Gating on it would be noise with a "
+                "verdict attached -- 10.6's resolution principle.")
     gates = [m_gate(curved_by_rung, "curved"), m_gate(twin_by_rung, "twin"),
-             cross_arm_m_gate(curved_by_rung, twin_by_rung)]
+             cross]
     _abort_on_gate_failure(gates)
 
     bottom, top = P12B_LADDER[0], P12B_LADDER[-1]
@@ -1036,7 +1111,25 @@ def run_stage_b(output_dir: Path) -> None:
             } for r in P12B_LADDER
         },
         "m_gate_curved": gates[0], "m_gate_twin": gates[1],
-        "cross_arm_m_gate": gates[2],
+        "cross_arm_m_gate": cross,
+        # Disclosed pre-run rather than discovered on an abort: the frozen
+        # bottom-rung offset is +0.55% against a 1% tolerance, so with
+        # this arm's measured standard error the campaign has a real
+        # chance of tripping its own cross-arm gate on correctly
+        # calibrated arms. The tolerance is NOT loosened for it -- 10.6
+        # chose 1% because a 1% offset injects ~17% into the recovery --
+        # and if it trips, the halt is the record.
+        "cross_arm_spurious_trip_probability": {
+            rung: float(
+                0.5 * (1.0 - math.erf(
+                    (CROSS_ARM_TOLERANCE - 0.0055)
+                    / (row["cross_arm_offset_se"] * math.sqrt(2.0))))
+                + 0.5 * (1.0 + math.erf(
+                    (-CROSS_ARM_TOLERANCE - 0.0055)
+                    / (row["cross_arm_offset_se"] * math.sqrt(2.0)))))
+            for rung, row in cross["per_rung"].items()
+            if row["cross_arm_offset_se"] > 0
+        },
         "skip_counts": {str(r): {"curved": len(skips[r]["curved"]),
                                  "twin": len(skips[r]["twin"])}
                         for r in P12B_LADDER},

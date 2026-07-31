@@ -957,3 +957,83 @@ def test_the_pin_is_a_smoke_test_and_the_fill_rule_is_the_real_gate():
                                          B.VERIFY_COUNT, 0.995)
     assert survivable < 0.1
     assert _negbinom_failures_upper_tail(skipcap, need, 0.995) < 1e-3
+
+
+# ====================================================================
+# a gate may not be tighter than its own resolution (10.6's principle,
+# applied to the gate and not only to the calibration probe)
+# ====================================================================
+
+def _noisy_records(n, mean_m, rel_sd_per_pair, seed):
+    """Per-sample mean m with the dispersion a real arm carries: each
+    sample averages K_PAIRS pairs, so the per-sample sd is
+    rel_sd/sqrt(6)."""
+
+    rng = np.random.default_rng(seed)
+    sd = mean_m * rel_sd_per_pair / math.sqrt(6.0)
+    return [{"mean_g": 1.0, "mean_m": float(v), "mean_tau_hat": TAU_ELL}
+            for v in rng.normal(mean_m, sd, n)]
+
+
+def test_cross_arm_gate_publishes_its_own_standard_error():
+    """The case: the gate's tolerance is 1%, and whether that is a gate or
+    a coin flip depends entirely on the standard error of the quantity it
+    tests. The artifact must therefore carry the error and the ratio, so a
+    reader can tell which it was without re-deriving anything.
+    """
+
+    curved = {600: _noisy_records(200, M_TARGET[600], 0.23, 1)}
+    twin = {600: _noisy_records(200, M_TARGET[600], 0.23, 2)}
+    gate = cross_arm_m_gate(curved, twin, enforce=False)
+    row = gate["per_rung"]["600"]
+    assert row["cross_arm_offset_se"] > 0.0
+    assert row["resolution_ratio"] == pytest.approx(
+        CROSS_ARM_TOLERANCE / row["cross_arm_offset_se"], rel=1e-9)
+    # at pilot size the tolerance really is comparable to the error --
+    # this is the fact that makes enforcing there wrong
+    assert row["resolution_ratio"] < 2.0
+
+
+def test_cross_arm_gate_does_not_bind_at_pilot_resolution():
+    """The case, and it is 10.6's principle quoted back at the gate: "the
+    probe must be able to SEE the tolerance it calibrates to ...
+    calibrating below the probe's own resolution is not calibration". At
+    200 samples the offset's standard error is about the tolerance itself,
+    so a gate there would abort roughly a third of the time on perfectly
+    calibrated arms. Unenforced, its verdict must not reach the abort
+    list even when the measured offset is outside the tolerance.
+    """
+
+    curved = {600: _records(200, 1.0, M_TARGET[600])}
+    twin = {600: _records(200, 1.0, M_TARGET[600] * 1.05)}
+    measured = cross_arm_m_gate(curved, twin, enforce=False)
+    assert measured["enforced"] is False
+    assert measured["measured_passed"] is False, "the offset IS outside 1%"
+    assert measured["passed"] is True, (
+        "an unenforced gate must not present a failure as a gate failure")
+    # so it does not abort
+    _abort_on_gate_failure([measured])
+
+    # and enforced, the same data does abort
+    enforced = cross_arm_m_gate(curved, twin, enforce=True)
+    assert enforced["passed"] is False
+    with pytest.raises(SystemExit, match="nothing written"):
+        _abort_on_gate_failure([enforced])
+
+
+def test_within_arm_gate_can_see_its_tolerance_at_pilot_size():
+    """The case: the reason the WITHIN-arm gate keeps binding in the pilot
+    while the cross-arm one does not is resolution, not preference. Its
+    tolerance is 5% against a pilot standard error near 0.7%, so it is
+    testing something. If this ratio ever fell the pilot's gating would
+    need the same treatment.
+    """
+
+    arm = {600: _noisy_records(200, M_TARGET[600], 0.23, 3)}
+    realized = float(np.mean([r["mean_m"] for r in arm[600]]))
+    values = np.array([r["mean_m"] for r in arm[600]])
+    se = float(values.std(ddof=1) / math.sqrt(values.size) / realized)
+    assert M_TOLERANCE / se > 5.0, (
+        f"the within-arm tolerance {M_TOLERANCE:.0%} is only "
+        f"{M_TOLERANCE / se:.1f}x its own standard error at pilot size")
+    assert m_gate(arm, "curved")["passed"]
