@@ -1,9 +1,16 @@
 """P13: how far does curvature let the flat-normalized reading go?
 
-Implements docs/prereg/p13_tau_ell_ladder.md v1.1 and nothing else.
-P12 swept density at fixed tau/ell; P13 sweeps tau/ell at FIXED
-discreteness, which is why every rung carries its own patch and its
-own intensity and why the m-matching is gated rather than assumed.
+Implements docs/prereg/p13_tau_ell_ladder.md as amended through
+design v3 (Section 12), and nothing else. P12 swept density at fixed
+tau/ell; P13 sweeps tau/ell at FIXED discreteness, which is why every
+rung carries its own patch and its own intensity and why the
+m-matching is gated rather than assumed.
+
+Campaigns v1 (Section 9) and v2 (Section 11) were run under the
+constants of their own commits, 3f46313 and d916f34. v3 moves
+delta_eq, the equivalence power target, the cap and the windows, so
+those verdicts are reproducible only at those stamps -- which is why
+every artifact records code_version. Neither record is re-scored.
 
 Everything the estimator does is P11's and P12's, imported: the
 sprinkler's thinning, the exact dS_2 truth, the eligibility pair
@@ -66,29 +73,50 @@ BAND_REL = 0.10
 M_TARGET = 76.0
 M_TOLERANCE = 0.05          # Section 5 gate: +/- 5% of the grand mean
 
-#: Power design (Sections 1 and 10). v2 raises the cap to 300 ex
-#: ante: campaign v1's pilot returned n_eq = 231, which is disclosed
-#: pre-freeze information for v2 (in v1 it was pilot data arriving
-#: after the rule was frozen, so the cap stayed at 200 and
-#: CURVATURE-ROBUST was unpurchasable).
+#: Power design (Sections 1, 10 and 12). v3 moves three numbers.
+#:
+#: delta_eq falls to 0.02 dex (Section 12.2): a margin belongs near
+#: the scale at which the answer would change, and 11.3's diagnostic
+#: bounded the contrast inside [-0.0066, +0.0179], so 0.05 would
+#: certify what is no longer in doubt.
+#:
+#: The equivalence power target rises from 90% to 99%, z 1.645 ->
+#: 2.326 (Section 12.3). The 10% beta is not slack -- it is the
+#: probability a null ladder's interval pokes outside the margin, and
+#: v2 spent most of it on one +2.3 sigma draw whose upper end landed
+#: 0.0044 short. That thinness scales WITH delta_eq, so tightening
+#: the margin does not fix it; only power does.
+#:
+#: n_sup measures against DELTA_DETECT - DELTA_EQ because row 1 now
+#: requires clearing the margin rather than clearing zero. It is
+#: about 30 at this variance and is not binding; the correction is
+#: for accuracy, not for effect.
+#:
+#: The cap rises 300 -> 3000 with the standing v2's 200 -> 300 had:
+#: the variance that sets n_eq is disclosed pre-freeze (v2's pilot
+#: bounds and 11.3's diagnostic) rather than arriving as pilot data
+#: after the rule is frozen. It absorbs a realized S^2_90 up to about
+#: 0.065 before ROBUST becomes unpurchasable again.
 DELTA_DETECT = 0.15
-DELTA_EQ = 0.05
+DELTA_EQ = 0.02
 N_FLOOR = 12
-N_CAP = 300
-N_SUP_COEFF = (1.960 + 1.282) ** 2 / DELTA_DETECT ** 2
-N_EQ_COEFF = (1.960 + 1.645) ** 2 / DELTA_EQ ** 2
+N_CAP = 3000
+N_SUP_COEFF = (1.960 + 1.282) ** 2 / (DELTA_DETECT - DELTA_EQ) ** 2
+N_EQ_COEFF = (1.960 + 2.326) ** 2 / DELTA_EQ ** 2
 
-#: Seed windows (Section 10, v2). Campaign v1's seeds (6000000+) are
-#: spent, so v2 runs entirely in 8000000-8795999; design-check space
-#: remains 7000000+ and 9000000+, never touched by a runner.
-VERIFY_BASE = {0.30: 8000000, 0.60: 8002000, 1.00: 8004000,
-               1.50: 8006000}
-PILOT_BLOCKS = {0.30: (8020000, 320), 1.50: (8084000, 320)}
-PILOT_TWIN_BLOCKS = {0.30: (8148000, 320), 1.50: (8212000, 320)}
-STAGE_A_BLOCKS = {0.30: (8280000, 320), 0.60: (8344000, 320),
-                  1.00: (8408000, 320), 1.50: (8472000, 320)}
-TWIN_BLOCKS = {0.30: (8540000, 320), 0.60: (8604000, 320),
-               1.00: (8668000, 320), 1.50: (8732000, 320)}
+#: Seed windows (Section 12.4, v3). Campaign v1 spent 6000000-6475999
+#: and v2 spent 8000000-8795999; 11.3's diagnostic reached 14550000 in
+#: design-check space. So v3 runs entirely at 15000000+, and
+#: design-check space for anything after this is 22000000+. Slots are
+#: cap + 20 at STRIDE, the v2 pattern scaled to the new cap.
+VERIFY_BASE = {0.30: 15000000, 0.60: 15002000, 1.00: 15004000,
+               1.50: 15006000}
+PILOT_BLOCKS = {0.30: (15100000, 320), 1.50: (15200000, 320)}
+PILOT_TWIN_BLOCKS = {0.30: (15300000, 320), 1.50: (15400000, 320)}
+STAGE_A_BLOCKS = {0.30: (16000000, 3020), 0.60: (16700000, 3020),
+                  1.00: (17400000, 3020), 1.50: (18100000, 3020)}
+TWIN_BLOCKS = {0.30: (18800000, 3020), 0.60: (19500000, 3020),
+               1.00: (20200000, 3020), 1.50: (20900000, 3020)}
 SCORE_OFFSET = 150
 
 #: P13's prerequisite record lives in P12's frozen directory.
@@ -258,13 +286,27 @@ TWIN_RHO = {tau_c: 2.0 * M_TARGET / centre ** 2
 
 
 def verdict(lo: float, hi: float, robust_available: bool) -> str:
-    """The frozen table of Section 1.2, by precedence. The polarity is
+    """The v3 table (Section 12.1), by precedence. The polarity is
     inverted from P11/P12: here the null is no effect and the
-    interesting outcome is POSITIVE."""
+    interesting outcome is POSITIVE.
 
-    if lo > 0.0:
+    v3's repair: rows 1 and 2 key to the MARGIN, not to zero. Section
+    10 (1) had already made this fix for the control -- a point test
+    is a point test at any n -- and did not carry it here, which is
+    the whole of 11.3's third recurrence. So a contrast that does not
+    clear delta_eq can no longer earn the word DEGRADES, because not
+    clearing the margin is the definition of the reading not noticing
+    the curvature. Compare control_result below: the two now ask the
+    same question of the same number, and test_single_margin_invariant
+    holds them together.
+
+    Not usable on campaign v2's interval: that verdict was issued
+    under v2's rules and stands (Section 12.1's closing paragraph).
+    """
+
+    if lo > DELTA_EQ:
         return "CURVATURE-DEGRADES"
-    if hi < 0.0:
+    if hi < -DELTA_EQ:
         return "CURVATURE-HELPS"
     if robust_available and (-DELTA_EQ < lo) and (hi < DELTA_EQ):
         return "CURVATURE-ROBUST"
@@ -314,8 +356,12 @@ def twin_sample_size(y_bottom: np.ndarray, y_top: np.ndarray) -> dict:
 
 
 def power_requirements(y_bottom: np.ndarray, y_top: np.ndarray) -> dict:
-    """Section 1.3: calibrated Bonett bounds summed, then the two
-    requirements, then the frozen selection rule with cap 200."""
+    """Sections 1.3 and 12.3: calibrated Bonett bounds summed, then
+    the two requirements, then the frozen selection rule against
+    N_CAP. The cap is read from the constant rather than named in
+    prose -- this docstring said "cap 200" while the constant was 300,
+    which is the narrative-versus-artifact drift this programme
+    hunts."""
 
     bottom = calibrated_variance_bound(y_bottom, "bottom")
     top = calibrated_variance_bound(y_top, "top")

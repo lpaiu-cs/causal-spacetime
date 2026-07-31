@@ -1,9 +1,14 @@
-"""Regressions for P13 (prereg v1.1, Section 8).
+"""Regressions for P13 (prereg as amended through design v3).
 
 The load-bearing pins: the per-rung packing budget (P12's collapse
 class), the m-matching that the whole contrast rests on, the flat
 twin's calibration and normalization (both of which were wrong in the
 first implementation), the inverted verdict table, and window privacy.
+
+v3 adds two that exist because of 11.3: a significant but sub-margin
+contrast must no longer earn the word DEGRADES, and the verdict and
+the control must key to the SAME margin -- the invariant whose absence
+was v2's defect.
 """
 
 from __future__ import annotations
@@ -20,11 +25,15 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p13_tau_ell import (  # noqa: E402
+    DELTA_DETECT,
     DELTA_EQ,
     M_TARGET,
     N_CAP,
+    N_EQ_COEFF,
+    N_SUP_COEFF,
     PATCH,
     PILOT_BLOCKS,
+    PILOT_SAMPLES,
     PILOT_TWIN_BLOCKS,
     RUNGS,
     STAGE_A_BLOCKS,
@@ -127,19 +136,69 @@ def test_eligibility_enforces_band_and_box_inside_patch():
         assert np.all(np.abs(xx) <= xhalf + 1e-12)
 
 
-def test_inverted_verdict_table_is_single_valued():
-    """P13's polarity is the reverse of P11/P12: the null is no effect
-    and the interesting outcome is POSITIVE."""
+def test_v3_verdict_table_keys_rows_1_and_2_to_the_margin():
+    """Section 12.1's repair. P13's polarity is still the reverse of
+    P11/P12 -- the null is no effect and the interesting outcome is
+    POSITIVE -- but rows 1 and 2 now require clearing delta_eq instead
+    of clearing zero."""
 
-    assert verdict(0.01, 0.04, True) == "CURVATURE-DEGRADES"
-    assert verdict(-0.04, -0.01, True) == "CURVATURE-HELPS"
-    assert verdict(-0.03, 0.03, True) == "CURVATURE-ROBUST"
-    assert verdict(-0.09, 0.03, True) == "INCONCLUSIVE"
-    assert verdict(-0.03, 0.03, False) == "UNRESOLVED"
-    # rows 1 and 2 fire on significance, not size -- the pin the
-    # prereg added under the table
-    assert verdict(0.001, 0.004, True) == "CURVATURE-DEGRADES"
-    assert DELTA_EQ == 0.05 and N_CAP == 300
+    assert verdict(0.03, 0.05, True) == "CURVATURE-DEGRADES"
+    assert verdict(-0.05, -0.03, True) == "CURVATURE-HELPS"
+    assert verdict(-0.01, 0.01, True) == "CURVATURE-ROBUST"
+    assert verdict(-0.05, 0.01, True) == "INCONCLUSIVE"
+    assert verdict(-0.01, 0.01, False) == "UNRESOLVED"
+    assert DELTA_EQ == 0.02 and N_CAP == 3000
+
+
+def test_a_significant_but_sub_margin_contrast_no_longer_says_degrades():
+    """THE case v3 exists to catch, so it is tested directly rather
+    than implied. Under v2 an interval excluding zero earned the word
+    DEGRADES at any size, which is how a +0.024 contrast -- under half
+    the margin, with its whole interval inside the margin -- came to
+    carry a mechanism it could not support (11.2)."""
+
+    # excludes zero, sits entirely inside the margin
+    assert verdict(0.001, 0.004, True) == "CURVATURE-ROBUST"
+    assert verdict(0.005, 0.015, True) == "CURVATURE-ROBUST"
+    # excludes zero, straddles the margin edge: no verdict, not a word
+    assert verdict(0.005, 0.030, True) == "INCONCLUSIVE"
+    # and only a contrast wholly past the margin earns DEGRADES
+    assert verdict(0.021, 0.030, True) == "CURVATURE-DEGRADES"
+
+    # Campaign v2's frozen interval, for the record and NOT as a
+    # re-scoring: it was judged under v2's rules and stands as
+    # CURVATURE-DEGRADES (Section 12.1's closing paragraph). What this
+    # line pins is that the repair targets the real defect.
+    assert verdict(0.004444, 0.045607, True) == "INCONCLUSIVE"
+
+
+def test_single_margin_invariant():
+    """v2's resolution mismatch existed because the verdict keyed to 0
+    while the control keyed to delta_eq. The invariant that would have
+    caught it: on the positive side the verdict's row 1 and the
+    control's CONFOUNDED branch must be the SAME predicate, and both
+    sizings must key to the same margin. A guard is tested against the
+    case it is meant to catch."""
+
+    grid = np.linspace(-0.06, 0.06, 49)
+    for lo in grid:
+        for hi in grid:
+            if hi < lo:
+                continue
+            degrades = verdict(lo, hi, True) == "CURVATURE-DEGRADES"
+            confounded_high = (control_result(lo, hi) == "CONFOUNDED"
+                               and lo > 0)
+            assert degrades == confounded_high, (lo, hi)
+    # the equivalence sizing reads the same margin, so lowering
+    # delta_eq cannot silently leave the sample size behind
+    assert N_EQ_COEFF == pytest.approx(
+        (1.960 + 2.326) ** 2 / DELTA_EQ ** 2
+    )
+    # and the superiority requirement measures against the margin too,
+    # because row 1 now clears it rather than clearing zero
+    assert N_SUP_COEFF == pytest.approx(
+        (1.960 + 1.282) ** 2 / (DELTA_DETECT - DELTA_EQ) ** 2
+    )
 
 
 def test_control_gate_is_an_equivalence_test_with_a_label_row():
@@ -148,28 +207,52 @@ def test_control_gate_is_an_equivalence_test_with_a_label_row():
     equivalence test, evaluated by precedence."""
 
     # clean: the whole interval sits inside the margin
-    assert control_result(-0.03, 0.03) == "CONTROL-CLEAN"
+    assert control_result(-0.01, 0.01) == "CONTROL-CLEAN"
     # confounded: the interval lies wholly outside it
-    assert control_result(0.06, 0.20) == "CONFOUNDED"
-    assert control_result(-0.20, -0.06) == "CONFOUNDED"
+    assert control_result(0.03, 0.20) == "CONFOUNDED"
+    assert control_result(-0.20, -0.03) == "CONFOUNDED"
     # the ROW 3 BOUNDARY CASE the review asked for: the interval
-    # excludes zero but straddles the margin -- v1 would have called
-    # this CONFOUNDED, v2 labels it and lets the verdict stand
-    assert control_result(0.03, 0.20) == "UNDERPOWERED-CONTROL"
-    # and the campaign v1 reading itself lands on row 3
-    assert control_result(0.0318, 0.1355) == "UNDERPOWERED-CONTROL"
+    # excludes zero but straddles the margin -- a point threshold
+    # would call this a failure, the three-way test labels it and
+    # lets the verdict stand
+    assert control_result(0.01, 0.20) == "UNDERPOWERED-CONTROL"
     # merely wide but centred is also row 3, not clean
-    assert control_result(-0.09, 0.09) == "UNDERPOWERED-CONTROL"
+    assert control_result(-0.04, 0.04) == "UNDERPOWERED-CONTROL"
+    # Campaign v2's own twin interval, [-0.0194, +0.0328] at n = 179,
+    # was CONTROL-CLEAN against delta_eq = 0.05 and is only
+    # UNDERPOWERED-CONTROL against 0.02: it no longer fits inside the
+    # tighter margin, and it does not lie outside it either. That is
+    # the whole argument for raising the power target alongside
+    # lowering the margin (Section 12.3) -- tightening delta_eq without
+    # buying precision converts clean controls into underpowered ones.
+    # v2's record is judged at its own stamp and is not re-scored here.
+    assert control_result(-0.019403, 0.032829) == "UNDERPOWERED-CONTROL"
 
 
-def test_v2_cap_and_windows_moved_off_the_spent_campaign():
+def test_v3_cap_and_windows_moved_off_both_spent_campaigns():
+    """Section 12.4. v1 spent 6000000-6475999, v2 spent
+    8000000-8795999, and 11.3's diagnostic reached 14550000 in
+    design-check space, so v3 starts above all three."""
+
     from p13_tau_ell import N_CAP as cap
-    assert cap == 300
+    assert cap == 3000
     for base, _slots in (list(PILOT_BLOCKS.values())
                          + list(PILOT_TWIN_BLOCKS.values())
                          + list(STAGE_A_BLOCKS.values())
                          + list(TWIN_BLOCKS.values())):
-        assert base >= 8_000_000      # campaign v1's seeds are spent
+        assert base >= 15_000_000
+    for base in VERIFY_BASE.values():
+        assert base >= 15_000_000
+    # The reserve rule applies per block to what that block actually
+    # draws: pilots draw PILOT_SAMPLES, Stage A and the twin draw up to
+    # the cap. Raising the cap without widening the Stage A blocks is
+    # the failure this catches.
+    for _base, slots in (list(PILOT_BLOCKS.values())
+                         + list(PILOT_TWIN_BLOCKS.values())):
+        assert slots >= PILOT_SAMPLES + 20
+    for _base, slots in (list(STAGE_A_BLOCKS.values())
+                         + list(TWIN_BLOCKS.values())):
+        assert slots >= cap + 20
 
 
 def test_windows_are_private_and_clear_of_design_space():
@@ -180,11 +263,32 @@ def test_windows_are_private_and_clear_of_design_space():
                         + list(TWIN_BLOCKS.values())):
         span = set(range(base, base + STRIDE * slots))
         spans.append(span)
-        assert min(span) >= 8_000_000
-        assert max(span) < 9_000_000     # 9M+ is design-check space
+        assert min(span) >= 15_000_000
+        # 22M+ is design-check space from v3 onward (Section 12.4)
+        assert max(span) < 22_000_000
     for a in spans:
         for b in spans:
             assert a is b or not (a & b)
     for tau_c in RUNGS:
         vspan = set(range(VERIFY_BASE[tau_c], VERIFY_BASE[tau_c] + 2000))
         assert max(vspan) < min(min(s) for s in spans)
+        for span in spans:
+            assert not (vspan & span)
+
+
+def test_v3_windows_are_clear_of_every_spent_range():
+    """The freshness rule stated against the actual documented spans
+    rather than against a floor, so a future edit that walks a block
+    backwards into spent seeds fails here."""
+
+    spent = [(6_000_000, 6_475_999),      # campaign v1 experimental
+             (7_000_000, 7_999_999),      # v1 design-check
+             (8_000_000, 8_795_999),      # campaign v2 experimental
+             (9_000_000, 14_550_000)]     # 11.3's diagnostic
+    blocks = [(b, STRIDE * s) for b, s in (
+        list(PILOT_BLOCKS.values()) + list(PILOT_TWIN_BLOCKS.values())
+        + list(STAGE_A_BLOCKS.values()) + list(TWIN_BLOCKS.values()))]
+    blocks += [(b, 2000) for b in VERIFY_BASE.values()]
+    for base, width in blocks:
+        for lo, hi in spent:
+            assert base > hi or base + width - 1 < lo, (base, lo, hi)
