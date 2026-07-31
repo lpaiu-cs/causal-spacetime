@@ -133,6 +133,10 @@ CROSS_ARM_TOLERANCE = 0.01
 FROZEN_CROSS_ARM_OFFSET = {600: 0.00552373710017573,
                            1200: -0.004819043378003873,
                            2400: -0.0014848054904806895}
+assert set(FROZEN_CROSS_ARM_OFFSET) == set(P12B_LADDER), (
+    "every rung the campaign runs needs its own frozen offset -- this "
+    "disclosure is assembled at the END of a full run, so a missing key "
+    "would abort after the compute instead of before it")
 
 # --------------------------------------------------------------------
 # Power (Section 10.4 and 10.10). Delta*_B is DERIVED there, not
