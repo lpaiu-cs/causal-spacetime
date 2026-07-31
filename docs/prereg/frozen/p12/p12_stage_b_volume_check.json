@@ -1,5 +1,5 @@
 {
-  "code_version": "11b0954",
+  "code_version": "7ac5893",
   "relation": "Vol = 4 ell^2 ln cosh(tau / (2 ell))",
   "expansion_coefficient_c": 0.020833333333333332,
   "tolerance": 1e-09,

@@ -487,11 +487,13 @@ experimental seeds:
 `docs/prereg/frozen/p12/p12_stage_b_volume_check.json` (deterministic
 quadrature, no sprinkling at all) and
 `.../p12_stage_b_ensemble_check.json` (P12's design-check space
-`2000000-5999999`, Section 6). **Both are stamped `11b0954`** — the two
-earlier stamps this paragraph advertised, `a788836` and `627d481`,
-belonged to superseded runs and were left behind when the checks were
-re-run (review C16). An audit follows the stamp in the artifact, never
-the one in prose; this sentence now agrees with both. Their scripts write to the
+`2000000-5999999`, Section 6). **Both are stamped `7ac5893`.** An audit
+follows the stamp in the artifact, never the one in prose (review C16
+caught this paragraph carrying two superseded stamps), and both scripts
+now **abort rather than write** if any of their gates fails — the
+quadrature tolerance, the twin calibration's convergence, and the
+cross-arm `m` offsets (review C21, after C12 found the same
+"record-and-continue" shape in the quadrature check). Their scripts write to the
 gitignored `outputs/` tree and are frozen by a separate copy, because
 the preflight counts untracked files as dirty and a check writing
 straight into the repository makes the next check's stamp dirty — which
@@ -574,8 +576,8 @@ twin supplying the normalization.
 so the boundary-constrained estimate is `R_hat = 0` and the relative
 error is exactly 1. This is the edge of the parameter space, not a
 clamp over noise, and the **boundary-hit fraction is published per
-rung** — on the frozen paired statistic of 10.7 it is 37.2% / 30.2% /
-26.8%, a large and declining share that must never be silent.
+rung** — on the frozen paired statistic of 10.7 it is 38.1% / 34.6% /
+28.1%, a large and declining share that must never be silent.
 
 **The per-sample statistic is PAIRED (review C10).** The first version
 divided each curved sample's `g` by the twin's RUNG MEAN. Every `y_B`
@@ -591,21 +593,24 @@ is arbitrary and therefore harmless. The rung-level interval comes from
 a **joint bootstrap resampling both arms**, for the same reason.
 
 The correction costs what it should: the boundary fraction rose from
-28.2% to 37.2% at the bottom rung, because a single twin sample is a
+28.2% to 38.1% at the bottom rung, because a single twin sample is a
 noisier denominator than a rung mean. That is the honest price of an
 honest variance.
 
-**And the boundary population changes what the RATE can be, which 10.4
-does not see.** With 27-37% of samples pinned at `y_B = log10(1) = 0`,
-every rung's mean is pulled toward zero and the rung-to-rung contrast is
-compressed. `Delta*_B` is derived from the DISPERSION of `g`, which
-knows nothing about the clipping, so the achievable contrast is
-shallower than the target: design check measures
-`Delta_B = -0.1436 +/- 0.0345` against a derived `-0.2516`, about 3
-sigma apart. The target is kept as derived, because it is the rate of
-the underlying quantity and the derivation is what Section 5 item 2
-asked for — but `n_sup` is stated against both (10.10), so the design
-does not size itself for a rate its own statistic cannot show.
+**The boundary population can also compress the RATE, which 10.4 does
+not see.** With 28-38% of samples pinned at `y_B = log10(1) = 0`, every
+rung's mean is pulled toward zero and the rung-to-rung contrast is
+compressed; `Delta*_B` is derived from the DISPERSION of `g`, which
+knows nothing about the clipping. Whether the compression is large
+enough to matter is **not** established: design check measures
+`Delta_B = -0.2227 +/- 0.0167` against a derived `-0.2508`, 1.7 sigma
+apart and compatible. (At a quarter of these counts the gap read 3 sigma
+and an earlier draft treated it as measured; that reading is withdrawn
+and only the mechanism stands, unquantified.) The target is kept as
+derived, because it is the rate of the underlying quantity and the
+derivation is what Section 5 item 2 asked for, and `n_sup` is stated
+against both rates in 10.10 so the choice does not silently size the
+campaign.
 
 ### 10.3 Item 1 continued: why a RATIO and not a difference
 
@@ -615,31 +620,35 @@ is multiplicative and the design check shows how large it is:
 
 | rung (`m`) | `g_bar` curved | `g_bar` flat | own continuum value | bias factor |
 |---|---|---|---|---|
-| 19.0 | 0.97247 | 1.03475 | 0.45914 / 0.5 | 2.118 / 2.070 |
-| 38.1 | 0.80787 | 0.88102 | 0.45914 / 0.5 | 1.760 / 1.762 |
-| 75.4 | 0.70700 | 0.76842 | 0.45914 / 0.5 | 1.540 / 1.537 |
+| 18.9 | 0.96688 | 1.03106 | 0.45914 / 0.5 | 2.106 / 2.062 |
+| 37.8 | 0.81319 | 0.86714 | 0.45914 / 0.5 | 1.771 / 1.734 |
+| 75.8 | 0.71262 | 0.76695 | 0.45914 / 0.5 | 1.552 / 1.534 |
 
-Each arm's `g_bar` is biased by **53% to 112%** against its own
+Each arm's `g_bar` is biased by **53% to 111%** against its own
 continuum value — entirely because `tau_hat` underestimates `tau`
-(`tau_hat/tau` = 0.705 / 0.760 / 0.803) and enters squared. A difference
+(`tau_hat/tau` = 0.704 / 0.755 / 0.800) and enters squared. A difference
 would leave that bias in the units of the answer. The ratio removes most
 of it, and what survives is the signal:
 
 | rung | `1 - Q_hat` | joint-bootstrap se | continuum truth |
 |---|---|---|---|
-| 19.0 | +0.06018 | 0.01003 | 0.08172 |
-| 38.1 | +0.08303 | 0.00721 | 0.08172 |
-| 75.4 | +0.07994 | 0.00585 | 0.08172 |
+| 18.9 | +0.06224 | 0.00324 | 0.08172 |
+| 37.8 | +0.06221 | 0.00346 | 0.08172 |
+| 75.8 | +0.07084 | 0.00361 | 0.08172 |
 
-A pair of arms biased by a factor of two yielding an 8.0% ratio signal
+A pair of arms biased by a factor of two yielding a 6-7% ratio signal
 against an 8.2% truth is the case for the ratio, and it is measured
 rather than argued.
 
-**The cancellation is essentially exact at `m >= 38` and is not at
-`m ~ 19`**, and 10.6 is where that is priced: once the arms' `m` is
-matched, the bias factors above differ by `-2.29%` at the bottom rung
-and by `+0.14%` and `-0.19%` — both inside their own noise — at the
-upper two.
+**The cancellation is imperfect at every rung, and 10.6 prices it.**
+Once the arms' `m` is matched to better than 0.6%, the bias factors
+above still differ by `-2.08% / -2.08% / -1.17%`, which at this
+precision is `6.0 / 5.7 / 2.9 sigma` — real, decaying, and the reason
+the recovery is systematics-limited rather than statistics-limited.
+(An earlier draft, working from a 400-sample check, called the upper
+rungs' mismatch "inside its own noise". That was an artefact of the
+noise, not a property of the estimator; review C22 forced the
+higher-precision measurement that overturned it.)
 
 ### 10.4 Item 2: `Delta*_B`, derived and NOT borrowed
 
@@ -653,22 +662,22 @@ square). So
 The two COEFFICIENTS are calibrated on design-check seeds rather than
 asserted, because `m` and `L` rise together inside a box and their
 ratio therefore disperses LESS than independence would give. Fitted:
-**`a = 1.6019`, `b = 0.4338`**, against an uncorrelated analytic
+**`a = 1.4923`, `b = 0.4586`**, against an uncorrelated analytic
 `b = 0.8132` — the shortfall is that correlation, named rather than
 absorbed. The fit reproduces the measurements it was built from
-(measured 0.3825 / 0.2755 / 0.2225 versus model 0.3809 / 0.2836 /
-0.2134).
+(measured 0.3798 / 0.2805 / 0.2160 versus model 0.3792 / 0.2832 /
+0.2129).
 
-Propagating over the frozen ladder (`m` 19.02 -> 75.42):
+Propagating over the frozen ladder (`m` 18.87 -> 75.77):
 
     Delta*_B = log10[ rel_sd(g; m_top) / rel_sd(g; m_bot) ]
-             = -0.2516 dex.
+             = -0.2508 dex.
 
 **Steeper than `-0.2007`, and that is the evidence it was not
 borrowed**: the count contributes a Poisson component alongside the
 chain's, so the ratio's dispersion decays faster than the chain's
 alone. The equivalence margin follows P11's convention,
-`delta_eq_B = |Delta*_B| / 3 = 0.0839` dex.
+`delta_eq_B = |Delta*_B| / 3 = 0.0836` dex.
 
 **A note against a plausible future error.** The `1.645` in the
 equivalence sample-size slot is `Phi^-1(0.95)`, i.e. **already the
@@ -679,19 +688,24 @@ with a one-sided quantile; the note exists so it is not upgraded again.
 
 ### 10.5 Item 3: six disjoint pairs at the bottom rung
 
-Measured on design-check seeds, 400 samples per rung, both arms:
+Measured on design-check seeds, with the count set per rung (10.6's
+note on why: 4000 / 2000 / 1000, precision bought where it is cheap):
 
 | rung | mean `m` | completion, curved | completion, twin |
 |---|---|---|---|
-| 600 | 19.0 | **1.000** | **1.000** |
-| 1200 | 38.1 | 1.000 | 1.000 |
-| 2400 | 75.4 | 1.000 | 1.000 |
+| 600 | 18.9 | **0.997** (3988 of 4000) | 1.000 |
+| 1200 | 37.8 | 1.000 | 1.000 |
+| 2400 | 75.8 | 1.000 | 1.000 |
 
 The bottom rung — the one Section 5 item 3 singled out, where the pool
-is thinnest — completes 400 of 400. The packing budget is not the
-binding constraint at this operating point, which is a consequence of
-10.8's move: P13's `tau/ell = 1.5` patch is large (`X = 17`) precisely
-because six boxes had to stack along `x` there.
+is thinnest — completes 3988 of 4000, so 12 samples in 4000 fail to pack
+and the frozen fill rule replaces them from reserve slots. That is well
+inside the skip cap and it is quoted rather than rounded to 1.000,
+because at 400 samples it read as exactly 1.000 and the true rate is not
+zero. The packing budget is not the binding constraint at this operating
+point, which is a consequence of 10.8's move: P13's `tau/ell = 1.5`
+patch is large (`X = 17`) precisely because six boxes had to stack along
+`x` there.
 
 ### 10.6 Item 5: the flat twin, promoted and matched
 
@@ -718,34 +732,40 @@ this estimator: `Q_hat` divides one arm by the other, so a CONSISTENT
 offset passes both within-arm gates while numerator and denominator keep
 different discreteness biases. The design check then showed this is not
 a formality but **the dominant systematic**. Scaling P13's twin
-intensity down the ladder left the twin's `m` 2.0-3.4% below the curved
-arm's, producing a bias mismatch of about −1.5%, and with
-`Q/(1-Q) ~ 11` that is ~17% injected into the recovery — the bottom
-rung's measured `(1-Q)` shortfall of 0.0168 is almost exactly what a
-−1.8% mismatch predicts.
+intensity down the ladder left the twin's `m` 2-3% below the curved
+arm's, which shifts the twin's discreteness bias and therefore `Q_hat`;
+with `Q/(1-Q) ~ 15` here, a 1% bias shift is ~15% injected into the
+recovery.
 
 So the twin's intensity is **calibrated per rung against the curved
 arm's realized `m`**, on its own design-check blocks, and frozen at
 
-    rho_twin = 2.2113 / 4.4006 / 8.6615
+    rho_twin = 2.1948 / 4.3370 / 8.6990
 
-which realizes offsets of `+0.86% / -0.68% / -0.06%` on the arm runs.
-Each value is the best PROBED intensity, never an unprobed Newton step:
-the first attempt used a 150-sample probe whose own resolution on mean
-`m` was ~2% while its criterion demanded 0.5%, so it chased noise,
-exhausted its iterations, and returned a `rho` no probe had evaluated.
-The probe is now 400 samples and the criterion is the gate's own 1%. The
-gate is
-`+/- 1%` on the twin-versus-curved `m` ratio per rung.
+which realizes cross-arm offsets of `+0.55% / -0.48% / -0.15%` on the
+arm runs. Each value is the best PROBED intensity, never an unprobed
+Newton step: an earlier attempt used a 150-sample probe whose own
+resolution on mean `m` was ~2% while its criterion demanded 0.5%, so it
+chased noise, exhausted its iterations, and returned a `rho` no probe
+had evaluated. The probe is now 400 samples and the criterion is the
+gate's own 1%. **The gate ABORTS the check** rather than recording a
+failure and continuing (review C21), and so does the calibration's
+convergence.
 
-**(3) The residual bias mismatch is published, and it sets a RECOVERY
-FLOOR.** Matching `m` did not make the cancellation exact:
+**(3) The residual bias mismatch is real at every rung, measured rather
+than inferred, and it decays.** Matching `m` to better than 0.6% does
+not make the cancellation exact:
 
-| rung | cross-arm `m` offset | bias mismatch | significance | implied error in `R tau^2` |
-|---|---|---|---|---|
-| 19.0 | +0.86% | **-2.29% +/- 1.09%** | 2.1 sigma | **36%** |
-| 38.1 | -0.68% | +0.14% +/- 0.80% | 0.2 sigma | 1.6% |
-| 75.4 | -0.06% | -0.19% +/- 0.63% | 0.3 sigma | 2.2% |
+| rung | cross-arm `m` offset | bias mismatch | significance | implied err in `R tau^2` | observed |
+|---|---|---|---|---|---|
+| 18.9 | +0.55% | **-2.078% +/- 0.348%** | 6.0 sigma | 31% | 26% |
+| 37.8 | -0.48% | **-2.080% +/- 0.365%** | 5.7 sigma | 31% | 26% |
+| 75.8 | -0.15% | **-1.171% +/- 0.399%** | 2.9 sigma | 15% | 15% |
+
+The implied column is `|mismatch| * Q/(1-Q)`; the observed column is
+10.7's dimensionless recovery. **They agree to within a few points, and
+at the top rung to one**, so the mismatch accounts for essentially the
+whole recovery error rather than merely contributing to it.
 
 The reason is structural and is stated rather than absorbed: **on the
 curved side the intensity varies WITHIN a box** (`Omega^2` depends on
@@ -757,31 +777,40 @@ point process as the curved arm, and `Q_hat` would be identically 1. The
 gradient IS the signal, so the part of it the estimator mis-reads is
 inseparable from the part it reads correctly.
 
-**Consequence, frozen as an expectation, and it is rung-dependent.**
-Against the statistical noise on the same quantity —
-12.3% / 8.8% / 7.2% at 400 samples, falling to 8.3% / 5.9% / 4.8% at the
-campaign's `n ~ 879` — the systematic dominates only at the bottom rung:
+**Consequence, and the two things this replaces** (review C22). Against
+the statistical noise on the same quantity — `4.0% / 4.2% / 4.4%` at
+these sample counts — the systematic is 6 to 7 times larger at every
+rung:
 
-| rung | expected systematic | expected statistical at campaign `n` | limited by |
-|---|---|---|---|
-| 19.0 | 36% | 8.3% | **systematics** |
-| 38.1 | 1.6% | 5.9% | statistics |
-| 75.4 | 2.2% | 4.8% | statistics |
+| rung | systematic | statistical | limited by | recovery |
+|---|---|---|---|---|
+| 18.9 | 31% | 4.0% | **systematics** | 26% |
+| 37.8 | 31% | 4.2% | **systematics** | 26% |
+| 75.8 | 15% | 4.4% | **systematics** | 15% |
 
-So the two upper rungs are statistics-limited and their expected recovery
-is roughly 5-6% at campaign size; the bottom rung is systematics-limited
-at about 36% and more samples will not move it. 10.7's co-requirement is
-therefore evaluated at the TOP rung, where the floor is 2%, and the
-bottom rung's excess is expected rather than anomalous.
+So the recovery is systematics-limited at **every** rung, and adding
+samples narrows the interval without moving the centre. But the
+systematic **decays with density** — `-2.08%` at both lower rungs then
+`-1.17%` at the top — so raising the operating point does move it, which
+is a different and useful statement.
 
-An earlier draft of this subsection read the floor as ~11% at every rung.
-That figure came from an under-calibrated twin (10.6 item 2's first
-attempt) and is withdrawn: matching `m` properly took the upper rungs'
-mismatch from ~0.9% to inside its own noise.
+Two earlier readings of this subsection are withdrawn, and both were the
+same error in opposite directions. It first read the floor as ~11% at
+every rung, from an under-calibrated twin. It then read `-2.29% +/-
+1.09%` at the bottom rung as a 36% floor that more samples could not
+move, while calling the upper rungs' mismatch "inside its own noise" —
+a 2.1-sigma point estimate frozen as a known systematic on one side and
+a real 5-sigma effect dismissed as noise on the other. **Declaring the
+bottom rung's excess "expected rather than anomalous" would have
+pre-excused a genuine campaign discrepancy**, which is the worst form of
+the point-estimate habit. The remedy was evidence: the counts are now
+4000 / 2000 / 1000, chosen where the question is and where it is cheap
+(measured cost 0.046 / 0.123 / 0.552 s per sample over both arms), and
+the mismatch is resolved to `+/- 0.35-0.40%` at every rung.
 
 **`n_twin = n_per_rung`.** The twin's per-pair dispersion is measured
-equal to the curved arm's (0.369 / 0.279 / 0.211 against 0.383 / 0.276 /
-0.222), so equal `n` equalizes the two contributions to `se(Q_hat)`. The
+equal to the curved arm's (0.383 / 0.285 / 0.221 against 0.380 / 0.281 /
+0.216), so equal `n` equalizes the two contributions to `se(Q_hat)`. The
 twin is not separately equivalence-sized as P13's was, because P13's
 twin supplied a GATED CONTRAST while this one supplies a NORMALIZER
 inside the estimator — and its sampling variation is now carried by the
@@ -803,37 +832,36 @@ summaries of one population disagreeing inside one script):
 
 | rung | `m` | median `\|R_hat-R\|/R` | samples below error 1 | boundary hits | pooled |
 |---|---|---|---|---|---|
-| 600 | 19.0 | 1.00 | 66 / 400 (16.5%) | 37.2% | 0.428 |
-| 1200 | 38.1 | 1.00 | 103 / 400 (25.8%) | 30.2% | 0.761 |
-| 2400 | 75.4 | 1.00 | 120 / 400 (30.0%) | 26.8% | 0.513 |
+| 600 | 18.9 | 1.00 | 676 / 3988 (17.0%) | 38.1% | 0.484 |
+| 1200 | 37.8 | 1.00 | 445 / 2000 (22.2%) | 34.6% | 0.290 |
+| 2400 | 75.8 | 1.00 | 331 / 1000 (33.1%) | 28.1% | 0.328 |
 
 **The first version's "no single sample recovers `R`" was false against
 its own artifact and is withdrawn.** The correct statement: a MINORITY
 of samples recover `R` to better than 100%, and that minority grows with
-density — 18% to 31% across the ladder, which is the signal the gate
+density — 17.0% to 33.1% across the ladder, which is the signal the gate
 reads. The median sits at exactly 1 because the boundary population plus
 the worse-than-1 population is a majority at every rung.
 
-The pooled dimensionful recovery is **not monotone** — 0.428 / 0.761 /
-0.513 — because it is a product of two errors with independent signs.
+The pooled dimensionful recovery is **not monotone** — 0.484 / 0.290 /
+0.328 — because it is a product of two errors with independent signs.
 Splitting it shows what each contributes:
 
 | rung | `R tau^2` recovered | truth | relative error | `tau_hat/tau` |
 |---|---|---|---|---|
-| 600 | 3.1919 | 4.5 | 0.291 | 0.705 |
-| 1200 | 4.5828 | 4.5 | **0.018** | 0.760 |
-| 2400 | 4.3879 | 4.5 | **0.025** | 0.803 |
+| 600 | 3.3127 | 4.5 | 0.264 | 0.704 |
+| 1200 | 3.3113 | 4.5 | 0.264 | 0.755 |
+| 2400 | 3.8269 | 4.5 | **0.150** | 0.800 |
 
 `R tau^2 = 8 s^2` needs **no length at all** — it comes from `Q_hat`
-alone. It recovers to 1.8% and 2.5% at the two upper rungs and to 29% at
-the bottom one, where 10.6 puts the systematic at 36%. The upper rungs'
-figures are BETTER than their own statistical noise (8.8% and 7.2% at
-this sample size), so they are a fortunate draw and must not be quoted as
-the expected accuracy — 10.6's table gives that, at 5-6% for campaign
-size. Dividing by `tau_hat_bar^2` to reach `R` in continuum units then
-multiplies the error by `(tau/tau_hat)^2` — 1.55 at the top rung — and
-whether the two errors add or partly cancel at a given rung is
-arithmetic, not trend.
+alone. It recovers to 26% / 26% / 15%, and 10.6's mismatch column
+predicts 31% / 31% / 15% from the bias mismatch alone, so **the recovery
+error is the systematic and almost nothing else** — the statistical noise
+is 4% at every rung. The sequence improves only between the middle and
+top rungs, which is where the mismatch itself falls. Dividing by
+`tau_hat_bar^2` to reach `R` in continuum units then multiplies the error
+by `(tau/tau_hat)^2` — 1.56 at the top rung — and whether the two errors
+add or partly cancel at a given rung is arithmetic, not trend.
 
 **So the addendum adds a co-requirement Section 5 did not ask for.**
 The budget alone makes the failure visible; it does not stop the
@@ -848,15 +876,21 @@ Section 11 record cost. Frozen:
 > **RATE-ONLY** and states in the same sentence that no curvature was
 > recovered — the gate measured a decaying bias and nothing else.
 
-`0.25` is a design choice, stated as one, and it is set against 10.6's
-budget rather than against a single draw: at the TOP rung the systematic
-is 2.2% and the statistical noise at campaign size is 4.8%, so the
-expected recovery is 5-6% and (ii) is expected to pass with roughly a
-factor of four in hand. The threshold is evaluated at the top rung for
-that reason, and it is tight enough to exclude "recovering nothing",
-which sits near 1. All of it is disclosed here so a pass is not read as
-a discovery, and so a FAILURE would mean the budget was wrong rather
-than the sample unlucky.
+`0.25` is a design choice, stated as one, and the headroom it leaves is
+now measured rather than hoped: at the TOP rung the expected recovery is
+**15%** — the systematic, since the statistical part is 4% — with an
+uncertainty near 5% once the mismatch's own `+/- 0.40%` is propagated. So
+`P(pass) ~ 95%`, roughly `1.5 sigma` of margin, **not the factor of four
+an earlier draft claimed** on the strength of a fortunate 400-sample
+draw. The threshold is evaluated at the top rung because that is where
+the systematic is smallest, and 0.25 is tight enough to exclude
+"recovering nothing", which sits near 1.
+
+The threshold is NOT loosened to buy more margin. 15% against 25% is a
+design that can afford its likely verdict, which is the requirement; and
+a failure then means the systematic came in worse than 10.6 measured,
+which is a finding rather than an excuse. All of it is disclosed here so
+a pass is not read as a discovery.
 
 ### 10.8 The operating point moves to `tau/ell = 1.5`
 
@@ -885,10 +919,10 @@ Frozen constants, P13's 1.50 rung verbatim: `ell = 1`,
 (`+/- 10%`), twin band centre `4.2262`. The density ladder is fixed
 geometry with `rho` scaling 4x end to end as Stage A's did:
 `rho in {19.025, 38.05, 76.1}` giving `m ~ 19 / 38 / 75`, and the twin
-`rho_twin in {2.2113, 4.4006, 8.6615}` — **calibrated per rung against
+`rho_twin in {2.1948, 4.3370, 8.6990}` — **calibrated per rung against
 the curved arm's realized `m`** per 10.6 (2), not P13's values scaled,
-because scaling left the arms 2-3.4% apart in `m` and that offset was
-the design's dominant systematic.
+because scaling left the arms 2-3% apart in `m` and that offset dominated
+the recovery error.
 
 **Scope this moves, stated plainly.** Stage B no longer measures at
 Stage A's band, so it does not inherit Stage A's IMPROVES as evidence
@@ -904,16 +938,20 @@ the accuracy the record reports.** That is the strong form of "order +
 number = geometry" for a curvature invariant, and it is the first
 quantity in this programme that is not a length or a time.
 
-**The expected accuracy is 5-6% at the two upper rungs and about 36% at
-the bottom one, and the limiting factor differs between them** (10.6
-item 3). A pass may therefore not be written as "recoverable to arbitrary
-accuracy given enough samples" without saying at which rung: the upper
-rungs are statistics-limited, so more samples do help there, while the
-bottom rung is systematics-limited and they do not. The record must state
-which limit each rung hit, and the bottom rung's floor — a flat twin
-cannot reproduce a curved box's intra-box intensity gradient — is a
-property of the CONSTRUCTION, not of the instrument. Removing it needs a
-different control, which is a different design.
+**The expected accuracy is 26% / 26% / 15% down the ladder and it is
+SYSTEMATICS-limited at every rung** (10.6 item 3), with the statistical
+part at 4%. So a pass may not be written as "recoverable to arbitrary
+accuracy given enough samples": more samples narrow the interval and
+leave the centre where it is. What does move it is density — the
+mismatch falls from `-2.08%` to `-1.17%` between `m ~ 38` and `m ~ 76`
+— so the honest form of the claim is that the accuracy improves with
+the operating point, not with the sample count.
+
+The limit itself — a flat twin cannot reproduce a curved box's intra-box
+intensity gradient — is a property of the CONSTRUCTION, not of the
+instrument, and the record must say so beside any number. Removing it
+needs a control matched in the box-area distribution rather than only in
+`m`, which is a different design.
 
 It does NOT support the general claim that curvature is recoverable
 from causal order in general. P13's Section 13.3 gives the reason and
@@ -946,7 +984,7 @@ published as consumed. Then P11's frozen formulas with `Delta*_B` and
 
 with the FLAT-WITHIN-MARGIN row available only if `n_eq <= 1300`.
 Indicative, uncalibrated, from design check on the PAIRED statistic:
-`S^2 = 0.4757`, `n_sup = 79`, `n_eq = 879` — so **both verdicts look
+`S^2 = 0.4688`, `n_sup = 79`, `n_eq = 872` — so **both verdicts look
 purchasable at the cap**, which is the affordability statement P13's
 Section 1.3 requires a design to make about itself before running. The
 pilot's calibrated bounds decide, and they will run higher than these,
@@ -955,14 +993,16 @@ boundary is not a gentle one. The cap of 1300 leaves roughly 45% of
 headroom against `n_eq`, which is the margin that has to absorb it.
 
 Design-check `Delta_B` on the paired statistic, for disclosure:
-mean `y_B` = `+0.2060 / +0.1424 / +0.0624`, so
-`Delta_B = -0.1436 +/- 0.0345` against a derived `Delta*_B = -0.2516`.
-Monotone, same sign, and about 3 sigma shallower than the target — which
-is what the boundary population does to a rate (10.2), and is why 10.7's
-co-requirement rather than the rate alone decides whether anything was
-recovered. `n_sup` against the OBSERVED rate rather than the derived one
-is 242, still far under `n_eq`, so the shallower rate does not change
-what binds.
+mean `y_B` = `+0.2342 / +0.1205 / +0.0116`, so
+`Delta_B = -0.2227 +/- 0.0167` against a derived
+`Delta*_B = -0.2508` — monotone, same sign, and 1.7 sigma shallower,
+which is compatible with the target. (An earlier draft measured
+`-0.1436 +/- 0.0345` at a quarter of these counts and read the gap as a
+3-sigma compression from the boundary population; at this precision the
+gap is not established, so that reading is withdrawn and only the
+compression MECHANISM stands, unquantified.) `n_sup` against the
+observed rate is 100, still far under `n_eq`, so nothing that binds
+changes either way.
 
 **Seed windows (frozen). Section 6's `1200000-1999999` reservation is
 SUPERSEDED**, for two reasons stated rather than worked around: six
@@ -1017,7 +1057,14 @@ catch:
    clean curved arm (P13's C5 regression, ported);
 4b. the CROSS-ARM `m` gate at `+/- 1%`, failing on two arms that are
    each internally flat but offset from one another — the case within-arm
-   gates cannot see, and the one review C11 found had already bitten;
+   gates cannot see, and the one review C11 found had already bitten.
+   The test must assert that the failure **aborts**, not merely that it
+   is recorded, since review C21 found the first fix recording it and
+   continuing;
+4d. seed-block disjointness over every block the stage consumes, both
+   arms and every calibration iteration, enumerated rather than argued —
+   review C17 found 14 cross-rung collisions behind a comment that
+   claimed separation;
 4c. the paired statistic carrying twin variation: a construction that
    substitutes the twin's rung mean must produce a strictly smaller
    variance than the paired one on the same data, so the test asserts
