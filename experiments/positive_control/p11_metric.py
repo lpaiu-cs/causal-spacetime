@@ -271,14 +271,25 @@ def fill_block(n: int, base: int, slots: int, needed: int,
     return records, skipped, False
 
 
-def verdict(lo: float, hi: float, flat_available: bool) -> str:
-    """The frozen table of Section 1.4: rows in order, first match."""
+def verdict(lo: float, hi: float, flat_available: bool, *,
+            delta_eq: float) -> str:
+    """The frozen table of Section 1.4: rows in order, first match.
+
+    `delta_eq` is keyword-only and has NO DEFAULT, which review C30 is
+    the reason for. The table is shared across stages; the margin is
+    not. P12 Stage B sizes its equivalence row with `DELTA_EQ_B =
+    0.0836` and then read this row at P11's `0.067`, so an interval it
+    had powered itself to call FLAT-WITHIN-MARGIN would have come back
+    INCONCLUSIVE. A default would have let the next stage inherit the
+    wrong margin the same silent way; naming it at each call site is
+    what makes the mismatch visible where it is made.
+    """
 
     if hi < 0.0:
         return "IMPROVES"
     if lo > 0.0:
         return "DEGRADES"
-    if flat_available and (-DELTA_EQ < lo) and (hi < DELTA_EQ):
+    if flat_available and (-delta_eq < lo) and (hi < delta_eq):
         return "FLAT-WITHIN-MARGIN"
     return "INCONCLUSIVE" if flat_available else "UNRESOLVED"
 
@@ -616,7 +627,7 @@ def run_stage_a(output_dir: Path) -> None:
             skip_counts[n] > 0 for n in P11_LADDER
         )),
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P11_LADDER},
         "middle_rung_between_endpoints": bool(
@@ -1130,7 +1141,7 @@ def run_stage_b(output_dir: Path) -> None:
             )) for n in P11_LADDER
         },
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P11_LADDER},
         "middle_rung_between_endpoints": bool(
@@ -1481,7 +1492,7 @@ def run_stage_c(output_dir: Path) -> None:
             )) for n in P11_LADDER
         },
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P11_LADDER},
         "middle_rung_between_endpoints": bool(

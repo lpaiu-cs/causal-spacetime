@@ -334,13 +334,35 @@ def test_stage_b_windows_are_private_and_fresh():
 
 
 def test_verdict_precedence_is_single_valued():
-    assert verdict(-0.05, -0.01, True) == "IMPROVES"      # also in margin
-    assert verdict(0.01, 0.05, True) == "DEGRADES"        # also in margin
-    assert verdict(-0.05, 0.05, True) == "FLAT-WITHIN-MARGIN"
-    assert verdict(-0.10, 0.05, True) == "INCONCLUSIVE"
-    assert verdict(-0.05, 0.05, False) == "UNRESOLVED"
-    assert verdict(-0.05, -0.01, False) == "IMPROVES"
+    def v(lo, hi, flat, delta_eq=DELTA_EQ):
+        return verdict(lo, hi, flat, delta_eq=delta_eq)
+
+    assert v(-0.05, -0.01, True) == "IMPROVES"      # also in margin
+    assert v(0.01, 0.05, True) == "DEGRADES"        # also in margin
+    assert v(-0.05, 0.05, True) == "FLAT-WITHIN-MARGIN"
+    assert v(-0.10, 0.05, True) == "INCONCLUSIVE"
+    assert v(-0.05, 0.05, False) == "UNRESOLVED"
+    assert v(-0.05, -0.01, False) == "IMPROVES"
     assert abs(DELTA_EQ - 0.067) < 1e-12
+
+
+def test_the_equivalence_margin_is_the_callers_and_has_no_default():
+    """The case, review C30: the 1.4 table is shared across stages and
+    the margin is not. P12 Stage B sizes its equivalence row at 0.0836
+    and read this row at P11's 0.067, so an interval it had powered
+    itself to call FLAT-WITHIN-MARGIN came back INCONCLUSIVE.
+
+    The same interval must therefore give different rows under different
+    margins -- and the parameter must be required, because a default is
+    exactly how the next stage inherits the wrong one without saying so.
+    """
+
+    spans_zero = (-0.075, 0.075)
+    assert verdict(*spans_zero, True, delta_eq=0.0836) == (
+        "FLAT-WITHIN-MARGIN")
+    assert verdict(*spans_zero, True, delta_eq=DELTA_EQ) == "INCONCLUSIVE"
+    with pytest.raises(TypeError):
+        verdict(*spans_zero, True)
 
 
 def _gaussian_pilot(sigma: float, seed: int, n: int = 200) -> np.ndarray:

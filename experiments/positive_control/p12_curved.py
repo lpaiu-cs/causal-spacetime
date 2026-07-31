@@ -23,6 +23,7 @@ import numpy as np
 from p10_continuum_ladder import _stable_seed
 from p11_metric import (
     BONETT_Z,
+    DELTA_EQ,
     DRAW_REJECTION_CAP,
     K_PAIRS,
     N_CAP,
@@ -401,7 +402,10 @@ def run_stage_a(output_dir: Path) -> None:
         "selection_caveat": bool(any(skip_counts[n] > 0
                                      for n in P12_LADDER)),
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        # Stage A inherits P11's sizing wholesale (`N_EQ_COEFF` above is
+        # imported, not derived here), so P11's margin is the one it was
+        # powered for -- named rather than defaulted, per C30.
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P12_LADDER},
         "middle_rung_between_endpoints": bool(

@@ -1045,7 +1045,13 @@ def stage_b_record(delta: float, ci: list[float], flat_available: bool,
     recovery, which is what P13's Section 11 record cost.
     """
 
-    rate = verdict(ci[0], ci[1], flat_available)
+    # 10.4 derives this stage's own margin, `delta_eq_B = |Delta*_B|/3 =
+    # 0.0836`, and 10.10 SIZES the equivalence row with it -- so reading
+    # the 1.4 table at P11's 0.067, as this did until review C30, would
+    # have returned INCONCLUSIVE on an interval the campaign had powered
+    # itself to call FLAT-WITHIN-MARGIN. The table is shared; the margin
+    # is this stage's.
+    rate = verdict(ci[0], ci[1], flat_available, delta_eq=DELTA_EQ_B)
     recovered = bool(recovery["rel_error"] <= RECOVERY_THRESHOLD)
     if rate == "IMPROVES" and not recovered:
         outcome = "RATE-ONLY"

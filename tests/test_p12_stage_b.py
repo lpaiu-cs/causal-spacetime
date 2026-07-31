@@ -813,6 +813,27 @@ def test_recovery_threshold_is_evaluated_at_exactly_the_frozen_value():
     assert just_over["outcome"] == "RATE-ONLY"
 
 
+def test_stage_b_reads_the_equivalence_row_at_its_own_margin():
+    """The case, review C30: 10.4 derives this stage's own
+    `delta_eq_B = |Delta*_B|/3 = 0.0836` and 10.10 SIZES the equivalence
+    row with it, but the record read the shared 1.4 table at P11's
+    `DELTA_EQ = 0.067`. An interval the campaign had powered itself to
+    call FLAT-WITHIN-MARGIN therefore came back INCONCLUSIVE -- a stage
+    refusing a verdict it had already paid the samples for.
+
+    `[-0.075, 0.075]` is inside 0.0836 and outside 0.067, so it
+    separates the two margins by itself.
+    """
+
+    assert DELTA_EQ_B == 0.0836
+    powered = stage_b_record(0.0, [-0.075, 0.075], True, _recovery(0.10))
+    assert powered["rate_verdict"] == "FLAT-WITHIN-MARGIN"
+    # the row is still unavailable when the campaign was not sized for
+    # it, which is the flag's job and not the margin's
+    unpowered = stage_b_record(0.0, [-0.075, 0.075], False, _recovery(0.10))
+    assert unpowered["rate_verdict"] == "UNRESOLVED"
+
+
 # ====================================================================
 # the cross-stage gate, and the constants it must not confuse
 # ====================================================================
