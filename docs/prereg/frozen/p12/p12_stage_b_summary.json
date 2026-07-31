@@ -1,0 +1,347 @@
+{
+  "code_version": "5252ee7",
+  "cross_stage_gate": {
+    "p12_stage_a": {
+      "verdict": "IMPROVES",
+      "code_version": "6d1d1bf"
+    },
+    "p13_stage_a_13c": {
+      "verdict": "CURVATURE-ROBUST",
+      "code_version": "33e371f",
+      "control_result": "CONTROL-CLEAN",
+      "selection_caveat": true
+    }
+  },
+  "n_per_rung": 1117,
+  "n_twin": 1117,
+  "flat_available": true,
+  "tau_over_ell": 1.5,
+  "ricci_scalar_true": 2.0,
+  "r_tau2_true": 4.5,
+  "delta_b": -0.26372584464515403,
+  "delta_b_ci": [
+    -0.30370960413710607,
+    -0.22334142085496808
+  ],
+  "rate_verdict": "IMPROVES",
+  "recovery_rel_error": 0.17076350660657566,
+  "recovery_rel_error_ci": [
+    0.07843060548482836,
+    0.2643640137607833
+  ],
+  "recovery_threshold": 0.25,
+  "recovery_passed": true,
+  "outcome": "RECOVERS-CURVATURE",
+  "statement": "RECOVERS-CURVATURE: the rate gate passed and the top rung's dimensionless recovery is 0.171 <= 0.25. Scope, which the record must carry in the same breath: 1+1D metrics are conformally flat, so curvature reaches the causal order only through the volume this estimator reads; d >= 3 is where the general question lives.",
+  "verdict": "RECOVERS-CURVATURE",
+  "dimensionless_recovery_by_rung": {
+    "600": {
+      "Q_hat": 0.9238238694587346,
+      "one_minus_Q": 0.07617613054126537,
+      "R_tau2_hat": 4.1539631236522325,
+      "R_tau2_true": 4.5,
+      "rel_error": 0.07689708363283722,
+      "rel_error_ci": [
+        0.003767826465518118,
+        0.24099503514549167
+      ],
+      "R_tau2_ci": [
+        3.4155223418452874,
+        4.87997798230868
+      ],
+      "tau_hat_over_tau_true": 0.70439312907398
+    },
+    "1200": {
+      "Q_hat": 0.9322825442012721,
+      "one_minus_Q": 0.0677174557987279,
+      "R_tau2_hat": 3.6386133179917612,
+      "R_tau2_true": 4.5,
+      "rel_error": 0.19141926266849751,
+      "rel_error_ci": [
+        0.07049299587805327,
+        0.3138153769066655
+      ],
+      "R_tau2_ci": [
+        3.0878308039200055,
+        4.182781518548761
+      ],
+      "tau_hat_over_tau_true": 0.7560251961433541
+    },
+    "2400": {
+      "Q_hat": 0.9307386430576204,
+      "one_minus_Q": 0.06926135694237956,
+      "R_tau2_hat": 3.7315642202704096,
+      "R_tau2_true": 4.5,
+      "rel_error": 0.17076350660657566,
+      "rel_error_ci": [
+        0.07843060548482836,
+        0.2643640137607833
+      ],
+      "R_tau2_ci": [
+        3.3103619380764755,
+        4.147062275318272
+      ],
+      "tau_hat_over_tau_true": 0.7993750970992385
+    }
+  },
+  "mean_y_b_by_rung": {
+    "600": 0.26174555430093177,
+    "1200": 0.09847288146844628,
+    "2400": -0.0019802903442222492
+  },
+  "per_rung": {
+    "600": {
+      "n_paired": 1117,
+      "boundary_hits": 404,
+      "boundary_fraction": 0.36168307967770813,
+      "median_rel_error": 1.0,
+      "count_below_one": 175,
+      "fraction_below_one": 0.1566696508504924,
+      "variance": 0.2563496869918632
+    },
+    "1200": {
+      "n_paired": 1117,
+      "boundary_hits": 347,
+      "boundary_fraction": 0.3106535362578335,
+      "median_rel_error": 1.0,
+      "count_below_one": 295,
+      "fraction_below_one": 0.26410026857654434,
+      "variance": 0.2551065519845203
+    },
+    "2400": {
+      "n_paired": 1117,
+      "boundary_hits": 304,
+      "boundary_fraction": 0.2721575649059982,
+      "median_rel_error": 1.0,
+      "count_below_one": 397,
+      "fraction_below_one": 0.35541629364368843,
+      "variance": 0.21332795387111458
+    }
+  },
+  "m_gate_curved": {
+    "arm": "curved",
+    "tolerance": 0.05,
+    "per_rung": {
+      "600": {
+        "mean_m": 18.831542823037896,
+        "target_m": 18.8681,
+        "offset": -0.0019375123601265143,
+        "passed": true
+      },
+      "1200": {
+        "mean_m": 37.89838854073411,
+        "target_m": 37.8014,
+        "offset": 0.002565739383570742,
+        "passed": true
+      },
+      "2400": {
+        "mean_m": 75.9298716800955,
+        "target_m": 75.7675,
+        "offset": 0.002143025440927815,
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "m_gate_twin": {
+    "arm": "twin",
+    "tolerance": 0.05,
+    "per_rung": {
+      "600": {
+        "mean_m": 18.900477469412113,
+        "target_m": 18.8681,
+        "offset": 0.0017159899201357742,
+        "passed": true
+      },
+      "1200": {
+        "mean_m": 37.60668457176962,
+        "target_m": 37.8014,
+        "offset": -0.005151011026850338,
+        "passed": true
+      },
+      "2400": {
+        "mean_m": 75.68263205013429,
+        "target_m": 75.7675,
+        "offset": -0.0011201102037906585,
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "cross_arm_m_gate": {
+    "name": "cross-arm m",
+    "tolerance": 0.01,
+    "enforced": true,
+    "per_rung": {
+      "600": {
+        "mean_m_curved": 18.831542823037896,
+        "mean_m_twin": 18.900477469412113,
+        "se_mean_m_curved": 0.05681318308402311,
+        "se_mean_m_twin": 0.05967246571997772,
+        "cross_arm_offset": 0.0036605947277927875,
+        "cross_arm_offset_se": 0.004382866809613762,
+        "resolution_ratio": 2.2816116561117323,
+        "bias_factor_curved": 2.098243655092475,
+        "bias_factor_twin": 2.085650857275403,
+        "bias_mismatch": -0.006001589847065225,
+        "passed": true
+      },
+      "1200": {
+        "mean_m_curved": 37.89838854073411,
+        "mean_m_twin": 37.60668457176962,
+        "se_mean_m_curved": 0.09120530853330616,
+        "se_mean_m_twin": 0.09217179045424229,
+        "cross_arm_offset": -0.007697001909486523,
+        "cross_arm_offset_se": 0.003408487505419223,
+        "resolution_ratio": 2.933852620583411,
+        "bias_factor_curved": 1.7756454715767302,
+        "bias_factor_twin": 1.7489748901762951,
+        "bias_mismatch": -0.015020217620780096,
+        "passed": true
+      },
+      "2400": {
+        "mean_m_curved": 75.9298716800955,
+        "mean_m_twin": 75.68263205013429,
+        "se_mean_m_curved": 0.14283557043571246,
+        "se_mean_m_twin": 0.1533398880841328,
+        "cross_arm_offset": -0.0032561576161075356,
+        "cross_arm_offset_se": 0.002755735182422379,
+        "resolution_ratio": 3.6287957071439942,
+        "bias_factor_curved": 1.5586157757084422,
+        "bias_factor_twin": 1.537751612280538,
+        "bias_mismatch": -0.01338634174828679,
+        "passed": true
+      }
+    },
+    "passed": true,
+    "measured_passed": true,
+    "note": "ENFORCED: a failure aborts before anything is written."
+  },
+  "cross_arm_spurious_trip_probability": {
+    "600": 0.15247766391064688,
+    "1200": 0.09338121999750526,
+    "2400": 0.05123891727951557
+  },
+  "skip_counts": {
+    "600": {
+      "curved": 2,
+      "twin": 0
+    },
+    "1200": {
+      "curved": 1,
+      "twin": 0
+    },
+    "2400": {
+      "curved": 1,
+      "twin": 0
+    }
+  },
+  "skipped_seeds": {
+    "600": {
+      "curved": [
+        31139200,
+        31176200
+      ],
+      "twin": []
+    },
+    "1200": {
+      "curved": [
+        31577200
+      ],
+      "twin": []
+    },
+    "2400": {
+      "curved": [
+        31824000
+      ],
+      "twin": []
+    }
+  },
+  "selection_caveat": true,
+  "scope": "Supports: the scalar curvature of the ambient geometry is recoverable from causal order plus the interval count, OVER THIS LADDER, to the accuracy reported. Does NOT support the general claim: 1+1D metrics are conformally flat, so curvature reaches the order only through the volume this estimator reads. d >= 3 is where that question lives.",
+  "construction_limit": "A flat twin cannot reproduce a curved box's intra-box intensity gradient, so the residual bias mismatch is a property of the CONSTRUCTION, not of the instrument. Removing it needs a control matched in the box-area distribution rather than only in m, which is a different design.",
+  "labelled_checks": {
+    "mean_m_by_rung_curved": {
+      "600": 18.831542823037896,
+      "1200": 37.89838854073411,
+      "2400": 75.9298716800955
+    },
+    "mean_m_by_rung_twin": {
+      "600": 18.900477469412113,
+      "1200": 37.60668457176962,
+      "2400": 75.68263205013429
+    },
+    "mean_tau_hat_by_rung": {
+      "600": 1.05658969361097,
+      "1200": 1.134037794215031,
+      "2400": 1.1990626456488578
+    }
+  },
+  "seed_blocks": [
+    {
+      "label": "verify-600",
+      "lo": 30000000,
+      "hi": 30001999
+    },
+    {
+      "label": "verify-1200",
+      "lo": 30002000,
+      "hi": 30003999
+    },
+    {
+      "label": "verify-2400",
+      "lo": 30004000,
+      "hi": 30005999
+    },
+    {
+      "label": "pilot-curved-600",
+      "lo": 30100000,
+      "hi": 30163800
+    },
+    {
+      "label": "pilot-curved-2400",
+      "lo": 30200000,
+      "hi": 30263800
+    },
+    {
+      "label": "pilot-twin-600",
+      "lo": 30300000,
+      "hi": 30363800
+    },
+    {
+      "label": "pilot-twin-2400",
+      "lo": 30400000,
+      "hi": 30463800
+    },
+    {
+      "label": "stage-curved-600",
+      "lo": 31000000,
+      "hi": 31263800
+    },
+    {
+      "label": "stage-curved-1200",
+      "lo": 31400000,
+      "hi": 31663800
+    },
+    {
+      "label": "stage-curved-2400",
+      "lo": 31800000,
+      "hi": 32063800
+    },
+    {
+      "label": "stage-twin-600",
+      "lo": 32200000,
+      "hi": 32463800
+    },
+    {
+      "label": "stage-twin-1200",
+      "lo": 32600000,
+      "hi": 32863800
+    },
+    {
+      "label": "stage-twin-2400",
+      "lo": 33000000,
+      "hi": 33263800
+    }
+  ]
+}

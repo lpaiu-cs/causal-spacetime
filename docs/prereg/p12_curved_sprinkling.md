@@ -1,11 +1,16 @@
 # P12: does the instrument read CURVED geometry? — power-first preregistration
 
-Status: **STAGE A HAS RUN and returned IMPROVES (Section 9). STAGE B
-IS FROZEN BY THE SECTION 10 ADDENDUM (2026-07-31) and has NOT run.**
+Status: **STAGE A HAS RUN and returned IMPROVES (9.2). STAGE B HAS RUN
+and returned RECOVERS-CURVATURE with both halves of its co-requirement
+passing (9.3) — read with the four qualifications recorded there, chief
+among them that the recovery is of the ENSEMBLE-POOLED dimensionless
+`R tau^2` and that the median single sample recovers nothing.**
 Sections 1 through 8 are design v1.1 as frozen before Stage A; Section
-9 is Stage A's record and is not re-read; Section 10 is the Stage B
-addendum that Section 5 declared and deferred. Dates are local
-(UTC+9); commit timestamps carry their +09:00 offset.
+9 holds the stage records and is not re-read; Section 10 is the Stage B
+addendum that Section 5 declared and deferred, frozen before any Stage
+B datum, with one clause amended post-run and the amendment disclosed
+in place (10.10's completeness pin, which contradicted 10.5). Dates are
+local (UTC+9); commit timestamps carry their +09:00 offset.
 
 *(The header previously read "Nothing below has been run" while
 Section 9 carried a completed campaign — the narrative-versus-artifact
@@ -478,6 +483,130 @@ exponent survives there.
 
 Artifacts: `docs/prereg/frozen/p12/` (verification, pilot, Stage A),
 stamp recorded in each.
+
+### 9.3 Stage B-12 (2026-07-31): both halves of the co-requirement pass — **RECOVERS-CURVATURE**, and the size must be read beside the word
+
+Implementation and campaign at stamp `5252ee7`, on the frozen Section 10
+design. `n_per_rung = n_twin = 1117`, chosen by the frozen formulas from
+Stage P-B's calibrated bounds (`S^2 = 0.4505`, `S^2_90 = 0.6006`,
+`n_sup = 101`, `n_eq = 1117`) against the cap of 1300. Wall clock 4.8
+minutes over both arms.
+
+```
+Delta_B  = -0.2637,  95% CI [-0.3037, -0.2233]   ->  IMPROVES
+top rung |R tau^2 hat - R tau^2| / R tau^2 = 0.1708  <=  0.25  ->  passes
+outcome:  RECOVERS-CURVATURE
+```
+
+**The derived rate reproduced.** `Delta*_B = -0.2508` was derived in 10.4
+from the propagated Poisson and chain rates, not borrowed; the campaign
+measures `-0.2637 +/- 0.0205`, which is **0.63 sigma** from it. The
+design check's `-0.2227 +/- 0.0167` had read 1.7 sigma shallow, and 10.10
+declined to interpret that gap; at campaign precision the gap does not
+reproduce, which is the outcome that declining earned.
+
+| rung | `Q_hat` | `1 - Q_hat` | `R tau^2 hat` | rel error | 95% CI |
+|---|---|---|---|---|---|
+| 600 | 0.92382 | 0.07618 | 4.1540 | 0.0769 | [0.0038, 0.2410] |
+| 1200 | 0.93228 | 0.06772 | 3.6386 | 0.1914 | [0.0705, 0.3138] |
+| 2400 | 0.93074 | 0.06926 | 3.7316 | **0.1708** | [0.0784, 0.2644] |
+
+Truth is `R tau^2 = 4.5` and `1 - Q = 0.08172`. All three rungs undershoot
+`1 - Q` by 7 to 17%, which is the residual bias mismatch 10.6 priced.
+
+**Four qualifications, none of them optional, because 10.9 forbids the
+verdict word being read as accuracy.**
+
+**(1) The interval crosses the threshold.** The top rung's 95% interval
+reaches `0.2644`, above the `0.25` the co-requirement names. The frozen
+rule is a POINT comparison and it passes at `0.1708`; the interval is
+published because 10.10 requires it. Had the rule been written as an
+interval rule the outcome would have been different — and that is
+recorded as a lesson for the next design, **not** as a re-scoring of this
+one. Converting a point rule into an interval rule after seeing the
+interval would be the same move as loosening a threshold after seeing the
+data, in the opposite direction and equally forbidden. Realized margin
+`(0.25 - 0.1708) / 0.0474 = 1.67 sigma` against the `1.92 sigma` disclosed
+pre-run in 10.7, so the headroom came in slightly thinner than the design
+check projected, as that projection's own "UPPER bound" label warned.
+
+**(2) What is recovered is the ENSEMBLE-POOLED dimensionless quantity, not
+a sample's curvature.** The median per-sample relative error is **exactly
+1.000 at every rung** — the median sample recovers nothing:
+
+| rung | median per-sample rel error | within 100% | at the boundary |
+|---|---|---|---|
+| 600 | 1.000 | 175 / 1117 (15.7%) | 36.2% |
+| 1200 | 1.000 | 295 / 1117 (26.4%) | 31.1% |
+| 2400 | 1.000 | 397 / 1117 (35.5%) | 27.2% |
+
+So Section 5's predicted failure mode is **half realized**: the gate does
+pass while a typical single sample recovers nothing. What defeats the
+other half is that the pooled `R tau^2` is recovered to 17%, which is why
+10.7 made the co-requirement dimensionless and evaluated it on the
+ensemble. The minority within 100% grows with density, 15.7% to 35.5%,
+and that IS established — `+19.87 pp +/- 1.80`, about `11 sigma`, at these
+counts.
+
+**(3) No ordering across the rungs is established.** The point estimates
+`0.0769 / 0.1914 / 0.1708` are non-monotone, and the best rung is the
+BOTTOM one, but the three intervals overlap heavily. Per the rule in
+Section 10's preamble, a statement that recovery changes with the rung
+would have to carry its own sigma, and it cannot: nothing here supports
+one. Two consequences worth stating anyway, both about the design rather
+than the trend. First, 10.7 chose the top rung "because that is where the
+systematic is smallest" — in this campaign it was not, so the gate was
+evaluated at a rung HARDER than the best available and the pass is not a
+product of rung selection. Second, the measured bias mismatch is
+`-0.600% / -1.502% / -1.339%` against the design check's
+`-2.078% / -2.080% / -1.171%`: smaller everywhere, and smallest at the
+bottom rung, which is the reverse of the design check's ordering. Review
+C24 withdrew "the mismatch decays with density" as a 1.7-sigma reading;
+this campaign is direct evidence that the withdrawal was right.
+
+**(4) The cross-arm gate passed with a real chance of having tripped.**
+Offsets `+0.366% / -0.770% / -0.326%` against a `1%` tolerance, all
+inside, with resolution ratios `2.28 / 2.93 / 3.63` so the gate was
+testing something at every rung. The spurious-trip probability recorded
+in the artifact is `0.152 / 0.093 / 0.051` — at the bottom rung roughly
+one campaign in seven would have halted here on correctly calibrated
+arms. That risk was disclosed before the run and the tolerance was not
+widened for it, because 10.6 chose `1%` on the grounds that a `1%` offset
+injects about 17% into the recovery.
+
+**Selection caveat: YES.** Two curved seeds at rung 600 and one each at
+1200 and 2400 failed to pack and were replaced from reserve slots, with
+identities published in the artifact; the twin arm skipped none. The
+caveat also **inherits** from P13 Stage A-13C, whose own record carries
+one — an inherited gate inherits its caveats.
+
+Cross-stage gate as read at run time: P12 Stage A `IMPROVES` at `6d1d1bf`,
+P13 Stage A-13C `CURVATURE-ROBUST` at `33e371f` with `CONTROL-CLEAN`, both
+stamps ancestors of the running commit.
+
+**Scope, in the same breath as the word, exactly as 10.9 requires.** This
+supports: the scalar curvature of the ambient geometry is recoverable from
+causal order plus the interval count, **over this ladder, from the
+ensemble, to about 17%**. It does NOT support the general claim. **1+1D
+metrics are conformally flat**, so curvature reaches the causal order here
+only through the volume this estimator reads; `d >= 3` is where the
+general question lives, and P13's Section 13.3 limit applies verbatim.
+
+**The construction's own limit, unchanged by the pass.** A flat twin
+cannot reproduce a curved box's intra-box intensity gradient, so the
+residual bias mismatch is a property of the CONSTRUCTION and not of the
+instrument. Removing it needs a control matched in the box-area
+distribution and not only in `m`, which is a different design.
+
+**The lever this hands over.** Two, and they are separable. The
+interval-versus-point question of (1) is a specification lesson available
+now at no experimental cost. The `d >= 3` question of the scope paragraph
+is the only place the programme's general thesis is testable, and it is
+now the binding one for both P12 and P13.
+
+Artifacts: `docs/prereg/frozen/p12/` — `p12_verification_b_summary.json`,
+`p12_pilot_b_summary.json`, `p12_stage_b_summary.json`,
+`p12_stage_b.csv`, stamp `5252ee7` recorded in each.
 
 ---
 
