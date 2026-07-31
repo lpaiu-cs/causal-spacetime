@@ -743,22 +743,64 @@ def test_prerequisite_stamps_are_reachable_from_head():
     """The case: a stamp that is not an ancestor of HEAD cannot have its
     provenance audited here, which is what the merge policy protects.
     Section 10.10 requires BOTH prerequisites reachable.
+
+    THE SECOND CASE, which this test got wrong first. `git merge-base
+    --is-ancestor` exits non-zero both when the commit is off the ancestry
+    and when it is not in the object store at all. The first version
+    conflated them, passed locally on a full clone, and failed in CI's
+    shallow checkout asserting "6d1d1bf is not an ancestor of HEAD" when
+    the commit simply was not there -- the identical misreading that three
+    review findings on PRs #35 and #36 were spent refuting, committed here
+    by me. CI now fetches full history so the check runs for real, and an
+    absent object SKIPS with its reason rather than failing, because an
+    incomplete checkout cannot answer the question either way.
     """
 
     import json
 
-    stamps = []
+    from p11_metric import stamp_reachability
+
     for directory, name in (
         (FROZEN_P13V3_DIR.parent / "p12", "p12_stage_a_summary.json"),
         (FROZEN_P13V3_DIR, "p13_stage_a_summary.json"),
     ):
         artifact = json.loads((directory / name).read_text(encoding="utf-8"))
-        stamps.append(artifact["code_version"])
-    for stamp in stamps:
-        assert subprocess.run(
-            ["git", "merge-base", "--is-ancestor", stamp, "HEAD"],
-            capture_output=True,
-        ).returncode == 0, f"{stamp} is not an ancestor of HEAD"
+        stamp = artifact["code_version"]
+        state = stamp_reachability(stamp)
+        if state == "absent":
+            pytest.skip(
+                f"{stamp} is not in this checkout's object store, so its "
+                "ancestry cannot be decided here (shallow clone or source "
+                "archive). This is NOT a provenance failure.")
+        assert state == "ancestor", (
+            f"{stamp} is present but is not an ancestor of HEAD")
+
+
+def test_stamp_reachability_separates_absent_from_not_ancestor():
+    """The case: the whole value of the three-way answer is that the two
+    failure modes are different, so a two-way helper must not creep back.
+
+    `deadbeef...` is a well-formed SHA that does not exist here, which is
+    exactly the shape of every cited commit in findings C1, C15, C23 and
+    C26 -- and `git merge-base --is-ancestor` on it exits non-zero, which
+    is what made those findings look like provenance failures.
+    """
+
+    from p11_metric import stamp_reachability
+
+    absent = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    assert stamp_reachability(absent) == "absent"
+    assert stamp_reachability("") == "absent"
+    # the raw command cannot tell the difference, which is the point
+    assert subprocess.run(
+        ["git", "merge-base", "--is-ancestor", absent, "HEAD"],
+        capture_output=True).returncode != 0
+
+    # HEAD is trivially its own ancestor, so the positive case is checked
+    # against something that must always hold
+    head = subprocess.run(["git", "rev-parse", "HEAD"],
+                          capture_output=True, text=True).stdout.strip()
+    assert stamp_reachability(head) == "ancestor"
 
 
 def test_operating_point_constants_come_from_p13s_own_tables():

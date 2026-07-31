@@ -14,6 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history, because several tests audit PROVENANCE: frozen
+          # artifacts record a code_version and the records claim their
+          # stamps are ancestors of HEAD. The default shallow clone does
+          # not contain those commits, so the check cannot be answered
+          # there -- and answering it anyway is how "the object is absent"
+          # gets misread as "the history was flattened", which is the
+          # confusion three review rounds on PRs #35 and #36 were spent
+          # refuting. Depth 0 lets the check run for real instead.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:

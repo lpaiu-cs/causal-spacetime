@@ -831,6 +831,44 @@ FROZEN_P11_DIR = (Path(__file__).resolve().parents[2]
                   / "docs" / "prereg" / "frozen" / "p11")
 
 
+def stamp_reachability(stamp: str) -> str:
+    """Classify a stamp against HEAD: "ancestor", "not-ancestor", "absent".
+
+    The three-way answer exists because a two-way one is wrong, and wrong
+    in a way this programme has now paid for six times. `git merge-base
+    --is-ancestor X HEAD` exits non-zero BOTH when X is present and off
+    the ancestry AND when X is not in the object store at all -- and the
+    second case says nothing about ancestry. A shallow clone, a source
+    archive, or a review environment holding only a synthetic snapshot all
+    produce it.
+
+    Three findings on PRs #35 and #36 (C1, C15, C23/C26) were built on
+    exactly that conflation, reported as P1 provenance failures, and
+    refuted by running `git cat-file -t` on the cited SHA. The same
+    conflation then appeared in this repository's own provenance test,
+    which passed locally and failed in CI's shallow checkout claiming a
+    stamp was "not an ancestor" when the commit simply was not there. So
+    the distinction is made once, here, and callers report the two cases
+    differently.
+    """
+
+    import subprocess
+
+    if not stamp:
+        return "absent"
+    present = subprocess.run(
+        ["git", "cat-file", "-e", f"{stamp}^{{commit}}"],
+        capture_output=True,
+    ).returncode == 0
+    if not present:
+        return "absent"
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"],
+        capture_output=True,
+    ).returncode == 0
+    return "ancestor" if ancestor else "not-ancestor"
+
+
 def _require_stage_pass(name: str, stage_label: str,
                         directory: Path | None = None,
                         expected: str = "IMPROVES") -> dict:
@@ -849,9 +887,11 @@ def _require_stage_pass(name: str, stage_label: str,
     option: a gate that accepts whatever it finds is not a gate, and
     P13's own frozen directory holds a CONFOUNDED record from campaign
     v1 that such an option would have waved through.
-    """
 
-    import subprocess
+    The stamp check goes through ``stamp_reachability`` so that "the
+    object is not in this checkout" and "the object is off the ancestry"
+    are reported as the different things they are.
+    """
 
     # the frozen record lives with its own experiment; the default is
     # P11's directory, and later experiments pass their own (P13 asks
@@ -871,15 +911,21 @@ def _require_stage_pass(name: str, stage_label: str,
             "(Section 6)."
         )
     stamp = str(artifact.get("code_version", ""))
-    reachable = subprocess.run(
-        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"],
-        capture_output=True,
-    ).returncode == 0
-    if not reachable:
+    state = stamp_reachability(stamp)
+    if state == "absent":
         raise SystemExit(
-            f"{stage_label}'s frozen stamp {stamp} is not an ancestor "
-            "of HEAD -- its producing commit is unreachable from this "
-            "history, so its provenance cannot be audited here."
+            f"{stage_label}'s frozen stamp {stamp} is not present in this "
+            "checkout at all, so its provenance cannot be audited here. "
+            "This is NOT evidence that the history was flattened -- a "
+            "shallow clone reports the same thing. Fetch full history "
+            "(git fetch --unshallow) and re-run."
+        )
+    if state == "not-ancestor":
+        raise SystemExit(
+            f"{stage_label}'s frozen stamp {stamp} is present but is not "
+            "an ancestor of HEAD -- its producing commit is genuinely "
+            "unreachable from this history, so its provenance cannot be "
+            "audited here."
         )
     return artifact
 

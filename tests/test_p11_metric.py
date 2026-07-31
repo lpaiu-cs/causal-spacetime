@@ -433,13 +433,29 @@ def test_stage_pass_gate_requires_improves_and_reachable_stamp(
     )
     with pytest.raises(SystemExit, match="not\\s+IMPROVES"):
         mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
-    # unreachable stamp refuses even with a passing verdict
+    # a stamp that is not in the object store refuses too -- but for its
+    # OWN reason. The message must not say "not an ancestor", because a
+    # missing object says nothing about ancestry: that conflation is what
+    # three findings on PRs #35 and #36 were built on, and what this
+    # repository's own CI run then reproduced against a shallow clone.
     (tmp_path / "p11_stage_a_summary.json").write_text(
         '{"verdict": "IMPROVES", "code_version": "0000000"}\n',
         encoding="utf-8",
     )
-    with pytest.raises(SystemExit, match="not an ancestor"):
+    with pytest.raises(SystemExit) as absent:
         mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    assert "not present in this checkout" in str(absent.value)
+    assert "NOT evidence that the history was flattened" in str(absent.value)
+    assert "not an ancestor" not in str(absent.value)
+    # and a stamp that IS present but off the ancestry gets the other
+    # message, so both branches are covered rather than just the one the
+    # environment happens to produce
+    monkeypatch.setattr(mod, "stamp_reachability",
+                        lambda _stamp: "not-ancestor")
+    with pytest.raises(SystemExit, match="present but is not"):
+        mod._require_stage_pass("p11_stage_a_summary.json", "Stage A")
+    monkeypatch.undo()
+    monkeypatch.setattr(mod, "FROZEN_P11_DIR", tmp_path)
     # passing verdict with a reachable stamp is accepted
     head = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"],
