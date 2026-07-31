@@ -1,8 +1,16 @@
 # P12: does the instrument read CURVED geometry? — power-first preregistration
 
-Status: **DESIGN v1.1 (2026-07-28), for in-session review. Nothing
-below has been run.** Dates are local (UTC+9); commit timestamps
-carry their +09:00 offset.
+Status: **STAGE A HAS RUN and returned IMPROVES (Section 9). STAGE B
+IS FROZEN BY THE SECTION 10 ADDENDUM (2026-07-31) and has NOT run.**
+Sections 1 through 8 are design v1.1 as frozen before Stage A; Section
+9 is Stage A's record and is not re-read; Section 10 is the Stage B
+addendum that Section 5 declared and deferred. Dates are local
+(UTC+9); commit timestamps carry their +09:00 offset.
+
+*(The header previously read "Nothing below has been run" while
+Section 9 carried a completed campaign — the narrative-versus-artifact
+inconsistency this programme hunts, committed against its own record.
+Corrected here with the addendum rather than silently.)*
 
 v1.1 corrections, all pre-freeze and pre-data, from design review
 (each independently reproduced before being applied):
@@ -461,3 +469,693 @@ exponent survives there.
 
 Artifacts: `docs/prereg/frozen/p12/` (verification, pilot, Stage A),
 stamp recorded in each.
+
+---
+
+## 10. Stage B addendum (frozen 2026-07-31, before any Stage B data)
+
+Section 5 declared Stage B and deferred its estimator, listing five
+things the addendum must do before any Stage B datum exists. This
+section does all five, plus one thing Section 5 did not ask for and
+that P13's record argues is necessary (10.7). Every number quoted here
+is measured on quarantined design-check seeds and is **disclosed
+pre-freeze**, per the v1.1 and P13 precedents, so that a later pass
+cannot be mistaken for a surprise.
+
+Design-check artifacts, both stamped and both containing no
+experimental seeds:
+`docs/prereg/frozen/p12/p12_stage_b_volume_check.json` (deterministic
+quadrature, no sprinkling at all) and
+`.../p12_stage_b_ensemble_check.json` (P12's design-check space
+`2000000-5999999`, Section 6). **Both are stamped `7ac5893`.** An audit
+follows the stamp in the artifact, never the one in prose (review C16
+caught this paragraph carrying two superseded stamps), and both scripts
+now **abort rather than write** if any of their gates fails — the
+quadrature tolerance, the twin calibration's convergence, and the
+cross-arm `m` offsets (review C21, after C12 found the same
+"record-and-continue" shape in the quadrature check). Their scripts write to the
+gitignored `outputs/` tree and are frozen by a separate copy, because
+the preflight counts untracked files as dirty and a check writing
+straight into the repository makes the next check's stamp dirty — which
+is what the first attempt did.
+
+**This section was revised across three review rounds on PR #36.** Each
+finding is named where it applies rather than collected in a footnote,
+because several changed numbers this design depends on and two changed
+claims that were false against their own artifact. The findings cited
+below are C10, C11, C12, C13, C16, C17, C21, C22, C24 and C25 (C5 is
+inherited from P13's review).
+
+**A pattern across those rounds, recorded because it is the failure mode
+this document exists to prevent.** In five instances the text that
+REPLACED a withdrawn over-claim carried a new over-claim of the same
+kind: C6 to C7, C18, and C22 to C24. Correcting "no sample recovers `R`"
+produced "the minority grows with density"; correcting "inside its own
+noise" produced "the mismatch decays with density". The first of each
+pair was false against the artifact and the second was a point-estimate
+difference presented as a trend — and only one of those four survived
+being tested (the boundary and below-one fractions are 6.2 and 10.1
+sigma; the mismatch trend is 1.7 to 1.9 and is withdrawn). The habit is
+not carelessness about any single number, it is reaching for the
+narrative that the corrected number suggests. **The countermeasure now
+applied throughout 10.6 and 10.7: any statement of the form "X changes
+with the rung" carries its own sigma in the same sentence, or it is not
+made.** Two further defects were found by that rule rather than by
+review, and are disclosed in 10.6.
+
+### 10.1 Item 1: the diamond volume relation, exactly
+
+Section 5 refused the small-diamond expansion because its coefficient
+is "exactly the kind of unverified constant that killed Stage C v1".
+The exact relation is available in closed form. In the flat slicing
+with `Omega^2 = ell^2/eta^2` and null coordinates `U = eta + x`,
+`V = eta - x`, the diamond of a timelike pair is the coordinate
+rectangle `[U_p, U_q] x [V_p, V_q]`, and
+
+    Vol = 2 ell^2 int int dU dV / (U+V)^2
+        = 2 ell^2 ln[ (U_q+V_p)(U_p+V_q) / ((U_p+V_p)(U_q+V_q)) ]
+        = 2 ell^2 ln( (Z+1)/2 )
+        = 4 ell^2 ln cosh( tau / (2 ell) ),
+
+using `(eta_p+eta_q)^2 - (Delta x)^2 = 2 eta_p eta_q (Z+1)` with `Z`
+the de Sitter invariant of Section 3, and `Z = cosh(tau/ell)`.
+**Position drops out entirely**, as maximal symmetry requires — the
+volume is a function of proper time alone.
+
+Verified before freezing, per Section 3's rule:
+
+| check | result |
+|---|---|
+| closed form vs independent quadrature of `Omega^2` over the diamond, 5 positions | worst relative error `1.0e-14` |
+| same `tau` at three different patch positions | volume spread `8.3e-16` |
+| inversion recovers `R` on exact inputs, four `tau/ell` values | relative error `<= 1.0e-12` |
+
+**The tolerance is a gate, not a field (review C12).** The first version
+of this check used a midpoint rule at `n = 4000`, measured a worst
+relative error of `4.1e-9` against a pinned `1e-9` with three of five
+cases over the line, recorded the maximum, and continued — while this
+section called the relation verified at the tolerance. A guard that does
+not guard. The quadrature is now tensor Gauss-Legendre at 128 nodes per
+axis, which the smooth integrand `1/(U+V)^2` takes to machine
+precision, and the script now **raises and writes nothing** unless every
+check meets `1e-9`.
+
+The flat limit is `Vol -> tau^2/2 - tau^4/(48 ell^2)`, so Section 5's
+`(tau^2/2)(1 - c R tau^2)` has **`c = 1/48`** in this convention. That
+number is recorded to retire the ambiguity, and is not used: the
+campaign uses the exact form.
+
+### 10.2 Item 1 continued: the inversion, frozen
+
+Write `g = Vol / tau^2`. With `s = tau / (2 ell)`,
+
+    g = ln cosh(s) / s^2  =:  G(s),
+
+strictly decreasing from `G(0+) = 1/2` (flat) toward 0, hence
+invertible on `(0, 1/2)`. The instrument's per-pair observable is
+order-plus-count only:
+
+    g_hat = m_open / ( rho_hat * tau_hat^2 )
+
+with `m_open` the open interval cardinality (order data), `rho_hat` the
+Section 2 density calibration, and `tau_hat` the **unchanged** P11
+chain estimator called through
+`estimate_tau_from_longest_chain_1p1`. The frozen inversion is
+
+    s_hat = G^-1( Q_hat / 2 ),      Q_hat = g_bar_curved / g_bar_flat
+    R_hat = 8 s_hat^2 / tau_hat_bar^2
+
+with the ratio `Q_hat` taken against the flat twin of 10.6 at matched
+`m`. `R_hat = F(|I|, tau_hat, rho)` as Section 5 required, with the
+twin supplying the normalization.
+
+**Boundary convention, frozen.** The positive-curvature domain is
+`Q_hat/2 < 1/2`. A measurement outside it has recovered no curvature,
+so the boundary-constrained estimate is `R_hat = 0` and the relative
+error is exactly 1. This is the edge of the parameter space, not a
+clamp over noise, and the **boundary-hit fraction is published per
+rung** — on the frozen paired statistic of 10.7 it is 38.1% / 34.6% /
+28.1%, a large and declining share that must never be silent.
+
+**The per-sample statistic is PAIRED (review C10).** The first version
+divided each curved sample's `g` by the twin's RUNG MEAN. Every `y_B`
+then shared one random denominator, so the stored per-sample variance
+contained none of the twin arm's sampling variation while the power
+calculation treated the values as independent — which makes the
+projected `n` and the campaign's interval too optimistic. Frozen
+instead: curved sample `i` against twin sample `i` within a rung,
+pairing by index, with the sample's OWN mean `tau_hat`. Nothing
+rung-level leaks in, so each `y_B` is a genuine iid draw carrying both
+arms' variation. Pairing by index between two independent seed streams
+is arbitrary and therefore harmless. The rung-level interval comes from
+a **joint bootstrap resampling both arms**, for the same reason.
+
+The correction costs what it should: the boundary fraction rose from
+28.2% to 38.1% at the bottom rung, because a single twin sample is a
+noisier denominator than a rung mean. That is the honest price of an
+honest variance.
+
+**The boundary population can also compress the RATE, which 10.4 does
+not see.** With 28-38% of samples pinned at `y_B = log10(1) = 0`, every
+rung's mean is pulled toward zero and the rung-to-rung contrast is
+compressed; `Delta*_B` is derived from the DISPERSION of `g`, which
+knows nothing about the clipping. Whether the compression is large
+enough to matter is **not** established: design check measures
+`Delta_B = -0.2227 +/- 0.0167` against a derived `-0.2508`, 1.7 sigma
+apart and compatible. (At a quarter of these counts the gap read 3 sigma
+and an earlier draft treated it as measured; that reading is withdrawn
+and only the mechanism stands, unquantified.) The target is kept as
+derived, because it is the rate of the underlying quantity and the
+derivation is what Section 5 item 2 asked for, and `n_sup` is stated
+against both rates in 10.10 so the choice does not silently size the
+campaign.
+
+### 10.3 Item 1 continued: why a RATIO and not a difference
+
+Section 5 item 5 specified subtracting the flat arm's discrepancy. The
+addendum freezes a **ratio** instead, because the bias it must remove
+is multiplicative and the design check shows how large it is:
+
+| rung (`m`) | `g_bar` curved | `g_bar` flat | own continuum value | bias factor |
+|---|---|---|---|---|
+| 18.9 | 0.96688 | 1.03106 | 0.45914 / 0.5 | 2.106 / 2.062 |
+| 37.8 | 0.81319 | 0.86714 | 0.45914 / 0.5 | 1.771 / 1.734 |
+| 75.8 | 0.71262 | 0.76695 | 0.45914 / 0.5 | 1.552 / 1.534 |
+
+Each arm's `g_bar` is biased by **53% to 111%** against its own
+continuum value — entirely because `tau_hat` underestimates `tau`
+(`tau_hat/tau` = 0.704 / 0.755 / 0.800) and enters squared. A difference
+would leave that bias in the units of the answer. The ratio removes most
+of it, and what survives is the signal:
+
+| rung | `1 - Q_hat` | joint-bootstrap se | continuum truth |
+|---|---|---|---|
+| 18.9 | +0.06224 | 0.00324 | 0.08172 |
+| 37.8 | +0.06221 | 0.00346 | 0.08172 |
+| 75.8 | +0.07084 | 0.00361 | 0.08172 |
+
+A pair of arms biased by a factor of two yielding a 6-7% ratio signal
+against an 8.2% truth is the case for the ratio, and it is measured
+rather than argued.
+
+**The cancellation is imperfect at every rung, and 10.6 prices it.**
+Once the arms' `m` is matched to better than 0.6%, the bias factors
+above still differ by `-2.08% / -2.08% / -1.17%`, which at this
+precision is `6.0 / 5.7 / 2.9 sigma` — real at every rung, and the
+reason the recovery is systematics-limited rather than
+statistics-limited. Whether it varies WITH the rung is a separate
+question and 10.6 answers it: not established.
+(An earlier draft, working from a 400-sample check, called the upper
+rungs' mismatch "inside its own noise". That was an artefact of the
+noise, not a property of the estimator; review C22 forced the
+higher-precision measurement that overturned it.)
+
+### 10.4 Item 2: `Delta*_B`, derived and NOT borrowed
+
+`g_hat` inherits two independent dispersions whose EXPONENTS are
+theory: a Poisson `1/m` from the count, and a BDJ `m^(-2/3)` from the
+chain (`sd(L) ~ m^(1/6)` against `E L ~ 2 sqrt(m)`, doubled by the
+square). So
+
+    rel_sd(g)^2 = a/m + b m^(-2/3).
+
+The two COEFFICIENTS are calibrated on design-check seeds rather than
+asserted, because `m` and `L` rise together inside a box and their
+ratio therefore disperses LESS than independence would give. Fitted:
+**`a = 1.4923`, `b = 0.4586`**, against an uncorrelated analytic
+`b = 0.8132` — the shortfall is that correlation, named rather than
+absorbed. The fit reproduces the measurements it was built from
+(measured 0.3798 / 0.2805 / 0.2160 versus model 0.3792 / 0.2832 /
+0.2129).
+
+Propagating over the frozen ladder (`m` 18.87 -> 75.77):
+
+    Delta*_B = log10[ rel_sd(g; m_top) / rel_sd(g; m_bot) ]
+             = -0.2508 dex.
+
+**Steeper than `-0.2007`, and that is the evidence it was not
+borrowed**: the count contributes a Poisson component alongside the
+chain's, so the ratio's dispersion decays faster than the chain's
+alone. The equivalence margin follows P11's convention,
+`delta_eq_B = |Delta*_B| / 3 = 0.0836` dex.
+
+**A note against a plausible future error.** The `1.645` in the
+equivalence sample-size slot is `Phi^-1(0.95)`, i.e. **already the
+two-sided quantile** for `beta = 0.10`, because ROBUST-style
+equivalence needs BOTH interval bounds inside the margin and so has
+power `2 Phi(z) - 1`. P13's review found exactly this slot "upgraded"
+with a one-sided quantile; the note exists so it is not upgraded again.
+
+### 10.5 Item 3: six disjoint pairs at the bottom rung
+
+Measured on design-check seeds, with the count set per rung (10.6's
+note on why: 4000 / 2000 / 1000, precision bought where it is cheap):
+
+| rung | mean `m` | completion, curved | completion, twin |
+|---|---|---|---|
+| 600 | 18.9 | **0.997** (3988 of 4000) | 1.000 |
+| 1200 | 37.8 | 1.000 | 1.000 |
+| 2400 | 75.8 | 1.000 | 1.000 |
+
+The bottom rung — the one Section 5 item 3 singled out, where the pool
+is thinnest — completes 3988 of 4000, so 12 samples in 4000 fail to pack
+and the frozen fill rule replaces them from reserve slots. That is well
+inside the skip cap and it is quoted rather than rounded to 1.000,
+because at 400 samples it read as exactly 1.000 and the true rate is not
+zero. The packing budget is not the binding constraint at this operating
+point, which is a consequence of 10.8's move: P13's `tau/ell = 1.5`
+patch is large (`X = 17`) precisely because six boxes had to stack along
+`x` there.
+
+### 10.6 Item 5: the flat twin, promoted and matched
+
+Section 5 item 5 promotes the Stage A flat arm from a labelled check to
+Stage B's load-bearing control, and here it is inside the estimator
+rather than beside it: `g_bar_flat` is the denominator of `Q_hat`. Its
+construction is P13's twin verbatim — same coordinate rectangle, a
+uniform intensity calibrated so realized mean `m` matches, a band on
+`tau_flat = sqrt(dU dV)` centred on the curved rung's mean box side,
+same eligibility, `K`, rejection cap and fill rule.
+
+Three requirements follow, all frozen.
+
+**(1) The `m`-matching gate applies to BOTH arms**, each against its own
+grand mean, at `+/- 5%` — P13's review C5 correction carried forward
+before it can recur, and here it is load-bearing because the twin is the
+estimator's denominator.
+
+**(2) A CROSS-ARM `m` gate at `+/- 1%`, and calibrated twin intensities
+to meet it (review C11).** The first version published the cross-arm
+level offset without gating it, on the reasoning that within-arm drift
+is what confounds a within-arm contrast. That reasoning is wrong for
+this estimator: `Q_hat` divides one arm by the other, so a CONSISTENT
+offset passes both within-arm gates while numerator and denominator keep
+different discreteness biases. The design check then showed this is not
+a formality but **the dominant systematic**. Scaling P13's twin
+intensity down the ladder left the twin's `m` 2-3% below the curved
+arm's, which shifts the twin's discreteness bias and therefore `Q_hat`;
+with `Q/(1-Q) ~ 15` here, a 1% bias shift is ~15% injected into the
+recovery.
+
+So the twin's intensity is **calibrated per rung against the curved
+arm's realized `m`**, on its own design-check blocks, and frozen at
+
+    rho_twin = 2.1948 / 4.3370 / 8.6990
+
+which realizes cross-arm offsets of `+0.55% / -0.48% / -0.15%` on the
+arm runs. Each value is the best PROBED intensity, never an unprobed
+Newton step: an earlier attempt used a 150-sample probe whose own
+resolution on mean `m` was ~2% while its criterion demanded 0.5%, so it
+chased noise, exhausted its iterations, and returned a `rho` no probe
+had evaluated. The probe is now 400 samples and the criterion is the
+gate's own 1%. **The gate ABORTS the check** rather than recording a
+failure and continuing (review C21), and so does the calibration's
+convergence.
+
+**(3) The residual bias mismatch is real at every rung, and measured
+rather than inferred.** Matching `m` to better than 0.6% does not make
+the cancellation exact:
+
+| rung | cross-arm `m` offset | bias mismatch | significance | implied err in `R tau^2` | observed |
+|---|---|---|---|---|---|
+| 18.9 | +0.55% | **-2.078% +/- 0.348%** | 6.0 sigma | 31% | 26% |
+| 37.8 | -0.48% | **-2.080% +/- 0.365%** | 5.7 sigma | 31% | 26% |
+| 75.8 | -0.15% | **-1.171% +/- 0.399%** | 2.9 sigma | 15% | 15% |
+
+The mismatch is `g_bar_flat / g_bar_curved` referred to each arm's own
+continuum value, i.e. `bias_twin / bias_curved - 1` on the stored
+`mean_g`. Its uncertainty is the two arms' relative standard errors in
+quadrature, `hypot(se_twin/g_twin, se_curved/g_curved)`, which is
+legitimate because the arms run on **disjoint seed blocks**; the formula
+is written out because the value is not itself a stored field. The exact
+delta-method form carries an extra factor of the ratio (0.979) and gives
+`0.341 / 0.357 / 0.394` — a 2% difference that moves nothing here, and
+the larger figure is quoted.
+
+The implied column is `|mismatch| * Q/(1-Q)`; the observed column is
+10.7's dimensionless recovery. **They agree to within a few points, and
+at the top rung to one**, so the mismatch accounts for essentially the
+whole recovery error rather than merely contributing to it.
+
+The reason is structural and is stated rather than absorbed: **on the
+curved side the intensity varies WITHIN a box** (`Omega^2` depends on
+`eta`), so its events are non-uniformly distributed and its longest
+chain at fixed `m` differs from a uniform box's. The flat twin cannot
+reproduce that gradient, and it cannot be made to: in 1+1D a flat
+ensemble carrying the curved arm's `Omega^2` profile would be the SAME
+point process as the curved arm, and `Q_hat` would be identically 1. The
+gradient IS the signal, so the part of it the estimator mis-reads is
+inseparable from the part it reads correctly.
+
+**Consequence, and the two things this replaces** (review C22). Carrying
+both the mismatch and its uncertainty through the same `Q/(1-Q)`
+amplification gives the systematic and statistical parts of the
+recovery error on one scale:
+
+| rung | systematic | statistical | multiple | limited by | recovery |
+|---|---|---|---|---|---|
+| 18.9 | 31% | 5.2% | 6.0x | **systematics** | 26% |
+| 37.8 | 31% | 5.5% | 5.7x | **systematics** | 26% |
+| 75.8 | 15% | 5.2% | **2.9x** | **systematics** | 15% |
+
+The multiple column is necessarily the significance column of the table
+above — dividing both parts by the same amplification cancels it, so
+"how many times larger is the systematic" and "how many sigma from zero
+is the mismatch" are one quantity. Two corrections, found here rather
+than in review: this block previously gave the statistical part as
+`4.0% / 4.2% / 4.4%`, which is not reproducible from the frozen
+artifact by any propagation I can construct, and it claimed the
+systematic was "6 to 7 times larger at every rung" — true at the lower
+two rungs, **false at the top rung, where it is 2.9x**. The top rung is
+the one 10.7 evaluates its co-requirement on, so the overstatement sat
+exactly where it mattered most.
+
+So the recovery is systematics-limited at **every** rung, and adding
+samples narrows the interval without moving the centre.
+
+**Whether the systematic depends on density is NOT established** (review
+C24). The point estimates fall from `-2.08%` at both lower rungs to
+`-1.17%` at the top, but tested against their own uncertainties that
+difference is:
+
+| comparison | difference | combined se | sigma |
+|---|---|---|---|
+| `m ~ 19` -> `m ~ 76` | +0.907 pp | 0.529 | 1.71 |
+| `m ~ 38` -> `m ~ 76` | +0.909 pp | 0.541 | 1.68 |
+| pooled lower two -> top | +0.908 pp | 0.472 | 1.92 |
+
+Even pooling the two lower rungs, which is the most favourable
+comparison available, reaches 1.9 sigma. An earlier draft of this
+paragraph said the systematic "decays with density" and that raising the
+operating point "does move it" — **withdrawn**. What the check
+establishes is that the mismatch is real at every rung and lies between
+about 1.2% and 2.1%; its density dependence is suggestive and unresolved,
+and settling it would need roughly three times these counts (~50 minutes)
+for a question the design does not depend on.
+
+The design does not depend on it because 10.7's co-requirement is
+evaluated at the TOP rung on that rung's own MEASURED recovery, not on a
+trend: 15% there against 26% at the lower two is an observation about
+three measured numbers, and it would justify the choice of rung even if
+the differences between them were pure noise.
+
+Two earlier readings of this subsection are withdrawn, and both were the
+same error in opposite directions. It first read the floor as ~11% at
+every rung, from an under-calibrated twin. It then read `-2.29% +/-
+1.09%` at the bottom rung as a 36% floor that more samples could not
+move, while calling the upper rungs' mismatch "inside its own noise" —
+a 2.1-sigma point estimate frozen as a known systematic on one side and
+a real 5-sigma effect dismissed as noise on the other. **Declaring the
+bottom rung's excess "expected rather than anomalous" would have
+pre-excused a genuine campaign discrepancy**, which is the worst form of
+the point-estimate habit. The remedy was evidence: the counts are now
+4000 / 2000 / 1000, chosen where the question is and where it is cheap
+(measured cost 0.046 / 0.123 / 0.552 s per sample over both arms), and
+the mismatch is resolved to `+/- 0.35-0.40%` at every rung.
+
+**`n_twin = n_per_rung`.** The twin's per-pair dispersion is measured
+equal to the curved arm's (0.383 / 0.285 / 0.221 against 0.380 / 0.281 /
+0.216), so equal `n` equalizes the two contributions to `se(Q_hat)`. The
+twin is not separately equivalence-sized as P13's was, because P13's
+twin supplied a GATED CONTRAST while this one supplies a NORMALIZER
+inside the estimator — and its sampling variation is now carried by the
+paired statistic and the joint bootstrap of 10.2 rather than being
+assumed away.
+
+### 10.7 Item 4: the budget, and the co-requirement it forces
+
+Section 5 item 4 predicted the failure mode in advance: an uncorrected
+chain bias could leave `|R_hat - R| / R >> 1` at every rung while
+`Delta_B` still improves from bias decay alone — "a gate that passes
+while recovering nothing". The design check says the per-sample picture
+is close to that, and the pooled picture is not.
+
+On the frozen paired statistic, boundary-constrained population
+throughout (review C13 — the first version quoted medians that EXCLUDED
+undefined inversions while the power block included them at error 1, two
+summaries of one population disagreeing inside one script):
+
+| rung | `m` | median `\|R_hat-R\|/R` | samples below error 1 | boundary hits | pooled |
+|---|---|---|---|---|---|
+| 600 | 18.9 | 1.00 | 676 / 3988 (17.0%) | 38.1% | 0.484 |
+| 1200 | 37.8 | 1.00 | 445 / 2000 (22.2%) | 34.6% | 0.290 |
+| 2400 | 75.8 | 1.00 | 331 / 1000 (33.1%) | 28.1% | 0.328 |
+
+**The first version's "no single sample recovers `R`" was false against
+its own artifact and is withdrawn.** The correct statement: a MINORITY
+of samples recover `R` to better than 100%, and that minority grows with
+density — 17.0% to 33.1% across the ladder, which is the signal the gate
+reads. The median sits at exactly 1 because the boundary population plus
+the worse-than-1 population is a majority at every rung.
+
+The pooled dimensionful recovery is **not monotone** — 0.484 / 0.290 /
+0.328 — because it is a product of two errors with independent signs.
+Splitting it shows what each contributes:
+
+| rung | `R tau^2` recovered | truth | relative error | `tau_hat/tau` |
+|---|---|---|---|---|
+| 600 | 3.3127 | 4.5 | 0.264 | 0.704 |
+| 1200 | 3.3113 | 4.5 | 0.264 | 0.755 |
+| 2400 | 3.8269 | 4.5 | **0.150** | 0.800 |
+
+`R tau^2 = 8 s^2` needs **no length at all** — it comes from `Q_hat`
+alone. It recovers to 26% / 26% / 15%, and 10.6's mismatch column
+predicts 31% / 31% / 15% from the bias mismatch alone, so **the recovery
+error is the systematic and almost nothing else** — the statistical part
+is 5.2% / 5.5% / 5.2% (10.6). The sequence improves only between the
+middle and top rungs. Whether the underlying mismatch falls with density
+is **not** established (10.6, review C24) — the improvement is a
+property of these three measured numbers, quoted as such. Dividing by
+`tau_hat_bar^2` to reach `R` in continuum units then multiplies the error
+by `(tau/tau_hat)^2` — 1.56 at the top rung — and whether the two errors
+add or partly cancel at a given rung is arithmetic, not trend.
+
+**So the addendum adds a co-requirement Section 5 did not ask for.**
+The budget alone makes the failure visible; it does not stop the
+verdict word from being read as recovery, which is precisely what P13's
+Section 11 record cost. Frozen:
+
+> **A pass requires BOTH.** (i) the Section 1.4 table returns IMPROVES
+> on `Delta_B` for `y_B = log10(|R_hat - R| / R)`, and (ii) the top
+> rung's DIMENSIONLESS recovery satisfies
+> `|R tau^2 hat - R tau^2| / (R tau^2) <= 0.25`, reported with its
+> bootstrap CI. If (i) passes and (ii) fails, the record reads
+> **RATE-ONLY** and states in the same sentence that no curvature was
+> recovered — the gate measured a decaying bias and nothing else.
+
+`0.25` is a design choice, stated as one, and the headroom it leaves is
+now measured rather than hoped: at the TOP rung the measured recovery is
+**0.1496**, and propagating the mismatch's own `+/- 0.399%` through
+`Q/(1-Q) = 13.12` gives `+/- 5.23%`, so the margin to `0.25` is
+`(0.25 - 0.1496) / 0.0523 = 1.92 sigma` and `P(pass) ~ 97%`. **This is
+an UPPER bound on the confidence, not an estimate of it**, for two
+reasons stated here so a pass cannot later be read as having been
+comfortable: it propagates only the mismatch's uncertainty, and it takes
+the design check's sample counts rather than the campaign's. It is in
+any case **not the factor of four an earlier draft claimed** on the
+strength of a fortunate 400-sample draw. The threshold is evaluated at the top rung because that is where
+the systematic is smallest, and 0.25 is tight enough to exclude
+"recovering nothing", which sits near 1.
+
+The threshold is NOT loosened to buy more margin. 15% against 25% is a
+design that can afford its likely verdict, which is the requirement; and
+a failure then means the systematic came in worse than 10.6 measured,
+which is a finding rather than an excuse. All of it is disclosed here so
+a pass is not read as a discovery.
+
+### 10.8 The operating point moves to `tau/ell = 1.5`
+
+Section 5 was written when Stage A's band was the only certified one,
+so it assumed `tau/ell ~ 0.3`. The volume check measured what that
+costs. The inversion's amplification — relative error in `R_hat` per
+relative error in `g` — is
+
+| `tau/ell` | `1 - 2G` (the signal) | amplification |
+|---|---|---|
+| 0.30 | 0.00373 | **268.8x** |
+| 0.60 | 0.01465 | 68.9x |
+| 1.00 | 0.03908 | 26.2x |
+| 1.50 | 0.08172 | **12.9x** |
+
+At `tau/ell = 0.3` the signal is 0.37% and every input error is
+amplified 269-fold, which is Section 5 item 4's "two to three orders of
+magnitude" made exact. **P13 has since certified the same estimator out
+to `tau/ell = 1.5`** (CURVATURE-ROBUST, its Section 13, with the
+caveats that record carries), so Stage B takes that rung: the signal is
+22x larger and the amplification 21x smaller, a 480-fold reduction in
+the sample count a given recovery costs.
+
+Frozen constants, P13's 1.50 rung verbatim: `ell = 1`,
+`eta in [-7.0, -1.0]`, `|x| <= 17.0`, band `tau_curved in [1.35, 1.65]`
+(`+/- 10%`), twin band centre `4.2262`. The density ladder is fixed
+geometry with `rho` scaling 4x end to end as Stage A's did:
+`rho in {19.025, 38.05, 76.1}` giving `m ~ 19 / 38 / 75`, and the twin
+`rho_twin in {2.1948, 4.3370, 8.6990}` — **calibrated per rung against
+the curved arm's realized `m`** per 10.6 (2), not P13's values scaled,
+because scaling left the arms 2-3% apart in `m` and that offset dominated
+the recovery error.
+
+**Scope this moves, stated plainly.** Stage B no longer measures at
+Stage A's band, so it does not inherit Stage A's IMPROVES as evidence
+about its own operating point — it inherits P13's. Both are recorded
+gates with reachable stamps, and the cross-stage gate of 10.10 requires
+both.
+
+### 10.9 What Stage B can and cannot claim
+
+A pass under 10.7 supports: **the scalar curvature of the ambient
+geometry is recoverable from order plus the count, over this ladder, to
+the accuracy the record reports.** That is the strong form of "order +
+number = geometry" for a curvature invariant, and it is the first
+quantity in this programme that is not a length or a time.
+
+**The expected accuracy is 26% / 26% / 15% down the ladder and it is
+SYSTEMATICS-limited at every rung** (10.6 item 3), with the statistical
+part at 5.2-5.5% — a factor of 6.0 / 5.7 / **2.9** below the systematic,
+so the margin is thinnest at the very rung 10.7 gates on. So a pass may
+not be written as "recoverable to arbitrary
+accuracy given enough samples": more samples narrow the interval and
+leave the centre where it is. **Nor may it be written as improving with
+density** — the three measured recoveries differ, but the differences
+between the underlying mismatches are only 1.7-1.9 sigma (10.6), so a
+density-dependence claim is not available either. What the record may
+say is the three numbers and the limit they hit.
+
+The limit itself — a flat twin cannot reproduce a curved box's intra-box
+intensity gradient — is a property of the CONSTRUCTION, not of the
+instrument, and the record must say so beside any number. Removing it
+needs a control matched in the box-area distribution rather than only in
+`m`, which is a different design.
+
+It does NOT support the general claim that curvature is recoverable
+from causal order in general. P13's Section 13.3 gives the reason and
+it applies here verbatim: **1+1D metrics are conformally flat**, so the
+curvature reaches the order only through the conformal factor — that
+is, through exactly the volume this estimator reads. Stage B measures
+that channel accurately; it does not show there is no other channel,
+and `d >= 3` is where that question lives. The record must carry this
+sentence next to any pass.
+
+### 10.10 Gates, power, and seed windows
+
+**Cross-stage gate.** Stage B runs only after P12 Stage A's frozen
+IMPROVES and P13 Stage A-13C's frozen CURVATURE-ROBUST, both with
+reachable stamps — the first because the estimator is that one, the
+second because the operating point is that one.
+
+**Verification-B.** 2000 single-stream samples per rung, completeness
+pin `>= 1998`, measured wall times for the feasibility projection,
+quoted to one significant figure. Must pass before Stage P-B may run.
+
+**Stage P-B.** Both endpoint rungs and both twin endpoint rungs, 200
+samples each, cross-rung statistics forbidden, calibrated Bonett bounds
+published as consumed. Then P11's frozen formulas with `Delta*_B` and
+`delta_eq_B` of 10.4:
+
+    n_sup = ceil( S^2_90 * (1.960 + 1.282)^2 / Delta*_B^2 )
+    n_eq  = ceil( S^2_90 * (1.960 + 1.645)^2 / delta_eq_B^2 )
+    n_per_rung = clamp( max(n_sup, n_eq), 12, 1300 )
+
+with the FLAT-WITHIN-MARGIN row available only if `n_eq <= 1300`.
+Indicative, uncalibrated, from design check on the PAIRED statistic:
+`S^2 = 0.4688`, `n_sup = 79`, `n_eq = 872` — so **both verdicts look
+purchasable at the cap**, which is the affordability statement P13's
+Section 1.3 requires a design to make about itself before running. The
+pilot's calibrated bounds decide, and they will run higher than these,
+because a Bonett bound on a distribution with a 30-38% point mass at the
+boundary is not a gentle one. The cap of 1300 leaves roughly 45% of
+headroom against `n_eq`, which is the margin that has to absorb it.
+
+Design-check `Delta_B` on the paired statistic, for disclosure:
+mean `y_B` = `+0.2342 / +0.1205 / +0.0116`, so
+`Delta_B = -0.2227 +/- 0.0167` against a derived
+`Delta*_B = -0.2508` — monotone, same sign, and 1.7 sigma shallower,
+which is compatible with the target. (An earlier draft measured
+`-0.1436 +/- 0.0345` at a quarter of these counts and read the gap as a
+3-sigma compression from the boundary population; at this precision the
+gap is not established, so that reading is withdrawn and only the
+compression MECHANISM stands, unquantified.) `n_sup` against the
+observed rate is 100, still far under `n_eq`, so nothing that binds
+changes either way.
+
+**Seed windows (frozen). Section 6's `1200000-1999999` reservation is
+SUPERSEDED**, for two reasons stated rather than worked around: six
+blocks at this addendum's sample sizes need about 1.6M seeds and that
+reservation holds 800k, and `2000000+` is P12's own design-check space
+which this addendum's checks have now consumed. Stage B takes a fresh
+decade above every range the programme has used (P13 v3 ends at
+21503999; P13's Section 12.4 reserves `22000000+` for design checks,
+left intact):
+
+| block | base | slots | span |
+|---|---|---|---|
+| verification-B, 600 | 30000000 | 2000, consecutive | 30000000-30001999 |
+| verification-B, 1200 | 30002000 | 2000, consecutive | 30002000-30003999 |
+| verification-B, 2400 | 30004000 | 2000, consecutive | 30004000-30005999 |
+| pilot, curved 600 | 30100000 | 320 | 30100000-30163999 |
+| pilot, curved 2400 | 30200000 | 320 | 30200000-30263999 |
+| pilot, twin 600 | 30300000 | 320 | 30300000-30363999 |
+| pilot, twin 2400 | 30400000 | 320 | 30400000-30463999 |
+| Stage B, curved 600 | 31000000 | 1320 | 31000000-31263999 |
+| Stage B, curved 1200 | 31400000 | 1320 | 31400000-31663999 |
+| Stage B, curved 2400 | 31800000 | 1320 | 31800000-32063999 |
+| Stage B, twin 600 | 32200000 | 1320 | 32200000-32463999 |
+| Stage B, twin 1200 | 32600000 | 1320 | 32600000-32863999 |
+| Stage B, twin 2400 | 33000000 | 1320 | 33000000-33263999 |
+
+Slots are `cap + 20` at stride 200. Design-check space from here on is
+`40000000+`. Everything else procedural is P12 Section 6's, verbatim:
+first-`n`-complete fill with published skip identities, skip cap 20,
+clean-worktree preflight, stamp equality within a chain, and
+one-significant-figure quoting of every measured timing.
+
+### 10.11 Implementation plan (after this addendum merges)
+
+Extend `experiments/positive_control/p12_curved.py` with a Stage B
+module that imports rather than reimplements: P13's per-rung sprinkler
+and eligibility for the 1.50-rung geometry, the shared chain estimator,
+P11's power and verdict machinery. The only new code is `G`, its
+bisection inverse with the boundary convention, `g_hat`, and the
+twin-ratio aggregation.
+
+Tests before any run, each written against the case it is meant to
+catch:
+
+1. the closed-form volume against quadrature at the frozen tolerance,
+   and its position independence at fixed `tau`;
+2. `G` strictly decreasing on the tested range, and `G^-1(G(s)) = s`
+   to `1e-10`;
+3. the boundary convention: `Q_hat/2 >= 1/2` yields `R_hat = 0` and
+   relative error exactly 1, and the boundary-hit count is reported;
+4. the `m`-gate covering BOTH arms, failing on a drifting twin beside a
+   clean curved arm (P13's C5 regression, ported);
+4b. the CROSS-ARM `m` gate at `+/- 1%`, failing on two arms that are
+   each internally flat but offset from one another — the case within-arm
+   gates cannot see, and the one review C11 found had already bitten.
+   The test must assert that the failure **aborts**, not merely that it
+   is recorded, since review C21 found the first fix recording it and
+   continuing;
+4d. seed-block disjointness over every block the stage consumes, both
+   arms and every calibration iteration, enumerated rather than argued —
+   review C17 found 14 cross-rung collisions behind a comment that
+   claimed separation;
+4c. the paired statistic carrying twin variation: a construction that
+   substitutes the twin's rung mean must produce a strictly smaller
+   variance than the paired one on the same data, so the test asserts
+   the inequality rather than trusting the docstring;
+5. `Delta*_B` recomputed from the frozen `a`, `b` and the frozen `m`
+   ladder, asserted equal to the **`-0.2508`** this addendum freezes in
+   10.4, so the number cannot drift from its derivation. (Review C25:
+   this line still named `-0.2516`, the value from the superseded
+   400-sample check, so the test as specified would have rejected the
+   correct implementation — a stale expected value in a regression whose
+   whole job is to catch staleness);
+6. the equivalence coefficient's two-sided identity, `2 Phi(z) - 1 =
+   0.90` at the frozen constant (P13's C2 regression, ported);
+7. window privacy and freshness against every documented spent range,
+   asserted against the ranges themselves rather than against a floor;
+8. the co-requirement of 10.7 returning RATE-ONLY when (i) passes and
+   (ii) fails.
+
+Stage P-B runs only from a clean commit containing all of it, and only
+after Verification-B's pin passes.

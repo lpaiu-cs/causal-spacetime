@@ -139,4 +139,39 @@ Corollaries for anyone working in this repository:
   the artifact records is a commit that exists. The runners enforce this with a
   preflight check that counts untracked files as dirty.
 - A record may cite a stamp only if
-  `git merge-base --is-ancestor <stamp> HEAD` succeeds.
+  `git merge-base --is-ancestor <stamp> HEAD` succeeds, where **HEAD is the
+  branch that carries the record, or any merge commit that has that branch as
+  a parent.** The gate is a statement about the repository's real history, not
+  about every possible export of it.
+
+### What the gate does NOT mean, because this has been misread three times
+
+Automated review environments commonly evaluate a pull request as a **synthetic
+single-parent commit**: the branch's final tree grafted onto the fork point, or
+onto the base tip, with the branch's individual commits absent. On such an
+object `--is-ancestor <stamp> <synthetic>` exits 1 for every stamp on the
+branch, because none of those commits are in its ancestry. That is a property
+of the synthetic object, not evidence that the branch flattened its own history.
+
+Three findings on PRs #35 and #36 (C1, C15, C23/C26) were built on exactly this
+and reported as P1 provenance failures. The distinguishing check, which anyone
+auditing should run before drawing the inference:
+
+```
+git cat-file -t <cited-sha>                  # does the object exist here at all?
+git rev-list --parents -n 1 <cited-sha>      # one parent, or two?
+git rev-list --parents -n 1 <branch-head>    # what the branch actually looks like
+```
+
+For PR #36 at head `5dd2537` the cited object did not exist in the repository,
+while `git merge-base --is-ancestor 7ac5893 X` exited 0 for X in `HEAD`, the
+pushed branch, `refs/pull/36/head`, **and GitHub's own `refs/pull/36/merge`**
+(which has two parents, base tip and branch head, and therefore does preserve
+the stamps).
+
+The concern underneath the misreading is real, which is why it is answered by
+configuration rather than by vigilance: squash and rebase merges are disabled at
+the repository level, so no merge performed through GitHub can produce the
+flattened history these findings describe. PR #35 is the worked example — merged
+with a merge commit, and all six of its stamps verify reachable from
+`origin/main` afterwards.
