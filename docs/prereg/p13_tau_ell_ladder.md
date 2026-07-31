@@ -1,8 +1,38 @@
 # P13: how far does curvature let the flat-normalized reading go? — power-first preregistration
 
-Status: **DESIGN v1.1 (2026-07-28), for in-session review. Nothing
-below has been run.** Dates are local (UTC+9); commit timestamps
-carry their +09:00 offset.
+Status: **CLOSED. Three campaigns have run and the question is
+answered.** The result is Section 13:
+**CURVATURE-ROBUST with the control CLEAN**, at `delta_eq = 0.02` dex,
+`Delta_13 = +0.0072` with CI `[-0.0004, +0.0148]`, and a flat twin that
+matches the curved arm's observed residual to `+0.00007`, with the two
+arms differing by no more than `+/- 0.011` dex. (Each arm's own
+`+0.007` rise has an interval including zero and is not established —
+13.2.) At
+fixed discreteness `m ~ 76` the flat-normalized chain reading does not
+notice curvature out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`. **This
+is a result about the INSTRUMENT in 1+1D de Sitter, one conformal
+patch.** A 1+1D metric is conformally flat, so it does not and cannot
+establish the general thesis that curvature enters causal order only
+through the counting measure — 13.3 says why, and that generality needs
+`d >= 3`.
+
+Getting there took three campaigns, and each verdict stands at its own
+stamp, none re-read. v1 **CONFOUNDED** (Section 9): the control had no
+sample size of its own. v2 **CURVATURE-DEGRADES** (Section 11): the
+control was sized, but the verdict's trigger was scale-free and fired
+at `+0.024` — under half the margin then in force — and 11.3's
+quarantined diagnostic at four times the precision does not reproduce
+that contrast, so what the word may be read to MEAN is bounded there.
+v3 (Sections 12 and 13) repaired the trigger to key on the margin,
+tightened `delta_eq` to 0.02, raised the equivalence power target to
+99%, and ran on fresh windows at `15000000+`.
+
+Dates are local (UTC+9); commit timestamps carry their +09:00 offset.
+
+Sections 1 through 8 describe the design as frozen for campaign v1.
+Where v2 changes a frozen rule it says so in Section 10; everything
+those sections state that Section 10 does not touch remains in force
+verbatim.
 
 v1.1 corrections, pre-freeze and pre-data, from design review (the
 central one reproduced independently before it was applied): **the
@@ -123,7 +153,12 @@ flat-normalized chain reading does not notice curvature out to
 `R tau^2 = 4.5`. That is the strong form of this programme's thesis —
 curvature entering the order only through the counting measure — and
 P13 exists to establish or refute it with frozen power, not to
-discover it. Those design numbers are quarantined (seeds `7000000+`
+discover it. **[Forward marker, v3.1, per the in-place convention:
+this framing is SUPERSEDED by 13.3. A 1+1D metric is conformally flat,
+so in this model curvature can reach the order only through the measure
+as a matter of geometry rather than of measurement; the general thesis
+needs `d >= 3`, and what P13 establishes is about the instrument.]**
+Those design numbers are quarantined (seeds `7000000+`
 and `9000000+`, disjoint from every experimental window) and are
 disclosed here precisely so that a later ROBUST verdict cannot be
 mistaken for a surprise.
@@ -287,3 +322,1041 @@ zero-contrast pin; verdict-table precedence including the new
 polarity and the ROBUST-unavailable branch; and window privacy and
 freshness against every documented range. Stage P-13 runs only from a
 clean commit containing all of it, after the verification pin passes.
+
+---
+
+## 9. Stage records (campaign v1)
+
+### 9.1 Verification-13 and Stage P-13 (2026-07-28)
+
+- **Verification-13**: 2000 / 2000 / 2000 / **1998** of 2000 complete
+  across the four rungs — the pin met exactly at the top rung, so the
+  v1.1 packing constants hold at pin resolution where v1.0's would
+  have collapsed. Measured wall times ~0.1 s per sample.
+- **Stage P-13**: 200 samples at each endpoint rung, zero skips. The
+  calibration fired hard at the top rung (coverage 0.833 at nominal,
+  `z = 2.86` — heavier tails than any earlier pilot), and the
+  realized variance came in ABOVE the design check: `n_sup = 21`,
+  **`n_eq = 231 > cap 200`**, so CURVATURE-ROBUST was declared
+  unavailable ex ante and the campaign ran at `n = 21` with the
+  reduced vocabulary. The cap was not raised at this point: the
+  pilot's variance is data, and changing a frozen rule after seeing
+  it is precisely what preregistration forbids.
+
+### 9.2 Stage A-13 (2026-07-28): **CONFOUNDED**
+
+21 samples per rung on both arms, zero skips.
+
+    Delta_13 = +0.014,  95% CI [-0.050, +0.077]
+    flat twin = +0.085, 95% CI [+0.032, +0.136]   <- gate 2 fails
+
+| gate | reading | result |
+|---|---|---|
+| `m`-matching | 73.9 / 74.4 / 75.8 / 79.5, grand 75.9 | PASS (top rung +4.7%, inside the 5% band) |
+| flat twin | `|Delta_twin| = 0.085 > delta_eq = 0.05` | **FAIL** |
+
+The frozen rule returns **CONFOUNDED**: a control whose true contrast
+is zero by construction read larger than the equivalence margin, and
+the curved contrast (+0.014) is SMALLER than the artifact the control
+reports, so nothing can be said about curvature from this campaign.
+The verdict stands as run; gates are not re-read.
+
+Labelled, for the record: the curved rungs' median relative errors
+were 0.200 / 0.182 / 0.184 / 0.196 — flat to within 10% while
+`(tau/ell)^2` moved 25-fold — and the `(tau/ell)^2` trend fit read
+`+0.021`, CI `[-0.008, +0.051]`, consistent with zero. The raw signal
+still points at curvature-insensitivity; the campaign simply has no
+standing to say so.
+
+### 9.3 Isolated diagnostic: the control was innocent (post hoc, quarantined)
+
+Run in design-check space (`7500000+`, `7600000+`), never touching an
+experimental window.
+
+**Pair level (720 pairs per rung).** Relative error
+0.201 / 0.192 / 0.186 / 0.192; `m = 74.5 +/- 12.2` identically at
+every rung; mean chain length 16.0-16.1; aspect-ratio distributions
+overlapping. **Conditioned on `m in [70, 82]`**: 0.192 / 0.184 /
+0.184 / 0.185. This is what theory demands and is stronger than a
+measurement: the LIS distribution of a uniform Poisson box is
+invariant under axis-wise monotone rescaling, so given the count it
+cannot know the box's size or aspect. The twin's implementation is
+therefore not broken, and the packing-selection worry closes too,
+since the `m` distributions coincide across rungs.
+
+**Sample level (150 samples per rung, the campaign's own code path).**
+Mean `y` = -0.759 / -0.739 / -0.751 / -0.744, giving
+**`Delta_twin = +0.015 +/- 0.030`** — consistent with zero.
+
+**Where +0.085 came from.** Resampling `n = 21` subsets of those 150
+gives a contrast SD of 0.037 and
+
+    P(|Delta_twin| > delta_eq | true value 0) = 0.218,
+    P(Delta_twin > 0.085 | true value 0) = 0.031.
+
+So a perfect protocol trips this control roughly one campaign in
+five, and the observed value is a 3%-tail draw. The campaign's CI
+excluded zero, which is why the CONFOUNDED verdict was correct as
+frozen; the grounds for now calling it a fluctuation are the
+150-per-rung diagnostic and the invariance theorem, not a re-reading
+of the campaign.
+
+**The defect, named.** v1.1 specified the twin's protocol but never
+its SAMPLE SIZE, so the control inherited the curved arm's `n_sup`,
+which was sized to detect `Delta = 0.15` — not to demonstrate that a
+control sits inside `delta_eq = 0.05`. An equivalence-grade
+requirement was given a superiority-grade sample. That is the same
+class as P11 v1.5's "the design promised a verdict it had not
+priced", recurring one level out: this time in the control rather
+than the gate.
+
+---
+
+## 10. Design v2 (2026-07-28): the control gets its own power and semantics
+
+Campaign v1's record above stands. v2 changes three frozen things and
+nothing else, each because of a fact now on the record rather than a
+preference.
+
+**(1) The twin gate becomes an equivalence test, evaluated by
+precedence.** A point-estimate threshold is a point test at any `n`,
+which is why a perfect control failed it. With `lo_t`, `hi_t` the
+twin's 95% bootstrap interval:
+
+| # | condition | control result |
+|---|---|---|
+| 1 | `-delta_eq < lo_t` and `hi_t < delta_eq` | **CONTROL-CLEAN** — equivalence demonstrated; the campaign's verdict stands |
+| 2 | `lo_t > delta_eq` or `hi_t < -delta_eq` | **CONFOUNDED** — a real artifact larger than the margin |
+| 3 | otherwise | **UNDERPOWERED-CONTROL** — a record, not a verdict: the campaign reports its contrast with the control's imprecision stated |
+
+Row 3 is the honest home for the reading v1 produced, and it cannot
+fire spuriously the way a point threshold does.
+
+**What row 3 does to the curved verdict word, pinned so it cannot be
+read two ways** (the ambiguity v1 paid for elsewhere): on row 3 **the
+verdict word IS issued** and carries UNDERPOWERED-CONTROL beside it,
+exactly as P11's SELECTION-CAVEAT rides alongside a verdict rather
+than replacing it, and Section 9's narration must print the twin's
+interval next to the verdict word every time. Withholding the word
+would kill a campaign twice over for a control that is merely
+imprecise; with `n_twin` sized as in (2), row 3 fires only when the
+realized variance badly overruns the pilot, which is rare and is
+itself worth reporting.
+
+**(2) The twin is piloted and sized like an arm.** Stage P-13B pilots
+BOTH twin endpoint rungs (200 samples each), and
+
+    n_twin = ceil( S^2_90(twin) * (1.960 + 1.645)^2 / delta_eq^2 ),
+
+the same equivalence formula the curved arm uses, clamped to the same
+floor and cap. The twin's measured `s(y) ~ 0.11-0.14` puts this near
+`n ~ 170-230`, which is the point: demonstrating a control is clean
+costs as much as demonstrating equivalence anywhere else.
+
+**(3) The cap rises to 300, ex ante.** This is legitimate now and was
+not before: `n_eq = 231` is disclosed pre-freeze information for v2,
+where in v1 it was pilot data arriving after the rule was frozen. At
+300 the curved arm can again buy CURVATURE-ROBUST, and the total cost
+is about `2 * 231 * 4 * 0.1 s`, a few minutes.
+
+**(4) The `m`-gate's false-firing rate is stated rather than
+assumed** (same class check, applied to the other control): at
+`n = 21` the sample-level spread of per-rung mean `m` made the
+top rung's `+4.7%` a near miss of the `5%` band; at the v2 sample
+sizes the standard error of a rung's mean `m` is under `1%`, so the
+gate fires on drift rather than on noise. The realized figures are
+published per rung either way.
+
+**Fresh windows (v2, frozen).** Campaign v1's seeds are spent, so v2
+runs entirely in `8000000-8799999`; design-check space remains
+`7000000-7999999` and `9000000+`.
+
+| block | base | slots | span |
+|---|---|---|---|
+| verification-13B | 8000000 | 2000 per rung | 8000000-8007999 |
+| pilot, curved 0.30 | 8020000 | 320 | 8020000-8083999 |
+| pilot, curved 1.50 | 8084000 | 320 | 8084000-8147999 |
+| pilot, twin 0.30 | 8148000 | 320 | 8148000-8211999 |
+| pilot, twin 1.50 | 8212000 | 320 | 8212000-8275999 |
+| Stage A, curved 0.30 | 8280000 | 320 | 8280000-8343999 |
+| Stage A, curved 0.60 | 8344000 | 320 | 8344000-8407999 |
+| Stage A, curved 1.00 | 8408000 | 320 | 8408000-8471999 |
+| Stage A, curved 1.50 | 8472000 | 320 | 8472000-8535999 |
+| twin 0.30 | 8540000 | 320 | 8540000-8603999 |
+| twin 0.60 | 8604000 | 320 | 8604000-8667999 |
+| twin 1.00 | 8668000 | 320 | 8668000-8731999 |
+| twin 1.50 | 8732000 | 320 | 8732000-8795999 |
+
+Everything else — the ladder, the patch constants, the bands, the
+estimator, both eligibility conditions, the verdict table of Section
+1.2, `delta_eq`, and the detection target — is unchanged from v1.1
+and is NOT re-opened by this revision.
+
+---
+
+## 11. Stage records (campaign v2)
+
+Artifacts: `docs/prereg/frozen/p13v2/`. All four are stamped
+`d916f34`, so stamp-equality across the chain holds. Campaign v1's
+artifacts stay in `docs/prereg/frozen/p13/` and the two directories
+are never mixed in a quotation.
+
+### 11.1 Verification-13B and Stage P-13B (2026-07-28)
+
+- **Verification-13B**: 2000 / 2000 complete at every rung against
+  the 1998 pin, in the fresh `8000000+` windows. Measured wall times
+  ~0.2 / ~0.09 / ~0.08 / ~0.1 s per sample (one significant figure,
+  per 9.6).
+- **Stage P-13B**: 200 samples in each of FOUR pilot blocks — both
+  curved endpoint rungs and, new in v2, both twin endpoint rungs.
+  Curved: `s^2_90 = 0.0473` after calibration (bottom coverage 0.8805
+  -> `z = 2.756`; top 0.929 -> `z = 1.813`), giving `n_sup = 23` and
+  **`n_eq = 246`, inside the raised cap of 300**, so
+  CURVATURE-ROBUST was purchasable ex ante and `n_per_rung = 246`.
+  Twin: `s^2_90 = 0.0343`, `n_twin = 179`, equivalence affordable.
+  Projected Stage A 0.05 h. FEASIBLE.
+
+The cap is what bought the vocabulary. At v1's cap of 200 this
+pilot's `n_eq = 246` would again have declared ROBUST unavailable and
+the campaign would again have run at `n_sup = 23`.
+
+### 11.2 Stage A-13 v2 (2026-07-28): **CURVATURE-DEGRADES**, control CLEAN, effect at half the margin
+
+246 curved samples and 179 twin samples per rung, zero skips on
+either arm, no selection caveat.
+
+    Delta_13  = +0.0243,  95% CI [+0.0044, +0.0456]  ->  CURVATURE-DEGRADES
+    flat twin = +0.0063,  95% CI [-0.0194, +0.0328]  ->  CONTROL-CLEAN
+
+| gate | reading | result |
+|---|---|---|
+| `m`-matching | 75.57 / 75.58 / 75.98 / 75.89, grand 75.755 | PASS, widest rung at +0.30% |
+| flat twin (v2 equivalence test) | interval inside `+/- delta_eq` | **CONTROL-CLEAN** |
+
+Both v2 controls did what v2 was for. The `m`-gate now fires on drift
+rather than on noise — the widest rung sits at `+0.30%` where v1's
+`n = 21` put it at `+4.7%`, which is 10 (4) discharged as promised.
+And the twin, piloted and sized as an arm, demonstrated equivalence
+instead of failing a point threshold.
+
+**The magnitude, printed beside the verdict word because 1.2 requires
+it.** `Delta = +0.0243` is under HALF of `delta_eq = 0.05`, and even
+the interval's upper end (`+0.0456`) lies inside the margin. The
+campaign therefore says: the effect is statistically detected — zero
+is excluded — and it is SMALLER than the threshold below which "the
+reading did not notice the curvature" is a fair description. Quoting
+the verdict word alone inverts the finding. This is the exact
+situation 1.2 anticipated when it pinned that rows 1 and 2 can fire
+on a contrast smaller than `delta_eq`.
+
+**Where the contrast comes from, and it is not a trend.** The
+labelled checks: median relative error `0.1795 / 0.1916 / 0.1880 /
+0.1860`, a 6% spread while `(tau/ell)^2` moves 25-fold; the
+`(tau/ell)^2` trend fit reads `+0.0073`, CI `[-0.0013, +0.0158]`,
+consistent with zero. Both hold at once because of the rung profile:
+
+| `tau/ell` | mean `y`, curved (n = 246) | mean `y`, twin (n = 179) |
+|---|---|---|
+| 0.30 | -0.7608 +/- 0.0075 | -0.7552 +/- 0.0097 |
+| 0.60 | -0.7367 +/- 0.0071 | -0.7373 +/- 0.0095 |
+| 1.00 | -0.7392 +/- 0.0071 | -0.7508 +/- 0.0078 |
+| 1.50 | -0.7364 +/- 0.0071 | -0.7489 +/- 0.0088 |
+
+(`+/-` is one standard error. The curved rung means are in the
+summary artifact; the twin rung means and every standard error are
+computed from `p13_stage_a.csv`, the same frozen rows the gate
+scored. A labelled addition, not a re-reading of the gate.)
+
+Curved rungs 2, 3 and 4 agree to 0.003 dex. The `0.30 -> 0.60` step
+is `+0.0241 +/- 0.0103` and the primary contrast is `+0.0243`:
+**essentially the entire contrast is a bottom-rung offset.** A
+`(tau/ell)^2` correction does not have that shape.
+
+**And the control has the same offset.** The twin's `0.30 -> 0.60`
+step is `+0.0179 +/- 0.0136` — same sign, comparable size, in an
+ensemble whose true contrast is ZERO by construction. The twin's
+endpoint contrast stays small (`+0.0063`) only because its rungs 3
+and 4 come back down; the feature that produces the curved arm's
+signal is present in the control. Campaign v1's own 9.3 twin
+diagnostic, at 150 samples per rung in the disjoint design-check
+space `7600000+`, recorded `-0.759 / -0.739 / -0.751 / -0.744`: the
+same shape, so the offset replicates across two independent seed
+spaces.
+
+**The control is clean at its own resolution and silent at the
+effect's.** `n_twin = 179` was sized by the equivalence formula
+against `delta_eq = 0.05`, exactly as 10 (2) specifies, and its
+realized interval half-width is 0.026. The verdict, however, fires on
+`lo > 0`, which has no size floor. So the gate rang at `+0.0243`
+while the control can only certify the absence of artifacts at the
+`0.05` scale, and the twin's interval `[-0.0194, +0.0328]` contains
+`+0.0243` comfortably. **CONTROL-CLEAN is a true statement about
+0.05-scale artifacts and no statement at all about 0.024-scale
+ones.**
+
+That is this programme's recurring defect class, one level further
+out again. P11 v1.5: the design promised a verdict it had not priced.
+P13 v1: an equivalence-grade requirement was given a
+superiority-grade sample. P13 v2: **the verdict fires at a resolution
+finer than the control was sized to certify.** v2 gave the control
+power against `delta_eq` and left the trigger scale-free, so the
+mismatch moved rather than closed. Naming it here is not a
+re-reading of the gate; it is a bound on what the gate's word can be
+taken to mean.
+
+**Netting out the control** — a labelled calculation, not the frozen
+statistic, since P13 freezes the twin as a gate and not as a
+subtrahend:
+
+    endpoint difference-of-differences    +0.0180 +/- 0.0167   (1.1 sigma)
+    rung-1 step difference-of-differences +0.0062 +/- 0.0171   (0.4 sigma)
+
+Nothing survives either subtraction. The difference construction is
+in-programme — P12 Section 5 item 5 makes exactly this subtraction
+Stage B's primary, for exactly this reason — but P13 did not freeze
+it, so it is reported and not scored.
+
+**What the campaign establishes.** The frozen gate says
+CURVATURE-DEGRADES and it stands: the contrast excludes zero at 246
+samples per rung with both controls passing as frozen, and the
+verdict is not re-read. What the campaign does NOT establish is that
+curvature is the cause of it, and the reason is on the record above
+rather than in an objection: the whole contrast is a bottom-rung
+offset, and a zero-effect ensemble shows the same offset at
+comparable size.
+
+**Three candidates for the bottom-rung offset, and what the frozen
+artifact already decides.**
+
+1. **The band's absolute width, entering through the `m`
+   distribution.** The `+/- 10%` band is proportional, so its
+   absolute width grows with `tau`. **Excluded by the artifact**:
+   `sd_m = 11.52 / 11.74 / 11.53 / 11.59`, flat to 2% across the
+   ladder. And quantitatively — P12's measured `dy / dlog10 m ~
+   -0.304` makes a 2% shift in `m` worth about 0.003 dex, an order
+   below `+0.024`. No run was required to close this one.
+2. **The 0.30 rung's geometry at fixed `tau/ell`.** The candidate the
+   twin supports, and the quantity is packing pressure, which is not
+   flat across the ladder. With `K = 6` boxes of `(u,v)` area
+   `centre^2` in a patch of `(u,v)` area `4 (|eta_lo| - 1) X`, the
+   frozen constants give **0.168 / 0.222 / 0.263 / 0.263**. Two
+   notes, both corrections to the natural guess: the bottom rung has
+   the LOOSEST packing, not the tightest (Section 2's steeply growing
+   `X` is about the top rungs needing room, and the bottom rung ended
+   up with a surplus); and the relation to `y` is a step, not a
+   proportionality, since rung 2's ratio is intermediate while its
+   `y` already sits on the plateau. A correlation across rungs
+   therefore cannot settle it — only moving the ratio at fixed
+   `tau/ell` can, which is 11.3.
+3. **A real curvature effect that is not of `(tau/ell)^2` form.**
+   Still available. It has to beat candidate 2, and it has to explain
+   why a flat ensemble shows the same step.
+
+Candidate 2 has direct control-arm support, so it gets an isolated
+diagnostic, on the v1 precedent of 9.3: quarantined seed space, the
+campaign's own code path, labelled throughout, and no gate re-read.
+
+### 11.3 Isolated diagnostic: the offset does not replicate, and the mechanism has no effect
+
+Post hoc, quarantined, labelled. Design-check seeds `9000000+` per
+Section 10, no experimental window touched, no gate re-read. The
+script is `docs/prereg/frozen/p13v2/p13v2_rung1_diag.py`, committed at
+`7b1442d` with its predictions stated **before** it ran, and the
+results at that same stamp are in
+`p13v2_rung1_diag_results.json`. It calls `run_sample`, so
+eligibility, packing, the `rho` convention and the estimator are the
+campaign's. Every configuration completed 1.000 and every `rho`
+calibration converged, so nothing below is a selection or a
+discreteness artifact.
+
+**D1 and D2: the ladder at four times the campaign's precision.**
+1000 samples at the two rungs that carry the step, 500 at the
+plateau, both arms.
+
+| `tau/ell` | curved, campaign (n=246) | curved, diagnostic | flat, campaign (n=179) | flat, diagnostic |
+|---|---|---|---|---|
+| 0.30 | -0.7608 +/- 0.0075 | **-0.7432 +/- 0.0036** | -0.7552 +/- 0.0097 | -0.7533 +/- 0.0036 |
+| 0.60 | -0.7367 +/- 0.0071 | **-0.7514 +/- 0.0039** | -0.7373 +/- 0.0095 | -0.7485 +/- 0.0039 |
+| 1.00 | -0.7392 +/- 0.0071 | -0.7368 +/- 0.0049 | -0.7508 +/- 0.0078 | -0.7520 +/- 0.0053 |
+| 1.50 | -0.7364 +/- 0.0071 | -0.7376 +/- 0.0051 | -0.7489 +/- 0.0088 | -0.7455 +/- 0.0055 |
+
+The plateau rungs agree between the two samples to within a standard
+error. **The two bottom rungs swapped.** In the campaign rung 0.30 sat
+0.024 dex BELOW rung 0.60; in the diagnostic it sits 0.008 dex ABOVE
+it.
+
+| contrast | campaign | diagnostic | separation |
+|---|---|---|---|
+| curved, `0.30 -> 1.50` (the primary) | +0.0243 +/- 0.0105 | **+0.0056 +/- 0.0062**, CI `[-0.0066, +0.0179]` | 1.5 sigma |
+| curved, `0.30 -> 0.60` (the step) | +0.0241 +/- 0.0103 | **-0.0082 +/- 0.0054** | 2.8 sigma |
+| flat, `0.30 -> 1.50` | +0.0063 +/- 0.0133 | +0.0079 +/- 0.0066 | 0.1 sigma |
+| flat, `0.30 -> 0.60` | +0.0179 +/- 0.0136 | +0.0048 +/- 0.0053 | 0.9 sigma |
+| endpoint difference-of-differences | +0.0180 +/- 0.0167 | **-0.0022 +/- 0.0091** | — |
+
+So both offsets 11.2 reported were sampling noise at their own sample
+sizes: the twin's `+0.0179` falls to `+0.0048 +/- 0.0053`, and the
+curved arm's `+0.0241` — which was the entire primary contrast —
+reverses to `-0.0082 +/- 0.0054`. The endpoint contrasts are formally
+compatible between the two samples (1.5 sigma); the steps are in mild
+tension (2.8 sigma). Either way the higher-precision sample puts the
+primary contrast at about a quarter of the campaign's value with an
+interval that excludes nothing.
+
+Across the diagnostic's curved ladder the total spread is **0.0146
+dex** while `(tau/ell)^2` moves 25-fold, from 0.09 to 2.25.
+
+**D3: the suspected mechanism, measured directly.** Packing pressure
+moved at FIXED `tau/ell`, `rho` recalibrated so realized `m` stayed on
+the campaign's grand mean 75.755 (`m` turned out to be nearly
+`X`-insensitive on the curved arm — both curved calibrations converged
+at their frozen `rho` on the first probe, which is what a count in a
+band-fixed box should do).
+
+| variant | move | packing ratio | curved shift | flat shift |
+|---|---|---|---|---|
+| V-LOOSE | rung 0.60, `X` 4.0 -> 5.28 | 0.2217 -> 0.1679 | **+0.0008 +/- 0.0064** | +0.0061 +/- 0.0064 |
+| V-TIGHT | rung 0.30, `X` 1.8 -> 1.36 | 0.1680 -> 0.2224 | **-0.0002 +/- 0.0065** | +0.0070 +/- 0.0063 |
+
+Realized `m`: 76.33 / 74.86 / 75.32 / 74.52. Completion 1.000
+everywhere, including the narrowed patch.
+
+On the curved arm, a `+/- 32%` move in packing pressure shifts `y` by
+under 0.001 dex, bounding the mechanism at `+/- 0.013` dex at 95%. On
+the flat arm both shifts are about `+1 sigma` and — decisively — they
+have the SAME sign under OPPOSITE moves of the ratio, which is what
+noise looks like and is not what a mechanism looks like. The
+docstring's two-sided prediction (the variants CROSS if packing
+pressure drives the offset) is refuted on both arms.
+
+**All three candidates are now closed.**
+
+1. The `m` distribution: closed by the frozen artifact before any run
+   (`sd_m` flat to 2%; P12's measured slope makes a 2% `m` shift worth
+   0.003 dex).
+2. Packing pressure: closed by D3 above. Note this closes the
+   mechanism independently of the offset — even had the offset been
+   real, this is not what caused it.
+3. A real curvature effect not of `(tau/ell)^2` form: nothing is left
+   to explain. The high-precision curved ladder is flat to 0.0146 dex
+   across a 25-fold change in `(tau/ell)^2`.
+
+**What this means for the campaign's word.** The gate stands exactly
+as frozen and is not re-read: `Delta_13 = +0.0243`, CI
+`[+0.0044, +0.0456]`, CURVATURE-DEGRADES, control CLEAN, `m`-gate
+passed. What the diagnostic removes is the grounds for reading that
+word as a curvature effect. This is the P12 9.2 pattern repeating with
+a different number: a campaign-sized signature that a quarantined
+high-`n` diagnostic dissolves, and the honest record says so rather
+than letting the verdict word carry a mechanism it cannot support.
+
+**The substantive reading, labelled and not a verdict.** At fixed
+discreteness `m ~ 76`, no degradation of the flat-normalized chain
+reading is detected out to `tau/ell = 1.5`, i.e. `R tau^2 = 4.5`, with
+the endpoint contrast bounded inside `[-0.0066, +0.0179]` dex at 95%
+— well inside `delta_eq = 0.05`. That interval satisfies the
+numerical condition of row 3 of the 1.2 table. **[v3.1, review C4: the
+first version of this paragraph continued "and it is the strong form of
+this programme's thesis: curvature entering the order only through the
+counting measure." That clause is WITHDRAWN. A 1+1D patch is
+conformally flat, so the reading bears on the instrument and not on the
+thesis; 13.3 gives the argument.]** **And a diagnostic cannot award a
+verdict.** It carries no verification pin, its `n` is not
+pilot-derived, and it ran after the campaign's data were seen.
+CURVATURE-ROBUST remains unawarded, and awarding it requires a
+campaign.
+
+**The class, stated precisely this time.** Rows 1 and 2 are
+significance tests with no size floor, so a ladder with no true effect
+fires one of them in about one campaign in twenty by construction —
+that is the `alpha` of the test, not a defect in it. The campaign drew
+one. What the design did not require is that the trigger clear the
+resolution of the campaign's own controls: `n_per_rung = 246` gives
+`se ~ 0.010` on the contrast, `n_twin = 179` gives `+/- 0.026` on the
+control, and row 1 fired at `+0.024` — below the control's resolution
+and at twice the arm's. So the three recurrences read: P11 v1.5
+promised a verdict it had not priced; P13 v1 gave an equivalence-grade
+requirement a superiority-grade sample; P13 v2 let a scale-free
+trigger fire below the scale its controls could certify. Section
+1.2's magnitude pin is what kept this from being published as a
+mechanism, and it earned its place.
+
+**Named for the next design review, adopted by nothing here.** Two
+options, neither frozen: size the campaign on an equivalence
+requirement at a `delta_eq` near the effect scale that actually
+matters (~0.02 rather than 0.05), which at this variance costs
+`n ~ 1500` per rung and a few minutes; or give rows 1 and 2 a size
+floor, so a significant contrast must also exceed some stated fraction
+of `delta_eq` before it earns the word DEGRADES. The first buys
+precision, the second buys honesty in the vocabulary. Choosing between
+them is a design decision, and this record does not make it.
+
+---
+
+## 12. Design v3 (2026-07-31): one margin, and the trigger keyed to it
+
+Approved in session. 11.3 answered P13's scientific question at
+diagnostic grade and left the design owing one repair and offering one
+upgrade; both are taken, and the power target moves with them.
+Campaign v2's record stands and is not re-scored. Everything below is
+frozen before any v3 datum exists, and v3 runs on fresh windows.
+
+### 12.1 The repair: the trigger and the margin become the same number
+
+Section 10 (1) replaced the twin's point threshold with a three-way
+equivalence test, because a point test is a point test at any `n`. It
+did not carry that fix to the PRIMARY verdict table, and the module
+shows the asymmetry with the two functions side by side: the control
+asks `lo_t > delta_eq`, the verdict asks `lo > 0`. That gap IS 11.3's
+third recurrence, so the repair is to propagate a fix already made
+rather than to invent one.
+
+Frozen v3 table, by precedence as before:
+
+| # | condition | verdict |
+|---|---|---|
+| 1 | `lo > delta_eq` | **CURVATURE-DEGRADES** |
+| 2 | `hi < -delta_eq` | **CURVATURE-HELPS** |
+| 3 | `-delta_eq < lo` and `hi < delta_eq` | **CURVATURE-ROBUST** (available only if the pilot declared it affordable) |
+| 4 | otherwise | **INCONCLUSIVE** if row 3 was affordable, else **UNRESOLVED** |
+
+The vocabulary now matches the question. A contrast that does not clear
+the margin cannot earn the word DEGRADES, because "does not clear the
+margin" is the definition of the reading not noticing the curvature.
+Row 4 widens to hold every interval that straddles a margin edge,
+which is the honest home for an imprecise campaign.
+
+**1.2's magnitude pin STAYS.** It is now belt and braces rather than
+the only guard, and 11.2 is the reason to keep it: it is what stopped
+a scale-free trigger from being published as a mechanism.
+
+**What this table would have said about campaign v2** (corrected in
+v3.1, review C3; the first version of this paragraph said
+CURVATURE-ROBUST and was wrong). Applied to v2's frozen interval
+`[+0.0044, +0.0456]` against `delta_eq = 0.02`, row 1 does not fire
+(`lo = 0.0044` does not clear the margin), row 2 does not fire, and row
+3 does not fire either (`hi = 0.0456` is outside the margin). The table
+returns **INCONCLUSIVE** — row 4, which is where an interval that
+straddles a margin edge belongs. `test_a_significant_but_sub_margin_-`
+`contrast_no_longer_says_degrades` pins exactly that, and the error
+here was a number carried across from a superseded variant of this
+design in which `delta_eq` stayed at 0.05.
+
+The correction strengthens the argument rather than weakening it. Had
+the repair converted v2's DEGRADES into a ROBUST, it would be fair to
+ask whether the new rules were chosen to make an old campaign come out
+nicely. They do not: under v3's rules v2 gets **no verdict at all**,
+because v2's precision was not equal to v3's margin. The repair
+withholds a word rather than upgrading one.
+
+And either way this is **not** a re-scoring: v2's verdict was issued
+under v2's rules and stands as CURVATURE-DEGRADES. A rule change that
+touches one's own verdict may only be applied to data not yet seen,
+which is why v3 gets fresh windows and why this paragraph is here
+rather than discovered later.
+
+### 12.2 The upgrade: `delta_eq` falls from 0.05 to 0.02 dex
+
+A margin should sit near the scale at which the answer would change.
+When v1 chose `delta_eq = 0.05` dex -- 12% in relative error -- that
+was where the answer would have changed, and it was stated as a design
+choice rather than a derived quantity. 11.3 moved that scale: the
+endpoint contrast is now bounded inside `[-0.0066, +0.0179]` dex, so a
+0.05 margin is three times wider than the best available bound and
+would certify something no longer in doubt.
+
+`delta_eq = 0.02` dex is 4.7% in relative error. Since the estimator's
+own error is 18-19% at `m ~ 76`, ROBUST at this margin says curvature
+moves that error by less than 4.7% OF ITSELF while `(tau/ell)^2` moves
+25-fold. That is a materially stronger claim than v2 could have made,
+and it is the claim the diagnostic suggests is true.
+
+**Affordability is not the justification.** A sample costing 0.1 s is
+what makes the stronger claim purchasable; it is not what makes 0.02
+the right margin. The argument for the number is the one above, and it
+would hold at any cost per sample.
+
+**Pre-freeze disclosure, per the v1.1 and P12 precedent.** The
+quarantined numbers that make ROBUST the likely v3 reading are
+11.3's, in design-check space `9000000+`: curved endpoint
+`+0.0056 +/- 0.0062`, interval `[-0.0066, +0.0179]`, already inside
+`+/- 0.02`; the curved ladder flat to 0.0146 dex; packing pressure
+bounded at `+/- 0.013` dex. They are disclosed here so that a v3
+ROBUST cannot later be mistaken for a surprise, and so that this
+design is on record as having been built to establish a reading it
+expects rather than to discover one.
+
+### 12.3 Power: the equivalence target rises from 90% to 99%
+
+`n_eq` is defined so that `P(ROBUST | Delta = 0) = 90%`. That 10% is
+not slack -- it is exactly the probability that a null ladder's
+interval pokes outside the margin. Campaign v2 drew a `+2.3 sigma`
+fluctuation and its upper end landed 0.0044 short of the margin:
+inside, but by a hair. **That thinness is the `beta`, and it scales
+with `delta_eq`, so tightening the margin does not fix it.** Only power
+does.
+
+    n_sup = ceil( S^2_90 * (1.960 + 1.282)^2
+                  / (DELTA_DETECT - delta_eq)^2 )    # 90% power
+    n_eq  = ceil( S^2_90 * (1.960 + 2.576)^2
+                  / delta_eq^2 )                     # 99% P(ROBUST)
+    n_twin = ceil( S^2_90(twin) * (1.960 + 2.576)^2 / delta_eq^2 )
+
+`n_sup` now measures against `DELTA_DETECT - delta_eq`, because row 1
+requires clearing the margin rather than clearing zero. At this
+variance it is about 30 and is not binding; it is corrected for
+accuracy, not for effect.
+
+**The quantile in the equivalence slot is TWO-SIDED, and the 2.576
+above is a post-campaign correction (v3.1, review C2, 2026-07-31).**
+The derivation, written out here because v3 shipped it wrong: ROBUST
+requires BOTH bounds inside the margin, that is
+`|Delta_hat| < delta_eq - 1.960 se`, so with
+`delta_eq / se = 1.960 + z` the power at `Delta = 0` is
+`P(|Z| < z) = 2 Phi(z) - 1`, not `Phi(z)`. A central 99% therefore
+needs `z = Phi^-1(0.995) = 2.576`. **v3 wrote
+`z = Phi^-1(0.99) = 2.326`, which delivers 98.0%**, so the coefficient
+rises 12% and the design-point requirements become `n_eq = 1939` and
+`n_twin = 1848` where the campaign computed 1731 and 1650.
+
+Two things make it worse than a fresh slip. The 90% slot's `1.645` was
+already `Phi^-1(0.95)`, i.e. already the two-sided quantile, so
+substituting a one-sided one broke a convention that was right rather
+than sharpening a loose one — the defect is a *label* read as a
+*derivation*, which is this programme's recurring class in yet another
+dress. And the mistake reached a frozen design and a run campaign before
+review caught it. The corrected coefficient governs every future
+campaign; `test_equivalence_coefficient_is_two_sided` now derives the
+delivered power back out of the constant so a quantile cannot be swapped
+in by label again.
+
+**So campaign v3 missed its preregistered power target, and that stands
+on the record** (v3.3, review C8). v3.1 argued here that the
+conservative variance bound made the campaign achieve 99.86% in
+realization; **that argument is withdrawn.** Power computed from the
+observed interval is post-hoc — it conditions on an estimated variance
+and is a function of the result it would justify — so it cannot satisfy
+an ex-ante promise. The campaign ran `n = 1731 / 1650` where the
+corrected requirement is `1939 / 1848`, and a replication therefore has
+98% rather than 99% probability of reproducing ROBUST.
+
+**Campaign v3 is nonetheless NOT re-run here**, on two grounds and not
+three. Its verdict rests on a 95% interval lying inside the margin,
+which is a statement about that interval and not about the power that
+was targeted. And re-running a FAVOURABLE result is the asymmetry
+preregistration exists to prevent, which the v1 precedent settles: v1
+ran under-powered as frozen rather than raising a cap after seeing pilot
+data. **The remedy is named and available**, not foreclosed: a campaign
+at `n = 1939 / 1848` on fresh windows, about 40 minutes, would meet the
+corrected target and would be a genuine independent test since the
+correction is committed before any of its data exists. Whether to spend
+it is a scope decision this record does not make.
+
+**The cap rises from 300 to 3000, ex ante.** This has the same
+standing v2's raise from 200 to 300 had: the variance that sets `n_eq`
+is disclosed pre-freeze rather than arriving as pilot data after the
+rule is frozen. Projecting from v2's calibrated pilot bounds,
+`S^2_90 = 0.0473` gives `n_eq ~ 2172` and
+`S^2_90(twin) = 0.0343` gives `n_twin ~ 1575`; the cap absorbs a
+realized variance up to about `S^2_90 = 0.065` before ROBUST becomes
+unpurchasable again. Projected campaign cost is roughly 24,000
+samples, well under an hour.
+
+**One margin, three consumers.** `delta_eq` now sets the verdict
+trigger, the control's gate, the curved arm's size and the twin's size
+-- and that identity is the point. v2's resolution mismatch existed
+precisely because the trigger keyed to 0 while the control keyed to
+0.05. A test asserts the single-margin invariant, so the mismatch
+cannot reappear by editing one constant and forgetting the other.
+
+### 12.4 Fresh windows (frozen)
+
+Campaign v1 spent `6000000-6475999` and v2 spent `8000000-8795999`;
+11.3's diagnostic consumed design-check space up to `14550000`. So v3
+runs entirely at `15000000+`, and design-check space for anything after
+this is `22000000+`.
+
+| block | base | slots | span |
+|---|---|---|---|
+| verification-13C | 15000000 | 2000 per rung, consecutive | 15000000-15007999 |
+| pilot, curved 0.30 | 15100000 | 320 | 15100000-15163999 |
+| pilot, curved 1.50 | 15200000 | 320 | 15200000-15263999 |
+| pilot, twin 0.30 | 15300000 | 320 | 15300000-15363999 |
+| pilot, twin 1.50 | 15400000 | 320 | 15400000-15463999 |
+| Stage A, curved 0.30 | 16000000 | 3020 | 16000000-16603999 |
+| Stage A, curved 0.60 | 16700000 | 3020 | 16700000-17303999 |
+| Stage A, curved 1.00 | 17400000 | 3020 | 17400000-18003999 |
+| Stage A, curved 1.50 | 18100000 | 3020 | 18100000-18703999 |
+| twin 0.30 | 18800000 | 3020 | 18800000-19403999 |
+| twin 0.60 | 19500000 | 3020 | 19500000-20103999 |
+| twin 1.00 | 20200000 | 3020 | 20200000-20803999 |
+| twin 1.50 | 20900000 | 3020 | 20900000-21503999 |
+
+Slots are `cap + 20` at stride 200, the v2 pattern scaled to the new
+cap, so a Stage A rung can fill 3000 completions with reserve.
+
+### 12.5 What v3 does NOT change
+
+The ladder and its four rungs; every per-rung patch constant; the
+`+/- 10%` bands; the twin's construction, band centres and intensities;
+the estimator, called and never re-derived; both eligibility
+conditions; `K = 6`; the rejection cap; the first-`n`-complete fill
+with published skip identities; the `>= 1998 of 2000` verification pin;
+clean-worktree preflight and stamp equality; the `m`-gate at `+/- 5%`
+of the grand mean; `DELTA_DETECT = 0.15`; the three-way control
+semantics of 10 (1) including UNDERPOWERED-CONTROL riding beside a
+verdict; and 1.2's requirement that magnitude be printed with the
+word.
+
+### 12.6 A consequence, stated once
+
+`delta_eq` and the cap are module constants, and the module's comment
+calls the literals the frozen spec. Changing them means v1's and v2's
+verdicts are reproducible only at their own stamps -- `3f46313` and
+`d916f34` -- which is exactly why every artifact carries
+`code_version`. Nothing in Sections 9 or 11 is re-run, re-read or
+re-scored by this amendment.
+
+---
+
+## 13. Stage records (campaign v3)
+
+Artifacts: `docs/prereg/frozen/p13v3/`. Every file, and every row of
+the CSV, carries `code_version = 33e371f`, so stamp equality holds
+across the whole chain. The three campaigns keep three directories --
+`p13/`, `p13v2/`, `p13v3/` -- and are never mixed in a quotation.
+
+### 13.1 Verification-13C and Stage P-13C (2026-07-31)
+
+- **Verification-13C**: 2000 / 2000 / **1999** / 2000 of 2000 complete
+  against the 1998 pin, in the fresh `15000000+` windows. Measured wall
+  times ~0.2 / ~0.1 / ~0.08 / ~0.1 s per sample (one significant
+  figure, per 9.6).
+- **Stage P-13C**: 200 samples in each of four pilot blocks. Curved
+  `S^2_90 = 0.0377` after calibration, which fired on both endpoints
+  and hard at the top: coverage 0.9335 -> `z = 1.755` at the bottom,
+  **0.8055 -> `z = 2.869`** at the top — the largest under-coverage
+  the programme has recorded, past v1's 0.833 and P12's 0.865, and
+  the reason P11 v1.9 replaced the nominal bound with a calibrated
+  one. `n_sup = 24`, **`n_eq = 1731`, inside the cap of 3000**, so
+  CURVATURE-ROBUST was purchasable and `n_per_rung = 1731`. Twin
+  `S^2_90 = 0.0359`, `n_twin = 1650`, equivalence affordable.
+  Projected Stage A 0.4 h. FEASIBLE.
+
+The realized variance came in BELOW 12.3's projection — `n_eq = 1731`
+where v2's bounds projected 2172 — so the tightened margin was bought
+with room to spare rather than at the cap.
+
+**The preregistered power target was MISSED** (v3.1 review C2, restated
+correctly in v3.3 after review C8). The campaign computed its sample
+sizes with a one-sided quantile in a two-sided slot, so its design point
+bought 98.0% where 12.3 promised 99%. The corrected requirements are
+`n_eq = 1939` and `n_twin = 1848`; the campaign ran **1731 and 1650**.
+That is a shortfall against its own preregistration, it is not repaired
+by anything measured afterwards, and it stays on the record as a miss.
+
+v3.1 wrote here that the campaign "achieved 99.86% and 99.68%" by
+substituting the observed interval half-widths for `se`. **That
+calculation is withdrawn.** Power computed from the realized data is a
+post-hoc quantity — it conditions on an estimated variance that is
+itself random, and it is a deterministic function of the result it is
+meant to justify. An ex-ante power promise cannot be satisfied
+retroactively by the draw that followed it.
+
+What the frozen artifacts do support is narrower and is a statement
+about this realization only: the campaign's interval half-width came in
+at `0.0076` on the curved arm and `0.0080` on the twin, against a
+margin of `0.02`, so **this draw cleared the margin with room** rather
+than at its edge. That is a property of the draw, produced partly by
+`S^2_90` being a conservative upper bound, and it says nothing about
+the probability a replication would clear it.
+
+The consequence for reading P13, stated rather than left implied: the
+equivalence verdict rests on the observed interval lying inside the
+margin, which the artifact shows and which power does not affect. But a
+replication has the design-point probability of reproducing it, and that
+probability is 98% rather than the promised 99%. Closing the gap
+requires a campaign at `n = 1939 / 1848` on fresh windows — about 40
+minutes — which is named as an available remedy in 12.3 and is not
+taken here.
+
+### 13.2 Stage A-13C (2026-07-31): **CURVATURE-ROBUST**, control CLEAN
+
+1731 curved samples and 1650 twin samples per rung.
+
+    Delta_13  = +0.0072,  95% CI [-0.0004, +0.0148]  ->  CURVATURE-ROBUST
+    flat twin = +0.0071,  95% CI [-0.0007, +0.0153]  ->  CONTROL-CLEAN
+
+| gate | reading | result |
+|---|---|---|
+| `m`-matching, curved | 75.64 / 75.79 / 76.12 / 76.00, grand 75.89 | PASS, widest rung -0.33% |
+| `m`-matching, twin | 75.24 / 74.66 / 74.35 / 74.05, grand 74.57 | PASS, widest rung +0.89% |
+| flat twin, equivalence at `delta_eq = 0.02` | interval inside `+/- 0.02` | **CONTROL-CLEAN** |
+| skips | 0 / 0 / 2 / 1 | selection caveat rides along |
+
+**The twin's `m`-gate was frozen and was not implemented** (v3.2,
+review C5). Section 5 gives the twin "the same eligibility conditions,
+`K`, rejection cap, fill rule and `m`-gate", and the runner as it ran
+computed the gate from the curved rows only — so a twin rung could have
+drifted in discreteness and still had its contrast used as a control.
+The omitted check is discharged rather than waived: computed from the
+frozen rows it **passes on both arms in both campaigns** (twin worst
+deviation `+0.89%` here, `-0.64%` in v2, against a 5% tolerance), so
+each campaign is compliant in substance with what its own design
+required, and the second row of the table above is that computation.
+The runner now gates both arms, each against its own grand mean,
+because within-arm drift is what the gate exists to prevent; the
+cross-arm LEVEL offset (`-1.73%` here, `-1.74%` in v2) is a different
+quantity and is now published as a labelled field rather than left
+invisible inside a passing gate.
+
+**The selection caveat, with its size.** Three samples of 6924 failed
+to pack and were replaced from reserve slots; their seeds are published
+in the artifact (`17454000`, `17600600`, `18342600`). The flag fires on
+any skip at all, so its magnitude is stated for the same reason 1.2
+requires the contrast's: 3 in 6924 is 0.04%.
+
+**The twin arm's skips were dropped by the runner** (v3.4, review C14):
+`_fill_block` returns them and the summary published only the curved
+arm's, so a twin seed excluded for failing to pack could have gone
+unrecorded while `selection_caveat` still read from one arm. Same class
+as C5 one field over. **This campaign is unaffected, and that is checked
+rather than assumed**: every twin seed in `p13_stage_a.csv` is exactly
+`base + 200k` contiguous from its block base at all four rungs, so the
+twin arm skipped nothing and the published identities are complete. The
+runner now accumulates `twin_skip_counts` and `twin_skipped_seeds` and
+the caveat spans both arms, with
+`test_selection_caveat_spans_both_arms` pinning the case the first
+version got wrong.
+
+**This is the verdict the programme has been trying to buy since v1,
+and v3 is the first campaign that could afford it.** v1 could not
+(cap 200 against `n_eq = 231`); v2 could, and a scale-free trigger
+pre-empted it. Here the interval sits inside a margin two and a half
+times tighter than either used.
+
+**What makes it strong is the control, not the verdict word.**
+
+| `tau/ell` | mean `y`, curved (n = 1731) | mean `y`, twin (n = 1650) |
+|---|---|---|
+| 0.30 | -0.7499 +/- 0.0028 | -0.7462 +/- 0.0030 |
+| 0.60 | -0.7470 +/- 0.0029 | -0.7459 +/- 0.0029 |
+| 1.00 | -0.7443 +/- 0.0028 | -0.7453 +/- 0.0029 |
+| 1.50 | -0.7427 +/- 0.0027 | -0.7391 +/- 0.0028 |
+
+    curved endpoint contrast   +0.00720
+    twin endpoint contrast      +0.00713
+    difference-of-differences  +0.00007 +/- 0.00562   (0.01 sigma)
+
+Both ladders rise monotonically across the four rungs, by `+0.0072` on
+the curved arm and `+0.0071` on the twin, and the two endpoint contrasts
+agree to **seven parts in a hundred thousand of a dex** — a striking
+point agreement in an arm where curvature cannot act at all. (`+/-` is
+one standard error; rung means are in the summary artifact, standard
+errors computed from the frozen CSV.)
+
+**Neither rise is established, and that is stated before it is used**
+(v3.4, review C18). Each arm's endpoint interval includes zero — curved
+`[-0.0004, +0.0148]` at 1.9 sigma, twin `[-0.0007, +0.0153]` at 1.8
+sigma — as does the `(tau/ell)^2` trend, `[-0.0001, +0.0062]` at 1.9
+sigma. So the record reports an observed positive drift **compatible
+with no drift**, in both arms, and the monotone ordering across four
+rungs is not a frozen test and is not offered as one. What the two arms
+agreeing in sign and size does supply is the reason the ARM DIFFERENCE
+is the informative statistic here rather than either arm's drift.
+
+**What that number is, stated exactly** (v3.3, review C7; v3.2 had
+already withdrawn the claim that the residual "is therefore a property
+of the protocol, not of the geometry", and then over-corrected into
+calling the interval a geometry-specific bound, which it also is not).
+The difference-of-differences carries a standard error of `0.0056`, so
+its approximate 95% interval is `[-0.0110, +0.0111]`. **That interval
+is the uncertainty on the difference BETWEEN THESE TWO ARMS, and
+nothing narrower.** Reading it as a bound on the geometric contribution
+would require the arms to be equivalent in every respect except
+curvature, and Section 5 records in advance that they are not: the
+band, the eligibility rule, `K`, the rejection cap, the fill rule and
+the realized `m` are matched, but **the VARIANCE of box areas is not,
+and is larger on the curved side.** So the arm difference carries any
+protocol-by-box-distribution effect together with any curvature effect,
+and this campaign cannot separate them.
+
+Two partial bounds exist and are cited as partial, not as closing the
+gap. 11.3's D3 moved the box-to-patch RATIO by `+/- 32%` at fixed
+`tau/ell` and measured a shift of `+0.0008 +/- 0.0064` and
+`-0.0002 +/- 0.0065` on the curved arm, bounding that channel at
+`+/- 0.013` dex — but ratio is not variance. And 9.3's invariance
+argument (the LIS distribution of a uniform Poisson box does not depend
+on the box's size or aspect once the count is fixed) covers the FLAT
+arm exactly and does not transfer to the curved one, where the
+intensity inside a box is not uniform. **The geometric component is
+therefore not identified here.** What would identify it is a twin
+matched in the box-area DISTRIBUTION rather than only in its centre and
+in `m` — a design change for a future campaign, named here and not
+adopted.
+
+None of this touches the verdict. The arm difference is inside
+`delta_eq = 0.02` and so is the primary contrast, and the frozen gate
+tested the primary contrast against the margin: the ROBUST reading
+never depended on attributing the residual to anything. What the arm
+comparison does supply is a tighter *arm-difference* bound than v2's
+`+/- 0.0167` (11.2) by a factor of 2.4, which is what `n_twin = 1650`
+against v2's 179 buys.
+
+**How close v2's rule came to the wrong word again.** The contrast's
+lower bound is `-0.00039`. Under v2's table row 1 fired whenever
+`lo > 0`, so a shift of four ten-thousandths of a dex would have
+returned CURVATURE-DEGRADES on a contrast the flat control reproduces
+to `+0.00007`. The twin's own lower bound, `-0.00068`, sat just as
+close to the line. That is 12.1's repair vindicated by a near miss
+rather than by an argument: under the old rule this campaign was
+roughly a coin flip from publishing the same false word a second time,
+and what separated them was less noise than a single sample carries.
+
+**Labelled checks.** The `(tau/ell)^2` trend fit reads `+0.0030`, CI
+`[-0.0001, +0.0062]` — at the edge of zero, an order below `delta_eq`,
+and consistent both with zero and with the same rise the twin
+observes. Median
+relative error `0.1839 / 0.1858 / 0.1878 / 0.1865`, a 2% spread while
+`(tau/ell)^2` moves 25-fold. `sd_m` = `11.74 / 11.71 / 11.65 / 11.16`,
+flat to 5%.
+
+**Consistency with the disclosure.** 12.2 published 11.3's quarantined
+bound, `[-0.0066, +0.0179]`, precisely so a ROBUST reading could not be
+mistaken for a surprise. The campaign returned `[-0.0004, +0.0148]`.
+The design predicted its own outcome and then bought it under frozen
+rules, which is the only sense in which this result is not news.
+
+### 13.3 What P13 concludes
+
+Over the tested ladder, at fixed discreteness `m ~ 76`:
+
+**The flat-normalized chain reading does not notice curvature out to
+`tau/ell = 1.5`, that is `R tau^2 = 4.5`.** The endpoint contrast is
+bounded inside `[-0.0004, +0.0148]` dex — under 3.5% in relative
+error — against a margin of 0.02 dex, with `m`-gates flat to 0.33% on
+the curved arm and 0.89% on the twin, and a flat control whose own
+contrast matches the curved arm's to `+0.00007`, the two arms differing
+by no more than `+/- 0.011` dex (an ARM difference, not an identified
+geometric one — 13.2 says why).
+
+That is a statement about an INSTRUMENT, and v3.1 confines it to one
+(review C4, applying AGENTS.md's conservatism rule). P12 established
+that the unchanged P11 estimator reads CURVED proper time at
+`tau/ell ~ 0.3` and improves with density at the longest-chain rate.
+P13 establishes that the same reading stays accurate through a 25-fold
+growth in `(tau/ell)^2`, well past the point where the small-diamond
+premise the chain law rests on has itself failed by more than a factor
+of two. That is the finding, and it is quantitative and about the
+estimator.
+
+**What this experiment does NOT establish, stated because the first
+version of this section claimed it.** It does not establish the general
+thesis that curvature enters causal order only through the counting
+measure. The reason is structural and belongs in the record rather than
+in a hedge: **in 1+1D every metric is conformally flat**, so `dS_2`'s
+causal order is conformally equivalent to the flat twin's by
+construction, and the curvature can only reach the order through the
+conformal factor — that is, through the volume and hence the count. In
+this model the general claim is close to a theorem about the geometry
+rather than a measurement about the instrument, and the twin matching
+the curved arm's residual (13.2, to `+0.00007`, the arms differing by
+no more than `+/- 0.011` dex) is the experiment showing that structure
+operating, not evidence that it generalizes.
+
+The general claim needs `d >= 3`, where a metric is not generally
+conformally flat and Weyl curvature is non-trivial, so curvature can in
+principle enter the causal order without passing through the measure at
+all. Whether the flat-normalized reading survives there is an open
+question and a different experiment; nothing in P13 bears on it. The
+programme's thesis in that generality is therefore still a hypothesis,
+and this record does not promote it. (Section 1.3's framing of a ROBUST
+reading as "the strong form of this programme's thesis" was written
+before the campaign and is superseded here, per the in-place
+convention.)
+
+Scope, carried and not smoothed:
+
+- the claim binds to this estimator family at this operating point,
+  `m ~ 76`. A floor appearing only at larger `m` would be invisible
+  here, as Section 7 said in advance;
+- it binds to **1+1D de Sitter, one conformal patch**, for the reason
+  above. Dimension was a listed lever from P11 onward and is not part
+  of any P13 claim;
+- it binds to `tau/ell <= 1.5`. The successor sweeps
+  `{1.5, 2.0, 2.5, 3.0}`, where the conjugate point at `pi ell ~ 3.14`
+  is a hard ceiling — a different experiment with a different failure
+  mode, not an extension of this one;
+- the `+0.007` residual drift is an OBSERVED point estimate whose
+  interval includes zero (v3.4, review C18 — an earlier draft called it
+  "real at the edge of significance", which asserts an existence the
+  data do not establish). Curved endpoint `+0.0072`, CI
+  `[-0.0004, +0.0148]`, 1.9 sigma; the `(tau/ell)^2` trend `+0.0030`,
+  CI `[-0.0001, +0.0062]`, 1.9 sigma. **Compatible with no drift.** It
+  is also not explained beyond "the flat arm observes one of the same
+  size", and the two arms differ by no more than `+/- 0.011` dex — an
+  ARM difference, not an identified geometric one, because Section 5
+  leaves the box-area variance unmatched between them (13.2). Naming
+  the drift's mechanism, or separating its geometric share, would each
+  take its own design and would first need a campaign that establishes
+  the drift at all; 11.3 already closed the two candidates that were
+  on the table;
+- three samples of 6924 were replaced from reserve slots.
+
+The three campaigns' verdicts stand as issued, each at its own stamp:
+v1 **CONFOUNDED** at `3f46313`; v2 **CURVATURE-DEGRADES** at
+`d916f34`, with 11.3 bounding what that word may be read to mean; v3
+**CURVATURE-ROBUST** at `33e371f`. None is re-read, and the reason
+three campaigns were needed is written down in each: a control that
+was not sized, then a trigger that was not scaled, then neither.
+
+### 13.4 Provenance: what this record needs from the history
+
+Added in v3.1 (review C1). Several claims in Sections 11 to 13 are
+claims about ORDER IN THE HISTORY, not about file contents, and each
+artifact's `code_version` names a commit rather than describing one. So
+the record is only verifiable while those commits stay reachable.
+
+The chain, in first-parent order from `origin/main` at `922f8b8`:
+
+| commit | what it fixes in time |
+|---|---|
+| `f42b6b3` | P13 implementation (design v1.1) |
+| `3f46313` | campaign v1 ran at this stamp |
+| `9fd0a56` | v1 record + the 9.3 diagnostic + design v2 |
+| `67e96aa` | row-3 semantics pinned |
+| `43e1587` | v1 status header corrected |
+| `d916f34` | v3 implementation of design v2; **campaign v2 ran here** |
+| `c72da8c` | campaign v2 frozen out of `outputs/` + Section 11 |
+| `7b1442d` | **the 11.3 diagnostic and its predictions, before it ran** |
+| `ce51588` | the 11.3 diagnostic's results + Section 11.3 |
+| `94377ec` | **design v3, before its implementation and before any v3 datum** |
+| `33e371f` | v3 implementation; **campaign v3 ran here** |
+| `3f562c1` | campaign v3 frozen + Section 13 |
+
+Two claims rest on that order and on nothing else. The diagnostic's
+two-sided prediction is pre-data because `7b1442d` precedes `ce51588`.
+Design v3 is pre-implementation and pre-data because `94377ec` precedes
+`33e371f`, which is the stamp on every v3 artifact. Both are checkable:
+
+    git merge-base --is-ancestor 7b1442d ce51588
+    git merge-base --is-ancestor 94377ec 33e371f
+    git log --oneline --first-parent 922f8b8..3f562c1
+
+**Requirement, therefore: this branch merges with a MERGE COMMIT.**
+Neither of the alternatives is safe. A squash collapses the twelve
+commits into one, at which point every `code_version` in `frozen/p13/`,
+`frozen/p13v2/` and `frozen/p13v3/` names an object no checkout can
+resolve and the two ordering claims above become unverifiable
+assertions. **A rebase-merge is no better and is worse for being
+subtle**: it keeps the individual commits but REWRITES their SHAs, so
+the stamps break just as completely while the history still looks
+intact. Either way the cross-stage gate's own "reachable stamp"
+precondition silently stops meaning anything rather than failing
+loudly.
+
+This is now enforced rather than requested: `allow_squash_merge` and
+`allow_rebase_merge` are off in the repository settings, and AGENTS.md
+carries the rule with its reason so the settings are not re-enabled by
+someone tidying them. The repository's practice was already merge
+commits (`Merge pull request #NN` throughout `main`) — habit is simply
+not a guarantee, and the P13 record is unusually dependent on it.

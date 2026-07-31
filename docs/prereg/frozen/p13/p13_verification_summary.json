@@ -1,0 +1,27 @@
+{
+  "code_version": "3f46313",
+  "pin_required": 1998,
+  "per_rung": {
+    "0.3": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.14402335635002236
+    },
+    "0.6": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.08822468814998866
+    },
+    "1.0": {
+      "complete": 2000,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.07291273255000123
+    },
+    "1.5": {
+      "complete": 1998,
+      "total": 2000,
+      "mean_seconds_per_sample": 0.09282486525000422
+    }
+  },
+  "pin_passed": true
+}
