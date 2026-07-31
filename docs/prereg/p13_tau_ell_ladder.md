@@ -1113,6 +1113,19 @@ in the artifact (`17454000`, `17600600`, `18342600`). The flag fires on
 any skip at all, so its magnitude is stated for the same reason 1.2
 requires the contrast's: 3 in 6924 is 0.04%.
 
+**The twin arm's skips were dropped by the runner** (v3.4, review C14):
+`_fill_block` returns them and the summary published only the curved
+arm's, so a twin seed excluded for failing to pack could have gone
+unrecorded while `selection_caveat` still read from one arm. Same class
+as C5 one field over. **This campaign is unaffected, and that is checked
+rather than assumed**: every twin seed in `p13_stage_a.csv` is exactly
+`base + 200k` contiguous from its block base at all four rungs, so the
+twin arm skipped nothing and the published identities are complete. The
+runner now accumulates `twin_skip_counts` and `twin_skipped_seeds` and
+the caveat spans both arms, with
+`test_selection_caveat_spans_both_arms` pinning the case the first
+version got wrong.
+
 **This is the verdict the programme has been trying to buy since v1,
 and v3 is the first campaign that could afford it.** v1 could not
 (cap 200 against `n_eq = 231`); v2 could, and a scale-free trigger
