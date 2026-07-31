@@ -74,6 +74,20 @@ TWIN_LADDER = {"600": TWIN_RHO_TOP / 4.0, "1200": TWIN_RHO_TOP / 2.0,
 N_SAMPLES = 400
 BASE = {"600": 2_000_000, "1200": 2_100_000, "2400": 2_200_000}
 TWIN_BASE = {"600": 2_300_000, "1200": 2_400_000, "2400": 2_500_000}
+#: Review C11 made this necessary rather than optional. Scaling P13's
+#: twin intensity down the ladder leaves the twin's realized m about
+#: 2-3.4% BELOW the curved arm's, which shifts the twin's discreteness
+#: bias by ~1.5% and therefore Q by ~1.5% -- and since Q/(1-Q) ~ 11
+#: here, that is ~17% of relative error injected into the recovery. The
+#: measured shortfall in (1-Q) at the bottom rung, 0.0168, is almost
+#: exactly what a -1.8% bias mismatch predicts. So the twin's intensity
+#: is CALIBRATED per rung against the curved arm's realized m, on its
+#: own seed blocks, and the residual offset is gated.
+CAL_BASE = {"600": 2_600_000, "1200": 2_700_000, "2400": 2_800_000}
+N_CALIBRATE = 150
+CAL_SPACING = 40_000
+CAL_ITERATIONS = 4
+CROSS_ARM_TOLERANCE = 0.01        # +/- 1% on the twin-vs-curved m ratio
 DESIGN_FLOOR, DESIGN_CEIL = 2_000_000, 5_999_999
 
 
@@ -176,9 +190,13 @@ def run_arm(ladder, bases, flat):
 
 
 def main() -> None:
-    for base in list(BASE.values()) + list(TWIN_BASE.values()):
+    for base in (list(BASE.values()) + list(TWIN_BASE.values())
+                 + list(CAL_BASE.values())):
         assert DESIGN_FLOOR <= base <= DESIGN_CEIL, base
         assert base + P.STRIDE * N_SAMPLES <= DESIGN_CEIL
+    for base in CAL_BASE.values():
+        assert (base + CAL_SPACING * CAL_ITERATIONS
+                + P.STRIDE * N_CALIBRATE) <= DESIGN_CEIL
 
     results: dict = {
         "code_version": P._preflight_clean(),
@@ -198,8 +216,43 @@ def main() -> None:
 
     print("=== curved arm ===")
     results["curved"] = run_arm(LADDER, BASE, flat=False)
-    print("=== flat twin ===")
-    results["twin"] = run_arm(TWIN_LADDER, TWIN_BASE, flat=True)
+
+    print("=== twin intensity calibration against the curved m ===")
+    cal, twin_rho = {}, {}
+    for rung, rho0 in TWIN_LADDER.items():
+        target = results["curved"][rung]["mean_m"]
+        rho, steps = rho0, []
+        for it in range(CAL_ITERATIONS):
+            probe_gs, probe_ms = [], []
+            for k in range(N_CALIBRATE):
+                got = sample_pairs(
+                    rho, CAL_BASE[rung] + CAL_SPACING * it + P.STRIDE * k,
+                    True)
+                if got is None:
+                    continue
+                probe_ms.extend(p["m"] for p in got)
+                probe_gs.extend(p["g"] for p in got)
+            realized = float(np.mean(probe_ms))
+            steps.append({"iteration": it, "rho": float(rho),
+                          "mean_m": realized,
+                          "offset": realized / target - 1.0})
+            print(f"  {rung} step {it}: rho {rho:8.4f} -> m"
+                  f" {realized:6.2f} (target {target:6.2f}, offset"
+                  f" {realized / target - 1.0:+.2%})", flush=True)
+            if abs(realized / target - 1.0) <= CROSS_ARM_TOLERANCE / 2.0:
+                break
+            rho = rho * target / realized
+        cal[rung] = {"rho_start": float(rho0), "rho": float(rho),
+                     "target_m": target, "steps": steps,
+                     "converged": abs(steps[-1]["offset"])
+                     <= CROSS_ARM_TOLERANCE / 2.0}
+        twin_rho[rung] = rho
+    results["twin_calibration"] = cal
+    results["twin_ladder_rho_calibrated"] = {k: float(v) for k, v
+                                             in twin_rho.items()}
+
+    print("=== flat twin, at the calibrated intensities ===")
+    results["twin"] = run_arm(twin_rho, TWIN_BASE, flat=True)
 
     # --- the PAIRED per-sample statistic (review C10) ----------------
     # The first version divided each curved sample's g by the twin's
@@ -316,12 +369,16 @@ def main() -> None:
                 (bias_t / bias_c - 1.0) / (offset * 100.0)
                 if abs(offset) > 1e-9 else None,
         }
+        cross[rung]["gate_passed"] = abs(offset) <= CROSS_ARM_TOLERANCE
         x = cross[rung]
         print(f"  rung {rung}: m curved {c['mean_m']:.2f} twin"
               f" {t['mean_m']:.2f} -> offset {offset:+.2%}"
               f" | bias factors {bias_c:.4f} / {bias_t:.4f}"
-              f" -> mismatch {x['bias_mismatch']:+.3%}")
+              f" -> mismatch {x['bias_mismatch']:+.3%}"
+              f" | gate({CROSS_ARM_TOLERANCE:.0%}) "
+              f"{'PASS' if x['gate_passed'] else 'FAIL'}")
     results["cross_arm_m"] = cross
+    results["cross_arm_tolerance"] = CROSS_ARM_TOLERANCE
     print("=== the paired per-sample statistic and its variance ===")
 
     # --- Section 5 item 2: Delta*_B derived, not borrowed ------------
