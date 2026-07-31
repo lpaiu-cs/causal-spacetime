@@ -279,43 +279,84 @@ FROZEN_P13V3_DIR = (Path(__file__).resolve().parents[2]
 
 _LOG_2 = math.log(2.0)
 
+#: Below this the direct form is drowned by its own cancellation --
+#: `cosh(x)` is `1 + x^2/2` and the leading 1 swallows the only term
+#: carrying information -- and above it the series' truncation takes
+#: over. Chosen by scanning both forms against a 60-digit reference at
+#: 400 points per decade, not from the error model alone: 0.04 is where
+#: the PAIR's worst case is smallest, at 1.2e-13 relative, and it
+#: degrades to 2.3e-13 at 0.03 and 1.6e-13 at 0.05 (C31). The direct
+#: form's error is itself jumpy out here -- it is the rounding of
+#: `1 + x^2/2` -- so this is a shallow minimum, not a knife edge.
+_LOG_COSH_SERIES_BELOW = 0.04
+
 #: Above this the asymptote below is exact to the last bit, and well
 #: below the `|x| ~ 710` where `math.cosh` overflows.
 _LOG_COSH_ASYMPTOTIC_FROM = 20.0
 
 
 def log_cosh(x: float) -> float:
-    """`ln cosh(x)`, finite wherever `x` is.
+    """`ln cosh(x)`, to full relative accuracy for every `x`.
 
-    Review C29: `math.cosh` RAISES above `|x| ~ 710`, so the direct
-    quotient did not merely lose accuracy for strongly curved readings,
-    it aborted on them -- and `invert_g`'s bracket doubles through
+    Three regimes, because `ln cosh` is tiny at one end and enormous at
+    the other and the direct form fails at both. Reviews C29 and C31 are
+    one defect seen from its two sides.
+
+    C29, the large end: `math.cosh` RAISES above `|x| ~ 710`, so the
+    quotient did not merely lose accuracy on strongly curved readings,
+    it aborted on them -- `invert_g`'s bracket doubles through
     `s = 1024` on any `g` below about `0.002`, so the documented domain
-    `0 < g < 1/2` was not covered and the `hi` ceiling that was supposed
-    to catch it could never run. Both ends need their own form: the
-    direct one keeps the significant figures the `s -> 0` limit needs,
-    and `ln((1 + e^-2|x|)/2)` carries the large-`x` tail without ever
-    forming `cosh` itself.
+    `0 < g < 1/2` was not covered and the `hi` ceiling meant to catch a
+    runaway bracket could never run.
+
+    C31, the small end: `cosh(x)` rounds to exactly 1.0 by `x = 1e-8`,
+    so `ln cosh` came back 0 and `G` with it -- 100% relative error, not
+    a lost digit. Near the flat boundary that cost monotonicity, and a
+    bisection over a non-monotone `G` lands on whichever false crossing
+    the noise offers: `invert_g(0.4999999999)` returned `8.3e-5` for a
+    true `3.46e-5`, overstating `R tau^2 = 8 s^2` by 5.8x.
+
+    The series lives in `_g_series` because it is `G`'s series as much
+    as `ln cosh`'s -- one is the other times `x^2`, and `g_of_s` needs
+    it without the factor rather than with it and then divided back out.
     """
 
     ax = abs(x)
+    if ax < _LOG_COSH_SERIES_BELOW:
+        x2 = ax * ax
+        return x2 * _g_series(x2)
     if ax < _LOG_COSH_ASYMPTOTIC_FROM:
         return math.log(math.cosh(ax))
     return ax + math.log1p(math.exp(-2.0 * ax)) - _LOG_2
+
+
+def _g_series(x2: float) -> float:
+    """`ln cosh(x) / x^2 = 1/2 - x^2/12 + x^4/45 - 17 x^6/2520`, in
+    `x2 = x^2`. The integral of `tanh`'s series, divided through.
+
+    Exact in RELATIVE terms as `x -> 0`, because nothing is ever added
+    to a leading 1 -- which is the whole of C31's small-`x` half.
+    """
+
+    return 0.5 + x2 * (-1.0 / 12.0
+                       + x2 * (1.0 / 45.0 - 17.0 * x2 / 2520.0))
 
 
 def g_of_s(s: float) -> float:
     """`G(s) = ln cosh(s) / s^2`, with the `s -> 0` limit filled in.
 
     Strictly decreasing on `(0, inf)` from `G(0+) = 1/2`, which is what
-    makes the inversion single-valued; the series `1/2 - s^2/12` is used
-    near zero because the quotient loses all its significant figures
-    there.
+    makes the inversion single-valued -- and near zero it has to be
+    strictly decreasing IN DOUBLES too, or the bisection lands on a
+    false crossing. So the small branch evaluates `G`'s series directly
+    instead of forming `ln cosh` and dividing it back by `s^2`: the
+    quotient's rounding is not monotone, and left a band around
+    `s ~ 3e-8` where `G` stepped back up by an ulp (C31). It also makes
+    `s = 0` an ordinary input rather than a `0/0` to special-case.
     """
 
-    if s < 1e-8:
-        return 0.5 - s ** 2 / 12.0
-    return log_cosh(s) / s ** 2
+    return (_g_series(s * s) if s < _LOG_COSH_SERIES_BELOW
+            else log_cosh(s) / s ** 2)
 
 
 #: The bracket may not double past this. `G(s) ~ 1/s` out here, and the

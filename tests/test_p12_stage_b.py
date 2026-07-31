@@ -206,18 +206,54 @@ def test_operating_point_inverts_to_the_true_curvature():
 def test_log_cosh_continues_the_direct_form_past_where_it_exists():
     """The case, review C29: `math.cosh` RAISES above `|x| ~ 710`, so
     `ln cosh` had to be written twice -- and the second form is only
-    admissible if it is the same function as the first. Below 20 both
-    are computable and must agree to the last bits; at 1024 only one of
-    them exists at all.
+    admissible if it is the same function as the first. Between 0.04 and
+    20 both are computable and must agree to the last bits; at 1024 only
+    one of them exists at all.
+
+    The `x` values stop at 0.04 going down, and that is C31's lesson
+    rather than an arbitrary floor: this test originally included 1e-8,
+    where `math.log(math.cosh(x))` is 0.0 and wrong by 100%, so it was
+    pinning `log_cosh` TO the defect. A reference is only a reference
+    where it is itself correct. Below 0.04 the check is against
+    `decimal` instead, in the test below.
     """
 
-    for x in (0.0, 1e-8, 0.5, 1.0, 19.999, 20.0, 700.0):
+    for x in (0.041, 0.5, 1.0, 19.999, 20.0, 700.0):
         assert log_cosh(x) == pytest.approx(
-            math.log(math.cosh(x)), rel=1e-15, abs=1e-300)
+            math.log(math.cosh(x)), rel=1e-13)
     with pytest.raises(OverflowError):
         math.cosh(1024.0)
     assert log_cosh(1024.0) == pytest.approx(1024.0 - math.log(2.0),
                                              rel=1e-15)
+
+
+def test_log_cosh_is_accurate_where_the_direct_form_is_not():
+    """The case, review C31: `cosh(x)` is `1 + x^2/2`, and by `x = 1e-8`
+    the leading 1 has swallowed the term entirely -- `math.cosh(1e-8)`
+    is exactly 1.0, so the direct `ln cosh` is 0.0, an error of 100%
+    rather than of a digit. Double precision cannot referee double
+    precision here, so the reference is `decimal` at 40 digits.
+
+    Both crossovers are covered from both sides, because a discontinuity
+    at a regime boundary is its own defect: `G` has to be monotone
+    across them for the bisection to mean anything.
+
+    `5e-13` is the bound the CROSSOVER can carry, not the bound the
+    method deserves: away from 0.04 every regime is at 1e-14 or better,
+    but the direct form's own rounding of `1 + x^2/2` peaks near 1.2e-13
+    just above the cut, on a dense scan. The bound is set from that
+    measurement rather than from the tightest sample.
+    """
+
+    from decimal import Decimal, getcontext
+
+    getcontext().prec = 40
+    for x in (1e-12, 1e-10, 1e-8, 1e-6, 1e-4, 0.01, 0.039, 0.041, 0.5,
+              5.0, 19.9, 20.1, 700.0, 1024.0, 1e6):
+        d = Decimal(x)
+        exact = ((d.exp() + (-d).exp()) / 2).ln()
+        rel = abs((Decimal(log_cosh(x)) - exact) / exact)
+        assert rel < Decimal("5e-13"), f"log_cosh({x}) off by {rel:.2e}"
 
 
 @pytest.mark.parametrize("g", [0.4, 0.1, 0.01, 0.002, 0.001, 1e-5])
@@ -233,6 +269,59 @@ def test_inversion_covers_the_domain_it_documents(g):
     s = invert_g(g)
     assert s is not None
     assert g_of_s(s) == pytest.approx(g, rel=1e-9)
+
+
+def test_g_is_monotone_in_doubles_into_the_flat_boundary():
+    """The case, review C31: `G` must be strictly decreasing IN DOUBLES
+    and not only in mathematics, because `invert_g` bisects on it -- a
+    step back up is a second crossing and the bisection has no way to
+    prefer the true one. `G(1e-8)` came back 0.0, and just above it the
+    quotient `ln cosh(s)/s^2` stepped back up by an ulp around
+    `s ~ 3e-8`, which is why the small branch now evaluates `G`'s own
+    series rather than forming `ln cosh` and dividing it back out.
+
+    The grid is geometric because this is a multiplicative regime. The
+    plateau at exactly 0.5 is allowed and correct: below `s ~ 1.2e-7`
+    the deviation `s^2/12` is under half an ulp of 0.5, so 0.5 IS the
+    correctly rounded value.
+    """
+
+    ss = [s for s in (1e-9 * 1.05 ** i for i in range(400)) if s <= 1e-2]
+    gs = [g_of_s(s) for s in ss]
+    assert len(gs) > 250
+    assert all(gs[i] >= gs[i + 1] for i in range(len(gs) - 1)), (
+        "G stepped back up, which is a second crossing for the bisection")
+    assert g_of_s(1e-8) == 0.5, "this returned 0.0 before C31"
+
+    # and strictly decreasing once the deviation is representable at
+    # all -- doubling s quadruples s^2/12, so no step can be swallowed
+    coarse = [g_of_s(1e-7 * 2.0 ** i) for i in range(14)]
+    assert all(coarse[i] > coarse[i + 1] for i in range(len(coarse) - 1))
+
+
+@pytest.mark.parametrize(
+    "g", [0.4999999999, 0.499999999, 0.49999999, 0.4999999, 0.499999])
+def test_inversion_near_the_flat_boundary_finds_the_true_root(g):
+    """The case, review C31: `invert_g(0.4999999999)` returned `8.32e-5`
+    against a true `3.46e-5`, so `R tau^2 = 8 s^2` came out 5.8x too
+    large -- a false crossing of a `G` that was not monotone in doubles,
+    at readings that are inside 10.2's domain and not at its boundary.
+
+    Near the boundary `G(s) = 1/2 - s^2/12` to leading order, so the
+    true root is available in closed form and this does not have to
+    trust the same code it is testing.
+
+    `1e-5` is where both limits on the comparison sit, and neither is
+    the code's: dropping the `s^4/45` term costs the REFERENCE about
+    `1.6 (1/2 - g)` in relative terms, and one ulp of `1/2` maps to
+    about `5.6e-17 / (1/2 - g)` in the INVERSION, so the sum stays under
+    `2e-6` across this range. The defect being caught was 140% off, so
+    the test has five orders of margin over what it must not miss.
+    """
+
+    s = invert_g(g)
+    assert s is not None
+    assert s == pytest.approx(math.sqrt(12.0 * (0.5 - g)), rel=1e-5)
 
 
 # ====================================================================
