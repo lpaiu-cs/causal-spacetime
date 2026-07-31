@@ -57,7 +57,12 @@ import numpy as np
 sys.path.insert(0, "experiments/positive_control")
 from p11_metric import _preflight_clean  # noqa: E402
 
-OUT = Path("docs/prereg/frozen/p12/p12_stage_b_volume_check.json")
+#: Writes to the gitignored outputs/ tree, not straight into frozen/.
+#: The preflight counts untracked files as dirty, so a script writing
+#: into the repository would make the NEXT script's stamp dirty --
+#: which is exactly what happened on the first attempt. Freezing is a
+#: separate copy step, as it is for every runner in this programme.
+OUT = Path("outputs/p12_stage_b_volume_check.json")
 TOLERANCE = 1e-9          # Section 3's pinned tolerance, reused here
 
 #: Review C12: the first version of this file used a midpoint rule at

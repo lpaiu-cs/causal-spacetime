@@ -56,7 +56,9 @@ import numpy as np
 sys.path.insert(0, "experiments/positive_control")
 import p13_tau_ell as P  # noqa: E402
 
-OUT = Path("docs/prereg/frozen/p12/p12_stage_b_ensemble_check.json")
+#: Gitignored outputs/, then frozen by a separate copy -- see the note
+#: in the sibling volume check.
+OUT = Path("outputs/p12_stage_b_ensemble_check.json")
 
 TAU_ELL = 1.50                     # P13's top rung, certified there
 ETA_LO, XHALF, RHO_TOP = P.PATCH[TAU_ELL]
