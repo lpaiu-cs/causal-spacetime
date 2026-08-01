@@ -173,26 +173,68 @@ def transverse_cost(s: float, xp: float, xq: float,
     return cost_defocusing(s, xp, xq, w) + cost_focusing(s, yp, yq, w)
 
 
+def _leg_error_bound(s: float, ap: float, aq: float, w: float, *,
+                     focusing: bool) -> float:
+    """Roundoff and truncation for ONE leg, from the UNCANCELLED operands.
+
+    Two separate cancellations happen here and each needs its own scale
+    (R6.1, R7.1), which is why neither the leg's own value nor the
+    two-leg total may be used:
+
+    - inside a leg, the closed form's numerator
+      `P cosh(a) - Q` with `P = ap^2 + aq^2`, `Q = 2 ap aq` cancels when
+      the endpoints are close, so the operand scale is `P cosh + |Q|`;
+    - between the legs, the `a^2` terms of the two series have OPPOSITE
+      signs and cancel, while the `a^4` terms have the SAME sign and
+      ADD. Scaling the truncation by anything that shares the `a^2`
+      cancellation therefore vanishes exactly where the real error does
+      not. The first omitted term is used explicitly instead:
+
+          a^4 ( -P/24 + 7 (P - Q) / 360 ) / (2 s)
+
+      identical in form for both legs, which is why they add. Measured
+      at `s = 1`, `w = 9.9e-5`, all endpoints `1`: the series returns
+      `0.0`, the true cost is `-8.005e-18`, and this term reproduces it
+      to `1e-24`.
+    """
+
+    a = w * s
+    p_sum = ap * ap + aq * aq
+    q_cross = 2.0 * ap * aq
+
+    if abs(a) < _SMALL_WS:
+        flat = (aq - ap) ** 2 / (2.0 * s)
+        second = a * a * abs(2.0 * p_sum + q_cross) / (12.0 * s)
+        roundoff = _OPS_PER_LEG * _EPS * (flat + second)
+        omitted = abs(a ** 4 * (-p_sum / 24.0
+                                + 7.0 * (p_sum - q_cross) / 360.0)) / (2.0 * s)
+        # the series converges fast at these `a`; twice the first
+        # omitted term dominates the tail with room to spare
+        return roundoff + 2.0 * omitted
+
+    if focusing:
+        denominator, trig = abs(math.sin(a)), abs(math.cos(a))
+    else:
+        denominator, trig = abs(math.sinh(a)), math.cosh(a)
+    operands = (w / (2.0 * denominator)) * (p_sum * trig + abs(q_cross))
+    return _OPS_PER_LEG * _EPS * operands
+
+
 def cost_error_bound(s: float, xp: float, xq: float,
                      yp: float, yq: float, w: float) -> float:
     """A bound on the double-precision error in `transverse_cost`.
 
-    **Tracks the legs BEFORE they cancel.** `S_x > 0` and `S_y` can be
-    negative, so `|S_x + S_y|` is not a scale for the error in forming
-    it -- that was R6.1, measured at `3.2e11` too small. The series
-    branch's truncation, `O((w s)^4)` relative, is added where it is
-    used.
+    Built per leg from operands that have not yet cancelled, then added
+    in absolute value so the legs' own cancellation cannot shrink it.
+    `|S_x + S_y|` is never a scale for the error in forming it: R6.1
+    measured that model `3.2e11` too small, and R7.1 measured its
+    repaired version `2.2e5` too small in the series regime.
     """
 
     if w == 0.0:
         return _OPS_PER_LEG * _EPS * transverse_cost(s, xp, xq, yp, yq, w)
-    leg_x = abs(cost_defocusing(s, xp, xq, w))
-    leg_y = abs(cost_focusing(s, yp, yq, w))
-    bound = _OPS_PER_LEG * _EPS * (leg_x + leg_y)
-    ws = w * s
-    if abs(ws) < _SMALL_WS:
-        bound += ws ** 4 * (leg_x + leg_y)
-    return bound
+    return (_leg_error_bound(s, xp, xq, w, focusing=False)
+            + _leg_error_bound(s, yp, yq, w, focusing=True))
 
 
 # --------------------------------------------------------------------

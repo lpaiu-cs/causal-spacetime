@@ -201,6 +201,46 @@ def test_error_bound_survives_the_cancellation_that_broke_v1():
     assert Decimal(repr(v1_model)) < actual
 
 
+def test_error_bound_survives_the_series_cancellation_that_broke_v2():
+    """The case, review R7.1, and it is R6.1's second face. In the
+    series branch the two legs' `a^2` terms have OPPOSITE signs and
+    cancel, while their `a^4` terms have the SAME sign and ADD. v2
+    scaled its truncation budget by `a^4 * (leg_x + leg_y)` -- a
+    quantity that shares the `a^2` cancellation -- so it vanished
+    exactly where the real error did not.
+
+    Measured at `s = 1`, `w = 9.9e-5`, all transverse endpoints `1`:
+    the series returns `0.0`, the true cost is `-8.005e-18`, and v2
+    reported `3.58e-23` -- understating by `2.2e5` and returning a
+    definite `False` for a pair whose exact margin is positive.
+    """
+
+    s, w, val = 1.0, 9.9e-5, 1.0
+    approx = transverse_cost(s, val, val, val, val, w)
+    getcontext().prec = 60
+    exact = _exact_cost(s, val, val, val, val, w)
+    actual = abs(Decimal(repr(approx)) - exact)
+    bound = cost_error_bound(s, val, val, val, val, w)
+
+    # the configuration really is in the regime the bound must cover
+    assert approx == 0.0 and abs(float(exact)) > 1e-18
+    assert Decimal(repr(bound)) >= actual, (
+        f"bound {bound:.3e} does not cover the actual error "
+        f"{float(actual):.3e}")
+
+    # the first omitted term, derived, reproduces the whole error
+    a, p_sum, q_cross = w * s, 2.0 * val * val, 2.0 * val * val
+    per_leg = a ** 4 * (-p_sum / 24.0
+                        + 7.0 * (p_sum - q_cross) / 360.0) / (2.0 * s)
+    assert abs(2.0 * per_leg - float(exact)) < 1e-24
+
+    # and the predicate now escalates instead of deciding wrongly
+    geom = PlaneWaveGeometry(Slab(du=2.0, dv=2.0, dx=2.0, dy=2.0), w)
+    rel = causal_relation(geom, np.array([0.0, 0.0, val, val]),
+                          np.array([s, 4e-18, val, val]))
+    assert rel.escalated and rel.related is True
+
+
 def test_a_pair_double_cannot_decide_escalates_instead_of_guessing():
     """The case, design §5.1: the response to an undecidable pair is
     precision, never a tolerance. A pair placed inside the double-

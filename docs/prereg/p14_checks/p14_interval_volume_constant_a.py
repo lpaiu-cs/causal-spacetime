@@ -10,9 +10,26 @@ that computation so the corrected Section 4.4 quotes a number its own
 repository can regenerate.
 
 Setup: A = w^2 constant, central-axis pair. On the axis H = 0, so the
-pair's proper time is IDENTICAL in both arms (tau = T with Dv = T/2):
-the comparison is at equal clock reading by construction, and the
-volume still shifts -- the deformation lives in the interval domain.
+pair's proper time is IDENTICAL in both arms: the comparison is at equal
+clock reading by construction, and the volume still shifts -- the
+deformation lives in the interval domain.
+
+THE SIGN OF Dv, stated explicitly because getting it wrong picks
+SPACELIKE anchors (review R7.2). With ds^2 = 2 du dv + ... and the
+mostly-plus signature, an axis pair has
+
+    tau^2 = -ds^2 = -2 Du Dv,
+
+so tau = T at Du = T requires **Dv = -T/2**, negative. That is the same
+convention the probe's predicate enforces -- future-related points have
+DECREASING v -- and P2's fixed anchors must be built with it. The
+quantity entering the volume below is the positive half-extent
+
+    half_tau = -Dv = T/2,
+
+and it appears squared, so the volume formula is unchanged; only a
+caller reading this file for its anchor construction is affected, which
+is exactly who P2 is.
 
 Derivation (re-done from scratch for this check, then matched against
 the reviewer's formula and the plane-wave world function of Harte &
@@ -22,13 +39,14 @@ Drivas, Phys. Rev. D 85, 124039):
     (1/2) x_perp^T K(s) x_perp with K_x = w coth(w s) for x'' = +w^2 x
     (defocusing) and K_y = w cot(w s) for y'' = -w^2 y (focusing);
     flat limit K -> 1/s is the straight line.
-  - (s, v', x_perp) lies in the diamond iff v' covers the cost from p
-    and Dv - v' covers the cost to q, so the v-extent at fixed
-    (s, x_perp) is [Dv - q]_+ with q = (a_x x^2 + a_y y^2)/2 and
+  - a point at u-offset s must clear the cost from p and the cost to q,
+    so the admissible v-extent at fixed (s, x_perp) is
+    [half_tau*2 - q]_+ with q = (a_x x^2 + a_y y^2)/2 and
       a_x = w [coth(ws) + coth(w(T-s))]
       a_y = w [cot(ws)  + cot(w(T-s))]
-  - the ellipse integral gives V = int_0^T pi Dv^2 / sqrt(a_x a_y) ds,
-    i.e. with tau = T:  V_A = (pi T^2 / 4) int_0^T ds / sqrt(a_x a_y).
+  - the ellipse integral gives V = int_0^T pi (2*half_tau)^2/4 /
+    sqrt(a_x a_y) ds, i.e. with tau = T and half_tau = T/2:
+    V_A = (pi T^2 / 4) int_0^T ds / sqrt(a_x a_y).
   - flat limit, analytically: a -> T/(s(T-s)), integrand s(T-s)/T,
     integral T^2/6, V -> pi T^4 / 24 = the Alexandrov volume. That
     limit is asserted numerically below.

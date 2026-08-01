@@ -101,13 +101,19 @@ Three things this rule is not:
 - **Not retroactive.** P12's record stands on the rule it froze.
 - **Not free.** See the paragraph above. A design adopting it and then
   discovering it cannot afford it has loosened a gate.
-- **Not a licence to switch.** The direction is one-way: a design may not
-  move from interval to point, ever, and a design that wants a point rule
-  must argue for it in its own text before freezing.
+- **Not a licence to switch, and there is no argued exception.** An
+  accuracy gate is decided on the interval. Full stop. An earlier draft
+  of this rule added "a design that wants a point rule must argue for it
+  in its own text before freezing" — which reopens exactly what the rule
+  closes, since every design that wants the looser test will have an
+  argument ready and review would have no deterministic standard to hold
+  it to. Withdrawn.
 
 Gates that are **not** accuracy claims — existence, sign, ordering, budget,
 completion — keep whatever form their design freezes, and this rule says
-nothing about them.
+nothing about them. **That is the only latitude here**: the question a
+design may argue is whether a given gate IS an accuracy claim, not which
+rule an accuracy claim gets.
 
 ## Implementation standards
 
