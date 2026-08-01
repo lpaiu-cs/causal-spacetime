@@ -62,8 +62,9 @@ not a property of any single causal set.
 
 from __future__ import annotations
 
+import functools
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal, getcontext
 
 import numpy as np
@@ -305,6 +306,12 @@ class Slab:
         return self.du * self.dv * self.dx * self.dy
 
 
+#: Held by `arms()` alone, so that a linked geometry cannot be
+#: hand-built and "came from arms()" is a property a check can
+#: read rather than a convention a caller must follow (R14.7).
+_ARMS_KEY = object()
+
+
 @dataclass(frozen=True)
 class PlaneWaveGeometry:
     """A slab paired with a curvature, validated on construction.
@@ -331,19 +338,37 @@ class PlaneWaveGeometry:
     arm its own geometry got the flat arm's much smaller insets -- at
     `Slab(1, 0.4, 3, 3)` the `y` inset is `1.207` curved against
     `0.447` flat -- and the two arms would have had different eligible
-    sets, which is the one thing §4.1 exists to prevent. `arms()` now
-    links the flat arm to the curved one, and Class C refuses a flat
-    geometry that has no such link.
+    sets, which is the one thing §4.1 exists to prevent.
+
+    **The first version of the link checked the wrong things (R14.7.)**
+    It validated the shared slab and forbade chaining, neither of which
+    constrains `guard_from.w`, so a `w = 0.9` arm could be pointed at a
+    `w = 0.2` guard and would apply it -- admitting `|y| <= 1.0419`
+    where the real guard allows `0.3429`, and leaking diamonds out of
+    the box in 71% of causal pairs. And a hand-built flat-to-flat link
+    passed every check and compared equal to `arms()`' own output, so
+    "came from `arms()`" was not a property any check could read.
+
+    Both are closed here. The invariant is `w in (0, guard_from.w)` --
+    an arm reads its own guard or, if it is the flat reading, its
+    curved partner's -- and a link can only be made with the key
+    `arms()` holds, so the two conditions really are the same one.
     """
 
     slab: Slab
     w: float
     guard_from: PlaneWaveGeometry | None = None
+    link_key: object | None = field(
+        default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.w) or self.w < 0.0:
             raise ValueError(f"w must be finite and non-negative, got {self.w}")
         if self.guard_from is not None:
+            if self.link_key is not _ARMS_KEY:
+                raise ValueError(
+                    "a linked geometry is built by arms() and nowhere else, "
+                    "so that 'came from arms()' is a readable property")
             if self.guard_from.slab != self.slab:
                 raise ValueError(
                     "guard_from must share this arm's slab, else the two "
@@ -352,6 +377,10 @@ class PlaneWaveGeometry:
                 raise ValueError(
                     "guard_from must be a guard source itself, so that "
                     "one arm's eligibility cannot be read off another's")
+            if self.w not in (0.0, self.guard_from.w):
+                raise ValueError(
+                    f"an arm at w={self.w} may only read its own guard or "
+                    f"its curved partner's, not one at w={self.guard_from.w}")
         if self.slab.du <= 0.0:
             raise ValueError(f"slab u-extent must be positive, got {self.slab.du}")
         if self.w > 0.0 and self.slab.du >= conjugate_du(self.w):
@@ -513,7 +542,14 @@ def sprinkle(geometry: PlaneWaveGeometry, rho: float,
 
 
 # --------------------------------------------------------------------
-# P1: the Class C guard insets (design §4.6), in closed form
+# P1: the Class C guard insets (design §4.6)
+#
+# NOT in closed form, and §8 P1 requires reporting it as the frozen
+# deterministic construction it is. This banner said "in closed form"
+# from `9c63ff7`, whose subject made the same claim, and survived the
+# `a1f4a2a` audit because that audit's scope was the design document
+# (R14.6). Every other "closed form" in this module is about the §4.2
+# transverse action, which genuinely has one.
 # --------------------------------------------------------------------
 
 @dataclass(frozen=True)
@@ -606,13 +642,36 @@ def max_negative_focusing(a: float, w: float,
     is what the geometry actually offers: the anchor is an eligible
     endpoint and is already inset, while the intermediate point ranges
     over the whole box. R12 asked for this; the symmetric version, with
-    both limits at `dy/2`, is between 1.8x and 12x too large.
+    both limits at `dy/2`, is 3.06x and 20.04x too large on the two
+    geometries §4.6 and `test_the_asymmetric_v_bound_...` both use.
 
-    Three regimes, all exact and verified against a grid to 3e-15:
-    `cos a <= 0` puts the maximum at the corner; otherwise the interior
-    optimum `y = y_p / cos a` is feasible while `y_p <= box cos a` and
-    gives `y_p^2 sin^2(a)/cos(a)`; past that it is the corner again.
+    **`0 < anchor_limit <= box_limit` is a PRECONDITION, and checked
+    (R14.11).** The three branches below cover the rectangle only on
+    that side of the diagonal. Beyond it, at `anchor > box / cos a`,
+    the maximum in `y_p` is interior at `y_p = box / cos a` and the
+    corner form is not merely loose but wrong: at
+    `(a, w, anchor, box) = (0.6, 1, 5, 2)` it returns `-3.484` where
+    the true maximum is `+1.368` -- and no maximum of `-S_y` over a
+    rectangle containing the origin can be negative at all. Nothing
+    reaches it today (`v_excursion` passes `anchor <= half_y = box`,
+    `direct_bound` passes `anchor == box`, so it would need
+    `cos a > 1`), and the error is in the unsafe direction, so the
+    precondition is enforced rather than documented: the natural next
+    tightening is to inset the anchor harder, which walks toward this
+    edge, not away from it.
+
+    Three regimes on that domain, all exact and verified against a
+    grid to 3e-15: `cos a <= 0` puts the maximum at the corner;
+    otherwise the interior optimum `y = y_p / cos a` is feasible while
+    `y_p <= box cos a` and gives `y_p^2 sin^2(a)/cos(a)`; past that it
+    is the corner again.
     """
+
+    if not 0.0 <= anchor_limit <= box_limit:
+        raise ValueError(
+            f"anchor_limit {anchor_limit} must lie in [0, {box_limit}]: "
+            "the anchor is an eligible endpoint and so is inset at least "
+            "as far as the box, and the branches below assume it")
 
     cos_a, sin_a = math.cos(a), math.sin(a)
     if cos_a > 0.0 and anchor_limit <= box_limit * cos_a:
@@ -683,8 +742,22 @@ def _defocusing_inset(slab: Slab, w: float,
         return math.sqrt(slab.du * (slab.dv + cross_at(x_inset)) / 2.0)
 
     if implied(half_x) >= half_x:
-        # even a zero-width interior does not satisfy it
-        return half_x, cross_at(half_x)
+        # Even a zero-width interior does not satisfy it. Report the
+        # inset the condition actually demands -- `sqrt(du dv / 2)`,
+        # the flat Alexandrov radius, since `cross` vanishes at zero
+        # width -- rather than clamping to `half_x` (R14.8). Clamping
+        # made `guard_margins`' `x` component come out at exactly
+        # `0.0` for every closed cell, so a geometry one ulp from
+        # admitting and one missing by 89x read identically, and the
+        # census's `<= 0.0` was the only thing distinguishing them
+        # from a cell where `x` was satisfied.
+        #
+        # `cross` is reported at FULL box width for the same reason.
+        # It is vacuous here -- there are no eligible `x` endpoints to
+        # cross with -- and the zero it would otherwise take is the
+        # most optimistic value in a chain that feeds the `y`
+        # diagnostic monotonically.
+        return implied(half_x), cross_at(0.0)
 
     lo, hi = 0.0, half_x
     for _ in range(80):
@@ -697,8 +770,15 @@ def _defocusing_inset(slab: Slab, w: float,
     return x_inset, cross_at(x_inset)
 
 
+#: `guard_insets` is a constant of the geometry -- it reads only the
+#: frozen `slab` and `w` -- and `class_c_eligible` calls it once per
+#: pair, inside what will be an `O(N^2)` loop. One solve is 383 us and
+#: dominates the predicate entirely; over a 7140-pair loop caching it
+#: is 456x with identical eligible counts (R14.18). Sized to hold every
+#: geometry a sweep touches.
+@functools.lru_cache(maxsize=4096)
 def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
-    """Both components, from the Jacobi propagators (design §4.6).
+    """All three components, from the Jacobi propagators (§4.6).
 
     The two costs factor usefully as
 
@@ -721,19 +801,30 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     constrained maximum is the one that governs. The v0.8 text said
     `pi/2`; it was describing an unattainable configuration.
 
-    **The transverse inset** comes from the membership condition
-    `C_p + C_q <= Dv`. Bounding the two negative focusing terms by the
-    above and the cross terms by `w tanh(w du/2) X^2` each, and using
-    `coth(z) >= 1/z` so `S_x >= (b-a)^2 / (2 s)` less that cross term,
+    **The defocusing inset** comes from the membership condition
+    `C_p + C_q <= Dv`, using `coth(z) >= 1/z` so that
+    `S_x >= (b-a)^2 / (2 s)` less its cross term, and minimising the
+    left side over the split of `du` between the two legs:
 
         (|x - x_p| + |x - x_q|)^2 <= 2 du K,
-        K = Dv + 2 max(-S_y) + 2 w tanh(w du/2) X^2
+        K = dv + cross,   cross = 2 w tanh(a/4) X_inner X
 
-    after minimising the left side over the split of `du` between the
-    two legs. Hence an excursion of at most `sqrt(du K / 2)` beyond the
-    endpoints. It is deliberately conservative -- a guard that is too
-    tight silently truncates, a guard that is too loose only costs
-    eligible pairs -- and the flat limit is exact: `K = dv` gives
+    so the excursion is at most `sqrt(du K / 2)`. See
+    `_defocusing_inset`, which solves it -- `X_inner` is on both sides.
+
+    **`K` carries no `max(-S_y)` term**, which is the whole of R13.1:
+    an eligible pair sits inside `[V, dv - V]`, so `Dv <= dv - 2V`,
+    and the `2V` the focusing legs return cancels it exactly. This
+    docstring stated `K = Dv + 2 max(-S_y) + 2 w tanh(w du/2) X^2`
+    two rounds after that cancellation and one after `tanh(a/2) X^2`
+    became `tanh(a/4) X_inner X` -- on the sweep slab it overstated
+    `cross` by 4.5x before the missing term, and a reader reconciling
+    it against the design document would have concluded the code was
+    wrong (R14.12).
+
+    It is deliberately conservative -- a guard that is too tight
+    silently truncates, a guard that is too loose only costs eligible
+    pairs -- and the flat limit is exact: `K = dv` gives
     `sqrt(du dv / 2)`, the Alexandrov diamond's transverse radius.
 
     **[TO VERIFY at probe time]** what fraction of pairs this leaves
@@ -831,12 +922,34 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
             return 0.0
         return 2.0 * x_lim * 2.0 * y_inner * v_window * slab.du
 
-    # R13.3: the objective is not known to be unimodal, and a ternary
-    # search around the single best scan point cannot see a second
-    # peak. Every interior local maximum of the scan is refined and the
-    # best kept, so a peak is missed only if it is narrower than one
-    # scan step -- stated as the guarantee rather than "the maximum".
-    grid = [half_y * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
+    # **The scan is bracketed by the `v` window, not by the box.** The
+    # first version scanned `[0, half_y]` uniformly, and the feasible
+    # set can be a sliver far narrower than one step of that: at
+    # `Slab(1.59, 0.2, 6, 6)`, `w = 1`, it is `[0, 0.00452]` against a
+    # step of `0.0117`, so every sample missed it and the geometry was
+    # reported as admitting nothing when it admits a thin region. The
+    # `v` window closes monotonically in `y_inner` -- `max(-S_y)` grows
+    # with its domain -- so its upper end is found exactly by bisection
+    # and the scan gets the interval that can contain the optimum.
+    #
+    # R13.3: within that bracket the objective is still not known to be
+    # unimodal, so every interior local maximum is refined and the best
+    # kept. A peak is missed only if it is narrower than one step of
+    # the BRACKET, which is the guarantee claimed -- not "the maximum".
+    span = half_y
+    if slab.dv - 2.0 * v_excursion(span) * _GUARD_SLACK <= 0.0:
+        lo_v, hi_v = 0.0, span
+        for _ in range(80):
+            mid = 0.5 * (lo_v + hi_v)
+            if slab.dv - 2.0 * v_excursion(mid) * _GUARD_SLACK > 0.0:
+                lo_v = mid
+            else:
+                hi_v = mid
+        span = lo_v
+    if span <= 0.0:
+        return GuardInsets(x=half_x, y=half_y, v=slab.dv)
+
+    grid = [span * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
     vols = [volume(y) for y in grid]
     if max(vols) <= 0.0:
         # Nothing is eligible at any anchor limit. Block on all three,
@@ -845,13 +958,18 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
         # that emptied the set.
         return GuardInsets(x=half_x, y=half_y, v=slab.dv)
 
-    peaks = [i for i in range(1, _GUARD_SCAN)
+    # The global argmax is always an interior peak already -- `vols[0]`
+    # is identically zero and the far end is either zero or a boundary
+    # maximum -- so it is added only when the endpoints could carry it,
+    # rather than unconditionally re-refining a bracket already in the
+    # list (R14.9).
+    peaks = {i for i in range(1, _GUARD_SCAN)
              if vols[i] >= vols[i - 1] and vols[i] >= vols[i + 1]
-             and vols[i] > 0.0]
-    peaks.append(max(range(len(vols)), key=lambda i: vols[i]))
+             and vols[i] > 0.0}
+    peaks.add(max(range(len(vols)), key=lambda i: vols[i]))
     y_inner = 0.0
     best_vol = 0.0
-    for peak in peaks:
+    for peak in sorted(peaks):
         lo = grid[max(peak - 1, 0)]
         hi = grid[min(peak + 1, _GUARD_SCAN)]
         for _ in range(80):  # ternary search, bracket below an ulp
@@ -861,8 +979,9 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
             else:
                 hi = m2
         for candidate in (0.5 * (lo + hi), grid[peak]):
-            if volume(candidate) > best_vol:
-                y_inner, best_vol = candidate, volume(candidate)
+            here = volume(candidate)
+            if here > best_vol:
+                y_inner, best_vol = candidate, here
 
     _, _, v_inset = room(y_inner)
     return GuardInsets(x=x_inset, y=half_y - y_inner, v=v_inset)
@@ -889,18 +1008,33 @@ def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
     binds in most of the empty cells. Counting has to be per condition,
     not per cell, and every caller of this gets all three margins for
     that reason.
+
+    **All three mean CONTAINMENT SLACK, in both branches (R14.10.)**
+    The first version reported the `y` component as the eligible width
+    `y_inner / half_y` when the set was non-empty and as the slack
+    `(half_y - reach) / half_y` when it was not, so the number jumped
+    by 205x across the ulp of `a` where a cell closes and the two
+    branches could not be compared. Slack is the one of the two that
+    answers "which condition emptied this cell", so it is what both
+    branches report, and `_GUARD_SLACK` is applied here exactly as the
+    predicate applies it.
+
+    **And the empty branch no longer reports from a zero-volume
+    anchor.** Every margin is non-increasing in `y_inner`, so
+    `max(key=min)` always landed on `y_inner = 0` -- where the eligible
+    width is zero by construction and all three margins can be
+    positive at once, giving an empty cell with no blocker. The scan
+    runs over anchors that would carry positive volume if the margins
+    allowed it, so the reported margins are the ones that stopped it.
     """
 
     slab, w = geometry.slab, geometry.w
+    if geometry.guard_from is not None:
+        slab, w = geometry.guard_from.slab, geometry.guard_from.w
     half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
-    insets = guard_insets(geometry)
-    if insets.y < half_y:  # non-empty: read the operating point off it
-        return ((half_x - insets.x) / half_x,
-                (half_y - insets.y) / half_y,
-                (slab.dv - 2.0 * insets.v) / slab.dv)
 
     if w == 0.0:
-        flat = math.sqrt(slab.du * slab.dv / 2.0)
+        flat = math.sqrt(slab.du * slab.dv / 2.0) * _GUARD_SLACK
         return ((half_x - flat) / half_x, (half_y - flat) / half_y, 1.0)
 
     a = w * slab.du
@@ -910,14 +1044,23 @@ def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
     x_margin = (half_x - x_inset) / half_x
 
     def margins(y_inner: float) -> tuple[float, float, float]:
-        v_here = max_negative_focusing(a, w, y_inner, half_y)
+        v_here = max_negative_focusing(a, w, y_inner, half_y) * _GUARD_SLACK
         v_window = slab.dv - 2.0 * v_here
         budget = (max(v_window, 0.0) + cross
                   + max_negative_focusing(a, w, y_inner, y_inner))
         reach = alpha * y_inner + math.sqrt(budget * tan_half / w)
-        return (x_margin, (half_y - reach) / half_y, v_window / slab.dv)
+        return (x_margin,
+                (half_y - reach * _GUARD_SLACK) / half_y,
+                v_window / slab.dv)
 
-    grid = [half_y * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
+    insets = guard_insets(geometry)
+    if insets.y < half_y:  # non-empty: read the operating point off it
+        return margins(half_y - insets.y)
+
+    # Empty. The anchor that comes closest to feasible, over anchors
+    # that carry width -- `y_inner = 0` carries none, so its margins
+    # describe a configuration that admits nothing whatever they say.
+    grid = [half_y * i / _GUARD_SCAN for i in range(1, _GUARD_SCAN + 1)]
     return max((margins(y) for y in grid), key=min)
 
 
@@ -982,7 +1125,9 @@ def arms(slab: Slab, w: float) -> tuple[PlaneWaveGeometry, PlaneWaveGeometry]:
     """
 
     source = PlaneWaveGeometry(slab, w)
+    flat = PlaneWaveGeometry(slab, 0.0, guard_from=source,
+                             link_key=_ARMS_KEY)
     if w == 0.0:
-        return (PlaneWaveGeometry(slab, 0.0, guard_from=source),
-                PlaneWaveGeometry(slab, 0.0, guard_from=source))
-    return source, PlaneWaveGeometry(slab, 0.0, guard_from=source)
+        return flat, PlaneWaveGeometry(slab, 0.0, guard_from=source,
+                                       link_key=_ARMS_KEY)
+    return source, flat

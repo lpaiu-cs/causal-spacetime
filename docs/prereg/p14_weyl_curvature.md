@@ -770,11 +770,11 @@ in `{0.3, 1, 3}` — 216 cells, pinned in
 | | count of 216 | |
 |---|---|---|
 | admits pairs | 60 | |
-| empty, `x` violated | 102 | sole blocker in 34 |
-| empty, `y` violated | 111 | sole blocker in 48 |
+| empty, `x` violated | 102 | sole blocker in 32 |
+| empty, `y` violated | 113 | sole blocker in 48 |
 | empty, `v` violated | 12 | sole blocker in 5 |
 
-`x` is the sole reason 34 cells are empty. It is not a spectator — and
+`x` is the sole reason 32 cells are empty. It is not a spectator — and
 neither is `v`, whose sole-blocker count this table first recorded as
 **0** (R14.3). All three sole-blocker counts are pinned now, because
 pinning only `x` is what let the wrong one sit here: "sole blocker in
@@ -792,6 +792,17 @@ ratio falls to `0.60` at `a = 2` and `0.72` at `a = 3`. The count of
 admitting cells rose from 26 to 34 of the square 72, and from 47 to 60
 of the 216, and **`a = 2` became reachable**, which under the old bound
 it could not be at any box size.
+
+**The `x` margin is graded, not saturated (R14.8).** The first version
+of this table was produced by a `_defocusing_inset` that clamped its
+result to the half-extent when the condition could not be met, so
+`x_margin` came out at exactly `0.0` for every closed cell — a cell one
+ulp from admitting and one missing by 89× read identically, and the
+counts above existed only because the census's `<= 0.0` caught that
+saturated zero. Reported honestly the margin is strictly negative in 99
+of the 102, and the three that remain at zero are genuinely at zero
+width. The conclusion is unchanged; what changed is that it now
+survives the comparison being written `< 0.0`.
 
 The slice the withdrawn table used (`w = 1`, `dv = 0.2`, half-extent 3)
 admits at `a = 0.3, 0.6, 1.0` and not at `1.6` — where it is now `v`
@@ -831,8 +842,8 @@ Class C statistics may still live on a thin interior population.
 
 **[TO VERIFY]** Whether the `v` component ever binds at the geometries
 the probe will actually use. Removing it entirely still produces no
-escapes in the containment sweep, whose geometries reserve `0.002` and
-`0.006` for it against `dv = 0.35` — but that is now a statement about
+escapes in the containment sweep, whose geometries reserve `0.003` and
+`0.008` for it against `dv = 0.35` — but that is now a statement about
 those geometries, and the sweep above finds `v` binding in 12 of 216
 cells and **solely responsible in 5** of them. The
 earlier version of this section called the full-box `v` bound "not worth

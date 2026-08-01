@@ -18,6 +18,7 @@ Nothing here runs a probe. These are structural checks on the geometry.
 
 from __future__ import annotations
 
+import itertools
 import math
 import sys
 from decimal import Decimal, getcontext
@@ -32,6 +33,7 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p14_plane_wave import (  # noqa: E402
+    _ARMS_KEY,
     GuardInsets,
     PlaneWaveGeometry,
     Slab,
@@ -926,13 +928,28 @@ def test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box():
 
     square = census([(a, w_dv, h, h)
                      for a in axes for w_dv in dvs for h in halves])
-    assert square == {"cells": 72, "ok": 34, "x": 34, "y": 33, "v": 4,
-                      "x_only": 1, "y_only": 0, "v_only": 4}, square
+    assert square == {"cells": 72, "ok": 34, "x": 34, "y": 34, "v": 4,
+                      "x_only": 0, "y_only": 0, "v_only": 4}, square
 
     rect = census([(a, w_dv, w_x, w_y) for a in axes for w_dv in dvs
                    for w_x in halves for w_y in halves])
-    assert rect == {"cells": 216, "ok": 60, "x": 102, "y": 111, "v": 12,
-                    "x_only": 34, "y_only": 48, "v_only": 5}, rect
+    assert rect == {"cells": 216, "ok": 60, "x": 102, "y": 113, "v": 12,
+                    "x_only": 32, "y_only": 48, "v_only": 5}, rect
+
+    # R14.8: and the `x` margin is GRADED, not saturated. It used to
+    # clamp to exactly `0.0` for every closed cell, so the counts above
+    # were produced entirely by the census's inclusive `<= 0.0` catching
+    # that zero -- change it to `< 0.0` and the `x` column collapsed.
+    # A cell one ulp from admitting and one missing by 88x now differ.
+    graded = [margins(2.0, dv, 0.5, 1.5)[0] for dv in (2.0, 20.0, 200.0)]
+    assert all(m < 0.0 for m in graded), graded
+    assert graded[0] > graded[1] > graded[2]
+    assert graded[2] < -25.0, graded
+    strict = census([(a, w_dv, w_x, w_y) for a in axes for w_dv in dvs
+                     for w_x in halves for w_y in halves
+                     if not admits(a, w_dv, w_x, w_y)
+                     and margins(a, w_dv, w_x, w_y)[0] < 0.0])
+    assert strict["x"] == 99, strict
 
     # the anisotropy is real: at this cell a wide `y` extent admits and
     # a wide `x` extent does not, which a square sweep cannot see
@@ -969,17 +986,32 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
     assert not class_c_eligible(curved, p, q)
     assert not class_c_eligible(flat, p, q)
 
+    # R14.7: and the curvature is checked, not just the slab. A link
+    # validating only "same slab, no chaining" let a `w = 0.9` arm
+    # apply a `w = 0.2` guard -- admitting `|y| <= 1.0419` where the
+    # real guard allows `0.3429`, and leaking diamonds out of the box.
+    mild, _ = arms(slab, 0.2)
+    assert guard_insets(mild).y < guard_insets(curved).y / 2.0
+    with pytest.raises(ValueError, match="curved partner"):
+        PlaneWaveGeometry(slab, 0.9, guard_from=mild,
+                          link_key=_ARMS_KEY)
+    # the two links `arms()` does make are both legal
+    PlaneWaveGeometry(slab, 0.0, guard_from=curved, link_key=_ARMS_KEY)
+    PlaneWaveGeometry(slab, 1.0, guard_from=curved, link_key=_ARMS_KEY)
+
     # and a flat geometry with no curved partner is refused outright
     # rather than silently answering from its own insets
     orphan = PlaneWaveGeometry(slab, 0.0)
     with pytest.raises(ValueError, match="flat geometry"):
         class_c_eligible(orphan, p, q)
 
-    # the link is checked, not trusted: a partner on a different slab
-    # would mean the two arms are not the same points
-    other = PlaneWaveGeometry(Slab(du=1.0, dv=0.5, dx=3.0, dy=3.0), 1.0)
-    with pytest.raises(ValueError, match="same points"):
-        PlaneWaveGeometry(slab, 0.0, guard_from=other)
+    # R14.7: the link is a capability, not a field. Without the key
+    # `arms()` holds, no link can be made at all -- which is what makes
+    # "came from arms()" something a check can read. Before this, a
+    # hand-built flat-to-flat link passed every check and compared
+    # equal to `arms()`' own output.
+    with pytest.raises(ValueError, match="arms()"):
+        PlaneWaveGeometry(slab, 0.0, guard_from=curved)
 
 
 def test_the_defocusing_chain_was_the_ceiling_on_a():
@@ -1087,6 +1119,267 @@ def test_the_trajectory_excursion_is_exact_and_maximised_at_a_corner():
                                         / math.sin(a)) * math.sin(t))
                 for t in np.linspace(0.0, a, 200001))
     assert trajectory_excursion(yp, yq, a) == pytest.approx(dense, rel=1e-9)
+
+
+def _curved_containment(slab, w, y_factor, n_u=9, n_g=41):
+    """Exact containment for the CURVED guard, on a deterministic grid.
+
+    Review R14.15: the random sweep's negative control caught its one
+    escape entirely in the `w = 0` arm -- shrinking only `y` leaked at
+    `w = 0` and nowhere else -- so it was policing the Alexandrov
+    radius rather than the focusing derivation this PR is about. Its
+    geometries have `a = 0.21` and `0.385`, where `alpha` is within
+    0.4% of 1 and the curved guard is barely distinguishable from the
+    flat one.
+
+    Deterministic rather than sampled, because the escapes live in a
+    thin shell near the faces that random draws mostly miss: eligible
+    box corners as endpoints, a grid of candidates, and the exact
+    betweenness test `C(p,r) + C(r,q) <= v_p - v_q`.
+
+    Returns `(causal_points, leaking)`.
+    """
+
+    geom, _ = arms(slab, w)
+    insets = guard_insets(geom)
+    half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
+    lim_x = half_x - insets.x
+    lim_y = half_y - insets.y * y_factor
+    assert min(lim_x, lim_y) > 0.0 and slab.dv - 2.0 * insets.v > 0.0
+
+    corners = [(sx * lim_x, sy * lim_y)
+               for sx in (-1.0, 1.0) for sy in (-1.0, 1.0)]
+    us = np.linspace(0.0, slab.du, n_u + 2)[1:-1]
+    gx = np.linspace(-half_x * 1.3, half_x * 1.3, n_g)
+    gy = np.linspace(-half_y * 1.3, half_y * 1.3, n_g)
+
+    causal = leaking = 0
+    for (xp, yp), (xq, yq) in itertools.product(corners, corners):
+        p = np.array([0.0, slab.dv - insets.v, xp, yp])
+        q = np.array([slab.du, insets.v, xq, yq])
+        if causal_relation(geom, p, q).related is not True:
+            continue
+        budget = float(p[1] - q[1])
+        for u in us:
+            for x in gx:
+                for y in gy:
+                    cost = (transverse_cost(u, xp, float(x), yp, float(y), w)
+                            + transverse_cost(slab.du - u, float(x), xq,
+                                              float(y), yq, w))
+                    if cost > budget:
+                        continue
+                    causal += 1
+                    if abs(x) > half_x or abs(y) > half_y:
+                        leaking += 1
+    return causal, leaking
+
+
+def test_the_curved_focusing_inset_is_policed_by_its_own_control():
+    """The case, review R14.15: the random containment control's single
+    escape came from the `w = 0` arm, and mutating the curved return to
+    half its value left that control green. So nothing tested the
+    focusing inset three review rounds were spent deriving.
+
+    Here `a = 1.2`, where `alpha = 1.212` and the curved guard is
+    materially tighter than the flat one. The real guard leaks nothing
+    over 5,684 causal points; shrunk to 70% it leaks.
+
+    **The measured slack is reported rather than hidden:** an 85%
+    shrink does NOT leak on this construction, so the inset carries
+    roughly 15% of room above what this test can force. That is the
+    number a future tightening has to beat, and stating it is the
+    difference between a control that bounds the guard and one that
+    merely fails to contradict it.
+    """
+
+    slab = Slab(du=1.2, dv=1.0, dx=3.0, dy=3.0)
+    assert _focusing_excursion_factor(1.2) > 1.2, "the geometry must focus"
+
+    causal, leaking = _curved_containment(slab, 1.0, 1.0)
+    assert causal > 2000, causal
+    assert leaking == 0, f"the real curved guard leaks {leaking}/{causal}"
+
+    shrunk_causal, shrunk_leaking = _curved_containment(slab, 1.0, 0.7)
+    assert shrunk_leaking > 0, (
+        f"a 30% shrink of the curved y inset leaked nothing in "
+        f"{shrunk_causal} points; this control polices nothing")
+
+    # and the slack, pinned so a tightening that closes it shows up
+    assert _curved_containment(slab, 1.0, 0.85)[1] == 0
+
+
+def test_every_rejection_class_c_eligible_can_make_is_exercised():
+    """The case, review R14.14: line tracing showed the `v`-window
+    rejection and the closed-guard rejection were never reached by any
+    test. Four mutations each left the suite green -- deleting the `v`
+    check, making it one-sided either way, checking only `p` and not
+    `q`, and removing the `x` limit -- so `class_c_eligible` could be
+    reduced to a `y`-only check on one endpoint and nothing noticed.
+
+    The `v` component is R10.1's, the one that exists because `C` can
+    go negative and a diamond can rise ABOVE its own past endpoint, and
+    §4.6.3 now pins it as sole blocker in 5 of 216 cells precisely
+    because that number decides whether it is droppable. A test that
+    admits deleting its only consumer is not covering it.
+
+    Each rejection below is reached by exactly one coordinate, with
+    every other coordinate inside, so no assertion passes for a second
+    reason.
+    """
+
+    slab = Slab(du=1.0, dv=1.0, dx=4.0, dy=4.0)
+    geom, _ = arms(slab, 1.0)
+    insets = guard_insets(geom)
+    half_x, half_y = 2.0, 2.0
+    x_lim, y_lim = half_x - insets.x, half_y - insets.y
+    assert min(x_lim, y_lim) > 0.0 and 2.0 * insets.v < slab.dv
+
+    mid_v = 0.5 * slab.dv
+    inside = np.array([0.0, mid_v, 0.0, 0.0])
+    later = np.array([slab.du, mid_v, 0.0, 0.0])
+    assert class_c_eligible(geom, inside, later)
+
+    def shifted(point, index, value):
+        moved = point.copy()
+        moved[index] = value
+        return moved
+
+    # each face, on each endpoint, one coordinate at a time
+    for index, over in ((1, slab.dv - insets.v + 1e-6),
+                        (1, insets.v - 1e-6),
+                        (2, x_lim + 1e-6), (2, -x_lim - 1e-6),
+                        (3, y_lim + 1e-6), (3, -y_lim - 1e-6)):
+        assert not class_c_eligible(geom, shifted(inside, index, over),
+                                    later), (index, over, "p")
+        assert not class_c_eligible(geom, inside,
+                                    shifted(later, index, over)), (
+            index, over, "q")
+
+    # and the `v` window really is two-sided: `insets.v > 0` here, so
+    # a one-sided check would let the low side through
+    assert insets.v > 0.0
+    assert not class_c_eligible(geom, shifted(inside, 1, 0.0), later)
+    assert not class_c_eligible(geom, inside, shifted(later, 1, slab.dv))
+
+    # the closed-guard rejection: a geometry the guard empties admits
+    # nothing at all, including its own centre
+    closed, _ = arms(Slab(du=2.0, dv=4.0, dx=0.6, dy=0.6), 1.0)
+    blocked = guard_insets(closed)
+    assert blocked.x >= 0.3 and blocked.y >= 0.3
+    assert not class_c_eligible(closed, np.array([0.0, 2.0, 0.0, 0.0]),
+                                np.array([2.0, 2.0, 0.0, 0.0]))
+
+
+def test_the_y_inset_is_tied_to_the_reach_it_is_supposed_to_bound():
+    """The case, review R14.13: the focusing chain is what R11.1, R12.1
+    and R13.1 were spent on, and nothing pinned the number it returns.
+    Three independent weakenings each left the whole suite green --
+    scaling the returned `y` inset by `0.85`, discarding
+    `worst_focusing_corner` by forcing `alpha = 1`, and dropping the
+    inner-inner `direct_bound` term from the budget -- so a regression
+    silently loosening the guard by up to 15% shipped.
+
+    The gap was that every existing assertion compared the inset to
+    something else the guard computes, or to the other arm, rather than
+    to the reachability condition it exists to enforce. This recomputes
+    that condition from the module's published pieces and requires the
+    returned inset to sit exactly on it.
+    """
+
+    for w, du, dv, half in ((1.0, 1.0, 1.0, 2.0), (0.7, 1.2, 0.4, 3.0),
+                            (1.3, 0.9, 2.0, 1.5), (0.4, 2.0, 0.6, 4.0)):
+        slab = Slab(du=du, dv=dv, dx=2 * half, dy=2 * half)
+        geom, _ = arms(slab, w)
+        insets = guard_insets(geom)
+        if insets.y >= half:
+            continue
+        y_inner = half - insets.y
+        a = w * du
+        alpha = _focusing_excursion_factor(a)
+        x_inset, cross = _defocusing_inset(slab, w, half)
+
+        # the reach the design derives: trajectory plus spread, with the
+        # budget of R13.1 -- window, cross, and the inner-inner direct
+        # action, each of which one of the surviving mutations dropped
+        v_here = max_negative_focusing(a, w, y_inner, half)
+        budget = (slab.dv - 2.0 * v_here * (1 + 1e-12) + cross
+                  + max_negative_focusing(a, w, y_inner, y_inner))
+        reach = alpha * y_inner + math.sqrt(budget * math.tan(a / 2.0) / w)
+        assert reach <= half * (1 + 1e-9), (
+            f"w={w} du={du}: the admitted anchor reaches {reach} beyond "
+            f"the half-extent {half}")
+
+        # and it is not loose: the guard's own `v` component agrees, so
+        # a scaled-down `y` cannot pass
+        assert insets.v == pytest.approx(v_here * (1 + 1e-12), rel=1e-9)
+        assert alpha > 1.0, "a flat alpha would discard the trajectory"
+
+    # `alpha` and `direct_bound` are load-bearing, pinned by what they
+    # change rather than by a magic constant
+    slab = Slab(du=1.0, dv=1.0, dx=2.0, dy=2.0)
+    geom, _ = arms(slab, 1.0)
+    half, a, w = 1.0, 1.0, 1.0
+    y_inner = half - guard_insets(geom).y
+    alpha = _focusing_excursion_factor(a)
+    _, cross = _defocusing_inset(slab, w, half)
+    v_here = max_negative_focusing(a, w, y_inner, half)
+    window = slab.dv - 2.0 * v_here
+    direct = max_negative_focusing(a, w, y_inner, y_inner)
+    spread = math.sqrt((window + cross + direct) * math.tan(a / 2.0) / w)
+
+    assert alpha > 1.13, alpha
+    # the trajectory term is 2%+ of the reach and the reach is
+    # saturated below, so `alpha = 1` cannot be a rounding difference
+    assert (alpha - 1.0) * y_inner > 0.02 * (alpha * y_inner + spread)
+    # and dropping `direct_bound` shrinks the spread measurably
+    without = math.sqrt((window + cross) * math.tan(a / 2.0) / w)
+    assert spread - without > 1e-3, (spread, without)
+
+
+def test_the_operating_point_sits_where_the_volume_criterion_puts_it():
+    """The case, review R14.13 again, from the other side: the previous
+    test checks the guard does not exceed its reach, which a guard that
+    is merely too tight also satisfies. This checks it is not too tight,
+    by pinning the criterion §4.6.1 says determines it.
+
+    Maximising `2 X_lim . 2 y_inner . (dv - 2V) . du` over the anchor
+    has exactly two outcomes. Either the reach saturates `half_y` --
+    the containment condition binds and the optimum is on that
+    boundary -- or it is interior, and since `V` is quadratic in the
+    anchor there, `d/dy [y (dv - 2 c y^2)] = 0` puts the `v` window at
+    exactly `2/3 dv`. Both are checkable to many digits and neither
+    survives a scaled inset.
+    """
+
+    seen_reach = seen_window = 0
+    for w, du, dv, half in ((1.0, 1.0, 1.0, 2.0), (0.7, 1.2, 0.4, 3.0),
+                            (1.3, 0.9, 2.0, 1.5), (0.4, 2.0, 0.6, 4.0),
+                            (1.0, 1.0, 1.0, 1.0), (0.5, 1.5, 0.8, 2.5)):
+        slab = Slab(du=du, dv=dv, dx=2 * half, dy=2 * half)
+        geom, _ = arms(slab, w)
+        insets = guard_insets(geom)
+        if insets.y >= half:
+            continue
+        y_inner = half - insets.y
+        a = w * du
+        alpha = _focusing_excursion_factor(a)
+        _, cross = _defocusing_inset(slab, w, half)
+        window = slab.dv - 2.0 * insets.v
+        budget = (window + cross
+                  + max_negative_focusing(a, w, y_inner, y_inner))
+        reach = alpha * y_inner + math.sqrt(budget * math.tan(a / 2.0) / w)
+
+        saturated = reach >= half * (1.0 - 1e-9)
+        interior = abs(window / slab.dv - 2.0 / 3.0) < 1e-6
+        assert saturated or interior, (
+            f"w={w} du={du} half={half}: the anchor is neither on the "
+            f"reach boundary ({reach / half}) nor at the interior "
+            f"optimum (window/dv = {window / slab.dv}) -- the volume "
+            "criterion is not what placed it")
+        seen_reach += saturated
+        seen_window += interior and not saturated
+
+    assert seen_reach >= 2 and seen_window >= 3, (seen_reach, seen_window)
 
 
 def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
@@ -1311,27 +1604,52 @@ def test_a_weakened_focusing_guard_leaks_on_a_constructed_pair():
             lo = mid
         else:
             hi = mid
-    assert lo > 0.0, (
-        "no shrinkage of the y inset makes the constructed geodesic "
-        "leave the box, so this control polices nothing")
+
+    # R14.16: `assert lo > 0.0` used to stand here and could not fail.
+    # At `f = 0` the condition reduces to `alpha * half > half`, i.e.
+    # `alpha > 1`, with no dependence on `real.y` at all -- so it held
+    # for any guard however weak, and restated the `alpha > 1.05`
+    # assertion fifteen lines above. The number it was standing in for
+    # is the SLACK, and that is what is pinned: the inset survives
+    # being cut to 19.6% of its value before this construction leaks.
+    assert lo == pytest.approx(0.1963, abs=5e-4), lo
     lim = half - real.y * lo
 
     # and the pair really is causally related, so the peak really is a
     # diamond point rather than a curve nobody can traverse. The `v`
     # coordinates are placed inside the guard's own admissible window,
     # so the pair is a pair the pipeline would actually count.
+    #
+    # R14.17: `p` used to be placed at `q_v + cost + 1e-3`, and at the
+    # same-sign maximising corner `cost` is NEGATIVE -- it comes out at
+    # `-29.8`, putting `v_p` at `-28.8` against a slab floor of `0`.
+    # `sprinkle` draws `v` in `[0, dv]`, so no such pair can exist and
+    # a leak demonstrated on it could never reach a Class C count --
+    # exactly the defect R12.3 opened and this docstring claims to have
+    # fixed. The window is not binding here, so the pair is simply
+    # placed at its two faces.
     cost = transverse_cost(du, 0.0, 0.0, sign_p * lim, sign_q * lim, w)
-    q_v = real.v
-    p = np.array([0.0, q_v + cost + 1e-3, 0.0, sign_p * lim])
-    q = np.array([du, q_v, 0.0, sign_q * lim])
-    assert float(p[1]) <= slab.dv - real.v, (
+    p = np.array([0.0, slab.dv - real.v, 0.0, sign_p * lim])
+    q = np.array([du, real.v, 0.0, sign_q * lim])
+    assert real.v <= float(q[1]) < float(p[1]) <= slab.dv - real.v, (
         "the constructed pair does not fit the admissible v window")
+    assert 0.0 <= float(q[1]) and float(p[1]) <= slab.dv, (
+        "the constructed pair is outside the slab and could never be "
+        "sprinkled, so a leak on it reaches no Class C count")
+    assert float(p[1]) - float(q[1]) >= cost, "not causally related"
     assert causal_relation(geom, p, q).related is True
 
     # THE POINT OF THE CONTROL: under the weakened guard this pair is
     # eligible, so its diamond would be counted while part of it lies
     # outside the box -- and under the real guard it is not.
-    assert abs(float(p[3])) <= half - real.y * lo
+    #
+    # R14.16: the first assertion here read
+    # `abs(p[3]) <= half - real.y * lo`, which is `lim <= lim`
+    # bit-exactly and could not fail. What it meant to say is that the
+    # weakened guard ADMITS the pair, which is a statement about the
+    # predicate, so it is now asked of the predicate.
+    weak_lim = half - real.y * lo
+    assert abs(float(p[3])) <= weak_lim and abs(float(q[3])) <= weak_lim
     assert abs(float(p[3])) > half - real.y, (
         "the constructed pair survives the real guard too, so the "
         "control does not separate the two")
