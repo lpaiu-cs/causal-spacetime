@@ -1,7 +1,14 @@
 # P14: which pure-order statistic reads a pure-Weyl deformation, and at what density? — design draft
 
-Status: **DESIGN DRAFT v0.7 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
-HAS RUN. NOTHING IS FROZEN.** Two deterministic design checks HAVE run and
+Status: **DESIGN DRAFT v0.8 (2026-08-01). APPROVED FOR THE EXPLORATORY
+PROBE (P0–P4, S1) on 2026-08-01. NO STOCHASTIC PROBE OR CAMPAIGN HAS RUN
+YET. NOTHING IS FROZEN.**
+
+**What the approval covers, and what it does not.** It authorises the
+exploratory probe only. It is **not** approval to freeze a
+preregistration, to set gates or thresholds, or to run a confirmatory
+campaign — those need the probe's numbers first and a separate review,
+and §8.2's fresh-seed boundary stands between them. Two deterministic design checks HAVE run and
 are committed beside this document (`docs/prereg/p14_checks/`), because an
 output pasted into prose is not a check; their frozen, stamped copies move
 to `docs/prereg/frozen/p14/` if and when this design freezes. The document
@@ -987,6 +994,24 @@ freeze and with nothing frozen**:
      - **Ratio, reported secondarily.** As a pooled `sum N_A / sum N_0`
        or an explicit ratio-of-means, never as a per-sample average of
        ratios, and never as the primary test.
+
+  **The anchors are external and are not counted (R5 approval
+  condition).** Everything above assumes `N_A` and `N_0` are Poisson
+  counts over DETERMINISTIC regions. That holds only if the axis pair
+  defining the diamond is a **fixed external anchor** — chosen from the
+  frozen geometry, not from the realization — and the anchor points
+  themselves are excluded from both counts. Then `I_A` and `I_0` are
+  fixed sets, `N_A ~ Poisson(rho V_A)`, `N_0 ~ Poisson(rho V_0)`, and
+  the covariance identity applies exactly as written.
+
+  **If a future variant post-selects axis pairs from the sprinkled
+  points, none of this transfers.** Conditioning on the endpoints being
+  sprinkled changes the law of the remaining points and makes the region
+  itself random; the correct conditional distribution must then be
+  re-derived from scratch, and the formulas above may not be reused by
+  analogy. P2 as designed uses external anchors and does not have this
+  problem — the note exists so that a later convenience does not
+  silently inherit an inapplicable error model.
 - **P3. Discriminability.** For a ladder of `A` and slab sizes, measure
   the §5 statistics in order — `D` first, reported as
   `[D_lower, D_upper]` with `ambiguous_fraction` and the gained/lost
