@@ -104,13 +104,31 @@ def _series(x: Decimal, *, odd: bool, alternating: bool) -> Decimal:
         k += 1
 
 
-def _exact_cost(s: float, xp: float, xq: float,
-                yp: float, yq: float, w: float) -> Decimal:
-    """`transverse_cost` in `decimal` at `ESCALATED_PRECISION` digits."""
+def _dec(value) -> Decimal:
+    """A float's EXACT value as a `Decimal`.
+
+    `Decimal(x)` is exact; `Decimal(repr(x))` is the shortest string
+    that round-trips, which is a different number (R9.1). The
+    escalation path exists to be exact about the stored coordinates, so
+    it must not begin by rounding them.
+    """
+
+    return value if isinstance(value, Decimal) else Decimal(float(value))
+
+
+def _exact_cost(s, xp, xq, yp, yq, w) -> Decimal:
+    """`transverse_cost` in `decimal` at `ESCALATED_PRECISION` digits.
+
+    `s` may be a `Decimal`, and in the escalation path it always is: the
+    `u`-separation has to be formed as a Decimal DIFFERENCE of the two
+    stored coordinates, never handed in as a double that already
+    rounded (R9.1).
+    """
 
     getcontext().prec = ESCALATED_PRECISION
-    ds, dxp, dxq = Decimal(repr(s)), Decimal(repr(xp)), Decimal(repr(xq))
-    dyp, dyq, dw = Decimal(repr(yp)), Decimal(repr(yq)), Decimal(repr(w))
+    ds = _dec(s)
+    dxp, dxq, dyp, dyq, dw = (_dec(xp), _dec(xq), _dec(yp), _dec(yq),
+                              _dec(w))
     if dw == 0:
         return ((dxq - dxp) ** 2 + (dyq - dyp) ** 2) / (2 * ds)
     ws = dw * ds
@@ -230,7 +248,11 @@ def _leg_error_bound(s: float, ap: float, aq: float, w: float, *,
     # `s = pi/0.9 - 1e-4`: the true error is `1.80e-9` where the
     # roundoff term alone reports `4.44e-12`, understating it 405-fold
     # and deciding pairs on the wrong side without escalating.
-    argument_error = _EPS * (abs(a) + 1.0)
+    # `a` is wrong by two roundings of equal size, not one: `s` is
+    # itself a subtraction of stored coordinates (R9.1) and `w * s` is a
+    # product. Both give `eps |a|`; the trigonometric evaluation adds
+    # about `eps`.
+    argument_error = _EPS * (2.0 * abs(a) + 1.0)
     sensitivity = operands * (trig / denominator) + 0.5 * w * p_sum
     return roundoff + sensitivity * argument_error
 
@@ -408,11 +430,26 @@ def causal_relation(geometry: PlaneWaveGeometry,
     if not verdict.ambiguous:
         return verdict
 
-    # escalate rather than guess (design §5.1: precision, not tolerance)
+    # Escalate rather than guess (design §5.1: precision, not tolerance).
+    #
+    # R9.1: the separations are rebuilt HERE, as Decimal differences of
+    # the stored coordinates. Passing the double `du` and `dv` down was
+    # the defect: `q[0] - p[0]` has already rounded, and the cost
+    # depends on `du` strongly enough for that to outweigh the margin.
+    # Measured, flat arm, `p = (1.9556e-07, 199.8037, 0, 0)` and
+    # `q = (0.0532716, 0, 4.6139, 0)`: the subtraction loses `3.1e-19`,
+    # which the `1/du` in the cost turns into `1.2e-15` -- and the
+    # escalated verdict came back `False` with a margin of `-1.7e-15`
+    # where the exact one is positive. An escalation that begins by
+    # rounding its inputs certifies the wrong answer more confidently
+    # than the double path would have.
     getcontext().prec = ESCALATED_PRECISION
-    exact_margin = -(Decimal(repr(dv)) + _exact_cost(du, xp, xq, yp, yq, w))
+    du_exact = _dec(q[0]) - _dec(p[0])
+    dv_exact = _dec(q[1]) - _dec(p[1])
+    exact_margin = -(dv_exact
+                     + _exact_cost(du_exact, xp, xq, yp, yq, w))
     exact_error = Decimal(10) ** (-(ESCALATED_PRECISION - 10))
-    scale = abs(exact_margin) + Decimal(repr(abs(dv) + abs(cost) + 1.0))
+    scale = abs(exact_margin) + abs(dv_exact) + _dec(abs(cost)) + 1
     return _verdict(float(exact_margin), float(exact_error * scale),
                     escalated=True)
 

@@ -316,6 +316,173 @@ def test_error_bound_survives_proximity_to_the_conjugate_point():
     assert tame < 1e-14
 
 
+# --------------------------------------------------------------------
+# and the systematic version, because four rounds of counterexamples is
+# enough evidence that waiting for the fifth is the wrong method
+# --------------------------------------------------------------------
+
+def _regime_sampler(rng, n):
+    """Configurations spanning every regime that has broken the bound.
+
+    Reviews R6.1 through R9.1 each found the bound in a place the
+    previous fix did not reach: legs cancelling, the series' `a^2` terms
+    cancelling between legs, the argument amplified near a conjugate
+    point, and the separations rounded before exact arithmetic saw them.
+    Each was repaired where the counterexample pointed. This draws from
+    all of those regions at once instead.
+    """
+
+    for _ in range(n):
+        kind = rng.integers(0, 6)
+        if kind == 5:
+            # deliberately near-cancelling: S_x > 0 always, and S_y < 0
+            # whenever the y endpoints coincide, so solve for the x
+            # separation that almost annihilates the sum. Perfect
+            # cancellation is measure zero, which is why the uniform
+            # regimes above hit R6.1's case only twice in 1400 draws --
+            # the defect that started this series needs to be aimed at.
+            s = float(rng.uniform(0.2, 2.0))
+            w = float(rng.uniform(0.2, 1.4))
+            if s >= math.pi / w:
+                continue
+            y = float(rng.normal(0.0, 1.0)) or 1.0
+            leg_y = cost_focusing(s, y, y, w)
+            coth = math.cosh(w * s) / math.sinh(w * s)
+            target = -2.0 * leg_y / (w * coth)
+            if target <= 0.0:
+                continue
+            xq = math.sqrt(target) * float(rng.uniform(0.999999, 1.000001))
+            yield s, 0.0, xq, y, y, w
+            continue
+        if kind == 0:                                    # flat
+            w = 0.0
+            s = float(rng.uniform(1e-3, 5.0))
+        elif kind == 1:                                  # series branch
+            s = float(rng.uniform(0.1, 3.0))
+            w = float(rng.uniform(1e-9, 0.9e-4)) / s
+        elif kind == 2:                                  # mid range
+            s = float(rng.uniform(0.1, 3.0))
+            w = float(rng.uniform(0.05, 2.0))
+        elif kind == 3:                                  # near conjugate
+            w = float(rng.uniform(0.3, 2.0))
+            s = (math.pi / w) * float(rng.uniform(0.90, 0.999999))
+        else:                                            # near-coincident
+            s = float(rng.uniform(0.1, 3.0))
+            w = float(rng.uniform(0.0, 2.0))
+        scale = 10.0 ** float(rng.uniform(-4.0, 1.0))
+        xp = float(rng.normal(0.0, scale))
+        yp = float(rng.normal(0.0, scale))
+        if kind == 4:                                    # endpoints close
+            xq = xp + float(rng.normal(0.0, scale * 1e-8))
+            yq = yp + float(rng.normal(0.0, scale * 1e-8))
+        else:
+            xq = float(rng.normal(0.0, scale))
+            yq = float(rng.normal(0.0, scale))
+        if w > 0.0 and s >= math.pi / w:
+            continue
+        yield s, xp, xq, yp, yq, w
+
+
+def test_the_error_bound_dominates_over_every_regime_that_has_broken_it():
+    """The case: each of R6.1, R7.1, R8.1 and R9.1 found this bound
+    wrong somewhere the previous repair did not reach, and each was
+    fixed at the point the counterexample happened to expose. Four
+    rounds of that is evidence the method is wrong, not just the code:
+    a bound has to be checked against the thing it bounds, everywhere,
+    rather than patched wherever the last reviewer looked.
+
+    So: draw configurations from all four regimes and assert the bound
+    dominates the measured error in every one. This is what should have
+    been written after R6.1.
+
+    NEGATIVE CONTROL, run before trusting this. Each historical bound
+    model was reinstated and swept, and this test catches all three --
+    a property test that passes for every version of the code it
+    polices would be worth nothing:
+
+        v1 (the R6.1 model)   271 violations / 1423, worst 7.1e4 too small
+        v2 (the R7.1 model)    56 violations / 1423, worst 1.5e3 too small
+        v3 (the R8.1 model)    17 violations / 1423, worst 9.7e2 too small
+        current                 0 violations / 1423
+
+    v1 registered only twice before the deliberately near-cancelling
+    regime was added, which is itself the lesson: uniform sampling does
+    not find a measure-zero configuration, so the regime that broke the
+    code has to be aimed at rather than hoped for.
+    """
+
+    getcontext().prec = 60
+    rng = np.random.default_rng(20260802)
+    checked = failures = 0
+    worst_ratio = 0.0
+    for s, xp, xq, yp, yq, w in _regime_sampler(rng, 1500):
+        approx = transverse_cost(s, xp, xq, yp, yq, w)
+        if not math.isfinite(approx):
+            continue
+        exact = _exact_cost(s, xp, xq, yp, yq, w)
+        bound = cost_error_bound(s, xp, xq, yp, yq, w)
+        actual = abs(Decimal(approx) - exact)
+        checked += 1
+        if actual > 0:
+            worst_ratio = max(worst_ratio, float(actual) / max(bound, 1e-300))
+        if Decimal(bound) < actual:
+            failures += 1
+            if failures == 1:
+                pytest.fail(
+                    f"bound violated at s={s!r} w={w!r} "
+                    f"x=({xp!r},{xq!r}) y=({yp!r},{yq!r}): "
+                    f"bound {bound:.3e} < actual {float(actual):.3e}")
+    assert checked > 1000, f"sampler produced only {checked} usable cases"
+    assert failures == 0
+    # and the bound is not vacuous: it should not be astronomically
+    # larger than the error everywhere, or it would escalate every pair
+    assert worst_ratio > 1e-6, (
+        f"worst error/bound ratio {worst_ratio:.2e} suggests the bound "
+        "is so loose it carries no information")
+
+
+def test_the_verdict_agrees_with_exact_arithmetic_on_pairs_at_the_cone():
+    """The case: the bound existing is not the claim -- the claim is that
+    a returned verdict is right. Pairs are placed at the cone and nudged
+    by amounts that straddle the double path's resolution, so most of
+    them are decided by escalation, and every non-ambiguous verdict is
+    checked against exact arithmetic that rebuilds the separations
+    itself (R9.1).
+    """
+
+    getcontext().prec = 60
+    rng = np.random.default_rng(31415)
+    decided = escalated = 0
+    for s, xp, xq, yp, yq, w in _regime_sampler(rng, 260):
+        cost = transverse_cost(s, xp, xq, yp, yq, w)
+        if not math.isfinite(cost):
+            continue
+        # the slab must hold the pair and stay inside the conjugate
+        # bound; the sampler guarantees s < pi/w, so split the gap
+        du = s * 1.5 if w == 0.0 else s + 0.5 * (math.pi / w - s)
+        geom = PlaneWaveGeometry(
+            Slab(du=du, dv=1.0, dx=1.0, dy=1.0), w)
+        for nudge in (-1e-16, -1e-13, 0.0, 1e-13, 1e-16):
+            p = np.array([0.0, 0.0, xp, yp])
+            q = np.array([s, -cost + nudge, xq, yq])
+            rel = causal_relation(geom, p, q)
+            if rel.ambiguous:
+                continue
+            du_exact = Decimal(float(q[0])) - Decimal(float(p[0]))
+            dv_exact = Decimal(float(q[1])) - Decimal(float(p[1]))
+            truth = -(dv_exact
+                      + _exact_cost(du_exact, xp, xq, yp, yq, w)) > 0
+            assert rel.related == truth, (
+                f"verdict {rel.related} != exact {truth} at s={s!r} "
+                f"w={w!r} nudge={nudge!r}")
+            decided += 1
+            escalated += int(rel.escalated)
+    assert decided > 400, f"only {decided} decided pairs exercised"
+    assert escalated > 20, (
+        f"only {escalated} escalations: the fixture is not reaching the "
+        "regime where the double path has to hand over")
+
+
 def test_a_pair_double_cannot_decide_escalates_instead_of_guessing():
     """The case, design §5.1: the response to an undecidable pair is
     precision, never a tolerance. A pair placed inside the double-
@@ -339,6 +506,45 @@ def test_a_pair_double_cannot_decide_escalates_instead_of_guessing():
     rel_out = causal_relation(geom, p, q_out)
     assert rel_out.escalated
     assert rel_out.related is False
+
+
+def test_escalation_rebuilds_the_separations_instead_of_inheriting_them():
+    """The case, review R9.1, and the worst of the series: the double
+    path escalated correctly and the ESCALATION returned the wrong
+    answer, because it took `du` and `dv` as doubles that had already
+    rounded in `q[i] - p[i]`.
+
+    Flat arm, inside `Slab(du=1, dv=201, dx=10, dy=1)`. The `u`
+    subtraction loses `3.1e-19`, and the `1/du` in the cost turns that
+    into `1.2e-15` against a true margin of `+8.1e-15` -- so the verdict
+    came back `False` with an `escalated=True` certificate on it. An
+    escalation that begins by rounding its inputs is worse than no
+    escalation: it certifies the wrong answer.
+    """
+
+    p = np.array([1.955619748358592e-07, 199.803718598693, 0.0, 0.0])
+    q = np.array([0.053271600135298, 0.0, 4.613854078473958, 0.0])
+    geom = PlaneWaveGeometry(Slab(du=1.0, dv=201.0, dx=10.0, dy=1.0), 0.0)
+
+    getcontext().prec = 60
+    du_exact = Decimal(float(q[0])) - Decimal(float(p[0]))
+    dv_exact = Decimal(float(q[1])) - Decimal(float(p[1]))
+    dx = Decimal(float(q[2])) - Decimal(float(p[2]))
+    exact_margin = -(dv_exact + dx * dx / (2 * du_exact))
+
+    # the case must really be one the double path cannot settle
+    assert abs(float(exact_margin)) < 1e-13
+    assert exact_margin > 0
+
+    rel = causal_relation(geom, p, q)
+    assert rel.escalated
+    assert rel.related is True
+    assert rel.margin_lower == pytest.approx(float(exact_margin), rel=1e-9)
+
+    # the subtraction really does lose digits -- this is not a fixture
+    # that would pass for an unrelated reason
+    lost = abs(Decimal(float(q[0]) - float(p[0])) - du_exact)
+    assert lost > 0
 
 
 def test_a_pair_exactly_on_the_cone_stays_ambiguous_after_escalation():

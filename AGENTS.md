@@ -63,6 +63,25 @@ recovers `X` to within `t`" — the verdict is decided by the confidence
 interval, not by the point estimate. A point estimate inside `t` whose
 interval crosses `t` does not support the sentence the record will quote.
 
+**"The confidence interval" is not yet a rule, so its coverage and
+sidedness are frozen here too.** An 80% interval and a one-sided bound
+are both "the confidence interval", and either would change the verdict
+and the required `n` without contradicting the sentence above — which
+would put back, one level down, exactly the free parameter this rule
+removes. So:
+
+- **House default: 95%, two-sided.** That is the construction P12's
+  price below is computed against (`1.96`), and a design that says
+  nothing gets it.
+- **A design may choose otherwise, and must then fix coverage and
+  sidedness BEFORE data and power against that same construction.** A
+  one-sided bound in the verdict and a two-sided quantile in the power
+  section is not a choice, it is an inconsistency.
+- **The METHOD stays free.** Bootstrap, exact, likelihood-based,
+  Bonferroni-corrected — whatever the design argues for. What may not
+  float is the error level: the method is a modelling decision, the
+  coverage is a gate parameter, and gate parameters freeze before data.
+
 The case that forced this. P12 §9.3's co-requirement (ii) was frozen as a
 point comparison; the campaign's top rung read `0.1708` against a threshold
 of `0.25` and passed, while its 95% interval reached `0.2644` — across the

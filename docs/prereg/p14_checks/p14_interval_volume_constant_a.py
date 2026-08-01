@@ -39,13 +39,26 @@ Drivas, Phys. Rev. D 85, 124039):
     (1/2) x_perp^T K(s) x_perp with K_x = w coth(w s) for x'' = +w^2 x
     (defocusing) and K_y = w cot(w s) for y'' = -w^2 y (focusing);
     flat limit K -> 1/s is the straight line.
-  - a point at u-offset s must clear the cost from p and the cost to q,
-    so the admissible v-extent at fixed (s, x_perp) is
-    [half_tau*2 - q]_+ with q = (a_x x^2 + a_y y^2)/2 and
+  - a point at u-offset s with transverse position x_perp must clear
+    the cost from p and the cost to q. With p = (0, 0, 0_perp) and
+    q = (T, -half_tau, 0_perp) the two causal inequalities read
+
+        v <= -C_p        (from p to the point)
+        v >= -half_tau + C_q   (from the point to q)
+
+    so the admissible v-extent is [half_tau - q]_+ with
+    q = C_p + C_q = (a_x x^2 + a_y y^2)/2 and
       a_x = w [coth(ws) + coth(w(T-s))]
       a_y = w [cot(ws)  + cot(w(T-s))]
-  - the ellipse integral gives V = int_0^T pi (2*half_tau)^2/4 /
-    sqrt(a_x a_y) ds, i.e. with tau = T and half_tau = T/2:
+    (review R9.2: an earlier revision wrote this width as 2*half_tau,
+    which integrates a region four times too large -- the constant in
+    the next line was right, so only a caller following the PROSE would
+    have been misled, which is again P2's anchor construction.)
+  - integrating half_tau - q over the ellipse where it is positive:
+
+        V = int_0^T  pi half_tau^2 / sqrt(a_x a_y)  ds
+
+    i.e. with tau = T and half_tau = T/2,
     V_A = (pi T^2 / 4) int_0^T ds / sqrt(a_x a_y).
   - flat limit, analytically: a -> T/(s(T-s)), integrand s(T-s)/T,
     integral T^2/6, V -> pi T^4 / 24 = the Alexandrov volume. That
