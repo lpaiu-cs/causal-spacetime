@@ -1,11 +1,16 @@
 # P12: does the instrument read CURVED geometry? — power-first preregistration
 
-Status: **STAGE A HAS RUN and returned IMPROVES (Section 9). STAGE B
-IS FROZEN BY THE SECTION 10 ADDENDUM (2026-07-31) and has NOT run.**
+Status: **STAGE A HAS RUN and returned IMPROVES (9.2). STAGE B HAS RUN
+and returned RECOVERS-CURVATURE with both halves of its co-requirement
+passing (9.3) — read with the four qualifications recorded there, chief
+among them that the recovery is of the ENSEMBLE-POOLED dimensionless
+`R tau^2` and that the median single sample recovers nothing.**
 Sections 1 through 8 are design v1.1 as frozen before Stage A; Section
-9 is Stage A's record and is not re-read; Section 10 is the Stage B
-addendum that Section 5 declared and deferred. Dates are local
-(UTC+9); commit timestamps carry their +09:00 offset.
+9 holds the stage records and is not re-read; Section 10 is the Stage B
+addendum that Section 5 declared and deferred, frozen before any Stage
+B datum, with one clause amended post-run and the amendment disclosed
+in place (10.10's completeness pin, which contradicted 10.5). Dates are
+local (UTC+9); commit timestamps carry their +09:00 offset.
 
 *(The header previously read "Nothing below has been run" while
 Section 9 carried a completed campaign — the narrative-versus-artifact
@@ -262,6 +267,15 @@ cross-stage gate on P11 Stage A's frozen IMPROVES (P12's instrument
 IS that estimator, so its flat certification is the prerequisite),
 and one-significant-figure quoting of every measured timing.
 
+**"Verbatim" is where a later defect entered, so it is flagged here at
+the source.** The pin held for Stage A, which completed 2000 of 2000 at
+every rung (9.1). It does not hold for Stage B, whose bottom density rung
+completes 0.997 by 10.5's own measurement, and 10.10 first inherited
+`1998` through this clause without checking it against that. 10.10 now
+carries a per-rung pin and its derivation. Inheriting a constant verbatim
+inherits its calibration too, and that calibration was P11's ensemble,
+not this one.
+
 | block | base | fills | window span |
 |---|---|---|---|
 | verification-12 (non-experimental) | 1000000 | 2000 per rung | 1000000-1005999 |
@@ -469,6 +483,153 @@ exponent survives there.
 
 Artifacts: `docs/prereg/frozen/p12/` (verification, pilot, Stage A),
 stamp recorded in each.
+
+### 9.3 Stage B-12 (2026-07-31): both halves of the co-requirement pass — **RECOVERS-CURVATURE**, and the size must be read beside the word
+
+Implementation and campaign at stamp `5252ee7`, on the frozen Section 10
+design. `n_per_rung = n_twin = 1117`, chosen by the frozen formulas from
+Stage P-B's calibrated bounds (`S^2 = 0.4505`, `S^2_90 = 0.6006`,
+`n_sup = 101`, `n_eq = 1117`) against the cap of 1300. Wall clock 4.8
+minutes over both arms.
+
+```
+Delta_B  = -0.2637,  95% CI [-0.3037, -0.2233]   ->  IMPROVES
+top rung |R tau^2 hat - R tau^2| / R tau^2 = 0.1708  <=  0.25  ->  passes
+outcome:  RECOVERS-CURVATURE
+```
+
+**The derived rate reproduced.** `Delta*_B = -0.2508` was derived in 10.4
+from the propagated Poisson and chain rates, not borrowed; the campaign
+measures `-0.2637 +/- 0.0205`, which is **0.63 sigma** from it. The
+design check's `-0.2227 +/- 0.0167` had read 1.7 sigma shallow, and 10.10
+declined to interpret that gap; at campaign precision the gap does not
+reproduce, which is the outcome that declining earned.
+
+| rung | `Q_hat` | `1 - Q_hat` | `R tau^2 hat` | rel error | 95% CI |
+|---|---|---|---|---|---|
+| 600 | 0.92382 | 0.07618 | 4.1540 | 0.0769 | [0.0038, 0.2410] |
+| 1200 | 0.93228 | 0.06772 | 3.6386 | 0.1914 | [0.0705, 0.3138] |
+| 2400 | 0.93074 | 0.06926 | 3.7316 | **0.1708** | [0.0784, 0.2644] |
+
+Truth is `R tau^2 = 4.5` and `1 - Q = 0.08172`. All three rungs undershoot
+`1 - Q` by 7 to 17%, which is the residual bias mismatch 10.6 priced.
+
+**Four qualifications, none of them optional, because 10.9 forbids the
+verdict word being read as accuracy.**
+
+**(1) The interval crosses the threshold.** The top rung's 95% interval
+reaches `0.2644`, above the `0.25` the co-requirement names. The frozen
+rule is a POINT comparison and it passes at `0.1708`; the interval is
+published because 10.10 requires it. Had the rule been written as an
+interval rule the outcome would have been different — and that is
+recorded as a lesson for the next design, **not** as a re-scoring of this
+one. Converting a point rule into an interval rule after seeing the
+interval would be the same move as loosening a threshold after seeing the
+data, in the opposite direction and equally forbidden. Realized margin
+`(0.25 - 0.1708) / 0.0474 = 1.67 sigma` against the `1.92 sigma` disclosed
+pre-run in 10.7, so the headroom came in slightly thinner than the design
+check projected, as that projection's own "UPPER bound" label warned.
+
+**(2) What is recovered is the ENSEMBLE-POOLED dimensionless quantity, not
+a sample's curvature.** The median per-sample relative error is **exactly
+1.000 at every rung** — the median sample recovers nothing:
+
+| rung | median per-sample rel error | within 100% | at the boundary |
+|---|---|---|---|
+| 600 | 1.000 | 175 / 1117 (15.7%) | 36.2% |
+| 1200 | 1.000 | 295 / 1117 (26.4%) | 31.1% |
+| 2400 | 1.000 | 397 / 1117 (35.5%) | 27.2% |
+
+So Section 5's predicted failure mode is **half realized**: the gate does
+pass while a typical single sample recovers nothing. What defeats the
+other half is that the pooled `R tau^2` is recovered to 17%, which is why
+10.7 made the co-requirement dimensionless and evaluated it on the
+ensemble. The minority within 100% grows with density, 15.7% to 35.5%,
+and that IS established — `+19.87 pp +/- 1.80`, about `11 sigma`, at these
+counts.
+
+**(3) No ordering across the rungs is established.** The point estimates
+`0.0769 / 0.1914 / 0.1708` are non-monotone, and the best rung is the
+BOTTOM one, but the three intervals overlap heavily. Per the rule in
+Section 10's preamble, a statement that recovery changes with the rung
+would have to carry its own sigma, and it cannot: nothing here supports
+one. Two consequences worth stating anyway, both about the design rather
+than the trend. First, 10.7 chose the top rung "because that is where the
+systematic is smallest" — in this campaign it was not, so the gate was
+evaluated at a rung HARDER than the best available and the pass is not a
+product of rung selection. Second, the measured bias mismatch is
+`-0.600% / -1.502% / -1.339%` against the design check's
+`-2.078% / -2.080% / -1.171%`: smaller everywhere, and smallest at the
+bottom rung, which is the reverse of the design check's ordering. Review
+C24 withdrew "the mismatch decays with density" as a 1.7-sigma reading;
+this campaign is direct evidence that the withdrawal was right.
+
+**(4) The cross-arm gate passed with a real chance of having tripped.**
+Offsets `+0.366% / -0.770% / -0.326%` against a `1%` tolerance, all
+inside, with resolution ratios `2.28 / 2.93 / 3.63` so the gate was
+testing something at every rung. The spurious-trip probability recorded
+in the artifact is `0.154 / 0.064 / 0.001`, each rung computed against
+the offset the design check actually left in *that* rung
+(`+0.55% / -0.48% / -0.15%`): about one campaign in six would have
+halted at the bottom rung on correctly calibrated arms, and effectively
+none at the top. That risk was disclosed before the run and the
+tolerance was not widened for it, because 10.6 chose `1%` on the grounds
+that a `1%` offset injects about 17% into the recovery.
+
+**Review C28 corrected those three numbers**, and the correction is
+recorded here rather than in a footnote because they are published
+numbers. The first version centred all three rungs on the bottom rung's
+`+0.55%`, giving `0.093` and `0.051` where the rungs' own offsets give
+`0.064` and `0.001`. The error ran in the conservative direction — the
+disclosed risk was larger than the design's, not smaller — but a
+pessimistic number that does not describe the design it claims to is
+still not the disclosure 10.6 asked for. **No campaign data changed.**
+This field is not a measurement: it is a function of the frozen offset
+and the realized standard error, both of which were already in the
+artifact, so the three values were recomputed from it in place rather
+than obtained by re-running. **The artifact's `code_version` therefore
+still names the run that produced every measured field, and it is not
+bumped, because no run happened** — which is exactly why the record
+cannot be left to rest on that stamp here. What vouches for these three
+numbers instead is
+`test_spurious_trip_disclosure_is_centred_on_each_rungs_own_offset`,
+which recomputes them from the artifact's own standard errors on every
+CI run, so the published value and the code that defines it cannot
+drift apart again.
+
+**Selection caveat: YES.** Two curved seeds at rung 600 and one each at
+1200 and 2400 failed to pack and were replaced from reserve slots, with
+identities published in the artifact; the twin arm skipped none. The
+caveat also **inherits** from P13 Stage A-13C, whose own record carries
+one — an inherited gate inherits its caveats.
+
+Cross-stage gate as read at run time: P12 Stage A `IMPROVES` at `6d1d1bf`,
+P13 Stage A-13C `CURVATURE-ROBUST` at `33e371f` with `CONTROL-CLEAN`, both
+stamps ancestors of the running commit.
+
+**Scope, in the same breath as the word, exactly as 10.9 requires.** This
+supports: the scalar curvature of the ambient geometry is recoverable from
+causal order plus the interval count, **over this ladder, from the
+ensemble, to about 17%**. It does NOT support the general claim. **1+1D
+metrics are conformally flat**, so curvature reaches the causal order here
+only through the volume this estimator reads; `d >= 3` is where the
+general question lives, and P13's Section 13.3 limit applies verbatim.
+
+**The construction's own limit, unchanged by the pass.** A flat twin
+cannot reproduce a curved box's intra-box intensity gradient, so the
+residual bias mismatch is a property of the CONSTRUCTION and not of the
+instrument. Removing it needs a control matched in the box-area
+distribution and not only in `m`, which is a different design.
+
+**The lever this hands over.** Two, and they are separable. The
+interval-versus-point question of (1) is a specification lesson available
+now at no experimental cost. The `d >= 3` question of the scope paragraph
+is the only place the programme's general thesis is testable, and it is
+now the binding one for both P12 and P13.
+
+Artifacts: `docs/prereg/frozen/p12/` — `p12_verification_b_summary.json`,
+`p12_pilot_b_summary.json`, `p12_stage_b_summary.json`,
+`p12_stage_b.csv`, stamp `5252ee7` recorded in each.
 
 ---
 
@@ -722,7 +883,18 @@ is thinnest — completes 3988 of 4000, so 12 samples in 4000 fail to pack
 and the frozen fill rule replaces them from reserve slots. That is well
 inside the skip cap and it is quoted rather than rounded to 1.000,
 because at 400 samples it read as exactly 1.000 and the true rate is not
-zero. The packing budget is not the binding constraint at this operating
+zero.
+
+**That last sentence turned out to be load-bearing, and 10.10 ignored
+it.** This table says the bottom-rung rate is `0.997` and not zero;
+10.10's verification pin, as first written, required it to be better
+than `0.999`. The two clauses were in flat contradiction inside one
+section for six review rounds. 10.10 now carries the amendment and its
+derivation. The general lesson is recorded there: when a re-measurement
+changes a number — here review C22 raising the design check from 400
+samples, where `400/400` could not distinguish `0.997` from `0.999`, to
+4000 — every clause calibrated against the old number has to be
+re-derived, not just the ones the review round happened to name. The packing budget is not the binding constraint at this operating
 point, which is a consequence of 10.8's move: P13's `tau/ell = 1.5`
 patch is large (`X = 17`) precisely because six boxes had to stack along
 `x` there.
@@ -1043,9 +1215,82 @@ IMPROVES and P13 Stage A-13C's frozen CURVATURE-ROBUST, both with
 reachable stamps — the first because the estimator is that one, the
 second because the operating point is that one.
 
-**Verification-B.** 2000 single-stream samples per rung, completeness
-pin `>= 1998`, measured wall times for the feasibility projection,
-quoted to one significant figure. Must pass before Stage P-B may run.
+**Verification-B.** 2000 single-stream samples per rung, measured wall
+times for the feasibility projection, quoted to one significant figure.
+Must pass before Stage P-B may run. The completeness pin is **PER RUNG**:
+
+| rung | frozen curved completion (10.5) | `p_lo` at 95% | **pin** |
+|---|---|---|---|
+| 600 | 0.99700 (3988 of 4000) | 0.995144 | **1979** |
+| 1200 | 1.00000 (2000 of 2000) | 0.998503 | **1990** |
+| 2400 | 1.00000 (1000 of 1000) | 0.997009 | **1985** |
+
+**AMENDMENT, disclosed because a preregistered threshold is being
+moved.** This clause first read `>= 1998`, P11's single `VERIFY_PIN`
+carried over. That was wrong, and wrong against this very section:
+
+- 1998 of 2000 demands completion `0.999`, while **10.5's own frozen
+  artifact measured the bottom rung at `0.997`**. 10.5 says the twelve
+  failures in four thousand are "well inside the skip cap" and even notes
+  that "the true rate is not zero" — so 10.5 and 10.10 contradicted each
+  other, and the contradiction was legible without running anything.
+- Worse, **1998 sits on the MEDIAN of `Bin(2000, 0.999)`**: at exactly
+  the rate it demands it fails about half the time (0.677), and it needs
+  better than `0.9995` to be reliably clearable. No rung of this
+  programme was ever measured there.
+- The fragility had already been grazed **at this operating point**: P13
+  campaign v1's `tau/ell = 1.5` verification read 1998 of 2000, clearing
+  the pin by exactly zero, and v3's `1.0` rung by one.
+
+**Why it was mis-set: the pin was calibrated as though it were the
+feasibility gate. It is not.** The feasibility gate is the fill rule —
+1320 slots, skip cap 20, needing 1300 — and that gate is exact, aborting
+INFEASIBLE-INCOMPLETE on the real campaign. At `n = 2000` the healthy
+rate and the rate at which the campaign starts aborting (`~0.990`) are
+only `2.68 sigma` apart, so **no pin on 2000 samples can be both
+clearable and a reliable feasibility test.** The pin is a smoke test: it
+refuses to spend quarantined windows on a pipeline that is grossly
+broken.
+
+**The rule, which may only ever loosen:**
+
+    pin(rung) = min( 1998,
+                     largest k with P(X >= k | X ~ Bin(2000, p_lo)) >= 0.999 )
+
+with `p_lo` the one-sided 95% Clopper-Pearson lower bound on that rung's
+frozen CURVED completion. Verification runs the curved arm, and the
+twin's frozen rate is at least as high at every rung (0.99975 / 1.000 /
+1.000), so the curved arm binds. Two levels, both conventional round
+values rather than tuned: **95%** on the rate, so the pin survives the
+frozen estimate itself sitting at the pessimistic end of its own sample;
+**99.9%** clearance, so a healthy pipeline fails at most once in a
+thousand runs. The `min` forbids the derivation from ever TIGHTENING a
+pin, so it cannot be used to make a later stage easier to reach by
+lowering an earlier one.
+
+**The inputs are frozen data only** — 3988/4000, 2000/2000 and 1000/1000
+all predate any Stage B sample — so these pins are not tuned to a
+measured verification, and
+`test_verification_pins_are_derived_from_frozen_data` recomputes them
+from the artifact rather than trusting the literals. That is review
+C25's lesson applied before it can recur: a preregistered threshold
+typed twice drifts from its own derivation.
+
+**What the loosening costs, stated because it is not nothing:**
+
+| completion | caught at 1998 | caught at 1979 | campaign aborts |
+|---|---|---|---|
+| 0.995 | 0.997 | 0.001 | 0.000 |
+| 0.990 | 1.000 | 0.356 | 0.028 |
+| 0.985 | 1.000 | 0.947 | 0.423 |
+| 0.980 | 1.000 | 0.999 | 0.880 |
+
+Read the last two columns together. Where the derived pin loses power the
+campaign does not abort, so nothing that mattered was given up; where the
+campaign does abort the derived pin catches it. The sensitivity
+surrendered is to drifts the campaign survives, and the fill rule
+measures those exactly at fill time rather than guessing at them from a
+smoke test.
 
 **Stage P-B.** Both endpoint rungs and both twin endpoint rungs, 200
 samples each, cross-rung statistics forbidden, calibrated Bonett bounds
@@ -1155,7 +1400,15 @@ catch:
 7. window privacy and freshness against every documented spent range,
    asserted against the ranges themselves rather than against a floor;
 8. the co-requirement of 10.7 returning RATE-ONLY when (i) passes and
-   (ii) fails.
+   (ii) fails;
+9. **added with 10.10's pin amendment**: the per-rung verification pins
+   RECOMPUTED from the frozen design-check completions by 10.10's stated
+   rule and asserted equal to the module's literals, each pin shown
+   clearable at `>= 0.999` against its own `p_lo`, the inherited 1998
+   shown NOT clearable at the bottom rung (so the amendment loses its
+   justification loudly if that ever changes), and the division of labour
+   pinned — the fill rule is comfortable at `0.997` and does abort at
+   `0.98`, which is what makes a smoke-test pin the right instrument.
 
 Stage P-B runs only from a clean commit containing all of it, and only
 after Verification-B's pin passes.

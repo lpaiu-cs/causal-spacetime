@@ -1,0 +1,38 @@
+{
+  "code_version": "5252ee7",
+  "tau_over_ell": 1.5,
+  "pin_required": {
+    "600": 1979,
+    "1200": 1990,
+    "2400": 1985
+  },
+  "pin_inherited_single_value": 1998,
+  "pin_note": "PER-RUNG, amended: the inherited 1998 demanded completion 0.999 while 10.5's frozen artifact measured 0.997 at the bottom rung, and 1998 sits on the median of Bin(2000, 0.999). Derived from frozen completions only; the pin is a smoke test and the fill rule is the feasibility gate.",
+  "per_rung": {
+    "600": {
+      "complete": 1988,
+      "total": 2000,
+      "pin": 1979,
+      "pin_margin": 9,
+      "completion": 0.994,
+      "mean_seconds_per_sample": 0.005994593800001894
+    },
+    "1200": {
+      "complete": 2000,
+      "total": 2000,
+      "pin": 1990,
+      "pin_margin": 10,
+      "completion": 1.0,
+      "mean_seconds_per_sample": 0.02467161734999536
+    },
+    "2400": {
+      "complete": 2000,
+      "total": 2000,
+      "pin": 1985,
+      "pin_margin": 15,
+      "completion": 1.0,
+      "mean_seconds_per_sample": 0.0977950239999991
+    }
+  },
+  "pin_passed": true
+}

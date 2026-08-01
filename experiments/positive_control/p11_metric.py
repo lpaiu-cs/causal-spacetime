@@ -271,14 +271,25 @@ def fill_block(n: int, base: int, slots: int, needed: int,
     return records, skipped, False
 
 
-def verdict(lo: float, hi: float, flat_available: bool) -> str:
-    """The frozen table of Section 1.4: rows in order, first match."""
+def verdict(lo: float, hi: float, flat_available: bool, *,
+            delta_eq: float) -> str:
+    """The frozen table of Section 1.4: rows in order, first match.
+
+    `delta_eq` is keyword-only and has NO DEFAULT, which review C30 is
+    the reason for. The table is shared across stages; the margin is
+    not. P12 Stage B sizes its equivalence row with `DELTA_EQ_B =
+    0.0836` and then read this row at P11's `0.067`, so an interval it
+    had powered itself to call FLAT-WITHIN-MARGIN would have come back
+    INCONCLUSIVE. A default would have let the next stage inherit the
+    wrong margin the same silent way; naming it at each call site is
+    what makes the mismatch visible where it is made.
+    """
 
     if hi < 0.0:
         return "IMPROVES"
     if lo > 0.0:
         return "DEGRADES"
-    if flat_available and (-DELTA_EQ < lo) and (hi < DELTA_EQ):
+    if flat_available and (-delta_eq < lo) and (hi < delta_eq):
         return "FLAT-WITHIN-MARGIN"
     return "INCONCLUSIVE" if flat_available else "UNRESOLVED"
 
@@ -616,7 +627,7 @@ def run_stage_a(output_dir: Path) -> None:
             skip_counts[n] > 0 for n in P11_LADDER
         )),
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P11_LADDER},
         "middle_rung_between_endpoints": bool(
@@ -831,16 +842,67 @@ FROZEN_P11_DIR = (Path(__file__).resolve().parents[2]
                   / "docs" / "prereg" / "frozen" / "p11")
 
 
-def _require_stage_pass(name: str, stage_label: str,
-                        directory: Path | None = None) -> dict:
-    """Cross-stage gate (Section 6): a later stage runs only after the
-    earlier stage's FROZEN record reads IMPROVES. The frozen copy is
-    the repo-canonical one, and its stamp must be REACHABLE from HEAD
-    (ancestry, not equality — the earlier stage's code legitimately
-    predates later commits; a squash-merge that orphaned the stamp
-    fails here loudly, review)."""
+def stamp_reachability(stamp: str) -> str:
+    """Classify a stamp against HEAD: "ancestor", "not-ancestor", "absent".
+
+    The three-way answer exists because a two-way one is wrong, and wrong
+    in a way this programme has now paid for six times. `git merge-base
+    --is-ancestor X HEAD` exits non-zero BOTH when X is present and off
+    the ancestry AND when X is not in the object store at all -- and the
+    second case says nothing about ancestry. A shallow clone, a source
+    archive, or a review environment holding only a synthetic snapshot all
+    produce it.
+
+    Three findings on PRs #35 and #36 (C1, C15, C23/C26) were built on
+    exactly that conflation, reported as P1 provenance failures, and
+    refuted by running `git cat-file -t` on the cited SHA. The same
+    conflation then appeared in this repository's own provenance test,
+    which passed locally and failed in CI's shallow checkout claiming a
+    stamp was "not an ancestor" when the commit simply was not there. So
+    the distinction is made once, here, and callers report the two cases
+    differently.
+    """
 
     import subprocess
+
+    if not stamp:
+        return "absent"
+    present = subprocess.run(
+        ["git", "cat-file", "-e", f"{stamp}^{{commit}}"],
+        capture_output=True,
+    ).returncode == 0
+    if not present:
+        return "absent"
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"],
+        capture_output=True,
+    ).returncode == 0
+    return "ancestor" if ancestor else "not-ancestor"
+
+
+def _require_stage_pass(name: str, stage_label: str,
+                        directory: Path | None = None,
+                        expected: str = "IMPROVES") -> dict:
+    """Cross-stage gate (Section 6): a later stage runs only after the
+    earlier stage's FROZEN record reads the verdict that licenses it.
+    The frozen copy is the repo-canonical one, and its stamp must be
+    REACHABLE from HEAD (ancestry, not equality — the earlier stage's
+    code legitimately predates later commits; a squash-merge that
+    orphaned the stamp fails here loudly, review).
+
+    ``expected`` defaults to P11's and P12's IMPROVES. P12 Stage B's
+    cross-stage gate (its Section 10.10) also requires P13's
+    CURVATURE-ROBUST, whose vocabulary is inverted, so the licensing
+    verdict is a parameter rather than a literal. It is REQUIRED to be
+    named by the caller in the sense that there is no "any verdict"
+    option: a gate that accepts whatever it finds is not a gate, and
+    P13's own frozen directory holds a CONFOUNDED record from campaign
+    v1 that such an option would have waved through.
+
+    The stamp check goes through ``stamp_reachability`` so that "the
+    object is not in this checkout" and "the object is off the ancestry"
+    are reported as the different things they are.
+    """
 
     # the frozen record lives with its own experiment; the default is
     # P11's directory, and later experiments pass their own (P13 asks
@@ -853,21 +915,28 @@ def _require_stage_pass(name: str, stage_label: str,
             "is frozen."
         )
     artifact = json.loads(path.read_text(encoding="utf-8"))
-    if artifact.get("verdict") != "IMPROVES":
+    if artifact.get("verdict") != expected:
         raise SystemExit(
             f"{stage_label} verdict is {artifact.get('verdict')!r}, not "
-            "IMPROVES -- the campaign stops at that stage (Section 6)."
+            f"{expected} -- the campaign stops at that stage "
+            "(Section 6)."
         )
     stamp = str(artifact.get("code_version", ""))
-    reachable = subprocess.run(
-        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"],
-        capture_output=True,
-    ).returncode == 0
-    if not reachable:
+    state = stamp_reachability(stamp)
+    if state == "absent":
         raise SystemExit(
-            f"{stage_label}'s frozen stamp {stamp} is not an ancestor "
-            "of HEAD -- its producing commit is unreachable from this "
-            "history, so its provenance cannot be audited here."
+            f"{stage_label}'s frozen stamp {stamp} is not present in this "
+            "checkout at all, so its provenance cannot be audited here. "
+            "This is NOT evidence that the history was flattened -- a "
+            "shallow clone reports the same thing. Fetch full history "
+            "(git fetch --unshallow) and re-run."
+        )
+    if state == "not-ancestor":
+        raise SystemExit(
+            f"{stage_label}'s frozen stamp {stamp} is present but is not "
+            "an ancestor of HEAD -- its producing commit is genuinely "
+            "unreachable from this history, so its provenance cannot be "
+            "audited here."
         )
     return artifact
 
@@ -1072,7 +1141,7 @@ def run_stage_b(output_dir: Path) -> None:
             )) for n in P11_LADDER
         },
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P11_LADDER},
         "middle_rung_between_endpoints": bool(
@@ -1423,7 +1492,7 @@ def run_stage_c(output_dir: Path) -> None:
             )) for n in P11_LADDER
         },
         "delta": delta, "delta_ci": [lo, hi],
-        "verdict": verdict(lo, hi, flat_available),
+        "verdict": verdict(lo, hi, flat_available, delta_eq=DELTA_EQ),
         "mean_y_by_rung": {str(n): float(per_rung_y[n].mean())
                            for n in P11_LADDER},
         "middle_rung_between_endpoints": bool(
