@@ -56,23 +56,56 @@ CURVED, FLAT = arms(SLAB, W)
 # the independent oracle: minimise the discretised action directly
 # --------------------------------------------------------------------
 
-def _min_action_discrete(s, ap, aq, w2, n=4000):
+def _solve_tridiagonal(sub, diag, sup, rhs):
+    """Thomas algorithm. `O(n)` time and memory, no dense matrix.
+
+    Review R8.2: the first version of the oracle built the Hessian with
+    `np.diag`, which materialises a dense `(n-1) x (n-1)` array -- 128 MB
+    at `n = 4000`, several of them per call counting temporaries -- and
+    then ran a dense LU at `O(n^3)`. The Hessian is tridiagonal, so none
+    of that was necessary, and an oracle that can exhaust a runner's
+    memory is not one anybody will keep running.
+    """
+
+    n = len(diag)
+    c = np.empty(n - 1)
+    d = np.empty(n)
+    c[0] = sup[0] / diag[0]
+    d[0] = rhs[0] / diag[0]
+    for i in range(1, n):
+        denom = diag[i] - sub[i - 1] * c[i - 1]
+        if i < n - 1:
+            c[i] = sup[i] / denom
+        d[i] = (rhs[i] - sub[i - 1] * d[i - 1]) / denom
+    x = np.empty(n)
+    x[-1] = d[-1]
+    for i in range(n - 2, -1, -1):
+        x[i] = d[i] - c[i] * x[i + 1]
+    return x
+
+
+def _min_action_discrete(s, ap, aq, w2, n=20000):
     """min over paths of  int_0^s (a'^2 + w2 a^2) du / 2,  a(0)=ap, a(s)=aq.
 
     Discretise, leave the interior nodes free, solve the resulting
-    quadratic minimisation by one linear solve. Uses no closed form, no
-    `sinh`, no `sin` -- it knows only the integrand.
+    quadratic minimisation exactly. Uses no closed form, no `sinh`, no
+    `sin` -- it knows only the integrand.
+
+    `n` is five times the dense version's and still far cheaper, because
+    the solve is now tridiagonal: the discretisation is `O(h^2)`, so the
+    extra nodes buy about `25x` in oracle accuracy for `O(n)` work.
     """
 
     h = s / n
     m = n - 1
-    main = np.full(m, 2.0 / h + w2 * h / 2.0)
+    diag = np.full(m, 2.0 / h + w2 * h / 2.0)
     off = np.full(m - 1, -1.0 / h + w2 * h / 4.0)
-    a_mat = np.diag(main) + np.diag(off, 1) + np.diag(off, -1)
     rhs = np.zeros(m)
-    rhs[0] = ap * (1.0 / h - w2 * h / 4.0)
-    rhs[-1] = aq * (1.0 / h - w2 * h / 4.0)
-    a = np.concatenate(([ap], np.linalg.solve(a_mat, rhs), [aq]))
+    edge = 1.0 / h - w2 * h / 4.0
+    rhs[0] = ap * edge
+    rhs[-1] = aq * edge
+    interior = _solve_tridiagonal(off, diag, off, rhs)
+    a = np.concatenate(([ap], interior, [aq]))
     da = np.diff(a) / h
     mid = 0.5 * (a[:-1] + a[1:])
     return float(0.5 * np.sum(h * (da ** 2 + w2 * mid ** 2)))
@@ -99,7 +132,10 @@ def test_closed_form_cost_matches_independent_minimisation(
     closed = transverse_cost(s, xp, xq, yp, yq, w)
     direct = (_min_action_discrete(s, xp, xq, w * w)
               + _min_action_discrete(s, yp, yq, -w * w))
-    assert closed == pytest.approx(direct, rel=2e-6, abs=1e-12)
+    # measured worst agreement over these cases is 2.4e-10, which is the
+    # oracle's `O(h^2)` and not the closed form's; the tolerance is set
+    # from that measurement rather than left at the dense version's 2e-6
+    assert closed == pytest.approx(direct, rel=1.2e-9, abs=1e-12)
 
 
 def test_flat_arm_is_the_straight_line_and_not_a_numerical_limit():
@@ -239,6 +275,45 @@ def test_error_bound_survives_the_series_cancellation_that_broke_v2():
     rel = causal_relation(geom, np.array([0.0, 0.0, val, val]),
                           np.array([s, 4e-18, val, val]))
     assert rel.escalated and rel.related is True
+
+
+def test_error_bound_survives_proximity_to_the_conjugate_point():
+    """The case, review R8.1, and the third face of the same defect. Near
+    a conjugate point `sin(a)` is nearly zero, so the ROUNDING OF THE
+    ARGUMENT `a = w s` is amplified twice over: once through
+    `d(1/sin a) = |cos a| da / sin^2 a`. The bound had only the operand
+    scale, which carries a single `1/sin a`, so it missed the second
+    factor entirely.
+
+    Measured at `w = 0.9`, `s = pi/0.9 - 1e-4` (`sin a = 9e-5`),
+    endpoints `(0.3, -0.2, 0.4, 0.1)`: the true error is `1.80e-9` and
+    the old bound reported `4.44e-12`, understating it 405-fold and
+    deciding pairs on the wrong side of the cone without escalating.
+
+    A slab this close to the bound is legal -- `PlaneWaveGeometry` only
+    forbids reaching it -- so the bound has to cover it rather than the
+    geometry being trusted to stay away.
+    """
+
+    w = 0.9
+    s = math.pi / w - 1e-4
+    xp, xq, yp, yq = 0.3, -0.2, 0.4, 0.1
+
+    assert 0.0 < math.sin(w * s) < 1e-4      # really is near the pole
+    approx = transverse_cost(s, xp, xq, yp, yq, w)
+    getcontext().prec = 60
+    actual = abs(Decimal(repr(approx)) - _exact_cost(s, xp, xq, yp, yq, w))
+    bound = cost_error_bound(s, xp, xq, yp, yq, w)
+
+    assert float(actual) > 1e-10, "the case must actually be hard"
+    assert Decimal(repr(bound)) >= actual, (
+        f"bound {bound:.3e} does not cover the actual error "
+        f"{float(actual):.3e}")
+
+    # and the bound is not vacuous far from the pole: it stays small
+    # where the argument sensitivity is not amplified
+    tame = cost_error_bound(1.0, xp, xq, yp, yq, 0.5)
+    assert tame < 1e-14
 
 
 def test_a_pair_double_cannot_decide_escalates_instead_of_guessing():

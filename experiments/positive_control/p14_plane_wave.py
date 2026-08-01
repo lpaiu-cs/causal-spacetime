@@ -217,7 +217,22 @@ def _leg_error_bound(s: float, ap: float, aq: float, w: float, *,
     else:
         denominator, trig = abs(math.sinh(a)), math.cosh(a)
     operands = (w / (2.0 * denominator)) * (p_sum * trig + abs(q_cross))
-    return _OPS_PER_LEG * _EPS * operands
+    roundoff = _OPS_PER_LEG * _EPS * operands
+
+    # R8.1: the ARGUMENT `a = w s` carries its own rounding, and near a
+    # conjugate point the nearly-zero `sin(a)` amplifies it. Propagating
+    # `da` through the two places `a` enters:
+    #
+    #   d(1/sin a) -> |cos a| da / sin^2 a   =>  operands * |cot a| * da
+    #   d(cos a)   -> |sin a| da             =>  (w/2) P da, the sin cancels
+    #
+    # so the sensitivity is `1/sin^2`, not `1/sin`. Measured at `w = 0.9`,
+    # `s = pi/0.9 - 1e-4`: the true error is `1.80e-9` where the
+    # roundoff term alone reports `4.44e-12`, understating it 405-fold
+    # and deciding pairs on the wrong side without escalating.
+    argument_error = _EPS * (abs(a) + 1.0)
+    sensitivity = operands * (trig / denominator) + 0.5 * w * p_sum
+    return roundoff + sensitivity * argument_error
 
 
 def cost_error_bound(s: float, xp: float, xq: float,
