@@ -1,6 +1,6 @@
 # P14: which pure-order statistic reads a pure-Weyl deformation, and at what density? — design draft
 
-Status: **DESIGN DRAFT v0.5 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
+Status: **DESIGN DRAFT v0.6 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
 HAS RUN. NOTHING IS FROZEN.** Two deterministic design checks HAVE run and
 are committed beside this document (`docs/prereg/p14_checks/`), because an
 output pasted into prose is not a check; their frozen, stamped copies move
@@ -131,6 +131,42 @@ protocol conflict and three smaller items, all fixed here.**
   on a fresh block disjoint from everything the probe consumed. §8.2.
 - **R3.5 (P3)** Two stale `d >= 3` mentions in
   `docs/paper/results_source_wip.md` corrected.
+
+**R4 (2026-08-01, in-session): R3.1's P1 resolved; one new P1 where the
+guard rule reached back into the claim. Four items, all fixed here.**
+
+- **R4.1 (P1)** §4.6's guard inset decides Class C eligibility from
+  COORDINATES, so a guarded chain vector needs the poset *and* an
+  external interiority label — which means R3.3's assignment of the
+  single-poset claim to "items 2 and 3" did not hold. Fixed by
+  separating the two axes that v0.5 conflated: what a statistic COUNTS
+  fixes its admissibility rule, what a statistic is GIVEN fixes the
+  claim it can carry (§4.6.2's table). The strictly single-poset claim
+  now rests on **item 3a alone** — the global relation fraction over all
+  elements — and the guarded statistics are demoted to single-ARM
+  diagnostics. An order-invariant eligibility rule that would promote
+  them back is named and assigned to the probe, with the warning that
+  selecting on interval cardinality is forbidden because truncation
+  biases that very quantity. §4.6.2, §5, §7.
+- **R4.2 (P2)** The inset's freeze time was stated two ways: §4.6 froze
+  it before the probe, §8.2 let the probe pick it. Resolved by what it
+  is — a closed-form function of the operating point, hence DETERMINED
+  rather than chosen (§4.6.1). Definitions and derivation rule frozen
+  now; the number follows the operating point and freezes with it before
+  confirmation. §5's "may not be chosen after seeing its curves" is
+  withdrawn as written — it contradicted §8.2 and would have forbidden
+  the probe from doing its job.
+- **R4.3 (P2)** "Independent per arm" was the wrong phrase: the
+  marginals are Poisson, the counts are not independent. And
+  `Var(N_A - N_0) = rho Vol(I_A △ I_0)` is exact for the raw difference
+  but is not the cross-check for a RATIO. Replaced with the residual the
+  ratio actually tests, `N_A - r N_0` at `r = V_A/V_0`, whose variance
+  is `rho (V_A + r^2 V_0 - 2 r Vol(I_A ∩ I_0))`. §8 P2.
+- **R4.4 (P3)** `assert_windows_disjoint_and_fresh` exists in **P12's**
+  runner only; P13 enforces the same property via its own frozen window
+  constants and tests. "P12/P13 runners" corrected. §8.2. Also: §4.6 had
+  been inserted into the middle of §4.5, splitting the quadrupole
+  discussion; moved below it.
 
 ---
 
@@ -403,13 +439,21 @@ so the eigenvalues come in `(+A, -A)` pairs — a constant plus/cross
 polarization rotates back to the same form. Making the coefficients
 unequal breaks Ricci-flatness and with it the entire §4 case.
 
-### 4.6 Which pairs enter which statistic, fixed before the probe (R3.1)
+The quadrupole symmetry has a cost and a mitigation, both stated now:
+scalar expectations lose their `O(A)` term to the `x`/`y` cancellation,
+so generic scalar responses start at `O(A^2)` — pushed down, not zero
+(§4.4's volume shift is the worked example). The statistic that keeps
+`O(|A|)` sensitivity is one that does not let the two transverse
+directions cancel, which is §5's first candidate. If a second profile
+is ever needed, it is a `u`-rotating trace-free polarization `K(u)` —
+transverse equations still linear — not an asymmetric static one.
+
+### 4.6 Which pairs enter which statistic (R3.1), and what that costs the claim (R4.1)
 
 There are **two** admissibility rules, not one, because there are two
-kinds of statistic. Collapsing them was the v0.4 defect. Both are frozen
-before the probe; neither may be adjusted after seeing a curve; and
-**neither is allowed to depend on the realized data** — eligibility is a
-deterministic function of coordinates alone, or it is selection.
+kinds of statistic. Collapsing them was the v0.4 defect. Neither rule
+may depend on realized data — eligibility is a deterministic function of
+the frozen geometry, or it is selection.
 
 **Class R — relation statistics.** `D`, its gained/lost split, and any
 global relation fraction over the box. These read the causal predicate
@@ -430,12 +474,11 @@ inside a causally defined region, so a diamond leaving the box is a
 truncated count.
 
 - **Eligible: pairs whose diamond is contained in the box, decided by a
-  frozen GUARD INSET rather than per-pair inspection.** Both endpoints
-  must lie in an inner sub-box inset from the sprinkled box by the
-  maximum transverse excursion a null geodesic can make over the slab's
+  GUARD INSET rather than per-pair inspection.** Both endpoints must lie
+  in an inner sub-box inset from the sprinkled box by the maximum
+  transverse excursion a null geodesic can make over the slab's
   `u`-extent — computable in closed form from the same Jacobi
-  propagators as §4.3 and §4.4, so the inset is a constant of the frozen
-  design.
+  propagators as §4.3 and §4.4.
 - **The inset is the SAME in both arms** and is taken from the binding
   arm — the curved one, whose defocusing direction gives the larger
   excursion. Arm-dependent eligibility would give the two arms different
@@ -444,42 +487,96 @@ truncated count.
   and never silently substituted for `C(N, 2)`. A Class C number and a
   Class R number are never quoted against the same denominator.
 
+#### 4.6.1 When the inset is frozen — one policy, not two (R4.2)
+
+v0.5 said both "frozen before the probe" (here) and "the probe selects
+it" (§8.2). Fixed, and the resolution is forced by what the inset is:
+
+> **The class definitions and the derivation rule are frozen now. The
+> numeric inset is DETERMINED — not chosen — by the operating point,
+> and is frozen with it before confirmation.**
+
+The inset is a closed-form function of the slab geometry and `A`. Once
+the probe fixes those, the number follows; there is no free parameter to
+tune. So it is not on the list of things the probe selects, and it is
+not a pre-freezable constant either, because it cannot be computed
+before the geometry it depends on exists. What §8.2's fresh-seed rule
+protects is the operating point; the inset rides along with it.
+
+#### 4.6.2 The guard costs Class C its pure-order standing (R4.1)
+
+This is the correction R4 forced, and it narrows a claim rather than a
+method. **The Class C eligibility label is coordinate-derived.** A chain
+vector is computed from order alone, but deciding *which* intervals to
+compute it on requires knowing which elements sit in the inner sub-box —
+a fact about coordinates that no poset carries. So:
+
+| statistic | admissibility | inputs it needs | claim it can carry |
+|---|---|---|---|
+| `D`, gained/lost split | Class R | two orders **+ the point correspondence** | paired-order sensitivity diagnostic (§5, §7) |
+| global relation fraction over ALL elements | Class R | **one poset, nothing else** | **strictly single-poset, pure-order** |
+| chain vectors `C_k` on guarded intervals | Class C | one poset **+ coordinate eligibility labels** | single-ARM, NOT pure-poset — diagnostic |
+| Myrheim–Meyer / ordering fraction on a diamond | Class C | one poset **+ coordinate eligibility labels** | single-ARM, NOT pure-poset — diagnostic |
+| interval cardinality (§8 P2) | Class C | one poset + coordinate labels | implementation check, carries no claim |
+
+Two axes, and v0.5 conflated them: **what a statistic counts** decides
+its admissibility rule, **what a statistic is given** decides the claim
+it can carry. `D` is Class R and still not single-poset. The guarded
+chain vectors are single-arm and still not pure-poset.
+
+The consequence for §7 is real and is not softened there: **the strictly
+single-poset claim now rests on the global relation fraction alone**
+until an order-invariant eligibility rule exists.
+
+**[TO VERIFY — and it would restore the chain vectors]** Whether Class C
+eligibility can be defined order-invariantly, e.g. by requiring each
+endpoint to have at least `k` elements below/above it inside the
+sprinkled set, as an order-theoretic proxy for interiority. Such a rule
+would make the guarded chain vectors genuinely pure-poset and hand §7's
+claim a far more sensitive instrument. It is a proxy, not a
+certificate — its agreement with true containment has to be MEASURED
+against the coordinate guard before anything rests on it, and selecting
+on interval cardinality directly is forbidden, since truncation biases
+that very quantity. **Assigned:** §8 P1.
+
 **[TO VERIFY]** The closed form for the maximum transverse excursion,
 and the fraction of pairs Class C eligibility retains at working slab
 geometries. If the inset is so large that few pairs survive, that is a
 cost of the volume-type statistics and a reason §5 does not lead with
 them — but it must be measured, not assumed. **Assigned:** §8 P1.
 
-The quadrupole symmetry has a cost and a mitigation, both stated now:
-scalar expectations lose their `O(A)` term to the `x`/`y` cancellation,
-so generic scalar responses start at `O(A^2)` — pushed down, not zero
-(§4.4's volume shift is the worked example). The statistic that keeps
-`O(|A|)` sensitivity is one that does not let the two transverse
-directions cancel, which is §5's first candidate. If a second profile
-is ever needed, it is a `u`-rotating trace-free polarization `K(u)` —
-transverse equations still linear — not an asymmetric static one.
-
 ## 5. What the instrument reads, in probe order (R1.3)
 
-No gate is proposed for any of these here. Which one, at what size, with
-what threshold, is what §8 P3 measures and what may not be chosen after
-seeing its curves.
+**No gate is proposed for any of these here, and the probe is allowed to
+choose (R4.2).** Which statistic, at what operating point, is exactly
+what §8 P3 exists to decide, and deciding it from P3's curves is what a
+probe is for. The v0.5 sentence "may not be chosen after seeing its
+curves" said the opposite of §8.2 and is withdrawn. What may not happen
+is choosing a gate **inside a frozen design** after seeing that design's
+own data; the boundary that keeps those apart is the fresh-seed rule of
+§8.2, not a prohibition on the probe learning from itself.
 
-**What each statistic can and cannot be claimed for (R3.3).** The two
-classes of §4.6 split a second way, and the split runs opposite to
-sensitivity. `D` takes **two orders plus the point correspondence** as
-input; it is a paired counterfactual and is **not computable from a
-single causal set**. The chain vectors and the ordering-fraction
-estimators are computable from one poset — which is what a causal-set
-observer actually has. So:
+**What each statistic can and cannot be claimed for (R3.3, narrowed by
+R4.1).** The classes of §4.6 split a second way, and the split runs
+opposite to sensitivity. `D` takes **two orders plus the point
+correspondence**, so it is a paired counterfactual and **not computable
+from a single causal set**. But the guarded chain vectors are not
+strictly single-poset either: their eligibility labels are
+coordinate-derived (§4.6.2), so an observer holding one poset cannot
+even tell which intervals to evaluate. The full picture is §4.6.2's
+table; the operative consequences here:
 
 > `D` is the most sensitive probe and the least claim-bearing. It is a
 > **paired-order sensitivity diagnostic**: it answers "does pure-Weyl
 > curvature move the order at all, at this density", which is what a
 > probe needs. It does not answer "can a finite causal set be told from
-> a flat one", and no single-poset claim may rest on it. That claim
-> belongs to items 2 and 3, and their weaker sensitivity is the price of
-> it.
+> a flat one", and no single-poset claim may rest on it.
+>
+> That claim rests on **item 3 computed over ALL elements** — the only
+> candidate here needing nothing but the poset. Items 2 and 3-on-a-
+> diamond are single-ARM diagnostics while their eligibility is
+> coordinate-guarded, and are promoted only if §4.6.2's order-invariant
+> rule is validated.
 
 **1. Paired relation disagreement (primary probe statistic).** With
 `prec_A` and `prec_0` the two relations on the same `N` points,
@@ -500,19 +597,33 @@ the defocusing direction's), separately. Why it leads:
 - the gained/lost split is the quadrupole made visible: gains should
   concentrate among `y`-separated pairs, losses among `x`-separated.
 
-**2. Chain vectors (secondary).** Abundances `C_2, C_3, C_4, ...` at
-fixed or conditioned cardinality, normalized. The `C_k` are where a
-small-interval expansion places curvature information beyond the volume
-— but the leading terms it places there are `R` and `R_00` (RSS 2013),
-both zero here, so Weyl sensitivity, if any, sits at higher order.
-Measured second for exactly that reason.
+**2. Chain vectors (secondary) — Class C, single-ARM.** Abundances
+`C_2, C_3, C_4, ...` at fixed or conditioned cardinality, normalized,
+over §4.6's eligible intervals. The `C_k` are where a small-interval
+expansion places curvature information beyond the volume — but the
+leading terms it places there are `R` and `R_00` (RSS 2013), both zero
+here, so Weyl sensitivity, if any, sits at higher order. Measured second
+for exactly that reason. **While its eligibility is coordinate-guarded
+this is a single-arm diagnostic, not a pure-poset observable** (§4.6.2);
+promotion depends on the order-invariant rule being validated.
 
-**3. Relation fraction / ordering fraction, as a discriminator only.**
-The Myrheim–Meyer machinery is characterized in this repository (P6b)
-and cheap, but in a generic curved spacetime its output may NOT be
-interpreted as a flat-ensemble dimension estimate. It runs as a pure
-discriminator — does the number move between arms — with the word
-"dimension" kept out of every sentence that quotes it.
+**3. Relation fraction, as a discriminator only — and read carefully,
+because two different statistics hide under this heading.**
+
+- **3a. Global relation fraction over ALL sprinkled elements.** Class R,
+  no eligibility rule, no coordinates: `(# related pairs) / C(N, 2)` on
+  one arm's poset. **This is the only strictly single-poset, pure-order
+  candidate in the list**, and §7's single-causal-set claim rests on it.
+  Its sensitivity is unknown and may well be the weakest here — that is
+  the price of being the one thing an observer holding a poset can
+  actually compute.
+- **3b. Myrheim–Meyer or ordering fraction ON A DIAMOND.** Class C,
+  coordinate-guarded, therefore single-arm and not pure-poset, exactly
+  as item 2. The MM machinery is characterized in this repository (P6b)
+  and cheap, but in a generic curved spacetime its output may NOT be
+  interpreted as a flat-ensemble dimension estimate. It runs as a pure
+  discriminator — does the number move between arms — with the word
+  "dimension" kept out of every sentence that quotes it.
 
 **4. Transverse anisotropy, diagnostic only.** Any statistic that uses
 the coordinates `x, y` directly (e.g. conditioning pairs on their
@@ -711,14 +822,31 @@ Per §10.9's discipline, stated now rather than after a verdict:
   supports is: **pure-Weyl curvature moves the causal order measurably
   at the tested density, patch and profile** — the existence and size of
   the effect, not its accessibility to an observer holding one poset.
-- **The single-causal-set claim belongs to items 2 and 3 of §5** — the
-  chain vectors and the ordering-fraction estimators, which are
-  computable from one poset. Only those may be quoted as "a finite
-  causal set can be told from a flat one", and only at the density and
-  effect size they themselves achieve, which §5 expects to be worse than
-  `D`'s. A design that finds `D` positive and the single-poset
-  statistics null has learned something real and must report it in those
-  two sentences, not in one.
+- **The single-causal-set claim rests on §5 item 3a alone (R4.1)** — the
+  global relation fraction over all elements, the one candidate needing
+  nothing but the poset. v0.5 assigned this claim to items 2 and 3
+  together; that was wrong, because their eligibility labels are
+  coordinate-derived (§4.6.2), so an observer holding one poset cannot
+  even tell which intervals to evaluate, let alone evaluate them. Only
+  3a may be quoted as "a finite causal set can be told from a flat one",
+  and only at the effect size it itself achieves — which may be the
+  weakest in the list. **That narrowing is a real cost of this design
+  and is not hidden**: the most sensitive statistic (`D`) carries no
+  single-poset claim, and the statistic that carries it may be too blunt
+  to see anything.
+- **The guarded chain vectors and diamond-based estimators (items 2 and
+  3b) are single-ARM diagnostics** while their eligibility is
+  coordinate-guarded. They may be reported, compared between arms, and
+  used to understand `D` — they may not be quoted as what a causal-set
+  observer could do. §4.6.2 names the order-invariant eligibility rule
+  that would promote them, and makes its validation a probe task rather
+  than an assumption.
+- A design that finds `D` positive, 3a null, and the guarded statistics
+  positive has learned three separate things and must report them in
+  three sentences, not one. That combination is not a failure; it is the
+  finding that the effect exists, that it is not reachable by the one
+  unguarded pure-order statistic tried, and that an order-invariant
+  eligibility rule is where the next design should look.
 - Neither establishes quantitative recovery of the Weyl tensor —
   detection and recovery are different claims, and P12 needed a separate
   stage for the second.
@@ -767,7 +895,11 @@ freeze and with nothing frozen**:
   extent is under `pi/sqrt(A)` so no pair needs a conjugate-point filter
   (§4.3). Derive and report §4.6's **Class C guard inset** in closed
   form, and the eligible-pair fraction it leaves — Class R keeps every
-  pair and `C(N, 2)`.
+  pair and `C(N, 2)`. Also measure §4.6.2's candidate **order-invariant
+  eligibility rule** against that coordinate guard: report the agreement
+  rate and the pairs each admits that the other rejects, since that
+  number decides whether §7's single-poset claim has anything better
+  than item 3a available to it.
 - **P2. The volume prediction, with the right error model (R3.2).**
   Axis-pair interval cardinalities in the curved arm must match the
   `V_A/V_0` quadrature of §4.4 (`1.00400047` at `wT = 1`, `1.07300802`
@@ -776,26 +908,35 @@ freeze and with nothing frozen**:
 
   **"Within Poisson error" was underspecified and, read naively, wrong.**
   `N_A` and `N_0` are counts over two OVERLAPPING regions of the SAME
-  realization, so they are correlated and independent-Poisson errors do
-  not apply. For a Poisson process the covariance is exact:
+  realization, so they are correlated. For a Poisson process the
+  covariance is exact:
 
       Cov(N_A, N_0) = rho * Vol(I_A  intersect  I_0)
-      Var(N_A - N_0) = rho * Vol(I_A  triangle  I_0)
 
-  — the paired difference sees only the SYMMETRIC DIFFERENCE volume, far
-  less than the `rho (V_A + V_0)` a naive independent model would give.
-  Both of the following are fixed here, and P2 reports both:
+  Two things are reported, and R4.3 fixes how each is stated:
 
   1. **Marginal check per arm.** Each arm's count is compared against
-     its own known mean `rho V_A` and `rho V_0` under a marginal Poisson
-     model. Independent per arm, so the standard error is standard, and
-     this is the check that the sprinkling and the volumes are right.
-  2. **Paired ratio.** The uncertainty on `N_A / N_0` is estimated
-     **between independent sprinklings** (§5.2), which captures the
-     covariance without assuming a form for it. The analytic
-     `Vol(I_A triangle I_0)` above is the CROSS-CHECK that the
-     implementation's paired error is the right size, not a substitute
-     for the empirical estimate.
+     its own known mean, `rho V_A` and `rho V_0`, under its **marginal**
+     Poisson law. Note the word: the marginals are Poisson, the two
+     counts are **not independent of each other**, and v0.5's "independent
+     per arm" was the wrong phrase for the right check. Each comparison
+     stands on its own marginal and neither borrows the other's; this is
+     the check that the sprinkling and the volumes are right.
+  2. **Paired ratio, with a cross-check matched to it.** The uncertainty
+     on `N_A / N_0` is estimated **between independent sprinklings**
+     (§5.2), which captures the covariance without assuming a form for
+     it. The analytic cross-check must be the residual the ratio
+     actually tests, and v0.5 quoted the wrong one:
+     `Var(N_A - N_0) = rho Vol(I_A triangle I_0)` is exact for the RAW
+     difference but is not what `N_A / N_0` measures. With the predicted
+     ratio `r = V_A / V_0`, the zero-mean residual is
+
+         N_A - r * N_0,     E[N_A - r N_0] = 0,
+         Var(N_A - r N_0) = rho ( V_A + r^2 V_0 - 2 r Vol(I_A ∩ I_0) )
+
+     and that variance is the cross-check on the implementation's paired
+     error. It is a check that the empirical between-sprinkling estimate
+     has the right size, never a substitute for making it.
 - **P3. Discriminability.** For a ladder of `A` and slab sizes, measure
   the §5 statistics in order — `D` first, reported as
   `[D_lower, D_upper]` with `ambiguous_fraction` and the gained/lost
@@ -845,26 +986,34 @@ unaddressed.
 ### 8.2 Exploration and confirmation do not share seeds (R3.4)
 
 P0 through P4 and S1 are **exploratory**: they may look at every curve,
-compare candidate statistics, and pick the operating point, the primary
-statistic, the guard inset and the ambiguity policy. The freeze that
-follows may set gates from what they found — that is what a probe is
-for, and §5's "may not be chosen after seeing its curves" governs a gate
-chosen inside a frozen design, not a probe choosing what to freeze.
+compare candidate statistics, and pick the primary statistic, the
+operating point, and the ambiguity policy. The freeze that follows may
+set gates from what they found — that is what a probe is for, and §5 now
+says so rather than contradicting it (R4.2).
 
-**The line between the two is the seed block, and it is fixed here
-rather than left to the freeze:**
+**What the probe does NOT choose:** the guard inset. Per §4.6.1 it is a
+closed-form function of the operating point, so fixing the point fixes
+the inset; it is determined, not tuned. v0.5 listed it here as a probe
+choice, which is why §4.6 and this section disagreed.
+
+**The line between exploration and confirmation is the seed block, and
+it is fixed here rather than left to the freeze:**
 
 > **Confirmation runs on a fresh seed block disjoint from every seed the
 > probe consumed.** No sprinkling that informed the choice of statistic,
-> operating point, guard inset, ambiguity policy, or threshold may
-> appear in the confirmatory sample.
+> operating point, ambiguity policy, or threshold may appear in the
+> confirmatory sample.
 
-The repository already enforces exactly this shape —
-`assert_windows_disjoint_and_fresh` in the P12/P13 runners aborts on a
-window collision — and the eventual preregistration inherits that
-machinery rather than reinventing it. Recording the rule now is what
-keeps the probe's freedom to explore from quietly becoming a licence to
-tune and confirm on the same data.
+The repository already has machinery of exactly this shape, though it is
+not one shared helper (R4.4): **P12's runner** calls
+`assert_windows_disjoint_and_fresh`, which aborts on a window collision;
+**P13** enforces the same property through its own frozen window
+constants and tests, and uses `supports_disjoint` for the separate job
+of packing disjoint boxes within a sample. The eventual preregistration
+inherits the property and should inherit P12's helper rather than
+writing a third variant. Recording the rule now is what keeps the
+probe's freedom to explore from quietly becoming a licence to tune and
+confirm on the same data.
 
 ### 8.3 Exit conditions
 
@@ -944,10 +1093,17 @@ own interval construction rather than inheriting P12's.
 7. What the diamond volume is in a Schwarzschild patch, if S1 says the
    causality cost is affordable. §3's standing refusal of unverified
    expansion coefficients applies, and this draft has no answer.
-8. Whether the single-poset statistics (§5 items 2 and 3) reach any
-   useful sensitivity at all. §7 now rests the only observer-relevant
-   claim on them, so a design where `D` separates and they do not is a
-   live and reportable outcome rather than a failure.
+8. Whether **item 3a** — the global relation fraction over all elements,
+   now the only strictly single-poset candidate (§4.6.2) — reaches any
+   useful sensitivity. §7 rests the only observer-relevant claim on it
+   alone, so a result where `D` separates and 3a does not is a live and
+   reportable outcome rather than a failure.
+9. Whether Class C eligibility can be defined **order-invariantly**, and
+   how closely such a rule agrees with the coordinate guard. This is the
+   lever that would return the chain vectors and diamond-based
+   estimators to pure-poset standing and hand §7 a far more sensitive
+   instrument than 3a. Validation is measurement against the coordinate
+   guard, not argument. **Assigned:** §8 P1.
 
 ## References named by reviews R1 and R2
 
