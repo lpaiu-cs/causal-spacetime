@@ -521,9 +521,20 @@ truncated count.
   a `v` component as well as a transverse one (R10.1)** — see below,
   because the `v` one is not obvious and its omission would have made
   §8 P2 count truncated intervals against an untruncated mean.
-- **Transverse component:** the maximum transverse excursion a null
-  geodesic can make over the slab's `u`-extent, in closed form from the
-  same Jacobi propagators as §4.3 and §4.4.
+- **Transverse component — and it is TWO insets, not one (R11.1).** The
+  first derivation bounded the excursion using `coth(z) >= 1/z`, which
+  is a fact about the DEFOCUSING direction; the focusing one has
+  `cot(z)` in the same slot, where the inequality is false and the value
+  turns negative past `z = pi/2`. Nothing had been proved about `y`. The
+  two are now separate: `x` keeps the inequality chain
+  `sqrt(du K / 2)`, and `y` solves its actual reachability condition,
+  using `Q = (w/2) sin(a)/(sin a_p sin a_q) >= w cot(a/2) > 0` (positive
+  even where the individual cotangents are not), `min_y f = S_y(du)` by
+  composition of the classical action, and a trajectory excursion whose
+  maximum over the endpoint box sits at a CORNER because the function is
+  convex there. The maximising corner is the **same-sign** one, reaching
+  `Y / cos(a/2)` — not the opposite-sign one, which reaches only `Y`.
+  Because the tighter derivation wins, `inset_y < inset_x`.
 - **`v` component, and why it exists at all.** One would expect a
   diamond to lie between its endpoints' `v` coordinates, since future
   means decreasing `v`. It need not: membership in `J^+(p)` reads
@@ -616,15 +627,43 @@ against the coordinate guard before anything rests on it, and selecting
 on interval cardinality directly is forbidden, since truncation biases
 that very quantity. **Assigned:** §8 P1.
 
-**[TO VERIFY]** The closed forms for **both** components of the inset —
-the maximum transverse excursion and the constrained maximum of `-C`
-over the box — and the fraction of pairs Class C eligibility retains at
-working slab geometries. If the inset is so large that few pairs
-survive, that is a cost of the volume-type statistics and a reason §5
-does not lead with them — but it must be measured, not assumed. The
-`v` component in particular grows like `tan(w Du)` before the box caps
-it, so it may bind harder than the transverse one at exactly the slab
-sizes that make the effect large. **Assigned:** §8 P1.
+### 4.6.3 What P1 found: Class C may have no operating point at all
+
+The insets are derived and implemented, and the eligible-pair question
+§8 P1 was asked to answer has a first answer. It is not a good one.
+Measured with `dv = 0.2`, `dx = dy = 6` (half-extent 3), varying
+`a = w du`:
+
+| `a` | excursion factor | `lim_x` | `lim_y` |
+|---|---|---|---|
+| 0.3 | 1.011 | 2.08 | 2.23 |
+| 0.6 | 1.047 | 1.18 | 1.54 |
+| 1.0 | 1.139 | **-0.03** | 0.71 |
+| 1.6 | 1.435 | -1.95 | **0.00** |
+| 2.5 | 3.171 | -6.33 | 0.00 |
+
+**Eligibility empties out by `a ~ 1`**, and it is the defocusing
+direction that closes first. The effect being measured grows with `a`
+(§4.4: the volume shift is `(wT)^4 / 252`), so the region where Class C
+admits pairs and the region where there is something to see may not
+overlap. If that holds up, §5's items 2 and 3b — the chain vectors and
+the diamond-based estimators — are not merely weaker than `D`, they are
+unusable, and §7's single-poset claim is left resting on item 3a alone
+with no fallback.
+
+**Not yet established, and it matters which way it goes:** whether a
+larger `dx, dy` at fixed `a` recovers eligibility (the insets grow with
+the box through the cross term, so this is not obvious), and whether the
+`x` inset's inequality chain is simply too loose to be worth believing
+here — unlike `y`, it was never tightened to the actual reachability
+condition. **Assigned:** §8 P1, and it should be answered before any
+design work rests on Class C.
+
+**[TO VERIFY]** The `v` component is implemented and its formula is
+verified, but a negative control could not make it bind: shrinking it to
+zero produces no escapes, because the transverse inset has already
+pushed eligible endpoints far enough in. Whether it is ever necessary is
+open; if it is not, the design can drop it. **Assigned:** §8 P1.
 
 ## 5. What the instrument reads, in probe order (R1.3)
 

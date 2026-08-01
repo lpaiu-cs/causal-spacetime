@@ -492,10 +492,77 @@ class GuardInsets:
     their eligible pairs are decided by insetting the endpoints rather
     than by inspecting each diamond. Class R statistics use neither of
     these and keep every pair.
+
+    **`x` and `y` need separate insets (R11.1).** The first version
+    derived one transverse bound from `coth(z) >= 1/z` and applied it to
+    both, but that inequality is a fact about the DEFOCUSING direction.
+    The focusing one has `cot(z)` in the same slot, where it is false
+    and in fact negative past `z = pi/2`. A random containment sweep
+    passing is not a proof, and the guard is about to be used as the
+    ground-truth label for the order-invariant eligibility candidate, so
+    a certificate is what it needs.
     """
 
-    transverse: float
+    x: float
+    y: float
     v: float
+
+
+def trajectory_excursion(yp: float, yq: float, a: float) -> float:
+    """`max |y(u)|` on the focusing geodesic between two endpoints.
+
+    With `u` as parameter the focusing trajectory is
+    `y(u) = y_p cos(w u) + C sin(w u)`, `C = (y_q - y_p cos a)/sin a`,
+    i.e. `R sin(w u + phi)` -- so the maximum over the segment is either
+    at an endpoint or at an interior peak, and both are exact. Nothing
+    is sampled.
+    """
+
+    if a <= 0.0:
+        return max(abs(yp), abs(yq))
+    c = (yq - yp * math.cos(a)) / math.sin(a)
+    r = math.hypot(yp, c)
+    if r == 0.0:
+        return 0.0
+    phi = math.atan2(yp, c)
+    best = max(abs(math.sin(phi)), abs(math.sin(phi + a)))
+    first = math.ceil((phi - math.pi / 2.0) / math.pi)
+    for k in (first, first + 1):
+        peak = math.pi / 2.0 + k * math.pi
+        if phi <= peak <= phi + a:
+            best = 1.0
+            break
+    return r * best
+
+
+def worst_focusing_corner(a: float) -> tuple[float, float, float]:
+    """The unit-box corner with the largest focusing excursion, and it.
+
+    `y(u)` is affine in `(y_p, y_q)`, `|.|` is convex and a maximum of
+    convex functions is convex, so `trajectory_excursion` is convex on
+    the box and its maximum is attained at a CORNER. Four evaluations,
+    no grid, and homogeneous of degree one so the result scales.
+
+    The maximising corner is the SAME-SIGN one, `(+Y, +Y)`, where the
+    trajectory bulges outward and reaches `Y / cos(a/2)` -- not the
+    opposite-sign corner, which is the intuitive guess and is wrong.
+    Returned rather than just its value because the constructed
+    counterexample in the tests needs the configuration, not the number.
+    """
+
+    best = (1.0, 1.0, trajectory_excursion(1.0, 1.0, a))
+    for sy in (-1.0, 1.0):
+        for sq in (-1.0, 1.0):
+            value = trajectory_excursion(sy, sq, a)
+            if value > best[2]:
+                best = (sy, sq, value)
+    return best
+
+
+def _focusing_excursion_factor(a: float) -> float:
+    """`max |y(u)| / Y` over endpoints in `[-Y, Y]^2`, exactly."""
+
+    return worst_focusing_corner(a)[2]
 
 
 def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
@@ -547,15 +614,55 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     slab, w = geometry.slab, geometry.w
     half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
     if w == 0.0:
-        v_inset = 0.0
-        budget = slab.dv
+        flat = math.sqrt(slab.du * slab.dv / 2.0)
+        return GuardInsets(x=flat, y=flat, v=0.0)
+
+    a = w * slab.du
+    v_inset = w * half_y * half_y * math.tan(a / 2.0)
+    budget = (slab.dv + 2.0 * v_inset
+              + 2.0 * w * math.tanh(a / 2.0) * half_x * half_x)
+    x_inset = math.sqrt(slab.du * budget / 2.0)
+
+    # The focusing direction (R11.1). The reachable `y` at split
+    # `a_p + a_q = a` is bounded by the trajectory plus a spread:
+    #
+    #   f(y) >= S_y(du; y_p, y_q) + Q (y - y*)^2,
+    #   Q = (w/2) sin(a) / (sin a_p sin a_q) >= w cot(a/2) > 0
+    #
+    # the identity holding even where the individual cotangents are
+    # negative, and `min_y f = S_y(du; y_p, y_q)` by composition of the
+    # classical action. So the spread is at most
+    # `sqrt(D tan(a/2) / w)` with `D` the budget above the direct
+    # action, and the trajectory term is `alpha(a) * Y_inner` with
+    # `alpha` the corner maximum.
+    #
+    # `Y_inner = half_y - y_inset` appears on both sides, so the inset
+    # is the root of a monotone one-dimensional condition and is found
+    # by bisection rather than by a closed form. Solving it is what
+    # makes this a certificate instead of a hope.
+    alpha = _focusing_excursion_factor(a)
+    tan_half = math.tan(a / 2.0)
+    cross = 2.0 * w * math.tanh(a / 2.0) * half_x * half_x
+
+    def reach(y_inner: float) -> float:
+        spread_budget = (slab.dv + cross
+                         + w * y_inner * y_inner * tan_half)
+        return (alpha * y_inner
+                + math.sqrt(max(spread_budget, 0.0) * tan_half / w))
+
+    lo, hi = 0.0, half_y
+    if reach(0.0) > half_y:
+        y_inset = half_y          # nothing is eligible; class_c_eligible says so
     else:
-        a = w * slab.du
-        v_inset = w * half_y * half_y * math.tan(a / 2.0)
-        budget = (slab.dv + 2.0 * v_inset
-                  + 2.0 * w * math.tanh(a / 2.0) * half_x * half_x)
-    return GuardInsets(transverse=math.sqrt(slab.du * budget / 2.0),
-                       v=v_inset)
+        for _ in range(200):
+            mid = 0.5 * (lo + hi)
+            if reach(mid) <= half_y:
+                lo = mid
+            else:
+                hi = mid
+        y_inset = half_y - lo
+
+    return GuardInsets(x=x_inset, y=y_inset, v=v_inset)
 
 
 def class_c_eligible(geometry: PlaneWaveGeometry,
@@ -573,8 +680,8 @@ def class_c_eligible(geometry: PlaneWaveGeometry,
 
     insets = guard_insets(geometry)
     slab = geometry.slab
-    x_lim = slab.dx / 2.0 - insets.transverse
-    y_lim = slab.dy / 2.0 - insets.transverse
+    x_lim = slab.dx / 2.0 - insets.x
+    y_lim = slab.dy / 2.0 - insets.y
     if x_lim <= 0.0 or y_lim <= 0.0:
         return False
     for point in (p, q):

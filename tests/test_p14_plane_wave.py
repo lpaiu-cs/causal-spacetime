@@ -35,6 +35,7 @@ from p14_plane_wave import (  # noqa: E402
     PlaneWaveGeometry,
     Slab,
     _exact_cost,
+    _focusing_excursion_factor,
     arms,
     causal_relation,
     class_c_eligible,
@@ -45,7 +46,9 @@ from p14_plane_wave import (  # noqa: E402
     guard_insets,
     slab_within_conjugate_bound,
     sprinkle,
+    trajectory_excursion,
     transverse_cost,
+    worst_focusing_corner,
 )
 
 # a slab comfortably inside the conjugate bound, reused below
@@ -732,7 +735,72 @@ def test_the_transverse_inset_is_the_alexandrov_radius_when_flat():
         geom = PlaneWaveGeometry(Slab(du=du, dv=dv, dx=9.0, dy=9.0), 0.0)
         insets = guard_insets(geom)
         assert insets.v == 0.0
-        assert insets.transverse == pytest.approx(math.sqrt(du * dv / 2.0))
+        assert insets.x == pytest.approx(math.sqrt(du * dv / 2.0))
+        assert insets.y == pytest.approx(math.sqrt(du * dv / 2.0))
+
+
+def test_the_focusing_direction_needs_its_own_inset():
+    """The case, review R11.1: the first guard derived ONE transverse
+    bound from `coth(z) >= 1/z` -- a fact about the DEFOCUSING direction
+    -- and applied it to both. In the focusing direction the same slot
+    holds `cot(z)`, where the inequality is false and the value is
+    negative past `z = pi/2`, so nothing had been proved about `y` at
+    all. A random containment sweep passing is not a proof, and this
+    guard is about to be the ground-truth label for the order-invariant
+    eligibility candidate.
+
+    The excursion factor rises from `1.02 Y` at `w du = 0.4` to
+    `5.88 Y` at `2.8`, so the geometry really does focus.
+
+    The two insets must differ once `w > 0`, and -- contrary to the
+    guess that focusing must cost more -- the focusing one comes out
+    SMALLER. That is not a bug: the `x` inset is the loose chain of
+    inequalities `sqrt(du K / 2)`, while the `y` inset solves the actual
+    reachability condition by bisection, so the tighter derivation wins.
+    Asserting the direction pins which is which; an earlier version had
+    it backwards, on the intuition rather than the arithmetic.
+    """
+
+    for a in (0.4, 1.0, 2.0, 2.8):
+        assert _focusing_excursion_factor(a) > 1.0
+    assert _focusing_excursion_factor(2.8) > 5.0
+    assert (_focusing_excursion_factor(2.8)
+            > _focusing_excursion_factor(0.4))
+
+    for w, du in ((0.6, 0.5), (1.1, 0.9), (0.9, 2.0)):
+        geom = PlaneWaveGeometry(Slab(du=du, dv=0.4, dx=3.0, dy=3.0), w)
+        insets = guard_insets(geom)
+        assert insets.x != insets.y, (
+            f"w={w} du={du}: the two insets are equal, so they were not "
+            "derived apart")
+        assert insets.y < insets.x, (
+            f"w={w} du={du}: focusing inset {insets.y} exceeds defocusing "
+            f"{insets.x}; the bisection should be tighter than the "
+            "inequality chain")
+
+
+def test_the_trajectory_excursion_is_exact_and_maximised_at_a_corner():
+    """The case: the focusing inset rests on two structural claims --
+    that `max_u |y(u)|` is computed exactly rather than sampled, and
+    that its maximum over the endpoint box sits at a corner because the
+    function is convex there. If the corner claim were wrong the inset
+    would be too small everywhere, silently.
+    """
+
+    for a in (0.4, 1.0, 2.0, 2.8):
+        grid = np.linspace(-1.0, 1.0, 121)
+        best_interior = max(
+            trajectory_excursion(float(p), float(q), a)
+            for p in grid for q in grid)
+        assert _focusing_excursion_factor(a) >= best_interior * (1 - 1e-12)
+
+    # and the exact maximum really is the trajectory's, not an endpoint
+    # value, wherever an interior peak falls inside the segment
+    a, yp, yq = 2.8, 1.0, -1.0
+    dense = max(abs(yp * math.cos(t) + ((yq - yp * math.cos(a))
+                                        / math.sin(a)) * math.sin(t))
+                for t in np.linspace(0.0, a, 200001))
+    assert trajectory_excursion(yp, yq, a) == pytest.approx(dense, rel=1e-9)
 
 
 def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
@@ -779,37 +847,65 @@ def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
     catching it.
     """
 
+    interior, escapes = _containment_sweep(guard_insets)
+    assert interior > 100, (
+        f"only {interior} diamond points found; the sweep is not "
+        "exercising containment")
+    assert escapes == 0, f"{escapes}/{interior} diamond points escaped"
+
+
+def _containment_sweep(insets_fn):
+    """Body of the containment test, shared with its negative control.
+
+    Taking the inset function as an argument is what lets the control
+    run the SAME sweep against a weakened guard (R11.2) rather than
+    quoting numbers in a docstring that nothing executes. Returns
+    `(interior_points, escapes)` summed over the geometries.
+    """
+
     rng = np.random.default_rng(4242)
+    total_interior = total_escapes = 0
     for w in (0.0, 0.6, 1.1):
         # a box the guard actually binds in: the flat inset alone is
         # sqrt(du dv / 2) = 0.247 against a half-extent of 0.45, so an
         # eligible pair sits in a genuinely small interior region
         slab = Slab(du=0.35, dv=0.35, dx=0.9, dy=0.9)
         geom = PlaneWaveGeometry(slab, w)
-        insets = guard_insets(geom)
-        lim = slab.dx / 2.0 - insets.transverse
-        assert lim > 0.05, f"w={w}: the geometry admits nothing to test"
+        insets = insets_fn(geom)
+        lim_x = slab.dx / 2.0 - insets.x
+        lim_y = slab.dy / 2.0 - insets.y
+        assert min(lim_x, lim_y) > 0.02, (
+            f"w={w}: the geometry admits nothing to test")
 
         # the FATTEST admissible diamonds, since those are the ones that
         # can reach a face: `p` at the top of the eligible `v` range and
         # `q` at the bottom, spanning almost the whole slab in `u`
-        pairs = escapes = interior = 0
+        pairs = attempts = 0
         while pairs < 6:
+            attempts += 1
+            # R11.3: an explicit cap, so an eligibility or predicate
+            # regression fails loudly instead of hanging CI
+            assert attempts < 20000, (
+                f"w={w}: {pairs} eligible causal pairs in {attempts} "
+                "attempts -- eligibility or the predicate has regressed")
             p = np.array([rng.uniform(0.0, slab.du * 0.05),
                           slab.dv - insets.v,
-                          rng.uniform(-lim, lim), rng.uniform(-lim, lim)])
+                          rng.uniform(-lim_x, lim_x),
+                          rng.uniform(-lim_y, lim_y)])
             q = np.array([rng.uniform(slab.du * 0.95, slab.du),
                           insets.v,
-                          rng.uniform(-lim, lim), rng.uniform(-lim, lim)])
+                          rng.uniform(-lim_x, lim_x),
+                          rng.uniform(-lim_y, lim_y)])
             if not class_c_eligible(geom, p, q):
                 continue
             if causal_relation(geom, p, q).related is not True:
                 continue
             pairs += 1
-            # candidates are drawn 30% BEYOND the box transversally and
+            # candidates are drawn 30% BEYOND each transverse face and
             # past both `v` faces, so an escape is detectable; drawing
             # from the box itself would be circular, and drawing from a
-            # much larger region would find nothing
+            # much larger region finds nothing (two earlier attempts
+            # returned 0 and 11 points)
             span_x, span_y = slab.dx * 0.65, slab.dy * 0.65
             for _ in range(6000):
                 cand = np.array([rng.uniform(float(p[0]), float(q[0])),
@@ -821,16 +917,78 @@ def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
                     continue
                 if causal_relation(geom, cand, q).related is not True:
                     continue
-                interior += 1
+                total_interior += 1
                 inside = (0.0 <= cand[1] <= slab.dv
                           and abs(cand[2]) <= slab.dx / 2
                           and abs(cand[3]) <= slab.dy / 2)
                 if not inside:
-                    escapes += 1
-        assert interior > 100, (
-            f"w={w}: only {interior} diamond points found, the test is "
-            "not exercising containment")
-        assert escapes == 0, f"w={w}: {escapes}/{interior} points escaped"
+                    total_escapes += 1
+    return total_interior, total_escapes
+
+
+def test_a_weakened_focusing_guard_leaks_on_a_constructed_pair():
+    """The case, review R11.2: the negative control existed only as
+    numbers in a docstring, which nothing runs, so a weakened guard
+    would still have passed the committed test.
+
+    Executed here, and CONSTRUCTED rather than sampled -- random sweeps
+    could not catch a shrunken guard at all, because at the small
+    `w du` where eligibility is non-empty the focusing factor is barely
+    above 1 and the geodesic hardly bulges. The counterexample instead
+    uses the fact that makes it a counterexample: **every point of the
+    geodesic joining a causally related pair lies in their diamond**, so
+    if that geodesic leaves the box, the diamond does.
+
+    The configuration is the maximising corner `(+Y, +Y)` -- same sign,
+    where the trajectory bulges outward to `Y / cos(a/2)`. The opposite
+    corner is the intuitive guess and reaches only `Y`, which is why an
+    earlier version of this control found nothing.
+    """
+
+    w, du = 1.0, 1.2
+    slab = Slab(du=du, dv=6.0, dx=6.0, dy=6.0)
+    geom = PlaneWaveGeometry(slab, w)
+    real = guard_insets(geom)
+    half, a = slab.dy / 2.0, w * du
+    sign_p, sign_q, alpha = worst_focusing_corner(a)
+    assert alpha > 1.05, "the geometry must actually focus"
+
+    # rather than pick a magic shrink factor, find the largest one that
+    # leaks. The claim being tested is that SOME shrinkage does -- i.e.
+    # the guard is not arbitrarily loose in `y` -- and reporting the
+    # threshold says how much slack it actually has.
+    def leaks(f):
+        lim = half - real.y * f
+        return trajectory_excursion(sign_p * lim, sign_q * lim, a) > half
+
+    assert not leaks(1.0), "the real guard must not leak"
+    lo, hi = 0.0, 1.0
+    for _ in range(60):
+        mid = 0.5 * (lo + hi)
+        if leaks(mid):
+            lo = mid
+        else:
+            hi = mid
+    assert lo > 0.0, (
+        "no shrinkage of the y inset makes the constructed geodesic "
+        "leave the box, so this control polices nothing")
+    lim = half - real.y * lo
+
+    # and the pair really is causally related, so the peak really is a
+    # diamond point rather than a curve nobody can traverse. The `v`
+    # separation is taken from the cost itself rather than from the
+    # slab's faces: `guard_insets`' own `v` component exceeds `dv` in
+    # this geometry, which is a separate looseness and not what this
+    # control is about.
+    cost = transverse_cost(du, 0.0, 0.0, sign_p * lim, sign_q * lim, w)
+    p = np.array([0.0, cost + 0.5, 0.0, sign_p * lim])
+    q = np.array([du, 0.0, 0.0, sign_q * lim])
+    assert causal_relation(geom, p, q).related is True
+
+    # the real guard keeps the same construction inside
+    lim_real = half - real.y
+    assert trajectory_excursion(sign_p * lim_real, sign_q * lim_real,
+                                a) <= half + 1e-9
 
 
 def test_the_two_arms_read_the_same_points_and_disagree():
