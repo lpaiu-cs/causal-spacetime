@@ -115,11 +115,14 @@ Scope carried from the records, not to be dropped in any write-up:
   `AGENTS.md`, and it is not retroactive.
 - **Both records confine themselves to the instrument.** In 1+1D every
   metric is conformally flat, so curvature reaches the causal order only
-  through the volume this estimator reads. The programme's general
-  thesis — that curvature enters the order ONLY through the counting
-  measure — is close to a theorem in this setting rather than a
-  measurement, and neither record promotes it. `d >= 3` with `Weyl != 0`
-  is where it becomes falsifiable.
+  through the volume this estimator reads — the "number" half of P11's
+  "order + number = geometry". The "order fixes conformal structure"
+  half has never been tested at finite density, because every ensemble
+  so far had flat conformal structure. Testing it needs non-vanishing
+  Weyl, which needs spacetime dimension >= 4; at the continuum level the
+  order-signal's existence is a theorem (causal order determines the
+  conformal class), so the open question is finite-density
+  detectability. See `docs/prereg/p14_weyl_curvature.md`.
 - **Selection caveat: YES on both.** P12 Stage B replaced two curved
   seeds at rung 600 and one each at 1200 and 2400 from reserve slots
   (twin arm skipped none); identities are published in the artifact. The

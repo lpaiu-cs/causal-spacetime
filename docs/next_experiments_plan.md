@@ -18,8 +18,8 @@
 > standing judgement.
 >
 > **Current sources of truth.** Results: `docs/paper/results_source_wip.md`.
-> Next lever: `docs/prereg/p14_weyl_curvature.md` (`d >= 3` with
-> `Weyl != 0`). Frozen protocols and outcomes: `docs/prereg/p*.md`.
+> Next lever: `docs/prereg/p14_weyl_curvature.md` (pure-Weyl plane wave,
+> 3+1D). Frozen protocols and outcomes: `docs/prereg/p*.md`.
 
 Date: 2026-07-15. Status at the time: **P6 COMPLETE; P7 FROZEN AT N=600
 CHARACTERIZATION; T1 ACTIVE.** This was a roadmap rather than a
