@@ -73,14 +73,40 @@ in A, consistent with the small-diamond expansion's R and R_00 terms
 Aborts on failure rather than recording it. numpy only.
 """
 
+import functools
+
 import numpy as np
 
+#: Gauss-Legendre degree. Review R10.2: this was 6000, where
+#: `leggauss` diagonalises a dense 6000x6000 companion matrix -- 288 MB
+#: and 3.1 s per call -- and the module calls `volume_ratio` eleven
+#: times, so the check spent ~34 s rebuilding an identical grid and
+#: could exhaust a small runner.
+#:
+#: 6000 was never needed. The integrand is ANALYTIC on the closed
+#: interval: `a_x, a_y ~ 1/s` at the ends, so `1 / sqrt(a_x a_y) ~ s`
+#: with only even corrections, and Gauss-Legendre converges
+#: geometrically. Measured against the old degree at `wT = 2`, the
+#: agreement is `3.1e-13` already at **50** nodes and does not improve
+#: after -- that residual is the reference's own floor. 200 is four
+#: times the point of convergence and costs 4 ms.
+_QUAD_DEGREE = 200
 
-def volume_ratio(wT: float, nodes: int = 6000) -> float:
+
+@functools.cache
+def _gauss_legendre(degree: int):
+    """Nodes and weights, built once. Caching matters more than the
+    degree did: eleven calls rebuilding one grid is eleven times the
+    only expensive step in the file."""
+
+    return np.polynomial.legendre.leggauss(degree)
+
+
+def volume_ratio(wT: float, nodes: int = _QUAD_DEGREE) -> float:
     """V_A / V_0 for a central-axis pair at u-separation T, A = (wT/T)^2."""
 
     T, w = 1.0, wT
-    xg, wg = np.polynomial.legendre.leggauss(nodes)
+    xg, wg = _gauss_legendre(nodes)
     s = 0.5 * T * (xg + 1.0)
     ww = 0.5 * T * wg
     a_x = w * (1.0 / np.tanh(w * s) + 1.0 / np.tanh(w * (T - s)))
@@ -124,10 +150,20 @@ resid = [((volume_ratio(wT) - 1.0) / wT ** 4 - LEADING) / wT ** 4
          for wT in (0.5, 0.3, 0.2, 0.15)]
 assert max(resid) / min(resid) < 1.1, f"next term is not (wT)^8: {resid}"
 
+# The FLATNESS above is the claim; the coefficient's value is incidental
+# and only the largest `wT` reports it cleanly. The smaller ones divide
+# a cancellation error by `wT^8`, so their estimate drifts with the
+# quadrature degree (3.19e-5 to 3.23e-5 across degrees at wT = 0.15)
+# while `wT = 0.5` sits at 3.1951e-5 for every degree from 50 to 3000.
+# The old printed value quoted a mean over all four and was reporting
+# that noise to three digits.
+NEXT_COEFF = resid[0]
+
 print("flat-limit check (wT=1e-3):", f"{flat:.12f}")
 print(f"wT=1: V_A/V_0 = {r1:.8f}   (pinned 1.00400047)")
 print(f"wT=2: V_A/V_0 = {r2:.8f}   (pinned 1.07300802)")
 print(f"excess ratio (quartic => 16): {excess_ratio:.2f}")
 print(f"leading coefficient -> 1/252 = {LEADING:.12f}, "
-      f"next term (wT)^8 with coefficient ~{np.mean(resid):.2e}")
+      f"next term (wT)^8 with coefficient {NEXT_COEFF:.4e} "
+      f"(read at wT=0.5, the least cancelled)")
 print("=> the volume channel is NOT silent; C0 as drafted is dead: PASS")

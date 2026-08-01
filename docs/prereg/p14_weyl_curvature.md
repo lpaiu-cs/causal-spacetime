@@ -461,7 +461,8 @@ boundary. Three consequences:
 
   The check asserts `(V_A/V_0 - 1)/(wT)^4 -> 1/252 = 0.003968253968`
   over `wT in [0.15, 0.5]` and that the residual scales as `(wT)^4`
-  (coefficient `~3.2e-5`), ruling out a `(wT)^6` term. Below
+  (coefficient `3.195e-5`, read at `wT = 0.5` where the estimate is not
+  itself cancellation-limited), ruling out a `(wT)^6` term. Below
   `wT ~ 0.1` the excess falls under `1e-9` and double-precision
   cancellation against 1 dominates, so the window is chosen where
   physics rather than arithmetic is the limit.
@@ -516,14 +517,36 @@ truncated count.
 
 - **Eligible: pairs whose diamond is contained in the box, decided by a
   GUARD INSET rather than per-pair inspection.** Both endpoints must lie
-  in an inner sub-box inset from the sprinkled box by the maximum
-  transverse excursion a null geodesic can make over the slab's
-  `u`-extent — computable in closed form from the same Jacobi
-  propagators as §4.3 and §4.4.
+  in an inner sub-box inset from the sprinkled box, and **the inset has
+  a `v` component as well as a transverse one (R10.1)** — see below,
+  because the `v` one is not obvious and its omission would have made
+  §8 P2 count truncated intervals against an untruncated mean.
+- **Transverse component:** the maximum transverse excursion a null
+  geodesic can make over the slab's `u`-extent, in closed form from the
+  same Jacobi propagators as §4.3 and §4.4.
+- **`v` component, and why it exists at all.** One would expect a
+  diamond to lie between its endpoints' `v` coordinates, since future
+  means decreasing `v`. It need not: membership in `J^+(p)` reads
+  `Dv <= -C`, and **`C` can be NEGATIVE**, because the focusing
+  direction contributes `S_y < 0` whenever the `y` endpoints are close.
+  At `w = 1` over `Du = 1` with equal `y` endpoints,
+  `S_y = y^2 (cos 1 - 1)/ sin 1 = -0.5463 y^2`, so a causal point can
+  sit at `v = v_p + 0.546 y^2` — above the past endpoint, outside the
+  `[v_q, v_p]` band, and potentially outside a `v` face of the slab.
+  The inset must therefore include `max(-C)` over the admissible
+  region.
+- **That maximum must be taken over the COMPACT box, not analytically
+  in the open.** Minimising `S_y` over an interior `y` gives
+  `-(w y_p^2 / 2) tan(w Du)` at `y = y_p / cos(w Du)`, which diverges as
+  `w Du -> pi/2` — well before the conjugate point at `pi`. What keeps
+  it finite is the box's own `|y| <= dy/2`, so the bound is a
+  constrained maximum over the frozen geometry and it is one more thing
+  the operating point's `fraction` has to buy.
 - **The inset is the SAME in both arms** and is taken from the binding
   arm — the curved one, whose defocusing direction gives the larger
-  excursion. Arm-dependent eligibility would give the two arms different
-  eligible sets and destroy the pairing that §4.1 exists for.
+  transverse excursion and whose focusing direction is the only source
+  of the `v` one. Arm-dependent eligibility would give the two arms
+  different eligible sets and destroy the pairing that §4.1 exists for.
 - **Its denominator is the eligible-pair count, reported alongside**,
   and never silently substituted for `C(N, 2)`. A Class C number and a
   Class R number are never quoted against the same denominator.
@@ -580,11 +603,15 @@ against the coordinate guard before anything rests on it, and selecting
 on interval cardinality directly is forbidden, since truncation biases
 that very quantity. **Assigned:** §8 P1.
 
-**[TO VERIFY]** The closed form for the maximum transverse excursion,
-and the fraction of pairs Class C eligibility retains at working slab
-geometries. If the inset is so large that few pairs survive, that is a
-cost of the volume-type statistics and a reason §5 does not lead with
-them — but it must be measured, not assumed. **Assigned:** §8 P1.
+**[TO VERIFY]** The closed forms for **both** components of the inset —
+the maximum transverse excursion and the constrained maximum of `-C`
+over the box — and the fraction of pairs Class C eligibility retains at
+working slab geometries. If the inset is so large that few pairs
+survive, that is a cost of the volume-type statistics and a reason §5
+does not lead with them — but it must be measured, not assumed. The
+`v` component in particular grows like `tan(w Du)` before the box caps
+it, so it may bind harder than the transverse one at exactly the slab
+sizes that make the effect large. **Assigned:** §8 P1.
 
 ## 5. What the instrument reads, in probe order (R1.3)
 
@@ -1139,7 +1166,7 @@ flat-limit check (wT=1e-3): 1.000000000000
 wT=1: V_A/V_0 = 1.00400047   (pinned 1.00400047)
 wT=2: V_A/V_0 = 1.07300802   (pinned 1.07300802)
 excess ratio (quartic => 16): 18.25
-leading coefficient -> 1/252 = 0.003968253968, next term (wT)^8 with coefficient ~3.22e-05
+leading coefficient -> 1/252 = 0.003968253968, next term (wT)^8 with coefficient 3.1951e-05 (read at wT=0.5, the least cancelled)
 => the volume channel is NOT silent; C0 as drafted is dead: PASS
 ```
 
