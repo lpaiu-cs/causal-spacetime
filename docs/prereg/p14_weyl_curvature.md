@@ -159,11 +159,11 @@ guard rule reached back into the claim. Four items, all fixed here.**
   it before the probe, §8.2 let the probe pick it. Resolved by what it
   is — a DETERMINED function of the operating point rather than a chosen
   one (§4.6.1; no longer closed-form since R12.1, but still resolved by
-  a fixed criterion rather than by anyone's judgement). Definitions and derivation rule frozen
-  now; the number follows the operating point and freezes with it before
-  confirmation. §5's "may not be chosen after seeing its curves" is
-  withdrawn as written — it contradicted §8.2 and would have forbidden
-  the probe from doing its job.
+  a fixed criterion rather than by anyone's judgement). Definitions and
+  derivation rule frozen now; the number follows the operating point
+  and freezes with it before confirmation. §5's "may not be chosen
+  after seeing its curves" is withdrawn as written — it contradicted
+  §8.2 and would have forbidden the probe from doing its job.
 - **R4.3 (P2)** "Independent per arm" was the wrong phrase: the
   marginals are Poisson, the counts are not independent. And
   `Var(N_A - N_0) = rho Vol(I_A △ I_0)` is exact for the raw difference
@@ -1188,11 +1188,12 @@ freeze and with nothing frozen**:
   §5.1's undecided set is well defined; report `ambiguous_fraction` and
   the precision-escalation policy with its cost. Assert the frozen slab
   extent is under `pi/sqrt(A)` so no pair needs a conjugate-point filter
-  (§4.3). Report §4.6's **Class C guard inset** — the frozen
-  deterministic construction, not a closed form, which since R12.1 it
-  is not (§4.6.1) — and the eligible-pair fraction it leaves; Class R
-  keeps every pair and `C(N, 2)`. Also measure §4.6.2's candidate **order-invariant
-  eligibility rule** against that coordinate guard: report the agreement
+  (§4.3). Report §4.6's **Class C guard inset** as the frozen
+  deterministic construction it is — *not* in closed form, which since
+  R12.1 it does not have (§4.6.1) — together with the eligible-pair
+  fraction it leaves; Class R keeps every pair and `C(N, 2)`. Also
+  measure §4.6.2's candidate **order-invariant eligibility rule**
+  against that coordinate guard: report the agreement
   rate and the pairs each admits that the other rejects, since that
   number decides whether §7's single-poset claim has anything better
   than item 3a available to it.
@@ -1335,8 +1336,9 @@ says so rather than contradicting it (R4.2).
 **What the probe does NOT choose:** the guard inset. Per §4.6.1 it is a
 deterministic function of the operating point — solved numerically since
 R12.1, with its one free parameter resolved by a fixed criterion in code
-— so fixing the point fixes the inset; it is determined, not tuned. v0.5 listed it here as a probe
-choice, which is why §4.6 and this section disagreed.
+— so fixing the point fixes the inset; it is determined, not tuned. v0.5
+listed it here as a probe choice, which is why §4.6 and this section
+disagreed.
 
 **The line between exploration and confirmation is the seed block, and
 it is fixed here rather than left to the freeze:**
