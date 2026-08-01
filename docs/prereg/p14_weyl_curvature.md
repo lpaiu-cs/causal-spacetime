@@ -1004,14 +1004,25 @@ freeze and with nothing frozen**:
   fixed sets, `N_A ~ Poisson(rho V_A)`, `N_0 ~ Poisson(rho V_0)`, and
   the covariance identity applies exactly as written.
 
-  **If a future variant post-selects axis pairs from the sprinkled
-  points, none of this transfers.** Conditioning on the endpoints being
-  sprinkled changes the law of the remaining points and makes the region
-  itself random; the correct conditional distribution must then be
-  re-derived from scratch, and the formulas above may not be reused by
-  analogy. P2 as designed uses external anchors and does not have this
-  problem — the note exists so that a later convenience does not
-  silently inherit an inapplicable error model.
+  **What breaks it is post-selection, and it is worth being precise
+  about what does NOT (R6.5).** Palm conditioning on a point existing at
+  a FIXED location leaves the rest of a Poisson process an unchanged
+  Poisson process (Slivnyak), so simply having anchor points is
+  harmless — and if anchors were themselves sprinkled but at
+  predetermined coordinates, excluding them from the counts would be
+  enough. The v0.8 draft said the conditioning changes the law of the
+  remaining points; that was wrong.
+
+  **The damage comes from choosing the anchors after seeing the
+  realization.** Then the diamond is a random region and the selection
+  rule is a random function of the same points being counted: `I_A` and
+  `I_0` are no longer fixed sets, `N_A` is no longer `Poisson(rho V_A)`,
+  and the covariance identity has nothing to attach to. A variant that
+  post-selects axis pairs must re-derive its conditional distribution
+  from scratch and may not reuse the formulas above by analogy. P2 as
+  designed takes anchors from the frozen geometry and does not have this
+  problem — the note exists so a later convenience does not silently
+  inherit an inapplicable error model.
 - **P3. Discriminability.** For a ladder of `A` and slab sizes, measure
   the §5 statistics in order — `D` first, reported as
   `[D_lower, D_upper]` with `ambiguous_fraction` and the gained/lost
