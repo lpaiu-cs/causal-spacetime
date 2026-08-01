@@ -54,6 +54,38 @@ Avoid this language unless explicitly discussed as a rejected formulation:
 - "space is information-transfer speed"
 - "this proves spacetime is information"
 
+### House rule: an accuracy gate is evaluated on the interval, not the point
+
+**Proposed 2026-08-01, pending review — see `docs/prereg/p14_weyl_curvature.md` §6.**
+
+When a preregistered gate is a claim about **accuracy** — "this instrument
+recovers `X` to within `t`" — the verdict is decided by the confidence
+interval, not by the point estimate. A point estimate inside `t` whose
+interval crosses `t` does not support the sentence the record will quote.
+
+The case that forced this. P12 §9.3's co-requirement (ii) was frozen as a
+point comparison; the campaign's top rung read `0.1708` against a threshold
+of `0.25` and passed, while its 95% interval reached `0.2644` — across the
+line. §9.3 declined to re-score, correctly: converting a point rule to an
+interval rule after seeing the interval is the same move as loosening a
+threshold after seeing the data, in the opposite direction and equally
+forbidden. So the rule is fixed here, in advance, for designs that do not
+yet exist.
+
+Three things this rule is not:
+
+- **Not retroactive.** P12's record stands on the rule it froze.
+- **Not free.** An interval rule is strictly harder to clear, so it must be
+  sized for in the power section before any data exists. A design adopting
+  it and then discovering it cannot afford it has loosened a gate.
+- **Not a licence to switch.** The direction is one-way: a design may not
+  move from interval to point, ever, and a design that wants a point rule
+  must argue for it in its own text before freezing.
+
+Gates that are **not** accuracy claims — existence, sign, ordering, budget,
+completion — keep whatever form their design freezes, and this rule says
+nothing about them.
+
 ## Implementation standards
 
 Use Python 3.11 or later.
