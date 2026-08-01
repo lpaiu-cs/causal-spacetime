@@ -2,8 +2,9 @@
 
 **Status: WORK IN PROGRESS. Not a manuscript, and deliberately not a
 closing account.** The programme is continuing (the curvature track
-closed 2026-08-01 and handed over a `d >= 3` lever — see
-`docs/prereg/p14_weyl_curvature.md`), so this file exists only so that a
+closed 2026-08-01 and handed over a pure-Weyl lever, which needs
+spacetime dimension `>= 4` — see `docs/prereg/p14_weyl_curvature.md`),
+so this file exists only so that a
 future write-up quotes numbers from ONE place, each traceable to a frozen
 artifact. Nothing here interprets beyond what the frozen records already
 state; where a record carries a scope or caveat, it is reproduced, not
@@ -144,4 +145,4 @@ resolution instrument cannot answer a question a counting-measure
 instrument can), positioning against the causal-set literature
 (`docs/theory/t1_literature_positioning.md` is the source), and a
 decision on whether the curvature track is written up now or held until
-the `d >= 3` question has an answer.
+the pure-Weyl question has an answer.

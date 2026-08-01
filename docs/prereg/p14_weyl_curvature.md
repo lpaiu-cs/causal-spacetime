@@ -1,6 +1,6 @@
 # P14: which pure-order statistic reads a pure-Weyl deformation, and at what density? — design draft
 
-Status: **DESIGN DRAFT v0.4 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
+Status: **DESIGN DRAFT v0.5 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
 HAS RUN. NOTHING IS FROZEN.** Two deterministic design checks HAVE run and
 are committed beside this document (`docs/prereg/p14_checks/`), because an
 output pasted into prose is not a check; their frozen, stamped copies move
@@ -95,6 +95,42 @@ both fixed here. No redesign.**
   has a closed coefficient: `V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)`,
   confirmed independently here and now asserted by the committed check.
   §4.4. The `D`-versus-scalar hierarchy stays `[TO VERIFY]`.
+
+**R3 (2026-08-01, in-session): physics design PASSED again; one P1
+protocol conflict and three smaller items, all fixed here.**
+
+- **R3.1 (P1)** §4.2's pair rules contradicted §5.1's `D`. It allowed a
+  fixed exclusion band for near-null pairs, and demanded diamond
+  containment "for every pair entering any statistic" — but not every
+  pair in a finite box has a contained diamond, so either would drop
+  pairs or move `D`'s denominator, and either invalidates §5.1. Fixed by
+  separating the rules by statistic class (§4.6): **Class R** (`D`, its
+  split, global relation fractions) keeps every pair and `C(N, 2)` with
+  no containment condition, since a predicate between two points does
+  not care what the box holds; **Class C** (interval cardinality, chain
+  vectors, diamond-based ordering fractions, the §8 P2 check) uses a
+  frozen guard inset with its own reported denominator. The band is
+  withdrawn from §4.2 outright, and §4.3 now makes the conjugate bound a
+  property of the SLAB rather than a per-pair filter, which is what lets
+  `C(N, 2)` be unconditional.
+- **R3.2 (P2)** §8 P2 said "within Poisson error" for two counts taken
+  over overlapping regions of the SAME realization, which are
+  correlated. Fixed with both halves stated: a marginal per-arm check
+  against known `rho V`, and a paired ratio whose uncertainty is
+  estimated between independent sprinklings, with the exact
+  `Cov(N_A, N_0) = rho Vol(I_A ∩ I_0)` and
+  `Var(N_A - N_0) = rho Vol(I_A △ I_0)` as the cross-check.
+- **R3.3 (P2)** `D` consumes two orders plus the point correspondence,
+  so it is a paired counterfactual and not a property of a single causal
+  set — §7's "a finite causal set carries..." did not follow from it.
+  `D` is now scoped as a **paired-order sensitivity diagnostic**, and
+  the single-poset claim is assigned explicitly to §5's items 2 and 3.
+  §5 and §7.
+- **R3.4 (P2, before freeze)** The exploration/confirmation boundary is
+  now stated as a seed rule rather than left implicit: confirmation runs
+  on a fresh block disjoint from everything the probe consumed. §8.2.
+- **R3.5 (P3)** Two stale `d >= 3` mentions in
+  `docs/paper/results_source_wip.md` corrected.
 
 ---
 
@@ -255,18 +291,27 @@ causality are simultaneously available.
 the plane-wave world function is explicit in the literature (Harte &
 Drivas 2012, Phys. Rev. D 85 124039) and must be reproduced here and
 checked against direct numerical null-geodesic integration to a pinned
-tolerance. Two requirements R1.5 adds, both absolute:
+tolerance. Two requirements R1.5 adds, both absolute — and **R3.1
+corrects how the second one is scoped**:
 
-- **Near-null ambiguity band.** "Machine precision for arbitrary pairs"
-  is too strong a promise: pairs with `sigma ~ 0` sit inside floating-
-  point ambiguity, and the implementation must either resolve them with
-  interval arithmetic or EXCLUDE them by an explicit, published band —
-  never silently misclassify. The band's width is a frozen constant of
-  the eventual design, and both arms use the same band.
-- **Containment.** For every pair entering any statistic, both arms'
-  causal intervals must lie inside the sprinkled box, verified per pair
-  — the analogue of P12's "causal box inside the patch" check. A
-  truncated diamond is a biased count with no flag otherwise.
+- **No pair is ever dropped for being near-null.** "Machine precision
+  for arbitrary pairs" is too strong a promise: pairs with `sigma ~ 0`
+  sit inside floating-point ambiguity. The v0.4 draft offered a fixed
+  published band as an alternative to resolving them, which contradicts
+  §5.1 — a band is an exclusion, and an exclusion moves `D`'s
+  denominator. **Withdrawn.** Undecided pairs stay in the sample and are
+  classified `ambiguous`; the response to too many of them is adaptive
+  precision or interval arithmetic (§5.1), never a band.
+- **Containment is a requirement of COUNTING statistics only.** The
+  v0.4 draft demanded that both arms' causal intervals lie inside the
+  sprinkled box "for every pair entering any statistic". That is wrong
+  as stated and it is the conflict R3.1 names: not every pair in a
+  finite box has a contained diamond, so applied to `D` the rule would
+  force dropping pairs or changing the denominator, and either
+  invalidates §5.1. A relation predicate reads the geometry between two
+  points and does not care what the box contains; only a statistic that
+  COUNTS SPRINKLED POINTS INSIDE A CAUSALLY DEFINED REGION is biased by
+  truncation. §4.6 sets the two rules separately.
 
 ### 4.3 Conjugate points: the analytic bound, and what does not escape it
 
@@ -277,10 +322,17 @@ exactly
     |Du| = pi / w = pi / sqrt(A)
 
 (Harte & Drivas 2012 give the same). The patch is therefore an explicit
-**slab in `u`**: all sprinkled pairs satisfy `|Du| < pi/sqrt(A)` with a
-margin to be frozen, and the containment check of §4.2 enforces it
-per pair. What remains [TO VERIFY] is only the implementation against
-this known answer, not the constant itself.
+**slab in `u`**, and R3.1 makes its role precise: **the slab's `u`-extent
+is frozen strictly below `pi/sqrt(A)`, so patch validity is a property of
+the BOX and never a per-pair filter.** Every pair of sprinkled points
+then satisfies `|Du| < pi/sqrt(A)` automatically, by construction, and no
+pair can be excluded on conjugate-point grounds — which is what lets
+`D`'s denominator be `C(N, 2)` unconditionally (§5.1).
+
+What remains [TO VERIFY] is only the implementation against this known
+answer, not the constant itself: an assertion that the frozen slab extent
+is under the bound, and a run-time check that the sprinkled `u`-range
+respects it.
 
 **The escape the first draft offered is wrong and is withdrawn (R1.6).**
 Making `A(u)` compactly supported does not restore global hyperbolicity:
@@ -351,6 +403,53 @@ so the eigenvalues come in `(+A, -A)` pairs — a constant plus/cross
 polarization rotates back to the same form. Making the coefficients
 unequal breaks Ricci-flatness and with it the entire §4 case.
 
+### 4.6 Which pairs enter which statistic, fixed before the probe (R3.1)
+
+There are **two** admissibility rules, not one, because there are two
+kinds of statistic. Collapsing them was the v0.4 defect. Both are frozen
+before the probe; neither may be adjusted after seeing a curve; and
+**neither is allowed to depend on the realized data** — eligibility is a
+deterministic function of coordinates alone, or it is selection.
+
+**Class R — relation statistics.** `D`, its gained/lost split, and any
+global relation fraction over the box. These read the causal predicate
+between two sprinkled points and nothing else.
+
+- **Eligible: every pair. Denominator: `C(N, 2)`, unconditionally.**
+- No containment requirement: the predicate is a fact about two points
+  and the metric, not about what the box contains, so a diamond
+  extending outside the box does not bias it.
+- No conjugate-point filter either — §4.3's slab makes the bound a box
+  property, so it is satisfied by every pair by construction.
+- Undecided pairs are `ambiguous` and stay in the denominator (§5.1).
+
+**Class C — counting statistics.** Interval cardinality, the chain
+vectors `C_k`, any Myrheim–Meyer or ordering-fraction estimator computed
+**on a diamond**, and §8 P2's volume check. These count sprinkled points
+inside a causally defined region, so a diamond leaving the box is a
+truncated count.
+
+- **Eligible: pairs whose diamond is contained in the box, decided by a
+  frozen GUARD INSET rather than per-pair inspection.** Both endpoints
+  must lie in an inner sub-box inset from the sprinkled box by the
+  maximum transverse excursion a null geodesic can make over the slab's
+  `u`-extent — computable in closed form from the same Jacobi
+  propagators as §4.3 and §4.4, so the inset is a constant of the frozen
+  design.
+- **The inset is the SAME in both arms** and is taken from the binding
+  arm — the curved one, whose defocusing direction gives the larger
+  excursion. Arm-dependent eligibility would give the two arms different
+  eligible sets and destroy the pairing that §4.1 exists for.
+- **Its denominator is the eligible-pair count, reported alongside**,
+  and never silently substituted for `C(N, 2)`. A Class C number and a
+  Class R number are never quoted against the same denominator.
+
+**[TO VERIFY]** The closed form for the maximum transverse excursion,
+and the fraction of pairs Class C eligibility retains at working slab
+geometries. If the inset is so large that few pairs survive, that is a
+cost of the volume-type statistics and a reason §5 does not lead with
+them — but it must be measured, not assumed. **Assigned:** §8 P1.
+
 The quadrupole symmetry has a cost and a mitigation, both stated now:
 scalar expectations lose their `O(A)` term to the `x`/`y` cancellation,
 so generic scalar responses start at `O(A^2)` — pushed down, not zero
@@ -366,8 +465,24 @@ No gate is proposed for any of these here. Which one, at what size, with
 what threshold, is what §8 P3 measures and what may not be chosen after
 seeing its curves.
 
-**1. Paired relation disagreement (primary).** With `prec_A` and
-`prec_0` the two relations on the same `N` points,
+**What each statistic can and cannot be claimed for (R3.3).** The two
+classes of §4.6 split a second way, and the split runs opposite to
+sensitivity. `D` takes **two orders plus the point correspondence** as
+input; it is a paired counterfactual and is **not computable from a
+single causal set**. The chain vectors and the ordering-fraction
+estimators are computable from one poset — which is what a causal-set
+observer actually has. So:
+
+> `D` is the most sensitive probe and the least claim-bearing. It is a
+> **paired-order sensitivity diagnostic**: it answers "does pure-Weyl
+> curvature move the order at all, at this density", which is what a
+> probe needs. It does not answer "can a finite causal set be told from
+> a flat one", and no single-poset claim may rest on it. That claim
+> belongs to items 2 and 3, and their weaker sensitivity is the price of
+> it.
+
+**1. Paired relation disagreement (primary probe statistic).** With
+`prec_A` and `prec_0` the two relations on the same `N` points,
 
     D = | prec_A  triangle  prec_0 | / C(N, 2),
 
@@ -443,7 +558,15 @@ above uses the word.
 to a large `ambiguous_fraction` is adaptive precision or interval
 arithmetic on the offending pairs — never a wider fixed band, which
 trades a measurable quantity for an invisible one. The escalation policy
-and its cost are part of what §8 P1 must report.
+and its cost are part of what §8 P1 must report. §4.2 previously offered
+a fixed band as an alternative here; it is withdrawn (R3.1), because a
+band is an exclusion and an exclusion moves this denominator.
+
+**Nothing else moves the denominator either.** `D` is a Class R
+statistic in §4.6's sense: every pair of sprinkled points is eligible,
+there is no containment condition, and the conjugate-point bound is a
+property of the slab rather than a per-pair test. `C(N, 2)` is therefore
+the count of all pairs, without qualification.
 
 The same construction applies to the gained/lost split, which inherits
 `ambiguous` from the pair-level classification rather than resolving it
@@ -580,11 +703,25 @@ rule it froze. §9.3 already says so and this document does not reopen it.
 
 Per §10.9's discipline, stated now rather than after a verdict:
 
-- A positive result supports: **a finite causal set at the tested density
-  carries a detectable pure-Weyl signature in the tested pure-order
-  statistic, over this patch and profile.** It does not establish
-  quantitative recovery of the Weyl tensor — detection and recovery are
-  different claims, and P12 needed a separate stage for the second.
+- **A positive `D` supports less than the v0.4 draft said (R3.3).** The
+  draft claimed "a finite causal set carries a detectable pure-Weyl
+  signature", which `D` cannot support: `D` consumes two orders and the
+  point correspondence between them, so it is a paired counterfactual
+  and not a property of any single causal set. What a positive `D`
+  supports is: **pure-Weyl curvature moves the causal order measurably
+  at the tested density, patch and profile** — the existence and size of
+  the effect, not its accessibility to an observer holding one poset.
+- **The single-causal-set claim belongs to items 2 and 3 of §5** — the
+  chain vectors and the ordering-fraction estimators, which are
+  computable from one poset. Only those may be quoted as "a finite
+  causal set can be told from a flat one", and only at the density and
+  effect size they themselves achieve, which §5 expects to be worse than
+  `D`'s. A design that finds `D` positive and the single-poset
+  statistics null has learned something real and must report it in those
+  two sentences, not in one.
+- Neither establishes quantitative recovery of the Weyl tensor —
+  detection and recovery are different claims, and P12 needed a separate
+  stage for the second.
 - A **null** result is a statement about the tested statistics and
   densities, never about the continuum: Malament's theorem stands either
   way, and a null must not be phrased as "curvature does not enter the
@@ -621,17 +758,44 @@ freeze and with nothing frozen**:
 - **P0. Measure.** Confirm the uniform-coordinate sprinkling reproduces
   the true 4-volume in the slab (it must, given `sqrt(-g) = 1`; this is
   an implementation check, not a physics one).
-- **P1. Causality.** Implement `p prec q` in the constant-`A` slab from
-  the world function and check against direct null-geodesic integration
-  to a pinned tolerance. Return a **verified error interval for `sigma`
-  per arm**, not a value, so §5.1's undecided set is well defined; report
-  `ambiguous_fraction` and the precision-escalation policy with its cost.
-  Verify per pair that both arms' intervals are box-contained and inside
-  `|Du| < pi/sqrt(A)` (§4.2, §4.3).
-- **P2. The volume prediction.** Axis-pair interval cardinalities in the
-  curved arm must match the `V_A/V_0` quadrature of §4.4 within Poisson
-  error (`1.00400047` at `wT = 1`, `1.07300802` at `wT = 2`). This
-  replaces the dead C0: a number, not a silence.
+- **P1. Causality, and the two admissibility rules.** Implement
+  `p prec q` in the constant-`A` slab from the world function and check
+  against direct null-geodesic integration to a pinned tolerance. Return
+  a **verified error interval for `sigma` per arm**, not a value, so
+  §5.1's undecided set is well defined; report `ambiguous_fraction` and
+  the precision-escalation policy with its cost. Assert the frozen slab
+  extent is under `pi/sqrt(A)` so no pair needs a conjugate-point filter
+  (§4.3). Derive and report §4.6's **Class C guard inset** in closed
+  form, and the eligible-pair fraction it leaves — Class R keeps every
+  pair and `C(N, 2)`.
+- **P2. The volume prediction, with the right error model (R3.2).**
+  Axis-pair interval cardinalities in the curved arm must match the
+  `V_A/V_0` quadrature of §4.4 (`1.00400047` at `wT = 1`, `1.07300802`
+  at `wT = 2`), over Class C eligible pairs only. This replaces the dead
+  C0: a number, not a silence.
+
+  **"Within Poisson error" was underspecified and, read naively, wrong.**
+  `N_A` and `N_0` are counts over two OVERLAPPING regions of the SAME
+  realization, so they are correlated and independent-Poisson errors do
+  not apply. For a Poisson process the covariance is exact:
+
+      Cov(N_A, N_0) = rho * Vol(I_A  intersect  I_0)
+      Var(N_A - N_0) = rho * Vol(I_A  triangle  I_0)
+
+  — the paired difference sees only the SYMMETRIC DIFFERENCE volume, far
+  less than the `rho (V_A + V_0)` a naive independent model would give.
+  Both of the following are fixed here, and P2 reports both:
+
+  1. **Marginal check per arm.** Each arm's count is compared against
+     its own known mean `rho V_A` and `rho V_0` under a marginal Poisson
+     model. Independent per arm, so the standard error is standard, and
+     this is the check that the sprinkling and the volumes are right.
+  2. **Paired ratio.** The uncertainty on `N_A / N_0` is estimated
+     **between independent sprinklings** (§5.2), which captures the
+     covariance without assuming a form for it. The analytic
+     `Vol(I_A triangle I_0)` above is the CROSS-CHECK that the
+     implementation's paired error is the right size, not a substitute
+     for the empirical estimate.
 - **P3. Discriminability.** For a ladder of `A` and slab sizes, measure
   the §5 statistics in order — `D` first, reported as
   `[D_lower, D_upper]` with `ambiguous_fraction` and the gained/lost
@@ -678,7 +842,31 @@ to confront the small-diamond expansion that P12 §10.1 refused. S1
 measures the causality cost only; the volume question is separate and
 unaddressed.
 
-### 8.2 Exit conditions
+### 8.2 Exploration and confirmation do not share seeds (R3.4)
+
+P0 through P4 and S1 are **exploratory**: they may look at every curve,
+compare candidate statistics, and pick the operating point, the primary
+statistic, the guard inset and the ambiguity policy. The freeze that
+follows may set gates from what they found — that is what a probe is
+for, and §5's "may not be chosen after seeing its curves" governs a gate
+chosen inside a frozen design, not a probe choosing what to freeze.
+
+**The line between the two is the seed block, and it is fixed here
+rather than left to the freeze:**
+
+> **Confirmation runs on a fresh seed block disjoint from every seed the
+> probe consumed.** No sprinkling that informed the choice of statistic,
+> operating point, guard inset, ambiguity policy, or threshold may
+> appear in the confirmatory sample.
+
+The repository already enforces exactly this shape —
+`assert_windows_disjoint_and_fresh` in the P12/P13 runners aborts on a
+window collision — and the eventual preregistration inherits that
+machinery rather than reinventing it. Recording the rule now is what
+keeps the probe's freedom to explore from quietly becoming a licence to
+tune and confirm on the same data.
+
+### 8.3 Exit conditions
 
 If P3 finds no separation at achievable sizes, P14 closes there, cheaply
 and honestly — phrased as instrument-and-density scope per §7, with S1's
@@ -743,13 +931,23 @@ own interval construction rather than inheriting P12's.
    `[D_lower, D_upper]` too wide to decide anything is still a dead
    probe, and the escalation to interval arithmetic has a cost nobody
    has measured. **Assigned:** §8 P1.
-5. Whether the same-points pairing tightens the interval enough to
+5. The Class C guard inset of §4.6 in closed form, and what fraction of
+   pairs it leaves eligible. If volume-type statistics survive on only a
+   thin interior population, that is a real cost of §5's items 2 and 3 —
+   and since those are the statistics carrying the single-poset claim
+   (§7, R3.3), it bears directly on what the probe can conclude.
+   **Assigned:** §8 P1.
+6. Whether the same-points pairing tightens the interval enough to
    offset the interval rule's cost, measured **between sprinklings**
    (§5.2). The benchmark it must beat is §6.1's `3.76x` at 90% power,
    not the `1.38x` break-even. **Assigned:** §8 P4.
-6. What the diamond volume is in a Schwarzschild patch, if S1 says the
+7. What the diamond volume is in a Schwarzschild patch, if S1 says the
    causality cost is affordable. §3's standing refusal of unverified
    expansion coefficients applies, and this draft has no answer.
+8. Whether the single-poset statistics (§5 items 2 and 3) reach any
+   useful sensitivity at all. §7 now rests the only observer-relevant
+   claim on them, so a design where `D` separates and they do not is a
+   live and reportable outcome rather than a failure.
 
 ## References named by reviews R1 and R2
 
