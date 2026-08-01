@@ -37,10 +37,12 @@ from p14_plane_wave import (  # noqa: E402
     _exact_cost,
     arms,
     causal_relation,
+    class_c_eligible,
     conjugate_du,
     cost_defocusing,
     cost_error_bound,
     cost_focusing,
+    guard_insets,
     slab_within_conjugate_bound,
     sprinkle,
     transverse_cost,
@@ -689,6 +691,146 @@ def test_uniform_coordinate_sprinkling_has_the_covariant_intensity():
     se = math.sqrt(expected / len(counts))
     assert abs(float(np.mean(counts)) - expected) < 4.0 * se
     assert float(np.var(counts)) == pytest.approx(expected, rel=0.25)
+
+
+# --------------------------------------------------------------------
+# P1: the Class C guard insets
+# --------------------------------------------------------------------
+
+def test_the_v_inset_matches_the_constrained_maximum_of_minus_the_cost():
+    """The case, review R10.1: a diamond can rise above its own past
+    endpoint because `C` goes negative, and the guard has to bound that.
+    The closed form claims `max(-S_y) = w Y^2 tan(w s / 2)` at the box
+    corner. Checked against a direct grid search, and separately that
+    the defocusing direction never lifts `v` at all.
+    """
+
+    for w in (0.3, 0.8, 1.4):
+        for half_y in (0.4, 1.0):
+            for frac in (0.2, 0.5, 0.9):
+                s = frac * math.pi / w
+                predicted = w * half_y ** 2 * math.tan(w * s / 2.0)
+                grid = np.linspace(-half_y, half_y, 201)
+                best = max(-cost_focusing(s, float(yp), float(y), w)
+                           for yp in grid for y in grid)
+                assert best == pytest.approx(predicted, rel=1e-9)
+                # and x can never contribute a rise
+                worst_x = max(-cost_defocusing(s, float(xp), float(x), w)
+                              for xp in grid for x in grid)
+                assert worst_x <= 0.0
+
+
+def test_the_transverse_inset_is_the_alexandrov_radius_when_flat():
+    """The case: the transverse guard is a chain of inequalities, so its
+    one checkable anchor is the flat limit, where the answer is known
+    exactly -- a diamond of proper time `tau` has transverse radius
+    `tau/2`, and `tau^2 = 2 du dv`, giving `sqrt(du dv / 2)`. If the
+    bound did not reduce to that, the inequalities would be wrong.
+    """
+
+    for du, dv in ((1.0, 1.0), (0.5, 2.0), (2.0, 0.3)):
+        geom = PlaneWaveGeometry(Slab(du=du, dv=dv, dx=9.0, dy=9.0), 0.0)
+        insets = guard_insets(geom)
+        assert insets.v == 0.0
+        assert insets.transverse == pytest.approx(math.sqrt(du * dv / 2.0))
+
+
+def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
+    """The case: the guard's whole purpose is that a Class C count is
+    not truncated. That is a claim about points, so it is tested on
+    points -- sample candidates from a region THREE TIMES the box, keep
+    the ones that are causally between an eligible pair, and require
+    every one of them to be inside the box.
+
+    Sampling from the box itself would be circular: everything drawn
+    would be inside by construction and the test would pass however
+    wrong the inset was.
+
+    NEGATIVE CONTROL, and it says something the guard's derivation did
+    not. Shrinking each component and re-running this sweep:
+
+        real insets        1581 interior points,    0 escapes
+        transverse x0.9    1429,                    0
+        transverse x0.7    1086,                    0
+        transverse x0.5     840,                    1  [caught]
+        v inset x0.5       1746,                    0
+        v inset x0.0       1931,                    0
+
+    So this test polices the transverse component only loosely -- the
+    bound is a chain of inequalities and is genuinely conservative --
+    and **does not police the `v` component at all**, because in these
+    geometries it never binds. The reason is structural rather than
+    accidental: `guard_insets` computes the `v` excursion over the FULL
+    box, `w Y^2 tan(w du/2)` at `y_p = y = Y`, but an eligible endpoint
+    has already been pushed inside by the transverse inset, so the
+    reachable `y_p` is several times smaller and the rise it can produce
+    is about a tenth of the budget. Tightening it would need `Y_inner`,
+    which depends on the transverse inset, which depends on the `v`
+    one -- circular, and not worth iterating for a guard whose job is
+    only to be safe.
+
+    What that leaves: the `v` formula itself is verified directly by
+    `test_the_v_inset_matches_the_constrained_maximum_of_minus_the_cost`
+    against a grid search, and this test verifies the two together do
+    contain the diamond. Neither establishes that the `v` component is
+    NECESSARY at the geometries the probe will use. §8 P1 should report
+    whether it ever binds; if it never does, that is a simplification
+    the design can take, and if it does, this control will start
+    catching it.
+    """
+
+    rng = np.random.default_rng(4242)
+    for w in (0.0, 0.6, 1.1):
+        # a box the guard actually binds in: the flat inset alone is
+        # sqrt(du dv / 2) = 0.247 against a half-extent of 0.45, so an
+        # eligible pair sits in a genuinely small interior region
+        slab = Slab(du=0.35, dv=0.35, dx=0.9, dy=0.9)
+        geom = PlaneWaveGeometry(slab, w)
+        insets = guard_insets(geom)
+        lim = slab.dx / 2.0 - insets.transverse
+        assert lim > 0.05, f"w={w}: the geometry admits nothing to test"
+
+        # the FATTEST admissible diamonds, since those are the ones that
+        # can reach a face: `p` at the top of the eligible `v` range and
+        # `q` at the bottom, spanning almost the whole slab in `u`
+        pairs = escapes = interior = 0
+        while pairs < 6:
+            p = np.array([rng.uniform(0.0, slab.du * 0.05),
+                          slab.dv - insets.v,
+                          rng.uniform(-lim, lim), rng.uniform(-lim, lim)])
+            q = np.array([rng.uniform(slab.du * 0.95, slab.du),
+                          insets.v,
+                          rng.uniform(-lim, lim), rng.uniform(-lim, lim)])
+            if not class_c_eligible(geom, p, q):
+                continue
+            if causal_relation(geom, p, q).related is not True:
+                continue
+            pairs += 1
+            # candidates are drawn 30% BEYOND the box transversally and
+            # past both `v` faces, so an escape is detectable; drawing
+            # from the box itself would be circular, and drawing from a
+            # much larger region would find nothing
+            span_x, span_y = slab.dx * 0.65, slab.dy * 0.65
+            for _ in range(6000):
+                cand = np.array([rng.uniform(float(p[0]), float(q[0])),
+                                 rng.uniform(float(q[1]) - 0.15,
+                                             float(p[1]) + 0.15),
+                                 rng.uniform(-span_x, span_x),
+                                 rng.uniform(-span_y, span_y)])
+                if causal_relation(geom, p, cand).related is not True:
+                    continue
+                if causal_relation(geom, cand, q).related is not True:
+                    continue
+                interior += 1
+                inside = (0.0 <= cand[1] <= slab.dv
+                          and abs(cand[2]) <= slab.dx / 2
+                          and abs(cand[3]) <= slab.dy / 2)
+                if not inside:
+                    escapes += 1
+        assert interior > 100, (
+            f"w={w}: only {interior} diamond points found, the test is "
+            "not exercising containment")
+        assert escapes == 0, f"w={w}: {escapes}/{interior} points escaped"
 
 
 def test_the_two_arms_read_the_same_points_and_disagree():

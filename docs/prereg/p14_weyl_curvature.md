@@ -536,12 +536,25 @@ truncated count.
   The inset must therefore include `max(-C)` over the admissible
   region.
 - **That maximum must be taken over the COMPACT box, not analytically
-  in the open.** Minimising `S_y` over an interior `y` gives
-  `-(w y_p^2 / 2) tan(w Du)` at `y = y_p / cos(w Du)`, which diverges as
-  `w Du -> pi/2` — well before the conjugate point at `pi`. What keeps
-  it finite is the box's own `|y| <= dy/2`, so the bound is a
-  constrained maximum over the frozen geometry and it is one more thing
-  the operating point's `fraction` has to buy.
+  in the open** — and doing so changes where it diverges, which the
+  first version of this bullet got wrong. Minimising `S_y` over an
+  unconstrained interior `y` gives `-(w y_p^2/2) tan(w Du)` at
+  `y = y_p / cos(w Du)`, blowing up at `w Du -> pi/2`; but that `y`
+  leaves the box first, so the configuration is unattainable. **Over
+  the box the maximum is `w (dy/2)^2 tan(w Du / 2)`, at the corner
+  `y_p = y = dy/2`** (P1, verified against a grid search), and it
+  diverges at `w Du -> pi` — the conjugate point, which is the natural
+  place. The `pi/2` claim is withdrawn.
+- **Implemented and measured (P1).** `guard_insets` returns both
+  components in closed form; the transverse one reduces exactly to the
+  Alexandrov radius `sqrt(du dv / 2)` in the flat limit. A containment
+  sweep confirms no diamond point escapes the box for an eligible pair.
+  Its negative control also found that **the `v` component never binds
+  in the geometries tested** — shrinking it to zero produces no escapes
+  — because the transverse inset has already pushed eligible endpoints
+  far enough in that the reachable `y_p` is several times below `dy/2`.
+  Whether it ever binds at the probe's operating point is a question
+  §8 P1 must answer; if it does not, the design can drop it.
 - **The inset is the SAME in both arms** and is taken from the binding
   arm — the curved one, whose defocusing direction gives the larger
   transverse excursion and whose focusing direction is the only source

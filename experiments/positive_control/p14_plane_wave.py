@@ -479,6 +479,112 @@ def sprinkle(geometry: PlaneWaveGeometry, rho: float,
     return pts
 
 
+# --------------------------------------------------------------------
+# P1: the Class C guard insets (design §4.6), in closed form
+# --------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class GuardInsets:
+    """How far inside the box a Class C pair's endpoints must sit.
+
+    Design §4.6: statistics that COUNT sprinkled points inside a
+    causally defined region are biased if the region leaves the box, so
+    their eligible pairs are decided by insetting the endpoints rather
+    than by inspecting each diamond. Class R statistics use neither of
+    these and keep every pair.
+    """
+
+    transverse: float
+    v: float
+
+
+def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
+    """Both components, from the Jacobi propagators (design §4.6).
+
+    The two costs factor usefully as
+
+        S_x(s; a, b) = (w/2) coth(w s) (b-a)^2 + w tanh(w s/2) a b
+        S_y(s; a, b) = (w/2) cot (w s) (b-a)^2 - w tan (w s/2) a b
+
+    **The `v` inset** exists because `C` can be negative, so a diamond
+    can rise ABOVE its own past endpoint (R10.1). Only the focusing
+    direction does it: `max(-S_x) < 0` for every configuration, while
+    maximising `-S_y` over the box `|y_p|, |y| <= Y` gives, at the
+    corner `y_p = y = Y`,
+
+        max(-S_y) = w Y^2 tan(w s / 2),
+
+    increasing in `s`, so the bound is that at `s = du`. Note where it
+    diverges: at `w du = pi`, the conjugate point -- NOT at `pi/2`,
+    which is where the UNCONSTRAINED interior optimum
+    `-(w y_p^2/2) tan(w s)` blows up. That optimum needs
+    `|y| = |y_p / cos(w s)|`, which leaves the box first, and the
+    constrained maximum is the one that governs. The v0.8 text said
+    `pi/2`; it was describing an unattainable configuration.
+
+    **The transverse inset** comes from the membership condition
+    `C_p + C_q <= Dv`. Bounding the two negative focusing terms by the
+    above and the cross terms by `w tanh(w du/2) X^2` each, and using
+    `coth(z) >= 1/z` so `S_x >= (b-a)^2 / (2 s)` less that cross term,
+
+        (|x - x_p| + |x - x_q|)^2 <= 2 du K,
+        K = Dv + 2 w Y^2 tan(w du/2) + 2 w tanh(w du/2) X^2
+
+    after minimising the left side over the split of `du` between the
+    two legs. Hence an excursion of at most `sqrt(du K / 2)` beyond the
+    endpoints. It is deliberately conservative -- a guard that is too
+    tight silently truncates, a guard that is too loose only costs
+    eligible pairs -- and the flat limit is exact: `K = dv` gives
+    `sqrt(du dv / 2)`, the Alexandrov diamond's transverse radius.
+
+    **[TO VERIFY at probe time]** what fraction of pairs this leaves
+    eligible. The flat limit alone is `sqrt(du dv / 2)`, so the box has
+    to be far wider transversally than the diamonds it holds, and §5's
+    Class C statistics may end up living on a thin interior population.
+    That is a measurement §8 P1 owes, not an assumption.
+    """
+
+    slab, w = geometry.slab, geometry.w
+    half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
+    if w == 0.0:
+        v_inset = 0.0
+        budget = slab.dv
+    else:
+        a = w * slab.du
+        v_inset = w * half_y * half_y * math.tan(a / 2.0)
+        budget = (slab.dv + 2.0 * v_inset
+                  + 2.0 * w * math.tanh(a / 2.0) * half_x * half_x)
+    return GuardInsets(transverse=math.sqrt(slab.du * budget / 2.0),
+                       v=v_inset)
+
+
+def class_c_eligible(geometry: PlaneWaveGeometry,
+                     p: np.ndarray, q: np.ndarray) -> bool:
+    """Is this pair eligible for a Class C (counting) statistic?
+
+    Both endpoints must sit inside the inset sub-box. The rule is a
+    deterministic function of the frozen geometry and the coordinates,
+    never of the realized data (design §4.6) -- and it is the SAME rule
+    in both arms, taken from the curved one, so the two arms keep a
+    common eligible set (§4.1).
+
+    Class R statistics do not call this: they take every pair.
+    """
+
+    insets = guard_insets(geometry)
+    slab = geometry.slab
+    x_lim = slab.dx / 2.0 - insets.transverse
+    y_lim = slab.dy / 2.0 - insets.transverse
+    if x_lim <= 0.0 or y_lim <= 0.0:
+        return False
+    for point in (p, q):
+        if abs(float(point[2])) > x_lim or abs(float(point[3])) > y_lim:
+            return False
+        if not (insets.v <= float(point[1]) <= slab.dv - insets.v):
+            return False
+    return True
+
+
 def arms(slab: Slab, w: float) -> tuple[PlaneWaveGeometry, PlaneWaveGeometry]:
     """The curved and flat readings of one slab, both validated.
 
