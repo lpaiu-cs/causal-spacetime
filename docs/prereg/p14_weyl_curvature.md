@@ -1,6 +1,6 @@
 # P14: which pure-order statistic reads a pure-Weyl deformation, and at what density? — design draft
 
-Status: **DESIGN DRAFT v0.3 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
+Status: **DESIGN DRAFT v0.4 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
 HAS RUN. NOTHING IS FROZEN.** Two deterministic design checks HAVE run and
 are committed beside this document (`docs/prereg/p14_checks/`), because an
 output pasted into prose is not a check; their frozen, stamped copies move
@@ -66,6 +66,35 @@ accepted, none cosmetic:**
   `n = 4`; in `n = 3` the obstruction to conformal flatness is the
   Cotton tensor, a different channel and a different design. §2. Status
   line and §9 reproducibility fixed (scripts committed).
+
+**R2 (2026-08-01, in-session): physics design PASSED; two P1 defects,
+both fixed here. No redesign.**
+
+- **R2.1** `D`'s undecided pairs had no construction, only an
+  acknowledged tension — and a fixed exclusion band would have removed
+  the near-cone population that carries the entire signal, then reported
+  the removal as a small `D`. Replaced by an interval construction:
+  verified error interval for `sigma` per arm, either arm's interval
+  containing zero marks the pair `ambiguous`, denominator stays
+  `C(N, 2)`, and `[D_lower, D_upper]` is reported with
+  `ambiguous_fraction`. A band that eats the signal now shows as a wide
+  bracket, never as a null. Conditional `D` is diagnostic only;
+  escalation is adaptive precision, never a wider tolerance. §5.1.
+- **R2.2** `D` is a pair-dependent **U-statistic** over one point set,
+  so treating `C(N, 2)` pairs as independent samples would understate
+  its standard error by a factor growing with `N`. The replication unit
+  is the **sprinkling**, everywhere, for every quantity derived from
+  `D`. §5.2, and §8 P3/P4 rewritten to match.
+- **R2.3** §6.1 quoted the **break-even** `n` (`1538`) as the price a
+  design must pay. Break-even is 50% power by construction. At P12's own
+  90% convention the number is **`4204`**, `3.76x` rather than `1.38x`,
+  and the frozen cap of `1300` is exceeded 3.2 times over rather than
+  marginally. Corrected here and in `AGENTS.md`, with a simulation check
+  (`0.499 / 0.801 / 0.901` at `n = 1538 / 3141 / 4206`). §6.1.
+- **R2.4 (accepted, upgrade not defect)** The axis-volume `A^2` response
+  has a closed coefficient: `V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)`,
+  confirmed independently here and now asserted by the committed check.
+  §4.4. The `D`-versus-scalar hierarchy stays `[TO VERIFY]`.
 
 ---
 
@@ -296,12 +325,23 @@ boundary. Three consequences:
   is §8 P2 — an implementation check with a number on it, not a silence
   test. The flat arm needs no control at all: it IS the reference, on
   the same points.
-- **The excess is quadratic in `A`** (quartic in `wT`; the committed
-  check asserts the growth), consistent with the small-diamond
-  expansion's leading corrections being `R` and `R_00` (Roy, Sinha &
-  Surya 2013, arXiv:1212.0631) — both identically zero here. The volume
-  channel responds at second order. This is exactly why §5 does not
-  lead with a volume-type statistic.
+- **The excess is quadratic in `A` with a closed coefficient** (R2,
+  confirmed by the committed check):
+
+      V_A / V_0 = 1 + (wT)^4 / 252 + O((wT)^8)
+
+  The check asserts `(V_A/V_0 - 1)/(wT)^4 -> 1/252 = 0.003968253968`
+  over `wT in [0.15, 0.5]` and that the residual scales as `(wT)^4`
+  (coefficient `~3.2e-5`), ruling out a `(wT)^6` term. Below
+  `wT ~ 0.1` the excess falls under `1e-9` and double-precision
+  cancellation against 1 dominates, so the window is chosen where
+  physics rather than arithmetic is the limit.
+
+  This is consistent with the small-diamond expansion's leading
+  corrections being `R` and `R_00` (Roy, Sinha & Surya 2013,
+  arXiv:1212.0631) — both identically zero here — so the volume channel
+  responds only at second order. It is exactly why §5 does not lead with
+  a volume-type statistic, and it is now a number rather than a trend.
 
 ### 4.5 The profile stays, and why (R1.4)
 
@@ -367,6 +407,68 @@ statistics' behaviour, never a primary claim, unless a future design
 reconstructs the polarization axes from order data alone — which would
 be its own result and its own preregistration.
 
+### 5.1 Undecided pairs, and why `D` is reported as an interval (R2.1)
+
+`D` lives exactly where the predicate is hardest: a flip happens at the
+cone, and the cone is where `sigma ~ 0` and floating point runs out. A
+fixed exclusion band would therefore remove the signal-carrying
+population and could report the removal as a small `D` — a null
+manufactured by the tolerance. The construction below makes that failure
+mode unrepresentable.
+
+**Definition.** For each pair and **each arm**, compute not a value of
+`sigma` but a **verified error interval** for it. If either arm's
+interval contains zero, that pair is `ambiguous`: its relation is
+undecided at the achieved precision, and no verdict is imputed to it.
+
+**Reporting, and the denominator does not move.** `C(N, 2)` stays the
+denominator throughout. Report three numbers together, never one:
+
+    D_lower              = (definite flips) / C(N,2)
+    D_upper              = (definite flips + ambiguous) / C(N,2)
+    ambiguous_fraction   = (ambiguous) / C(N,2)
+
+`D_lower` assumes every undecided pair agrees between the arms;
+`D_upper` assumes every one of them flips. The truth is bracketed by
+construction. **If the band eats the signal, that shows up as a wide
+`[D_lower, D_upper]`, never as a small `D`.**
+
+**A conditional `D` restricted to decided pairs may be reported and may
+not be primary.** It conditions on an outcome correlated with the
+quantity being measured — precision fails preferentially near the cone,
+which is where flips are — so it is a diagnostic, in the sense item 4
+above uses the word.
+
+**When ambiguity is high, buy precision, not tolerance.** The response
+to a large `ambiguous_fraction` is adaptive precision or interval
+arithmetic on the offending pairs — never a wider fixed band, which
+trades a measurable quantity for an invisible one. The escalation policy
+and its cost are part of what §8 P1 must report.
+
+The same construction applies to the gained/lost split, which inherits
+`ambiguous` from the pair-level classification rather than resolving it
+by fiat.
+
+### 5.2 `D` is a U-statistic: the resampling unit is the sprinkling (R2.2)
+
+`D` is an average over `C(N, 2)` pairs drawn from **one** point set, and
+those pairs share points. They are not independent samples, and treating
+them as such would understate `D`'s standard error by a factor that grows
+with `N` — millions of pairs presenting as millions of degrees of
+freedom when the actual replication is one sprinkling.
+
+**Therefore: every uncertainty attached to `D`, `D_lower`, `D_upper`,
+`ambiguous_fraction`, or the gained/lost split is computed across
+independent sprinklings, and never across pairs within a sprinkling.**
+The sprinkling is the sampling unit; `N` buys resolution inside one
+sample, not replication. Effect size per sample in §8 P3 means per
+sprinkling, and the power section that follows sizes the number of
+sprinklings.
+
+This is the same defect class as P11's C10 (a statistic that dropped the
+twin's variance) and P12's fixed-denominator bootstrap, caught here
+before it can be implemented rather than after.
+
 ## 6. The interval-versus-point rule, settled before it can be convenient
 
 P12 §9.3 handed over a second, separable lever "available now at no
@@ -399,31 +501,61 @@ Rationale:
   interval rule is **stricter**, so adopting it cannot be a way to rescue a
   marginal result later.
 
-### 6.1 What it would have cost P12, computed rather than asserted
+### 6.1 What it would have cost P12 — break-even is not the design number (R2.3)
 
 The rule was adopted with its price on the table, read out of
-`p12_stage_b_summary.json` rather than estimated:
+`p12_stage_b_summary.json`. **The v0.3 draft then quoted the wrong price**:
+it gave the break-even `n` and called it what a design must size for.
+Review R2 caught the conflation, and the correction is a factor of three,
+not a rounding.
 
-| | value |
-|---|---|
-| realized top-rung recovery | `0.1708` |
-| realized 95% CI | `[0.0784, 0.2644]` |
-| effective standard error | `0.0474` (record: margin `1.67 sigma`) |
-| SE needed for the interval to clear `0.25` | `0.0404` |
-| implied `n` multiplier (`SE ~ 1/sqrt n`) | `1.38x` |
-| implied `n` per rung per arm | **`1538`** |
-| P12's frozen cap `N_CAP` | `1300` |
+Realized inputs: recovery `0.1708`, 95% CI `[0.0784, 0.2644]`, effective
+`SE = 0.0474` (the record's `1.67 sigma` margin against `t = 0.25`), at
+`n = 1117` per rung per arm.
 
-**Under this rule P12 would have declared itself INFEASIBLE** — not because
-the result was wrong, but because it could not afford the sentence it
-wanted to write. That is the rule working, and it is stated here so no
-later design can adopt it believing it is free.
+**Break-even** is the `n` at which the realized point estimate's interval
+just touches the threshold: `SE <= (t - theta)/1.96 = 0.0404`, giving
+`n = 1538`, i.e. `1.38x`. A design sized there passes **half the time** —
+by construction, since the interval lands exactly on the line. It is a
+description of what happened, never a sizing target.
+
+**Power-sized** is what a preregistration owes. P12's own convention is
+90% (`N_SUP_COEFF` carries `1.960 + 1.282`, and the equivalence slot's
+`1.645` is already the two-sided quantile for `beta = 0.10`), so applying
+the house convention to the recovery gate:
+
+| target power | `SE` needed | `n` per rung per arm | vs the `1117` run |
+|---|---|---|---|
+| break-even (**50%**) | `0.0404` | `1538` | `1.38x` |
+| 80% | `0.02827` | `3141` | `2.81x` |
+| **90% (house convention)** | `0.02443` | **`4204`** | **`3.76x`** |
+| 95% | `0.02197` | `5200` | `4.66x` |
+
+Verified by direct simulation, not by the closed form alone: pass rates
+`0.499 / 0.801 / 0.901` at `n = 1538 / 3141 / 4206`.
+
+**Under this rule P12 would have declared itself INFEASIBLE**, and by a
+wide margin rather than a narrow one: its frozen cap was `N_CAP = 1300`,
+which break-even already exceeds and the 90%-power number exceeds **3.2
+times over**. Not because the result was wrong, but because it could not
+afford the sentence it wanted to write. That is the rule working, and it
+is stated here — with the right number — so no later design adopts it
+believing it is cheap.
+
+Two caveats on the arithmetic, since this is a design-stage estimate:
+`SE ~ 1/sqrt(n)` and normal-theory intervals stand in for what is
+actually a bootstrap CI, and the power figures are conditioned on the
+true value sitting at P12's realized `0.1708`. A real design substitutes
+its own design value and its own interval construction. Neither caveat
+touches the finding: break-even is 50% power, and the gap to a house
+90% is a factor of `2.7` in `n` on top of it.
 
 Note also where P12's `n` came from: `n_sup = 101`, `n_eq = 1117`, both
 from the **rate** gate. The recovery gate's precision was never a sizing
 constraint and simply came along. Under the interval rule it becomes one,
-and on these numbers it becomes the **binding** one. Every design from here
-sizes for its accuracy gate explicitly.
+and on these numbers it becomes the **binding** one by a large factor.
+Every design from here sizes its accuracy gate for **power**, states the
+target explicitly, and may not quote a break-even `n` as if it were one.
 
 ### 6.2 Why the cost is smallest exactly where the rule first binds
 
@@ -435,9 +567,11 @@ fluctuation cancels in the paired difference, so the interval should be
 materially tighter at equal `n` — which is to say the design that first has
 to pay for this rule is the one where it is cheapest.
 
-**[TO VERIFY]** That is a reasoned expectation, not a measurement. §8's
-probe must report the paired variance directly; if the pairing does not
-deliver, the power section pays the full `1.38x` and says so.
+**[TO VERIFY]** That is a reasoned expectation, not a measurement. §8 P4
+must report the paired variance directly, **between sprinklings** per
+§5.2; if the pairing does not deliver, the power section pays the full
+`3.76x` of §6.1 — the 90%-power figure, not the `1.38x` break-even — and
+says so.
 
 **This is not retroactive.** P12's record stands as written, on the point
 rule it froze. §9.3 already says so and this document does not reopen it.
@@ -461,9 +595,17 @@ Per §10.9's discipline, stated now rather than after a verdict:
   The exactness of the measure is what makes the experiment clean and
   what makes it unrepresentative of generic `Weyl != 0` spacetimes.
   Generalizing beyond type N is a different design (§8.1).
-- The `O(|A|)`-vs-`O(A^2)` hierarchy of §5 is a heuristic until P3
-  measures it. If the primary statistic underperforms it, that finding
-  is reported, not absorbed.
+- The `O(|A|)`-vs-`O(A^2)` hierarchy of §5 is a heuristic for `D` versus
+  generic scalars until P3 measures it, and stays labelled that way. The
+  axis-volume case is the exception and is no longer a heuristic: its
+  `A^2` response has a closed coefficient, `V_A/V_0 = 1 + (wT)^4/252 +
+  O((wT)^8)` (§4.4). If the primary statistic underperforms the
+  heuristic, that finding is reported, not absorbed.
+- A wide `[D_lower, D_upper]` is a **precision** result, not a physics
+  result, and may not be reported as either a detection or a null. §5.1
+  exists so the two cannot be confused, and §8 P1 must show the
+  ambiguous fraction is small enough for the bracket to decide anything
+  before P3's numbers mean what they appear to.
 
 ## 8. What comes next, and it is a probe, not a stage
 
@@ -480,23 +622,29 @@ freeze and with nothing frozen**:
   the true 4-volume in the slab (it must, given `sqrt(-g) = 1`; this is
   an implementation check, not a physics one).
 - **P1. Causality.** Implement `p prec q` in the constant-`A` slab from
-  the world function; check against direct null-geodesic integration to
-  a pinned tolerance; publish the near-null ambiguity band and apply it
-  identically in both arms; verify per pair that both arms' intervals
-  are box-contained and inside `|Du| < pi/sqrt(A)` (§4.2, §4.3).
+  the world function and check against direct null-geodesic integration
+  to a pinned tolerance. Return a **verified error interval for `sigma`
+  per arm**, not a value, so §5.1's undecided set is well defined; report
+  `ambiguous_fraction` and the precision-escalation policy with its cost.
+  Verify per pair that both arms' intervals are box-contained and inside
+  `|Du| < pi/sqrt(A)` (§4.2, §4.3).
 - **P2. The volume prediction.** Axis-pair interval cardinalities in the
   curved arm must match the `V_A/V_0` quadrature of §4.4 within Poisson
   error (`1.00400047` at `wT = 1`, `1.07300802` at `wT = 2`). This
   replaces the dead C0: a number, not a silence.
 - **P3. Discriminability.** For a ladder of `A` and slab sizes, measure
-  the §5 statistics in order — `D` with its gained/lost split first —
-  on the same point sets, and report effect size per sample with
-  uncertainties. **No gates, no verdicts** — characterization, in the
-  sense P10 §6 uses the word. This is also where the `O(|A|)` heuristic
-  for `D` and the `O(A^2)` suppression of scalars get measured.
-- **P4. Paired variance.** Report the variance of the paired difference
-  directly, so §6.2's expectation is measured rather than assumed and
-  the power section knows what the interval rule actually costs here.
+  the §5 statistics in order — `D` first, reported as
+  `[D_lower, D_upper]` with `ambiguous_fraction` and the gained/lost
+  split (§5.1) — on the same point sets, over **independent sprinklings**
+  as the replication unit (§5.2). Effect size per sample means per
+  sprinkling. **No gates, no verdicts** — characterization, in the sense
+  P10 §6 uses the word. This is also where the `O(|A|)` heuristic for
+  `D` and the `O(A^2)` suppression of scalars get measured.
+- **P4. Paired variance.** Report the between-sprinkling variance of the
+  paired difference directly, so §6.2's expectation is measured rather
+  than assumed and the power section — which sizes a NUMBER OF
+  SPRINKLINGS, not a number of pairs — knows what the interval rule
+  actually costs here.
 
 ### 8.1 The second probe: what a general `Weyl != 0` spacetime would cost
 
@@ -568,8 +716,16 @@ flat-limit check (wT=1e-3): 1.000000000000
 wT=1: V_A/V_0 = 1.00400047   (pinned 1.00400047)
 wT=2: V_A/V_0 = 1.07300802   (pinned 1.07300802)
 excess ratio (quartic => 16): 18.25
+leading coefficient -> 1/252 = 0.003968253968, next term (wT)^8 with coefficient ~3.22e-05
 => the volume channel is NOT silent; C0 as drafted is dead: PASS
 ```
+
+**Not a committed check, and named so it is not mistaken for one:** the
+break-even-versus-power figures of §6.1 were computed and simulated at
+draft stage but are arithmetic on P12's frozen artifact, not a property
+of this design. They belong to the power section of the eventual
+preregistration, which must derive them for its own design value and its
+own interval construction rather than inheriting P12's.
 
 ## 10. Open questions this draft does not answer
 
@@ -582,18 +738,20 @@ excess ratio (quartic => 16): 18.25
    diagnostic to a claim).
 3. The cost of deciding causality per pair. **Assigned:** §8 P1 for the
    plane wave, §8.1 S1 for Schwarzschild.
-4. The near-null ambiguity band: how wide it must be for correctness,
-   and what fraction of pairs it excludes at campaign densities — a
-   band that eats the near-cone population would eat `D`'s signal with
-   it. **Assigned:** §8 P1.
+4. What `ambiguous_fraction` actually is at campaign densities. §5.1
+   makes a large one visible rather than silent, but a bracket
+   `[D_lower, D_upper]` too wide to decide anything is still a dead
+   probe, and the escalation to interval arithmetic has a cost nobody
+   has measured. **Assigned:** §8 P1.
 5. Whether the same-points pairing tightens the interval enough to
-   absorb the interval rule's cost, or whether the power section pays
-   the full `1.38x` of §6.1. **Assigned:** §8 P4.
+   offset the interval rule's cost, measured **between sprinklings**
+   (§5.2). The benchmark it must beat is §6.1's `3.76x` at 90% power,
+   not the `1.38x` break-even. **Assigned:** §8 P4.
 6. What the diamond volume is in a Schwarzschild patch, if S1 says the
    causality cost is affordable. §3's standing refusal of unverified
    expansion coefficients applies, and this draft has no answer.
 
-## References named by review R1
+## References named by reviews R1 and R2
 
 - D. Malament, J. Math. Phys. 18, 1399 (1977); S. W. Hawking, A. R. King,
   P. J. McCarthy, J. Math. Phys. 17, 174 (1976) — causal structure

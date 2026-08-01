@@ -72,18 +72,29 @@ threshold after seeing the data, in the opposite direction and equally
 forbidden. So the rule is fixed here, in advance, for designs that do not
 yet exist.
 
-**What it costs, computed on the case that forced it rather than asserted.**
-At P12 Stage B's realized variance (effective `SE = 0.0474`), clearing
-`0.25` with the whole interval needs `SE <= 0.0404`, i.e. `1.38x` the
-samples: `n = 1538` per rung per arm against the `1117` actually run — and
-against P12's own frozen cap of `1300`. **Under this rule P12 would have
-declared itself infeasible.** Adopt it knowing that, or do not adopt it.
+**Size it for POWER, and never quote break-even as the price.** These are
+different numbers and confusing them silently halves a design's power —
+the first draft of this rule did exactly that, and review caught it. At
+P12 Stage B's realized variance (effective `SE = 0.0474`, margin
+`1.67 sigma` against `0.25`, `n = 1117`):
+
+| | `n` per rung per arm | |
+|---|---|---|
+| break-even — interval just touches the line | `1538` | **50% power** |
+| 80% power | `3141` | |
+| **90% power** (this repository's convention) | **`4204`** | `3.76x` the run |
+
+**Under this rule P12 would have declared itself infeasible** — its frozen
+cap was `1300`, which break-even already exceeds and the 90% number
+exceeds 3.2x over. Adopt it knowing that, or do not adopt it.
 
 Note where P12's `n` came from: `n_sup = 101` and `n_eq = 1117`, both from
 the **rate** gate. The recovery gate's precision was never a sizing
 constraint and simply came along for free. Under this rule it becomes one,
-and on those numbers the binding one. **Every design from here sizes for
-its accuracy gate explicitly, in the power section, before any data.**
+and on those numbers the binding one by a large factor. **Every design
+from here sizes its accuracy gate for a stated target power, in the power
+section, before any data.** Derivation and simulation check:
+`docs/prereg/p14_weyl_curvature.md` §6.1.
 
 Three things this rule is not:
 

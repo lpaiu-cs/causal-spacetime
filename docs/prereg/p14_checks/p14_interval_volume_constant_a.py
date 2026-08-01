@@ -74,8 +74,29 @@ assert abs(r2 - 1.07300802) < 1e-7, f"wT=2: {r2:.8f}"
 excess_ratio = (r2 - 1.0) / (r1 - 1.0)
 assert excess_ratio > 16.0, f"sub-quartic growth: {excess_ratio:.2f}"
 
+# The leading coefficient, supplied by review R2 and confirmed here:
+#     V_A / V_0 = 1 + (wT)^4 / 252 + O((wT)^8)
+# This upgrades "quadratic in A" from a scaling observation to a closed
+# number, so §4.4 quotes a coefficient rather than a trend. The window
+# matters: above wT ~ 0.5 the (wT)^8 term is visible, and below wT ~ 0.1
+# the ratio minus one falls to ~1e-9 where double-precision cancellation
+# against 1 dominates -- the check is made where the physics, not the
+# arithmetic, is the limit.
+LEADING = 1.0 / 252.0
+for wT in (0.5, 0.3, 0.2, 0.15):
+    c = (volume_ratio(wT) - 1.0) / wT ** 4
+    assert abs(c - LEADING) < 2.1e-6, f"wT={wT}: coefficient {c:.12f}"
+
+# and the next term is (wT)^8, not (wT)^6: the residual over (wT)^4 is
+# flat across that window, which it would not be at sixth order
+resid = [((volume_ratio(wT) - 1.0) / wT ** 4 - LEADING) / wT ** 4
+         for wT in (0.5, 0.3, 0.2, 0.15)]
+assert max(resid) / min(resid) < 1.1, f"next term is not (wT)^8: {resid}"
+
 print("flat-limit check (wT=1e-3):", f"{flat:.12f}")
 print(f"wT=1: V_A/V_0 = {r1:.8f}   (pinned 1.00400047)")
 print(f"wT=2: V_A/V_0 = {r2:.8f}   (pinned 1.07300802)")
 print(f"excess ratio (quartic => 16): {excess_ratio:.2f}")
+print(f"leading coefficient -> 1/252 = {LEADING:.12f}, "
+      f"next term (wT)^8 with coefficient ~{np.mean(resid):.2e}")
 print("=> the volume channel is NOT silent; C0 as drafted is dead: PASS")
