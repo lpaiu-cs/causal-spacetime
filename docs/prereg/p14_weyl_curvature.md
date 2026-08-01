@@ -1,11 +1,21 @@
 # P14: can curvature reach the causal order without passing through the measure? — design draft
 
-Status: **DESIGN DRAFT v0.1 (2026-08-01). NOTHING IS FROZEN AND NOTHING HAS
+Status: **DESIGN DRAFT v0.2 (2026-08-01). NOTHING IS FROZEN AND NOTHING HAS
 BEEN RUN.** This document argues a spacetime choice and a discriminability
 probe. It deliberately does not state gates, thresholds, sample sizes, or
 seed windows: those belong in a freeze that follows Section 8's probe, and
 writing them now would fix numbers against a construction whose
 discriminability is still unmeasured.
+
+Two decisions taken 2026-08-01, both recorded here with their price:
+
+- **Both probes run** (§8, §8.1). The plane wave carries the
+  discriminability question; a separate, narrow Schwarzschild measurement
+  prices the generalization path so a type-N null result is not reported
+  as if no alternative existed.
+- **The interval rule is adopted** (§6), house-wide in `AGENTS.md`, with
+  the computation showing it would have made P12 itself infeasible under
+  P12's own cap (§6.1).
 
 Dates are local (UTC+9, Asia/Seoul).
 
@@ -250,10 +260,11 @@ passed; an interval rule would not have. §9.3 refused to re-score:
 
 That refusal was right, and it leaves a decision owed to the next design.
 
-**Proposal, for review: an accuracy claim gates on the interval, and the
-choice is made once, as a house rule, not per design.**
+**ADOPTED 2026-08-01: an accuracy claim gates on the interval, and the
+choice is made once, as a house rule, not per design.** The rule now lives
+in `AGENTS.md` so it binds every subsequent design, not only P14.
 
-Rationale, and the honest cost of it:
+Rationale:
 
 - The threshold in a recovery gate is a claim about accuracy — "this
   instrument recovers `R tau^2` to 25%". A point estimate that clears 0.25
@@ -261,22 +272,52 @@ Rationale, and the honest cost of it:
   confidence the rest of the record is quoted at. Every other number in
   §9.3 is reported with an interval; the one number that decides the
   verdict should not be the exception.
-- **It costs power, and the cost is quantified rather than waved at.** P12
-  disclosed `1.92 sigma` of headroom pre-run and realized `1.67 sigma`. An
-  interval rule at the same threshold demands the whole interval inside,
-  which at that variance is a materially larger `n`. A design adopting this
-  rule must size for it up front — which is exactly why it belongs in the
-  power section of a preregistration and not in a verdict table written
-  afterwards.
 - It is directional and must be applied in the direction that hurts: an
   interval rule is **stricter**, so adopting it cannot be a way to rescue a
   marginal result later.
 
+### 6.1 What it would have cost P12, computed rather than asserted
+
+The rule was adopted with its price on the table, read out of
+`p12_stage_b_summary.json` rather than estimated:
+
+| | value |
+|---|---|
+| realized top-rung recovery | `0.1708` |
+| realized 95% CI | `[0.0784, 0.2644]` |
+| effective standard error | `0.0474` (record: margin `1.67 sigma`) |
+| SE needed for the interval to clear `0.25` | `0.0404` |
+| implied `n` multiplier (`SE ~ 1/sqrt n`) | `1.38x` |
+| implied `n` per rung per arm | **`1538`** |
+| P12's frozen cap `N_CAP` | `1300` |
+
+**Under this rule P12 would have declared itself INFEASIBLE** — not because
+the result was wrong, but because it could not afford the sentence it
+wanted to write. That is the rule working, and it is stated here so no
+later design can adopt it believing it is free.
+
+Note also where P12's `n` came from: `n_sup = 101`, `n_eq = 1117`, both
+from the **rate** gate. The recovery gate's precision was never a sizing
+constraint and simply came along. Under the interval rule it becomes one,
+and on these numbers it becomes the **binding** one. Every design from here
+sizes for its accuracy gate explicitly.
+
+### 6.2 Why the cost is smallest exactly where the rule first binds
+
+P12's two arms were **separate sprinklings on disjoint seed blocks**, so
+the ratio `Q_hat` carries both arms' fluctuations independently.
+
+In this design the two arms are the **same points** (§4.1). The common
+fluctuation cancels in the paired difference, so the interval should be
+materially tighter at equal `n` — which is to say the design that first has
+to pay for this rule is the one where it is cheapest.
+
+**[TO VERIFY]** That is a reasoned expectation, not a measurement. §8's
+probe must report the paired variance directly; if the pairing does not
+deliver, the power section pays the full `1.38x` and says so.
+
 **This is not retroactive.** P12's record stands as written, on the point
 rule it froze. §9.3 already says so and this document does not reopen it.
-
-If accepted, the rule belongs in `AGENTS.md` as a house rule so it binds
-every subsequent design, not only P14.
 
 ## 7. What this design does NOT claim, written before there is anything to protect
 
@@ -322,12 +363,51 @@ prereg freeze and with nothing frozen**:
   `A != 0` from `A = 0` **on the same point set**, and with what effect
   size per sample. Report curves with uncertainties. **No gates, no
   verdicts** — this is characterization, in the sense P10 §6 uses the word.
+- **P4. Paired variance.** Report the variance of the paired difference
+  directly, so §6.2's expectation is measured rather than assumed and the
+  power section knows what the interval rule actually costs here.
+
+### 8.1 The second probe: what a general `Weyl != 0` spacetime would cost
+
+Decided 2026-08-01: the plane-wave probe runs, **and so does a separate,
+narrower measurement on Schwarzschild.** The reason is §7's honest limit —
+plane waves are Petrov type N, and a null result there cannot distinguish
+"the thesis holds" from "this family is too special". Leaving the
+generalization path unpriced until after the first probe would repeat the
+mistake the Wang-Landau record names: porting a kernel before measuring the
+exponent that decides whether the port is worth anything.
+
+This probe does **not** run a campaign and does not need one. It answers
+one question:
+
+- **S1. Cost of causality.** Implement `p precedes q` in a Schwarzschild
+  patch by null-geodesic integration and measure the wall-clock per pair
+  and its scaling. Compare against the sprinkling sizes P11–P13 operated
+  at (`n` in the low thousands per rung, so `O(n^2)` relations per sample).
+  Report a price, not a verdict.
+
+Two things follow from S1 regardless of P3's outcome. If the price is
+affordable, Schwarzschild becomes the generalization stage and the
+type-N limitation is a temporary one. If it is not, that number is what
+closes the general-`Weyl` path for now, in the same quantified way the
+tunneling exponent closed Wang-Landau — and a plane-wave null result then
+has to be reported with a limitation that is **priced**, not merely named.
+
+The Section 3 obstacle stands and S1 does not resolve it: Schwarzschild has
+no closed-form diamond volume, so a campaign there would still have to
+confront the small-diamond expansion that §10.1 refused. S1 measures the
+causality cost only; the volume question is separate and unaddressed.
+
+### 8.2 Exit conditions
 
 If P3 finds no separation at achievable sizes, P14 closes there, cheaply
 and honestly, and the programme's thesis remains a hypothesis with a
-documented reason. If it does separate, P3's effect sizes are what the
-power section of the actual preregistration is built from — power-first,
-as P11 through P13 all were.
+documented reason — with S1's price attached, so the closure records what
+the alternative would have cost rather than implying none existed. If it
+does separate, P3's effect sizes and P4's paired variance are what the
+power section of the actual preregistration is built from — power-first, as
+P11 through P13 all were, and now sized for an interval-rule accuracy gate
+per §6.
 
 ## 9. The Section 4 verification, in full
 
@@ -369,8 +449,15 @@ not committed by this draft, because this draft freezes nothing.
    statistics blind by symmetry, and whether a profile without that symmetry
    would be a better or a less standard choice.
 3. The cost of deciding causality per pair, which sets whether the campaign
-   sizes P11–P13 operated at are reachable here at all.
+   sizes P11–P13 operated at are reachable here at all. **Assigned:** §8 P1
+   for the plane wave, §8.1 S1 for Schwarzschild.
 4. Whether the non-global-hyperbolicity of the family can be confined to a
    patch constraint cleanly enough to survive review, or whether it must be
    escaped by a sandwich profile (`A(u)` compactly supported), which
    restores global hyperbolicity at the price of a `u`-dependent profile.
+5. Whether the same-points pairing of §4.1 tightens the interval enough to
+   absorb the interval rule's cost, or whether the power section pays the
+   full `1.38x` of §6.1. **Assigned:** §8 P4.
+6. What the diamond volume is in a Schwarzschild patch, if S1 says the
+   causality cost is affordable. §3's standing refusal of unverified
+   expansion coefficients applies, and this draft has no answer.
