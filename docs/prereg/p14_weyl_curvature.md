@@ -1,6 +1,6 @@
 # P14: which pure-order statistic reads a pure-Weyl deformation, and at what density? — design draft
 
-Status: **DESIGN DRAFT v0.6 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
+Status: **DESIGN DRAFT v0.7 (2026-08-01). NO STOCHASTIC PROBE OR CAMPAIGN
 HAS RUN. NOTHING IS FROZEN.** Two deterministic design checks HAVE run and
 are committed beside this document (`docs/prereg/p14_checks/`), because an
 output pasted into prose is not a check; their frozen, stamped copies move
@@ -167,6 +167,36 @@ guard rule reached back into the claim. Four items, all fixed here.**
   constants and tests. "P12/P13 runners" corrected. §8.2. Also: §4.6 had
   been inserted into the middle of §4.5, splitting the quadrupole
   discussion; moved below it.
+
+**R5 (2026-08-01, in-session): P1s all cleared; one P2 estimand and two
+stale sentences. No redesign.**
+
+- **R5.1 (P2)** §8 P2 still estimated the uncertainty of the per-sample
+  ratio `N_A / N_0`. Wrong estimand: with a finite Poisson denominator
+  `E[N_A/N_0] != V_A/V_0` and `N_0 = 0` has positive probability, so the
+  per-sample ratio is biased and adding sprinklings does not fix it. The
+  right quantity was already in the document as a cross-check and is now
+  the test: per sprinkling `Z = N_A - r N_0` with `r = V_A/V_0`,
+  `E[Z] = 0` exactly, empirical uncertainty from the between-sprinkling
+  variance of `Z`, analytic `Var(Z)` as the cross-check **of the same
+  quantity**, and the ratio reported secondarily as a pooled
+  `sum N_A / sum N_0`. §8 P2.
+- **R5.2 (P3)** §10 q5 still said items 2 and 3 carry the single-poset
+  claim — v0.5 wording that contradicts §4.6.2, §5, §7 and its own
+  neighbour q8. Rewritten: a thin retained fraction costs the
+  single-arm diagnostics, not the claim, whose lever is q9.
+- **R5.3 (P3)** §4.4 still said the volume prediction is checked "within
+  Poisson error", the phrase R3.2 replaced. It now points at §8 P2's
+  marginal-plus-residual protocol directly.
+
+**The pattern R5 exposes, recorded because it is the fourth instance:**
+every round of this review found the corrected claim consistent at the
+site of the correction and stale at a downstream consumer — §7's
+assignment after R3, §10 q5 after R4, §4.4 after R3.2. Naming a risk is
+not a mechanism (R2), a mechanism must be verified across the
+statistic's whole input boundary (R4), and **a changed claim boundary
+must be searched for in the open questions and every downstream
+consumer, not only fixed where it was found (R5).**
 
 ---
 
@@ -407,12 +437,16 @@ boundary. Three consequences:
   volume channel is not silent, and a control built on its silence
   would have failed on a correct implementation, which is the worst
   kind of control.
-- **What replaces it is stronger: a quantitative prediction.** The
-  curved arm's mean interval cardinality over axis-pair diamonds must
-  match `V_A/V_0` at the sprinkled density within Poisson error. That
-  is §8 P2 — an implementation check with a number on it, not a silence
-  test. The flat arm needs no control at all: it IS the reference, on
-  the same points.
+- **What replaces it is stronger: a quantitative prediction.** Interval
+  cardinalities over axis-pair diamonds must reproduce the ratio
+  `r = V_A/V_0` at the sprinkled density. **The test is §8 P2's
+  marginal-plus-residual protocol** — each arm against its own marginal
+  Poisson mean, and the paired residual `Z = N_A - r N_0` against zero —
+  **not "within Poisson error"**, which is what v0.5 said here and is
+  wrong for two counts taken over overlapping regions of one
+  realization (R3.2, R5.1). An implementation check with a number on it,
+  not a silence test. The flat arm needs no control at all: it IS the
+  reference, on the same points.
 - **The excess is quadratic in `A` with a closed coefficient** (R2,
   confirmed by the committed check):
 
@@ -922,21 +956,37 @@ freeze and with nothing frozen**:
      per arm" was the wrong phrase for the right check. Each comparison
      stands on its own marginal and neither borrows the other's; this is
      the check that the sprinkling and the volumes are right.
-  2. **Paired ratio, with a cross-check matched to it.** The uncertainty
-     on `N_A / N_0` is estimated **between independent sprinklings**
-     (§5.2), which captures the covariance without assuming a form for
-     it. The analytic cross-check must be the residual the ratio
-     actually tests, and v0.5 quoted the wrong one:
-     `Var(N_A - N_0) = rho Vol(I_A triangle I_0)` is exact for the RAW
-     difference but is not what `N_A / N_0` measures. With the predicted
-     ratio `r = V_A / V_0`, the zero-mean residual is
+  2. **Paired residual — the primary check, and the ratio is derived
+     from it (R5.1).** v0.6 estimated the uncertainty of the per-sample
+     ratio `N_A / N_0` between sprinklings. That is the wrong estimand:
+     for a finite Poisson denominator `E[N_A / N_0] != V_A / V_0`, and
+     `N_0 = 0` has positive probability, so the per-sample ratio is
+     biased and more sprinklings do not remove it. The design already
+     contained the right quantity and used it only as a cross-check.
+     Promoted:
 
-         N_A - r * N_0,     E[N_A - r N_0] = 0,
-         Var(N_A - r N_0) = rho ( V_A + r^2 V_0 - 2 r Vol(I_A ∩ I_0) )
+     - **Primary.** Per sprinkling `i`, with the predicted ratio
+       `r = V_A / V_0`, form
 
-     and that variance is the cross-check on the implementation's paired
-     error. It is a check that the empirical between-sprinkling estimate
-     has the right size, never a substitute for making it.
+           Z_i = N_A,i - r * N_0,i
+
+       and test `E[Z] = 0`. `Z` is exactly zero-mean under the
+       prediction, is defined whatever `N_0` is, and needs no
+       denominator.
+     - **Empirical uncertainty.** The between-sprinkling variance of
+       `Z` (§5.2's replication unit, unchanged).
+     - **Analytic cross-check, now of the same quantity the test uses:**
+
+           Var(Z) = rho ( V_A + r^2 V_0 - 2 r Vol(I_A ∩ I_0) )
+
+       Because the primary test is `Z` rather than a ratio, the analytic
+       and empirical numbers are two estimates of ONE variance instead
+       of two descriptions of different things. `Var(N_A - N_0) =
+       rho Vol(I_A triangle I_0)` is exact for the raw difference and is
+       NOT this check, which is what v0.5 got wrong.
+     - **Ratio, reported secondarily.** As a pooled `sum N_A / sum N_0`
+       or an explicit ratio-of-means, never as a per-sample average of
+       ratios, and never as the primary test.
 - **P3. Discriminability.** For a ladder of `A` and slab sizes, measure
   the §5 statistics in order — `D` first, reported as
   `[D_lower, D_upper]` with `ambiguous_fraction` and the gained/lost
@@ -1081,11 +1131,11 @@ own interval construction rather than inheriting P12's.
    probe, and the escalation to interval arithmetic has a cost nobody
    has measured. **Assigned:** §8 P1.
 5. The Class C guard inset of §4.6 in closed form, and what fraction of
-   pairs it leaves eligible. If volume-type statistics survive on only a
-   thin interior population, that is a real cost of §5's items 2 and 3 —
-   and since those are the statistics carrying the single-poset claim
-   (§7, R3.3), it bears directly on what the probe can conclude.
-   **Assigned:** §8 P1.
+   pairs it leaves eligible. A thin retained population is a cost of the
+   **single-arm diagnostics** (§5 items 2 and 3b) and of §8 P2's
+   implementation check — **not** of §7's single-poset claim, which
+   rests on item 3a and needs no eligibility rule at all (§4.6.2, R4.1).
+   The claim-side lever is q9, not this one. **Assigned:** §8 P1.
 6. Whether the same-points pairing tightens the interval enough to
    offset the interval rule's cost, measured **between sprinklings**
    (§5.2). The benchmark it must beat is §6.1's `3.76x` at 90% power,
