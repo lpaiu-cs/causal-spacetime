@@ -32,6 +32,7 @@ EXPERIMENT_DIR = (
 sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p14_plane_wave import (  # noqa: E402
+    GuardInsets,
     PlaneWaveGeometry,
     Slab,
     _exact_cost,
@@ -44,6 +45,8 @@ from p14_plane_wave import (  # noqa: E402
     cost_error_bound,
     cost_focusing,
     guard_insets,
+    guard_margins,
+    max_negative_focusing,
     slab_within_conjugate_bound,
     sprinkle,
     trajectory_excursion,
@@ -706,6 +709,12 @@ def test_the_v_inset_matches_the_constrained_maximum_of_minus_the_cost():
     The closed form claims `max(-S_y) = w Y^2 tan(w s / 2)` at the box
     corner. Checked against a direct grid search, and separately that
     the defocusing direction never lifts `v` at all.
+
+    The rectangle case of R12 has three regimes rather than one -- the
+    interior optimum `y = y_p / cos a` is feasible only while
+    `y_p <= Y cos a` -- so it is checked over random rectangles too,
+    where getting a regime boundary wrong would show as the grid
+    beating the formula.
     """
 
     for w in (0.3, 0.8, 1.4):
@@ -717,10 +726,39 @@ def test_the_v_inset_matches_the_constrained_maximum_of_minus_the_cost():
                 best = max(-cost_focusing(s, float(yp), float(y), w)
                            for yp in grid for y in grid)
                 assert best == pytest.approx(predicted, rel=1e-9)
+                # the symmetric case must be the formula's own corner
+                assert max_negative_focusing(
+                    w * s, w, half_y, half_y) == pytest.approx(
+                        predicted, rel=1e-12)
                 # and x can never contribute a rise
                 worst_x = max(-cost_defocusing(s, float(xp), float(x), w)
                               for xp in grid for x in grid)
                 assert worst_x <= 0.0
+
+    rng = np.random.default_rng(20260802)
+    worst_over = 0.0
+    saw_interior = saw_corner = 0
+    for _ in range(120):
+        a = float(rng.uniform(0.05, 0.95)) * math.pi
+        w = float(rng.uniform(0.3, 1.5))
+        box = float(rng.uniform(0.5, 3.0))
+        anchor = box * float(rng.uniform(0.05, 1.0))
+        predicted = max_negative_focusing(a, w, anchor, box)
+        if math.cos(a) > 0.0 and anchor <= box * math.cos(a):
+            saw_interior += 1
+        else:
+            saw_corner += 1
+        gp = np.linspace(-anchor, anchor, 121)
+        gq = np.linspace(-box, box, 121)
+        best = max(-cost_focusing(a / w, float(yp), float(y), w)
+                   for yp in gp for y in gq)
+        worst_over = max(worst_over,
+                         (best - predicted) / max(abs(predicted), 1e-12))
+    assert worst_over < 1e-12, (
+        f"a grid beat the rectangle formula by {worst_over:.3e} relative")
+    assert saw_interior > 10 and saw_corner > 10, (
+        f"only one regime exercised: interior={saw_interior} "
+        f"corner={saw_corner}")
 
 
 def test_the_transverse_inset_is_the_alexandrov_radius_when_flat():
@@ -752,13 +790,13 @@ def test_the_focusing_direction_needs_its_own_inset():
     The excursion factor rises from `1.02 Y` at `w du = 0.4` to
     `5.88 Y` at `2.8`, so the geometry really does focus.
 
-    The two insets must differ once `w > 0`, and -- contrary to the
-    guess that focusing must cost more -- the focusing one comes out
-    SMALLER. That is not a bug: the `x` inset is the loose chain of
-    inequalities `sqrt(du K / 2)`, while the `y` inset solves the actual
-    reachability condition by bisection, so the tighter derivation wins.
-    Asserting the direction pins which is which; an earlier version had
-    it backwards, on the intuition rather than the arithmetic.
+    What is NOT pinned here is which inset is larger. I asserted a
+    fixed ordering twice and had it backwards both times; with the
+    coupled solve of R12.1 it is regime-dependent, because `x` is
+    computed from a budget that itself contains the `v` excursion that
+    the `y` solve determines. There is no ordering to pin. What can be
+    pinned is that the two are derived apart rather than one copied
+    onto the other.
     """
 
     for a in (0.4, 1.0, 2.0, 2.8):
@@ -767,16 +805,144 @@ def test_the_focusing_direction_needs_its_own_inset():
     assert (_focusing_excursion_factor(2.8)
             > _focusing_excursion_factor(0.4))
 
-    for w, du in ((0.6, 0.5), (1.1, 0.9), (0.9, 2.0)):
+    for w, du in ((0.6, 0.5), (1.1, 0.9), (0.4, 0.3)):
         geom = PlaneWaveGeometry(Slab(du=du, dv=0.4, dx=3.0, dy=3.0), w)
         insets = guard_insets(geom)
         assert insets.x != insets.y, (
             f"w={w} du={du}: the two insets are equal, so they were not "
             "derived apart")
-        assert insets.y < insets.x, (
-            f"w={w} du={du}: focusing inset {insets.y} exceeds defocusing "
-            f"{insets.x}; the bisection should be tighter than the "
-            "inequality chain")
+
+
+def test_the_asymmetric_v_bound_is_what_makes_the_guard_usable():
+    """The case, review R12.1: the first guard bounded `-S_y` over the
+    full box in BOTH arguments and solved the three components apart.
+    That is why a table of `lim_x` and `lim_y` could report a trend
+    while every row was already empty in `v` -- the analysis never
+    consumed the component it had just added.
+
+    The rectangle is the honest domain: the anchor is an eligible
+    endpoint, hence already inset, while the intermediate point ranges
+    over the whole box. This test pins that the distinction is
+    load-bearing rather than cosmetic -- the symmetric bound empties
+    all three geometries below, and the asymmetric one does not.
+    """
+
+    def admits(w, du):
+        slab = Slab(du=du, dv=0.4, dx=3.0, dy=3.0)
+        insets = guard_insets(PlaneWaveGeometry(slab, w))
+        symmetric = w * (slab.dy / 2.0) ** 2 * math.tan(w * du / 2.0)
+        eligible = (insets.x < 1.5 and insets.y < 1.5
+                    and 2.0 * insets.v < slab.dv)
+        return eligible, symmetric <= slab.dv / 2.0, insets.v, symmetric
+
+    for w, du, sym_ratio in ((0.6, 0.5, 3.2), (1.1, 0.9, 22.0)):
+        eligible, sym_ok, v_inset, symmetric = admits(w, du)
+        assert not sym_ok, (
+            f"w={w} du={du}: the symmetric bound admits this geometry, so "
+            "it is not a case where the asymmetry matters")
+        assert eligible, (
+            f"w={w} du={du}: the asymmetric bound should have rescued this")
+        assert v_inset <= symmetric / sym_ratio, (
+            f"w={w} du={du}: asymmetric v={v_inset} saves less than "
+            f"{sym_ratio}x on the symmetric {symmetric}")
+
+    # It is not unconditional rescue: the saving is a bounded factor,
+    # so a geometry far enough past the bound stays empty either way.
+    assert not admits(0.9, 2.0)[0] and not admits(0.9, 2.0)[1]
+
+
+def test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box():
+    """The case, review R12.1 and R12.2: §4.6.3 reported a table of two
+    margins at one box size, indexed by `a = w du` alone, and concluded
+    from it that eligibility empties near `a ~ 1` because the
+    defocusing condition closes first. Both halves were wrong. The
+    table omitted `v`; and `a` does not index the problem, because
+    scaling `w -> lambda w` with `du -> du/lambda` holds `a` fixed
+    while changing `w dv` and `w dx/2`, which move the margins.
+
+    Fixing `w = 1` (lengths in units of `1/w`) leaves four
+    dimensionless quantities, `a`, `w dv`, `w dx/2`, `w dy/2`, and this
+    pins the corrected picture over them. The conclusion that survives
+    is weaker and differently shaped: eligibility is non-empty well
+    past `a = 1` provided the box is chosen with it, `x` is the usual
+    binding condition but `v` binds too, and by `a = 2` no box size
+    tried recovers anything.
+    """
+
+    def margins(a, w_dv, w_half):
+        slab = Slab(du=a, dv=w_dv, dx=2 * w_half, dy=2 * w_half)
+        return guard_margins(PlaneWaveGeometry(slab, 1.0))
+
+    def admits(a, w_dv, w_half):
+        slab = Slab(du=a, dv=w_dv, dx=2 * w_half, dy=2 * w_half)
+        insets = guard_insets(PlaneWaveGeometry(slab, 1.0))
+        return (insets.x < w_half and insets.y < w_half
+                and 2.0 * insets.v < slab.dv)
+
+    # The slice §4.6.3 reported, now with `w` and the `v` margin
+    # present. The withdrawn claim said `lim_x` goes negative at
+    # `a = 1.0` and eligibility empties there; it does not, and it
+    # does not.
+    eligible = {a: admits(a, 0.2, 3.0) for a in (0.3, 0.6, 1.0, 1.6)}
+    assert eligible == {0.3: True, 0.6: True, 1.0: True, 1.6: False}, (
+        f"the corrected slice changed: {eligible}")
+
+    census = {"x": 0, "y": 0, "v": 0, "ok": 0}
+    for a in (0.2, 0.4, 0.7, 1.0, 1.4, 2.0):
+        for w_dv in (0.2, 1.0, 4.0, 16.0):
+            for w_half in (0.3, 1.0, 3.0):
+                if admits(a, w_dv, w_half):
+                    census["ok"] += 1
+                    continue
+                m_x, m_y, m_v = margins(a, w_dv, w_half)
+                worst = min(m_x, m_y, m_v)
+                census["x" if worst == m_x
+                       else "y" if worst == m_y else "v"] += 1
+    assert census == {"ok": 26, "x": 0, "y": 43, "v": 3}, census
+
+    # No box size tried admits anything at `a = 2`, and the reason
+    # changes with the box: small boxes close on the focusing reach,
+    # large ones close in `v`, because the `-S_y` bound grows with the
+    # box while `dv` does not. So it is not one condition that has to
+    # be relaxed to reach large `a` -- widening the box trades one for
+    # the other.
+    for w_half in (0.3, 1.0, 3.0, 10.0):
+        assert not admits(2.0, 4.0, w_half)
+    assert min(margins(2.0, 4.0, 0.3)) == margins(2.0, 4.0, 0.3)[1]
+    assert min(margins(2.0, 4.0, 10.0)) == margins(2.0, 4.0, 10.0)[2]
+
+
+def test_the_focusing_reach_binds_before_the_defocusing_chain_does():
+    """The case, review R12: the next step was to be conditional --
+    tighten the loose `x` chain of inequalities only if `x` turns out
+    to dominate. Measured over the dimensionless box, it does not. The
+    census above finds `y` binding in 43 of the 46 empty cells and `x`
+    in none, so tightening `x` would buy nothing.
+
+    The reason is structural, not an accident of the grid. At zero
+    anchor limit the two reaches share a budget `K` and differ only in
+    their prefactor,
+
+        y: sqrt(K tan(a/2) / w),     x: sqrt(K a / (2 w)),
+
+    whose ratio squared is `2 tan(a/2) / a > 1` for all `0 < a < pi`,
+    rising without bound at the conjugate point. The focusing side is
+    the larger reach before the trajectory term `alpha * Y_inner` is
+    added at all, and that term only widens the gap.
+    """
+
+    for a in (0.2, 0.5, 1.0, 2.0, 3.0):
+        ratio_sq = 2.0 * math.tan(a / 2.0) / a
+        assert ratio_sq > 1.0, a
+    assert 2.0 * math.tan(3.1 / 2.0) / 3.1 > 30.0
+
+    # and it is monotone, so no `a` in range reverses the ordering
+    prev = 0.0
+    for i in range(1, 200):
+        a = math.pi * i / 200.0
+        cur = 2.0 * math.tan(a / 2.0) / a
+        assert cur > prev, a
+        prev = cur
 
 
 def test_the_trajectory_excursion_is_exact_and_maximised_at_a_corner():
@@ -817,25 +983,26 @@ def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
     NEGATIVE CONTROL, and it says something the guard's derivation did
     not. Shrinking each component and re-running this sweep:
 
-        real insets        1581 interior points,    0 escapes
-        transverse x0.9    1429,                    0
-        transverse x0.7    1086,                    0
-        transverse x0.5     840,                    1  [caught]
-        v inset x0.5       1746,                    0
-        v inset x0.0       1931,                    0
+        real insets        1813 interior points,    0 escapes
+        transverse x0.9    1636,                    0
+        transverse x0.7    1290,                    0
+        transverse x0.5     965,                    1  [caught]
+        v inset x0.5       1839,                    0
+        v inset x0.0       1868,                    0
+
+    Two of those rows are executed below rather than quoted; the rest
+    are a record.
 
     So this test polices the transverse component only loosely -- the
     bound is a chain of inequalities and is genuinely conservative --
-    and **does not police the `v` component at all**, because in these
-    geometries it never binds. The reason is structural rather than
-    accidental: `guard_insets` computes the `v` excursion over the FULL
-    box, `w Y^2 tan(w du/2)` at `y_p = y = Y`, but an eligible endpoint
-    has already been pushed inside by the transverse inset, so the
-    reachable `y_p` is several times smaller and the rise it can produce
-    is about a tenth of the budget. Tightening it would need `Y_inner`,
-    which depends on the transverse inset, which depends on the `v`
-    one -- circular, and not worth iterating for a guard whose job is
-    only to be safe.
+    and **does not police the `v` component at all** in these
+    geometries, where the excursion the guard reserves for it is
+    `0.002` and `0.006` against `dv = 0.35`. That is now a statement
+    about the geometries and not about the guard: the `v` component is
+    computed over the honest rectangle since R12.1, and the earlier
+    version of this docstring called the full-box bound "not worth
+    iterating" one round before it turned out to be the difference
+    between an empty eligible set and a usable one.
 
     What that leaves: the `v` formula itself is verified directly by
     `test_the_v_inset_matches_the_constrained_maximum_of_minus_the_cost`
@@ -853,6 +1020,25 @@ def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
         "exercising containment")
     assert escapes == 0, f"{escapes}/{interior} diamond points escaped"
 
+    def shrunk(fx=1.0, fv=1.0):
+        def insets_fn(geom):
+            real = guard_insets(geom)
+            return GuardInsets(x=real.x * fx, y=real.y * fx, v=real.v * fv)
+        return insets_fn
+
+    caught_interior, caught = _containment_sweep(shrunk(fx=0.5))
+    assert caught > 0, (
+        f"halving the transverse inset leaked nothing in "
+        f"{caught_interior} points; this sweep polices nothing")
+
+    # and the row that says the sweep is blind to `v` here -- executed,
+    # so that if a geometry change ever makes `v` bind, this assertion
+    # fails and the docstring above stops being true silently
+    blind_interior, blind = _containment_sweep(shrunk(fv=0.0))
+    assert blind_interior > 100 and blind == 0, (
+        f"removing the v inset now leaks ({blind}/{blind_interior}); the "
+        "claim that these geometries do not exercise it is stale")
+
 
 def _containment_sweep(insets_fn):
     """Body of the containment test, shared with its negative control.
@@ -861,6 +1047,15 @@ def _containment_sweep(insets_fn):
     run the SAME sweep against a weakened guard (R11.2) rather than
     quoting numbers in a docstring that nothing executes. Returns
     `(interior_points, escapes)` summed over the geometries.
+
+    Review R12.3: eligibility is read off the insets THIS call was
+    given, not off `class_c_eligible`, which always consults the real
+    guard. The first version did the latter, so every weakened-`v` run
+    placed its endpoints outside the real guard's window and was thrown
+    out with zero eligible pairs -- the control reported "no escapes"
+    for a guard it had never actually run. When the insets are the real
+    ones the two predicates are asserted to agree, so reading them
+    locally does not quietly diverge from the pipeline.
     """
 
     rng = np.random.default_rng(4242)
@@ -876,6 +1071,15 @@ def _containment_sweep(insets_fn):
         lim_y = slab.dy / 2.0 - insets.y
         assert min(lim_x, lim_y) > 0.02, (
             f"w={w}: the geometry admits nothing to test")
+        assert slab.dv - 2.0 * insets.v > 0.02, (
+            f"w={w}: the v window is closed, nothing to test")
+        real = insets_fn(geom) == guard_insets(geom)
+
+        def admits(point, insets=insets, lim_x=lim_x, lim_y=lim_y,
+                   slab=slab):
+            return (abs(float(point[2])) <= lim_x
+                    and abs(float(point[3])) <= lim_y
+                    and insets.v <= float(point[1]) <= slab.dv - insets.v)
 
         # the FATTEST admissible diamonds, since those are the ones that
         # can reach a face: `p` at the top of the eligible `v` range and
@@ -896,7 +1100,12 @@ def _containment_sweep(insets_fn):
                           insets.v,
                           rng.uniform(-lim_x, lim_x),
                           rng.uniform(-lim_y, lim_y)])
-            if not class_c_eligible(geom, p, q):
+            ok = admits(p) and admits(q)
+            if real:
+                assert ok == class_c_eligible(geom, p, q), (
+                    "the local eligibility read has drifted from the "
+                    "pipeline predicate")
+            if not ok:
                 continue
             if causal_relation(geom, p, q).related is not True:
                 continue
@@ -943,15 +1152,26 @@ def test_a_weakened_focusing_guard_leaks_on_a_constructed_pair():
     where the trajectory bulges outward to `Y / cos(a/2)`. The opposite
     corner is the intuitive guess and reaches only `Y`, which is why an
     earlier version of this control found nothing.
+
+    Review R12.3: it also has to be a control on the PIPELINE, not just
+    on the arithmetic. The first version ran at `dy = 6`, where the
+    guard admits no pair at all, so `class_c_eligible` would have
+    rejected the constructed pair and a leak there could never have
+    reached a Class C count. Same `a = 1.2`, wider box, and the pair is
+    now put through the eligibility predicate itself.
     """
 
     w, du = 1.0, 1.2
-    slab = Slab(du=du, dv=6.0, dx=6.0, dy=6.0)
+    slab = Slab(du=du, dv=6.0, dx=16.0, dy=16.0)
     geom = PlaneWaveGeometry(slab, w)
     real = guard_insets(geom)
     half, a = slab.dy / 2.0, w * du
     sign_p, sign_q, alpha = worst_focusing_corner(a)
     assert alpha > 1.05, "the geometry must actually focus"
+    assert (real.x < slab.dx / 2.0 and real.y < half
+            and 2.0 * real.v < slab.dv), (
+        f"the guard admits nothing here ({real}), so a leak could never "
+        "reach a Class C count and this would not be a pipeline control")
 
     # rather than pick a magic shrink factor, find the largest one that
     # leaks. The claim being tested is that SOME shrinkage does -- i.e.
@@ -976,14 +1196,24 @@ def test_a_weakened_focusing_guard_leaks_on_a_constructed_pair():
 
     # and the pair really is causally related, so the peak really is a
     # diamond point rather than a curve nobody can traverse. The `v`
-    # separation is taken from the cost itself rather than from the
-    # slab's faces: `guard_insets`' own `v` component exceeds `dv` in
-    # this geometry, which is a separate looseness and not what this
-    # control is about.
+    # coordinates are placed inside the guard's own admissible window,
+    # so the pair is a pair the pipeline would actually count.
     cost = transverse_cost(du, 0.0, 0.0, sign_p * lim, sign_q * lim, w)
-    p = np.array([0.0, cost + 0.5, 0.0, sign_p * lim])
-    q = np.array([du, 0.0, 0.0, sign_q * lim])
+    q_v = real.v
+    p = np.array([0.0, q_v + cost + 1e-3, 0.0, sign_p * lim])
+    q = np.array([du, q_v, 0.0, sign_q * lim])
+    assert float(p[1]) <= slab.dv - real.v, (
+        "the constructed pair does not fit the admissible v window")
     assert causal_relation(geom, p, q).related is True
+
+    # THE POINT OF THE CONTROL: under the weakened guard this pair is
+    # eligible, so its diamond would be counted while part of it lies
+    # outside the box -- and under the real guard it is not.
+    assert abs(float(p[3])) <= half - real.y * lo
+    assert abs(float(p[3])) > half - real.y, (
+        "the constructed pair survives the real guard too, so the "
+        "control does not separate the two")
+    assert not class_c_eligible(geom, p, q)
 
     # the real guard keeps the same construction inside
     lim_real = half - real.y

@@ -534,7 +534,11 @@ truncated count.
   maximum over the endpoint box sits at a CORNER because the function is
   convex there. The maximising corner is the **same-sign** one, reaching
   `Y / cos(a/2)` — not the opposite-sign one, which reaches only `Y`.
-  Because the tighter derivation wins, `inset_y < inset_x`.
+  Which of the two insets comes out larger is regime-dependent and this
+  design no longer claims an ordering: it asserted one twice and had it
+  backwards both times, and since R12.1 made the components coupled,
+  `x` is computed from a budget that the `y` solve determines. What is
+  pinned instead is that they are derived apart.
 - **`v` component, and why it exists at all.** One would expect a
   diamond to lie between its endpoints' `v` coordinates, since future
   means decreasing `v`. It need not: membership in `J^+(p)` reads
@@ -556,16 +560,30 @@ truncated count.
   `y_p = y = dy/2`** (P1, verified against a grid search), and it
   diverges at `w Du -> pi` — the conjugate point, which is the natural
   place. The `pi/2` claim is withdrawn.
-- **Implemented and measured (P1).** `guard_insets` returns both
-  components in closed form; the transverse one reduces exactly to the
-  Alexandrov radius `sqrt(du dv / 2)` in the flat limit. A containment
-  sweep confirms no diamond point escapes the box for an eligible pair.
-  Its negative control also found that **the `v` component never binds
-  in the geometries tested** — shrinking it to zero produces no escapes
-  — because the transverse inset has already pushed eligible endpoints
-  far enough in that the reachable `y_p` is several times below `dy/2`.
-  Whether it ever binds at the probe's operating point is a question
-  §8 P1 must answer; if it does not, the design can drop it.
+- **And it is taken over a RECTANGLE, not that square (R12.1).** One of
+  the two arguments is an eligible endpoint, so it is already inset:
+  the honest domain is `|y_p| <= Y_inner`, `|y| <= Y`. The maximum then
+  has three regimes — the interior optimum `y = y_p / cos a` is
+  feasible only while `y_p <= Y cos a` — and comes out 3.2× to 22×
+  below the square's corner value in the geometries tested, which
+  §4.6.3 records as the difference between an empty eligible set and a
+  usable one.
+- **Implemented and measured (P1).** `guard_insets` returns all three
+  components; the transverse one reduces exactly to the Alexandrov
+  radius `sqrt(du dv / 2)` in the flat limit. It is **not a closed
+  form** (R12.4): `Y_inner` appears on both sides, so the guard has a
+  free parameter, and the operating point is the one maximising the
+  eligible coordinate volume — located by scan and refinement, with
+  every acceptance carrying a fixed relative margin so the insets can
+  only err **large**, costing eligible pairs and never admitting a pair
+  whose diamond leaves the box. A containment sweep confirms no diamond
+  point escapes for an eligible pair, and its negative control catches a
+  halved transverse inset. The control finds **the `v` component never
+  binds in the sweep's geometries** — removing it produces no escapes,
+  because they reserve `0.002` and `0.006` for it against `dv = 0.35`.
+  Whether it binds at the probe's operating point is §8 P1's to answer;
+  §4.6.3 finds it binding in 3 of 72 cells of the dimensionless box, so
+  it is not droppable on present evidence.
 - **The inset is the SAME in both arms** and is taken from the binding
   arm — the curved one, whose defocusing direction gives the larger
   transverse excursion and whose focusing direction is the only source
@@ -627,43 +645,93 @@ against the coordinate guard before anything rests on it, and selecting
 on interval cardinality directly is forbidden, since truncation biases
 that very quantity. **Assigned:** §8 P1.
 
-### 4.6.3 What P1 found: Class C may have no operating point at all
+### 4.6.3 Where Class C has an operating point (R12.1, R12.2)
 
-The insets are derived and implemented, and the eligible-pair question
-§8 P1 was asked to answer has a first answer. It is not a good one.
-Measured with `dv = 0.2`, `dx = dy = 6` (half-extent 3), varying
-`a = w du`:
+**Withdrawn.** The first version of this section reported a table of
+`lim_x` and `lim_y` at one box size, indexed by `a = w du`, and drew
+from it the conclusion that *eligibility empties out by `a ~ 1`, and it
+is the defocusing direction that closes first*. Both halves are false,
+and the way they were arrived at is worth recording because it is the
+same failure §10 keeps naming: the analysis did not consume the
+component the guard had just gained. The `v` inset had been added one
+round earlier (R10.1); the table left it out. With it included, **every
+row of that table was already ineligible**, so the trend it reported was
+a trend across configurations that all admit nothing.
 
-| `a` | excursion factor | `lim_x` | `lim_y` |
-|---|---|---|---|
-| 0.3 | 1.011 | 2.08 | 2.23 |
-| 0.6 | 1.047 | 1.18 | 1.54 |
-| 1.0 | 1.139 | **-0.03** | 0.71 |
-| 1.6 | 1.435 | -1.95 | **0.00** |
-| 2.5 | 3.171 | -6.33 | 0.00 |
+Two things were wrong beneath that.
 
-**Eligibility empties out by `a ~ 1`**, and it is the defocusing
-direction that closes first. The effect being measured grows with `a`
-(§4.4: the volume shift is `(wT)^4 / 252`), so the region where Class C
-admits pairs and the region where there is something to see may not
-overlap. If that holds up, §5's items 2 and 3b — the chain vectors and
-the diamond-based estimators — are not merely weaker than `D`, they are
-unusable, and §7's single-poset claim is left resting on item 3a alone
-with no fallback.
+**`a` does not index the problem (R12.2).** Rescaling `w -> λw` with
+`du -> du/λ` holds `a` fixed while changing `w·dv` and `w·dx/2`, and
+those move the margins. Fixing `w = 1`, so lengths are in units of
+`1/w`, the question has four dimensionless arguments — `a`, `w·dv`,
+`w·dx/2`, `w·dy/2` — and one column of one slice cannot answer it.
 
-**Not yet established, and it matters which way it goes:** whether a
-larger `dx, dy` at fixed `a` recovers eligibility (the insets grow with
-the box through the cross term, so this is not obvious), and whether the
-`x` inset's inequality chain is simply too loose to be worth believing
-here — unlike `y`, it was never tightened to the actual reachability
-condition. **Assigned:** §8 P1, and it should be answered before any
-design work rests on Class C.
+**The three conditions are coupled, and solving them apart loses the
+answer (R12.1).** The `v` excursion was bounded over the full box in
+both arguments, but one of them is an *eligible endpoint*, already inset
+by the guard being solved for. Bounding `max(-S_y)` over the honest
+rectangle `|y_p| ≤ Y_inner`, `|y| ≤ Y` instead cuts it by a factor of
+3.2 to 22 in the geometries tested, which is the difference between an
+empty eligible set and a usable one. `Y_inner` then appears on both
+sides, so the guard is solved jointly rather than component by
+component.
 
-**[TO VERIFY]** The `v` component is implemented and its formula is
-verified, but a negative control could not make it bind: shrinking it to
-zero produces no escapes, because the transverse inset has already
-pushed eligible endpoints far enough in. Whether it is ever necessary is
-open; if it is not, the design can drop it. **Assigned:** §8 P1.
+That joint solve exposes a free parameter this design did not know it
+had. Anchors further out in `y` cost both `x` room and `v` window, and
+there is no distinguished point on the trade-off. Maximising `y` — the
+obvious choice — spends the whole `v` window and leaves a region of
+**zero volume**, which satisfies every inequality and admits no pairs.
+The operating point is therefore chosen to maximise the eligible
+coordinate volume itself, which is also the quantity §8 P1 owes.
+
+**The corrected picture**, over `a ∈ {0.2 … 2.0}`, `w·dv ∈ {0.2 … 16}`,
+`w·dx/2 = w·dy/2 ∈ {0.3, 1, 3}` (72 cells, pinned in
+`test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box`):
+
+| | count | note |
+|---|---|---|
+| admits pairs | 26 | roomiest margin 54% of the half-extent |
+| empty, `y` binds | 43 | the focusing reach |
+| empty, `v` binds | 3 | large boxes only |
+| empty, `x` binds | 0 | — |
+
+The slice the withdrawn table used (`w = 1`, `dv = 0.2`, half-extent 3)
+admits pairs at `a = 0.3, 0.6, 1.0` and not at `1.6`. So Class C has an
+operating point past `a = 1`, provided the box is chosen with `a` rather
+than fixed independently of it, and §5's items 2 and 3b are not written
+off.
+
+**`a = 2` is empty at every box size tried**, and instructively so: small
+boxes close on the focusing reach, large ones close in `v`, because the
+`-S_y` bound grows with the box while `dv` does not. There is no single
+condition to relax — widening the box trades one for the other. The
+usable range in `a` is bounded above somewhere in `(1, 2)`, and since
+the effect grows as `(wT)^4/252`, **how much signal survives inside that
+range is the open question**, not whether any range exists.
+
+**The `x` inset is not what costs eligibility, so it will not be
+tightened.** R12 made that step conditional on `x` dominating; measured,
+it never binds. The reason is structural rather than a property of the
+grid: at zero anchor limit the two reaches share a budget `K` and differ
+only in prefactor, `sqrt(K tan(a/2)/w)` against `sqrt(K a/(2w))`, whose
+ratio squared is `2 tan(a/2)/a > 1` throughout `0 < a < π` and diverges
+at the conjugate point. The focusing side is larger before the
+trajectory term is added at all.
+
+**[TO VERIFY]** The eligible-pair *fraction* — the count above says
+where the region is non-empty, not how much of the box it is, and §5's
+Class C statistics may still live on a thin interior population.
+**Assigned:** §8 P1.
+
+**[TO VERIFY]** Whether the `v` component ever binds at the geometries
+the probe will actually use. Removing it entirely still produces no
+escapes in the containment sweep, whose geometries reserve `0.002` and
+`0.006` for it against `dv = 0.35` — but that is now a statement about
+those geometries, and the sweep above finds `v` binding in 3 cells. The
+earlier version of this section called the full-box `v` bound "not worth
+iterating" one round before it turned out to decide the answer; the
+control is executed rather than quoted, so a geometry that starts
+exercising it will say so. **Assigned:** §8 P1.
 
 ## 5. What the instrument reads, in probe order (R1.3)
 
@@ -1245,12 +1313,16 @@ own interval construction rather than inheriting P12's.
    `[D_lower, D_upper]` too wide to decide anything is still a dead
    probe, and the escalation to interval arithmetic has a cost nobody
    has measured. **Assigned:** §8 P1.
-5. The Class C guard inset of §4.6 in closed form, and what fraction of
-   pairs it leaves eligible. A thin retained population is a cost of the
-   **single-arm diagnostics** (§5 items 2 and 3b) and of §8 P2's
-   implementation check — **not** of §7's single-poset claim, which
-   rests on item 3a and needs no eligibility rule at all (§4.6.2, R4.1).
-   The claim-side lever is q9, not this one. **Assigned:** §8 P1.
+5. What fraction of pairs the Class C guard leaves eligible. §4.6.3
+   settles **where** the eligible set is non-empty over the four
+   dimensionless box ratios; it does not settle how much of the box it
+   is, and the guard is not a closed form — it has a free parameter set
+   by maximising that very fraction, so the two questions are the same
+   question. A thin retained population is a cost of the **single-arm
+   diagnostics** (§5 items 2 and 3b) and of §8 P2's implementation
+   check — **not** of §7's single-poset claim, which rests on item 3a
+   and needs no eligibility rule at all (§4.6.2, R4.1). The claim-side
+   lever is q9, not this one. **Assigned:** §8 P1.
 6. Whether the same-points pairing tightens the interval enough to
    offset the interval rule's cost, measured **between sprinklings**
    (§5.2). The benchmark it must beat is §6.1's `3.76x` at 90% power,

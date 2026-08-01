@@ -155,6 +155,18 @@ _SMALL_WS = 1e-4
 _EPS = 2.220446049250313e-16
 _OPS_PER_LEG = 16.0
 
+#: Relative room demanded of the guard's feasibility conditions, so
+#: that the bisected inset errs in a FIXED direction -- too large,
+#: costing eligible pairs -- rather than merely to within roundoff of
+#: the true root (R12.4). Thousands of ulps, still far below the
+#: sprinkling scale.
+_GUARD_SLACK = 1.0 + 1e-12
+
+#: Scan resolution for the guard's free parameter. The eligible volume
+#: is not guaranteed unimodal in it, so the bracket is found by scan
+#: before it is refined.
+_GUARD_SCAN = 256
+
 
 def _leg_cost_flat(s: float, dp: float, dq: float) -> float:
     return (dq - dp) ** 2 / (2.0 * s)
@@ -565,6 +577,31 @@ def _focusing_excursion_factor(a: float) -> float:
     return worst_focusing_corner(a)[2]
 
 
+def max_negative_focusing(a: float, w: float,
+                          anchor_limit: float, box_limit: float) -> float:
+    """`max(-S_y)` over `|y_p| <= anchor_limit`, `|y| <= box_limit`.
+
+    Maximising `2 y_p y - cos(a)(y_p^2 + y^2)` over the RECTANGLE, which
+    is what the geometry actually offers: the anchor is an eligible
+    endpoint and is already inset, while the intermediate point ranges
+    over the whole box. R12 asked for this; the symmetric version, with
+    both limits at `dy/2`, is between 1.8x and 12x too large.
+
+    Three regimes, all exact and verified against a grid to 3e-15:
+    `cos a <= 0` puts the maximum at the corner; otherwise the interior
+    optimum `y = y_p / cos a` is feasible while `y_p <= box cos a` and
+    gives `y_p^2 sin^2(a)/cos(a)`; past that it is the corner again.
+    """
+
+    cos_a, sin_a = math.cos(a), math.sin(a)
+    if cos_a > 0.0 and anchor_limit <= box_limit * cos_a:
+        bracket = anchor_limit * anchor_limit * sin_a * sin_a / cos_a
+    else:
+        bracket = (2.0 * anchor_limit * box_limit
+                   - cos_a * (anchor_limit ** 2 + box_limit ** 2))
+    return w * bracket / (2.0 * sin_a)
+
+
 def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     """Both components, from the Jacobi propagators (design §4.6).
 
@@ -576,15 +613,15 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     **The `v` inset** exists because `C` can be negative, so a diamond
     can rise ABOVE its own past endpoint (R10.1). Only the focusing
     direction does it: `max(-S_x) < 0` for every configuration, while
-    maximising `-S_y` over the box `|y_p|, |y| <= Y` gives, at the
-    corner `y_p = y = Y`,
-
-        max(-S_y) = w Y^2 tan(w s / 2),
-
-    increasing in `s`, so the bound is that at `s = du`. Note where it
-    diverges: at `w du = pi`, the conjugate point -- NOT at `pi/2`,
-    which is where the UNCONSTRAINED interior optimum
-    `-(w y_p^2/2) tan(w s)` blows up. That optimum needs
+    `max(-S_y)` over the RECTANGLE `|y_p| <= Y_inner`, `|y| <= Y` is
+    `max_negative_focusing`. The rectangle, not the square, is what the
+    geometry offers: the anchor is an eligible endpoint and so already
+    inset, while the intermediate point ranges over the whole box
+    (R12). Its symmetric special case is the corner value
+    `w Y^2 tan(w s / 2)`, increasing in `s`, so the bound is that at
+    `s = du`. Note where it diverges: at `w du = pi`, the conjugate
+    point -- NOT at `pi/2`, which is where the UNCONSTRAINED interior
+    optimum `-(w y_p^2/2) tan(w s)` blows up. That optimum needs
     `|y| = |y_p / cos(w s)|`, which leaves the box first, and the
     constrained maximum is the one that governs. The v0.8 text said
     `pi/2`; it was describing an unattainable configuration.
@@ -595,7 +632,7 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     `coth(z) >= 1/z` so `S_x >= (b-a)^2 / (2 s)` less that cross term,
 
         (|x - x_p| + |x - x_q|)^2 <= 2 du K,
-        K = Dv + 2 w Y^2 tan(w du/2) + 2 w tanh(w du/2) X^2
+        K = Dv + 2 max(-S_y) + 2 w tanh(w du/2) X^2
 
     after minimising the left side over the split of `du` between the
     two legs. Hence an excursion of at most `sqrt(du K / 2)` beyond the
@@ -618,10 +655,6 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
         return GuardInsets(x=flat, y=flat, v=0.0)
 
     a = w * slab.du
-    v_inset = w * half_y * half_y * math.tan(a / 2.0)
-    budget = (slab.dv + 2.0 * v_inset
-              + 2.0 * w * math.tanh(a / 2.0) * half_x * half_x)
-    x_inset = math.sqrt(slab.du * budget / 2.0)
 
     # The focusing direction (R11.1). The reachable `y` at split
     # `a_p + a_q = a` is bounded by the trajectory plus a spread:
@@ -637,32 +670,124 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     # `alpha` the corner maximum.
     #
     # `Y_inner = half_y - y_inset` appears on both sides, so the inset
-    # is the root of a monotone one-dimensional condition and is found
-    # by bisection rather than by a closed form. Solving it is what
-    # makes this a certificate instead of a hope.
+    # is NOT a closed form (R12.4). Nor is it the root of anything:
+    # R12.1 asked for the three components to be solved TOGETHER, and
+    # once they are, the guard turns out to have a free parameter.
     alpha = _focusing_excursion_factor(a)
     tan_half = math.tan(a / 2.0)
     cross = 2.0 * w * math.tanh(a / 2.0) * half_x * half_x
 
-    def reach(y_inner: float) -> float:
-        spread_budget = (slab.dv + cross
-                         + w * y_inner * y_inner * tan_half)
-        return (alpha * y_inner
-                + math.sqrt(max(spread_budget, 0.0) * tan_half / w))
+    # The coupling runs one way. Admitting anchors further out in `y`
+    # raises the asymmetric `max(-S_y)` -- the anchor is an eligible
+    # endpoint and so already inset, while the intermediate point
+    # ranges over the whole box -- and that excursion appears twice:
+    # once as the `v` window `dv - 2 v` the endpoints must fit in, and
+    # again inside the budget that sets the defocusing inset. So `y`
+    # room is BOUGHT with `x` room and `v` room, and there is no
+    # distinguished point on that trade-off curve.
+    #
+    # Maximising `y_inner` -- the first thing I tried -- spends the
+    # whole `v` window and leaves a region of zero volume, which
+    # satisfies every inequality and admits no pairs at all. The
+    # criterion has to be the quantity the statistic actually consumes,
+    # so it is the eligible coordinate volume itself, which is also
+    # what §8 P1 owes as a measurement.
+    def v_excursion(y_inner: float) -> float:
+        return max_negative_focusing(a, w, y_inner, half_y)
 
-    lo, hi = 0.0, half_y
-    if reach(0.0) > half_y:
-        y_inset = half_y          # nothing is eligible; class_c_eligible says so
-    else:
-        for _ in range(200):
-            mid = 0.5 * (lo + hi)
-            if reach(mid) <= half_y:
-                lo = mid
-            else:
-                hi = mid
-        y_inset = half_y - lo
+    def room(y_inner: float) -> tuple[float, float, float, float]:
+        """`(x_lim, y_room, v_window, v_inset)` at this anchor limit.
 
-    return GuardInsets(x=x_inset, y=y_inset, v=v_inset)
+        Every margin carries `_GUARD_SLACK` of relative room, so the
+        insets built from it can only err LARGE -- costing eligible
+        pairs, never admitting a pair whose diamond leaves the box.
+        Margins may be non-positive; the caller decides.
+        """
+
+        v_here = v_excursion(y_inner) * _GUARD_SLACK
+        budget = slab.dv + cross + 2.0 * v_here
+        reach = alpha * y_inner + math.sqrt(budget * tan_half / w)
+        return (half_x - math.sqrt(slab.du * budget / 2.0) * _GUARD_SLACK,
+                half_y - reach * _GUARD_SLACK,
+                slab.dv - 2.0 * v_here,
+                v_here)
+
+    def volume(y_inner: float) -> float:
+        x_lim, y_room, v_window, _ = room(y_inner)
+        if x_lim <= 0.0 or y_room <= 0.0 or v_window <= 0.0:
+            return 0.0
+        return 2.0 * x_lim * 2.0 * y_inner * v_window * slab.du
+
+    # Coarse scan then local refinement: the objective vanishes at both
+    # ends -- no `y` room at zero, no `v` window at the far end -- and
+    # is not guaranteed unimodal, so a bracket is found by scan rather
+    # than assumed.
+    grid = [half_y * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
+    best = max(range(len(grid)), key=lambda i: volume(grid[i]))
+    if volume(grid[best]) <= 0.0:
+        # Nothing is eligible at any anchor limit. Block on all three,
+        # not just the one that happens to bind: reporting a positive
+        # `y` limit here would let pairs through the very condition
+        # that emptied the set.
+        return GuardInsets(x=half_x, y=half_y, v=slab.dv)
+
+    lo = grid[max(best - 1, 0)]
+    hi = grid[min(best + 1, _GUARD_SCAN)]
+    for _ in range(80):  # ternary search, bracket below an ulp
+        m1, m2 = lo + (hi - lo) / 3.0, hi - (hi - lo) / 3.0
+        if volume(m1) < volume(m2):
+            lo = m1
+        else:
+            hi = m2
+    y_inner = 0.5 * (lo + hi)
+    if volume(y_inner) <= 0.0:  # refinement wandered off the feasible set
+        y_inner = grid[best]
+    x_lim, _, _, v_inset = room(y_inner)
+    return GuardInsets(x=half_x - x_lim, y=half_y - y_inner, v=v_inset)
+
+
+def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
+    """The three interior margins, as fractions of the box's own scale.
+
+    `guard_insets` blocks on all three components once the eligible set
+    is empty, which is right for the predicate and useless for asking
+    WHICH condition emptied it. This reports that separately: the
+    margins at the guard's operating point, or -- when the set is
+    empty -- at the anchor limit that comes closest to feasible.
+
+    R12.2: they are reported as fractions so that the answer depends on
+    the four dimensionless ratios `w du`, `w dv`, `w dx/2`, `w dy/2`
+    and not on the scale, which is what makes a sweep over them a
+    complete statement rather than one slice of it.
+    """
+
+    slab, w = geometry.slab, geometry.w
+    half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
+    insets = guard_insets(geometry)
+    if insets.x < half_x:  # non-empty: read the operating point off it
+        return ((half_x - insets.x) / half_x,
+                (half_y - insets.y) / half_y,
+                (slab.dv - 2.0 * insets.v) / slab.dv)
+
+    if w == 0.0:
+        flat = math.sqrt(slab.du * slab.dv / 2.0)
+        return ((half_x - flat) / half_x, (half_y - flat) / half_y, 1.0)
+
+    a = w * slab.du
+    alpha = _focusing_excursion_factor(a)
+    tan_half = math.tan(a / 2.0)
+    cross = 2.0 * w * math.tanh(a / 2.0) * half_x * half_x
+
+    def margins(y_inner: float) -> tuple[float, float, float]:
+        v_here = max_negative_focusing(a, w, y_inner, half_y)
+        budget = slab.dv + cross + 2.0 * v_here
+        reach = alpha * y_inner + math.sqrt(budget * tan_half / w)
+        return ((half_x - math.sqrt(slab.du * budget / 2.0)) / half_x,
+                (half_y - reach) / half_y,
+                (slab.dv - 2.0 * v_here) / slab.dv)
+
+    grid = [half_y * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
+    return max((margins(y) for y in grid), key=min)
 
 
 def class_c_eligible(geometry: PlaneWaveGeometry,
