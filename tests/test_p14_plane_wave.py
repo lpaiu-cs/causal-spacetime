@@ -35,6 +35,7 @@ from p14_plane_wave import (  # noqa: E402
     GuardInsets,
     PlaneWaveGeometry,
     Slab,
+    _defocusing_inset,
     _exact_cost,
     _focusing_excursion_factor,
     arms,
@@ -835,7 +836,7 @@ def test_the_asymmetric_v_bound_is_what_makes_the_guard_usable():
                     and 2.0 * insets.v < slab.dv)
         return eligible, symmetric <= slab.dv / 2.0, insets.v, symmetric
 
-    for w, du, sym_ratio in ((0.6, 0.5, 3.2), (1.1, 0.9, 22.0)):
+    for w, du, sym_ratio in ((0.6, 0.5, 3.0), (1.1, 0.9, 20.0)):
         eligible, sym_ok, v_inset, symmetric = admits(w, du)
         assert not sym_ok, (
             f"w={w} du={du}: the symmetric bound admits this geometry, so "
@@ -862,87 +863,145 @@ def test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box():
 
     Fixing `w = 1` (lengths in units of `1/w`) leaves four
     dimensionless quantities, `a`, `w dv`, `w dx/2`, `w dy/2`, and this
-    pins the corrected picture over them. The conclusion that survives
-    is weaker and differently shaped: eligibility is non-empty well
-    past `a = 1` provided the box is chosen with it, `x` is the usual
-    binding condition but `v` binds too, and by `a = 2` no box size
-    tried recovers anything.
+    pins the corrected picture over them.
+
+    **Counted per condition, not per cell (R13.2).** The first version
+    of this census recorded only the WORST margin in each empty cell,
+    and I read `x` never being worst as `x` never binding -- concluding
+    that tightening it would buy nothing, when it was in fact the
+    ceiling on `a`. A condition can be violated in most of the empty
+    cells and be the worst one in none of them. The counts below
+    overlap on purpose.
+
+    **And `X` and `Y` vary independently (R13.4).** Tying them makes
+    the sweep a three-dimensional slice through a four-dimensional
+    problem, which cannot support a claim about which direction binds.
+    Untied, the box that admits is not square.
     """
 
-    def margins(a, w_dv, w_half):
-        slab = Slab(du=a, dv=w_dv, dx=2 * w_half, dy=2 * w_half)
+    def margins(a, w_dv, w_x, w_y):
+        slab = Slab(du=a, dv=w_dv, dx=2 * w_x, dy=2 * w_y)
         return guard_margins(PlaneWaveGeometry(slab, 1.0))
 
-    def admits(a, w_dv, w_half):
-        slab = Slab(du=a, dv=w_dv, dx=2 * w_half, dy=2 * w_half)
+    def admits(a, w_dv, w_x, w_y):
+        slab = Slab(du=a, dv=w_dv, dx=2 * w_x, dy=2 * w_y)
         insets = guard_insets(PlaneWaveGeometry(slab, 1.0))
-        return (insets.x < w_half and insets.y < w_half
+        return (insets.x < w_x and insets.y < w_y
                 and 2.0 * insets.v < slab.dv)
 
-    # The slice §4.6.3 reported, now with `w` and the `v` margin
-    # present. The withdrawn claim said `lim_x` goes negative at
-    # `a = 1.0` and eligibility empties there; it does not, and it
-    # does not.
-    eligible = {a: admits(a, 0.2, 3.0) for a in (0.3, 0.6, 1.0, 1.6)}
+    # The slice §4.6.3 reported. The withdrawn claim said `lim_x` goes
+    # negative at `a = 1.0` and eligibility empties there; it does not,
+    # and it does not.
+    eligible = {a: admits(a, 0.2, 3.0, 3.0) for a in (0.3, 0.6, 1.0, 1.6)}
     assert eligible == {0.3: True, 0.6: True, 1.0: True, 1.6: False}, (
         f"the corrected slice changed: {eligible}")
+    # and `a = 1.6` fails on `v`, with both transverse margins positive
+    m_x, m_y, m_v = margins(1.6, 0.2, 3.0, 3.0)
+    assert m_x > 0.0 and m_y > 0.0 and m_v <= 0.0
 
-    census = {"x": 0, "y": 0, "v": 0, "ok": 0}
-    for a in (0.2, 0.4, 0.7, 1.0, 1.4, 2.0):
-        for w_dv in (0.2, 1.0, 4.0, 16.0):
-            for w_half in (0.3, 1.0, 3.0):
-                if admits(a, w_dv, w_half):
-                    census["ok"] += 1
-                    continue
-                m_x, m_y, m_v = margins(a, w_dv, w_half)
-                worst = min(m_x, m_y, m_v)
-                census["x" if worst == m_x
-                       else "y" if worst == m_y else "v"] += 1
-    assert census == {"ok": 26, "x": 0, "y": 43, "v": 3}, census
+    axes = (0.2, 0.4, 0.7, 1.0, 1.4, 2.0)
+    dvs = (0.2, 1.0, 4.0, 16.0)
+    halves = (0.3, 1.0, 3.0)
 
-    # No box size tried admits anything at `a = 2`, and the reason
-    # changes with the box: small boxes close on the focusing reach,
-    # large ones close in `v`, because the `-S_y` bound grows with the
-    # box while `dv` does not. So it is not one condition that has to
-    # be relaxed to reach large `a` -- widening the box trades one for
-    # the other.
-    for w_half in (0.3, 1.0, 3.0, 10.0):
-        assert not admits(2.0, 4.0, w_half)
-    assert min(margins(2.0, 4.0, 0.3)) == margins(2.0, 4.0, 0.3)[1]
-    assert min(margins(2.0, 4.0, 10.0)) == margins(2.0, 4.0, 10.0)[2]
+    def census(cells):
+        counts = {"cells": 0, "ok": 0, "x": 0, "y": 0, "v": 0, "x_only": 0}
+        for a, w_dv, w_x, w_y in cells:
+            counts["cells"] += 1
+            if admits(a, w_dv, w_x, w_y):
+                counts["ok"] += 1
+                continue
+            bad = [k for k, m in zip("xyv", margins(a, w_dv, w_x, w_y),
+                                     strict=True)
+                   if m <= 0.0]
+            for key in bad:
+                counts[key] += 1
+            if bad == ["x"]:
+                counts["x_only"] += 1
+        return counts
+
+    square = census([(a, w_dv, h, h)
+                     for a in axes for w_dv in dvs for h in halves])
+    assert square == {"cells": 72, "ok": 34, "x": 34, "y": 33, "v": 4,
+                      "x_only": 1}, square
+
+    rect = census([(a, w_dv, w_x, w_y) for a in axes for w_dv in dvs
+                   for w_x in halves for w_y in halves])
+    assert rect == {"cells": 216, "ok": 60, "x": 102, "y": 111, "v": 12,
+                    "x_only": 34}, rect
+
+    # the anisotropy is real: at this cell a wide `y` extent admits and
+    # a wide `x` extent does not, which a square sweep cannot see
+    assert admits(1.0, 1.0, 1.0, 3.0)
+    assert not admits(1.0, 1.0, 3.0, 1.0)
 
 
-def test_the_focusing_reach_binds_before_the_defocusing_chain_does():
-    """The case, review R12: the next step was to be conditional --
-    tighten the loose `x` chain of inequalities only if `x` turns out
-    to dominate. Measured over the dimensionless box, it does not. The
-    census above finds `y` binding in 43 of the 46 empty cells and `x`
-    in none, so tightening `x` would buy nothing.
+def test_the_defocusing_chain_was_the_ceiling_on_a():
+    """The case, review R13.2: the previous round concluded that the
+    `x` inset never binds and would not be tightened. That was read off
+    a census recording only the worst condition per cell, and it was
+    backwards. With the old bound `cross = 2 w tanh(a/2) X^2` and the
+    budget `dv + cross`,
 
-    The reason is structural, not an accident of the grid. At zero
-    anchor limit the two reaches share a budget `K` and differ only in
-    their prefactor,
+        x_inset / X >= sqrt(du * cross / 2) / X = sqrt(a tanh(a/2)),
 
-        y: sqrt(K tan(a/2) / w),     x: sqrt(K a / (2 w)),
+    with `dv` and the box size dropping out entirely. That exceeds 1 at
+    `a = 1.5434`, so past there NO square box admitted a pair, whatever
+    else was done -- while the effect being measured grows as `(wT)^4`.
+    A ceiling on `a` is the most expensive thing this design can have,
+    and it was hiding behind a statistic that never showed `x` as worst.
 
-    whose ratio squared is `2 tan(a/2) / a > 1` for all `0 < a < pi`,
-    rising without bound at the conjugate point. The focusing side is
-    the larger reach before the trajectory term `alpha * Y_inner` is
-    added at all, and that term only widens the gap.
+    Tightened the same two ways the rest of the guard already was --
+    the anchor is an eligible endpoint, so the bilinear term carries
+    `X_inner` and not `X`; and `tanh(a_p/2) + tanh(a_q/2)` over a free
+    split peaks at `2 tanh(a/4)` by concavity, not `2 tanh(a/2)` -- the
+    ratio drops below 1 everywhere tested and `a = 2` becomes
+    reachable.
     """
 
-    for a in (0.2, 0.5, 1.0, 2.0, 3.0):
-        ratio_sq = 2.0 * math.tan(a / 2.0) / a
-        assert ratio_sq > 1.0, a
-    assert 2.0 * math.tan(3.1 / 2.0) / 3.1 > 30.0
+    def old_ratio(a):
+        return math.sqrt(a * math.tanh(a / 2.0))
 
-    # and it is monotone, so no `a` in range reverses the ordering
-    prev = 0.0
-    for i in range(1, 200):
-        a = math.pi * i / 200.0
-        cur = 2.0 * math.tan(a / 2.0) / a
-        assert cur > prev, a
-        prev = cur
+    assert old_ratio(1.5) < 1.0 < old_ratio(1.6)
+    assert old_ratio(2.0) == pytest.approx(1.2342, abs=5e-5)
+    lo, hi = 1.0, 2.0
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if mid * math.tanh(mid / 2.0) < 1.0:
+            lo = mid
+        else:
+            hi = mid
+    assert lo == pytest.approx(1.5434, abs=5e-5)
+
+    # the tightened inset, in the box-only limit where `dv` is
+    # negligible, stays inside the box well past that
+    for a, ceiling in ((1.6, 0.54), (2.0, 0.61), (2.5, 0.68), (3.0, 0.73)):
+        slab = Slab(du=a, dv=1e-9, dx=2.0, dy=2.0)
+        x_inset, _ = _defocusing_inset(slab, 1.0, 1.0)
+        assert x_inset < ceiling, f"a={a}: x_inset/X = {x_inset}"
+        assert x_inset < old_ratio(a)
+
+    # and it is not merely a smaller number: `a = 2` now admits pairs,
+    # which under the old bound was impossible at every box size
+    admitting = []
+    for w_dv in (0.1, 0.5, 2.0, 8.0):
+        for w_x in (0.5, 1.0, 3.0, 9.0):
+            for w_y in (0.5, 1.0, 3.0, 9.0):
+                slab = Slab(du=2.0, dv=w_dv, dx=2 * w_x, dy=2 * w_y)
+                ins = guard_insets(PlaneWaveGeometry(slab, 1.0))
+                if (ins.x < w_x and ins.y < w_y
+                        and 2.0 * ins.v < slab.dv):
+                    admitting.append((w_dv, w_x, w_y))
+    assert admitting, "a = 2 still admits nothing"
+
+    # the fixed point is a fixed point: `x_inset` reproduces itself
+    for a, dv, half in ((0.7, 1.0, 2.0), (1.5, 0.3, 1.0), (2.5, 4.0, 5.0)):
+        slab = Slab(du=a, dv=dv, dx=2 * half, dy=2 * half)
+        x_inset, cross = _defocusing_inset(slab, 1.0, half)
+        assert x_inset < half, f"a={a} dv={dv} half={half}: x closed"
+        assert cross == pytest.approx(
+            2.0 * math.tanh(a / 4.0) * (half - x_inset) * half)
+        assert x_inset == pytest.approx(
+            math.sqrt(slab.du * (slab.dv + cross) / 2.0), rel=1e-9)
 
 
 def test_the_trajectory_excursion_is_exact_and_maximised_at_a_corner():
@@ -983,12 +1042,12 @@ def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
     NEGATIVE CONTROL, and it says something the guard's derivation did
     not. Shrinking each component and re-running this sweep:
 
-        real insets        1813 interior points,    0 escapes
-        transverse x0.9    1636,                    0
-        transverse x0.7    1290,                    0
-        transverse x0.5     965,                    1  [caught]
-        v inset x0.5       1839,                    0
-        v inset x0.0       1868,                    0
+        real insets        1724 interior points,    0 escapes
+        transverse x0.9    1558,                    0
+        transverse x0.7    1230,                    0
+        transverse x0.5    1018,                    1  [caught]
+        v inset x0.5       1748,                    0
+        v inset x0.0       1783,                    0
 
     Two of those rows are executed below rather than quoted; the rest
     are a record.
@@ -997,7 +1056,7 @@ def test_no_diamond_point_escapes_the_box_when_the_guard_admits_the_pair():
     bound is a chain of inequalities and is genuinely conservative --
     and **does not police the `v` component at all** in these
     geometries, where the excursion the guard reserves for it is
-    `0.002` and `0.006` against `dv = 0.35`. That is now a statement
+    `0.003` and `0.008` against `dv = 0.35`. That is now a statement
     about the geometries and not about the guard: the `v` component is
     computed over the honest rectangle since R12.1, and the earlier
     version of this docstring called the full-box bound "not worth

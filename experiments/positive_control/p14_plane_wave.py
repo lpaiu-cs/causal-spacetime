@@ -602,6 +602,75 @@ def max_negative_focusing(a: float, w: float,
     return w * bracket / (2.0 * sin_a)
 
 
+def _defocusing_inset(slab: Slab, w: float,
+                      half_x: float) -> tuple[float, float]:
+    """`(x_inset, cross)` for the defocusing direction (R13.2).
+
+    The membership budget for the two `x` legs is `Dv + 2V + cross`,
+    and for an ELIGIBLE pair `Dv <= dv - 2V`, so `V` cancels and the
+    budget is `dv + cross` (R13.1). What remains is the cross term,
+    which the first three versions bounded as `2 w tanh(a/2) X^2`.
+    Both factors were loose, and the looseness was not harmless: with
+    that bound
+
+        x_inset / X >= sqrt(a tanh(a/2)),
+
+    which exceeds 1 at `a = 1.5434` **regardless of `dv` or box size**,
+    so every square box closed on `x` alone past that point. I read a
+    census that never showed `x` as the WORST condition as showing `x`
+    did not bind, and concluded that tightening it would buy nothing.
+    It is the ceiling on `a`, and the effect being measured grows as
+    `(w T)^4`.
+
+    Two corrections, both already made elsewhere in this guard:
+
+    **The anchor is inset.** The bilinear terms sum to
+    `w x_m [tanh(a_p/2) x_p + tanh(a_q/2) x_q]`, where `x_p, x_q` are
+    eligible ENDPOINTS -- bounded by `X_inner` -- while only the
+    intermediate `x_m` ranges over the box. This is the same asymmetry
+    that R12.1 found in `-S_y`, in the term that turned out to set the
+    ceiling.
+
+    **The split is not free.** `tanh` is concave, so
+    `tanh(a_p/2) + tanh(a_q/2)` over `a_p + a_q = a` is largest at the
+    midpoint, giving `2 tanh(a/4)` and not `2 tanh(a/2)`.
+
+    So `cross = 2 w tanh(a/4) X_inner X` with `X_inner = X - x_inset`,
+    which puts `x_inset` on both sides. The map is decreasing in
+    `x_inset` while the identity is increasing, so the fixed point is
+    unique and bisection finds it; the root is approached from the
+    conservative side. Dropping the ceiling entirely: the same ratio is
+    now `0.689` at `a = 2` and `0.778` at `a = 3`.
+    """
+
+    if w == 0.0:
+        return math.sqrt(slab.du * slab.dv / 2.0), 0.0
+
+    a = w * slab.du
+    tanh_quarter = math.tanh(a / 4.0)
+
+    def cross_at(x_inset: float) -> float:
+        return (2.0 * w * tanh_quarter
+                * max(half_x - x_inset, 0.0) * half_x)
+
+    def implied(x_inset: float) -> float:
+        return math.sqrt(slab.du * (slab.dv + cross_at(x_inset)) / 2.0)
+
+    if implied(half_x) >= half_x:
+        # even a zero-width interior does not satisfy it
+        return half_x, cross_at(half_x)
+
+    lo, hi = 0.0, half_x
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if implied(mid) > mid:
+            lo = mid
+        else:
+            hi = mid
+    x_inset = hi * _GUARD_SLACK  # the side that over-insets
+    return x_inset, cross_at(x_inset)
+
+
 def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     """Both components, from the Jacobi propagators (design §4.6).
 
@@ -675,28 +744,48 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     # once they are, the guard turns out to have a free parameter.
     alpha = _focusing_excursion_factor(a)
     tan_half = math.tan(a / 2.0)
-    cross = 2.0 * w * math.tanh(a / 2.0) * half_x * half_x
 
-    # The coupling runs one way. Admitting anchors further out in `y`
-    # raises the asymmetric `max(-S_y)` -- the anchor is an eligible
-    # endpoint and so already inset, while the intermediate point
-    # ranges over the whole box -- and that excursion appears twice:
-    # once as the `v` window `dv - 2 v` the endpoints must fit in, and
-    # again inside the budget that sets the defocusing inset. So `y`
-    # room is BOUGHT with `x` room and `v` room, and there is no
-    # distinguished point on that trade-off curve.
+    # **`V` IS NOT PAID TWICE (R13.1).** The first joint version wrote
+    # the budget as `dv + cross + 2V` in both conditions, on the reading
+    # that the diamond may use the whole slab in `v` AND rise by `V` at
+    # each end. It may not: an ELIGIBLE pair already sits inside the
+    # window `[V, dv - V]`, so the drop it has to spend is
     #
-    # Maximising `y_inner` -- the first thing I tried -- spends the
-    # whole `v` window and leaves a region of zero volume, which
-    # satisfies every inequality and admits no pairs at all. The
-    # criterion has to be the quantity the statistic actually consumes,
-    # so it is the eligible coordinate volume itself, which is also
-    # what §8 P1 owes as a measurement.
+    #   Dv = v_p - v_q <= dv - 2 V,
+    #
+    # and the two focusing legs return at most `2V` of it. In the
+    # defocusing condition the two cancel exactly,
+    #
+    #   (x-x_p)^2/(2 s_p) + (x-x_q)^2/(2 s_q)
+    #       <= Dv + 2V + cross <= dv + cross,
+    #
+    # so **the `x` inset does not depend on `y_inner` at all** and the
+    # guard is far less coupled than R12 concluded. Charging `V` to the
+    # window and again to the budget shrank the eligible volume and the
+    # census with it.
+    #
+    # The `y` spread does not get the same cancellation, because what
+    # it must subtract is the direct action between the two ENDPOINTS,
+    # both of which are inset -- an inner-inner bound `W`, not the
+    # inner-outer `V` that governs an intermediate point:
+    #
+    #   Q (y - y*)^2 <= Dv - (S_x,p + S_x,q) - S_y(du; y_p, y_q)
+    #                <= (dv - 2V) + cross + W.
     def v_excursion(y_inner: float) -> float:
+        """`max(-S_y)` for one leg: anchor inset, intermediate free."""
+
         return max_negative_focusing(a, w, y_inner, half_y)
 
-    def room(y_inner: float) -> tuple[float, float, float, float]:
-        """`(x_lim, y_room, v_window, v_inset)` at this anchor limit.
+    def direct_bound(y_inner: float) -> float:
+        """`max(-S_y)` between two ENDPOINTS, so both are inset."""
+
+        return max_negative_focusing(a, w, y_inner, y_inner)
+
+    x_inset, cross = _defocusing_inset(slab, w, half_x)
+    x_lim = half_x - x_inset
+
+    def room(y_inner: float) -> tuple[float, float, float]:
+        """`(y_room, v_window, v_inset)` at this anchor limit.
 
         Every margin carries `_GUARD_SLACK` of relative room, so the
         insets built from it can only err LARGE -- costing eligible
@@ -705,45 +794,52 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
         """
 
         v_here = v_excursion(y_inner) * _GUARD_SLACK
-        budget = slab.dv + cross + 2.0 * v_here
+        v_window = slab.dv - 2.0 * v_here
+        budget = max(v_window, 0.0) + cross + direct_bound(y_inner)
         reach = alpha * y_inner + math.sqrt(budget * tan_half / w)
-        return (half_x - math.sqrt(slab.du * budget / 2.0) * _GUARD_SLACK,
-                half_y - reach * _GUARD_SLACK,
-                slab.dv - 2.0 * v_here,
-                v_here)
+        return half_y - reach * _GUARD_SLACK, v_window, v_here
 
     def volume(y_inner: float) -> float:
-        x_lim, y_room, v_window, _ = room(y_inner)
+        y_room, v_window, _ = room(y_inner)
         if x_lim <= 0.0 or y_room <= 0.0 or v_window <= 0.0:
             return 0.0
         return 2.0 * x_lim * 2.0 * y_inner * v_window * slab.du
 
-    # Coarse scan then local refinement: the objective vanishes at both
-    # ends -- no `y` room at zero, no `v` window at the far end -- and
-    # is not guaranteed unimodal, so a bracket is found by scan rather
-    # than assumed.
+    # R13.3: the objective is not known to be unimodal, and a ternary
+    # search around the single best scan point cannot see a second
+    # peak. Every interior local maximum of the scan is refined and the
+    # best kept, so a peak is missed only if it is narrower than one
+    # scan step -- stated as the guarantee rather than "the maximum".
     grid = [half_y * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
-    best = max(range(len(grid)), key=lambda i: volume(grid[i]))
-    if volume(grid[best]) <= 0.0:
+    vols = [volume(y) for y in grid]
+    if max(vols) <= 0.0:
         # Nothing is eligible at any anchor limit. Block on all three,
         # not just the one that happens to bind: reporting a positive
         # `y` limit here would let pairs through the very condition
         # that emptied the set.
         return GuardInsets(x=half_x, y=half_y, v=slab.dv)
 
-    lo = grid[max(best - 1, 0)]
-    hi = grid[min(best + 1, _GUARD_SCAN)]
-    for _ in range(80):  # ternary search, bracket below an ulp
-        m1, m2 = lo + (hi - lo) / 3.0, hi - (hi - lo) / 3.0
-        if volume(m1) < volume(m2):
-            lo = m1
-        else:
-            hi = m2
-    y_inner = 0.5 * (lo + hi)
-    if volume(y_inner) <= 0.0:  # refinement wandered off the feasible set
-        y_inner = grid[best]
-    x_lim, _, _, v_inset = room(y_inner)
-    return GuardInsets(x=half_x - x_lim, y=half_y - y_inner, v=v_inset)
+    peaks = [i for i in range(1, _GUARD_SCAN)
+             if vols[i] >= vols[i - 1] and vols[i] >= vols[i + 1]
+             and vols[i] > 0.0]
+    peaks.append(max(range(len(vols)), key=lambda i: vols[i]))
+    y_inner = 0.0
+    best_vol = 0.0
+    for peak in peaks:
+        lo = grid[max(peak - 1, 0)]
+        hi = grid[min(peak + 1, _GUARD_SCAN)]
+        for _ in range(80):  # ternary search, bracket below an ulp
+            m1, m2 = lo + (hi - lo) / 3.0, hi - (hi - lo) / 3.0
+            if volume(m1) < volume(m2):
+                lo = m1
+            else:
+                hi = m2
+        for candidate in (0.5 * (lo + hi), grid[peak]):
+            if volume(candidate) > best_vol:
+                y_inner, best_vol = candidate, volume(candidate)
+
+    _, _, v_inset = room(y_inner)
+    return GuardInsets(x=x_inset, y=half_y - y_inner, v=v_inset)
 
 
 def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
@@ -759,12 +855,20 @@ def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
     the four dimensionless ratios `w du`, `w dv`, `w dx/2`, `w dy/2`
     and not on the scale, which is what makes a sweep over them a
     complete statement rather than one slice of it.
+
+    **Read all three (R13.2).** A census that records only the WORST
+    condition per empty cell answers a different question from the one
+    it looks like it answers: I read `x` never being worst as `x` never
+    binding, and concluded that tightening it would buy nothing. It
+    binds in most of the empty cells. Counting has to be per condition,
+    not per cell, and every caller of this gets all three margins for
+    that reason.
     """
 
     slab, w = geometry.slab, geometry.w
     half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
     insets = guard_insets(geometry)
-    if insets.x < half_x:  # non-empty: read the operating point off it
+    if insets.y < half_y:  # non-empty: read the operating point off it
         return ((half_x - insets.x) / half_x,
                 (half_y - insets.y) / half_y,
                 (slab.dv - 2.0 * insets.v) / slab.dv)
@@ -776,15 +880,16 @@ def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
     a = w * slab.du
     alpha = _focusing_excursion_factor(a)
     tan_half = math.tan(a / 2.0)
-    cross = 2.0 * w * math.tanh(a / 2.0) * half_x * half_x
+    x_inset, cross = _defocusing_inset(slab, w, half_x)
+    x_margin = (half_x - x_inset) / half_x
 
     def margins(y_inner: float) -> tuple[float, float, float]:
         v_here = max_negative_focusing(a, w, y_inner, half_y)
-        budget = slab.dv + cross + 2.0 * v_here
+        v_window = slab.dv - 2.0 * v_here
+        budget = (max(v_window, 0.0) + cross
+                  + max_negative_focusing(a, w, y_inner, y_inner))
         reach = alpha * y_inner + math.sqrt(budget * tan_half / w)
-        return ((half_x - math.sqrt(slab.du * budget / 2.0)) / half_x,
-                (half_y - reach) / half_y,
-                (slab.dv - 2.0 * v_here) / slab.dv)
+        return (x_margin, (half_y - reach) / half_y, v_window / slab.dv)
 
     grid = [half_y * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
     return max((margins(y) for y in grid), key=min)
