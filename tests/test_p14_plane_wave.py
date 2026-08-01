@@ -903,8 +903,13 @@ def test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box():
     dvs = (0.2, 1.0, 4.0, 16.0)
     halves = (0.3, 1.0, 3.0)
 
+    # R14.3: all three sole-blocker counts, not just `x`. Pinning one
+    # of them let a wrong value for another sit in the design table --
+    # `v_only` was recorded as 0 and is 5, and "sole blocker in 0" is
+    # exactly the reading that would justify dropping the `v` guard.
     def census(cells):
-        counts = {"cells": 0, "ok": 0, "x": 0, "y": 0, "v": 0, "x_only": 0}
+        counts = {"cells": 0, "ok": 0, "x": 0, "y": 0, "v": 0,
+                  "x_only": 0, "y_only": 0, "v_only": 0}
         for a, w_dv, w_x, w_y in cells:
             counts["cells"] += 1
             if admits(a, w_dv, w_x, w_y):
@@ -915,24 +920,66 @@ def test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box():
                    if m <= 0.0]
             for key in bad:
                 counts[key] += 1
-            if bad == ["x"]:
-                counts["x_only"] += 1
+            if len(bad) == 1:
+                counts[bad[0] + "_only"] += 1
         return counts
 
     square = census([(a, w_dv, h, h)
                      for a in axes for w_dv in dvs for h in halves])
     assert square == {"cells": 72, "ok": 34, "x": 34, "y": 33, "v": 4,
-                      "x_only": 1}, square
+                      "x_only": 1, "y_only": 0, "v_only": 4}, square
 
     rect = census([(a, w_dv, w_x, w_y) for a in axes for w_dv in dvs
                    for w_x in halves for w_y in halves])
     assert rect == {"cells": 216, "ok": 60, "x": 102, "y": 111, "v": 12,
-                    "x_only": 34}, rect
+                    "x_only": 34, "y_only": 48, "v_only": 5}, rect
 
     # the anisotropy is real: at this cell a wide `y` extent admits and
     # a wide `x` extent does not, which a square sweep cannot see
     assert admits(1.0, 1.0, 1.0, 3.0)
     assert not admits(1.0, 1.0, 3.0, 1.0)
+
+
+def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
+    """The case, review R14.1: §4.6 says the eligibility rule is the
+    same in both arms and comes from the curved one, because two arms
+    with different eligible sets are not the same points and the
+    paired comparison §4.1 exists for is gone. That was a sentence in
+    a docstring; the function derived its insets from whatever geometry
+    it was handed. A paired analysis passing each arm its own geometry
+    got the flat arm's insets in the flat arm -- flatness collapses the
+    guard to the Alexandrov radius, so they are much smaller -- and
+    pairs would have entered one arm's denominator and not the other's.
+    """
+
+    slab = Slab(du=1.0, dv=0.4, dx=3.0, dy=3.0)
+    curved, flat = arms(slab, 1.0)
+
+    # the two guards really do differ, so this is not a moot contract
+    assert guard_insets(flat).y < guard_insets(curved).y / 2.0
+
+    # a point eligible under the flat guard but not the curved one
+    y_flat = 0.5 * (1.5 - guard_insets(flat).y)
+    p = np.array([0.0, 0.3, 0.0, y_flat])
+    q = np.array([slab.du, 0.1, 0.0, y_flat])
+    assert abs(y_flat) < 1.5 - guard_insets(flat).y
+    assert abs(y_flat) > 1.5 - guard_insets(curved).y
+
+    # both arms refuse it, because both read the curved guard
+    assert not class_c_eligible(curved, p, q)
+    assert not class_c_eligible(flat, p, q)
+
+    # and a flat geometry with no curved partner is refused outright
+    # rather than silently answering from its own insets
+    orphan = PlaneWaveGeometry(slab, 0.0)
+    with pytest.raises(ValueError, match="flat geometry"):
+        class_c_eligible(orphan, p, q)
+
+    # the link is checked, not trusted: a partner on a different slab
+    # would mean the two arms are not the same points
+    other = PlaneWaveGeometry(Slab(du=1.0, dv=0.5, dx=3.0, dy=3.0), 1.0)
+    with pytest.raises(ValueError, match="same points"):
+        PlaneWaveGeometry(slab, 0.0, guard_from=other)
 
 
 def test_the_defocusing_chain_was_the_ceiling_on_a():
@@ -992,6 +1039,20 @@ def test_the_defocusing_chain_was_the_ceiling_on_a():
                         and 2.0 * ins.v < slab.dv):
                     admitting.append((w_dv, w_x, w_y))
     assert admitting, "a = 2 still admits nothing"
+
+    # R14.4: and NO upper endpoint in `a` is claimed. A previous
+    # version of the design read a miss on a coarse grid as a bound at
+    # `2.4`; these three boxes admit, and the two larger ones need a
+    # `w dv` two orders below anything that grid contained. Failing to
+    # find a box is not evidence that none exists -- the only ceiling
+    # established anywhere is the conjugate point, `a < pi`.
+    for a, w_dv, w_x, w_y in ((2.4, 0.2, 0.6, 0.4),
+                              (2.6, 0.005, 0.0835, 0.0519),
+                              (2.8, 0.00875, 0.1112, 0.0519)):
+        slab = Slab(du=a, dv=w_dv, dx=2 * w_x, dy=2 * w_y)
+        ins = guard_insets(PlaneWaveGeometry(slab, 1.0))
+        assert ins.x < w_x and ins.y < w_y and 2.0 * ins.v < slab.dv, (
+            f"a={a} at ({w_dv}, {w_x}, {w_y}) no longer admits: {ins}")
 
     # the fixed point is a fixed point: `x_inset` reproduces itself
     for a, dv, half in ((0.7, 1.0, 2.0), (1.5, 0.3, 1.0), (2.5, 4.0, 5.0)):
@@ -1124,7 +1185,9 @@ def _containment_sweep(insets_fn):
         # sqrt(du dv / 2) = 0.247 against a half-extent of 0.45, so an
         # eligible pair sits in a genuinely small interior region
         slab = Slab(du=0.35, dv=0.35, dx=0.9, dy=0.9)
-        geom = PlaneWaveGeometry(slab, w)
+        # via arms(), so the geometry carries its own guard source and
+        # Class C is legal on it even at w = 0 (R14.1)
+        geom, _ = arms(slab, w)
         insets = insets_fn(geom)
         lim_x = slab.dx / 2.0 - insets.x
         lim_y = slab.dy / 2.0 - insets.y

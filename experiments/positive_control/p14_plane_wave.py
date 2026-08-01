@@ -323,14 +323,35 @@ class PlaneWaveGeometry:
     margin to leave under it is an operating-point choice the probe
     makes and reports (see `slab_within_conjugate_bound`), not a
     constant this module gets to pick.
+
+    `guard_from` carries the arm whose guard governs eligibility, and
+    exists because a docstring saying "the same rule in both arms" was
+    not a mechanism (R14.1). `class_c_eligible` derived its insets from
+    whatever geometry it was handed, so a paired analysis passing each
+    arm its own geometry got the flat arm's much smaller insets -- at
+    `Slab(1, 0.4, 3, 3)` the `y` inset is `1.207` curved against
+    `0.447` flat -- and the two arms would have had different eligible
+    sets, which is the one thing §4.1 exists to prevent. `arms()` now
+    links the flat arm to the curved one, and Class C refuses a flat
+    geometry that has no such link.
     """
 
     slab: Slab
     w: float
+    guard_from: PlaneWaveGeometry | None = None
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.w) or self.w < 0.0:
             raise ValueError(f"w must be finite and non-negative, got {self.w}")
+        if self.guard_from is not None:
+            if self.guard_from.slab != self.slab:
+                raise ValueError(
+                    "guard_from must share this arm's slab, else the two "
+                    "arms are not the same points")
+            if self.guard_from.guard_from is not None:
+                raise ValueError(
+                    "guard_from must be a guard source itself, so that "
+                    "one arm's eligibility cannot be read off another's")
         if self.slab.du <= 0.0:
             raise ValueError(f"slab u-extent must be positive, got {self.slab.du}")
         if self.w > 0.0 and self.slab.du >= conjugate_du(self.w):
@@ -639,8 +660,13 @@ def _defocusing_inset(slab: Slab, w: float,
     which puts `x_inset` on both sides. The map is decreasing in
     `x_inset` while the identity is increasing, so the fixed point is
     unique and bisection finds it; the root is approached from the
-    conservative side. Dropping the ceiling entirely: the same ratio is
-    now `0.689` at `a = 2` and `0.778` at `a = 3`.
+    conservative side. In the `dv -> 0`, `X = 1` limit it is the root
+    of `r^2 = a tanh(a/4) (1 - r)`, giving `r = 0.6046` at `a = 2` and
+    `0.7245` at `a = 3` -- so the ceiling is gone. (An earlier draft of
+    this note quoted `0.689` and `0.778`, which solve the same equation
+    with `tanh(a/2)`: they are the intermediate result from correcting
+    only the first of the two factors, and describe no version of this
+    code. R14.2.)
     """
 
     if w == 0.0:
@@ -905,8 +931,26 @@ def class_c_eligible(geometry: PlaneWaveGeometry,
     in both arms, taken from the curved one, so the two arms keep a
     common eligible set (§4.1).
 
+    **That last sentence used to be only a sentence (R14.1.)** This
+    derived its insets from whatever geometry it was handed, so a
+    paired analysis passing each arm its own geometry got the flat
+    arm's insets in the flat arm -- much smaller, since flatness
+    reduces the guard to the Alexandrov radius -- and the two arms
+    ended up with different eligible sets and different denominators.
+    A flat geometry is refused here unless `arms()` built it and linked
+    it to its curved partner, which is the only construction where the
+    shared set is guaranteed.
+
     Class R statistics do not call this: they take every pair.
     """
+
+    if geometry.guard_from is not None:
+        geometry = geometry.guard_from
+    elif geometry.w == 0.0:
+        raise ValueError(
+            "Class C eligibility cannot be derived from a flat geometry: "
+            "the guard must come from the curved arm so both arms share "
+            "one eligible set (design §4.1). Build the pair with arms().")
 
     insets = guard_insets(geometry)
     slab = geometry.slab
@@ -926,7 +970,19 @@ def arms(slab: Slab, w: float) -> tuple[PlaneWaveGeometry, PlaneWaveGeometry]:
     """The curved and flat readings of one slab, both validated.
 
     They share the slab by construction, which is what makes the two
-    arms the same points (design §4.1).
+    arms the same points (design §4.1). And the flat arm is linked to
+    the curved one, so Class C eligibility is the SAME set in both --
+    a property of the objects rather than of the caller's discipline
+    (R14.1).
+
+    At `w = 0` both arms are the same geometry and nothing can
+    disagree, but they are still linked, so that "came from `arms()`"
+    and "may be used for Class C" are the same condition and there is
+    no second rule to remember.
     """
 
-    return PlaneWaveGeometry(slab, w), PlaneWaveGeometry(slab, 0.0)
+    source = PlaneWaveGeometry(slab, w)
+    if w == 0.0:
+        return (PlaneWaveGeometry(slab, 0.0, guard_from=source),
+                PlaneWaveGeometry(slab, 0.0, guard_from=source))
+    return source, PlaneWaveGeometry(slab, 0.0, guard_from=source)

@@ -622,6 +622,15 @@ truncated count.
   transverse excursion and whose focusing direction is the only source
   of the `v` one. Arm-dependent eligibility would give the two arms
   different eligible sets and destroy the pairing that §4.1 exists for.
+  **And that is now a mechanism rather than a sentence (R14.1):** the
+  predicate used to derive its insets from whichever geometry it was
+  handed, so a paired analysis passing each arm its own geometry got
+  the flat arm's much smaller insets there — at `Slab(1, 0.4, 3, 3)`
+  the `y` inset is `1.207` curved against `0.447` flat, so pairs would
+  have entered one denominator and not the other. `arms()` links the
+  flat arm to the curved one, and Class C refuses a flat geometry that
+  has no such link, so "came from `arms()`" and "may be used for Class
+  C" are the same condition.
 - **Its denominator is the eligible-pair count, reported alongside**,
   and never silently substituted for `C(N, 2)`. A Class C number and a
   Class R number are never quoted against the same denominator.
@@ -763,9 +772,14 @@ in `{0.3, 1, 3}` — 216 cells, pinned in
 | admits pairs | 60 | |
 | empty, `x` violated | 102 | sole blocker in 34 |
 | empty, `y` violated | 111 | sole blocker in 48 |
-| empty, `v` violated | 12 | sole blocker in 0 |
+| empty, `v` violated | 12 | sole blocker in 5 |
 
-`x` is the sole reason 34 cells are empty. It is not a spectator.
+`x` is the sole reason 34 cells are empty. It is not a spectator — and
+neither is `v`, whose sole-blocker count this table first recorded as
+**0** (R14.3). All three sole-blocker counts are pinned now, because
+pinning only `x` is what let the wrong one sit here: "sole blocker in
+0" is precisely the reading that would have justified dropping the `v`
+guard as redundant, and it is false.
 
 **The `x` chain was a ceiling on `a`, and is now tightened.** With the
 old bound the inset obeys `x_inset / X >= sqrt(a tanh(a/2))` with `dv`
@@ -793,10 +807,22 @@ transpose does not. A square sweep cannot see this, and any operating
 point chosen for the campaign should be selected over both extents
 separately.
 
-**Still bounded above in `a`, now between 2 and 2.4** on the grids
-searched. Since the effect grows as `(wT)^4/252`, **how much signal
-survives inside the reachable range is the open question**, not whether
-a range exists.
+**No upper endpoint in `a` is claimed (R14.4).** A previous sentence
+here read "bounded above between 2 and 2.4 on the grids searched",
+which took a grid miss for a boundary. It is false as a guard-level
+statement: `a = 2.4` admits at `w·dv = 0.2`, `w·dx/2 = 0.6`,
+`w·dy/2 = 0.4`, and a finer search finds boxes at `2.6` and `2.8` that
+coarser ones did not. The admitting boxes shrink quickly — those two
+need `w·dv` of `0.005` and `0.009` — so *finding* them takes a search
+matched to that scale, and failing to find one says nothing.
+
+The only ceiling this design has established is the structural one,
+`a < π`, which is the conjugate point and is enforced on construction
+(§4.3). Where between the two the guard actually gives out is
+unmeasured. Since the effect grows as `(wT)^4/252`, **how much signal
+survives at usable `a`, and in how small a box, is the open question** —
+and the shrinking box is itself part of that cost, since a smaller box
+holds fewer elements at fixed density. **Assigned:** §8 P1.
 
 **[TO VERIFY]** The eligible-pair *fraction* — the count above says
 where the region is non-empty, not how much of the box it is, and §5's
@@ -807,7 +833,8 @@ Class C statistics may still live on a thin interior population.
 the probe will actually use. Removing it entirely still produces no
 escapes in the containment sweep, whose geometries reserve `0.002` and
 `0.006` for it against `dv = 0.35` — but that is now a statement about
-those geometries, and the sweep above finds `v` binding in 3 cells. The
+those geometries, and the sweep above finds `v` binding in 12 of 216
+cells and **solely responsible in 5** of them. The
 earlier version of this section called the full-box `v` bound "not worth
 iterating" one round before it turned out to decide the answer; the
 control is executed rather than quoted, so a geometry that starts
@@ -1161,9 +1188,10 @@ freeze and with nothing frozen**:
   §5.1's undecided set is well defined; report `ambiguous_fraction` and
   the precision-escalation policy with its cost. Assert the frozen slab
   extent is under `pi/sqrt(A)` so no pair needs a conjugate-point filter
-  (§4.3). Derive and report §4.6's **Class C guard inset** in closed
-  form, and the eligible-pair fraction it leaves — Class R keeps every
-  pair and `C(N, 2)`. Also measure §4.6.2's candidate **order-invariant
+  (§4.3). Report §4.6's **Class C guard inset** — the frozen
+  deterministic construction, not a closed form, which since R12.1 it
+  is not (§4.6.1) — and the eligible-pair fraction it leaves; Class R
+  keeps every pair and `C(N, 2)`. Also measure §4.6.2's candidate **order-invariant
   eligibility rule** against that coordinate guard: report the agreement
   rate and the pairs each admits that the other rejects, since that
   number decides whether §7's single-poset claim has anything better
