@@ -1,7 +1,28 @@
-# Next experiments plan — post Paper B v0.5
+# Experiments plan for the P6–P7 cycle — post Paper B v0.5 (SUPERSEDED)
 
-Date: 2026-07-15. Status: **P6 COMPLETE; P7 FROZEN AT N=600
-CHARACTERIZATION; T1 ACTIVE.** This remains a roadmap rather than a
+> **SUPERSEDED 2026-08-01. This is a dated record of the P6–P7/T1 cycle,
+> not the current plan, and it is kept unedited below that line because
+> its execution updates are the contemporaneous account of how that cycle
+> closed.** Do not read the sequence or the non-goals as live.
+>
+> Where the programme actually went next: **P8–P9** (3+1D dimension
+> selection — P8 placed no gate, P9 SUPPORTED 20/20/20), **P10–P11** (the
+> continuum question closed for the discriminator family, then answered
+> IMPROVES by a new metric instrument), **P12–P13** (the curvature track,
+> closed 2026-07-31: RECOVERS-CURVATURE and CURVATURE-ROBUST).
+>
+> Note against this document's own "Non-goals this cycle", which named
+> curvature recovery as "high risk, premature before P7": it was
+> premature *then*, and P11's metric instrument is what made it
+> affordable later. The non-goal was correct for its cycle and is not a
+> standing judgement.
+>
+> **Current sources of truth.** Results: `docs/paper/results_source_wip.md`.
+> Next lever: `docs/prereg/p14_weyl_curvature.md` (pure-Weyl plane wave,
+> 3+1D). Frozen protocols and outcomes: `docs/prereg/p*.md`.
+
+Date: 2026-07-15. Status at the time: **P6 COMPLETE; P7 FROZEN AT N=600
+CHARACTERIZATION; T1 ACTIVE.** This was a roadmap rather than a
 preregistration. Frozen protocols and outcomes live in the
 experiment-specific `docs/prereg/p*.md` files.
 

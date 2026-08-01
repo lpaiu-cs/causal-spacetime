@@ -54,6 +54,86 @@ Avoid this language unless explicitly discussed as a rejected formulation:
 - "space is information-transfer speed"
 - "this proves spacetime is information"
 
+### House rule: an accuracy gate is evaluated on the interval, not the point
+
+**Adopted 2026-08-01. Derivation and price: `docs/prereg/p14_weyl_curvature.md` §6.**
+
+When a preregistered gate is a claim about **accuracy** — "this instrument
+recovers `X` to within `t`" — the verdict is decided by the confidence
+interval, not by the point estimate. A point estimate inside `t` whose
+interval crosses `t` does not support the sentence the record will quote.
+
+**"The confidence interval" is not yet a rule, so its coverage and
+sidedness are frozen here too.** An 80% interval and a one-sided bound
+are both "the confidence interval", and either would change the verdict
+and the required `n` without contradicting the sentence above — which
+would put back, one level down, exactly the free parameter this rule
+removes. So:
+
+- **House default: 95%, two-sided.** That is the construction P12's
+  price below is computed against (`1.96`), and a design that says
+  nothing gets it.
+- **A design may choose otherwise, and must then fix coverage and
+  sidedness BEFORE data and power against that same construction.** A
+  one-sided bound in the verdict and a two-sided quantile in the power
+  section is not a choice, it is an inconsistency.
+- **The METHOD stays free.** Bootstrap, exact, likelihood-based,
+  Bonferroni-corrected — whatever the design argues for. What may not
+  float is the error level: the method is a modelling decision, the
+  coverage is a gate parameter, and gate parameters freeze before data.
+
+The case that forced this. P12 §9.3's co-requirement (ii) was frozen as a
+point comparison; the campaign's top rung read `0.1708` against a threshold
+of `0.25` and passed, while its 95% interval reached `0.2644` — across the
+line. §9.3 declined to re-score, correctly: converting a point rule to an
+interval rule after seeing the interval is the same move as loosening a
+threshold after seeing the data, in the opposite direction and equally
+forbidden. So the rule is fixed here, in advance, for designs that do not
+yet exist.
+
+**Size it for POWER, and never quote break-even as the price.** These are
+different numbers and confusing them silently halves a design's power —
+the first draft of this rule did exactly that, and review caught it. At
+P12 Stage B's realized variance (effective `SE = 0.0474`, margin
+`1.67 sigma` against `0.25`, `n = 1117`):
+
+| | `n` per rung per arm | |
+|---|---|---|
+| break-even — interval just touches the line | `1538` | **50% power** |
+| 80% power | `3141` | |
+| **90% power** (this repository's convention) | **`4204`** | `3.76x` the run |
+
+**Under this rule P12 would have declared itself infeasible** — its frozen
+cap was `1300`, which break-even already exceeds and the 90% number
+exceeds 3.2x over. Adopt it knowing that, or do not adopt it.
+
+Note where P12's `n` came from: `n_sup = 101` and `n_eq = 1117`, both from
+the **rate** gate. The recovery gate's precision was never a sizing
+constraint and simply came along for free. Under this rule it becomes one,
+and on those numbers the binding one by a large factor. **Every design
+from here sizes its accuracy gate for a stated target power, in the power
+section, before any data.** Derivation and simulation check:
+`docs/prereg/p14_weyl_curvature.md` §6.1.
+
+Three things this rule is not:
+
+- **Not retroactive.** P12's record stands on the rule it froze.
+- **Not free.** See the paragraph above. A design adopting it and then
+  discovering it cannot afford it has loosened a gate.
+- **Not a licence to switch, and there is no argued exception.** An
+  accuracy gate is decided on the interval. Full stop. An earlier draft
+  of this rule added "a design that wants a point rule must argue for it
+  in its own text before freezing" — which reopens exactly what the rule
+  closes, since every design that wants the looser test will have an
+  argument ready and review would have no deterministic standard to hold
+  it to. Withdrawn.
+
+Gates that are **not** accuracy claims — existence, sign, ordering, budget,
+completion — keep whatever form their design freezes, and this rule says
+nothing about them. **That is the only latitude here**: the question a
+design may argue is whether a given gate IS an accuracy claim, not which
+rule an accuracy claim gets.
+
 ## Implementation standards
 
 Use Python 3.11 or later.
