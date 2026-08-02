@@ -157,12 +157,13 @@ guard rule reached back into the claim. Four items, all fixed here.**
   biases that very quantity. §4.6.2, §5, §7.
 - **R4.2 (P2)** The inset's freeze time was stated two ways: §4.6 froze
   it before the probe, §8.2 let the probe pick it. Resolved by what it
-  is — a closed-form function of the operating point, hence DETERMINED
-  rather than chosen (§4.6.1). Definitions and derivation rule frozen
-  now; the number follows the operating point and freezes with it before
-  confirmation. §5's "may not be chosen after seeing its curves" is
-  withdrawn as written — it contradicted §8.2 and would have forbidden
-  the probe from doing its job.
+  is — a DETERMINED function of the operating point rather than a chosen
+  one (§4.6.1; no longer closed-form since R12.1, but still resolved by
+  a fixed criterion rather than by anyone's judgement). Definitions and
+  derivation rule frozen now; the number follows the operating point
+  and freezes with it before confirmation. §5's "may not be chosen
+  after seeing its curves" is withdrawn as written — it contradicted
+  §8.2 and would have forbidden the probe from doing its job.
 - **R4.3 (P2)** "Independent per arm" was the wrong phrase: the
   marginals are Poisson, the counts are not independent. And
   `Var(N_A - N_0) = rho Vol(I_A △ I_0)` is exact for the raw difference
@@ -521,9 +522,25 @@ truncated count.
   a `v` component as well as a transverse one (R10.1)** — see below,
   because the `v` one is not obvious and its omission would have made
   §8 P2 count truncated intervals against an untruncated mean.
-- **Transverse component:** the maximum transverse excursion a null
-  geodesic can make over the slab's `u`-extent, in closed form from the
-  same Jacobi propagators as §4.3 and §4.4.
+- **Transverse component — and it is TWO insets, not one (R11.1).** The
+  first derivation bounded the excursion using `coth(z) >= 1/z`, which
+  is a fact about the DEFOCUSING direction; the focusing one has
+  `cot(z)` in the same slot, where the inequality is false and the value
+  turns negative past `z = pi/2`. Nothing had been proved about `y`. The
+  two are now separate: `x` keeps the inequality chain
+  `sqrt(du K / 2)` with `K = dv + cross` (R13.1 — see below for why `V`
+  is not in it), and `y` solves its actual reachability condition,
+  using `Q = (w/2) sin(a)/(sin a_p sin a_q) >= w cot(a/2) > 0` (positive
+  even where the individual cotangents are not), `min_y f = S_y(du)` by
+  composition of the classical action, and a trajectory excursion whose
+  maximum over the endpoint box sits at a CORNER because the function is
+  convex there. The maximising corner is the **same-sign** one, reaching
+  `Y / cos(a/2)` — not the opposite-sign one, which reaches only `Y`.
+  Which of the two insets comes out larger is regime-dependent and this
+  design no longer claims an ordering: it asserted one twice and had it
+  backwards both times, and since R12.1 made the components coupled,
+  `x` is computed from a budget that the `y` solve determines. What is
+  pinned instead is that they are derived apart.
 - **`v` component, and why it exists at all.** One would expect a
   diamond to lie between its endpoints' `v` coordinates, since future
   means decreasing `v`. It need not: membership in `J^+(p)` reads
@@ -536,17 +553,84 @@ truncated count.
   The inset must therefore include `max(-C)` over the admissible
   region.
 - **That maximum must be taken over the COMPACT box, not analytically
-  in the open.** Minimising `S_y` over an interior `y` gives
-  `-(w y_p^2 / 2) tan(w Du)` at `y = y_p / cos(w Du)`, which diverges as
-  `w Du -> pi/2` — well before the conjugate point at `pi`. What keeps
-  it finite is the box's own `|y| <= dy/2`, so the bound is a
-  constrained maximum over the frozen geometry and it is one more thing
-  the operating point's `fraction` has to buy.
+  in the open** — and doing so changes where it diverges, which the
+  first version of this bullet got wrong. Minimising `S_y` over an
+  unconstrained interior `y` gives `-(w y_p^2/2) tan(w Du)` at
+  `y = y_p / cos(w Du)`, blowing up at `w Du -> pi/2`; but that `y`
+  leaves the box first, so the configuration is unattainable. **Over
+  the box the maximum is `w (dy/2)^2 tan(w Du / 2)`, at the corner
+  `y_p = y = dy/2`** (P1, verified against a grid search), and it
+  diverges at `w Du -> pi` — the conjugate point, which is the natural
+  place. The `pi/2` claim is withdrawn.
+- **And it is taken over a RECTANGLE, not that square (R12.1).** One of
+  the two arguments is an eligible endpoint, so it is already inset:
+  the honest domain is `|y_p| <= Y_inner`, `|y| <= Y`. The maximum then
+  has three regimes — the interior optimum `y = y_p / cos a` is
+  feasible only while `y_p <= Y cos a` — and comes out 3× to 20×
+  below the square's corner value in the geometries tested, which
+  §4.6.3 records as the difference between an empty eligible set and a
+  usable one.
+- **`V` is paid ONCE, not twice (R13.1).** The joint solve first wrote
+  the budget as `dv + cross + 2V` in both transverse conditions, on the
+  reading that the diamond may use the whole slab in `v` *and* rise by
+  `V` at each end. It may not. An eligible pair already sits inside the
+  window `[V, dv - V]`, so the drop it can spend is `Dv <= dv - 2V`,
+  and the two focusing legs return at most `2V` of it — **the two
+  cancel exactly in the defocusing condition**, leaving `K = dv + cross`
+  with no `V` in it at all, and no dependence on `Y_inner`. The `y`
+  spread gets no such cancellation, because what it subtracts is the
+  direct action between the two ENDPOINTS, both inset: an inner-inner
+  bound `W`, giving `(dv - 2V) + cross + W`. Double-charging `V` shrank
+  the eligible volume and the census with it, so §4.6.3's first
+  "operating point" reading was not yet earned.
+- **The cross term carries `X_inner`, and the split is not free
+  (R13.2).** It was bounded as `2 w tanh(a/2) X^2`. Both factors were
+  loose, and not harmlessly: with it, `x_inset / X >= sqrt(a tanh(a/2))`
+  **independently of `dv` and of box size**, which exceeds 1 at
+  `a = 1.5434` — a hard ceiling on `a` for every square box, in the one
+  parameter the effect grows with. The bilinear terms sum to
+  `w x_m [tanh(a_p/2) x_p + tanh(a_q/2) x_q]` where `x_p, x_q` are
+  eligible endpoints, so they carry `X_inner`; and `tanh` is concave, so
+  the sum over a free split `a_p + a_q = a` peaks at `2 tanh(a/4)`.
+  `X_inner` then appears on both sides, making `x_inset` the unique
+  fixed point of a decreasing map. The ratio becomes `0.60` at `a = 2`
+  and `0.72` at `a = 3`, and the ceiling is gone.
+- **Implemented and measured (P1).** `guard_insets` returns all three
+  components; the transverse one reduces exactly to the Alexandrov
+  radius `sqrt(du dv / 2)` in the flat limit. It is **not a closed
+  form** (R12.4): `X_inner` and `Y_inner` appear on both sides of their
+  own conditions, so `x` is a bisected fixed point and `y` carries a
+  free parameter, whose operating point is the one maximising the
+  eligible coordinate volume. Every acceptance carries a fixed relative
+  margin, so the insets can only err **large** — costing eligible pairs,
+  never admitting a pair whose diamond leaves the box. **What the search
+  guarantees (R13.3):** the `x` fixed point is exact to bisection, since
+  the map is monotone; the `y` optimum is refined at *every* local
+  maximum of a 256-point scan rather than around the single best one, so
+  a peak is missed only if it is narrower than one scan step. It is not
+  claimed to be the global maximum on any stronger basis than that. A
+  containment sweep confirms no diamond point escapes for an eligible
+  pair, and its negative control catches a halved transverse inset. The
+  control finds **the `v` component never binds in the sweep's
+  geometries** — removing it produces no escapes, because they reserve
+  `0.003` and `0.008` for it against `dv = 0.35`. Whether it binds at
+  the probe's operating point is §8 P1's to answer; §4.6.3 finds it
+  binding in 12 of 216 cells, so it is not droppable on present
+  evidence.
 - **The inset is the SAME in both arms** and is taken from the binding
   arm — the curved one, whose defocusing direction gives the larger
   transverse excursion and whose focusing direction is the only source
   of the `v` one. Arm-dependent eligibility would give the two arms
   different eligible sets and destroy the pairing that §4.1 exists for.
+  **And that is now a mechanism rather than a sentence (R14.1):** the
+  predicate used to derive its insets from whichever geometry it was
+  handed, so a paired analysis passing each arm its own geometry got
+  the flat arm's much smaller insets there — at `Slab(1, 0.4, 3, 3)`
+  the `y` inset is `1.207` curved against `0.447` flat, so pairs would
+  have entered one denominator and not the other. `arms()` links the
+  flat arm to the curved one, and Class C refuses a flat geometry that
+  has no such link, so "came from `arms()`" and "may be used for Class
+  C" are the same condition.
 - **Its denominator is the eligible-pair count, reported alongside**,
   and never silently substituted for `C(N, 2)`. A Class C number and a
   Class R number are never quoted against the same denominator.
@@ -560,12 +644,21 @@ it" (§8.2). Fixed, and the resolution is forced by what the inset is:
 > numeric inset is DETERMINED — not chosen — by the operating point,
 > and is frozen with it before confirmation.**
 
-The inset is a closed-form function of the slab geometry and `A`. Once
-the probe fixes those, the number follows; there is no free parameter to
-tune. So it is not on the list of things the probe selects, and it is
-not a pre-freezable constant either, because it cannot be computed
-before the geometry it depends on exists. What §8.2's fresh-seed rule
-protects is the operating point; the inset rides along with it.
+The inset is a **deterministic** function of the slab geometry and `A`
+— not, since R12.1, a closed-form one. Two of its components are solved
+numerically (a bisected fixed point in `x`, a scanned optimum in `y`),
+and the `y` solve has a genuine free parameter, the anchor limit. What
+matters for freezing is unchanged, and is the reason the wording is
+worth being exact about: **the free parameter is resolved by a fixed
+criterion in code — maximise the eligible coordinate volume — and not
+by anyone's choice.** Once the probe fixes the geometry, the number
+follows with no analyst input. So it is not on the list of things the
+probe selects, and it is not a pre-freezable constant either, because
+it cannot be computed before the geometry it depends on exists. What
+§8.2's fresh-seed rule protects is the operating point; the inset rides
+along with it. Were that criterion ever to become a tunable, the inset
+would move onto the selection list and this section would have to
+change with it.
 
 #### 4.6.2 The guard costs Class C its pure-order standing (R4.1)
 
@@ -603,15 +696,159 @@ against the coordinate guard before anything rests on it, and selecting
 on interval cardinality directly is forbidden, since truncation biases
 that very quantity. **Assigned:** §8 P1.
 
-**[TO VERIFY]** The closed forms for **both** components of the inset —
-the maximum transverse excursion and the constrained maximum of `-C`
-over the box — and the fraction of pairs Class C eligibility retains at
-working slab geometries. If the inset is so large that few pairs
-survive, that is a cost of the volume-type statistics and a reason §5
-does not lead with them — but it must be measured, not assumed. The
-`v` component in particular grows like `tan(w Du)` before the box caps
-it, so it may bind harder than the transverse one at exactly the slab
-sizes that make the effect large. **Assigned:** §8 P1.
+### 4.6.3 Where Class C has an operating point (R12.1, R12.2, R13.2, R13.4)
+
+**Two withdrawals, from successive rounds, both of the same kind: a
+conclusion drawn from a statistic that did not contain the thing being
+concluded about.** §10 keeps naming this failure and it keeps recurring
+here.
+
+*First*, this section reported a table of `lim_x` and `lim_y` at one box
+size, indexed by `a = w du`, concluding that *eligibility empties out by
+`a ~ 1`, and it is the defocusing direction that closes first*. The
+table omitted the `v` inset, added one round earlier (R10.1). With it
+included, **every row was already ineligible** — a trend across
+configurations that all admit nothing.
+
+*Second*, the replacement census recorded only the **worst** condition
+per empty cell, and concluded from `x` never being worst that the `x`
+chain never binds and would not be tightened. `x` was violated in 42 of
+46 empty cells and was, as §4.6 now records, a hard ceiling on `a`.
+
+Both readings were available to be checked against the data already
+computed, and were not.
+
+Three things were wrong beneath the first.
+
+**`a` does not index the problem (R12.2).** Rescaling `w -> λw` with
+`du -> du/λ` holds `a` fixed while changing `w·dv` and `w·dx/2`, and
+those move the margins. Fixing `w = 1`, so lengths are in units of
+`1/w`, the question has four dimensionless arguments — `a`, `w·dv`,
+`w·dx/2`, `w·dy/2` — and one column of one slice cannot answer it.
+
+**Every bound whose argument is an eligible endpoint was taken over the
+full box (R12.1, R13.2).** The `-S_y` excursion, and later the `cross`
+term, were bounded over `|·| ≤ X` or `≤ Y` in *both* arguments, when one
+of them is an endpoint the guard has already inset. The honest domains
+are the rectangles `|y_p| ≤ Y_inner, |y| ≤ Y` and `|x_p| ≤ X_inner,
+|x_m| ≤ X`. The first cuts `V` by 3× to 20×; the second removes the
+ceiling on `a` described above. Both put an inset on both sides of its
+own condition, so `x` becomes a fixed point and `y` a solved parameter,
+rather than closed forms.
+
+**And a budget can be double-charged (R13.1).** Having added the `v`
+window, the joint solve then also added `2V` to the transverse budgets —
+charging the same excursion to the window and again to the reach. For
+an eligible pair `Dv ≤ dv − 2V`, so in the defocusing condition the two
+cancel exactly. The over-charge shrank both the eligible volume and the
+census.
+
+That joint solve exposes a free parameter this design did not know it
+had. Anchors further out in `y` cost both `v` window and `y` reach, and
+there is no distinguished point on the trade-off. Maximising `y` — the
+obvious choice — spends the whole `v` window and leaves a region of
+**zero volume**, which satisfies every inequality and admits no pairs.
+The operating point is therefore chosen to maximise the eligible
+coordinate volume itself, which is also the quantity §8 P1 owes.
+
+**A census must count conditions, not cells (R13.2).** The first version
+of the corrected table recorded, for each empty cell, only which margin
+was *worst*. `x` was worst in none of them, and I read that as `x` never
+binding — and concluded on that basis that the `x` chain would not be
+tightened. `x` was in fact violated in 42 of the 46 empty cells; it was
+simply never the largest violation. The two questions are different and
+only one of them was asked. Counts below are per condition and overlap.
+
+**And `X` and `Y` must vary independently (R13.4).** Tying them makes
+the sweep a three-dimensional slice, which cannot support a claim about
+which *direction* binds.
+
+Over `a ∈ {0.2 … 2.0}`, `w·dv ∈ {0.2 … 16}`, `w·dx/2` and `w·dy/2` each
+in `{0.3, 1, 3}` — 216 cells, pinned in
+`test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box`:
+
+| | count of 216 | |
+|---|---|---|
+| admits pairs | 60 | |
+| empty, `x` violated | 102 | sole blocker in 32 |
+| empty, `y` violated | 113 | sole blocker in 48 |
+| empty, `v` violated | 12 | sole blocker in 5 |
+
+`x` is the sole reason 32 cells are empty. It is not a spectator — and
+neither is `v`, whose sole-blocker count this table first recorded as
+**0** (R14.3). All three sole-blocker counts are pinned now, because
+pinning only `x` is what let the wrong one sit here: "sole blocker in
+0" is precisely the reading that would have justified dropping the `v`
+guard as redundant, and it is false.
+
+**The `x` chain was a ceiling on `a`, and is now tightened.** With the
+old bound the inset obeys `x_inset / X >= sqrt(a tanh(a/2))` with `dv`
+and box size dropping out, so **no square box at all** admitted a pair
+past `a = 1.5434`. Since the effect grows as `(wT)^4/252`, a ceiling on
+`a` is the most expensive defect available here, and it was hidden by
+the worst-condition census. Tightened by the two corrections in §4.6 —
+`X_inner` in the bilinear term, `2 tanh(a/4)` for the free split — the
+ratio falls to `0.60` at `a = 2` and `0.72` at `a = 3`. The count of
+admitting cells rose from 26 to 34 of the square 72, and from 47 to 60
+of the 216, and **`a = 2` became reachable**, which under the old bound
+it could not be at any box size.
+
+**The `x` margin is graded, not saturated (R14.8).** The first version
+of this table was produced by a `_defocusing_inset` that clamped its
+result to the half-extent when the condition could not be met, so
+`x_margin` came out at exactly `0.0` for every closed cell — a cell one
+ulp from admitting and one missing by 89× read identically, and the
+counts above existed only because the census's `<= 0.0` caught that
+saturated zero. Reported honestly the margin is strictly negative in all
+102 — not one cell reports exactly zero — so the conclusion is unchanged
+and now survives the comparison being written `< 0.0`.
+
+The slice the withdrawn table used (`w = 1`, `dv = 0.2`, half-extent 3)
+admits at `a = 0.3, 0.6, 1.0` and not at `1.6` — where it is now `v`
+that closes, both transverse margins being positive. So Class C has an
+operating point past `a = 1`, provided the box is chosen with `a` rather
+than fixed independently of it, and §5's items 2 and 3b are not written
+off.
+
+**The admitting box is not square.** `cross` grows with `X`, so a wide
+`x` extent is self-defeating while a wide `y` extent is not: at
+`a = 1`, `w·dv = 1`, the box `w·dx/2 = 1, w·dy/2 = 3` admits and its
+transpose does not. A square sweep cannot see this, and any operating
+point chosen for the campaign should be selected over both extents
+separately.
+
+**No upper endpoint in `a` is claimed (R14.4).** A previous sentence
+here read "bounded above between 2 and 2.4 on the grids searched",
+which took a grid miss for a boundary. It is false as a guard-level
+statement: `a = 2.4` admits at `w·dv = 0.2`, `w·dx/2 = 0.6`,
+`w·dy/2 = 0.4`, and a finer search finds boxes at `2.6` and `2.8` that
+coarser ones did not. The admitting boxes shrink quickly — those two
+need `w·dv` of `0.005` and `0.009` — so *finding* them takes a search
+matched to that scale, and failing to find one says nothing.
+
+The only ceiling this design has established is the structural one,
+`a < π`, which is the conjugate point and is enforced on construction
+(§4.3). Where between the two the guard actually gives out is
+unmeasured. Since the effect grows as `(wT)^4/252`, **how much signal
+survives at usable `a`, and in how small a box, is the open question** —
+and the shrinking box is itself part of that cost, since a smaller box
+holds fewer elements at fixed density. **Assigned:** §8 P1.
+
+**[TO VERIFY]** The eligible-pair *fraction* — the count above says
+where the region is non-empty, not how much of the box it is, and §5's
+Class C statistics may still live on a thin interior population.
+**Assigned:** §8 P1.
+
+**[TO VERIFY]** Whether the `v` component ever binds at the geometries
+the probe will actually use. Removing it entirely still produces no
+escapes in the containment sweep, whose geometries reserve `0.003` and
+`0.008` for it against `dv = 0.35` — but that is now a statement about
+those geometries, and the sweep above finds `v` binding in 12 of 216
+cells and **solely responsible in 5** of them. The
+earlier version of this section called the full-box `v` bound "not worth
+iterating" one round before it turned out to decide the answer; the
+control is executed rather than quoted, so a geometry that starts
+exercising it will say so. **Assigned:** §8 P1.
 
 ## 5. What the instrument reads, in probe order (R1.3)
 
@@ -961,10 +1198,12 @@ freeze and with nothing frozen**:
   §5.1's undecided set is well defined; report `ambiguous_fraction` and
   the precision-escalation policy with its cost. Assert the frozen slab
   extent is under `pi/sqrt(A)` so no pair needs a conjugate-point filter
-  (§4.3). Derive and report §4.6's **Class C guard inset** in closed
-  form, and the eligible-pair fraction it leaves — Class R keeps every
-  pair and `C(N, 2)`. Also measure §4.6.2's candidate **order-invariant
-  eligibility rule** against that coordinate guard: report the agreement
+  (§4.3). Report §4.6's **Class C guard inset** as the frozen
+  deterministic construction it is — *not* in closed form, which since
+  R12.1 it does not have (§4.6.1) — together with the eligible-pair
+  fraction it leaves; Class R keeps every pair and `C(N, 2)`. Also
+  measure §4.6.2's candidate **order-invariant eligibility rule**
+  against that coordinate guard: report the agreement
   rate and the pairs each admits that the other rejects, since that
   number decides whether §7's single-poset claim has anything better
   than item 3a available to it.
@@ -1105,9 +1344,11 @@ set gates from what they found — that is what a probe is for, and §5 now
 says so rather than contradicting it (R4.2).
 
 **What the probe does NOT choose:** the guard inset. Per §4.6.1 it is a
-closed-form function of the operating point, so fixing the point fixes
-the inset; it is determined, not tuned. v0.5 listed it here as a probe
-choice, which is why §4.6 and this section disagreed.
+deterministic function of the operating point — solved numerically since
+R12.1, with its one free parameter resolved by a fixed criterion in code
+— so fixing the point fixes the inset; it is determined, not tuned. v0.5
+listed it here as a probe choice, which is why §4.6 and this section
+disagreed.
 
 **The line between exploration and confirmation is the seed block, and
 it is fixed here rather than left to the freeze:**
@@ -1193,12 +1434,16 @@ own interval construction rather than inheriting P12's.
    `[D_lower, D_upper]` too wide to decide anything is still a dead
    probe, and the escalation to interval arithmetic has a cost nobody
    has measured. **Assigned:** §8 P1.
-5. The Class C guard inset of §4.6 in closed form, and what fraction of
-   pairs it leaves eligible. A thin retained population is a cost of the
-   **single-arm diagnostics** (§5 items 2 and 3b) and of §8 P2's
-   implementation check — **not** of §7's single-poset claim, which
-   rests on item 3a and needs no eligibility rule at all (§4.6.2, R4.1).
-   The claim-side lever is q9, not this one. **Assigned:** §8 P1.
+5. What fraction of pairs the Class C guard leaves eligible. §4.6.3
+   settles **where** the eligible set is non-empty over the four
+   dimensionless box ratios; it does not settle how much of the box it
+   is, and the guard is not a closed form — it has a free parameter set
+   by maximising that very fraction, so the two questions are the same
+   question. A thin retained population is a cost of the **single-arm
+   diagnostics** (§5 items 2 and 3b) and of §8 P2's implementation
+   check — **not** of §7's single-poset claim, which rests on item 3a
+   and needs no eligibility rule at all (§4.6.2, R4.1). The claim-side
+   lever is q9, not this one. **Assigned:** §8 P1.
 6. Whether the same-points pairing tightens the interval enough to
    offset the interval rule's cost, measured **between sprinklings**
    (§5.2). The benchmark it must beat is §6.1's `3.76x` at 90% power,
