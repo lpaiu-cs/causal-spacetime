@@ -1051,9 +1051,14 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
     # forgery this refuses compares EQUAL to `arms()`' output for the
     # same `compare=False` reason the round trip had to work around, so
     # an equality check could not see a linker put back here.
+    # R18.1: `is curved.guard_from` was the left disjunct here, and
+    # `curved.guard_from` is None -- so it read as `is None`, which is
+    # the very failure the line refuses. `_arm_of` calls `arms()`
+    # afresh, so identity with `curved` cannot hold; equality plus a
+    # non-None check is what there is to say.
     assert _arm_of(slab, 1.0, 1).w == 0.0
-    assert _arm_of(slab, 1.0, 1).guard_from is curved.guard_from or (
-        _arm_of(slab, 1.0, 1).guard_from == curved)
+    assert _arm_of(slab, 1.0, 1).guard_from is not None
+    assert _arm_of(slab, 1.0, 1).guard_from == curved
     assert _arm_of(slab, 1.0, 0).guard_from is None, (
         "index 0 is the unlinked source; a linker would return a link")
     for index in (0, 1):
@@ -1061,25 +1066,29 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
         assert rebuilt.w == 0.0 and rebuilt.guard_from is not None
         assert rebuilt.link_key is _ARMS_KEY
 
-    # R14.7: and the curvature is checked, not just the slab. A link
-    # validating only "same slab, no chaining" let a `w = 0.9` arm
-    # apply a `w = 0.2` guard -- admitting `|y| <= 1.0419` where the
-    # real guard allows `0.3429`, and leaking diamonds out of the box.
+    # R17.1: a linked arm is the FLAT reading, and that is the whole
+    # rule. R14.7 first stated it as a curvature comparison -- a
+    # `w = 0.9` arm must not apply a `w = 0.2` guard, which admitted
+    # `|y| <= 1.0419` where the real guard allows `0.3429` -- but that
+    # form also let a curved arm link to itself, a shape `arms()` never
+    # emits and `__reduce__`'s fixed index assumed away, so a round
+    # trip returned the flat arm with the flat guard. `w == 0` covers
+    # both and is what makes that index safe.
+    #
+    # R18.2: one block, not two. The R14.7 case matched on `curved
+    # partner`, a substring of the message the `w == 0` check now
+    # raises, so both fired on the same condition while the comment
+    # above the weaker one still described the rule R17 replaced.
     mild, _ = arms(slab, 0.2)
     assert guard_insets(mild).y < guard_insets(curved).y / 2.0
-    with pytest.raises(ValueError, match="curved partner"):
-        PlaneWaveGeometry(slab, 0.9, guard_from=mild,
-                          link_key=_ARMS_KEY)
-    # R17.1: the ONE shape `arms()` makes -- a flat arm reading its
-    # curved partner. The second line here used to build a self-linked
-    # CURVED arm under the comment "the two links arms() does make",
-    # which `arms()` does not make: the curved arm it returns is
-    # unlinked. `__post_init__` admitted it and `__reduce__` assumed it
-    # away, so a round trip returned the flat arm and swapped the guard.
+    for other_w, source in ((0.9, mild), (1.0, curved)):
+        with pytest.raises(ValueError, match="only a flat arm"):
+            PlaneWaveGeometry(slab, other_w, guard_from=source,
+                              link_key=_ARMS_KEY)
+
+    # the ONE shape `arms()` makes, and its source is unlinked
     PlaneWaveGeometry(slab, 0.0, guard_from=curved, link_key=_ARMS_KEY)
     assert curved.guard_from is None
-    with pytest.raises(ValueError, match="only a flat arm"):
-        PlaneWaveGeometry(slab, 1.0, guard_from=curved, link_key=_ARMS_KEY)
 
     # and a flat geometry with no curved partner is refused outright
     # rather than silently answering from its own insets
