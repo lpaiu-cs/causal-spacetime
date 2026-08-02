@@ -37,9 +37,11 @@ sys.path.insert(0, str(EXPERIMENT_DIR))
 
 from p14_plane_wave import (  # noqa: E402
     _ARMS_KEY,
+    _GUARD_SLACK,
     GuardInsets,
     PlaneWaveGeometry,
     Slab,
+    _arm_of,
     _defocusing_inset,
     _exact_cost,
     _focusing_excursion_factor,
@@ -779,8 +781,14 @@ def test_the_transverse_inset_is_the_alexandrov_radius_when_flat():
         geom = PlaneWaveGeometry(Slab(du=du, dv=dv, dx=9.0, dy=9.0), 0.0)
         insets = guard_insets(geom)
         assert insets.v == 0.0
-        assert insets.x == pytest.approx(math.sqrt(du * dv / 2.0))
-        assert insets.y == pytest.approx(math.sqrt(du * dv / 2.0))
+        # R16.5: EXACT, not approximate. The flat limit is the one
+        # place the answer is known to the last bit, so a stray
+        # `_GUARD_SLACK` here -- 1e-12, invisible to `approx` -- is
+        # detectable, and this quantity has drifted twice already.
+        assert insets.x == math.sqrt(du * dv / 2.0)
+        assert insets.y == math.sqrt(du * dv / 2.0)
+        assert _defocusing_inset(geom.slab, 0.0, 4.5) == (
+            math.sqrt(du * dv / 2.0), 0.0)
 
 
 def test_the_focusing_direction_needs_its_own_inset():
@@ -952,13 +960,11 @@ def test_where_class_c_eligibility_is_non_empty_over_the_dimensionless_box():
                      for w_x in halves for w_y in halves
                      if not admits(a, w_dv, w_x, w_y)
                      and margins(a, w_dv, w_x, w_y)[0] < 0.0])
-    assert strict["x"] == 102, strict
-    # not one cell reports exactly zero, so the counts do not depend on
-    # whether the comparison above is written `<= 0.0` or `< 0.0`
-    assert not [c for c in [(a, w_dv, w_x, w_y) for a in axes
-                            for w_dv in dvs for w_x in halves
-                            for w_y in halves]
-                if not admits(*c) and margins(*c)[0] == 0.0]
+    # R16.3: `rect["x"]` counts `<= 0.0` and `strict["x"]` counts
+    # `< 0.0`; the two being equal IS the statement that no cell
+    # reports exactly zero, so a separate check of that could not fail
+    # while both of these pass. Said once, here.
+    assert strict["x"] == rect["x"] == 102, (strict, rect)
 
     # the anisotropy is real: at this cell a wide `y` extent admits and
     # a wide `x` extent does not, which a square sweep cannot see
@@ -1019,9 +1025,27 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
     for made in (pickle.loads(pickle.dumps(flat)), copy.deepcopy(flat),
                  pickle.loads(pickle.dumps(curved))):
         original = curved if made.w else flat
+        # R16.3: `link_key` is `compare=False`, so equality is exactly
+        # the thing that could NOT see the capability being lost -- the
+        # first version of this control asserted equality twice and
+        # carried its whole weight on the `replace()` call. The
+        # property is stated directly now; the two value checks stay,
+        # but as value checks.
+        assert made.link_key is original.link_key
         assert made == original
         assert guard_insets(made) == guard_insets(original)
         dataclasses.replace(made, w=made.w)  # must not raise
+
+    # R16.2: and the reconstructor is a selector on `arms()`, not a
+    # linker. The first one called the constructor with the key, so it
+    # rebuilt the flat-to-flat forgery this test's own `nowhere else`
+    # assertion refuses two lines below.
+    assert _arm_of(slab, 1.0, 1) == flat
+    assert _arm_of(slab, 1.0, 0) == curved
+    for index in (0, 1):
+        rebuilt = _arm_of(slab, 0.0, index)
+        assert rebuilt == arms(slab, 0.0)[index], (
+            "the reconstructor returns something arms() would not")
 
     # R14.7: and the curvature is checked, not just the slab. A link
     # validating only "same slab, no chaining" let a `w = 0.9` arm
@@ -1328,15 +1352,124 @@ def test_every_rejection_class_c_eligible_can_make_is_exercised():
     closed_slab = Slab(du=0.7, dv=0.2, dx=6.0, dy=0.6)
     closed, _ = arms(closed_slab, 1.0)
     blocked = guard_insets(closed)
-    assert closed_slab.dx / 2.0 - blocked.x == 0.0
+    # `y` alone carries the block, and it is a BITWISE zero -- both
+    # sides compute `slab.dy / 2.0` from the same slab (R16.6). `x` is
+    # the raw demanded inset and is comfortably inside, and the `v`
+    # window is open, so nothing else can be doing the rejecting.
     assert closed_slab.dy / 2.0 - blocked.y == 0.0
+    assert closed_slab.dx / 2.0 - blocked.x > 0.5
     assert closed_slab.dv - 2.0 * blocked.v > 0.0, (
         "the v window is shut, so the v check would reject and this "
         "would not reach the extent branch")
     axis_p = np.array([0.0, 0.5 * closed_slab.dv, 0.0, 0.0])
     axis_q = np.array([closed_slab.du, 0.5 * closed_slab.dv, 0.0, 0.0])
-    assert blocked.v <= float(axis_p[1]) <= closed_slab.dv - blocked.v
     assert not class_c_eligible(closed, axis_p, axis_q)
+
+    # and the block survives every blocked geometry, not just this one:
+    # `y_lim` is bitwise zero in all of them
+    for du, dv, ext_x, ext_y in ((0.7, 0.2, 6.0, 0.6), (2.0, 4.0, 0.6, 0.6),
+                                 (1.4, 0.2, 6.0, 2.0), (2.0, 0.2, 6.0, 2.0)):
+        empty_slab = Slab(du=du, dv=dv, dx=ext_x, dy=ext_y)
+        empty, _ = arms(empty_slab, 1.0)
+        blocked = guard_insets(empty)
+        if blocked.y < empty_slab.dy / 2.0:
+            continue
+        assert empty_slab.dy / 2.0 - blocked.y == 0.0, (du, dv, ext_x, ext_y)
+
+
+def test_the_guard_solve_is_cached_where_the_pair_loop_reads_it():
+    """The case, review R16.1: `@functools.lru_cache` was landed on
+    `guard_insets` in R14.18, and a later edit inserted a helper
+    between the decorator and the function -- so the cache moved onto a
+    four-float constructor, `guard_insets` went back to 285.5 us per
+    call inside what will be an `O(N^2)` loop, and nothing failed.
+
+    Nothing failed in either direction: moving the decorator back was
+    also invisible. That is the shape this review round keeps finding,
+    so the property is asserted rather than left to the decorator
+    staying adjacent to its function.
+    """
+
+    assert hasattr(guard_insets, "cache_info"), (
+        "guard_insets is not cached -- check that no definition has "
+        "been inserted between it and its decorator")
+
+    geom, _ = arms(Slab(du=1.0, dv=1.0, dx=4.0, dy=4.0), 1.0)
+    guard_insets(geom)  # warm, so the count below is not the first miss
+    before = guard_insets.cache_info()
+
+    rng = np.random.default_rng(3)
+    points = [np.array([rng.uniform(0.0, 1.0), rng.uniform(0.0, 1.0),
+                        rng.uniform(-2.0, 2.0), rng.uniform(-2.0, 2.0)])
+              for _ in range(24)]
+    for i, first in enumerate(points):
+        for second in points[i + 1:]:
+            class_c_eligible(geom, first, second)
+
+    after = guard_insets.cache_info()
+    pairs = len(points) * (len(points) - 1) // 2
+    assert after.misses == before.misses, (
+        f"{after.misses - before.misses} solves for one geometry over "
+        f"{pairs} pairs; the guard is being recomputed per pair")
+    assert after.hits - before.hits >= pairs
+
+
+def test_the_diagnostic_and_the_predicate_compute_one_guard():
+    """The case, review R16.5: `_GUARD_SLACK` has now been wrong in
+    BOTH directions across two consecutive rounds -- missing from
+    `guard_margins`' curved branch in one, added to its flat branch in
+    the next -- and after each fix nothing pinned it. Six of seven
+    mutations left the suite green, including reverting the fix that
+    had just landed.
+
+    The reason is that `guard_margins` re-derives what `guard_insets`
+    already computed instead of reading it, so the two can drift by any
+    amount that no other assertion happens to notice. This asserts they
+    agree, which is the property the docstring claims and the one that
+    catches a slack applied in one place and not the other.
+
+    Both branches, and both signs of the eligible/empty split.
+    """
+
+    checked = {"flat": 0, "curved_open": 0, "curved_empty": 0}
+    for w, du, dv, ext_x, ext_y in (
+            (0.0, 1.0, 0.4, 3.0, 3.0), (0.0, 0.5, 2.0, 4.0, 1.0),
+            (1.0, 1.0, 1.0, 4.0, 4.0), (0.7, 1.2, 0.4, 6.0, 6.0),
+            (1.3, 0.9, 2.0, 3.0, 3.0), (1.0, 2.0, 0.2, 6.0, 2.0),
+            (1.0, 0.7, 0.2, 6.0, 0.6), (0.9, 2.0, 0.05, 1.0, 1.0)):
+        slab = Slab(du=du, dv=dv, dx=ext_x, dy=ext_y)
+        geom, flat = arms(slab, w)
+        half_x, half_y = ext_x / 2.0, ext_y / 2.0
+        insets = guard_insets(geom)
+        reported = guard_margins(geom)
+
+        # the `x` and `v` components are read off the insets directly
+        # in every branch, so they must match exactly
+        assert reported[0] == pytest.approx(
+            (half_x - insets.x) / half_x, rel=1e-15, abs=1e-15), (w, du)
+        if insets.y < half_y:
+            assert reported[2] == pytest.approx(
+                (slab.dv - 2.0 * insets.v) / slab.dv, rel=1e-15,
+                abs=1e-15), (w, du)
+
+        # and both arms report the same thing, since they share a guard
+        assert guard_margins(flat) == reported, (w, du)
+
+        if w == 0.0:
+            # flat: the guard is the Alexandrov radius in both
+            # components, and the diagnostic must not add a slack the
+            # predicate does not apply, nor drop one it does
+            assert reported[0] == pytest.approx(
+                (half_x - insets.x) / half_x, rel=1e-15, abs=1e-15)
+            assert reported[1] == pytest.approx(
+                (half_y - insets.y) / half_y, rel=1e-15, abs=1e-15)
+            checked["flat"] += 1
+        elif insets.y < half_y:
+            checked["curved_open"] += 1
+        else:
+            checked["curved_empty"] += 1
+
+    assert all(checked.values()), checked
 
 
 def test_the_y_inset_is_tied_to_the_reach_it_is_supposed_to_bound():
@@ -1378,6 +1511,14 @@ def test_the_y_inset_is_tied_to_the_reach_it_is_supposed_to_bound():
         assert reach <= half * (1 + 1e-9), (
             f"w={w} du={du}: the admitted anchor reaches {reach} beyond "
             f"the half-extent {half}")
+
+        # R16.5: and `guard_margins` reports that same reach with the
+        # same slack. Dropping the multiplier in either place is a
+        # 1e-12 move that no other assertion in the suite could see.
+        assert guard_margins(geom)[1] == pytest.approx(
+            (half - reach * _GUARD_SLACK) / half, rel=1e-14, abs=1e-16), (
+            f"w={w} du={du}: the diagnostic's y margin is not the "
+            "reach the guard enforces")
 
         # and it is not loose: the guard's own `v` component agrees, so
         # a scaled-down `y` cannot pass
@@ -1459,7 +1600,16 @@ def test_the_operating_point_sits_where_the_volume_criterion_puts_it():
                   + max_negative_focusing(a, w, y_inner, y_inner))
         reach = alpha * y_inner + math.sqrt(budget * math.tan(a / 2.0) / w)
 
+        # R16.5: saturation is where the scan stopped because
+        # `reach * _GUARD_SLACK` hit the half-extent, so the reach
+        # itself lands just BELOW it by exactly that factor. Removing
+        # the multiplier in `room()` moves it to `half` and is caught
+        # here; nothing else in the suite resolves 1e-12.
         saturated = reach >= half * (1.0 - 1e-9)
+        if saturated:
+            assert reach * _GUARD_SLACK <= half * (1.0 + 1e-15), (
+                f"w={w} du={du}: the accepted anchor does not carry the "
+                f"guard's own slack ({reach * _GUARD_SLACK} vs {half})")
         interior = abs(window / slab.dv - 2.0 / 3.0) < 1e-6
         assert saturated or interior, (
             f"w={w} du={du} half={half}: the anchor is neither on the "
@@ -1721,16 +1871,30 @@ def test_a_weakened_focusing_guard_leaks_on_a_constructed_pair():
     cost = transverse_cost(du, 0.0, 0.0, sign_p * lim, sign_q * lim, w)
     p = np.array([0.0, slab.dv - real.v, 0.0, sign_p * lim])
     q = np.array([du, real.v, 0.0, sign_q * lim])
+    # R16.4: what "sprinkleable" means is taken from `sprinkle`, not
+    # restated. Two rounds of this assertion have been written against
+    # a bound a neighbouring line already implied -- first `q`'s floor
+    # and `p`'s ceiling, then all four corners of the same box -- so
+    # the constant comes from the function whose range is the claim.
+    drawn = sprinkle(geom, 300.0, np.random.default_rng(11))
+    assert len(drawn) > 50
+    assert float(drawn[:, 1].min()) >= 0.0
+    assert float(drawn[:, 1].max()) <= slab.dv
+    for name, point in (("p", p), ("q", q)):
+        v_here = float(point[1])
+        assert 0.0 <= v_here <= slab.dv, (
+            f"{name} sits at v = {v_here}, outside the range `sprinkle` "
+            "draws from, so a leak on this pair reaches no Class C count")
+
+    # The window check below implies the two above, and only because
+    # `real.v >= 0` -- structural, since `max_negative_focusing`
+    # maximises over a rectangle containing the origin where `-S_y` is
+    # zero. Stated rather than relied on silently: if the guard ever
+    # returned a negative `v` inset the two would come apart, and the
+    # slab bound is the one that has to hold.
+    assert real.v >= 0.0
     assert real.v <= float(q[1]) < float(p[1]) <= slab.dv - real.v, (
         "the constructed pair does not fit the admissible v window")
-    # R15.9: BOTH bounds on BOTH endpoints. The first version read
-    # `0.0 <= q[1] and p[1] <= slab.dv`, which checks `q`'s floor and
-    # `p`'s ceiling -- while the bug it was written for was `p`'s
-    # FLOOR, at `-28.8`. Both halves reduced to `real.v >= 0`.
-    for coordinate in (float(p[1]), float(q[1])):
-        assert 0.0 <= coordinate <= slab.dv, (
-            f"v = {coordinate} is outside the slab, so the pair could "
-            "never be sprinkled and a leak on it reaches no Class C count")
     assert float(p[1]) - float(q[1]) >= cost, "not causally related"
     assert causal_relation(geom, p, q).related is True
 

@@ -405,15 +405,24 @@ class PlaneWaveGeometry:
 
         if self.guard_from is None:
             return (PlaneWaveGeometry, (self.slab, self.w))
-        return (_relink, (self.slab, self.w, self.guard_from))
+        return (_arm_of, (self.slab, self.guard_from.w, 1))
 
 
-def _relink(slab: Slab, w: float,
-            source: PlaneWaveGeometry) -> PlaneWaveGeometry:
-    """Reconstructor for `PlaneWaveGeometry.__reduce__` (R15.14)."""
+def _arm_of(slab: Slab, w: float, index: int) -> PlaneWaveGeometry:
+    """Reconstructor for `PlaneWaveGeometry.__reduce__` (R15.14).
 
-    return PlaneWaveGeometry(slab, w, guard_from=source,
-                             link_key=_ARMS_KEY)
+    **A selector on `arms()`, not a linker (R16.2.)** The first version
+    called the constructor with `_ARMS_KEY` itself, which made it a
+    general-purpose linking function that happened to be private by
+    naming convention -- and `_relink(sl, 0.0, PlaneWaveGeometry(sl, 0.0))`
+    rebuilt the flat-to-flat forgery R14.7 exists to refuse, admitting a
+    pair both real arms reject. A `__reduce__` reconstructor has to
+    reproduce an object that already passed the checks, never to hand
+    out the capability to make one. A linked geometry is always an
+    output of `arms()`, so returning one is all this needs to do.
+    """
+
+    return arms(slab, w)[index]
 
 
 def conjugate_du(w: float) -> float:
@@ -800,13 +809,6 @@ def _defocusing_inset(slab: Slab, w: float,
     return x_inset, cross_at(x_inset)
 
 
-#: `guard_insets` is a constant of the geometry -- it reads only the
-#: frozen `slab` and `w` -- and `class_c_eligible` calls it once per
-#: pair, inside what will be an `O(N^2)` loop. One solve is 383 us and
-#: dominates the predicate entirely; over a 7140-pair loop caching it
-#: is 456x with identical eligible counts (R14.18). Sized to hold every
-#: geometry a sweep touches.
-@functools.lru_cache(maxsize=4096)
 def _blocked(half_x: float, half_y: float,
              x_inset: float, v_inset: float) -> GuardInsets:
     """Insets for a geometry that admits nothing.
@@ -820,11 +822,32 @@ def _blocked(half_x: float, half_y: float,
     therefore untested (R15.4). Reporting the `x` inset the condition
     DEMANDS, which may exceed `half_x`, both keeps the extent branch
     live and says by how much the geometry missed.
+
+    R16.6: the `x` component is the RAW demanded inset, not
+    `max(x_inset, half_x)`. Clamping reported exactly `half_x` in 559
+    of 974 blocked geometries -- every one where `x` was not the
+    binding condition -- which is R14.8's saturated zero returning in
+    the cells it was not looking at. Nothing rests on the clamp:
+    `y_lim = slab.dy/2 - half_y` is a bitwise zero in every blocked
+    case, computed from the same `slab.dy` on both sides, so the extent
+    branch fires on `y` whatever `x` says.
     """
 
-    return GuardInsets(x=max(x_inset, half_x), y=half_y, v=v_inset)
+    return GuardInsets(x=x_inset, y=half_y, v=v_inset)
 
 
+#: `guard_insets` is a constant of the geometry -- it reads only the
+#: frozen `slab` and `w` -- and `class_c_eligible` calls it once per
+#: pair, inside what will be an `O(N^2)` loop. One solve is 383 us and
+#: dominates the predicate entirely; over a 7140-pair loop caching it
+#: is 456x with identical eligible counts (R14.18). Sized to hold every
+#: geometry a sweep touches.
+#:
+#: R16.1: this decorator has to sit against `guard_insets` itself.
+#: Inserting `_blocked` between the two put it on a four-float
+#: constructor instead -- 3 hits against 9 misses -- and reverted
+#: R14.18 entirely, at 285.5 us per call against 0.211 us cached.
+@functools.lru_cache(maxsize=4096)
 def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     """All three components, from the Jacobi propagators (§4.6).
 
@@ -995,12 +1018,14 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
                 hi_v = mid
         span = lo_v
     if span <= 0.0:
-        return _blocked(half_x, half_y, x_inset, v_excursion(0.0))
+        return _blocked(half_x, half_y, x_inset,
+                        v_excursion(0.0) * _GUARD_SLACK)
 
     grid = [span * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
     vols = [volume(y) for y in grid]
     if max(vols) <= 0.0:
-        return _blocked(half_x, half_y, x_inset, v_excursion(0.0))
+        return _blocked(half_x, half_y, x_inset,
+                        v_excursion(0.0) * _GUARD_SLACK)
 
     # The global argmax is always an interior peak already -- `vols[0]`
     # is identically zero and the far end is either zero or a boundary
@@ -1034,9 +1059,14 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
 def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
     """The three interior margins, as fractions of the box's own scale.
 
-    `guard_insets` blocks on all three components once the eligible set
-    is empty, which is right for the predicate and useless for asking
-    WHICH condition emptied it. This reports that separately: the
+    `guard_insets` jams `y` once the eligible set is empty -- that
+    alone refuses every pair -- which is right for the predicate and
+    useless for asking WHICH condition emptied it. (It used to jam all
+    three; R15.4 stopped, because jamming them cost exactly the
+    information this function exists to recover. The sentence here
+    still described the old sentinel, which is R14.6's shape again:
+    the site that changed was updated and the sibling claim elsewhere
+    was not.) This reports separately: the
     margins at the guard's operating point, or -- when the set is
     empty -- at the anchor limit that comes closest to feasible.
 
