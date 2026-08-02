@@ -1022,9 +1022,16 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
     # `guard_from` and losing its key, equal and hashing equal to the
     # original but rejected by `dataclasses.replace`. §8 P3/P4 make
     # sprinklings the replication unit and `multiprocessing` pickles.
-    for made in (pickle.loads(pickle.dumps(flat)), copy.deepcopy(flat),
-                 pickle.loads(pickle.dumps(curved))):
-        original = curved if made.w else flat
+    # R17.2: the expected object is FIXED per item, not read off the
+    # answer. `original = curved if made.w else flat` made a round trip
+    # that returned the wrong arm select that arm as its own
+    # expectation and compare it to itself, so the index regression
+    # above was invisible here.
+    for original, made in ((flat, pickle.loads(pickle.dumps(flat))),
+                           (flat, copy.deepcopy(flat)),
+                           (curved, pickle.loads(pickle.dumps(curved)))):
+        assert made.w == original.w, (
+            f"a round trip changed the arm: w {original.w} -> {made.w}")
         # R16.3: `link_key` is `compare=False`, so equality is exactly
         # the thing that could NOT see the capability being lost -- the
         # first version of this control asserted equality twice and
@@ -1040,12 +1047,19 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
     # linker. The first one called the constructor with the key, so it
     # rebuilt the flat-to-flat forgery this test's own `nowhere else`
     # assertion refuses two lines below.
-    assert _arm_of(slab, 1.0, 1) == flat
-    assert _arm_of(slab, 1.0, 0) == curved
+    # R17.2: stated over `w` and `guard_from`, not over `==`. The
+    # forgery this refuses compares EQUAL to `arms()`' output for the
+    # same `compare=False` reason the round trip had to work around, so
+    # an equality check could not see a linker put back here.
+    assert _arm_of(slab, 1.0, 1).w == 0.0
+    assert _arm_of(slab, 1.0, 1).guard_from is curved.guard_from or (
+        _arm_of(slab, 1.0, 1).guard_from == curved)
+    assert _arm_of(slab, 1.0, 0).guard_from is None, (
+        "index 0 is the unlinked source; a linker would return a link")
     for index in (0, 1):
         rebuilt = _arm_of(slab, 0.0, index)
-        assert rebuilt == arms(slab, 0.0)[index], (
-            "the reconstructor returns something arms() would not")
+        assert rebuilt.w == 0.0 and rebuilt.guard_from is not None
+        assert rebuilt.link_key is _ARMS_KEY
 
     # R14.7: and the curvature is checked, not just the slab. A link
     # validating only "same slab, no chaining" let a `w = 0.9` arm
@@ -1056,9 +1070,16 @@ def test_class_c_eligibility_cannot_be_taken_from_the_flat_arm():
     with pytest.raises(ValueError, match="curved partner"):
         PlaneWaveGeometry(slab, 0.9, guard_from=mild,
                           link_key=_ARMS_KEY)
-    # the two links `arms()` does make are both legal
+    # R17.1: the ONE shape `arms()` makes -- a flat arm reading its
+    # curved partner. The second line here used to build a self-linked
+    # CURVED arm under the comment "the two links arms() does make",
+    # which `arms()` does not make: the curved arm it returns is
+    # unlinked. `__post_init__` admitted it and `__reduce__` assumed it
+    # away, so a round trip returned the flat arm and swapped the guard.
     PlaneWaveGeometry(slab, 0.0, guard_from=curved, link_key=_ARMS_KEY)
-    PlaneWaveGeometry(slab, 1.0, guard_from=curved, link_key=_ARMS_KEY)
+    assert curved.guard_from is None
+    with pytest.raises(ValueError, match="only a flat arm"):
+        PlaneWaveGeometry(slab, 1.0, guard_from=curved, link_key=_ARMS_KEY)
 
     # and a flat geometry with no curved partner is refused outright
     # rather than silently answering from its own insets
@@ -1365,16 +1386,22 @@ def test_every_rejection_class_c_eligible_can_make_is_exercised():
     axis_q = np.array([closed_slab.du, 0.5 * closed_slab.dv, 0.0, 0.0])
     assert not class_c_eligible(closed, axis_p, axis_q)
 
-    # and the block survives every blocked geometry, not just this one:
-    # `y_lim` is bitwise zero in all of them
+    # And the block survives every blocked geometry, not just this one.
+    # R17.3: no `continue`. The guard it used to carry --
+    # `if blocked.y < half: continue` -- fired exactly when `y_lim > 0`,
+    # which is the direction this exists to catch, so a one-ulp-down
+    # mutation of `_blocked`'s `y` made all four entries skip and the
+    # loop assert nothing. These four are all blocked, so the guard was
+    # never doing anything except hiding its own failure mode.
     for du, dv, ext_x, ext_y in ((0.7, 0.2, 6.0, 0.6), (2.0, 4.0, 0.6, 0.6),
                                  (1.4, 0.2, 6.0, 2.0), (2.0, 0.2, 6.0, 2.0)):
         empty_slab = Slab(du=du, dv=dv, dx=ext_x, dy=ext_y)
         empty, _ = arms(empty_slab, 1.0)
         blocked = guard_insets(empty)
-        if blocked.y < empty_slab.dy / 2.0:
-            continue
         assert empty_slab.dy / 2.0 - blocked.y == 0.0, (du, dv, ext_x, ext_y)
+        assert not class_c_eligible(
+            empty, np.array([0.0, 0.5 * dv, 0.0, 0.0]),
+            np.array([du, 0.5 * dv, 0.0, 0.0])), (du, dv, ext_x, ext_y)
 
 
 def test_the_guard_solve_is_cached_where_the_pair_loop_reads_it():
@@ -1458,9 +1485,9 @@ def test_the_diagnostic_and_the_predicate_compute_one_guard():
         if w == 0.0:
             # flat: the guard is the Alexandrov radius in both
             # components, and the diagnostic must not add a slack the
-            # predicate does not apply, nor drop one it does
-            assert reported[0] == pytest.approx(
-                (half_x - insets.x) / half_x, rel=1e-15, abs=1e-15)
+            # predicate does not apply, nor drop one it does. Only the
+            # `y` half is stated here -- the `x` half is the assertion
+            # above, which runs in every branch (R17.3).
             assert reported[1] == pytest.approx(
                 (half_y - insets.y) / half_y, rel=1e-15, abs=1e-15)
             checked["flat"] += 1
@@ -1876,15 +1903,22 @@ def test_a_weakened_focusing_guard_leaks_on_a_constructed_pair():
     # a bound a neighbouring line already implied -- first `q`'s floor
     # and `p`'s ceiling, then all four corners of the same box -- so
     # the constant comes from the function whose range is the claim.
+    # R17.4: pinned from BOTH sides. Asserting only that the draw sits
+    # inside `[0, dv]` holds for any NARROWER range too -- which is the
+    # direction that would make the bound below too loose and reopen
+    # R12.3 -- and a `sprinkle` mutated to fill only half the slab left
+    # the whole suite green.
     drawn = sprinkle(geom, 300.0, np.random.default_rng(11))
     assert len(drawn) > 50
-    assert float(drawn[:, 1].min()) >= 0.0
-    assert float(drawn[:, 1].max()) <= slab.dv
+    low, high = float(drawn[:, 1].min()), float(drawn[:, 1].max())
+    assert 0.0 <= low < 0.02 * slab.dv, low
+    assert 0.98 * slab.dv < high <= slab.dv, high
     for name, point in (("p", p), ("q", q)):
         v_here = float(point[1])
-        assert 0.0 <= v_here <= slab.dv, (
+        assert low <= v_here <= high, (
             f"{name} sits at v = {v_here}, outside the range `sprinkle` "
-            "draws from, so a leak on this pair reaches no Class C count")
+            f"drew from ({low}, {high}), so a leak on this pair reaches "
+            "no Class C count")
 
     # The window check below implies the two above, and only because
     # `real.v >= 0` -- structural, since `max_negative_focusing`

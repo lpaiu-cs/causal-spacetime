@@ -349,10 +349,20 @@ class PlaneWaveGeometry:
     passed every check and compared equal to `arms()`' own output, so
     "came from `arms()`" was not a property any check could read.
 
-    Both are closed here. The invariant is `w in (0, guard_from.w)` --
-    an arm reads its own guard or, if it is the flat reading, its
-    curved partner's -- and a link can only be made with the key
-    `arms()` holds, so the two conditions really are the same one.
+    **A LINKED ARM IS ALWAYS THE FLAT READING (R17.1.)** The second
+    version admitted `w in (0, guard_from.w)`, which also lets a curved
+    arm link to itself -- a third shape `arms()` never emits, since the
+    curved arm it returns is unlinked. Nothing needed that shape and
+    `__reduce__` was written assuming it away, so a self-linked curved
+    geometry came back from a round trip as the flat arm, silently
+    swapping its guard: the R14.1 defect arriving through
+    serialisation. Enforcing `w == 0` is what the two `arms()` shapes
+    already satisfy -- a flat arm reading its curved partner, and, at
+    `w = 0`, a flat arm reading a flat source -- and it makes that
+    premise true rather than assumed.
+
+    A link can only be made with the key `arms()` holds, so "came from
+    `arms()`" and "may be used for Class C" are one condition.
     """
 
     slab: Slab
@@ -377,10 +387,11 @@ class PlaneWaveGeometry:
                 raise ValueError(
                     "guard_from must be a guard source itself, so that "
                     "one arm's eligibility cannot be read off another's")
-            if self.w not in (0.0, self.guard_from.w):
+            if self.w != 0.0:
                 raise ValueError(
-                    f"an arm at w={self.w} may only read its own guard or "
-                    f"its curved partner's, not one at w={self.guard_from.w}")
+                    f"only a flat arm carries a link, and this one has "
+                    f"w={self.w}: an arm reads its own guard unless it is "
+                    "the flat reading of a curved partner")
         if self.slab.du <= 0.0:
             raise ValueError(f"slab u-extent must be positive, got {self.slab.du}")
         if self.w > 0.0 and self.slab.du >= conjugate_du(self.w):
@@ -414,12 +425,16 @@ def _arm_of(slab: Slab, w: float, index: int) -> PlaneWaveGeometry:
     **A selector on `arms()`, not a linker (R16.2.)** The first version
     called the constructor with `_ARMS_KEY` itself, which made it a
     general-purpose linking function that happened to be private by
-    naming convention -- and `_relink(sl, 0.0, PlaneWaveGeometry(sl, 0.0))`
-    rebuilt the flat-to-flat forgery R14.7 exists to refuse, admitting a
-    pair both real arms reject. A `__reduce__` reconstructor has to
-    reproduce an object that already passed the checks, never to hand
-    out the capability to make one. A linked geometry is always an
-    output of `arms()`, so returning one is all this needs to do.
+    naming convention, and rebuilt the flat-to-flat forgery R14.7
+    exists to refuse -- admitting a pair both real arms reject. A
+    `__reduce__` reconstructor has to reproduce an object that already
+    passed the checks, never to hand out the capability to make one.
+
+    The fixed index `1` is safe because `PlaneWaveGeometry` now
+    enforces what this assumed: a linked arm has `w == 0`, so it is
+    `arms()`' second output and never its first (R17.1). Before that
+    was enforced, a self-linked curved arm reduced to `(slab, w, 1)`
+    and came back as the flat arm with the flat guard.
     """
 
     return arms(slab, w)[index]
