@@ -389,6 +389,32 @@ class PlaneWaveGeometry:
                 f"point {conjugate_du(self.w)} at w={self.w}: every pair in "
                 "the slab must be strictly inside it")
 
+    def __reduce__(self):
+        """Rebuild through the checks, so the link survives a round trip.
+
+        R15.14: `pickle` and `deepcopy` restore a dataclass by setting
+        `__dict__` directly, which skips `__post_init__`. A linked
+        geometry came back with its `guard_from` intact and its key
+        gone -- comparing and hashing equal to the original, accepted
+        by `class_c_eligible`, but rejected by `dataclasses.replace`.
+        The capability was lost silently, which is the one way it must
+        not be lost. §8 P3/P4 make independent sprinklings the
+        replication unit and `multiprocessing` pickles its arguments,
+        so this lands the moment that is parallelised.
+        """
+
+        if self.guard_from is None:
+            return (PlaneWaveGeometry, (self.slab, self.w))
+        return (_relink, (self.slab, self.w, self.guard_from))
+
+
+def _relink(slab: Slab, w: float,
+            source: PlaneWaveGeometry) -> PlaneWaveGeometry:
+    """Reconstructor for `PlaneWaveGeometry.__reduce__` (R15.14)."""
+
+    return PlaneWaveGeometry(slab, w, guard_from=source,
+                             link_key=_ARMS_KEY)
+
 
 def conjugate_du(w: float) -> float:
     """First conjugate `u`-separation, `pi / w`.
@@ -645,8 +671,12 @@ def max_negative_focusing(a: float, w: float,
     both limits at `dy/2`, is 3.06x and 20.04x too large on the two
     geometries §4.6 and `test_the_asymmetric_v_bound_...` both use.
 
-    **`0 < anchor_limit <= box_limit` is a PRECONDITION, and checked
-    (R14.11).** The three branches below cover the rectangle only on
+    **`0 <= anchor_limit <= box_limit` is a PRECONDITION, and checked
+    (R14.11).** Zero is admissible and does occur: `guard_insets`
+    passes it from the scan grid's first term and from the span
+    bisection's lower bracket, so the strict form this docstring
+    first stated would have made the module raise on its own first
+    call (R15.3). The three branches below cover the rectangle only on
     that side of the diagonal. Beyond it, at `anchor > box / cos a`,
     the maximum in `y_p` is interior at `y_p = box / cos a` and the
     corner form is not merely loose but wrong: at
@@ -757,7 +787,7 @@ def _defocusing_inset(slab: Slab, w: float,
         # cross with -- and the zero it would otherwise take is the
         # most optimistic value in a chain that feeds the `y`
         # diagnostic monotonically.
-        return implied(half_x), cross_at(0.0)
+        return implied(half_x) * _GUARD_SLACK, cross_at(0.0)
 
     lo, hi = 0.0, half_x
     for _ in range(80):
@@ -777,6 +807,24 @@ def _defocusing_inset(slab: Slab, w: float,
 #: is 456x with identical eligible counts (R14.18). Sized to hold every
 #: geometry a sweep touches.
 @functools.lru_cache(maxsize=4096)
+def _blocked(half_x: float, half_y: float,
+             x_inset: float, v_inset: float) -> GuardInsets:
+    """Insets for a geometry that admits nothing.
+
+    `y = half_y` alone already refuses every pair -- `class_c_eligible`
+    returns on `y_lim <= 0` before it looks at a coordinate -- so the
+    other two components do not also have to be jammed, and jamming
+    them cost information. The first version returned `v = slab.dv`,
+    which made the `v` window the rejection that actually fired for
+    every blocked geometry and left the extent branch unreachable and
+    therefore untested (R15.4). Reporting the `x` inset the condition
+    DEMANDS, which may exceed `half_x`, both keeps the extent branch
+    live and says by how much the geometry missed.
+    """
+
+    return GuardInsets(x=max(x_inset, half_x), y=half_y, v=v_inset)
+
+
 def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
     """All three components, from the Jacobi propagators (§4.6).
 
@@ -947,16 +995,12 @@ def guard_insets(geometry: PlaneWaveGeometry) -> GuardInsets:
                 hi_v = mid
         span = lo_v
     if span <= 0.0:
-        return GuardInsets(x=half_x, y=half_y, v=slab.dv)
+        return _blocked(half_x, half_y, x_inset, v_excursion(0.0))
 
     grid = [span * i / _GUARD_SCAN for i in range(_GUARD_SCAN + 1)]
     vols = [volume(y) for y in grid]
     if max(vols) <= 0.0:
-        # Nothing is eligible at any anchor limit. Block on all three,
-        # not just the one that happens to bind: reporting a positive
-        # `y` limit here would let pairs through the very condition
-        # that emptied the set.
-        return GuardInsets(x=half_x, y=half_y, v=slab.dv)
+        return _blocked(half_x, half_y, x_inset, v_excursion(0.0))
 
     # The global argmax is always an interior peak already -- `vols[0]`
     # is identically zero and the far end is either zero or a boundary
@@ -1028,13 +1072,24 @@ def guard_margins(geometry: PlaneWaveGeometry) -> tuple[float, float, float]:
     allowed it, so the reported margins are the ones that stopped it.
     """
 
-    slab, w = geometry.slab, geometry.w
+    # R15.1: redirect the whole GEOMETRY, once, exactly as
+    # `class_c_eligible` does. The first version unpacked `slab, w`
+    # from the source and then called `guard_insets` on the original,
+    # so the anchor handed to the curved closure was the flat arm's --
+    # `1.0528` against `0.3429` at `Slab(1, 0.4, 3, 3)`, w = 0.9 -- and
+    # in 146 of 2400 sampled geometries the two arms took different
+    # branches and named different blockers for one shared guard. That
+    # is R13.2's mis-attribution arriving through the diagnostic.
     if geometry.guard_from is not None:
-        slab, w = geometry.guard_from.slab, geometry.guard_from.w
+        geometry = geometry.guard_from
+    slab, w = geometry.slab, geometry.w
     half_x, half_y = slab.dx / 2.0, slab.dy / 2.0
 
     if w == 0.0:
-        flat = math.sqrt(slab.du * slab.dv / 2.0) * _GUARD_SLACK
+        # R15.2: no `_GUARD_SLACK` here. `guard_insets`' flat branch
+        # applies none, and a diagnostic that is pessimistic relative
+        # to the predicate disagrees with it inside a 1e-12 band.
+        flat = math.sqrt(slab.du * slab.dv / 2.0)
         return ((half_x - flat) / half_x, (half_y - flat) / half_y, 1.0)
 
     a = w * slab.du

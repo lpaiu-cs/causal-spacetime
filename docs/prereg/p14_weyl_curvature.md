@@ -799,10 +799,9 @@ result to the half-extent when the condition could not be met, so
 `x_margin` came out at exactly `0.0` for every closed cell — a cell one
 ulp from admitting and one missing by 89× read identically, and the
 counts above existed only because the census's `<= 0.0` caught that
-saturated zero. Reported honestly the margin is strictly negative in 99
-of the 102, and the three that remain at zero are genuinely at zero
-width. The conclusion is unchanged; what changed is that it now
-survives the comparison being written `< 0.0`.
+saturated zero. Reported honestly the margin is strictly negative in all
+102 — not one cell reports exactly zero — so the conclusion is unchanged
+and now survives the comparison being written `< 0.0`.
 
 The slice the withdrawn table used (`w = 1`, `dv = 0.2`, half-extent 3)
 admits at `a = 0.3, 0.6, 1.0` and not at `1.6` — where it is now `v`
