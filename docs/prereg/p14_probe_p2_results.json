@@ -234,29 +234,39 @@
   },
   "script": "experiments/positive_control/p14_probe_p2.py",
   "sizing": {
+    "design_mc": {
+      "samples": 2000000,
+      "seed": 777
+    },
     "points": [
       {
+        "design_mc_hits": 120,
         "label": "slice-a1.0",
+        "marginal_power_at_frozen_n": 0.9010303040509257,
         "n_frozen": 21000,
-        "n_marginal_min": 20939,
-        "n_primary_min_ucb": 1025,
-        "n_required": 20939,
+        "n_marginal_first_crossing": 20939,
+        "n_primary_min_campaign": 1025,
+        "n_primary_min_design": 1167,
         "variance_floor": 100
       },
       {
+        "design_mc_hits": 79,
         "label": "high-a2.0",
+        "marginal_power_at_frozen_n": 0.9435872973273622,
         "n_frozen": 400,
-        "n_marginal_min": 349,
-        "n_primary_min_ucb": 116,
-        "n_required": 349,
+        "n_marginal_first_crossing": 349,
+        "n_primary_min_campaign": 116,
+        "n_primary_min_design": 78,
         "variance_floor": 100
       },
       {
+        "design_mc_hits": 737,
         "label": "edge-a2.4",
+        "marginal_power_at_frozen_n": 0.9999999999999988,
         "n_frozen": 100,
-        "n_marginal_min": 13,
-        "n_primary_min_ucb": 6,
-        "n_required": 100,
+        "n_marginal_first_crossing": 13,
+        "n_primary_min_campaign": 6,
+        "n_primary_min_design": 6,
         "variance_floor": 100
       }
     ],

@@ -51,16 +51,18 @@ disjoint from every campaign stream. Burned seeds (P1 campaign,
 design checks) may not reappear. `assert_seed_layout` enforces the
 whole layout and a test pins it.
 
-Sizing: frozen power target 0.90; n = 21_000 / 400 / 100 =
-max(marginal minimum, primary minimum, variance floor 100). The
-exact-Garwood marginal minima at `tau_m = delta` are 20_939 / 349 /
-13 -- binding at the first two points; 13 is edge-a2.4's PRE-floor
-statistical minimum and the floor 100 is what binds there. The
-primary z-TOST minima at the campaign MC's V_dis UCB are smaller
-everywhere. `sizing_block` recomputes all of it from committed
-inputs and the committed artifact carries the result, test-pinned
-(PR #42 review: prose-only minima with a burned design seed are not
-a frozen design). Verified coverage/power of the frozen t-CI by
+Sizing: frozen power target 0.90, certified DIRECTLY at the frozen
+n -- the exact-Garwood marginal power at n = 21_000 / 400 / 100 is
+0.9010 / 0.9436 / 1.0000, asserted in `sizing_block`. Direct,
+because the discrete power is not monotone in n (slice dips back
+below target at n = 20_941), so no crossing point certifies a
+design. Design provenance is pre-data: the frozen n clear the
+primary z-TOST minima from the PRE-campaign design MC (seed 777,
+reproduced deterministically) and the variance floor; the
+campaign-MC primary minima and the first-crossing marginal n are
+informational (outcome diagnostic; non-monotone locator). All in
+the artifact's `sizing` block, reconstruction-tested (PR #42
+reviews R1/R2). Verified coverage/power of the frozen t-CI by
 compound-Poisson simulation: 0.9495/0.9492/0.9473 coverage, 1.0000
 equivalence power. The P1 inputs behind delta live in
 `docs/prereg/p14_probe_p1_sizing.json`, cross-checked at run time.
@@ -126,6 +128,16 @@ CAMPAIGN_SEEDS = {
 }
 MC_SEED = 20260814
 BURNED_SEEDS = (20260808, 777)
+
+#: The PRE-campaign design MC that actually sized the protocol (the
+#: design review's 2e6-sample run). 777 is burned as a campaign seed
+#: precisely BECAUSE the design consumed it; as a deterministic
+#: design-reconstruction constant it is the provenance itself (PR #42
+#: review R2: reconstructing the frozen sizing from post-freeze
+#: campaign output proves only that the realized campaign would also
+#: have justified n, not that n came from pre-data information).
+DESIGN_MC_SEED = 777
+DESIGN_MC_SAMPLES = 2_000_000
 
 #: Bootstrap replicates for the Var(Z) percentile CI (diagnostic).
 B_BOOT = 4_000
@@ -335,6 +347,13 @@ def marginal_power(n: int, lam: float, tau: float) -> float:
     Both Garwood endpoints are increasing in `T`, so the passing set
     is a contiguous integer range, found by bisection; the power is
     the exact Poisson mass on it.
+
+    **NOT monotone in `n`** (PR #42 review R2): the acceptance set
+    moves in integer jumps, so the power wiggles at the 1e-4 level
+    around the target -- at slice-a1.0, power(20939) = 0.90004 but
+    power(20941) = 0.89991. The design certification therefore never
+    rests on a crossing point: it is the DIRECT evaluation of this
+    function at the frozen `n` (`sizing_block`).
     """
 
     mu = n * lam
@@ -371,10 +390,17 @@ def marginal_power(n: int, lam: float, tau: float) -> float:
     return _poisson_cdf(t2, mu) - _poisson_cdf(t1 - 1, mu)
 
 
-def marginal_min_n(lam: float, tau: float,
-                   power: float = POWER_TARGET) -> int:
-    """Smallest `n` whose marginal power reaches the frozen target,
-    by bisection plus a local scan against discreteness wiggle."""
+def marginal_first_crossing_n(lam: float, tau: float,
+                              power: float = POWER_TARGET) -> int:
+    """First discrete crossing of the power target -- INFORMATIONAL.
+
+    Bisection plus a downward local scan. Because `marginal_power` is
+    not monotone in `n`, this locates a first crossing under
+    near-monotonicity, not a guaranteed threshold: `n` slightly above
+    it can dip back below the target (PR #42 review R2). The design
+    certification is the direct power evaluation at the frozen `n`,
+    never this locator.
+    """
 
     lo, hi = 1, 2
     while marginal_power(hi, lam, tau) < power:
@@ -392,19 +418,18 @@ def marginal_min_n(lam: float, tau: float,
     return n
 
 
-def primary_min_n(rec: dict) -> int:
-    """z-approximate TOST minimum at the V_dis 95% CP upper limit,
-    recomputed from the COMMITTED campaign MC record (hits and
-    samples in `var_diag`) -- reproducible provenance, unlike the
-    burned design-seed MC that first estimated it."""
+def primary_min_n(rec: dict, hits: int, mc_samples: int) -> int:
+    """z-approximate TOST minimum at the V_dis 95% CP upper limit
+    computed from an MC record given as `(hits, mc_samples)` -- the
+    DESIGN provenance when fed the pre-campaign design MC, an outcome
+    diagnostic when fed the campaign's own cross-check MC."""
 
     slab = Slab(du=rec["du"], dv=rec["dv"], dx=rec["dx"], dy=rec["dy"])
     curved, _flat = arms(slab, rec["w"])
     p, q = fattest_axis_diamond(curved)
     region = ((float(q[0]) - float(p[0]))
               * slab.dv * slab.dx * slab.dy)
-    d = rec["var_diag"]
-    ucb = clopper_pearson(d["v_dis_hits"], d["mc_samples"])[1] * region
+    ucb = clopper_pearson(hits, mc_samples)[1] * region
     v0 = rec["lam0"] / rec["rho"]
     v = max(ucb, rec["delta"] * v0)
     sd_z = math.sqrt(rec["r_pred"] * rec["rho"] * v)
@@ -412,28 +437,62 @@ def primary_min_n(rec: dict) -> int:
     return int(math.ceil(n))
 
 
-def sizing_block(art: dict) -> dict:
-    """The frozen n's executable provenance, computed from committed
-    inputs only (the artifact's own records): the exact-Garwood
-    marginal minimum (the binding constraint at the first two
-    points), the z-TOST primary minimum at the campaign MC's V_dis
-    UCB, and the variance floor -- the floor, not the pre-floor
-    statistical minimum, is what binds at edge-a2.4."""
+def design_mc_hits(rec: dict) -> int:
+    """The pre-campaign design MC, reproduced deterministically: the
+    2e6-sample run at the burned design seed that actually sized the
+    protocol. This is the pre-data provenance R2 asked to be
+    preserved -- not the campaign's own MC, which can only show the
+    realized data would also have justified the choice."""
 
-    out = {"power_target": POWER_TARGET, "points": []}
+    slab = Slab(du=rec["du"], dv=rec["dv"], dx=rec["dx"], dy=rec["dy"])
+    curved, flat = arms(slab, rec["w"])
+    p, q = fattest_axis_diamond(curved)
+    rng = np.random.default_rng(DESIGN_MC_SEED)
+    vols = diamond_volumes_mc(curved, flat, p, q,
+                              DESIGN_MC_SAMPLES, rng)
+    return int(vols.disagree_hits)
+
+
+def sizing_block(art: dict) -> dict:
+    """The frozen n's executable provenance and certification.
+
+    Certification (asserted): the exact marginal power AT the frozen
+    `n` reaches `POWER_TARGET` -- the direct evaluation, because the
+    power is not monotone in `n` and no crossing point can certify it
+    (R2) -- and the frozen `n` clears the DESIGN primary minimum (the
+    pre-campaign 2e6 MC at the burned design seed, reproduced here)
+    and the variance floor. The campaign-MC primary minimum and the
+    first-crossing marginal `n` are carried as informational fields:
+    an outcome diagnostic and a non-monotone locator respectively.
+    """
+
+    out = {
+        "power_target": POWER_TARGET,
+        "design_mc": {"seed": DESIGN_MC_SEED,
+                      "samples": DESIGN_MC_SAMPLES},
+        "points": [],
+    }
     for rec in art["points"]:
-        m_min = marginal_min_n(rec["lam0"], rec["tau_m"])
-        p_min = primary_min_n(rec)
-        required = max(m_min, p_min, VARIANCE_FLOOR_N)
+        d_hits = design_mc_hits(rec)
+        p_design = primary_min_n(rec, d_hits, DESIGN_MC_SAMPLES)
+        p_campaign = primary_min_n(rec, rec["var_diag"]["v_dis_hits"],
+                                   rec["var_diag"]["mc_samples"])
+        power_frozen = marginal_power(rec["n"], rec["lam0"],
+                                      rec["tau_m"])
+        m_cross = marginal_first_crossing_n(rec["lam0"], rec["tau_m"])
+        assert power_frozen >= POWER_TARGET, (
+            f"{rec['label']}: power {power_frozen} at frozen n")
+        assert rec["n"] >= max(p_design, VARIANCE_FLOOR_N), rec["label"]
         out["points"].append({
             "label": rec["label"],
-            "n_marginal_min": m_min,
-            "n_primary_min_ucb": p_min,
-            "variance_floor": VARIANCE_FLOOR_N,
-            "n_required": required,
             "n_frozen": rec["n"],
+            "marginal_power_at_frozen_n": power_frozen,
+            "design_mc_hits": d_hits,
+            "n_primary_min_design": p_design,
+            "n_primary_min_campaign": p_campaign,
+            "n_marginal_first_crossing": m_cross,
+            "variance_floor": VARIANCE_FLOOR_N,
         })
-        assert rec["n"] >= required, rec["label"]
     return out
 
 

@@ -46,20 +46,24 @@ circular.
   estimand.
 - **Coverage** — pointwise 95% per operating point. Any sentence
   joining the three points is Bonferroni-adjusted and separate.
-- **Sizing** — frozen power target **0.90**.
-  `n = 21 000 / 400 / 100 = max(marginal minimum, primary minimum,
-  variance floor 100)`. The marginal minima at `τ_m = δ` by **exact
-  Garwood power** are `20 939 / 349 / 13` (binding at the first two
-  points; `13` is edge-a2.4's PRE-floor statistical minimum — the
-  variance floor `100` is what binds there). The primary z-TOST
-  minima at the campaign MC's `V_dis` 95% UCB are smaller
-  everywhere. All minima are recomputed from committed inputs into
-  the artifact's `sizing` block by executable code
-  (`sizing_block`), and a test asserts the committed block equals
-  the recomputation — the design-review numbers were additionally
-  cross-computed independently. Design inputs: P1's committed
-  `p14_probe_p1_sizing.json` (quadrature cross-checked at run time)
-  and the campaign's own committed MC records.
+- **Sizing** — frozen power target **0.90**, certified **directly at
+  the frozen `n`**: the exact-Garwood marginal power at
+  `n = 21 000 / 400 / 100` is `0.9010 / 0.9436 / 1.0000`, asserted in
+  code and test. The direct evaluation is the certification because
+  the discrete power is NOT monotone in `n` — at slice-a1.0 it dips
+  back below target at `n = 20 941` — so no crossing point can
+  certify a design. **Design provenance** is pre-data: the frozen `n`
+  clear the primary z-TOST minima `1167 / 78 / 6` computed from the
+  PRE-campaign 2e6-sample design MC (seed `777`, hits
+  `120 / 79 / 737`, reproduced deterministically and pinned) and the
+  variance floor `100` (binding at edge-a2.4). The first-crossing
+  marginal minima `20 939 / 349 / 13` and the campaign-MC primary
+  minima (`1025 / 116 / 6`) are carried as informational fields — a
+  non-monotone locator and an outcome diagnostic respectively. All
+  of it lives in the artifact's `sizing` block, recomputed by
+  `sizing_block` and reconstruction-tested. Other design inputs:
+  P1's committed `p14_probe_p1_sizing.json`, quadrature
+  cross-checked at run time.
 - **Statistics implementation** — the repo carries no scipy; the
   Student-t quantile (incomplete beta) and the Garwood interval
   (incomplete gamma) are built in the script and test-pinned against

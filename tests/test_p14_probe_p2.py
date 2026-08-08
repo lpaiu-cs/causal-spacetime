@@ -221,30 +221,59 @@ def test_the_results_artifact_derived_fields_recompute_from_raw():
 
 
 def test_the_frozen_n_have_executable_sizing_provenance():
-    """The case, PR #42 review R1: minima quoted only in prose (with
-    the design MC burned) and a test that reasserts the frozen
-    literals are not a reproducible sizing design. The provenance is
-    now executable: `sizing_block` recomputes, from the committed
-    artifact's own records and the frozen `POWER_TARGET = 0.90`, the
-    exact-Garwood marginal minimum, the z-TOST primary minimum at the
-    campaign MC's V_dis UCB, and the floor -- and the committed
-    `sizing` block must equal that recomputation. The marginal minima
-    20939/349/13 were independently cross-computed in the design
-    review; note 13 is the PRE-floor statistical minimum at
-    edge-a2.4 -- the variance floor 100 is what binds there.
+    """The cases, PR #42 reviews R1 and R2. R1: minima quoted only in
+    prose are not a frozen design -- `sizing_block` is executable
+    provenance. R2 sharpened it twice: (a) the DESIGN provenance is
+    the pre-campaign 2e6 MC at the burned design seed (hits
+    120/79/737, primary minima 1167/78/6), reproduced here
+    deterministically -- the campaign's own MC is carried only as an
+    outcome diagnostic, since it can merely show the realized data
+    would also have justified `n`; (b) the discrete Garwood power is
+    NOT monotone in `n` (it dips back below target at slice's
+    n = 20941), so the certification is the DIRECT power evaluation
+    at the frozen `n`, never a crossing point -- the first crossing
+    stays informational.
+
+    Floats are compared under a documented tolerance: the power's
+    T-range endpoints are integers found by comparing libm-computed
+    gamma quantiles against a boundary, so a cross-platform ulp can
+    shift an endpoint by one and move the power by ~one Poisson pmf
+    term (~4e-4 at slice) -- abs 2e-3 covers it, while any
+    meaningful edit (1e-2+) still fails; the same flip moves the
+    first-crossing locator by a few integers, hence abs <= 3.
     """
 
     art = json.loads(ARTIFACT.read_text(encoding="utf-8"))
     assert p2.POWER_TARGET == 0.90
+    assert p2.DESIGN_MC_SEED == 777
     fresh = p2.sizing_block(art)
-    assert art["sizing"] == fresh
+    blk = art["sizing"]
+    assert blk["power_target"] == fresh["power_target"]
+    assert blk["design_mc"] == fresh["design_mc"]
+    for c_rec, f_rec in zip(blk["points"], fresh["points"],
+                            strict=True):
+        assert set(c_rec) == set(f_rec)
+        for key in ("label", "n_frozen", "design_mc_hits",
+                    "n_primary_min_design", "n_primary_min_campaign",
+                    "variance_floor"):
+            assert c_rec[key] == f_rec[key], f"{c_rec['label']}.{key}"
+        assert c_rec["marginal_power_at_frozen_n"] == pytest.approx(
+            f_rec["marginal_power_at_frozen_n"], abs=2e-3)
+        assert abs(c_rec["n_marginal_first_crossing"]
+                   - f_rec["n_marginal_first_crossing"]) <= 3
+
     by_label = {r["label"]: r for r in fresh["points"]}
-    assert by_label["slice-a1.0"]["n_marginal_min"] == 20_939
-    assert by_label["high-a2.0"]["n_marginal_min"] == 349
-    assert by_label["edge-a2.4"]["n_marginal_min"] == 13
-    assert by_label["edge-a2.4"]["n_required"] == 100  # the floor
+    # the design-review numbers, independently cross-computed there
+    assert [by_label[k]["design_mc_hits"] for k in
+            ("slice-a1.0", "high-a2.0", "edge-a2.4")] == [120, 79, 737]
+    assert [by_label[k]["n_primary_min_design"] for k in
+            ("slice-a1.0", "high-a2.0", "edge-a2.4")] == [1167, 78, 6]
+    assert by_label["slice-a1.0"]["n_marginal_first_crossing"] == 20_939
+    # the certification itself: power AT the frozen n, direct
     for r in fresh["points"]:
-        assert r["n_frozen"] >= r["n_required"], r["label"]
+        assert r["marginal_power_at_frozen_n"] >= p2.POWER_TARGET
+        assert r["n_frozen"] >= max(r["n_primary_min_design"],
+                                    r["variance_floor"]), r["label"]
 
 
 @pytest.mark.slow
