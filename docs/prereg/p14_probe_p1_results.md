@@ -116,7 +116,13 @@ estimate; the upper endpoint is the CP upper limit (`3.69 q` at 0
 hits, wider than the one-sided rule of three's `3 q`; `7.2 q` at 2).
 `sd_Z = √(r·ρ·V_dis)` carries the same bracket. The estimator stores
 the raw count and the trial total and computes the interval
-(`clopper_pearson`, test-pinned against the standard CP values). All
+(`clopper_pearson`, test-pinned against the standard CP values).
+Every `V_dis` quantity the sizing reads — point and both endpoints —
+is additionally constrained by the deterministic identity
+`V_dis ≥ δV_0` (applied once, at construction), and a row only quotes
+a point when the raw point itself satisfies that floor (rounds
+R9.2–R9.4); on all rows here the points sit far above their floors,
+so the constraint never binds. All
 three unresolved rows are dead either way. The resolved rows carry
 hundreds of hits and their point estimates stand.
 Worked example at `edge-a2.4`: `sd_Z = 0.386` per sprinkling and
@@ -307,6 +313,22 @@ half of the 95% CI (`ucb ≤ factor·point`), so 8–11 hits at
 `~0.43·point`. Both endpoints are required now; the operating points
 here (0/2/5 hits unresolved, 85+ resolved) are unchanged, but the
 predicate now matches its contract.
+
+Rounds R9–R9.4 hardened the per-run consistency machinery, with no
+change to any number here. R9 fixed the check's normalization (the
+identity is `δV_0 ≤ V_dis`, not `δ ≤ V_dis/V_A`). R9.1 split it by
+what each part can promise: the deterministic sample-count partition
+(`in_A + in_0 = dis + 2·overlap`, exact for any seed) became the hard
+per-run assertion at the MC classifier, and the analytic-vs-MC floor
+check became a diagnostic warning — a 95% CP bound is a random
+variable and cannot serve as a hard implementation invariant. R9.2,
+R9.3, and R9.4 were then one round each of a consumer reading a raw
+`V_dis` value the identity forbids (an invertible bracket, a
+resolution flag blind to a floor conflict, a point sizing below the
+floor), closed as a class: one floor-constrained view of `V_dis`
+(point, both endpoints, and the resolution flag — which requires the
+raw point itself to satisfy the floor) is built once and is all the
+sizing, resolution, and reporting read.
 
 Round R4 corrected three sizing/uncertainty issues: the unresolved
 `n90` lower endpoint used the MC point estimate via
