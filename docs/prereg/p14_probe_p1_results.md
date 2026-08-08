@@ -75,13 +75,18 @@ different questions (review R1.1):**
 
 | point | `a` | δ = R−1 | λ_A | V_dis hits | n90 marginal | n90 detect | sd_Z |
 |---|---|---|---|---|---|---|---|
-| slice-a0.3 | 0.3 | 3.2e-5 | 0.12 | 0¹ | 8.7e10 | [2.8e6, 3.4e9]¹ | [0.002, 0.067]¹ |
-| slice-a0.6 | 0.6 | 5.2e-4 | 0.23 | 2¹ | 1.7e8 | [3.9e5, 6.9e6]¹ | [0.023, 0.097]¹ |
-| slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | ~250 | 1.7e6 | 1.4e5 | 0.145 |
-| aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | ~600 | 1.1e5 | 4.8e3 | 0.462 |
-| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | ~340 | 2.0e10 | 5.4e7 | 0.150 |
-| high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 3.0e4 | [2.0e3, 6.2e3]¹ | [0.074, 0.130]¹ |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 1.2e3 | **478** | 0.386 |
+| slice-a0.3 | 0.3 | 3.2e-5 | 0.12 | 0¹ | 8.7e10 | [2.8e6, 4.2e9]¹ | [0.002, 0.074]¹ |
+| slice-a0.6 | 0.6 | 5.2e-4 | 0.23 | 2¹ | 1.7e8 | [2.7e5, 7.9e6]¹ | [0.019, 0.104]¹ |
+| slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | ~250 | 1.7e6 | 9.2e4 | 0.145 |
+| aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | ~600 | 1.1e5 | 4.1e3 | 0.462 |
+| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | ~340 | 2.0e10 | 3.5e7 | 0.150 |
+| high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 3.0e4 | [2.0e3, 6.9e3]¹ | [0.074, 0.137]¹ |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 1.2e3 | **399** | 0.386 |
+
+The resolved rows report the point-estimate sizing (review R5.2); the
+unresolved rows report a bracket. `n90 detect` and `sd_Z` share one
+resolution rule — both are the point on resolved rows, both a bracket
+otherwise — rather than `n90` silently staying on the upper bound.
 
 `λ_A` is the expected count in the diamond at `N = 300`; `V_dis` is
 the volume where the two arms' predicates disagree; `V_∩` their
@@ -89,20 +94,23 @@ overlap — all from shared-sample MC, and the partition
 `V_A + V_0 = V_dis + 2V_∩` holds exactly per sample (test-pinned).
 
 ¹ **A low MC count is a bracket, never a point (review R2.1, R3.1,
-R4.1/R4.2):** three rows have too few disagreeing samples for a point
-estimate, so both `n90 detect` and `sd_Z` are brackets. The `V_dis`
-lower endpoint is a true lower bound — the larger of the analytic
-floor `|V_A − V_0| = δV_0` and the **exact 95% Poisson lower limit**
-for the count — never the MC point estimate; the upper endpoint is the
-**exact 95% Poisson upper limit** (`2.996 q` at 0 hits, the rule of
-three; `6.30 q` at 2; `10.5 q` at 5). `sd_Z = √(r·ρ·V_dis)` carries
-the same bracket. The earlier `max(point, 3q)` under-stated the upper
-bound for every positive count and called a one-hit row resolved; the
-estimator stores the raw count and computes both limits
-(`_poisson_upper_95` / `_poisson_lower_95`, test-pinned against the
-standard values). All three unresolved rows are dead either way. The
-resolved rows carry hundreds of hits and their point estimates stand.
-Worked example at `edge-a2.4`: `sd_Z = 0.385` per sprinkling and
+R4.1/R4.2, R5.1):** three rows have too few disagreeing samples for a
+point estimate, so both `n90 detect` and `sd_Z` are brackets. The
+sampler is `mc_samples` Bernoulli trials, so the exact finite-sample
+interval is the two-sided 95% **Clopper–Pearson** interval on the hit
+probability — binomial, not the Poisson approximation used earlier —
+with **2.5% in each tail**, so pairing the endpoints is a real 95%
+bracket rather than the ~90% two one-sided 95% limits would give. The
+`V_dis` lower endpoint is the larger of the analytic floor
+`|V_A − V_0| = δV_0` and the CP lower limit, never the MC point
+estimate; the upper endpoint is the CP upper limit (`3.69 q` at 0
+hits, wider than the one-sided rule of three's `3 q`; `7.2 q` at 2).
+`sd_Z = √(r·ρ·V_dis)` carries the same bracket. The estimator stores
+the raw count and the trial total and computes the interval
+(`clopper_pearson`, test-pinned against the standard CP values). All
+three unresolved rows are dead either way. The resolved rows carry
+hundreds of hits and their point estimates stand.
+Worked example at `edge-a2.4`: `sd_Z = 0.386` per sprinkling and
 `ρV_0 ≈ 0.32`, so 100 sprinklings verify the ratio to
 `±0.12` (1σ) against a predicted shift of `0.18` — P2's tolerance
 choice decides whether that is enough or `n` must grow.
@@ -110,7 +118,7 @@ choice decides whether that is enough or `n` must grow.
 **Reading.** The product (effect)² × (count) is maximized at the
 largest `a` the guard admits, despite the tiny boxes: δ grows as `a⁴`
 and beyond, while the count only needs to be O(1) per sprinkling.
-`edge-a2.4` needs ~4.8e2 sprinklings to detect the shift (~1.2e3
+`edge-a2.4` needs ~4.0e2 sprinklings to detect the shift (~1.2e3
 marginal); `roomy`
 and the `slice` points are dead at any affordable n. Density is a
 further free lever this table does not use: P2-style counting inside
@@ -122,7 +130,7 @@ an external-anchor diamond is O(N) per anchor, not O(N²), so raising
 - **External-anchor Class C (P2's volume check, anchors fixed and not
   counted, per the approval condition):** what this probe establishes
   is that the geometry is ADMISSIBLE at large `a` and the predicted
-  shift is DETECTABLE there (~4e2 sprinklings at `edge-a2.4`), and
+  shift is DETECTABLE there (~4.0e2 sprinklings at `edge-a2.4`), and
   that P2's validation precision is quantified by `sd_Z`
   (±0.12 on the ratio per 100 sprinklings at `edge-a2.4`).
   **P2 feasibility itself is conditional on the tolerance P2 has not
@@ -261,9 +269,18 @@ not been ruled out — every integer `k ≤ 20` is swept now, and the
 Round R4 corrected three sizing/uncertainty issues: the unresolved
 `n90` lower endpoint used the MC point estimate via
 `max(v_dis, δV_0)`, which is neither a bound nor trustworthy at low
-counts — replaced by `max(δV_0, 95% Poisson lower limit)`, both true
-lower bounds; `sd_Z` recombined three noisy volumes and hid that it
+counts — replaced by `max(δV_0, 95% lower limit)`, both true lower
+bounds; `sd_Z` recombined three noisy volumes and hid that it
 inherits `V_dis`'s resolution — replaced by the exact identity
 `Var(Z) = r·ρ·V_dis`, bracketed on the unresolved rows; and `n90
 marginal` sized a `λ_0`-relative effect against a `λ_A`-relative SD,
 optimistic by `(1+δ)²` — both absolute now (`edge-a2.4`: 834 → 1.2e3).
+
+Round R5 corrected two: the bracket paired two one-sided 95% limits
+(~90% two-sided coverage) using the Poisson approximation — replaced
+by the exact two-sided 95% Clopper–Pearson binomial interval, 2.5%
+per tail; and the resolved rows never actually switched `n90 detect`
+back to the point estimate (it silently stayed on the upper bound,
+~20% high at `edge-a2.4`), so `n90 detect` and `sd_Z` disagreed on
+resolution — now both use the point on resolved rows and a bracket
+otherwise (`edge-a2.4`: 478 → 399).

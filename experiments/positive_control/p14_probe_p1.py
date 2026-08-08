@@ -382,62 +382,68 @@ def _between(geometry: PlaneWaveGeometry, p: np.ndarray, q: np.ndarray,
 _MC_CI_FACTOR = 2.0
 
 
-def _poisson_cdf(k: int, lam: float) -> float:
-    """`P(X <= k)` for `X ~ Poisson(lam)`, summed term by term."""
+#: Two-sided confidence level for the V_dis bracket -- 2.5% in each
+#: tail, so pairing the two endpoints is a genuine 95% interval, not
+#: the ~90% that two one-sided 95% limits would give (R5.1).
+_MC_CI_ALPHA = 0.05
 
-    term = math.exp(-lam)
-    total = term
+
+def _binom_cdf(k: int, n: int, prob: float) -> float:
+    """`P(X <= k)` for `X ~ Binomial(n, prob)`, in log space.
+
+    Exact for the fixed-`n` Bernoulli sampler the MC actually is; the
+    Poisson form used before was only its small-`prob` approximation
+    (R5.1). `k` is small here (hundreds at most), so the tail sum is
+    short; log space keeps `(1-prob)^n` from underflowing at large `n`.
+    """
+
+    if prob <= 0.0:
+        return 1.0
+    if prob >= 1.0:
+        return 1.0 if k >= n else 0.0
+    log_p, log_q = math.log(prob), math.log1p(-prob)
+    log_terms = [n * log_q]
     for i in range(1, k + 1):
-        term *= lam / i
-        total += term
-    return total
+        log_terms.append(log_terms[-1]
+                         + math.log(n - i + 1) - math.log(i)
+                         + log_p - log_q)
+    hi = max(log_terms)
+    return math.exp(hi) * sum(math.exp(lt - hi) for lt in log_terms)
 
 
-def _poisson_lower_95(hits: int) -> float:
-    """One-sided 95% lower limit on a Poisson mean given `hits` observed.
+def _bisect_prob(predicate) -> float:
+    """Root in `[0, 1]` of a monotone `predicate(p) - 0` by bisection."""
 
-    The smallest `lam` with `P(X >= hits | lam) = 0.05`, i.e.
-    `P(X <= hits-1 | lam) = 0.95`; zero at `hits = 0` (no lower
-    information). Paired with `_poisson_upper_95`, this gives a genuine
-    two-sided bracket on `V_dis` -- a point estimate is neither
-    endpoint (R4.1).
-    """
-
-    if hits <= 0:
-        return 0.0
-    lo, hi = 0.0, float(hits)
+    lo, hi = 0.0, 1.0
     for _ in range(100):
         mid = 0.5 * (lo + hi)
-        if _poisson_cdf(hits - 1, mid) > 0.95:
+        if predicate(mid):
             lo = mid
         else:
             hi = mid
     return 0.5 * (lo + hi)
 
 
-def _poisson_upper_95(hits: int) -> float:
-    """One-sided 95% upper limit on a Poisson mean given `hits` observed.
+def clopper_pearson(hits: int, samples: int,
+                    alpha: float = _MC_CI_ALPHA) -> tuple[float, float]:
+    """Exact two-sided `1 - alpha` Clopper-Pearson interval on `p`.
 
-    The largest `lam` with `P(X <= hits | lam) = 0.05` -- the exact
-    upper limit, of which the rule of three (`~3` at `hits = 0`) is
-    only the special case (R3.1). `k = 2` gives `6.30`, not `3`; every
-    positive count sits below its own 95% limit, so `hits * quantum`
-    is never itself a 95% bound. `P(X <= k | lam)` is decreasing in
-    `lam`, so a bisection finds the crossing.
+    Each endpoint carries an `alpha/2` tail, so the pair is a genuine
+    `1 - alpha` interval (R5.1). Lower is the `p` with
+    `P(X >= hits | p) = alpha/2`, upper the `p` with
+    `P(X <= hits | p) = alpha/2`; both binomial tails are monotone in
+    `p`. Degenerate ends (`0` hits, all hits) collapse the matching
+    endpoint to the boundary, as Clopper-Pearson prescribes.
     """
 
-    if hits < 0:
-        raise ValueError(f"hits must be non-negative, got {hits}")
-    lo, hi = float(hits), float(hits) + 10.0
-    while _poisson_cdf(hits, hi) > 0.05:
-        hi *= 2.0
-    for _ in range(100):
-        mid = 0.5 * (lo + hi)
-        if _poisson_cdf(hits, mid) > 0.05:
-            lo = mid
-        else:
-            hi = mid
-    return 0.5 * (lo + hi)
+    if not 0 <= hits <= samples:
+        raise ValueError(f"hits {hits} out of range [0, {samples}]")
+    half = alpha / 2.0
+    lower = 0.0 if hits == 0 else _bisect_prob(
+        lambda p: 1.0 - _binom_cdf(hits - 1, samples, p) < half)
+    upper = 1.0 if hits == samples else _bisect_prob(
+        lambda p: _binom_cdf(hits, samples, p) > half)
+    return lower, upper
 
 
 @dataclass(frozen=True)
@@ -446,14 +452,13 @@ class DiamondVolumes:
 
     `quantum` is the volume one accepted sample represents
     (`region / samples`), and `disagree_hits` is the raw count behind
-    `disagree = disagree_hits * quantum`. Keeping the count is what
-    lets a consumer form a real confidence bound: a Monte-Carlo count
-    of `k` establishes the one-sided 95% Poisson upper limit
-    `_poisson_upper_95(k) * quantum`, of which the rule of three at
-    `k = 0` is only the endpoint. The analytic `delta > 0` guarantees
-    `V_dis >= |V_A - V_0| > 0`, so the point estimate `0` is never the
-    truth; consumers that need a positive-definite quantity take
-    `disagree_ucb` (R2.1, R3.1).
+    `disagree = disagree_hits * quantum`, out of `samples` Bernoulli
+    trials. Keeping the count and the trial total is what lets a
+    consumer form a real confidence bound: the exact two-sided 95%
+    Clopper-Pearson interval on the hit probability, times the region.
+    The analytic `delta > 0` guarantees `V_dis >= |V_A - V_0| > 0`, so
+    the point estimate `0` is never the truth; consumers that need a
+    positive-definite quantity take `disagree_ucb` (R2.1, R3.1, R5.1).
     """
 
     curved: float
@@ -462,24 +467,29 @@ class DiamondVolumes:
     intersect: float
     quantum: float
     disagree_hits: int
+    samples: int
+
+    @property
+    def _region(self) -> float:
+        return self.quantum * self.samples
 
     @property
     def disagree_ucb(self) -> float:
-        """95% upper confidence bound on `V_dis` -- the exact Poisson
-        limit for the observed hit count, not `max(point, 3q)`."""
+        """Upper end of the exact two-sided 95% Clopper-Pearson interval
+        on `V_dis` -- binomial, not the Poisson approximation, and a
+        2.5% tail so the pair is a real 95% bracket (R5.1)."""
 
-        return _poisson_upper_95(self.disagree_hits) * self.quantum
+        return clopper_pearson(self.disagree_hits, self.samples)[1] * (
+            self._region)
 
     @property
     def disagree_lcb(self) -> float:
-        """95% lower confidence bound on `V_dis` from the hit count.
+        """Lower end of the same interval; zero at zero hits. The caller
+        maxes it with the analytic floor `delta * V_0`, so the bracket's
+        lower endpoint is always a true lower bound (R4.1, R5.1)."""
 
-        Zero at zero hits; the caller maxes it with the analytic floor
-        `delta * V_0`, so the bracket's lower endpoint is always a true
-        lower bound and never the MC point estimate (R4.1).
-        """
-
-        return _poisson_lower_95(self.disagree_hits) * self.quantum
+        return clopper_pearson(self.disagree_hits, self.samples)[0] * (
+            self._region)
 
     @property
     def disagree_resolved(self) -> bool:
@@ -535,7 +545,8 @@ def diamond_volumes_mc(
         disagree=region * disagree / samples,
         intersect=region * overlap / samples,
         quantum=region / samples,
-        disagree_hits=disagree)
+        disagree_hits=disagree,
+        samples=samples)
 
 
 def sprinklings_needed(delta_abs: float, sd_per_sprinkling: float,
@@ -648,11 +659,22 @@ def probe_point(label: str, w: float, du: float, dv: float,
     # the bracket maps to [n_floor (small V_dis), n_detect (large)].
     v_dis_floor = max(delta * v0_exact, vols.disagree_lcb)
     v_dis_ucb = vols.disagree_ucb
-    n_detect = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis_ucb))
+    resolved = vols.disagree_resolved
+    # R5.2: a resolved row reports the POINT-estimate sizing, matching
+    # the reporting contract and sd_Z (which is already the point on
+    # resolved rows); an unresolved row reports the UCB as the upper
+    # end of its bracket. The two columns now share one resolution
+    # semantics instead of n_detect silently staying on the UCB.
+    n_detect_point = sprinklings_needed(signal_abs,
+                                        math.sqrt(rho * v_dis))
+    n_detect_ucb = sprinklings_needed(signal_abs,
+                                      math.sqrt(rho * v_dis_ucb))
     n_detect_floor = sprinklings_needed(signal_abs,
                                         math.sqrt(rho * v_dis_floor))
-    n_detect_be = sprinklings_needed(signal_abs,
-                                     math.sqrt(rho * v_dis_ucb), z_beta=0.0)
+    n_detect = n_detect_point if resolved else n_detect_ucb
+    n_detect_be = sprinklings_needed(
+        signal_abs, math.sqrt(rho * (v_dis if resolved else v_dis_ucb)),
+        z_beta=0.0)
 
     # P2's preregistered residual Z = N_A - r N_0, r predicted. With
     # r = V_A / V_0 exactly, Var(Z) reduces algebraically to
@@ -711,7 +733,8 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "v_dis_hits": vols.disagree_hits,
         "n_marginal": n_marginal, "n_marginal_be": n_marg_be,
         "n_detect": n_detect, "n_detect_be": n_detect_be,
-        "n_detect_floor": n_detect_floor,
+        "n_detect_floor": n_detect_floor, "n_detect_ucb": n_detect_ucb,
+        "v_dis_ucb": v_dis_ucb, "v_dis_floor": v_dis_floor,
         "ambiguous_fraction": float(np.mean(amb_fracs)),
         "escalations": escalations,
         "escalations_flat": escalations_flat,
@@ -758,10 +781,10 @@ def main(seed: int = 20260808) -> None:
                   f"({r['v_dis_hits']} hits, quantum "
                   f"{r['v_dis_quantum']:.2e}); n90 is "
                   f"the bracket [{r['n_detect_floor']:.2g}, "
-                  f"{r['n_detect']:.2g}] and sd_Z in "
+                  f"{r['n_detect_ucb']:.2g}] and sd_Z in "
                   f"[{r['sd_z_floor']:.3f}, {r['sd_z_ucb']:.3f}], from "
-                  f"the analytic floor delta*V_0 to the 95% Poisson "
-                  f"upper limit")
+                  f"the analytic floor delta*V_0 to the 95% "
+                  f"Clopper-Pearson upper limit")
 
     print("\n== order-invariant candidate vs coordinate guard "
           "(PAIR level, mean over sprinklings; R1.3/R3.2) ==")

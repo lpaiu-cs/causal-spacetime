@@ -102,53 +102,58 @@ def test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume():
     region = slab.du * slab.dv * slab.dx * slab.dy
     assert vols.quantum == pytest.approx(region / 120_000)
     assert vols.disagree_resolved
-    # R3.1: the UCB is the Poisson limit for the observed count, which
-    # is ABOVE the point estimate even here -- never equal to it. It
-    # stays within the reporting factor, which is what "resolved" means.
+    # R3.1/R5.1: the UCB is the Clopper-Pearson upper limit for the
+    # observed count, ABOVE the point estimate but within the reporting
+    # factor, which is what "resolved" means.
     assert vols.disagree_ucb > vols.disagree
     assert vols.disagree_ucb <= probe._MC_CI_FACTOR * vols.disagree
-    assert vols.disagree_hits > 0
+    assert vols.disagree_hits > 0 and vols.samples == 120_000
 
 
-def test_the_poisson_upper_limit_is_exact_not_rule_of_three():
-    """The case, review R3.1: the first UCB was `max(point, 3q)`, which
-    is the 95% bound only at zero hits. At `k` hits the one-sided 95%
-    Poisson upper limit is strictly larger than `k` and larger than
-    `3` for `k >= 3`, so the old form under-reported the bound and
-    called a one-hit estimate resolved. These reference values are the
-    standard exact Poisson upper limits.
+def test_clopper_pearson_is_exact_and_two_sided():
+    """The case, review R5.1: the first bracket paired two one-sided
+    95% limits, giving ~90% two-sided coverage, and used the Poisson
+    approximation where the sampler is a fixed-n Bernoulli experiment.
+    Both fixed: exact binomial Clopper-Pearson with a 2.5% tail on each
+    end. These reference values are the standard exact CP intervals.
     """
 
-    assert probe._poisson_upper_95(0) == pytest.approx(2.996, abs=1e-3)
-    assert probe._poisson_upper_95(1) == pytest.approx(4.744, abs=1e-3)
-    assert probe._poisson_upper_95(2) == pytest.approx(6.296, abs=1e-3)
-    assert probe._poisson_upper_95(10) == pytest.approx(16.962, abs=1e-3)
-    # strictly above the count, and above the old rule-of-three past k=3
-    for k in range(0, 30):
-        assert probe._poisson_upper_95(k) > k
-        if k >= 3:
-            assert probe._poisson_upper_95(k) > 3.0
-    # a single hit is NOT resolved -- its bound is ~4.7x the point
+    lo, hi = probe.clopper_pearson(0, 100)
+    assert lo == 0.0 and hi == pytest.approx(0.03621, abs=1e-4)
+    lo, hi = probe.clopper_pearson(2, 100)
+    assert lo == pytest.approx(0.00243, abs=1e-4)
+    assert hi == pytest.approx(0.07038, abs=1e-4)
+    # each tail is 2.5%, verified against the binomial CDF directly
+    lo, hi = probe.clopper_pearson(5, 1000)
+    assert probe._binom_cdf(5, 1000, hi) == pytest.approx(0.025, abs=1e-4)
+    assert 1.0 - probe._binom_cdf(4, 1000, lo) == pytest.approx(
+        0.025, abs=1e-4)
+    # all-hits and no-hits collapse the matching endpoint
+    assert probe.clopper_pearson(0, 50)[0] == 0.0
+    assert probe.clopper_pearson(50, 50)[1] == 1.0
+
+    # a single hit is NOT resolved -- its 95% CP upper is many times
+    # the point estimate
     one = probe.DiamondVolumes(curved=1.0, flat=1.0, disagree=1.0,
                                intersect=0.0, quantum=1.0,
-                               disagree_hits=1)
+                               disagree_hits=1, samples=1000)
     assert not one.disagree_resolved
-    assert one.disagree_ucb == pytest.approx(4.744, abs=1e-3)
+    assert one.disagree_ucb > 3.0 * one.disagree
 
 
-def test_the_poisson_lower_limit_brackets_the_upper():
-    """The case, review R4.1: the bracket's lower endpoint must be a
-    genuine lower bound, not the MC point estimate. `_poisson_lower_95`
-    supplies the statistical one; these are the standard exact values,
-    and it is below the count and below the upper limit for every k."""
+def test_the_cp_bracket_is_a_true_two_sided_interval():
+    """The case, review R4.1/R5.1: the bracket's lower endpoint must be
+    a genuine lower bound, not the MC point estimate, and the two
+    endpoints together must be a real 95% interval -- 2.5% in each
+    tail, not 5%. The point estimate lies strictly inside."""
 
-    assert probe._poisson_lower_95(0) == 0.0
-    assert probe._poisson_lower_95(1) == pytest.approx(0.0513, abs=1e-3)
-    assert probe._poisson_lower_95(2) == pytest.approx(0.355, abs=1e-3)
-    assert probe._poisson_lower_95(10) == pytest.approx(5.425, abs=1e-3)
-    for k in range(1, 30):
-        assert 0.0 < probe._poisson_lower_95(k) < k
-        assert probe._poisson_lower_95(k) < probe._poisson_upper_95(k)
+    for hits, samples in ((1, 1000), (5, 1000), (85, 200_000)):
+        lo, hi = probe.clopper_pearson(hits, samples)
+        point = hits / samples
+        assert 0.0 < lo < point < hi
+        # 90% (two one-sided 95%) would be narrower than this 95%
+        assert probe._binom_cdf(hits, samples, hi) == pytest.approx(
+            0.025, abs=2e-3)
 
 
 def test_sd_z_is_the_exact_r_rho_vdis_identity_not_a_recombination():
@@ -345,8 +350,10 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     admits pairs. `TARGET_N` is patched down so this stays cheap."""
 
     monkeypatch.setattr(probe, "TARGET_N", 80)
+    # full MC so V_dis resolves (the R5.2 check needs a resolved row);
+    # the MC runs once per probe_point, so this stays cheap
     row = probe.probe_point("mini", 1.0, 1.0, 0.2, 6.0, 6.0,
-                            seed=2, sprinklings=6, mc_samples=30_000)
+                            seed=2, sprinklings=6, mc_samples=200_000)
     f = row["frac_analytic"]
     assert row["elem_frac"] == pytest.approx(f, abs=4.0 * math.sqrt(
         f * (1 - f) / (80 * 6)))
@@ -368,6 +375,19 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     assert row["sd_z"] == pytest.approx(
         math.sqrt((1.0 + row["delta"]) * row["rho"] * row["v_dis"]))
     assert row["sd_z_floor"] <= row["sd_z_ucb"]
+    # R5.2: n_detect and sd_z share one resolution semantics. This
+    # fixture resolves V_dis, so the headline n_detect is the POINT
+    # sizing (from v_dis), strictly below the UCB sizing -- not the UCB
+    # silently kept, which is what the two columns disagreeing looked
+    # like before.
+    assert row["v_dis_resolved"], "fixture no longer resolves V_dis"
+    # n scales linearly with V_dis, so the headline (point) sizing over
+    # the UCB sizing is exactly v_dis / v_dis_ucb -- confirming the
+    # headline uses the point, not the UCB silently kept.
+    assert row["n_detect"] / row["n_detect_ucb"] == pytest.approx(
+        row["v_dis"] / row["v_dis_ucb"], rel=1e-9)
+    assert row["n_detect"] < row["n_detect_ucb"]
+    assert row["v_dis_floor"] <= row["v_dis"] <= row["v_dis_ucb"]
     # Var(Z) with the predicted r must sit near rho*V_dis -- they
     # differ at O(delta) -- and never below the parallelogram floor
     assert row["sd_z"] ** 2 == pytest.approx(
