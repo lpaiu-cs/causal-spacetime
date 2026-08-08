@@ -45,6 +45,7 @@ from __future__ import annotations
 import math
 import sys
 import time
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
@@ -318,8 +319,10 @@ def axis_volume_ratio(a: float, nodes: int = 400) -> float:
     `tau^2 = 2 du dv` instead.** That imports `dv` into an effect `dv`
     cancels out of, overstating delta by 2.4e4x at the large-`dv`
     operating point and understating it 14x at `a = 1` -- and it was
-    caught by the probe's own consistency bound, `delta*V_0 <= V_dis`,
-    not by reading. The series itself is also not usable at the large
+    flagged by the probe's own consistency diagnostic, `delta*V_0 <=
+    V_dis` (a warning at 95%, since V_dis is measured, not a hard
+    assertion -- review R10), not by reading. The series itself is also
+    not usable at the large
     `a` the guard admits: at `a = 2.4` the true ratio is `1.1815`
     against the series' `1.1317`, and it diverges toward the conjugate
     point, so the probe uses the quadrature and never the series.
@@ -544,6 +547,19 @@ def diamond_volumes_mc(
         in_flat += b
         disagree += a != b
         overlap += a and b
+    # The four cells partition the samples: every trial is exactly one
+    # of {both, curved-only, flat-only, neither}, so the INTEGER counts
+    # obey `in_curved + in_flat == disagree + 2*overlap` exactly (hence
+    # `|V_A - V_0| <= V_dis` for the derived volumes). This is the hard,
+    # DETERMINISTIC consistency invariant -- it holds for any seed with
+    # no sampling tolerance and catches an inconsistent assembly of the
+    # four counts, the classifier being the component that owns it
+    # (review R10). The analytic-vs-MC cross-check, which is inherently
+    # statistical, is a warning in `probe_point`, not a hard assert.
+    assert in_curved + in_flat == disagree + 2 * overlap, (
+        f"MC classification does not partition the {samples} samples: "
+        f"in_curved={in_curved} + in_flat={in_flat} != "
+        f"disagree={disagree} + 2*overlap={overlap}")
     return DiamondVolumes(
         curved=region * in_curved / samples,
         flat=region * in_flat / samples,
@@ -661,12 +677,29 @@ def probe_point(label: str, w: float, du: float, dv: float,
     # PREDICTION, never the MC difference of the volumes (fourth-order
     # in a, drowned by MC noise that is first-order in V_dis; an early
     # run returned exactly 0).
+    # The DETERMINISTIC consistency invariant (the four MC volumes are
+    # one partition) is hard-asserted at the classifier. What remains is
+    # the ANALYTIC-vs-MC cross-check `delta*V_0 <= V_dis` -- the identity
+    # `|V_A - V_0| <= V_dis` with the analytic floor on the left. It
+    # caught the original delta-formula bug (14x-2.4e4x wrong), but it
+    # CANNOT be a hard assertion: V_dis is known only through MC, and
+    # `disagree_ucb` is a random 95% CP upper limit that a correct run
+    # still lets fall below the true V_dis on its ~2.5% tail. With
+    # arbitrary seeds accepted, asserting it would turn a valid draw into
+    # a deterministic crash whenever V_dis sits near the floor (review
+    # R10). So it is a DIAGNOSTIC: a gross (order-of-magnitude) formula
+    # error blows past the bound and warns loudly; a sampling
+    # fluctuation is at most a factor ~1 and is expected. Run under
+    # `-W error::UserWarning` to restore the old halting semantics.
     analytic_floor = delta * v0_exact
-    assert analytic_floor <= vols.disagree_ucb, (
-        f"{label}: analytic floor delta*V_0 = {analytic_floor:.6e} exceeds "
-        f"the CP upper bound on V_dis = {vols.disagree_ucb:.6e} -- "
-        "|V_A - V_0| <= V_dis is an identity, so one of the two is being "
-        "computed wrongly")
+    if analytic_floor > vols.disagree_ucb:
+        warnings.warn(
+            f"{label}: analytic floor delta*V_0 = {analytic_floor:.6e} "
+            f"exceeds the 95% CP upper bound on V_dis = "
+            f"{vols.disagree_ucb:.6e}. |V_A - V_0| <= V_dis is an identity; "
+            "an excess beyond sampling error means delta or the MC volume "
+            "is being computed wrongly -- investigate before trusting this "
+            "row.", stacklevel=2)
     signal_abs = delta * lam_0  # = rho V_0 delta, the raw N_A - N_0 shift
     # DETECTION sizing over the honest V_dis BRACKET (R2.1, R4.1). The
     # lower endpoint is a true lower bound -- the larger of the

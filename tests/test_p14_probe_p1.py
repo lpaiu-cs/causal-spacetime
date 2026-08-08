@@ -36,9 +36,10 @@ def test_the_axis_volume_ratio_reproduces_the_design_pinned_values():
     quadrature, and the FIRST version of the probe used
     `(w tau)^4 / 252` with `tau^2 = 2 du dv` instead -- importing `dv`
     into an effect `dv` cancels out of, wrong by 2.4e4x at one
-    operating point and 14x at another. It was caught by the
-    consistency bound `delta*V_0 <= V_dis`, an identity the probe now
-    asserts on every run.
+    operating point and 14x at another. It was flagged by the
+    consistency diagnostic `delta*V_0 <= V_dis` (a warning, since V_dis
+    is measured; the hard per-run assertion is the exact sample-count
+    partition inside `diamond_volumes_mc` -- review R10).
 
     The pin is against the design's own committed check script
     (`p14_interval_volume_constant_a.py`), whose values this must
@@ -428,3 +429,28 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     assert row["escalations"] == 0 and row["escalations_flat"] == 0
     for k, agreements in row["agreement"].items():
         assert len(agreements) == row["sprinklings"], k
+
+
+def test_a_gross_delta_error_warns_but_does_not_crash(monkeypatch):
+    """The case, review R10: the analytic-vs-MC consistency check
+    compares the analytic floor `delta*V_0` against `disagree_ucb`, a
+    RANDOM 95% CP upper limit. Because a correct run can see that limit
+    dip below the true V_dis on its ~2.5% upper tail -- and the script
+    accepts arbitrary seeds -- this must NOT be a hard assertion that
+    turns a valid draw into a deterministic crash. It is a diagnostic
+    warning: a gross delta error (here a forced 100x ratio) blows past
+    the bound and warns, while the run still completes and returns its
+    row. The hard, DETERMINISTIC invariant is instead the exact
+    sample-count partition asserted inside `diamond_volumes_mc`, whose
+    effect on the derived volumes is already pinned by
+    `test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume`.
+    """
+
+    monkeypatch.setattr(probe, "TARGET_N", 60)
+    monkeypatch.setattr(probe, "axis_volume_ratio", lambda a, **k: 100.0)
+    with pytest.warns(UserWarning, match=r"analytic floor delta\*V_0"):
+        row = probe.probe_point("gross", 1.0, 1.0, 1.0, 2.0, 6.0,
+                                 seed=3, sprinklings=3, mc_samples=50_000)
+    # completed instead of crashing, and delta reflects the patched ratio
+    assert row["delta"] == pytest.approx(99.0)
+    assert math.isfinite(row["n_detect"]) and row["n_detect"] > 0.0
