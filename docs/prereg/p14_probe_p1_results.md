@@ -50,12 +50,16 @@ check script's pinned values to the digit (`1.00400047` at `a = 1`,
 Fattest eligible axis diamond per point. **Two sizings, answering
 different questions (review R1.1):**
 
-- `n90 marginal` — one arm's count against its own known mean. The
-  effect is the absolute shift `λ_A − λ_0 = δλ_0` and the noise is the
-  Poisson SD `√λ_A`; sizing `δ` (relative to `λ_0`) against `1/√λ_A`
-  (relative to `λ_A`) mixed normalizations and was optimistic by
-  `(1+δ)²` (review R4.3). Corrected here — `edge-a2.4` is `1.2e3`, not
-  the earlier `834`.
+- `n90 unpaired` — the one-arm detectability test, **not** §8 P2's
+  marginal check (review R6.1). P2's marginal check compares each arm
+  against ITS OWN predicted mean, a displacement of zero under the
+  prediction — a precision statement, which is the `sd_Z` role below.
+  This instead sizes the curved count against the OTHER arm's mean
+  `λ_0` (the effect-absent null): can one arm alone separate `λ_A`
+  from `λ_0` WITHOUT the same-points cancellation? Signal
+  `λ_A − λ_0 = δλ_0`; distinct SDs under null (`√λ_0`) and alternative
+  (`√λ_A`). Comparing it to `n90 detect` is what shows the pairing's
+  advantage — at `edge-a2.4`, `1.1e3` unpaired against `399` paired.
 - `n90 detect` — sprinklings to reject a NO-SHIFT null with the raw
   same-points difference `N_A − N_0` (`Var = ρ V_dis`, exact: shared
   points cancel where the predicates agree), taking the **predicted**
@@ -73,15 +77,15 @@ different questions (review R1.1):**
   error of `sd_Z / (λ_0 √n)`. P2 sizes its own tolerance against that;
   this probe only reports the number.
 
-| point | `a` | δ = R−1 | λ_A | V_dis hits | n90 marginal | n90 detect | sd_Z |
+| point | `a` | δ = R−1 | λ_A | V_dis hits | n90 unpaired | n90 detect | sd_Z |
 |---|---|---|---|---|---|---|---|
 | slice-a0.3 | 0.3 | 3.2e-5 | 0.12 | 0¹ | 8.7e10 | [2.8e6, 4.2e9]¹ | [0.002, 0.074]¹ |
 | slice-a0.6 | 0.6 | 5.2e-4 | 0.23 | 2¹ | 1.7e8 | [2.7e5, 7.9e6]¹ | [0.019, 0.104]¹ |
 | slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | ~250 | 1.7e6 | 9.2e4 | 0.145 |
 | aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | ~600 | 1.1e5 | 4.1e3 | 0.462 |
 | roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | ~340 | 2.0e10 | 3.5e7 | 0.150 |
-| high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 3.0e4 | [2.0e3, 6.9e3]¹ | [0.074, 0.137]¹ |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 1.2e3 | **399** | 0.386 |
+| high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 2.9e4 | [2.0e3, 6.9e3]¹ | [0.074, 0.137]¹ |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 1.1e3 | **399** | 0.386 |
 
 The resolved rows report the point-estimate sizing (review R5.2); the
 unresolved rows report a bracket. `n90 detect` and `sd_Z` share one
@@ -118,8 +122,8 @@ choice decides whether that is enough or `n` must grow.
 **Reading.** The product (effect)² × (count) is maximized at the
 largest `a` the guard admits, despite the tiny boxes: δ grows as `a⁴`
 and beyond, while the count only needs to be O(1) per sprinkling.
-`edge-a2.4` needs ~4.0e2 sprinklings to detect the shift (~1.2e3
-marginal); `roomy`
+`edge-a2.4` needs ~4.0e2 sprinklings to detect the shift (~1.1e3
+unpaired — the same-points pairing is worth ~2.7×); `roomy`
 and the `slice` points are dead at any affordable n. Density is a
 further free lever this table does not use: P2-style counting inside
 an external-anchor diamond is O(N) per anchor, not O(N²), so raising
@@ -182,17 +186,27 @@ there:
 At every operating point, the smallest `k` that removes the unsafe
 admissions also removes essentially all the useful ones: the candidate
 keeps ~0 guard-admitted pairs at `k*`. There is no intermediate
-threshold that is both safe and non-empty. The reason is structural:
-below/above counts measure interiority along the CAUSAL depth (`u`),
-while the guard binds transversally; a `k` high enough to reject the
-transversally-shallow pairs rejects nearly all of them. (Element-level,
-same run: agreement 0.53–0.98, candidate-only up to 47%.)
+threshold that is both safe and non-empty. The likely reason: the
+two `below/above` counts measure interiority along the CAUSAL depth
+(`u`), while the guard binds transversally, so a `k` high enough to
+reject the transversally-shallow pairs rejects nearly all of them.
+(Element-level, same run: agreement 0.53–0.98, candidate-only up
+to 47%.)
+
+**Scope of this result (review R6.2).** What is measured is the
+specific two-threshold family `(below ≥ k) & (above ≥ k)` over every
+integer `k ≤ 20`. It does **not** establish that transverse
+interiority is invisible to degree counts in general: in a finite box
+the causal cones are clipped by the transverse faces, so past/future
+degrees can carry transverse-boundary information indirectly, and some
+other function of degree-derived or order-local features could still
+isolate it. Only this proxy family is ruled out here.
 
 **Consequence for §7:** the chain vectors do NOT recover pure-poset
-standing from this candidate. The strictly single-poset claim stays on
-item 3a (global relation fraction) unless a different order-invariant
-rule is proposed — one that would have to encode transverse
-interiority, which no degree count does.
+standing from *this* candidate. The strictly single-poset claim stays
+on item 3a (global relation fraction) unless some order-invariant rule
+— not necessarily excluded by this measurement — is found and shown to
+agree with the coordinate guard.
 
 ### 4. Ambiguity and cost — a non-issue at probe densities
 
@@ -265,6 +279,16 @@ empty candidate — both directions reported now; and the `k` sweep
 skipped `9..15`, so an intermediate safe-and-non-empty threshold had
 not been ruled out — every integer `k ≤ 20` is swept now, and the
 `k*` table shows there is none.
+
+Round R6 corrected two interpretations: `n90 marginal` was labelled
+as §8 P2's each-arm-against-its-own-mean check but sized a `λ_A`
+vs `λ_0` separation (displacement from an arm's own mean is zero
+under the prediction) — relabelled `n90 unpaired`, an explicit
+one-arm detectability test with the null at the other arm's mean and
+distinct null/alternative SDs; and the candidate conclusion
+generalized past the tested `(below≥k)&(above≥k)` family — narrowed
+to that proxy, since clipped cones in a finite box can carry
+transverse information to degree counts indirectly.
 
 Round R4 corrected three sizing/uncertainty issues: the unresolved
 `n90` lower endpoint used the MC point estimate via

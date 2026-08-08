@@ -699,15 +699,19 @@ that very quantity. **Assigned:** §8 P1.
 **MEASURED (P1 probe, exploratory —
 [results](p14_probe_p1_results.md)):** the degree-count proxy does NOT
 reproduce the coordinate guard, measured at PAIR level (both
-exclusive directions) over every integer `k` up to 20. The sharpened
-finding: at each operating point the smallest `k` that admits zero
-unsafe pairs also keeps ~0 guard-admitted pairs — there is no
-threshold that is both safe and non-empty. Structural:
-below/above counts measure interiority along the causal depth, while
-the guard's binding conditions are transverse, which no degree count
-sees. **The chain vectors stay coordinate-labeled and §7's strictly
-single-poset claim stays on item 3a**, unless a candidate that encodes
-transverse interiority order-invariantly is proposed.
+exclusive directions) over every integer `k` up to 20. At each
+operating point the smallest `k` that admits zero unsafe pairs also
+keeps ~0 guard-admitted pairs — no threshold in this family is both
+safe and non-empty (likely because `below/above` counts measure
+interiority along the causal depth while the guard binds
+transversally). **This rules out the specific two-threshold family
+`(below≥k)&(above≥k)`, not degree counts in general (R6.2):** in a
+finite box the cones are clipped by the transverse faces, so degrees
+can carry transverse information indirectly, and some other
+order-local feature could still isolate it. **The chain vectors stay
+coordinate-labeled and §7's strictly single-poset claim stays on item
+3a**, unless some order-invariant candidate — not excluded by this
+measurement — is found and shown to agree with the coordinate guard.
 
 ### 4.6.3 Where Class C has an operating point (R12.1, R12.2, R13.2, R13.4)
 

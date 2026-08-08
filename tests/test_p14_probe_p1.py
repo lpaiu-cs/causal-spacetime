@@ -364,13 +364,17 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     assert 0.0 < row["lam"] < 80.0
     assert math.isfinite(row["n_detect"]) and row["n_detect"] > 0.0
     assert row["n_detect"] >= row["n_detect_floor"] > 0.0
-    # R4.3: the marginal sizing is delta*lam_0 signal against
-    # sqrt(lam_A) noise -- exceeds the old delta-vs-1/sqrt(lam_A) form
-    # by (1+delta)^2. Reconstruct the corrected value and check.
-    z = 1.959964 + 1.281552
+    # R6.1: the unpaired sizing is a detectability test of lam_A vs
+    # lam_0 with the null at the OTHER arm's mean -- NOT §8 P2's
+    # each-arm-against-its-own-mean check (zero displacement under the
+    # prediction). Distinct SDs under null (sqrt lam_0) and alternative
+    # (sqrt lam_A). Reconstruct and check.
+    z_a, z_b = 1.959964, 1.281552
     lam_0 = row["lam"] / (1.0 + row["delta"])
-    expected = (z * math.sqrt(row["lam"]) / (row["delta"] * lam_0)) ** 2
-    assert row["n_marginal"] == pytest.approx(expected, rel=1e-9)
+    gap = row["lam"] - lam_0
+    expected = ((z_a * math.sqrt(lam_0) + z_b * math.sqrt(row["lam"]))
+                / gap) ** 2
+    assert row["n_unpaired"] == pytest.approx(expected, rel=1e-9)
     # R4.2: sd_Z from the exact identity, and its bracket brackets it
     assert row["sd_z"] == pytest.approx(
         math.sqrt((1.0 + row["delta"]) * row["rho"] * row["v_dis"]))

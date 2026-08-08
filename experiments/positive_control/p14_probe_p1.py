@@ -627,15 +627,20 @@ def probe_point(label: str, w: float, du: float, dv: float,
     lam = lam_A
     lam_flat = lam_0
 
-    # MARGINAL sizing (R4.3): the effect is the absolute count shift
-    # `lam_A - lam_0 = delta * lam_0`, and the noise is the Poisson SD
-    # `sqrt(lam_A)`. The first version sized `delta` (a shift relative
-    # to lam_0) against `1/sqrt(lam_A)` (an SD relative to lam_A),
-    # mixing the two normalisations and coming out optimistic by
-    # `(1 + delta)^2`. Both are absolute now.
-    n_marginal = sprinklings_needed(delta * lam_0, math.sqrt(lam_A))
-    n_marg_be = sprinklings_needed(delta * lam_0, math.sqrt(lam_A),
-                                   z_beta=0.0)
+    # UNPAIRED-DETECTABILITY sizing (R4.3, R6.1). This is NOT §8 P2's
+    # marginal check -- that compares each arm against ITS OWN mean, a
+    # displacement of zero under the prediction, so it is a precision
+    # statement (the `sd_Z` role), not a sizing. What this sizes is the
+    # one-arm test with the null at the OTHER arm's mean: can the
+    # curved count alone separate `lam_A` from `lam_0`, WITHOUT the
+    # same-points cancellation? Comparing it to `n_detect` is what
+    # shows the pairing's advantage. Signal `lam_A - lam_0 = delta
+    # lam_0`; the SD differs under null (`sqrt(lam_0)`) and alternative
+    # (`sqrt(lam_A)`), so the two z-terms carry their own variances.
+    signal_gap = lam_A - lam_0
+    n_unpaired = ((_Z_ALPHA * math.sqrt(lam_0)
+                   + _Z_BETA * math.sqrt(lam_A)) / signal_gap) ** 2
+    n_unpaired_be = (_Z_ALPHA * math.sqrt(lam_0) / signal_gap) ** 2
     # DETECTION sizing (R1.1: this is not P2's estimand and is no
     # longer labeled as it). Null: the volumes do not differ;
     # alternative: they differ by the predicted rho V_0 delta.
@@ -731,7 +736,7 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "v_dis_resolved": vols.disagree_resolved,
         "v_dis_quantum": vols.quantum,
         "v_dis_hits": vols.disagree_hits,
-        "n_marginal": n_marginal, "n_marginal_be": n_marg_be,
+        "n_unpaired": n_unpaired, "n_unpaired_be": n_unpaired_be,
         "n_detect": n_detect, "n_detect_be": n_detect_be,
         "n_detect_floor": n_detect_floor, "n_detect_ucb": n_detect_ucb,
         "v_dis_ucb": v_dis_ucb, "v_dis_floor": v_dis_floor,
@@ -765,7 +770,7 @@ def main(seed: int = 20260808) -> None:
 
     print("\n== feasibility, fattest eligible axis diamond ==")
     print(f"{'point':>12} {'a':>4} {'delta':>9} {'lam_A':>8} "
-          f"{'V_dis/V_A':>9} {'n90_marg':>9} {'n90_detect':>10} "
+          f"{'V_dis/V_A':>9} {'n90_unpair':>10} {'n90_detect':>10} "
           f"{'sd_Z':>8}")
     for r in rows:
         detect = (f"{r['n_detect']:10.3g}" if r["v_dis_resolved"]
@@ -774,7 +779,7 @@ def main(seed: int = 20260808) -> None:
                else f"<={r['sd_z_ucb']:6.3f}")
         print(f"{r['label']:>12} {r['a']:4.1f} {r['delta']:9.2e} "
               f"{r['lam']:8.2f} {r['v_dis'] / r['v_curved']:9.4f} "
-              f"{r['n_marginal']:9.3g} {detect:>10} {sdz:>8}")
+              f"{r['n_unpaired']:10.3g} {detect:>10} {sdz:>8}")
     for r in rows:
         if not r["v_dis_resolved"]:
             print(f"  {r['label']}: V_dis unresolved at this MC size "
