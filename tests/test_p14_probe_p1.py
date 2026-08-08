@@ -562,16 +562,41 @@ SIZING_JSON = (Path(__file__).resolve().parents[1]
 #: ulp is a 3.5e-11 RELATIVE shift, and `n ~ 1/delta^2` doubles it,
 #: which is exactly the 7e-11 the first uniform-1e-12 version of this
 #: test died on in CI (a Windows-committed artifact, a Linux rerun).
-#: So: `delta` is compared ABSOLUTELY (a few-ulp budget on R), fields
-#: that scale with inverse powers of delta get `_AMPLIFIED` tolerance
-#: `1e-11 + 1e-11/delta`, everything else a plain 1e-11. All real
-#: drift -- a TARGET_N or quadrature change, a hand-edit -- moves
-#: digits at 1e-6 or more and still fails loudly.
-_DELTA_ABS_TOL = 1e-12
+#:
+#: The budget is DERIVED from that mechanism, not chosen round (PR #43
+#: review: a `1e-11/delta` numerator -- five orders above ulp scale --
+#: admits ~1.6e-6 relative drift at roomy, ~22,000x the observed
+#: platform envelope, letting `n_detect` be hand-edited by ~55 while
+#: the test's contract says edits are pinned). `_R_ROUNDOFF` is a
+#: 100-ulp allowance on `R(a)` (observed: 1 ulp); `delta` is compared
+#: ABSOLUTELY against it, and `_AMPLIFIED_FIELDS` -- everything
+#: scaling with `delta^-1` or `delta^-2` -- get
+#: `rel = 1e-11 + 2 * _R_ROUNDOFF / delta` (the worst power's factor
+#: 2). At roomy that is ~7e-9: two orders above the observed drift,
+#: 200x tighter than before, and it pins `n_detect` to +-0.25 counts.
+#:
+#: The relative branches pass `abs=0.0` explicitly: pytest.approx
+#: otherwise keeps its DEFAULT abs=1e-12 and accepts when EITHER
+#: tolerance holds, which for small fields (slice-a0.3's
+#: `v_dis_floor` = 2.7e-8) widens the intended window ~27,000x
+#: (PR #44 review). Classification re-audited before removing the
+#: floor: the analytic floor is delta-LINEAR only where it binds
+#: (zero-hit rows' `v_dis_floor`/`sd_z_floor`, in `_AMPLIFIED`);
+#: every `n_*` divides by `(delta*lam0)^2` (in `_AMPLIFIED`);
+#: `lam`/`lam_flat` carry delta roundoff only RELATIVELY (~2e-14,
+#: inside 1e-11); `v_dis_ucb`/`sd_z_ucb` are CP-bound with the floor
+#: orders below; `sd_z` is floor-bound on zero-hit rows (`v_dis = 0`
+#: makes `v_dis_point = max(0, floor)` -- there `sd_z = sd_z_floor ~
+#: sqrt((1+delta) delta)`, a half-power of delta, ~3.5e-10 relative
+#: at slice-a0.3), so it sits in the amplified class too (PR #44
+#: review R2 -- the first audit wrongly called it point-bound
+#: everywhere); and exact-zero fields (`v_dis` at zero hits) compare
+#: as equal under `abs=0.0`.
+_R_ROUNDOFF = 100.0 * math.ulp(1.0)
 _AMPLIFIED_FIELDS = frozenset({
     "n_unpaired", "n_unpaired_be",
     "n_detect", "n_detect_be", "n_detect_floor", "n_detect_ucb",
-    "v_dis_floor", "sd_z_floor",
+    "v_dis_floor", "sd_z", "sd_z_floor",
 })
 
 
@@ -609,12 +634,14 @@ def test_the_sizing_artifact_reproduces_field_for_field():
             if isinstance(cv, (str, bool)) or isinstance(cv, int):
                 assert fv == cv, where
             elif k == "delta":
-                assert fv == pytest.approx(cv, abs=_DELTA_ABS_TOL), where
+                assert fv == pytest.approx(cv, abs=_R_ROUNDOFF), where
             elif k in _AMPLIFIED_FIELDS:
                 assert fv == pytest.approx(
-                    cv, rel=1e-11 + 1e-11 / delta), where
+                    cv, rel=1e-11 + 2.0 * _R_ROUNDOFF / delta,
+                    abs=0.0), where
             else:
-                assert fv == pytest.approx(cv, rel=1e-11), where
+                assert fv == pytest.approx(cv, rel=1e-11,
+                                           abs=0.0), where
 
 
 def test_the_results_doc_embeds_the_rendered_feasibility_table():
