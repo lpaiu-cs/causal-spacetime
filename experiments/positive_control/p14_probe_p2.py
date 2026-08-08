@@ -67,12 +67,10 @@ from __future__ import annotations
 
 import json
 import math
-import sys
 import time
 from pathlib import Path
 
 import numpy as np
-
 from p14_plane_wave import (
     PlaneWaveGeometry,
     Slab,
