@@ -118,20 +118,40 @@ def test_the_p1_sizing_link_holds():
     p2.check_p1_link()
 
 
+#: Every key a point record carries. Adding a field to `run_point`
+#: without extending the recomputation below fails here first -- the
+#: gap PR #42's review found (the Bonferroni fields were added after
+#: the test and went unpinned) cannot recur silently.
+_POINT_KEYS = frozenset({
+    "label", "w", "du", "dv", "dx", "dy", "n", "seed",
+    "a", "r_pred", "delta", "rho", "lam0", "lam_a", "tau", "tau_m",
+    "raw", "zbar", "var_emp", "se", "t_crit",
+    "theta_ci", "equivalent", "discriminates",
+    "theta_ci_bonf", "equivalent_bonf", "discriminates_bonf",
+    "marginal", "var_diag", "seconds",
+})
+
+
 def test_the_results_artifact_derived_fields_recompute_from_raw():
     """The PR #41 lesson applied to P2 from the start: every derived
     field in the committed artifact must recompute from the raw
     sufficient statistics and the frozen protocol -- zbar and Var from
-    the sums, the t-CI from those, both labels from the CI, the
-    marginal CIs from the pooled totals, and the analytic side of the
-    variance diagnostic from a fresh MC at the recorded sub-seed. The
-    one exception is the bootstrap CI, which needs the full per-
-    sprinkling sample; it is pinned by the slow edge-a2.4 rerun.
+    the sums, the t-CI from those, the Bonferroni CI and all four
+    labels, the marginal CIs from pooled totals that are THEMSELVES
+    tied back to the raw sums, and the analytic side of the variance
+    diagnostic from a fresh MC at the recorded sub-seed (PR #42
+    review R1: the first version skipped the Bonferroni fields --
+    exactly the ones that publish the joint sentence -- and never tied
+    the marginal totals to the raw record). The one exception is the
+    bootstrap CI, which needs the full per-sprinkling sample; it is
+    pinned by the slow edge-a2.4 rerun. `_POINT_KEYS` makes the
+    coverage a schema contract: a new field fails here until pinned.
     """
 
     art = json.loads(ARTIFACT.read_text(encoding="utf-8"))
     assert len(art["points"]) == len(p2.OPERATING_POINTS)
     for k, rec in enumerate(art["points"]):
+        assert set(rec) == _POINT_KEYS, rec.get("label")
         label, w, du, dv, dx, dy, n = p2.OPERATING_POINTS[k]
         assert rec["label"] == label and rec["n"] == n
         assert rec["seed"] == p2.CAMPAIGN_SEEDS[label]
@@ -164,7 +184,21 @@ def test_the_results_artifact_derived_fields_recompute_from_raw():
         assert rec["theta_ci"] == pytest.approx([lo, hi], rel=1e-9)
         assert rec["equivalent"] == (-delta < lo and hi < delta)
         assert rec["discriminates"] == (lo > -delta or hi < -delta)
+        # the Bonferroni fields publish the JOINT sentence via
+        # primary_table -- they recompute from the same raw record
+        t_bonf = p2.student_t_crit(n - 1, p2._T_LEVEL_BONF3)
+        b_lo = (zbar - t_bonf * se) / rec["lam0"]
+        b_hi = (zbar + t_bonf * se) / rec["lam0"]
+        assert rec["theta_ci_bonf"] == pytest.approx([b_lo, b_hi],
+                                                     rel=1e-9)
+        assert rec["equivalent_bonf"] == (-delta < b_lo
+                                          and b_hi < delta)
+        assert rec["discriminates_bonf"] == (b_lo > -delta
+                                             or b_hi < -delta)
 
+        # the marginal totals ARE the raw sums -- one record, not two
+        assert rec["marginal"]["curved"]["total"] == raw["sum_na"]
+        assert rec["marginal"]["flat"]["total"] == raw["sum_n0"]
         for arm_name, lam in (("curved", rec["lam_a"]),
                               ("flat", rec["lam0"])):
             m = rec["marginal"][arm_name]
@@ -184,6 +218,33 @@ def test_the_results_artifact_derived_fields_recompute_from_raw():
         want_hi = r_pred * rho * max(vols.disagree_ucb, floor)
         assert d["analytic_ci"] == pytest.approx(
             [want_lo, want_hi], rel=1e-9)
+
+
+def test_the_frozen_n_have_executable_sizing_provenance():
+    """The case, PR #42 review R1: minima quoted only in prose (with
+    the design MC burned) and a test that reasserts the frozen
+    literals are not a reproducible sizing design. The provenance is
+    now executable: `sizing_block` recomputes, from the committed
+    artifact's own records and the frozen `POWER_TARGET = 0.90`, the
+    exact-Garwood marginal minimum, the z-TOST primary minimum at the
+    campaign MC's V_dis UCB, and the floor -- and the committed
+    `sizing` block must equal that recomputation. The marginal minima
+    20939/349/13 were independently cross-computed in the design
+    review; note 13 is the PRE-floor statistical minimum at
+    edge-a2.4 -- the variance floor 100 is what binds there.
+    """
+
+    art = json.loads(ARTIFACT.read_text(encoding="utf-8"))
+    assert p2.POWER_TARGET == 0.90
+    fresh = p2.sizing_block(art)
+    assert art["sizing"] == fresh
+    by_label = {r["label"]: r for r in fresh["points"]}
+    assert by_label["slice-a1.0"]["n_marginal_min"] == 20_939
+    assert by_label["high-a2.0"]["n_marginal_min"] == 349
+    assert by_label["edge-a2.4"]["n_marginal_min"] == 13
+    assert by_label["edge-a2.4"]["n_required"] == 100  # the floor
+    for r in fresh["points"]:
+        assert r["n_frozen"] >= r["n_required"], r["label"]
 
 
 @pytest.mark.slow

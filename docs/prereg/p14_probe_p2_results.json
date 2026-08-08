@@ -232,5 +232,34 @@
     "tau_m_rule": "delta",
     "tau_rule": "delta"
   },
-  "script": "experiments/positive_control/p14_probe_p2.py"
+  "script": "experiments/positive_control/p14_probe_p2.py",
+  "sizing": {
+    "points": [
+      {
+        "label": "slice-a1.0",
+        "n_frozen": 21000,
+        "n_marginal_min": 20939,
+        "n_primary_min_ucb": 1025,
+        "n_required": 20939,
+        "variance_floor": 100
+      },
+      {
+        "label": "high-a2.0",
+        "n_frozen": 400,
+        "n_marginal_min": 349,
+        "n_primary_min_ucb": 116,
+        "n_required": 349,
+        "variance_floor": 100
+      },
+      {
+        "label": "edge-a2.4",
+        "n_frozen": 100,
+        "n_marginal_min": 13,
+        "n_primary_min_ucb": 6,
+        "n_required": 100,
+        "variance_floor": 100
+      }
+    ],
+    "power_target": 0.9
+  }
 }

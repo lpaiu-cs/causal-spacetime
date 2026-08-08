@@ -46,12 +46,20 @@ circular.
   estimand.
 - **Coverage** — pointwise 95% per operating point. Any sentence
   joining the three points is Bonferroni-adjusted and separate.
-- **Sizing** — `n = 21 000 / 400 / 100` =
-  `max(primary TOST at the V_dis 95% UCB, marginal at τ_m = δ,
-  variance floor 100)`; exact minima `20 939 / 349 / 13`. Inputs:
-  P1's committed `p14_probe_p1_sizing.json` (cross-checked at run
-  time) and the review's 2e6-sample MC (120/79/737 hits, design seed
-  777, burned).
+- **Sizing** — frozen power target **0.90**.
+  `n = 21 000 / 400 / 100 = max(marginal minimum, primary minimum,
+  variance floor 100)`. The marginal minima at `τ_m = δ` by **exact
+  Garwood power** are `20 939 / 349 / 13` (binding at the first two
+  points; `13` is edge-a2.4's PRE-floor statistical minimum — the
+  variance floor `100` is what binds there). The primary z-TOST
+  minima at the campaign MC's `V_dis` 95% UCB are smaller
+  everywhere. All minima are recomputed from committed inputs into
+  the artifact's `sizing` block by executable code
+  (`sizing_block`), and a test asserts the committed block equals
+  the recomputation — the design-review numbers were additionally
+  cross-computed independently. Design inputs: P1's committed
+  `p14_probe_p1_sizing.json` (quadrature cross-checked at run time)
+  and the campaign's own committed MC records.
 - **Statistics implementation** — the repo carries no scipy; the
   Student-t quantile (incomplete beta) and the Garwood interval
   (incomplete gamma) are built in the script and test-pinned against

@@ -51,14 +51,19 @@ disjoint from every campaign stream. Burned seeds (P1 campaign,
 design checks) may not reappear. `assert_seed_layout` enforces the
 whole layout and a test pins it.
 
-Sizing: n = 21_000 / 400 / 100 from the design review -- primary TOST
-at the V_dis 95% UCB (2e6 MC), marginal equivalence at `tau_m = delta`
-(the binding constraint at slice-a1.0 and high-a2.0), and a floor of
-100 for the variance estimate itself. Verified coverage/power of the
-frozen t-CI by compound-Poisson simulation: 0.9495/0.9492/0.9473
-coverage, 1.0000 equivalence power. The P1 inputs behind delta and
-sd_Z live in `docs/prereg/p14_probe_p1_sizing.json` and are
-cross-checked at run time.
+Sizing: frozen power target 0.90; n = 21_000 / 400 / 100 =
+max(marginal minimum, primary minimum, variance floor 100). The
+exact-Garwood marginal minima at `tau_m = delta` are 20_939 / 349 /
+13 -- binding at the first two points; 13 is edge-a2.4's PRE-floor
+statistical minimum and the floor 100 is what binds there. The
+primary z-TOST minima at the campaign MC's V_dis UCB are smaller
+everywhere. `sizing_block` recomputes all of it from committed
+inputs and the committed artifact carries the result, test-pinned
+(PR #42 review: prose-only minima with a burned design seed are not
+a frozen design). Verified coverage/power of the frozen t-CI by
+compound-Poisson simulation: 0.9495/0.9492/0.9473 coverage, 1.0000
+equivalence power. The P1 inputs behind delta live in
+`docs/prereg/p14_probe_p1_sizing.json`, cross-checked at run time.
 
 Run:  python experiments/positive_control/p14_probe_p2.py
 """
@@ -82,6 +87,7 @@ from p14_plane_wave import (
 from p14_probe_p1 import (
     _between,  # the ONE membership predicate: counts and MC volumes
     axis_volume_ratio,
+    clopper_pearson,
     diamond_volumes_mc,
     fattest_axis_diamond,
 )
@@ -90,10 +96,10 @@ from p14_probe_p1 import (
 # Frozen protocol constants (design review, 2026-08-08)
 # ---------------------------------------------------------------------
 
-#: (label, w, du, dv, dx, dy, n_sprinklings). n from the review's
-#: sizing: max(primary TOST at the V_dis UCB, marginal tau_m = delta,
-#: variance floor 100) -> 20_939 / 349 / 13 exact minima, frozen with
-#: margin as 21_000 / 400 / 100.
+#: (label, w, du, dv, dx, dy, n_sprinklings). n frozen with margin
+#: over max(marginal minimum, primary minimum, variance floor) at
+#: POWER_TARGET -- executable provenance in `sizing_block`, carried
+#: in the committed artifact and test-pinned.
 OPERATING_POINTS = (
     ("slice-a1.0", 1.0, 1.0, 0.2, 6.0, 6.0, 21_000),
     ("high-a2.0", 1.0, 2.0, 0.5, 2.0, 2.0, 400),
@@ -123,6 +129,20 @@ BURNED_SEEDS = (20260808, 777)
 
 #: Bootstrap replicates for the Var(Z) percentile CI (diagnostic).
 B_BOOT = 4_000
+
+#: The frozen design power for every sizing minimum below (90%, the
+#: same target the compound-Poisson t-CI simulation verified).
+POWER_TARGET = 0.90
+
+#: z pair for the z-approximate TOST primary sizing (95% two-sided
+#: containment, 90% power at theta = 0); the frozen t-CI's own power
+#: was verified by simulation at the final n (1.0000 everywhere).
+_Z_A, _Z_B = 1.959964, 1.644854
+
+#: The variance-estimation floor on n: below ~100 sprinklings the
+#: between-sprinkling variance that drives the primary CI is itself
+#: too noisy (rel-SE ~14%), whatever the statistical minima say.
+VARIANCE_FLOOR_N = 100
 
 _T_LEVEL = 0.975  # two-sided 95%: the house-rule interval
 
@@ -290,6 +310,131 @@ def poisson_mean_ci(total: int, level: float = 0.95) -> tuple[float, float]:
     lower = 0.0 if total == 0 else _gamma_quantile(float(total), half)
     upper = _gamma_quantile(float(total + 1), 1.0 - half)
     return lower, upper
+
+
+# ---------------------------------------------------------------------
+# Sizing -- executable provenance for the frozen n (PR #42 review R1:
+# minima quoted only in prose, with no stated power target and no
+# code that regenerates them, are not a frozen design)
+# ---------------------------------------------------------------------
+
+
+def _poisson_cdf(k: int, mu: float) -> float:
+    """`P(T <= k)` for `T ~ Poisson(mu)` via the gamma link."""
+
+    if k < 0:
+        return 0.0
+    return 1.0 - _gamma_p(float(k + 1), mu)
+
+
+def marginal_power(n: int, lam: float, tau: float) -> float:
+    """Exact power of the marginal equivalence check at truth ratio 1.
+
+    The pooled count is `T ~ Poisson(n lam)` exactly; the check passes
+    iff the Garwood CI of `T/(n lam)` lies inside `(1-tau, 1+tau)`.
+    Both Garwood endpoints are increasing in `T`, so the passing set
+    is a contiguous integer range, found by bisection; the power is
+    the exact Poisson mass on it.
+    """
+
+    mu = n * lam
+    lo_target, hi_target = (1.0 - tau) * mu, (1.0 + tau) * mu
+
+    def lower_ok(t: int) -> bool:  # Garwood lower above (1-tau)*mu
+        return t > 0 and _gamma_quantile(float(t), 0.025) > lo_target
+
+    def upper_ok(t: int) -> bool:  # Garwood upper below (1+tau)*mu
+        return _gamma_quantile(float(t + 1), 0.975) < hi_target
+
+    span = int(10.0 * math.sqrt(mu)) + 10
+    t_min, t_max = max(0, int(mu) - span), int(mu) + span
+    # smallest T with lower_ok
+    lo, hi = t_min, t_max
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if lower_ok(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    t1 = lo
+    # largest T with upper_ok
+    lo, hi = t_min, t_max
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if upper_ok(mid):
+            lo = mid
+        else:
+            hi = mid - 1
+    t2 = lo
+    if t2 < t1:
+        return 0.0
+    return _poisson_cdf(t2, mu) - _poisson_cdf(t1 - 1, mu)
+
+
+def marginal_min_n(lam: float, tau: float,
+                   power: float = POWER_TARGET) -> int:
+    """Smallest `n` whose marginal power reaches the frozen target,
+    by bisection plus a local scan against discreteness wiggle."""
+
+    lo, hi = 1, 2
+    while marginal_power(hi, lam, tau) < power:
+        hi *= 2
+        assert hi < 10_000_000, "marginal sizing diverged"
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if marginal_power(mid, lam, tau) >= power:
+            hi = mid
+        else:
+            lo = mid + 1
+    n = lo
+    while n > 1 and marginal_power(n - 1, lam, tau) >= power:
+        n -= 1
+    return n
+
+
+def primary_min_n(rec: dict) -> int:
+    """z-approximate TOST minimum at the V_dis 95% CP upper limit,
+    recomputed from the COMMITTED campaign MC record (hits and
+    samples in `var_diag`) -- reproducible provenance, unlike the
+    burned design-seed MC that first estimated it."""
+
+    slab = Slab(du=rec["du"], dv=rec["dv"], dx=rec["dx"], dy=rec["dy"])
+    curved, _flat = arms(slab, rec["w"])
+    p, q = fattest_axis_diamond(curved)
+    region = ((float(q[0]) - float(p[0]))
+              * slab.dv * slab.dx * slab.dy)
+    d = rec["var_diag"]
+    ucb = clopper_pearson(d["v_dis_hits"], d["mc_samples"])[1] * region
+    v0 = rec["lam0"] / rec["rho"]
+    v = max(ucb, rec["delta"] * v0)
+    sd_z = math.sqrt(rec["r_pred"] * rec["rho"] * v)
+    n = ((_Z_A + _Z_B) * sd_z / (rec["tau"] * rec["lam0"])) ** 2
+    return int(math.ceil(n))
+
+
+def sizing_block(art: dict) -> dict:
+    """The frozen n's executable provenance, computed from committed
+    inputs only (the artifact's own records): the exact-Garwood
+    marginal minimum (the binding constraint at the first two
+    points), the z-TOST primary minimum at the campaign MC's V_dis
+    UCB, and the variance floor -- the floor, not the pre-floor
+    statistical minimum, is what binds at edge-a2.4."""
+
+    out = {"power_target": POWER_TARGET, "points": []}
+    for rec in art["points"]:
+        m_min = marginal_min_n(rec["lam0"], rec["tau_m"])
+        p_min = primary_min_n(rec)
+        required = max(m_min, p_min, VARIANCE_FLOOR_N)
+        out["points"].append({
+            "label": rec["label"],
+            "n_marginal_min": m_min,
+            "n_primary_min_ucb": p_min,
+            "variance_floor": VARIANCE_FLOOR_N,
+            "n_required": required,
+            "n_frozen": rec["n"],
+        })
+        assert rec["n"] >= required, rec["label"]
+    return out
 
 
 # ---------------------------------------------------------------------
@@ -564,6 +709,7 @@ def main() -> None:
         print(f"  {label}: n = {n}")
         art["points"].append(run_point(label, w, du, dv, dx, dy, n, k))
         print(f"  {label} done ({art['points'][-1]['seconds']:.0f}s)")
+    art["sizing"] = sizing_block(art)
 
     print("\n== primary: theta equivalence (tau = delta) ==")
     print(primary_table(art))
