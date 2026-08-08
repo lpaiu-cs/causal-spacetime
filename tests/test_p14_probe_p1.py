@@ -569,7 +569,8 @@ def test_the_sizing_artifact_reproduces_from_its_recorded_seed():
     art = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
     assert art["seed"] == 20260808
     assert len(art["points"]) == len(probe.OPERATING_POINTS)
-    for spec, rec in zip(probe.OPERATING_POINTS, art["points"]):
+    for spec, rec in zip(probe.OPERATING_POINTS, art["points"],
+                         strict=True):
         label, w, du, dv, dx, dy = spec
         assert rec["label"] == label
         slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
