@@ -701,50 +701,53 @@ def probe_point(label: str, w: float, du: float, dv: float,
             "is being computed wrongly -- investigate before trusting this "
             "row.", stacklevel=2)
     signal_abs = delta * lam_0  # = rho V_0 delta, the raw N_A - N_0 shift
-    # DETECTION sizing over the honest V_dis BRACKET (R2.1, R4.1). The
-    # lower endpoint is a true lower bound -- the larger of the
-    # analytic floor `delta V_0` (since V_dis >= |V_A - V_0|) and the
-    # 95% Poisson lower limit -- never the MC point estimate, which is
-    # neither a bound nor (at low counts) trustworthy. The upper
-    # endpoint is the 95% Poisson upper limit. n scales with V_dis, so
-    # the bracket maps to [n_floor (small V_dis), n_detect (large)].
-    v_dis_floor = max(delta * v0_exact, vols.disagree_lcb)
-    # The upper endpoint is the 95% CP limit, but never below the
-    # deterministic floor: `V_dis >= delta*V_0` is an identity, so on the
-    # rare CP miss the warning above flags (`analytic_floor >
-    # disagree_ucb`) the honest upper bound is at least that floor. Left
-    # as `disagree_ucb` the bracket would INVERT (`v_dis_floor >
-    # v_dis_ucb`), and every derived interval below -- `n_detect`,
-    # `sd_z` -- would print as `[larger, smaller]` (review R9.2). Raising
-    # a random upper limit to a deterministic lower bound cannot reduce
-    # coverage, and in every normal row `disagree_ucb` already dominates,
-    # so this is a no-op there.
-    v_dis_ucb = max(vols.disagree_ucb, v_dis_floor)
-    # A resolved row reports its MC POINT estimate as the headline, so it
-    # may only do so when that point can satisfy the deterministic floor.
-    # In the warning's conflict case `analytic_floor > vols.disagree_ucb`
-    # the point is `v_dis <= disagree_ucb < analytic_floor`, i.e. BELOW
-    # `delta*V_0` -- an impossible V_dis. A tight (many-hit) CP interval
-    # can still make `disagree_resolved` True there, so gating on CP width
-    # alone would report that impossible point (review R9.3). The floor
-    # conflict forces the row unresolved, so the reconciled bracket -- not
-    # the point known to be below its minimum -- is what gets reported.
-    resolved = (vols.disagree_resolved
-                and analytic_floor <= vols.disagree_ucb)
+    # DETECTION sizing over the honest V_dis BRACKET (R2.1, R4.1): the
+    # lower endpoint is a true lower bound -- never the MC point
+    # estimate, which is neither a bound nor (at low counts)
+    # trustworthy -- the upper endpoint the 95% CP upper limit. n
+    # scales with V_dis, so the bracket maps to [n_floor, n_ucb].
+    #
+    # ONE floor-constrained view of V_dis for EVERY consumer below.
+    # R9.2 (inverted bracket), R9.3 (resolved-looking conflict), and
+    # R9.4 (point below the floor behind a compatible interval) were
+    # each one consumer reading a raw value the identity forbids.
+    # Closed as a class here: the deterministic `V_dis >= delta*V_0` is
+    # applied ONCE, and the sizing, resolution, and reporting below
+    # read ONLY these constrained values -- raw `v_dis` survives only
+    # as the returned measurement record and main()'s diagnostic ratio.
+    # - point: `max(v_dis, floor)`. On a downward MC fluctuation the
+    #   floor is the better estimate, being an exact lower bound on
+    #   the true V_dis;
+    # - bracket: both CP endpoints raised to the floor. Raising a
+    #   random bound to a deterministic lower bound cannot reduce
+    #   coverage, and in every normal row the CP endpoints already
+    #   dominate (a no-op);
+    # - resolved: quoting a POINT headline requires the RAW point to
+    #   satisfy the floor. Its confidence interval being compatible is
+    #   not enough -- `v_dis < floor <= ucb` is reachable by a modest
+    #   downward fluctuation (R9.4). The CP interval contains its
+    #   point, so `v_dis >= floor` strictly subsumes R9.3's
+    #   `floor <= ucb` gate; a conflicted row reports the constrained
+    #   bracket, never a point below its exact minimum.
+    v_dis_point = max(v_dis, analytic_floor)
+    v_dis_floor = max(vols.disagree_lcb, analytic_floor)
+    v_dis_ucb = max(vols.disagree_ucb, analytic_floor)
+    resolved = bool(vols.disagree_resolved and v_dis >= analytic_floor)
     # R5.2: a resolved row reports the POINT-estimate sizing, matching
     # the reporting contract and sd_Z (which is already the point on
     # resolved rows); an unresolved row reports the UCB as the upper
     # end of its bracket. The two columns now share one resolution
     # semantics instead of n_detect silently staying on the UCB.
     n_detect_point = sprinklings_needed(signal_abs,
-                                        math.sqrt(rho * v_dis))
+                                        math.sqrt(rho * v_dis_point))
     n_detect_ucb = sprinklings_needed(signal_abs,
                                       math.sqrt(rho * v_dis_ucb))
     n_detect_floor = sprinklings_needed(signal_abs,
                                         math.sqrt(rho * v_dis_floor))
     n_detect = n_detect_point if resolved else n_detect_ucb
     n_detect_be = sprinklings_needed(
-        signal_abs, math.sqrt(rho * (v_dis if resolved else v_dis_ucb)),
+        signal_abs,
+        math.sqrt(rho * (v_dis_point if resolved else v_dis_ucb)),
         z_beta=0.0)
 
     # P2's preregistered residual Z = N_A - r N_0, r predicted. With
@@ -756,7 +759,7 @@ def probe_point(label: str, w: float, du: float, dv: float,
     # so this sizes the PRECISION of the verification, not a detection:
     # after n sprinklings the ratio carries SE sd_Z / (lam_0 sqrt(n)),
     # and P2 sets its own tolerance against that (R1.1).
-    sd_z = math.sqrt(r_pred * rho * v_dis)
+    sd_z = math.sqrt(r_pred * rho * v_dis_point)
     sd_z_floor = math.sqrt(r_pred * rho * v_dis_floor)
     sd_z_ucb = math.sqrt(r_pred * rho * v_dis_ucb)
 

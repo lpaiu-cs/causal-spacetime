@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import math
 import sys
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -496,3 +497,54 @@ def test_a_floor_conflict_forces_a_resolved_looking_row_unresolved(
     # reconciled bracket (ucb), never the point below the floor
     assert row["v_dis_resolved"] is False
     assert row["n_detect"] == row["n_detect_ucb"]
+
+
+def test_a_point_below_the_floor_cannot_carry_a_resolved_headline(
+        monkeypatch):
+    """The case, review R9.4: R9.3 gated resolution on
+    `floor <= disagree_ucb`, which only proves the CONFIDENCE INTERVAL
+    is compatible with the deterministic floor -- not the point. A
+    modest downward fluctuation gives `v_dis < floor <= ucb`: the raw
+    CP interval is tight enough to resolve on its own, NO warning fires
+    (the floor does not exceed the ucb), yet the point sits below its
+    exact minimum `delta*V_0`, and R9.3's gate would still quote it as
+    the headline. Resolution now requires the RAW point itself to
+    satisfy the floor (which strictly subsumes the interval check,
+    since the CP interval contains its point), and every point-derived
+    output reads the floor-constrained `max(v_dis, floor)` -- the class
+    fix: one constrained view of V_dis, applied once, consumed
+    everywhere.
+    """
+
+    slab = Slab(du=1.0, dv=1.0, dx=2.0, dy=6.0)
+    curved, flat = arms(slab, 1.0)
+    p, q = probe.fattest_axis_diamond(curved)
+    # replicate probe_point's MC volumes: the rng's first consumer is
+    # diamond_volumes_mc, so the same seed reproduces them exactly
+    vols = probe.diamond_volumes_mc(curved, flat, p, q, 200_000,
+                                    np.random.default_rng(2))
+    assert vols.disagree_resolved  # raw CP interval resolves on its own
+    dv_win = float(p[1]) - float(q[1])
+    v0 = math.pi * slab.du ** 2 * dv_win ** 2 / 6.0
+    # force the analytic floor 5% ABOVE the measured point but still
+    # below the CP upper limit: `v_dis < floor <= ucb`, R9.4's case,
+    # DISTINCT from the R9.3 fixture where the floor exceeds the ucb
+    floor = 1.05 * vols.disagree
+    assert floor <= vols.disagree_ucb, "fixture must not exceed the ucb"
+    monkeypatch.setattr(probe, "axis_volume_ratio",
+                        lambda a, **k: 1.0 + floor / v0)
+    monkeypatch.setattr(probe, "TARGET_N", 60)
+    with warnings.catch_warnings():
+        # distinct from the R9.1/R9.3 fixtures: this case is NOT a
+        # gross error, so the diagnostic must stay silent
+        warnings.simplefilter("error", UserWarning)
+        row = probe.probe_point("dip", 1.0, 1.0, 1.0, 2.0, 6.0,
+                                seed=2, sprinklings=3,
+                                mc_samples=200_000)
+    # the point below its exact minimum may not carry a point headline
+    assert row["v_dis_resolved"] is False
+    assert row["n_detect"] == row["n_detect_ucb"]
+    # and the point-derived sd_z reads the constrained point (the
+    # floor), never the impossible raw point below it
+    assert row["sd_z"] == pytest.approx(math.sqrt(
+        (1.0 + row["delta"]) * row["rho"] * floor))
