@@ -82,7 +82,7 @@ def test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume():
     exact = math.pi * slab.du ** 2 * dv_win ** 2 / 6.0
 
     rng = np.random.default_rng(7)
-    v_curved, v_flat, v_dis = probe.diamond_volumes_mc(
+    v_curved, v_flat, v_dis, v_int = probe.diamond_volumes_mc(
         curved, flat, p, q, 120_000, rng)
 
     # binomial MC error: sd ~ sqrt(V (R - V)) / sqrt(n), R the region
@@ -92,6 +92,10 @@ def test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume():
     assert v_curved > v_flat
     # the identity the probe asserts per run, seen once here directly
     assert v_curved - v_flat <= v_dis + 1e-12
+    # and the four volumes are one partition: A + 0 = dis + 2*int,
+    # exact per-sample, so exact for the estimates too
+    assert v_curved + v_flat == pytest.approx(v_dis + 2.0 * v_int,
+                                              rel=1e-12)
 
 
 def test_element_eligibility_factorizes_exactly_as_the_probe_assumes():
@@ -159,6 +163,35 @@ def test_the_agreement_census_partitions_the_elements():
     assert 0.0 <= a.rate <= 1.0
 
 
+def test_pair_level_admissions_match_materialized_pair_masks():
+    """The case, review R1.3: §8 P1 asks for the PAIRS each rule
+    admits that the other rejects, and element rates do not equal pair
+    rates -- admissions compound over two endpoints. The probe derives
+    the pair counts combinatorially from the four element categories;
+    the oracle here materializes the O(N^2) pair masks and counts
+    directly. If the derivation dropped a cross term (a candidate-only
+    endpoint paired with a `both` endpoint, say), only the oracle
+    would see it."""
+
+    rng = np.random.default_rng(21)
+    for trial in range(5):
+        cand = rng.random(60) < rng.uniform(0.1, 0.6)
+        guard = rng.random(60) < rng.uniform(0.1, 0.6)
+        a = probe.agreement(cand, guard)
+
+        upper = np.triu(np.ones((60, 60), dtype=bool), k=1)
+        cand_pairs = np.outer(cand, cand) & upper
+        guard_pairs = np.outer(guard, guard) & upper
+        assert a.pair_total == int(upper.sum()), trial
+        assert a.pair_both == int((cand_pairs & guard_pairs).sum()), trial
+        assert a.pair_candidate_only == int(
+            (cand_pairs & ~guard_pairs).sum()), trial
+        assert a.pair_guard_only == int(
+            (~cand_pairs & guard_pairs).sum()), trial
+        disagree = a.pair_candidate_only + a.pair_guard_only
+        assert a.pair_rate == pytest.approx(1.0 - disagree / a.pair_total)
+
+
 def test_the_relation_census_is_upper_triangular_and_unambiguous_here():
     """The case: the census sorts by `u` and fills only `i < j`; an
     entry below the diagonal would double-count every relation the
@@ -174,6 +207,7 @@ def test_the_relation_census_is_upper_triangular_and_unambiguous_here():
     census = probe.relation_census(curved, pts)
     assert not np.any(np.tril(census.related))
     assert census.ambiguous == 0
+    assert census.ambiguous == len(census.ambiguous_pairs)
     assert census.escalated == 0
     assert census.related.sum() > 0
     assert census.pairs == len(pts) * (len(pts) - 1) // 2
@@ -212,7 +246,12 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     assert row["delta"] == pytest.approx(
         probe.axis_volume_ratio(1.0) - 1.0)
     assert 0.0 < row["lam"] < 80.0
-    assert math.isfinite(row["n_paired"]) and row["n_paired"] > 0.0
+    assert math.isfinite(row["n_detect"]) and row["n_detect"] > 0.0
+    # Var(Z) with the predicted r must sit near rho*V_dis -- they
+    # differ at O(delta) -- and never below the parallelogram floor
+    assert row["sd_z"] ** 2 == pytest.approx(
+        (80.0 / (1.0 * 0.2 * 6.0 * 6.0)) * row["v_dis"], rel=0.05)
     assert row["ambiguous_fraction"] == 0.0
+    assert row["escalations"] == 0 and row["escalations_flat"] == 0
     for k, agreements in row["agreement"].items():
         assert len(agreements) == row["sprinklings"], k

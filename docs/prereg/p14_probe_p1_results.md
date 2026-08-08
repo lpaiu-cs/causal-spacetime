@@ -47,29 +47,46 @@ check script's pinned values to the digit (`1.00400047` at `a = 1`,
 `1.07300802` at `a = 2`), which retroactively identifies that script's
 `T` as the u-separation.
 
-Fattest eligible axis diamond per point; `n90` = sprinklings for 90%
-power at two-sided 95% (house convention, §6.1), with the **predicted**
-`δ` as signal — verifying the prediction is P2's charter:
+Fattest eligible axis diamond per point. **Two sizings, answering
+different questions (review R1.1):**
 
-| point | `a` | δ = R−1 | λ_A | V_dis/V_A | n90 marginal | n90 paired |
-|---|---|---|---|---|---|---|
-| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | ~0 | 7.1e10 | — |
-| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 0.012 | 1.5e8 | 1.8e6 |
-| slice-a1.0 | 1.0 | 4.0e-3 | 0.42 | 0.050 | 1.6e6 | 7.6e4 |
-| aniso-a1.0 | 1.0 | 4.0e-3 | 5.80 | 0.037 | 1.1e5 | 4.2e3 |
-| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | 0.002 | 2.0e10 | 3.5e7 |
-| high-a2.0 | 2.0 | 7.3e-2 | 0.07 | 0.104 | 2.7e4 | 3.2e3 |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | 0.329 | 834 | **386** |
+- `n90 detect` — sprinklings to reject a NO-SHIFT null with the raw
+  same-points difference `N_A − N_0` (`Var = ρ V_dis`, exact: shared
+  points cancel where the predicates agree), taking the **predicted**
+  shift `ρ V_0 δ` as the alternative. This is detectability
+  reconnaissance, **not** P2 feasibility.
+- `sd_Z` — the per-sprinkling standard deviation of P2's preregistered
+  residual `Z = N_A − r N_0`, `r` predicted, from
+  `Var(Z) = ρ(V_A + r²V_0 − 2rV_∩)` with all three volumes measured.
+  Under the prediction `E[Z] = 0`: nothing is detected, and after `n`
+  sprinklings the measured ratio carries a standard error of
+  `sd_Z / (ρV_0 √n)`. P2 sizes its own tolerance against that; this
+  probe only reports the number.
 
-`λ_A` is the expected count in the diamond at `N = 300`;
-`V_dis` is the volume where the two arms' predicates disagree,
-measured by shared-sample MC — it is the exact per-realization
-variance of the same-points paired count, `Var(N_A − N_0) = ρ V_dis`.
+| point | `a` | δ = R−1 | λ_A | V_dis/V_A | n90 marginal | n90 detect | sd_Z |
+|---|---|---|---|---|---|---|---|
+| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | ~0 | 7.1e10 | — | 0.000 |
+| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 0.012 | 1.5e8 | 1.8e6 | 0.055 |
+| slice-a1.0 | 1.0 | 4.0e-3 | 0.42 | 0.050 | 1.6e6 | 7.6e4 | 0.145 |
+| aniso-a1.0 | 1.0 | 4.0e-3 | 5.80 | 0.037 | 1.1e5 | 4.2e3 | 0.463 |
+| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | 0.002 | 2.0e10 | 3.5e7 | 0.150 |
+| high-a2.0 | 2.0 | 7.3e-2 | 0.07 | 0.104 | 2.7e4 | 3.2e3 | 0.090 |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | 0.329 | 834 | **386** | 0.385 |
+
+`λ_A` is the expected count in the diamond at `N = 300`; `V_dis` is
+the volume where the two arms' predicates disagree; `V_∩` their
+overlap — all from shared-sample MC, and the partition
+`V_A + V_0 = V_dis + 2V_∩` holds exactly per sample (test-pinned).
+Worked example at `edge-a2.4`: `sd_Z = 0.385` per sprinkling and
+`ρV_0 ≈ 0.32`, so 100 sprinklings verify the ratio to
+`±0.12` (1σ) against a predicted shift of `0.18` — P2's tolerance
+choice decides whether that is enough or `n` must grow.
 
 **Reading.** The product (effect)² × (count) is maximized at the
 largest `a` the guard admits, despite the tiny boxes: δ grows as `a⁴`
 and beyond, while the count only needs to be O(1) per sprinkling.
-`edge-a2.4` needs ~4e2 sprinklings paired (~8e2 marginal); `roomy`
+`edge-a2.4` needs ~4e2 sprinklings to detect the shift (~8e2
+marginal); `roomy`
 and the `slice` points are dead at any affordable n. Density is a
 further free lever this table does not use: P2-style counting inside
 an external-anchor diamond is O(N) per anchor, not O(N²), so raising
@@ -88,24 +105,32 @@ an external-anchor diamond is O(N) per anchor, not O(N²), so raising
 
 ### 3. Order-invariant candidate (§4.6.2) — does not reproduce the guard
 
-Candidate: interior iff ≥ `k` elements below AND above. Element-level
-agreement with the coordinate guard / candidate-only fraction (the
-dangerous direction — diamonds that may leave the box):
+Candidate: interior iff ≥ `k` elements below AND above. §8 P1 asks
+for the PAIRS each rule admits that the other rejects (review R1.3) —
+both rules factorize over endpoints, so pair admissions are derived
+combinatorially from the element categories (test-pinned against
+materialized pair masks). Pair-level agreement / candidate-only pair
+fraction of `C(N,2)` (the dangerous direction — admitted pairs whose
+diamonds carry no containment certificate):
 
 | point | k=1 | k=2 | k=4 | k=8 | k=16 |
 |---|---|---|---|---|---|
-| slice-a0.3 | 0.90/0.02 | 0.92/0.00 | 0.92/0.00 | 0.92/0.00 | 0.92/0.00 |
-| slice-a1.0 | 0.81/0.16 | 0.90/0.08 | 0.96/0.02 | 0.98/0.00 | 0.98/0.00 |
-| aniso-a1.0 | 0.53/0.46 | 0.67/0.31 | 0.81/0.17 | 0.92/0.06 | 0.97/0.00 |
-| edge-a2.4 | 0.53/0.47 | 0.68/0.32 | 0.82/0.18 | 0.95/0.05 | 1.00/0.00 |
+| slice-a0.3 | 0.99/0.000 | 0.99/0.000 | 0.99/0.000 | 0.99/0.000 | 0.99/0.000 |
+| slice-a1.0 | 0.97/0.027 | 0.99/0.006 | 1.00/0.000 | 1.00/0.000 | 1.00/0.000 |
+| aniso-a1.0 | 0.78/0.219 | 0.90/0.098 | 0.97/0.029 | 1.00/0.004 | 1.00/0.000 |
+| edge-a2.4 | 0.78/0.220 | 0.90/0.104 | 0.97/0.032 | 1.00/0.003 | 1.00/0.000 |
 
-High agreement appears only at `k` large enough that the candidate
-admits almost nothing — the agreement is then mostly on "neither",
-not on a shared eligible set. At any `k` that admits a usable set,
-the candidate-only fraction (unguarded diamonds) is 2–47%. The
-reason is structural: below/above counts measure interiority along
-the CAUSAL depth (`u`), while the guard's binding conditions are
-transverse; the proxy cannot see the direction that matters.
+The headline agreement is inflated by the "neither-admits" pool; the
+decision number is the exclusive-admission count. At `aniso-a1.0`,
+`k = 4`: candidate-only pairs are 2.9% of `C(N,2)` ≈ **1,300
+unguarded pairs per sprinkling**, against ~26 pairs the guard admits
+at all — the candidate admits ~50× more uncertified pairs than the
+guard admits pairs. Driving that to zero (`k ≥ 16`) leaves the
+candidate admitting essentially nothing. The reason is structural:
+below/above counts measure interiority along the CAUSAL depth (`u`),
+while the guard's binding conditions are transverse; the proxy cannot
+see the direction that matters. (Element-level, same run: agreement
+0.53–0.98, candidate-only up to 47%.)
 
 **Consequence for §7:** the chain vectors do NOT recover pure-poset
 standing from this candidate. The strictly single-poset claim stays on
@@ -115,9 +140,11 @@ interiority, which no degree count does.
 
 ### 4. Ambiguity and cost — a non-issue at probe densities
 
-~7.5M generic pairs across all points and sprinklings: **zero
-escalations, zero ambiguous pairs**. Generic decision ~2.0 µs;
-a constructed on-cone pair escalates at ~55 µs (~25×). The
+§5.1 defines a pair as ambiguous when EITHER arm is undecided, so
+both arms are censused and the union taken (review R1.2): ~7.5M
+generic pairs across all points and sprinklings, **zero escalations
+in either arm, zero ambiguous pairs in the union**. Generic decision
+~2.0 µs; a constructed on-cone pair escalates at ~55 µs (~25–30×). The
 escalation path exists for adversarial/boundary inputs, not for
 sprinkled ones; `ambiguous_fraction` at these densities is 0 and
 §5.1's interval `[D_lower, D_upper]` collapses to a point.
@@ -153,3 +180,11 @@ mechanism generalizes:
    diamond's shadow × the full `v` depth (3× the true volume in the
    test case). Caught by the flat diamond's closed answer
    `π s²Δv²/6`, pinned in the test suite.
+
+Review round R1 then corrected three more, folded into the tables
+above: the paired sizing presented a raw-difference detectability
+number as P2 feasibility (different estimands — P2's `Z` has
+`E[Z] = 0` under the prediction and its variance uses `V_∩`); the
+ambiguity census read only the curved arm where §5.1 is defined over
+both; and the candidate comparison was reported at element level
+where §8 P1 asks for pair admissions, which compound.

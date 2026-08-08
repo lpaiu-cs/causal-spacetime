@@ -13,11 +13,17 @@ Four debts, in the order §8 P1 lists them:
 2. **The feasibility product.** The next design decision needs
    (eligible volume) x (elements a usable box holds) x (effect size)
    in one table. The effect at the fattest eligible axis diamond is
-   `delta = (w tau)^4 / 252` (§4.4); counting noise per sprinkling is
-   `1/sqrt(lambda)` marginally and `sqrt(rho V_sym)/(rho dV)` for the
-   same-points paired read, where `V_sym` is the volume on which the
-   two arms' predicates DISAGREE -- the same-realization estimand,
-   measured here by MC rather than assumed.
+   `R(a) - 1` with `a = w du`, by quadrature (`axis_volume_ratio`).
+   Two sizings are reported and they answer DIFFERENT questions
+   (R1.1): `n90_detect` sizes rejecting a no-shift null with the raw
+   same-points difference `N_A - N_0` (`Var = rho V_dis`, exact,
+   since shared points cancel where the predicates agree) -- can the
+   effect be seen at all; and `sd_Z` is the per-sprinkling standard
+   deviation of P2's preregistered residual `Z = N_A - r N_0`
+   (`Var(Z) = rho (V_A + r^2 V_0 - 2 r V_int)`, §8 P2), under which
+   `E[Z] = 0` -- so it sizes the PRECISION with which n sprinklings
+   verify the prediction, not a detection. Neither is presented as
+   the other.
 3. **The order-invariant candidate (§4.6.2).** Eligibility by
    coordinates costs Class C its pure-order standing. The candidate
    proxy -- an element is interior iff it has at least `k` elements
@@ -25,9 +31,11 @@ Four debts, in the order §8 P1 lists them:
    agreement, and each side's exclusive admissions. Candidate-only
    elements are the DANGEROUS direction (their diamonds may leave the
    box); guard-only elements are lost sensitivity.
-4. **Ambiguity and its price.** `ambiguous_fraction` per sprinkling,
-   the escalation count, and a micro-benchmark of what one escalated
-   decision costs against a generic one.
+4. **Ambiguity and its price.** `ambiguous_fraction` per sprinkling
+   as §5.1 defines it -- a pair is ambiguous when EITHER arm is
+   undecided, so both arms are censused and the union taken (R1.2) --
+   plus escalation counts per arm and a micro-benchmark of what one
+   escalated decision costs against a generic one.
 
 Run:  python experiments/positive_control/p14_probe_p1.py [seed]
 """
@@ -114,6 +122,10 @@ class RelationCensus:
     ambiguous: int
     escalated: int
     seconds: float
+    #: `(i, j)` indices (u-sorted) of the undecided pairs, so a paired
+    #: census can take the UNION across arms -- §5.1 calls a pair
+    #: ambiguous when EITHER arm is undecided (R1.2).
+    ambiguous_pairs: tuple = ()
 
     @property
     def pairs(self) -> int:
@@ -133,7 +145,8 @@ def relation_census(geometry: PlaneWaveGeometry,
     pts = points[order]
     n = len(pts)
     related = np.zeros((n, n), dtype=bool)
-    ambiguous = escalated = 0
+    undecided = []
+    escalated = 0
     start = time.perf_counter()
     for i in range(n):
         for j in range(i + 1, n):
@@ -141,12 +154,13 @@ def relation_census(geometry: PlaneWaveGeometry,
             if rel.escalated:
                 escalated += 1
             if rel.related is None:
-                ambiguous += 1
+                undecided.append((i, j))
             elif rel.related:
                 related[i, j] = True
-    return RelationCensus(related=related, ambiguous=ambiguous,
+    return RelationCensus(related=related, ambiguous=len(undecided),
                           escalated=escalated,
-                          seconds=time.perf_counter() - start)
+                          seconds=time.perf_counter() - start,
+                          ambiguous_pairs=tuple(undecided))
 
 
 def escalation_cost_microbench(geometry: PlaneWaveGeometry,
@@ -208,9 +222,23 @@ def candidate_mask(below: np.ndarray, above: np.ndarray,
     return (below >= k) & (above >= k)
 
 
+def _choose2(n: int) -> int:
+    return n * (n - 1) // 2
+
+
 @dataclass(frozen=True)
 class Agreement:
-    """Element-level confusion between candidate and coordinate guard."""
+    """Confusion between candidate and coordinate guard.
+
+    Element-level counts, with PAIR-level admissions derived from them
+    -- §8 P1 asks for the pairs each rule admits that the other
+    rejects, and element rates do not equal pair rates: both rules
+    factorize over endpoints, so admissions compound. A pair is
+    candidate-admitted iff both endpoints are candidate-eligible
+    (categories `both` or `candidate_only`), guard-admitted iff both
+    are guard-eligible (`both` or `guard_only`), admitted by BOTH
+    rules iff both endpoints are in `both` (R1.3).
+    """
 
     both: int
     candidate_only: int
@@ -224,6 +252,36 @@ class Agreement:
     @property
     def rate(self) -> float:
         return (self.both + self.neither) / self.total if self.total else 1.0
+
+    @property
+    def pair_total(self) -> int:
+        return _choose2(self.total)
+
+    @property
+    def pair_both(self) -> int:
+        return _choose2(self.both)
+
+    @property
+    def pair_candidate_only(self) -> int:
+        """Pairs the candidate admits that the guard rejects -- the
+        dangerous direction: their diamonds carry no containment
+        certificate."""
+
+        return _choose2(self.both + self.candidate_only) - self.pair_both
+
+    @property
+    def pair_guard_only(self) -> int:
+        """Pairs the guard admits that the candidate rejects -- lost
+        sensitivity, not lost soundness."""
+
+        return _choose2(self.both + self.guard_only) - self.pair_both
+
+    @property
+    def pair_rate(self) -> float:
+        if not self.pair_total:
+            return 1.0
+        disagree = self.pair_candidate_only + self.pair_guard_only
+        return 1.0 - disagree / self.pair_total
 
 
 def agreement(candidate: np.ndarray, guard: np.ndarray) -> Agreement:
@@ -318,10 +376,11 @@ def _between(geometry: PlaneWaveGeometry, p: np.ndarray, q: np.ndarray,
     return r_v - float(q[1]) >= c2
 
 
-def diamond_volumes_mc(curved: PlaneWaveGeometry, flat: PlaneWaveGeometry,
-                       p: np.ndarray, q: np.ndarray, samples: int,
-                       rng: np.random.Generator) -> tuple[float, float, float]:
-    """(V_curved, V_flat, V_disagree) for one pair, by shared-sample MC.
+def diamond_volumes_mc(
+        curved: PlaneWaveGeometry, flat: PlaneWaveGeometry,
+        p: np.ndarray, q: np.ndarray, samples: int,
+        rng: np.random.Generator) -> tuple[float, float, float, float]:
+    """(V_curved, V_flat, V_disagree, V_intersect), by shared-sample MC.
 
     The SAME sample decides all three, so `V_disagree` -- the volume
     where the two arms' membership predicates differ -- is measured
@@ -343,16 +402,18 @@ def diamond_volumes_mc(curved: PlaneWaveGeometry, flat: PlaneWaveGeometry,
     y = rng.uniform(-slab.dy / 2.0, slab.dy / 2.0, samples)
     region = (float(q[0]) - float(p[0])) * slab.dv * slab.dx * slab.dy
 
-    in_curved = in_flat = disagree = 0
+    in_curved = in_flat = disagree = overlap = 0
     for i in range(samples):
         a = _between(curved, p, q, u[i], v[i], x[i], y[i])
         b = _between(flat, p, q, u[i], v[i], x[i], y[i])
         in_curved += a
         in_flat += b
         disagree += a != b
+        overlap += a and b
     return (region * in_curved / samples,
             region * in_flat / samples,
-            region * disagree / samples)
+            region * disagree / samples,
+            region * overlap / samples)
 
 
 def sprinklings_needed(delta_abs: float, sd_per_sprinkling: float,
@@ -409,32 +470,44 @@ def probe_point(label: str, w: float, du: float, dv: float,
     p, q = fattest_axis_diamond(curved)
     delta = axis_volume_ratio(w * slab.du) - 1.0
 
-    v_curved, v_flat, v_dis = diamond_volumes_mc(
+    v_curved, v_flat, v_dis, v_int = diamond_volumes_mc(
         curved, flat, p, q, mc_samples, rng)
     lam = rho * v_curved
     lam_flat = rho * v_flat
     # marginal: relative shift delta on a Poisson(lam) count
     n_marginal = sprinklings_needed(delta, 1.0 / math.sqrt(lam))
     n_marg_be = sprinklings_needed(delta, 1.0 / math.sqrt(lam), z_beta=0.0)
-    # Paired same-points read: sd per sprinkling is sqrt(rho V_dis) --
-    # MEASURED, it is the whole advantage of the design -- while the
-    # signal is the PREDICTED rho V_0 delta of §4.4. The signal is not
-    # taken from the MC difference `v_curved - v_flat`: that difference
-    # is fourth-order in `w tau` while the MC noise on it is first-order
-    # in `V_dis`, so at any affordable sample count the estimate is
-    # noise (the smoke run returned exactly 0). Verifying the predicted
-    # ratio is P2's charter, not this probe's.
+    # DETECTION sizing (R1.1: this is not P2's estimand and is no
+    # longer labeled as it). Null: the volumes do not differ;
+    # alternative: they differ by the predicted rho V_0 delta.
+    # Statistic: the raw same-points difference N_A - N_0, whose
+    # per-realization variance is EXACTLY rho V_dis -- shared points
+    # cancel wherever the two predicates agree. The signal is the
+    # PREDICTION, never the MC difference of the volumes (fourth-order
+    # in a, drowned by MC noise that is first-order in V_dis; an early
+    # run returned exactly 0).
     assert delta <= v_dis / v_curved + 4.0 / math.sqrt(mc_samples), (
         f"{label}: delta {delta} exceeds the disagreement fraction "
         f"{v_dis / v_curved} -- |V_A - V_0| <= V_dis is an identity, so "
         "one of the two is being computed wrongly")
     signal_abs = rho * v_flat * delta
-    n_paired = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis))
-    n_paired_be = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis),
+    n_detect = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis))
+    n_detect_be = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis),
                                      z_beta=0.0)
+    # P2's preregistered residual Z = N_A - r N_0, r predicted:
+    # E[Z] = 0 under the prediction, so there is nothing to detect --
+    # sd_z sizes the PRECISION of the verification. After n
+    # sprinklings the measured ratio carries a standard error of
+    # sd_z / (rho v_flat sqrt(n)); P2 sets its own tolerance against
+    # that. This probe only reports the number (R1.1).
+    r_pred = 1.0 + delta
+    var_z = rho * (v_curved + r_pred ** 2 * v_flat
+                   - 2.0 * r_pred * v_int)
+    sd_z = math.sqrt(max(var_z, 0.0))
 
     elem_fracs, pair_fracs, amb_fracs = [], [], []
-    per_pair_us, escalations = [], 0
+    per_pair_us = []
+    escalations = escalations_flat = 0
     ks = {k: [] for k in K_SWEEP}
     for _ in range(sprinklings):
         pts = sprinkle(curved, rho, rng)
@@ -446,8 +519,13 @@ def probe_point(label: str, w: float, du: float, dv: float,
         elem_fracs.append(m / n)
         pair_fracs.append((m * (m - 1)) / (n * (n - 1)))
         census = relation_census(curved, pts)
-        amb_fracs.append(census.ambiguous_fraction)
+        flat_census = relation_census(flat, pts)
+        # R1.2: a pair is ambiguous when EITHER arm is undecided
+        union = set(census.ambiguous_pairs) | set(
+            flat_census.ambiguous_pairs)
+        amb_fracs.append(len(union) / census.pairs)
         escalations += census.escalated
+        escalations_flat += flat_census.escalated
         per_pair_us.append(census.seconds / census.pairs * 1e6)
         below, above = order_interiority(census.related)
         order = np.argsort(pts[:, 0], kind="stable")
@@ -464,10 +542,12 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "delta": delta,
         "lam": lam, "lam_flat": lam_flat,
         "v_curved": v_curved, "v_flat": v_flat, "v_dis": v_dis,
+        "v_int": v_int, "sd_z": sd_z,
         "n_marginal": n_marginal, "n_marginal_be": n_marg_be,
-        "n_paired": n_paired, "n_paired_be": n_paired_be,
+        "n_detect": n_detect, "n_detect_be": n_detect_be,
         "ambiguous_fraction": float(np.mean(amb_fracs)),
         "escalations": escalations,
+        "escalations_flat": escalations_flat,
         "per_pair_us": float(np.mean(per_pair_us)),
         "sprinklings": len(elem_fracs),
         "agreement": {k: ks[k] for k in K_SWEEP},
@@ -495,14 +575,16 @@ def main(seed: int = 20260808) -> None:
 
     print("\n== feasibility, fattest eligible axis diamond ==")
     print(f"{'point':>12} {'a':>4} {'delta':>9} {'lam_A':>8} "
-          f"{'V_dis/V_A':>9} {'n90_marg':>9} {'n90_pair':>9}")
+          f"{'V_dis/V_A':>9} {'n90_marg':>9} {'n90_detect':>10} "
+          f"{'sd_Z':>8}")
     for r in rows:
         print(f"{r['label']:>12} {r['a']:4.1f} {r['delta']:9.2e} "
               f"{r['lam']:8.2f} {r['v_dis'] / r['v_curved']:9.4f} "
-              f"{r['n_marginal']:9.3g} {r['n_paired']:9.3g}")
+              f"{r['n_marginal']:9.3g} {r['n_detect']:10.3g} "
+              f"{r['sd_z']:8.3f}")
 
     print("\n== order-invariant candidate vs coordinate guard "
-          "(element level, mean over sprinklings) ==")
+          "(PAIR level, mean over sprinklings; R1.3) ==")
     print(f"{'point':>12} " + " ".join(f"{'k=' + str(k):>15}"
                                        for k in K_SWEEP))
     print(f"{'':>12} " + " ".join(f"{'agree/c-only%':>15}"
@@ -511,18 +593,21 @@ def main(seed: int = 20260808) -> None:
         cells = []
         for k in K_SWEEP:
             ags = r["agreement"][k]
-            rate = float(np.mean([a.rate for a in ags]))
+            rate = float(np.mean([a.pair_rate for a in ags]))
             conly = float(np.mean(
-                [a.candidate_only / a.total for a in ags]))
+                [a.pair_candidate_only / a.pair_total for a in ags]))
             cells.append(f"{rate:7.3f}/{conly:6.3f}")
         print(f"{r['label']:>12} " + " ".join(f"{c:>15}" for c in cells))
+    print("  (element-level tables: rerun with the same seed and read "
+          "`.rate` / `.candidate_only` off the returned Agreements)")
 
-    print("\n== ambiguity and cost ==")
-    print(f"{'point':>12} {'ambig_frac':>10} {'escalations':>11} "
-          f"{'us/pair':>8}")
+    print("\n== ambiguity (union over BOTH arms, §5.1) and cost ==")
+    print(f"{'point':>12} {'ambig_frac':>10} {'esc_curved':>10} "
+          f"{'esc_flat':>8} {'us/pair':>8}")
     for r in rows:
         print(f"{r['label']:>12} {r['ambiguous_fraction']:10.2e} "
-              f"{r['escalations']:11d} {r['per_pair_us']:8.1f}")
+              f"{r['escalations']:10d} {r['escalations_flat']:8d} "
+              f"{r['per_pair_us']:8.1f}")
 
     generic_us, escalated_us = escalation_cost_microbench(
         arms(rows[0]["slab"], rows[0]["w"])[0])

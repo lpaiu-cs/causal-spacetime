@@ -698,10 +698,12 @@ that very quantity. **Assigned:** §8 P1.
 
 **MEASURED (P1 probe, exploratory —
 [results](p14_probe_p1_results.md)):** the degree-count proxy does NOT
-reproduce the coordinate guard. Agreement exceeds 95% only at `k` large
-enough that the candidate admits almost nothing (agreement on
-"neither"), and at any admitting `k` the candidate-only fraction —
-elements whose diamonds may leave the box — is 2–47%. Structural:
+reproduce the coordinate guard, measured at PAIR level as this item
+asks. Where anything is admitted, the candidate admits tens of times
+more uncertified pairs than the guard admits pairs at all
+(`aniso-a1.0`, `k = 4`: ~1,300 candidate-only pairs per sprinkling
+against ~26 guard-admitted); driving the uncertified admissions to
+zero leaves the candidate admitting essentially nothing. Structural:
 below/above counts measure interiority along the causal depth, while
 the guard's binding conditions are transverse, which no degree count
 sees. **The chain vectors stay coordinate-labeled and §7's strictly
@@ -859,7 +861,11 @@ ratio, `R(a) − 1 = a⁴/252 + O(a⁸)`, quadrature matching the §4.4 check
 script to the digit — so the feasible region is large `a`, exactly
 where the eligible fraction collapses (`f_elem ~ 3e-4` at `a = 2.4`).
 External-anchor counting (P2's form, anchors fixed and not counted)
-survives this: ~4e2 paired sprinklings at `a = 2.4`, `N = 300`.
+survives this: ~4e2 sprinklings at `a = 2.4`, `N = 300`, to DETECT
+the predicted shift against a no-shift null via the raw same-points
+difference — P2's own residual `Z` has `E[Z] = 0` under the
+prediction, and its per-sprinkling `sd_Z` is reported separately for
+P2 to size its tolerance against.
 Sprinkled-pair Class C (§5 items 2, 3b) is starved at large `a`
 (0 eligible pairs per sprinkling) and lives only in the mid-`a`
 region (`a ≈ 1`, ~26 pairs/sprinkling, δ = 4e-3); whether that
@@ -1462,8 +1468,9 @@ own interval construction rather than inheriting P12's.
    `[D_lower, D_upper]` too wide to decide anything is still a dead
    probe, and the escalation to interval arithmetic has a cost nobody
    has measured. **Assigned:** §8 P1. **Measured at probe densities**
-   ([results](p14_probe_p1_results.md)): zero escalations and zero
-   ambiguous pairs in ~7.5M generic pairs — the bracket collapses to a
+   ([results](p14_probe_p1_results.md)): zero escalations in either
+   arm and zero ambiguous pairs in the both-arm union (§5.1's
+   definition) over ~7.5M generic pairs — the bracket collapses to a
    point; campaign densities may differ and are re-measured there.
 5. What fraction of pairs the Class C guard leaves eligible. §4.6.3
    settles **where** the eligible set is non-empty over the four
