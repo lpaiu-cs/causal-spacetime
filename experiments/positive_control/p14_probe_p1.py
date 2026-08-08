@@ -627,16 +627,22 @@ def probe_point(label: str, w: float, du: float, dv: float,
     lam = lam_A
     lam_flat = lam_0
 
-    # UNPAIRED-DETECTABILITY sizing (R4.3, R6.1). This is NOT §8 P2's
-    # marginal check -- that compares each arm against ITS OWN mean, a
-    # displacement of zero under the prediction, so it is a precision
-    # statement (the `sd_Z` role), not a sizing. What this sizes is the
-    # one-arm test with the null at the OTHER arm's mean: can the
-    # curved count alone separate `lam_A` from `lam_0`, WITHOUT the
-    # same-points cancellation? Comparing it to `n_detect` is what
-    # shows the pairing's advantage. Signal `lam_A - lam_0 = delta
-    # lam_0`; the SD differs under null (`sqrt(lam_0)`) and alternative
-    # (`sqrt(lam_A)`), so the two z-terms carry their own variances.
+    # UNPAIRED-DETECTABILITY sizing (R4.3, R6.1, R7.1). This is NOT §8
+    # P2's marginal check, and `sd_Z` is not that check either -- the
+    # three are distinct (R7.1). P2's marginal check is a per-arm
+    # goodness-of-fit: does each arm's count follow ITS OWN predicted
+    # Poisson mean (`lam_A`, `lam_0`)? It catches common-mode error --
+    # scale both means by `c` and `E[Z] = c lam_A - r c lam_0 = 0`
+    # passes the contrast exactly while both marginals are wrong -- so
+    # `sd_Z` (the contrast's precision) cannot stand in for it, and it
+    # needs its own tolerance, which is P2's to set, not this probe's.
+    # What THIS sizes is a third thing: the one-arm detectability test
+    # with the null at the OTHER arm's mean -- can the curved count
+    # alone separate `lam_A` from `lam_0` WITHOUT the same-points
+    # cancellation? Comparing it to `n_detect` shows the pairing's
+    # advantage. Signal `lam_A - lam_0 = delta lam_0`; the SD differs
+    # under null (`sqrt(lam_0)`) and alternative (`sqrt(lam_A)`), so
+    # the two z-terms carry their own variances.
     signal_gap = lam_A - lam_0
     n_unpaired = ((_Z_ALPHA * math.sqrt(lam_0)
                    + _Z_BETA * math.sqrt(lam_A)) / signal_gap) ** 2

@@ -47,16 +47,21 @@ check script's pinned values to the digit (`1.00400047` at `a = 1`,
 `1.07300802` at `a = 2`), which retroactively identifies that script's
 `T` as the u-separation.
 
-Fattest eligible axis diamond per point. **Two sizings, answering
-different questions (review R1.1):**
+Fattest eligible axis diamond per point. **Three distinct quantities,
+answering three different questions (review R1.1, R6.1, R7.1):**
 
 - `n90 unpaired` — the one-arm detectability test, **not** §8 P2's
-  marginal check (review R6.1). P2's marginal check compares each arm
-  against ITS OWN predicted mean, a displacement of zero under the
-  prediction — a precision statement, which is the `sd_Z` role below.
-  This instead sizes the curved count against the OTHER arm's mean
-  `λ_0` (the effect-absent null): can one arm alone separate `λ_A`
-  from `λ_0` WITHOUT the same-points cancellation? Signal
+  marginal check and **not** the `sd_Z` role; the three are distinct
+  (review R6.1, R7.1). P2's marginal check is a per-arm
+  goodness-of-fit — does each arm's count follow ITS OWN predicted
+  Poisson mean (`λ_A`, `λ_0`)? It catches common-mode error that the
+  contrast is blind to: scale both means by `c` and
+  `E[Z] = cλ_A − r·cλ_0 = 0` passes `Z` exactly while both marginal
+  predictions are wrong, so `sd_Z` cannot stand in for it, and it
+  needs its own tolerance (P2's to set, not sized here). `n90
+  unpaired` instead sizes the curved count against the OTHER arm's
+  mean `λ_0` (the effect-absent null): can one arm alone separate
+  `λ_A` from `λ_0` WITHOUT the same-points cancellation? Signal
   `λ_A − λ_0 = δλ_0`; distinct SDs under null (`√λ_0`) and alternative
   (`√λ_A`). Comparing it to `n90 detect` is what shows the pairing's
   advantage — at `edge-a2.4`, `1.1e3` unpaired against `399` paired.
@@ -289,6 +294,12 @@ distinct null/alternative SDs; and the candidate conclusion
 generalized past the tested `(below≥k)&(above≥k)` family — narrowed
 to that proxy, since clipped cones in a finite box can carry
 transverse information to degree counts indirectly.
+
+Round R7 corrected one interpretation: the R6 wording assigned P2's
+per-arm marginal goodness-of-fit to `sd_Z`, but the two are orthogonal
+— a common-mode error (both means scaled by `c`) passes the contrast
+`Z` exactly while both marginals fail, so `sd_Z` cannot substitute for
+the marginal checks, which need their own tolerance (P2's to set).
 
 Round R4 corrected three sizing/uncertainty issues: the unresolved
 `n90` lower endpoint used the MC point estimate via
