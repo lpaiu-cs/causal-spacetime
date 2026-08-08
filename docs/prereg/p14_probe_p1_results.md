@@ -146,8 +146,11 @@ an external-anchor diamond is O(N) per anchor, not O(N²), so raising
   counted, per the approval condition):** what this probe establishes
   is that the geometry is ADMISSIBLE at large `a` and the predicted
   shift is DETECTABLE there (~4.0e2 sprinklings at `edge-a2.4`), and
-  that P2's validation precision is quantified by `sd_Z`
-  (±0.12 on the ratio per 100 sprinklings at `edge-a2.4`).
+  that P2's CONTRAST precision — the `Z = N_A − r·N_0` residual, one
+  of P2's checks, not its validation as a whole — is quantified by
+  `sd_Z` (±0.12 on the ratio per 100 sprinklings at `edge-a2.4`);
+  the per-arm marginal GOF, which catches common-mode errors `Z` is
+  blind to, remains separate and unsized here (review R7.1).
   **P2 feasibility itself is conditional on the tolerance P2 has not
   yet chosen** — this probe cannot pre-decide it (review R2.2).
 - **Sprinkled-pair Class C (§5 items 2, 3b — chain vectors, MM on
