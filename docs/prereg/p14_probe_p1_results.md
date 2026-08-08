@@ -86,11 +86,22 @@ answering three different questions (review R1.1, R6.1, R7.1):**
 |---|---|---|---|---|---|---|---|
 | slice-a0.3 | 0.3 | 3.2e-5 | 0.12 | 0¹ | 8.7e10 | [2.8e6, 4.2e9]¹ | [0.002, 0.074]¹ |
 | slice-a0.6 | 0.6 | 5.2e-4 | 0.23 | 2¹ | 1.7e8 | [2.7e5, 7.9e6]¹ | [0.019, 0.104]¹ |
-| slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | ~250 | 1.7e6 | 9.2e4 | 0.145 |
-| aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | ~600 | 1.1e5 | 4.1e3 | 0.462 |
-| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | ~340 | 2.0e10 | 3.5e7 | 0.150 |
+| slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | 14 | 1.7e6 | 9.2e4 | 0.145 |
+| aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | 142 | 1.1e5 | 4.1e3 | 0.462 |
+| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | 15 | 2.0e10 | 3.5e7 | 0.150 |
 | high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 2.9e4 | [2.0e3, 6.9e3]¹ | [0.074, 0.137]¹ |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 1.1e3 | **399** | 0.386 |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | 84 | 1.1e3 | **399** | 0.386 |
+
+Every number in this table mirrors the machine-readable artifact
+`p14_probe_p1_sizing.json` (same directory), which the run itself
+writes; the artifact, not this table, is what downstream sizing (§8
+P2) reads. **Erratum (P2 design review):** the hits column originally
+read `~250 / ~600 / ~340 / ~85` for the four resolved rows — numbers
+that do not reproduce from the merged code at the published seed
+(14 / 142 / 15 / 84 do, verified independently) and that trace to no
+current quantity; the sizing columns were always computed from the
+true counts (`sd_Z = 0.145` is exactly the 14-hit value), so only
+this column and the two prose phrases quoting it change.
 
 The resolved rows report the point-estimate sizing (review R5.2); the
 unresolved rows report a bracket. `n90 detect` and `sd_Z` share one
@@ -123,8 +134,9 @@ is additionally constrained by the deterministic identity
 a point when the raw point itself satisfies that floor (rounds
 R9.2–R9.4); on all rows here the points sit far above their floors,
 so the constraint never binds. All
-three unresolved rows are dead either way. The resolved rows carry
-hundreds of hits and their point estimates stand.
+three unresolved rows are dead either way. The resolved rows clear
+the two-sided factor-2 rule at 14–142 hits and their point estimates
+stand.
 Worked example at `edge-a2.4`: `sd_Z = 0.386` per sprinkling and
 `ρV_0 ≈ 0.32`, so 100 sprinklings verify the ratio to
 `±0.12` (1σ) against a predicted shift of `0.18` — P2's tolerance
@@ -314,7 +326,7 @@ Round R8 corrected one: `disagree_resolved` checked only the upper
 half of the 95% CI (`ucb ≤ factor·point`), so 8–11 hits at
 `samples = 2e5` read as resolved while the lower endpoint was still
 `~0.43·point`. Both endpoints are required now; the operating points
-here (0/2/5 hits unresolved, 85+ resolved) are unchanged, but the
+here (0/2/5 hits unresolved; 14/142/15/84 resolved) are unchanged, but the
 predicate now matches its contract.
 
 Rounds R9–R9.4 hardened the per-run consistency machinery, with no

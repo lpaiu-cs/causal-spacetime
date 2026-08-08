@@ -548,3 +548,72 @@ def test_a_point_below_the_floor_cannot_carry_a_resolved_headline(
     # floor), never the impossible raw point below it
     assert row["sd_z"] == pytest.approx(math.sqrt(
         (1.0 + row["delta"]) * row["rho"] * floor))
+
+
+SIZING_JSON = (Path(__file__).resolve().parents[1]
+               / "docs" / "prereg" / "p14_probe_p1_sizing.json")
+
+
+def test_the_sizing_artifact_reproduces_from_its_recorded_seed():
+    """The case, the P2 design review: the results doc's hits column
+    carried numbers (~250/~600/~340) that do not reproduce from the
+    merged code at the published seed -- hand-transcribed from some
+    earlier draft state. The fix is an artifact the RUN writes and the
+    doc mirrors. This pins the artifact's MC-derived fields to a fresh
+    recomputation at the recorded seed: same stream position (the MC is
+    the rng's first consumer), so exact equality, not tolerance.
+    """
+
+    import json
+
+    art = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
+    assert art["seed"] == 20260808
+    assert len(art["points"]) == len(probe.OPERATING_POINTS)
+    for spec, rec in zip(probe.OPERATING_POINTS, art["points"]):
+        label, w, du, dv, dx, dy = spec
+        assert rec["label"] == label
+        slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
+        curved, flat = arms(slab, w)
+        p, q = probe.fattest_axis_diamond(curved)
+        rng = np.random.default_rng(art["seed"])
+        vols = probe.diamond_volumes_mc(curved, flat, p, q,
+                                        art["mc_samples"], rng)
+        assert rec["v_dis_hits"] == vols.disagree_hits, label
+        assert rec["v_dis"] == pytest.approx(vols.disagree, rel=1e-12)
+        assert rec["v_curved"] == pytest.approx(vols.curved, rel=1e-12)
+        # the recorded resolution flag is the R9.3/R9.4 gate applied to
+        # these exact volumes: CP-resolved AND point above the analytic
+        # floor delta*V_0 (v0 from the closed form, as probe_point does)
+        dv_win = float(p[1]) - float(q[1])
+        v0 = math.pi * du ** 2 * dv_win ** 2 / 6.0
+        floor = rec["delta"] * v0
+        assert rec["v_dis_resolved"] == bool(
+            vols.disagree_resolved and vols.disagree >= floor), label
+
+
+def test_the_results_doc_hits_column_mirrors_the_artifact():
+    """The doc's feasibility table is a MIRROR of the sizing artifact,
+    not a source: every row's `V_dis hits` cell must equal the
+    artifact's count exactly (the erratum this guards against was a
+    hand-transcribed column drifting from the computation).
+    """
+
+    import json
+
+    art = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
+    doc = (SIZING_JSON.parent / "p14_probe_p1_results.md").read_text(
+        encoding="utf-8")
+    # anchor on the FEASIBILITY table's header -- the eligibility table
+    # also has one row per point, with different columns
+    lines = doc.splitlines()
+    starts = [i for i, ln in enumerate(lines)
+              if ln.startswith("| point |") and "V_dis hits" in ln]
+    assert len(starts) == 1, "feasibility table header not unique"
+    table = {}
+    for ln in lines[starts[0] + 2:]:
+        if not ln.startswith("|"):
+            break
+        cells = [c.strip() for c in ln.split("|")]
+        table[cells[1]] = cells[5].replace("¹", "")  # strip footnote
+    for rec in art["points"]:
+        assert table[rec["label"]] == str(rec["v_dis_hits"]), rec["label"]

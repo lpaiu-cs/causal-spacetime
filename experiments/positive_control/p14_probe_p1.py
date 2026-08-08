@@ -42,11 +42,13 @@ Run:  python experiments/positive_control/p14_probe_p1.py [seed]
 
 from __future__ import annotations
 
+import json
 import math
 import sys
 import time
 import warnings
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 from p14_plane_wave import (
@@ -916,6 +918,59 @@ def main(seed: int = 20260808) -> None:
     print(f"\nescalation micro-bench: generic {generic_us:.1f} us, "
           f"escalated {escalated_us:.1f} us "
           f"({escalated_us / generic_us:.0f}x)")
+
+    path = write_sizing_json(rows, seed)
+    print(f"\nsizing artifact written: {path}")
+
+
+#: Row fields exported to the machine-readable sizing artifact --
+#: everything a downstream consumer (P2's sizing) reads, and nothing
+#: display-only. Floats stay floats; counts stay ints; flags stay bools.
+_SIZING_FIELDS = (
+    "label", "w", "a", "rho", "delta",
+    "lam", "lam_flat",
+    "v_curved", "v_flat", "v_dis", "v_int",
+    "v_dis_hits", "v_dis_quantum", "v_dis_resolved",
+    "v_dis_floor", "v_dis_ucb",
+    "sd_z", "sd_z_floor", "sd_z_ucb",
+    "n_unpaired", "n_unpaired_be",
+    "n_detect", "n_detect_be", "n_detect_floor", "n_detect_ucb",
+    "frac_analytic", "elem_frac", "pair_frac",
+    "ambiguous_fraction", "escalations", "escalations_flat",
+    "sprinklings",
+)
+
+
+def write_sizing_json(rows: list[dict], seed: int) -> Path:
+    """Machine-readable sizing artifact, committed next to the results
+    doc. The doc's tables MIRROR this file rather than being the source
+    of truth -- the hits-column erratum happened exactly because the
+    numbers were transcribed by hand (P2 design review)."""
+
+    out = {
+        "script": "experiments/positive_control/p14_probe_p1.py",
+        "seed": int(seed),
+        "target_n": int(TARGET_N),
+        "mc_samples": 200_000,
+        "points": [],
+    }
+    for r in rows:
+        row = {}
+        for k in _SIZING_FIELDS:
+            v = r[k]
+            if isinstance(v, (str, bool)):
+                row[k] = v
+            elif isinstance(v, (int, np.integer)):
+                row[k] = int(v)
+            else:
+                row[k] = float(v)
+        out["points"].append(row)
+    path = (Path(__file__).resolve().parents[2]
+            / "docs" / "prereg" / "p14_probe_p1_sizing.json")
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(out, f, indent=2, sort_keys=True)
+        f.write("\n")
+    return path
 
 
 if __name__ == "__main__":
