@@ -574,6 +574,19 @@ SIZING_JSON = (Path(__file__).resolve().parents[1]
 #: `rel = 1e-11 + 2 * _R_ROUNDOFF / delta` (the worst power's factor
 #: 2). At roomy that is ~7e-9: two orders above the observed drift,
 #: 200x tighter than before, and it pins `n_detect` to +-0.25 counts.
+#:
+#: The relative branches pass `abs=0.0` explicitly: pytest.approx
+#: otherwise keeps its DEFAULT abs=1e-12 and accepts when EITHER
+#: tolerance holds, which for small fields (slice-a0.3's
+#: `v_dis_floor` = 2.7e-8) widens the intended window ~27,000x
+#: (PR #44 review). Classification re-audited before removing the
+#: floor: the analytic floor is delta-LINEAR only where it binds
+#: (zero-hit rows' `v_dis_floor`/`sd_z_floor`, in `_AMPLIFIED`);
+#: every `n_*` divides by `(delta*lam0)^2` (in `_AMPLIFIED`);
+#: `lam`/`lam_flat` carry delta roundoff only RELATIVELY (~2e-14,
+#: inside 1e-11); `v_dis_ucb`/`sd_z`/`sd_z_ucb` are CP/point-bound
+#: with the floor orders below; and exact-zero fields (`v_dis` at
+#: zero hits) compare as equal under `abs=0.0`.
 _R_ROUNDOFF = 100.0 * math.ulp(1.0)
 _AMPLIFIED_FIELDS = frozenset({
     "n_unpaired", "n_unpaired_be",
@@ -619,9 +632,11 @@ def test_the_sizing_artifact_reproduces_field_for_field():
                 assert fv == pytest.approx(cv, abs=_R_ROUNDOFF), where
             elif k in _AMPLIFIED_FIELDS:
                 assert fv == pytest.approx(
-                    cv, rel=1e-11 + 2.0 * _R_ROUNDOFF / delta), where
+                    cv, rel=1e-11 + 2.0 * _R_ROUNDOFF / delta,
+                    abs=0.0), where
             else:
-                assert fv == pytest.approx(cv, rel=1e-11), where
+                assert fv == pytest.approx(cv, rel=1e-11,
+                                           abs=0.0), where
 
 
 def test_the_results_doc_embeds_the_rendered_feasibility_table():
