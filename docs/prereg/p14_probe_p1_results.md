@@ -301,6 +301,13 @@ per-arm marginal goodness-of-fit to `sd_Z`, but the two are orthogonal
 `Z` exactly while both marginals fail, so `sd_Z` cannot substitute for
 the marginal checks, which need their own tolerance (P2's to set).
 
+Round R8 corrected one: `disagree_resolved` checked only the upper
+half of the 95% CI (`ucb ≤ factor·point`), so 8–11 hits at
+`samples = 2e5` read as resolved while the lower endpoint was still
+`~0.43·point`. Both endpoints are required now; the operating points
+here (0/2/5 hits unresolved, 85+ resolved) are unchanged, but the
+predicate now matches its contract.
+
 Round R4 corrected three sizing/uncertainty issues: the unresolved
 `n90` lower endpoint used the MC point estimate via
 `max(v_dis, δV_0)`, which is neither a bound nor trustworthy at low

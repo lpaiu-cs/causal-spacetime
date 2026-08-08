@@ -493,16 +493,21 @@ class DiamondVolumes:
 
     @property
     def disagree_resolved(self) -> bool:
-        """The point estimate is trustworthy to within `_MC_CI_FACTOR`.
+        """The whole 95% CI is within `_MC_CI_FACTOR` of the point.
 
         `hits > 0` alone is not resolution -- a single hit has a 95%
-        upper limit near `4.7 x` its point estimate (R3.1). This holds
-        only once the count is large enough that the bound is close to
-        the point.
+        upper limit near `4.7 x` its point estimate (R3.1). And the
+        UPPER endpoint alone is not enough either (R8.1): the CP
+        interval is asymmetric, so a count can satisfy
+        `ucb <= factor * point` while `lcb` is still below
+        `point / factor` (around 8-11 hits at `samples = 2e5`), leaving
+        the row switched to a point estimate while its lower half is
+        outside the advertised factor. Both endpoints are checked.
         """
 
         return (self.disagree > 0.0
-                and self.disagree_ucb <= _MC_CI_FACTOR * self.disagree)
+                and self.disagree_ucb <= _MC_CI_FACTOR * self.disagree
+                and self.disagree_lcb >= self.disagree / _MC_CI_FACTOR)
 
 
 def diamond_volumes_mc(

@@ -141,6 +141,34 @@ def test_clopper_pearson_is_exact_and_two_sided():
     assert one.disagree_ucb > 3.0 * one.disagree
 
 
+def test_resolution_checks_both_ends_of_the_ci_not_just_the_upper():
+    """The case, review R8.1: `disagree_resolved` promised the whole
+    95% CI within `_MC_CI_FACTOR` of the point, but checked only
+    `ucb <= factor*point`. The CP interval is asymmetric, so 8-11 hits
+    at `samples = 2e5` pass the upper test (`ucb ~ 1.97x point`) while
+    the lower endpoint is `~0.43x point` -- outside factor 2 on the
+    low side. Those rows would switch `n90 detect`/`sd_Z` from a
+    bracket to a point while half the interval is still out of range.
+    Both endpoints are required now.
+    """
+
+    # 8 hits: upper passes, lower fails -> NOT resolved
+    eight = probe.DiamondVolumes(curved=1.0, flat=1.0, disagree=8.0,
+                                 intersect=0.0, quantum=1.0,
+                                 disagree_hits=8, samples=200_000)
+    assert eight.disagree_ucb <= probe._MC_CI_FACTOR * eight.disagree
+    assert eight.disagree_lcb < eight.disagree / probe._MC_CI_FACTOR
+    assert not eight.disagree_resolved
+
+    # a count large enough that BOTH ends are inside the factor
+    many = probe.DiamondVolumes(curved=1.0, flat=1.0, disagree=250.0,
+                                intersect=0.0, quantum=1.0,
+                                disagree_hits=250, samples=200_000)
+    assert many.disagree_lcb >= many.disagree / probe._MC_CI_FACTOR
+    assert many.disagree_ucb <= probe._MC_CI_FACTOR * many.disagree
+    assert many.disagree_resolved
+
+
 def test_the_cp_bracket_is_a_true_two_sided_interval():
     """The case, review R4.1/R5.1: the bracket's lower endpoint must be
     a genuine lower bound, not the MC point estimate, and the two
@@ -350,9 +378,11 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     admits pairs. `TARGET_N` is patched down so this stays cheap."""
 
     monkeypatch.setattr(probe, "TARGET_N", 80)
-    # full MC so V_dis resolves (the R5.2 check needs a resolved row);
-    # the MC runs once per probe_point, so this stays cheap
-    row = probe.probe_point("mini", 1.0, 1.0, 0.2, 6.0, 6.0,
+    # the aniso-a1.0 geometry: its diamond has a large enough V_dis
+    # that 200k samples give ~150 hits, so V_dis resolves under the
+    # two-sided rule (R8.1) and the R5.2 point-vs-UCB check can run.
+    # The MC runs once per probe_point, so this stays cheap.
+    row = probe.probe_point("mini", 1.0, 1.0, 1.0, 2.0, 6.0,
                             seed=2, sprinklings=6, mc_samples=200_000)
     f = row["frac_analytic"]
     assert row["elem_frac"] == pytest.approx(f, abs=4.0 * math.sqrt(
@@ -392,10 +422,8 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
         row["v_dis"] / row["v_dis_ucb"], rel=1e-9)
     assert row["n_detect"] < row["n_detect_ucb"]
     assert row["v_dis_floor"] <= row["v_dis"] <= row["v_dis_ucb"]
-    # Var(Z) with the predicted r must sit near rho*V_dis -- they
-    # differ at O(delta) -- and never below the parallelogram floor
-    assert row["sd_z"] ** 2 == pytest.approx(
-        (80.0 / (1.0 * 0.2 * 6.0 * 6.0)) * row["v_dis"], rel=0.05)
+    # (sd_Z's exact identity is pinned above; no geometry-hardcoded
+    # duplicate here.)
     assert row["ambiguous_fraction"] == 0.0
     assert row["escalations"] == 0 and row["escalations_flat"] == 0
     for k, agreements in row["agreement"].items():
