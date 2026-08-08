@@ -50,47 +50,58 @@ check script's pinned values to the digit (`1.00400047` at `a = 1`,
 Fattest eligible axis diamond per point. **Two sizings, answering
 different questions (review R1.1):**
 
+- `n90 marginal` — one arm's count against its own known mean. The
+  effect is the absolute shift `λ_A − λ_0 = δλ_0` and the noise is the
+  Poisson SD `√λ_A`; sizing `δ` (relative to `λ_0`) against `1/√λ_A`
+  (relative to `λ_A`) mixed normalizations and was optimistic by
+  `(1+δ)²` (review R4.3). Corrected here — `edge-a2.4` is `1.2e3`, not
+  the earlier `834`.
 - `n90 detect` — sprinklings to reject a NO-SHIFT null with the raw
   same-points difference `N_A − N_0` (`Var = ρ V_dis`, exact: shared
   points cancel where the predicates agree), taking the **predicted**
   shift `ρ V_0 δ` as the alternative. This is detectability
   reconnaissance, **not** P2 feasibility.
 - `sd_Z` — the per-sprinkling standard deviation of P2's preregistered
-  residual `Z = N_A − r N_0`, `r` predicted, from
-  `Var(Z) = ρ(V_A + r²V_0 − 2rV_∩)` with all three volumes measured.
-  Under the prediction `E[Z] = 0`: nothing is detected, and after `n`
-  sprinklings the measured ratio carries a standard error of
-  `sd_Z / (ρV_0 √n)`. P2 sizes its own tolerance against that; this
-  probe only reports the number.
+  residual `Z = N_A − r N_0`, `r` predicted. With `r = V_A/V_0` exactly,
+  `Var(Z) = ρ(V_A + r²V_0 − 2rV_∩)` reduces **algebraically** to
+  `r·ρ·V_dis` (the cross terms vanish because `V_A − rV_0 = 0`), so
+  `sd_Z` is driven by the same `V_dis` as the detection sizing and
+  inherits its resolution — a bracket wherever `V_dis` is a bracket
+  (review R4.2), not a false point precision from recombining three
+  noisy volumes. Under the prediction `E[Z] = 0`: nothing is detected,
+  and after `n` sprinklings the measured ratio carries a standard
+  error of `sd_Z / (λ_0 √n)`. P2 sizes its own tolerance against that;
+  this probe only reports the number.
 
 | point | `a` | δ = R−1 | λ_A | V_dis hits | n90 marginal | n90 detect | sd_Z |
 |---|---|---|---|---|---|---|---|
-| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | 0¹ | 7.1e10 | [2.3e6, 2.2e9]¹ | ~0¹ |
-| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 2¹ | 1.5e8 | [1.8e6, 5.6e6]¹ | 0.055 |
-| slice-a1.0 | 1.0 | 4.0e-3 | 0.42 | ~250 | 1.6e6 | 1.2e5 | 0.145 |
-| aniso-a1.0 | 1.0 | 4.0e-3 | 5.80 | ~600 | 1.1e5 | 4.8e3 | 0.463 |
+| slice-a0.3 | 0.3 | 3.2e-5 | 0.12 | 0¹ | 8.7e10 | [2.8e6, 3.4e9]¹ | [0.002, 0.067]¹ |
+| slice-a0.6 | 0.6 | 5.2e-4 | 0.23 | 2¹ | 1.7e8 | [3.9e5, 6.9e6]¹ | [0.023, 0.097]¹ |
+| slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | ~250 | 1.7e6 | 1.4e5 | 0.145 |
+| aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | ~600 | 1.1e5 | 4.8e3 | 0.462 |
 | roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | ~340 | 2.0e10 | 5.4e7 | 0.150 |
-| high-a2.0 | 2.0 | 7.3e-2 | 0.07 | 5¹ | 2.7e4 | [3.2e3, 6.8e3]¹ | 0.090 |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 834 | **463** | 0.385 |
+| high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 3.0e4 | [2.0e3, 6.2e3]¹ | [0.074, 0.130]¹ |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 1.2e3 | **478** | 0.386 |
 
 `λ_A` is the expected count in the diamond at `N = 300`; `V_dis` is
 the volume where the two arms' predicates disagree; `V_∩` their
 overlap — all from shared-sample MC, and the partition
 `V_A + V_0 = V_dis + 2V_∩` holds exactly per sample (test-pinned).
 
-¹ **A low MC count is a bound, never a value (review R2.1, R3.1):**
-three rows have too few disagreeing samples for a point estimate. The
-`n90 detect` there is a bracket, from the analytic floor
-`|V_A − V_0| = δV_0` (best case) to the **exact one-sided 95% Poisson
-upper limit** for the observed count times the quantum (worst case) —
-`2.996 q` at 0 hits (the rule of three), `6.30 q` at 2, `10.5 q` at 5.
-The earlier `max(point, 3q)` under-stated this for every positive
-count and called a one-hit row resolved; the estimator now stores the
-raw count and computes the real limit (`_poisson_upper_95`,
-test-pinned against the standard values). All three unresolved rows
-are dead either way. `slice-a0.3`'s `sd_Z` is likewise a floor, not
-an estimate. The resolved rows carry hundreds of hits and their
-point estimates stand.
+¹ **A low MC count is a bracket, never a point (review R2.1, R3.1,
+R4.1/R4.2):** three rows have too few disagreeing samples for a point
+estimate, so both `n90 detect` and `sd_Z` are brackets. The `V_dis`
+lower endpoint is a true lower bound — the larger of the analytic
+floor `|V_A − V_0| = δV_0` and the **exact 95% Poisson lower limit**
+for the count — never the MC point estimate; the upper endpoint is the
+**exact 95% Poisson upper limit** (`2.996 q` at 0 hits, the rule of
+three; `6.30 q` at 2; `10.5 q` at 5). `sd_Z = √(r·ρ·V_dis)` carries
+the same bracket. The earlier `max(point, 3q)` under-stated the upper
+bound for every positive count and called a one-hit row resolved; the
+estimator stores the raw count and computes both limits
+(`_poisson_upper_95` / `_poisson_lower_95`, test-pinned against the
+standard values). All three unresolved rows are dead either way. The
+resolved rows carry hundreds of hits and their point estimates stand.
 Worked example at `edge-a2.4`: `sd_Z = 0.385` per sprinkling and
 `ρV_0 ≈ 0.32`, so 100 sprinklings verify the ratio to
 `±0.12` (1σ) against a predicted shift of `0.18` — P2's tolerance
@@ -99,7 +110,7 @@ choice decides whether that is enough or `n` must grow.
 **Reading.** The product (effect)² × (count) is maximized at the
 largest `a` the guard admits, despite the tiny boxes: δ grows as `a⁴`
 and beyond, while the count only needs to be O(1) per sprinkling.
-`edge-a2.4` needs ~4e2 sprinklings to detect the shift (~8e2
+`edge-a2.4` needs ~4.8e2 sprinklings to detect the shift (~1.2e3
 marginal); `roomy`
 and the `slice` points are dead at any affordable n. Density is a
 further free lever this table does not use: P2-style counting inside
@@ -246,3 +257,13 @@ empty candidate — both directions reported now; and the `k` sweep
 skipped `9..15`, so an intermediate safe-and-non-empty threshold had
 not been ruled out — every integer `k ≤ 20` is swept now, and the
 `k*` table shows there is none.
+
+Round R4 corrected three sizing/uncertainty issues: the unresolved
+`n90` lower endpoint used the MC point estimate via
+`max(v_dis, δV_0)`, which is neither a bound nor trustworthy at low
+counts — replaced by `max(δV_0, 95% Poisson lower limit)`, both true
+lower bounds; `sd_Z` recombined three noisy volumes and hid that it
+inherits `V_dis`'s resolution — replaced by the exact identity
+`Var(Z) = r·ρ·V_dis`, bracketed on the unresolved rows; and `n90
+marginal` sized a `λ_0`-relative effect against a `λ_A`-relative SD,
+optimistic by `(1+δ)²` — both absolute now (`edge-a2.4`: 834 → 1.2e3).

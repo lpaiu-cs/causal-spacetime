@@ -393,6 +393,28 @@ def _poisson_cdf(k: int, lam: float) -> float:
     return total
 
 
+def _poisson_lower_95(hits: int) -> float:
+    """One-sided 95% lower limit on a Poisson mean given `hits` observed.
+
+    The smallest `lam` with `P(X >= hits | lam) = 0.05`, i.e.
+    `P(X <= hits-1 | lam) = 0.95`; zero at `hits = 0` (no lower
+    information). Paired with `_poisson_upper_95`, this gives a genuine
+    two-sided bracket on `V_dis` -- a point estimate is neither
+    endpoint (R4.1).
+    """
+
+    if hits <= 0:
+        return 0.0
+    lo, hi = 0.0, float(hits)
+    for _ in range(100):
+        mid = 0.5 * (lo + hi)
+        if _poisson_cdf(hits - 1, mid) > 0.95:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
 def _poisson_upper_95(hits: int) -> float:
     """One-sided 95% upper limit on a Poisson mean given `hits` observed.
 
@@ -447,6 +469,17 @@ class DiamondVolumes:
         limit for the observed hit count, not `max(point, 3q)`."""
 
         return _poisson_upper_95(self.disagree_hits) * self.quantum
+
+    @property
+    def disagree_lcb(self) -> float:
+        """95% lower confidence bound on `V_dis` from the hit count.
+
+        Zero at zero hits; the caller maxes it with the analytic floor
+        `delta * V_0`, so the bracket's lower endpoint is always a true
+        lower bound and never the MC point estimate (R4.1).
+        """
+
+        return _poisson_lower_95(self.disagree_hits) * self.quantum
 
     @property
     def disagree_resolved(self) -> bool:
@@ -570,11 +603,28 @@ def probe_point(label: str, w: float, du: float, dv: float,
     vols = diamond_volumes_mc(curved, flat, p, q, mc_samples, rng)
     v_curved, v_flat = vols.curved, vols.flat
     v_dis, v_int = vols.disagree, vols.intersect
-    lam = rho * v_curved
-    lam_flat = rho * v_flat
-    # marginal: relative shift delta on a Poisson(lam) count
-    n_marginal = sprinklings_needed(delta, 1.0 / math.sqrt(lam))
-    n_marg_be = sprinklings_needed(delta, 1.0 / math.sqrt(lam), z_beta=0.0)
+
+    # V_0 is the flat on-axis diamond, which HAS a closed form --
+    # `pi s^2 Dv^2 / 6` -- so the means use it exactly rather than the
+    # noisy MC `v_flat` (R4.1). V_A = (1 + delta) V_0 by definition of
+    # delta, so r is exact too.
+    dv_window = float(p[1]) - float(q[1])
+    v0_exact = math.pi * slab.du ** 2 * dv_window ** 2 / 6.0
+    r_pred = 1.0 + delta
+    lam_0 = rho * v0_exact
+    lam_A = r_pred * lam_0
+    lam = lam_A
+    lam_flat = lam_0
+
+    # MARGINAL sizing (R4.3): the effect is the absolute count shift
+    # `lam_A - lam_0 = delta * lam_0`, and the noise is the Poisson SD
+    # `sqrt(lam_A)`. The first version sized `delta` (a shift relative
+    # to lam_0) against `1/sqrt(lam_A)` (an SD relative to lam_A),
+    # mixing the two normalisations and coming out optimistic by
+    # `(1 + delta)^2`. Both are absolute now.
+    n_marginal = sprinklings_needed(delta * lam_0, math.sqrt(lam_A))
+    n_marg_be = sprinklings_needed(delta * lam_0, math.sqrt(lam_A),
+                                   z_beta=0.0)
     # DETECTION sizing (R1.1: this is not P2's estimand and is no
     # longer labeled as it). Null: the volumes do not differ;
     # alternative: they differ by the predicted rho V_0 delta.
@@ -588,30 +638,34 @@ def probe_point(label: str, w: float, du: float, dv: float,
         f"{label}: delta {delta} exceeds the disagreement fraction "
         f"{v_dis / v_curved} -- |V_A - V_0| <= V_dis is an identity, so "
         "one of the two is being computed wrongly")
-    signal_abs = rho * v_flat * delta
-    # R2.1: a zero-hit V_dis is a bound, not a value, and feeding the
-    # point estimate 0 into the sd made the sizing return 0 -- a
-    # zero-noise instrument created by finite MC resolution. The sd
-    # uses the 95% upper bound (identical to the point estimate
-    # wherever hits dominate the quantum), so the sizing is an upper
-    # bound on n; the floor uses the smallest V_dis the analytic
-    # structure allows, |V_A - V_0| = delta V_0, giving the bracket
-    # the results table reports when unresolved.
-    sd_ucb = math.sqrt(rho * vols.disagree_ucb)
-    sd_floor = math.sqrt(rho * max(v_dis, delta * v_flat))
-    n_detect = sprinklings_needed(signal_abs, sd_ucb)
-    n_detect_floor = sprinklings_needed(signal_abs, sd_floor)
-    n_detect_be = sprinklings_needed(signal_abs, sd_ucb, z_beta=0.0)
-    # P2's preregistered residual Z = N_A - r N_0, r predicted:
-    # E[Z] = 0 under the prediction, so there is nothing to detect --
-    # sd_z sizes the PRECISION of the verification. After n
-    # sprinklings the measured ratio carries a standard error of
-    # sd_z / (rho v_flat sqrt(n)); P2 sets its own tolerance against
-    # that. This probe only reports the number (R1.1).
-    r_pred = 1.0 + delta
-    var_z = rho * (v_curved + r_pred ** 2 * v_flat
-                   - 2.0 * r_pred * v_int)
-    sd_z = math.sqrt(max(var_z, 0.0))
+    signal_abs = delta * lam_0  # = rho V_0 delta, the raw N_A - N_0 shift
+    # DETECTION sizing over the honest V_dis BRACKET (R2.1, R4.1). The
+    # lower endpoint is a true lower bound -- the larger of the
+    # analytic floor `delta V_0` (since V_dis >= |V_A - V_0|) and the
+    # 95% Poisson lower limit -- never the MC point estimate, which is
+    # neither a bound nor (at low counts) trustworthy. The upper
+    # endpoint is the 95% Poisson upper limit. n scales with V_dis, so
+    # the bracket maps to [n_floor (small V_dis), n_detect (large)].
+    v_dis_floor = max(delta * v0_exact, vols.disagree_lcb)
+    v_dis_ucb = vols.disagree_ucb
+    n_detect = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis_ucb))
+    n_detect_floor = sprinklings_needed(signal_abs,
+                                        math.sqrt(rho * v_dis_floor))
+    n_detect_be = sprinklings_needed(signal_abs,
+                                     math.sqrt(rho * v_dis_ucb), z_beta=0.0)
+
+    # P2's preregistered residual Z = N_A - r N_0, r predicted. With
+    # r = V_A / V_0 exactly, Var(Z) reduces algebraically to
+    # `r rho V_dis` (V_A - r V_0 = 0 kills the cross terms) -- so sd_Z
+    # is DRIVEN BY THE SAME V_dis as the detection sizing and inherits
+    # its resolution, rather than recombining three noisy MC volumes
+    # that hide the uncertainty (R4.2). E[Z] = 0 under the prediction,
+    # so this sizes the PRECISION of the verification, not a detection:
+    # after n sprinklings the ratio carries SE sd_Z / (lam_0 sqrt(n)),
+    # and P2 sets its own tolerance against that (R1.1).
+    sd_z = math.sqrt(r_pred * rho * v_dis)
+    sd_z_floor = math.sqrt(r_pred * rho * v_dis_floor)
+    sd_z_ucb = math.sqrt(r_pred * rho * v_dis_ucb)
 
     elem_fracs, pair_fracs, amb_fracs = [], [], []
     per_pair_us = []
@@ -651,6 +705,7 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "lam": lam, "lam_flat": lam_flat,
         "v_curved": v_curved, "v_flat": v_flat, "v_dis": v_dis,
         "v_int": v_int, "sd_z": sd_z,
+        "sd_z_floor": sd_z_floor, "sd_z_ucb": sd_z_ucb,
         "v_dis_resolved": vols.disagree_resolved,
         "v_dis_quantum": vols.quantum,
         "v_dis_hits": vols.disagree_hits,
@@ -692,18 +747,21 @@ def main(seed: int = 20260808) -> None:
     for r in rows:
         detect = (f"{r['n_detect']:10.3g}" if r["v_dis_resolved"]
                   else f"<={r['n_detect']:8.2g}")
+        sdz = (f"{r['sd_z']:8.3f}" if r["v_dis_resolved"]
+               else f"<={r['sd_z_ucb']:6.3f}")
         print(f"{r['label']:>12} {r['a']:4.1f} {r['delta']:9.2e} "
               f"{r['lam']:8.2f} {r['v_dis'] / r['v_curved']:9.4f} "
-              f"{r['n_marginal']:9.3g} {detect:>10} "
-              f"{r['sd_z']:8.3f}")
+              f"{r['n_marginal']:9.3g} {detect:>10} {sdz:>8}")
     for r in rows:
         if not r["v_dis_resolved"]:
             print(f"  {r['label']}: V_dis unresolved at this MC size "
                   f"({r['v_dis_hits']} hits, quantum "
                   f"{r['v_dis_quantum']:.2e}); n90 is "
                   f"the bracket [{r['n_detect_floor']:.2g}, "
-                  f"{r['n_detect']:.2g}] from the analytic floor "
-                  f"delta*V_0 and the rule-of-three bound")
+                  f"{r['n_detect']:.2g}] and sd_Z in "
+                  f"[{r['sd_z_floor']:.3f}, {r['sd_z_ucb']:.3f}], from "
+                  f"the analytic floor delta*V_0 to the 95% Poisson "
+                  f"upper limit")
 
     print("\n== order-invariant candidate vs coordinate guard "
           "(PAIR level, mean over sprinklings; R1.3/R3.2) ==")

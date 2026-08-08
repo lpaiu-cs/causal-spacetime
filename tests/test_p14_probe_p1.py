@@ -136,6 +136,42 @@ def test_the_poisson_upper_limit_is_exact_not_rule_of_three():
     assert one.disagree_ucb == pytest.approx(4.744, abs=1e-3)
 
 
+def test_the_poisson_lower_limit_brackets_the_upper():
+    """The case, review R4.1: the bracket's lower endpoint must be a
+    genuine lower bound, not the MC point estimate. `_poisson_lower_95`
+    supplies the statistical one; these are the standard exact values,
+    and it is below the count and below the upper limit for every k."""
+
+    assert probe._poisson_lower_95(0) == 0.0
+    assert probe._poisson_lower_95(1) == pytest.approx(0.0513, abs=1e-3)
+    assert probe._poisson_lower_95(2) == pytest.approx(0.355, abs=1e-3)
+    assert probe._poisson_lower_95(10) == pytest.approx(5.425, abs=1e-3)
+    for k in range(1, 30):
+        assert 0.0 < probe._poisson_lower_95(k) < k
+        assert probe._poisson_lower_95(k) < probe._poisson_upper_95(k)
+
+
+def test_sd_z_is_the_exact_r_rho_vdis_identity_not_a_recombination():
+    """The case, review R4.2: with the predicted r = V_A/V_0, the
+    residual variance Var(Z) = rho(V_A + r^2 V_0 - 2 r V_int) reduces
+    ALGEBRAICALLY to r*rho*V_dis, because V_A - r V_0 = 0 kills the
+    cross terms. So sd_Z is driven by the same V_dis as the detection
+    sizing and must inherit its resolution, rather than recombining
+    three noisy MC volumes. This checks the identity on the MC volumes
+    themselves (they satisfy the partition exactly per sample) and
+    that the reported sd_Z uses it.
+    """
+
+    slab = Slab(du=1.0, dv=1.0, dx=2.0, dy=6.0)
+    curved, flat = arms(slab, 1.0)
+    p, q = probe.fattest_axis_diamond(curved)
+    rng = np.random.default_rng(7)
+    vols = probe.diamond_volumes_mc(curved, flat, p, q, 120_000, rng)
+    r = vols.curved / vols.flat
+    recombined = vols.curved + r ** 2 * vols.flat - 2.0 * r * vols.intersect
+    assert recombined == pytest.approx(r * vols.disagree, rel=1e-9)
+
+
 def test_a_zero_hit_disagreement_is_a_bound_and_never_a_zero_sd():
     """The case, review R2.1: at `slice-a0.3` the 200k MC sample saw
     zero disagreeing points, the point estimate 0 flowed into
@@ -321,6 +357,17 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
     assert 0.0 < row["lam"] < 80.0
     assert math.isfinite(row["n_detect"]) and row["n_detect"] > 0.0
     assert row["n_detect"] >= row["n_detect_floor"] > 0.0
+    # R4.3: the marginal sizing is delta*lam_0 signal against
+    # sqrt(lam_A) noise -- exceeds the old delta-vs-1/sqrt(lam_A) form
+    # by (1+delta)^2. Reconstruct the corrected value and check.
+    z = 1.959964 + 1.281552
+    lam_0 = row["lam"] / (1.0 + row["delta"])
+    expected = (z * math.sqrt(row["lam"]) / (row["delta"] * lam_0)) ** 2
+    assert row["n_marginal"] == pytest.approx(expected, rel=1e-9)
+    # R4.2: sd_Z from the exact identity, and its bracket brackets it
+    assert row["sd_z"] == pytest.approx(
+        math.sqrt((1.0 + row["delta"]) * row["rho"] * row["v_dis"]))
+    assert row["sd_z_floor"] <= row["sd_z_ucb"]
     # Var(Z) with the predicted r must sit near rho*V_dis -- they
     # differ at O(delta) -- and never below the parallelogram floor
     assert row["sd_z"] ** 2 == pytest.approx(
