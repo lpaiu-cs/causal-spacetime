@@ -157,7 +157,7 @@ def test_the_bootstrap_preserves_the_sprinkling_cluster():
     replicate; per-rung independent draws (the refuted first version)
     break the identity almost surely."""
 
-    rungs_a, rungs_b = str(p3.W_LADDER[3]), str(p3.W_LADDER[4])
+    rungs_b = str(p3.W_LADDER[4])
     n = 40
     base = np.linspace(0.01, 0.05, n)
     raw = {"full": {"n": n, "rungs": {}}, "low": {"n": 4, "rungs": {}}}
