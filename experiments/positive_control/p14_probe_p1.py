@@ -376,11 +376,42 @@ def _between(geometry: PlaneWaveGeometry, p: np.ndarray, q: np.ndarray,
     return r_v - float(q[1]) >= c2
 
 
+@dataclass(frozen=True)
+class DiamondVolumes:
+    """Shared-sample MC volume estimates WITH their resolution.
+
+    `quantum` is the volume one accepted sample represents
+    (`region / samples`): every field is a count times it, so a field
+    of `0.0` means "no samples landed", which bounds the volume above
+    by ~3 quanta at 95% (rule of three) and never establishes zero --
+    the analytic `delta > 0` guarantees `V_dis >= |V_A - V_0| > 0`
+    (R2.1). Consumers that need a positive-definite quantity read
+    `disagree_resolved` and take the bound, not the point.
+    """
+
+    curved: float
+    flat: float
+    disagree: float
+    intersect: float
+    quantum: float
+
+    @property
+    def disagree_resolved(self) -> bool:
+        return self.disagree > 0.0
+
+    @property
+    def disagree_ucb(self) -> float:
+        """95% upper confidence bound on `V_dis` (exact when hits > 0
+        dominate the quantum; the rule-of-three bound when zero)."""
+
+        return max(self.disagree, 3.0 * self.quantum)
+
+
 def diamond_volumes_mc(
         curved: PlaneWaveGeometry, flat: PlaneWaveGeometry,
         p: np.ndarray, q: np.ndarray, samples: int,
-        rng: np.random.Generator) -> tuple[float, float, float, float]:
-    """(V_curved, V_flat, V_disagree, V_intersect), by shared-sample MC.
+        rng: np.random.Generator) -> DiamondVolumes:
+    """Diamond volumes for one pair, by shared-sample MC.
 
     The SAME sample decides all three, so `V_disagree` -- the volume
     where the two arms' membership predicates differ -- is measured
@@ -410,10 +441,12 @@ def diamond_volumes_mc(
         in_flat += b
         disagree += a != b
         overlap += a and b
-    return (region * in_curved / samples,
-            region * in_flat / samples,
-            region * disagree / samples,
-            region * overlap / samples)
+    return DiamondVolumes(
+        curved=region * in_curved / samples,
+        flat=region * in_flat / samples,
+        disagree=region * disagree / samples,
+        intersect=region * overlap / samples,
+        quantum=region / samples)
 
 
 def sprinklings_needed(delta_abs: float, sd_per_sprinkling: float,
@@ -470,8 +503,9 @@ def probe_point(label: str, w: float, du: float, dv: float,
     p, q = fattest_axis_diamond(curved)
     delta = axis_volume_ratio(w * slab.du) - 1.0
 
-    v_curved, v_flat, v_dis, v_int = diamond_volumes_mc(
-        curved, flat, p, q, mc_samples, rng)
+    vols = diamond_volumes_mc(curved, flat, p, q, mc_samples, rng)
+    v_curved, v_flat = vols.curved, vols.flat
+    v_dis, v_int = vols.disagree, vols.intersect
     lam = rho * v_curved
     lam_flat = rho * v_flat
     # marginal: relative shift delta on a Poisson(lam) count
@@ -491,9 +525,19 @@ def probe_point(label: str, w: float, du: float, dv: float,
         f"{v_dis / v_curved} -- |V_A - V_0| <= V_dis is an identity, so "
         "one of the two is being computed wrongly")
     signal_abs = rho * v_flat * delta
-    n_detect = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis))
-    n_detect_be = sprinklings_needed(signal_abs, math.sqrt(rho * v_dis),
-                                     z_beta=0.0)
+    # R2.1: a zero-hit V_dis is a bound, not a value, and feeding the
+    # point estimate 0 into the sd made the sizing return 0 -- a
+    # zero-noise instrument created by finite MC resolution. The sd
+    # uses the 95% upper bound (identical to the point estimate
+    # wherever hits dominate the quantum), so the sizing is an upper
+    # bound on n; the floor uses the smallest V_dis the analytic
+    # structure allows, |V_A - V_0| = delta V_0, giving the bracket
+    # the results table reports when unresolved.
+    sd_ucb = math.sqrt(rho * vols.disagree_ucb)
+    sd_floor = math.sqrt(rho * max(v_dis, delta * v_flat))
+    n_detect = sprinklings_needed(signal_abs, sd_ucb)
+    n_detect_floor = sprinklings_needed(signal_abs, sd_floor)
+    n_detect_be = sprinklings_needed(signal_abs, sd_ucb, z_beta=0.0)
     # P2's preregistered residual Z = N_A - r N_0, r predicted:
     # E[Z] = 0 under the prediction, so there is nothing to detect --
     # sd_z sizes the PRECISION of the verification. After n
@@ -543,8 +587,11 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "lam": lam, "lam_flat": lam_flat,
         "v_curved": v_curved, "v_flat": v_flat, "v_dis": v_dis,
         "v_int": v_int, "sd_z": sd_z,
+        "v_dis_resolved": vols.disagree_resolved,
+        "v_dis_quantum": vols.quantum,
         "n_marginal": n_marginal, "n_marginal_be": n_marg_be,
         "n_detect": n_detect, "n_detect_be": n_detect_be,
+        "n_detect_floor": n_detect_floor,
         "ambiguous_fraction": float(np.mean(amb_fracs)),
         "escalations": escalations,
         "escalations_flat": escalations_flat,
@@ -578,10 +625,19 @@ def main(seed: int = 20260808) -> None:
           f"{'V_dis/V_A':>9} {'n90_marg':>9} {'n90_detect':>10} "
           f"{'sd_Z':>8}")
     for r in rows:
+        detect = (f"{r['n_detect']:10.3g}" if r["v_dis_resolved"]
+                  else f"<={r['n_detect']:8.2g}")
         print(f"{r['label']:>12} {r['a']:4.1f} {r['delta']:9.2e} "
               f"{r['lam']:8.2f} {r['v_dis'] / r['v_curved']:9.4f} "
-              f"{r['n_marginal']:9.3g} {r['n_detect']:10.3g} "
+              f"{r['n_marginal']:9.3g} {detect:>10} "
               f"{r['sd_z']:8.3f}")
+    for r in rows:
+        if not r["v_dis_resolved"]:
+            print(f"  {r['label']}: V_dis unresolved at this MC size "
+                  f"(0 hits, quantum {r['v_dis_quantum']:.2e}); n90 is "
+                  f"the bracket [{r['n_detect_floor']:.2g}, "
+                  f"{r['n_detect']:.2g}] from the analytic floor "
+                  f"delta*V_0 and the rule-of-three bound")
 
     print("\n== order-invariant candidate vs coordinate guard "
           "(PAIR level, mean over sprinklings; R1.3) ==")

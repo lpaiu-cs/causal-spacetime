@@ -82,8 +82,9 @@ def test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume():
     exact = math.pi * slab.du ** 2 * dv_win ** 2 / 6.0
 
     rng = np.random.default_rng(7)
-    v_curved, v_flat, v_dis, v_int = probe.diamond_volumes_mc(
-        curved, flat, p, q, 120_000, rng)
+    vols = probe.diamond_volumes_mc(curved, flat, p, q, 120_000, rng)
+    v_curved, v_flat = vols.curved, vols.flat
+    v_dis, v_int = vols.disagree, vols.intersect
 
     # binomial MC error: sd ~ sqrt(V (R - V)) / sqrt(n), R the region
     region = slab.du * slab.dv * slab.dx * slab.dy
@@ -96,6 +97,38 @@ def test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume():
     # exact per-sample, so exact for the estimates too
     assert v_curved + v_flat == pytest.approx(v_dis + 2.0 * v_int,
                                               rel=1e-12)
+    # resolution is part of the return: every estimate is a count of
+    # quanta, and here the disagreement was actually sampled
+    region = slab.du * slab.dv * slab.dx * slab.dy
+    assert vols.quantum == pytest.approx(region / 120_000)
+    assert vols.disagree_resolved
+    assert vols.disagree_ucb == vols.disagree
+
+
+def test_a_zero_hit_disagreement_is_a_bound_and_never_a_zero_sd():
+    """The case, review R2.1: at `slice-a0.3` the 200k MC sample saw
+    zero disagreeing points, the point estimate 0 flowed into
+    `sqrt(rho * v_dis)`, and the detection sizing returned 0 -- a
+    zero-noise instrument manufactured by finite MC resolution, while
+    the analytic `delta > 0` guarantees `V_dis > 0`. The estimator now
+    carries its quantum: a zero count means `<= 3` quanta at 95%
+    (rule of three), the sizing uses that bound, and the row is
+    flagged unresolved with a floor from `|V_A - V_0| = delta V_0`.
+    """
+
+    monkey = pytest.MonkeyPatch()
+    try:
+        monkey.setattr(probe, "TARGET_N", 60)
+        row = probe.probe_point("zero-hit", 1.0, 0.3, 0.2, 6.0, 6.0,
+                                seed=4, sprinklings=2, mc_samples=4_000)
+    finally:
+        monkey.undo()
+    assert not row["v_dis_resolved"], (
+        "the fixture resolved V_dis; shrink mc_samples so the zero-hit "
+        "path is exercised")
+    assert row["n_detect"] > 0.0 and math.isfinite(row["n_detect"])
+    assert row["n_detect_floor"] > 0.0
+    assert row["n_detect"] >= row["n_detect_floor"]
 
 
 def test_element_eligibility_factorizes_exactly_as_the_probe_assumes():
@@ -247,6 +280,7 @@ def test_probe_point_holds_its_own_consistency_checks(monkeypatch):
         probe.axis_volume_ratio(1.0) - 1.0)
     assert 0.0 < row["lam"] < 80.0
     assert math.isfinite(row["n_detect"]) and row["n_detect"] > 0.0
+    assert row["n_detect"] >= row["n_detect_floor"] > 0.0
     # Var(Z) with the predicted r must sit near rho*V_dis -- they
     # differ at O(delta) -- and never below the parallelogram floor
     assert row["sd_z"] ** 2 == pytest.approx(

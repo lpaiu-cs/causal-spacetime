@@ -65,8 +65,8 @@ different questions (review R1.1):**
 
 | point | `a` | δ = R−1 | λ_A | V_dis/V_A | n90 marginal | n90 detect | sd_Z |
 |---|---|---|---|---|---|---|---|
-| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | ~0 | 7.1e10 | — | 0.000 |
-| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 0.012 | 1.5e8 | 1.8e6 | 0.055 |
+| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | unresolved | 7.1e10 | [2.3e6, 2.2e9]¹ | ~0¹ |
+| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 0.012² | 1.5e8 | 2.7e6² | 0.055 |
 | slice-a1.0 | 1.0 | 4.0e-3 | 0.42 | 0.050 | 1.6e6 | 7.6e4 | 0.145 |
 | aniso-a1.0 | 1.0 | 4.0e-3 | 5.80 | 0.037 | 1.1e5 | 4.2e3 | 0.463 |
 | roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | 0.002 | 2.0e10 | 3.5e7 | 0.150 |
@@ -77,6 +77,19 @@ different questions (review R1.1):**
 the volume where the two arms' predicates disagree; `V_∩` their
 overlap — all from shared-sample MC, and the partition
 `V_A + V_0 = V_dis + 2V_∩` holds exactly per sample (test-pinned).
+
+¹ **A zero-hit MC count is a bound, never a value (review R2.1):**
+at `slice-a0.3` the 200k samples saw no disagreeing point, and the
+analytic `δ > 0` guarantees `V_dis > 0`, so the row reports the
+bracket from the analytic floor `|V_A − V_0| = δV_0` (best case,
+n = 2.3e6) to the rule-of-three 95% bound `3 · region/samples`
+(worst case, n = 2.2e9). Dead either way. The same resolution limit
+makes that row's `sd_Z` a floor, not an estimate.
+² `slice-a0.6` resolved only ~2 disagreeing samples; its sizing uses
+`max(point, rule-of-three)` and is conservative accordingly. The
+estimator now returns its quantum (`region/samples`) alongside every
+estimate, and the sizing consumes the bound, not the point
+(test-pinned on a forced zero-hit run).
 Worked example at `edge-a2.4`: `sd_Z = 0.385` per sprinkling and
 `ρV_0 ≈ 0.32`, so 100 sprinklings verify the ratio to
 `±0.12` (1σ) against a predicted shift of `0.18` — P2's tolerance
@@ -95,7 +108,13 @@ an external-anchor diamond is O(N) per anchor, not O(N²), so raising
 **The split that matters downstream:**
 
 - **External-anchor Class C (P2's volume check, anchors fixed and not
-  counted, per the approval condition): FEASIBLE**, at large `a`.
+  counted, per the approval condition):** what this probe establishes
+  is that the geometry is ADMISSIBLE at large `a` and the predicted
+  shift is DETECTABLE there (~4e2 sprinklings at `edge-a2.4`), and
+  that P2's validation precision is quantified by `sd_Z`
+  (±0.12 on the ratio per 100 sprinklings at `edge-a2.4`).
+  **P2 feasibility itself is conditional on the tolerance P2 has not
+  yet chosen** — this probe cannot pre-decide it (review R2.2).
 - **Sprinkled-pair Class C (§5 items 2, 3b — chain vectors, MM on
   sprinkled intervals): starved exactly where the effect lives.**
   At `a ≥ 2` the run saw 0.0 eligible pairs per sprinkling; the
@@ -158,7 +177,8 @@ sprinkled ones; `ambiguous_fraction` at these densities is 0 and
   from normal; the n90 arithmetic is aggregate-Poisson and holds only
   summed over hundreds of sprinklings. Order-of-magnitude, not sizing.
 - MC error at `edge-a2.4`: ~250 accepted samples for `V_A` (±6%),
-  ~85 for `V_dis` (±11%); n90 there is ±25%-ish.
+  ~85 for `V_dis` (±11%); n90 there is ±25%-ish. Rows with fewer
+  hits carry their own flags (footnotes 1–2).
 - One seed, 24 sprinklings per point for the fractions; the
   eligibility numbers have ~binomial error, visible in the f_vol vs
   f_elem gaps.
@@ -188,3 +208,12 @@ number as P2 feasibility (different estimands — P2's `Z` has
 ambiguity census read only the curved arm where §5.1 is defined over
 both; and the candidate comparison was reported at element level
 where §8 P1 asks for pair admissions, which compound.
+
+Round R2 corrected two follow-ons: a zero-hit MC estimate of `V_dis`
+flowed into the detection sd as an exact zero, manufacturing a
+zero-noise instrument (footnote 1 — the estimator now returns its
+quantum and the sizing consumes the bound); and the downstream
+conclusion "external-anchor Class C: FEASIBLE" restated the estimand
+conflation R1.1 had just removed — narrowed to what the probe
+establishes: admissible, detectable, precision quantified, tolerance
+P2's own.
