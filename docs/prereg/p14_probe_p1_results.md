@@ -84,24 +84,29 @@ answering three different questions (review R1.1, R6.1, R7.1):**
 
 | point | `a` | δ = R−1 | λ_A | V_dis hits | n90 unpaired | n90 detect | sd_Z |
 |---|---|---|---|---|---|---|---|
-| slice-a0.3 | 0.3 | 3.2e-5 | 0.12 | 0¹ | 8.7e10 | [2.8e6, 4.2e9]¹ | [0.002, 0.074]¹ |
-| slice-a0.6 | 0.6 | 5.2e-4 | 0.23 | 2¹ | 1.7e8 | [2.7e5, 7.9e6]¹ | [0.019, 0.104]¹ |
-| slice-a1.0 | 1.0 | 4.0e-3 | 0.39 | 14 | 1.7e6 | 9.2e4 | 0.145 |
+| slice-a0.3 | 0.3 | 3.2e-5 | 0.116 | 0¹ | 8.7e10 | [2.8e6, 4.2e9]¹ | [0.002, 0.074]¹ |
+| slice-a0.6 | 0.6 | 5.1e-4 | 0.233 | 2¹ | 1.7e8 | [2.7e5, 7.9e6]¹ | [0.019, 0.104]¹ |
+| slice-a1.0 | 1.0 | 4.0e-3 | 0.389 | 14 | 1.7e6 | 9.2e4 | 0.145 |
 | aniso-a1.0 | 1.0 | 4.0e-3 | 5.84 | 142 | 1.1e5 | 4.1e3 | 0.462 |
-| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | 15 | 2.0e10 | 3.5e7 | 0.150 |
-| high-a2.0 | 2.0 | 7.3e-2 | 0.08 | 5¹ | 2.9e4 | [2.0e3, 6.9e3]¹ | [0.074, 0.137]¹ |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | 84 | 1.1e3 | **399** | 0.386 |
+| roomy-a0.2 | 0.2 | 6.3e-6 | 12.9 | 15 | 2.0e10 | 3.5e7 | 0.150 |
+| high-a2.0 | 2.0 | 7.3e-2 | 0.0757 | 5¹ | 2.9e4 | [2.0e3, 6.9e3]¹ | [0.074, 0.137]¹ |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.375 | 84 | 1.1e3 | 399 | 0.386 |
 
-Every number in this table mirrors the machine-readable artifact
-`p14_probe_p1_sizing.json` (same directory), which the run itself
-writes; the artifact, not this table, is what downstream sizing (§8
-P2) reads. **Erratum (P2 design review):** the hits column originally
-read `~250 / ~600 / ~340 / ~85` for the four resolved rows — numbers
-that do not reproduce from the merged code at the published seed
-(14 / 142 / 15 / 84 do, verified independently) and that trace to no
-current quantity; the sizing columns were always computed from the
-true counts (`sd_Z = 0.145` is exactly the 14-hit value), so only
-this column and the two prose phrases quoting it change.
+This table is RENDERED from the machine-readable artifact
+`p14_probe_p1_sizing.json` (same directory) by `feasibility_table` in
+the probe script, and a test asserts the doc contains that rendering
+verbatim — every cell, not only the corrected column, is pinned to
+the computation. The artifact itself is reproduced field-by-field
+from the recorded seed by another test, and it, not this table, is
+what downstream sizing (§8 P2) reads. **Erratum (P2 design review):**
+the hits column originally read `~250 / ~600 / ~340 / ~85` for the
+four resolved rows — numbers that do not reproduce from the merged
+code at the published seed (14 / 142 / 15 / 84 do, verified
+independently) and that trace to no current quantity; the sizing
+columns were always computed from the true counts (`sd_Z = 0.145` is
+exactly the 14-hit value), so only this column and the two prose
+phrases quoting it changed (display precision of some cells shifted
+in the move to rendered output, e.g. `0.12` → `0.116`).
 
 The resolved rows report the point-estimate sizing (review R5.2); the
 unresolved rows report a bracket. `n90 detect` and `sd_Z` share one

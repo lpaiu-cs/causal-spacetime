@@ -554,49 +554,45 @@ SIZING_JSON = (Path(__file__).resolve().parents[1]
                / "docs" / "prereg" / "p14_probe_p1_sizing.json")
 
 
-def test_the_sizing_artifact_reproduces_from_its_recorded_seed():
-    """The case, the P2 design review: the results doc's hits column
-    carried numbers (~250/~600/~340) that do not reproduce from the
-    merged code at the published seed -- hand-transcribed from some
-    earlier draft state. The fix is an artifact the RUN writes and the
-    doc mirrors. This pins the artifact's MC-derived fields to a fresh
-    recomputation at the recorded seed: same stream position (the MC is
-    the rng's first consumer), so exact equality, not tolerance.
+def test_the_sizing_artifact_reproduces_field_for_field():
+    """The case, PR #41 review R1: pinning only four MC fields of the
+    committed artifact leaves `TARGET_N`, the quadrature, every derived
+    sizing number, and any stale hand-edit of the JSON free to drift
+    while the tests stay green -- the same class the erratum closed for
+    the Markdown table, moved into JSON. So the whole payload is
+    regenerated from the recorded seed through `sizing_artifact` -- the
+    SAME function that writes the file -- and compared field by field:
+    ints, bools, and strings exactly; floats at 1e-12. A change to any
+    input (`TARGET_N`, `axis_volume_ratio`, the guard, the MC) or any
+    edit to the committed file fails this test.
     """
 
     import json
 
-    art = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
-    assert art["seed"] == 20260808
-    assert len(art["points"]) == len(probe.OPERATING_POINTS)
-    for spec, rec in zip(probe.OPERATING_POINTS, art["points"],
-                         strict=True):
-        label, w, du, dv, dx, dy = spec
-        assert rec["label"] == label
-        slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
-        curved, flat = arms(slab, w)
-        p, q = probe.fattest_axis_diamond(curved)
-        rng = np.random.default_rng(art["seed"])
-        vols = probe.diamond_volumes_mc(curved, flat, p, q,
-                                        art["mc_samples"], rng)
-        assert rec["v_dis_hits"] == vols.disagree_hits, label
-        assert rec["v_dis"] == pytest.approx(vols.disagree, rel=1e-12)
-        assert rec["v_curved"] == pytest.approx(vols.curved, rel=1e-12)
-        # the recorded resolution flag is the R9.3/R9.4 gate applied to
-        # these exact volumes: CP-resolved AND point above the analytic
-        # floor delta*V_0 (v0 from the closed form, as probe_point does)
-        dv_win = float(p[1]) - float(q[1])
-        v0 = math.pi * du ** 2 * dv_win ** 2 / 6.0
-        floor = rec["delta"] * v0
-        assert rec["v_dis_resolved"] == bool(
-            vols.disagree_resolved and vols.disagree >= floor), label
+    committed = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
+    fresh = probe.sizing_artifact(committed["seed"],
+                                  committed["mc_samples"])
+    assert fresh["target_n"] == committed["target_n"]
+    assert fresh["script"] == committed["script"]
+    assert len(fresh["points"]) == len(committed["points"])
+    for f_rec, c_rec in zip(fresh["points"], committed["points"],
+                            strict=True):
+        assert set(f_rec) == set(c_rec), c_rec.get("label")
+        for k, cv in c_rec.items():
+            fv = f_rec[k]
+            if isinstance(cv, (str, bool)) or isinstance(cv, int):
+                assert fv == cv, f"{c_rec['label']}.{k}"
+            else:
+                assert fv == pytest.approx(cv, rel=1e-12), (
+                    f"{c_rec['label']}.{k}")
 
 
-def test_the_results_doc_hits_column_mirrors_the_artifact():
-    """The doc's feasibility table is a MIRROR of the sizing artifact,
-    not a source: every row's `V_dis hits` cell must equal the
-    artifact's count exactly (the erratum this guards against was a
-    hand-transcribed column drifting from the computation).
+def test_the_results_doc_embeds_the_rendered_feasibility_table():
+    """The doc's feasibility table is RENDERED from the artifact by
+    `feasibility_table` and embedded verbatim -- so every cell of every
+    column is pinned to the computation, not only the hits column the
+    erratum corrected (PR #41 review R1: validating one column still
+    let the other six drift).
     """
 
     import json
@@ -604,17 +600,4 @@ def test_the_results_doc_hits_column_mirrors_the_artifact():
     art = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
     doc = (SIZING_JSON.parent / "p14_probe_p1_results.md").read_text(
         encoding="utf-8")
-    # anchor on the FEASIBILITY table's header -- the eligibility table
-    # also has one row per point, with different columns
-    lines = doc.splitlines()
-    starts = [i for i, ln in enumerate(lines)
-              if ln.startswith("| point |") and "V_dis hits" in ln]
-    assert len(starts) == 1, "feasibility table header not unique"
-    table = {}
-    for ln in lines[starts[0] + 2:]:
-        if not ln.startswith("|"):
-            break
-        cells = [c.strip() for c in ln.split("|")]
-        table[cells[1]] = cells[5].replace("¹", "")  # strip footnote
-    for rec in art["points"]:
-        assert table[rec["label"]] == str(rec["v_dis_hits"]), rec["label"]
+    assert probe.feasibility_table(art) in doc

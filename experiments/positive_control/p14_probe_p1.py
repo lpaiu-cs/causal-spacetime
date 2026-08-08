@@ -619,18 +619,25 @@ K_SWEEP = tuple(range(1, 21))
 K_DISPLAY = (2, 4, 8, 16)
 
 
-def probe_point(label: str, w: float, du: float, dv: float,
-                dx: float, dy: float, *, seed: int,
-                sprinklings: int = 24,
-                mc_samples: int = 200_000) -> dict:
-    slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
-    curved, flat = arms(slab, w)
-    assert slab.du < conjugate_du(w)  # §4.3, structural but stated
-    v_box = slab.coordinate_volume
-    rho = TARGET_N / v_box
-    rng = np.random.default_rng(seed)
+def anchor_sizing(label: str, curved: PlaneWaveGeometry,
+                  flat: PlaneWaveGeometry, rho: float,
+                  mc_samples: int, rng: np.random.Generator) -> dict:
+    """Every sizing quantity for one operating point's anchor diamond.
 
-    frac_analytic = eligible_volume_fraction(curved)
+    This is the WHOLE downstream sizing payload (§8 P2 reads it via
+    the committed JSON artifact): analytic quadrature + the seeded MC
+    volumes, no sprinkling campaign involved -- so the artifact is
+    reproducible from the current code in seconds, and a test pins
+    every field of it (PR #41 review: pinning four MC fields left
+    `TARGET_N`, the quadrature, and every derived sizing number free
+    to drift while the tests stayed green). `probe_point` consumes the
+    same function, so the campaign and the artifact cannot disagree.
+    The rng's FIRST consumer here is `diamond_volumes_mc`, which is
+    what makes seed-exact reproduction possible.
+    """
+
+    slab = curved.slab
+    w = curved.w
     p, q = fattest_axis_diamond(curved)
     delta = axis_volume_ratio(w * slab.du) - 1.0
 
@@ -765,6 +772,40 @@ def probe_point(label: str, w: float, du: float, dv: float,
     sd_z_floor = math.sqrt(r_pred * rho * v_dis_floor)
     sd_z_ucb = math.sqrt(r_pred * rho * v_dis_ucb)
 
+    return {
+        "label": label, "w": w, "a": w * slab.du, "rho": rho,
+        "delta": delta,
+        "lam": lam, "lam_flat": lam_flat,
+        "v_curved": v_curved, "v_flat": v_flat,
+        "v_dis": v_dis, "v_int": v_int,
+        "v_dis_hits": vols.disagree_hits,
+        "v_dis_quantum": vols.quantum,
+        "v_dis_resolved": resolved,
+        "v_dis_floor": v_dis_floor, "v_dis_ucb": v_dis_ucb,
+        "sd_z": sd_z, "sd_z_floor": sd_z_floor, "sd_z_ucb": sd_z_ucb,
+        "n_unpaired": n_unpaired, "n_unpaired_be": n_unpaired_be,
+        "n_detect": n_detect, "n_detect_be": n_detect_be,
+        "n_detect_floor": n_detect_floor, "n_detect_ucb": n_detect_ucb,
+    }
+
+
+def probe_point(label: str, w: float, du: float, dv: float,
+                dx: float, dy: float, *, seed: int,
+                sprinklings: int = 24,
+                mc_samples: int = 200_000) -> dict:
+    slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
+    curved, flat = arms(slab, w)
+    assert slab.du < conjugate_du(w)  # §4.3, structural but stated
+    v_box = slab.coordinate_volume
+    rho = TARGET_N / v_box
+    rng = np.random.default_rng(seed)
+
+    frac_analytic = eligible_volume_fraction(curved)
+    # The sizing payload comes from the SAME function that writes the
+    # committed artifact, at the same rng stream position -- the
+    # campaign and the artifact cannot disagree (PR #41 review).
+    sizing = anchor_sizing(label, curved, flat, rho, mc_samples, rng)
+
     elem_fracs, pair_fracs, amb_fracs = [], [], []
     per_pair_us = []
     escalations = escalations_flat = 0
@@ -795,22 +836,11 @@ def probe_point(label: str, w: float, du: float, dv: float,
                                    guard_sorted))
 
     return {
-        "label": label, "w": w, "a": w * du, "slab": slab, "rho": rho,
+        **sizing,
+        "slab": slab,
         "frac_analytic": frac_analytic,
         "elem_frac": float(np.mean(elem_fracs)),
         "pair_frac": float(np.mean(pair_fracs)),
-        "delta": delta,
-        "lam": lam, "lam_flat": lam_flat,
-        "v_curved": v_curved, "v_flat": v_flat, "v_dis": v_dis,
-        "v_int": v_int, "sd_z": sd_z,
-        "sd_z_floor": sd_z_floor, "sd_z_ucb": sd_z_ucb,
-        "v_dis_resolved": resolved,
-        "v_dis_quantum": vols.quantum,
-        "v_dis_hits": vols.disagree_hits,
-        "n_unpaired": n_unpaired, "n_unpaired_be": n_unpaired_be,
-        "n_detect": n_detect, "n_detect_be": n_detect_be,
-        "n_detect_floor": n_detect_floor, "n_detect_ucb": n_detect_ucb,
-        "v_dis_ucb": v_dis_ucb, "v_dis_floor": v_dis_floor,
         "ambiguous_fraction": float(np.mean(amb_fracs)),
         "escalations": escalations,
         "escalations_flat": escalations_flat,
@@ -919,45 +949,36 @@ def main(seed: int = 20260808) -> None:
           f"escalated {escalated_us:.1f} us "
           f"({escalated_us / generic_us:.0f}x)")
 
-    path = write_sizing_json(rows, seed)
+    path = write_sizing_json(sizing_artifact(seed))
     print(f"\nsizing artifact written: {path}")
 
 
-#: Row fields exported to the machine-readable sizing artifact --
-#: everything a downstream consumer (P2's sizing) reads, and nothing
-#: display-only. Floats stay floats; counts stay ints; flags stay bools.
-_SIZING_FIELDS = (
-    "label", "w", "a", "rho", "delta",
-    "lam", "lam_flat",
-    "v_curved", "v_flat", "v_dis", "v_int",
-    "v_dis_hits", "v_dis_quantum", "v_dis_resolved",
-    "v_dis_floor", "v_dis_ucb",
-    "sd_z", "sd_z_floor", "sd_z_ucb",
-    "n_unpaired", "n_unpaired_be",
-    "n_detect", "n_detect_be", "n_detect_floor", "n_detect_ucb",
-    "frac_analytic", "elem_frac", "pair_frac",
-    "ambiguous_fraction", "escalations", "escalations_flat",
-    "sprinklings",
-)
-
-
-def write_sizing_json(rows: list[dict], seed: int) -> Path:
-    """Machine-readable sizing artifact, committed next to the results
-    doc. The doc's tables MIRROR this file rather than being the source
-    of truth -- the hits-column erratum happened exactly because the
-    numbers were transcribed by hand (P2 design review)."""
+def sizing_artifact(seed: int, mc_samples: int = 200_000) -> dict:
+    """The COMPLETE machine-readable sizing payload, recomputed from
+    the current code at `seed` -- the one path the committed JSON, the
+    reproduction test, and the doc-table generator all share. No
+    sprinkling campaign: `anchor_sizing`'s rng starts at the same
+    stream position `probe_point` gives it, so the values are
+    seed-exact, in seconds (PR #41 review: an artifact only partially
+    pinned lets `TARGET_N`, the quadrature, or a stale hand-edit
+    drift while tests stay green -- the same class the erratum
+    closed for the Markdown table, moved into JSON)."""
 
     out = {
         "script": "experiments/positive_control/p14_probe_p1.py",
         "seed": int(seed),
         "target_n": int(TARGET_N),
-        "mc_samples": 200_000,
+        "mc_samples": int(mc_samples),
         "points": [],
     }
-    for r in rows:
+    for label, w, du, dv, dx, dy in OPERATING_POINTS:
+        slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
+        curved, flat = arms(slab, w)
+        rho = TARGET_N / slab.coordinate_volume
+        rng = np.random.default_rng(seed)
+        sizing = anchor_sizing(label, curved, flat, rho, mc_samples, rng)
         row = {}
-        for k in _SIZING_FIELDS:
-            v = r[k]
+        for k, v in sizing.items():
             if isinstance(v, (str, bool)):
                 row[k] = v
             elif isinstance(v, (int, np.integer)):
@@ -965,13 +986,73 @@ def write_sizing_json(rows: list[dict], seed: int) -> Path:
             else:
                 row[k] = float(v)
         out["points"].append(row)
+    return out
+
+
+def write_sizing_json(art: dict) -> Path:
+    """Serialize the artifact next to the results doc. The doc's
+    feasibility table MIRRORS this file (rendered by
+    `feasibility_table`), never the other way around."""
+
     path = (Path(__file__).resolve().parents[2]
             / "docs" / "prereg" / "p14_probe_p1_sizing.json")
     with open(path, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(out, f, indent=2, sort_keys=True)
+        json.dump(art, f, indent=2, sort_keys=True)
         f.write("\n")
     return path
 
 
+def _sig2(x: float) -> str:
+    """Two-significant-figure scientific notation, `8.7e10` style."""
+
+    mantissa, exp = f"{x:.1e}".split("e")
+    return f"{mantissa}e{int(exp)}"
+
+
+def _fmt_n(x: float) -> str:
+    """Sprinkling counts: plain below 1000, else 2-significant sci."""
+
+    return f"{x:.0f}" if x < 1000.0 else _sig2(x)
+
+
+def feasibility_table(art: dict) -> str:
+    """The results doc's feasibility table, rendered from the artifact.
+
+    The doc embeds this output verbatim and a test asserts containment,
+    so every cell -- not only the hits column the erratum corrected --
+    is pinned to the computation (PR #41 review). Unresolved rows get
+    the footnote mark and bracket cells, same rule as `main`'s console
+    table (R5.2 resolution semantics).
+    """
+
+    lines = [
+        "| point | `a` | δ = R−1 | λ_A | V_dis hits "
+        "| n90 unpaired | n90 detect | sd_Z |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for r in art["points"]:
+        if r["v_dis_resolved"]:
+            hits = str(r["v_dis_hits"])
+            detect = _fmt_n(r["n_detect"])
+            sdz = f"{r['sd_z']:.3f}"
+        else:
+            hits = f"{r['v_dis_hits']}¹"
+            detect = (f"[{_fmt_n(r['n_detect_floor'])}, "
+                      f"{_fmt_n(r['n_detect_ucb'])}]¹")
+            sdz = f"[{r['sd_z_floor']:.3f}, {r['sd_z_ucb']:.3f}]¹"
+        lines.append(
+            f"| {r['label']} | {r['a']:.1f} | {_sig2(r['delta'])} "
+            f"| {r['lam']:.3g} | {hits} | {_sig2(r['n_unpaired'])} "
+            f"| {detect} | {sdz} |")
+    return "\n".join(lines)
+
+
 if __name__ == "__main__":
-    main(int(sys.argv[1]) if len(sys.argv) > 1 else 20260808)
+    _seed = int(sys.argv[1]) if len(sys.argv) > 1 and (
+        sys.argv[1] != "--sizing-only") else 20260808
+    if "--sizing-only" in sys.argv:
+        # regenerate the committed artifact without the campaign
+        print(f"sizing artifact written: "
+              f"{write_sizing_json(sizing_artifact(_seed))}")
+    else:
+        main(_seed)
