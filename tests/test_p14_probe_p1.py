@@ -102,7 +102,38 @@ def test_the_mc_volume_estimator_matches_the_flat_alexandrov_volume():
     region = slab.du * slab.dv * slab.dx * slab.dy
     assert vols.quantum == pytest.approx(region / 120_000)
     assert vols.disagree_resolved
-    assert vols.disagree_ucb == vols.disagree
+    # R3.1: the UCB is the Poisson limit for the observed count, which
+    # is ABOVE the point estimate even here -- never equal to it. It
+    # stays within the reporting factor, which is what "resolved" means.
+    assert vols.disagree_ucb > vols.disagree
+    assert vols.disagree_ucb <= probe._MC_CI_FACTOR * vols.disagree
+    assert vols.disagree_hits > 0
+
+
+def test_the_poisson_upper_limit_is_exact_not_rule_of_three():
+    """The case, review R3.1: the first UCB was `max(point, 3q)`, which
+    is the 95% bound only at zero hits. At `k` hits the one-sided 95%
+    Poisson upper limit is strictly larger than `k` and larger than
+    `3` for `k >= 3`, so the old form under-reported the bound and
+    called a one-hit estimate resolved. These reference values are the
+    standard exact Poisson upper limits.
+    """
+
+    assert probe._poisson_upper_95(0) == pytest.approx(2.996, abs=1e-3)
+    assert probe._poisson_upper_95(1) == pytest.approx(4.744, abs=1e-3)
+    assert probe._poisson_upper_95(2) == pytest.approx(6.296, abs=1e-3)
+    assert probe._poisson_upper_95(10) == pytest.approx(16.962, abs=1e-3)
+    # strictly above the count, and above the old rule-of-three past k=3
+    for k in range(0, 30):
+        assert probe._poisson_upper_95(k) > k
+        if k >= 3:
+            assert probe._poisson_upper_95(k) > 3.0
+    # a single hit is NOT resolved -- its bound is ~4.7x the point
+    one = probe.DiamondVolumes(curved=1.0, flat=1.0, disagree=1.0,
+                               intersect=0.0, quantum=1.0,
+                               disagree_hits=1)
+    assert not one.disagree_resolved
+    assert one.disagree_ucb == pytest.approx(4.744, abs=1e-3)
 
 
 def test_a_zero_hit_disagreement_is_a_bound_and_never_a_zero_sd():
@@ -129,6 +160,8 @@ def test_a_zero_hit_disagreement_is_a_bound_and_never_a_zero_sd():
     assert row["n_detect"] > 0.0 and math.isfinite(row["n_detect"])
     assert row["n_detect_floor"] > 0.0
     assert row["n_detect"] >= row["n_detect_floor"]
+    # the unresolved sizing rests on the rule-of-three quantum, not 0
+    assert row["v_dis_quantum"] > 0.0
 
 
 def test_element_eligibility_factorizes_exactly_as_the_probe_assumes():
@@ -221,6 +254,13 @@ def test_pair_level_admissions_match_materialized_pair_masks():
             (cand_pairs & ~guard_pairs).sum()), trial
         assert a.pair_guard_only == int(
             (~cand_pairs & guard_pairs).sum()), trial
+        # both exclusive directions are reported, not just candidate
+        # (R3.2): an empty candidate has zero candidate-only and large
+        # guard-only, which the two together distinguish
+        empty = probe.agreement(np.zeros(60, bool), guard)
+        assert empty.pair_candidate_only == 0
+        assert empty.pair_guard_only == int(
+            np.triu(np.outer(guard, guard), 1).sum())
         disagree = a.pair_candidate_only + a.pair_guard_only
         assert a.pair_rate == pytest.approx(1.0 - disagree / a.pair_total)
 

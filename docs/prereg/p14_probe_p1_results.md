@@ -63,33 +63,34 @@ different questions (review R1.1):**
   `sd_Z / (ρV_0 √n)`. P2 sizes its own tolerance against that; this
   probe only reports the number.
 
-| point | `a` | δ = R−1 | λ_A | V_dis/V_A | n90 marginal | n90 detect | sd_Z |
+| point | `a` | δ = R−1 | λ_A | V_dis hits | n90 marginal | n90 detect | sd_Z |
 |---|---|---|---|---|---|---|---|
-| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | unresolved | 7.1e10 | [2.3e6, 2.2e9]¹ | ~0¹ |
-| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 0.012² | 1.5e8 | 2.7e6² | 0.055 |
-| slice-a1.0 | 1.0 | 4.0e-3 | 0.42 | 0.050 | 1.6e6 | 7.6e4 | 0.145 |
-| aniso-a1.0 | 1.0 | 4.0e-3 | 5.80 | 0.037 | 1.1e5 | 4.2e3 | 0.463 |
-| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | 0.002 | 2.0e10 | 3.5e7 | 0.150 |
-| high-a2.0 | 2.0 | 7.3e-2 | 0.07 | 0.104 | 2.7e4 | 3.2e3 | 0.090 |
-| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | 0.329 | 834 | **386** | 0.385 |
+| slice-a0.3 | 0.3 | 3.2e-5 | 0.14 | 0¹ | 7.1e10 | [2.3e6, 2.2e9]¹ | ~0¹ |
+| slice-a0.6 | 0.6 | 5.2e-4 | 0.26 | 2¹ | 1.5e8 | [1.8e6, 5.6e6]¹ | 0.055 |
+| slice-a1.0 | 1.0 | 4.0e-3 | 0.42 | ~250 | 1.6e6 | 1.2e5 | 0.145 |
+| aniso-a1.0 | 1.0 | 4.0e-3 | 5.80 | ~600 | 1.1e5 | 4.8e3 | 0.463 |
+| roomy-a0.2 | 0.2 | 6.4e-6 | 12.9 | ~340 | 2.0e10 | 5.4e7 | 0.150 |
+| high-a2.0 | 2.0 | 7.3e-2 | 0.07 | 5¹ | 2.7e4 | [3.2e3, 6.8e3]¹ | 0.090 |
+| edge-a2.4 | 2.4 | 1.8e-1 | 0.38 | ~85 | 834 | **463** | 0.385 |
 
 `λ_A` is the expected count in the diamond at `N = 300`; `V_dis` is
 the volume where the two arms' predicates disagree; `V_∩` their
 overlap — all from shared-sample MC, and the partition
 `V_A + V_0 = V_dis + 2V_∩` holds exactly per sample (test-pinned).
 
-¹ **A zero-hit MC count is a bound, never a value (review R2.1):**
-at `slice-a0.3` the 200k samples saw no disagreeing point, and the
-analytic `δ > 0` guarantees `V_dis > 0`, so the row reports the
-bracket from the analytic floor `|V_A − V_0| = δV_0` (best case,
-n = 2.3e6) to the rule-of-three 95% bound `3 · region/samples`
-(worst case, n = 2.2e9). Dead either way. The same resolution limit
-makes that row's `sd_Z` a floor, not an estimate.
-² `slice-a0.6` resolved only ~2 disagreeing samples; its sizing uses
-`max(point, rule-of-three)` and is conservative accordingly. The
-estimator now returns its quantum (`region/samples`) alongside every
-estimate, and the sizing consumes the bound, not the point
-(test-pinned on a forced zero-hit run).
+¹ **A low MC count is a bound, never a value (review R2.1, R3.1):**
+three rows have too few disagreeing samples for a point estimate. The
+`n90 detect` there is a bracket, from the analytic floor
+`|V_A − V_0| = δV_0` (best case) to the **exact one-sided 95% Poisson
+upper limit** for the observed count times the quantum (worst case) —
+`2.996 q` at 0 hits (the rule of three), `6.30 q` at 2, `10.5 q` at 5.
+The earlier `max(point, 3q)` under-stated this for every positive
+count and called a one-hit row resolved; the estimator now stores the
+raw count and computes the real limit (`_poisson_upper_95`,
+test-pinned against the standard values). All three unresolved rows
+are dead either way. `slice-a0.3`'s `sd_Z` is likewise a floor, not
+an estimate. The resolved rows carry hundreds of hits and their
+point estimates stand.
 Worked example at `edge-a2.4`: `sd_Z = 0.385` per sprinkling and
 `ρV_0 ≈ 0.32`, so 100 sprinklings verify the ratio to
 `±0.12` (1σ) against a predicted shift of `0.18` — P2's tolerance
@@ -132,24 +133,41 @@ materialized pair masks). Pair-level agreement / candidate-only pair
 fraction of `C(N,2)` (the dangerous direction — admitted pairs whose
 diamonds carry no containment certificate):
 
-| point | k=1 | k=2 | k=4 | k=8 | k=16 |
-|---|---|---|---|---|---|
-| slice-a0.3 | 0.99/0.000 | 0.99/0.000 | 0.99/0.000 | 0.99/0.000 | 0.99/0.000 |
-| slice-a1.0 | 0.97/0.027 | 0.99/0.006 | 1.00/0.000 | 1.00/0.000 | 1.00/0.000 |
-| aniso-a1.0 | 0.78/0.219 | 0.90/0.098 | 0.97/0.029 | 1.00/0.004 | 1.00/0.000 |
-| edge-a2.4 | 0.78/0.220 | 0.90/0.104 | 0.97/0.032 | 1.00/0.003 | 1.00/0.000 |
+Both exclusive directions are reported (review R3.2), as
+agree / candidate-only / guard-only, all as fractions of `C(N,2)`.
+Candidate-only is the dangerous direction (admitted pairs with no
+containment certificate); guard-only is lost coverage — and reporting
+it is what tells an "ideal candidate" (`1.00/0/0`) apart from an
+"empty candidate that rejects everything the guard admits":
 
-The headline agreement is inflated by the "neither-admits" pool; the
-decision number is the exclusive-admission count. At `aniso-a1.0`,
-`k = 4`: candidate-only pairs are 2.9% of `C(N,2)` ≈ **1,300
-unguarded pairs per sprinkling**, against ~26 pairs the guard admits
-at all — the candidate admits ~50× more uncertified pairs than the
-guard admits pairs. Driving that to zero (`k ≥ 16`) leaves the
-candidate admitting essentially nothing. The reason is structural:
+| point | k=2 | k=4 | k=8 | k=16 |
+|---|---|---|---|---|
+| slice-a1.0 | 0.993/0.006/0.001 | 0.999/0.000/0.001 | 0.999/0.000/0.001 | 0.999/0.000/0.001 |
+| aniso-a1.0 | 0.901/0.098/0.001 | 0.970/0.029/0.001 | 0.996/0.004/0.001 | 0.999/0.000/0.001 |
+| edge-a2.4 | 0.896/0.104/0.000 | 0.968/0.032/0.000 | 0.997/0.003/0.000 | 1.000/0.000/0.000 |
+
+**Every integer `k` from 1 to 20 was swept (review R3.3)** — the mask
+is monotone, so an intermediate threshold cannot hide between sampled
+values. For each point, the first `k` that admits **zero**
+candidate-only (unsafe) pairs, and what the candidate still admits
+there:
+
+| point | first safe `k*` | guard-only at `k*` | guarded pairs the candidate keeps |
+|---|---|---|---|
+| slice-a1.0 | 8 | 0.001 | **0.0** |
+| aniso-a1.0 | 19 | 0.001 | **0.0** |
+| roomy-a0.2 | 6 | 0.094 | **0.0** |
+| edge-a2.4 | 17 | 0.000 | **0.0** |
+
+**This is the finding, and it is sharper than "does not reproduce".**
+At every operating point, the smallest `k` that removes the unsafe
+admissions also removes essentially all the useful ones: the candidate
+keeps ~0 guard-admitted pairs at `k*`. There is no intermediate
+threshold that is both safe and non-empty. The reason is structural:
 below/above counts measure interiority along the CAUSAL depth (`u`),
-while the guard's binding conditions are transverse; the proxy cannot
-see the direction that matters. (Element-level, same run: agreement
-0.53–0.98, candidate-only up to 47%.)
+while the guard binds transversally; a `k` high enough to reject the
+transversally-shallow pairs rejects nearly all of them. (Element-level,
+same run: agreement 0.53–0.98, candidate-only up to 47%.)
 
 **Consequence for §7:** the chain vectors do NOT recover pure-poset
 standing from this candidate. The strictly single-poset claim stays on
@@ -217,3 +235,14 @@ conclusion "external-anchor Class C: FEASIBLE" restated the estimand
 conflation R1.1 had just removed — narrowed to what the probe
 establishes: admissible, detectable, precision quantified, tolerance
 P2's own.
+
+Round R3 corrected three more: the `V_dis` upper bound was
+`max(point, 3q)`, which is the 95% limit only at zero hits — replaced
+by the exact one-sided Poisson limit for the observed count (`6.30 q`
+at 2 hits, not `3 q`), which also fixed `disagree_resolved` calling a
+one-hit row resolved; the candidate table omitted the guard-only
+direction §8 P1 asks for, so `1.00/0.000` could not be told from an
+empty candidate — both directions reported now; and the `k` sweep
+skipped `9..15`, so an intermediate safe-and-non-empty threshold had
+not been ruled out — every integer `k ≤ 20` is swept now, and the
+`k*` table shows there is none.

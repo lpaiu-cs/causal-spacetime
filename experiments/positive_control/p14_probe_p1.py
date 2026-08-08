@@ -376,17 +376,62 @@ def _between(geometry: PlaneWaveGeometry, p: np.ndarray, q: np.ndarray,
     return r_v - float(q[1]) >= c2
 
 
+#: Report the point estimate of `V_dis` rather than the bracket once
+#: its 95% CI is within this factor of it -- a reporting choice, not a
+#: threshold on the science (R3.1).
+_MC_CI_FACTOR = 2.0
+
+
+def _poisson_cdf(k: int, lam: float) -> float:
+    """`P(X <= k)` for `X ~ Poisson(lam)`, summed term by term."""
+
+    term = math.exp(-lam)
+    total = term
+    for i in range(1, k + 1):
+        term *= lam / i
+        total += term
+    return total
+
+
+def _poisson_upper_95(hits: int) -> float:
+    """One-sided 95% upper limit on a Poisson mean given `hits` observed.
+
+    The largest `lam` with `P(X <= hits | lam) = 0.05` -- the exact
+    upper limit, of which the rule of three (`~3` at `hits = 0`) is
+    only the special case (R3.1). `k = 2` gives `6.30`, not `3`; every
+    positive count sits below its own 95% limit, so `hits * quantum`
+    is never itself a 95% bound. `P(X <= k | lam)` is decreasing in
+    `lam`, so a bisection finds the crossing.
+    """
+
+    if hits < 0:
+        raise ValueError(f"hits must be non-negative, got {hits}")
+    lo, hi = float(hits), float(hits) + 10.0
+    while _poisson_cdf(hits, hi) > 0.05:
+        hi *= 2.0
+    for _ in range(100):
+        mid = 0.5 * (lo + hi)
+        if _poisson_cdf(hits, mid) > 0.05:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
 @dataclass(frozen=True)
 class DiamondVolumes:
     """Shared-sample MC volume estimates WITH their resolution.
 
     `quantum` is the volume one accepted sample represents
-    (`region / samples`): every field is a count times it, so a field
-    of `0.0` means "no samples landed", which bounds the volume above
-    by ~3 quanta at 95% (rule of three) and never establishes zero --
-    the analytic `delta > 0` guarantees `V_dis >= |V_A - V_0| > 0`
-    (R2.1). Consumers that need a positive-definite quantity read
-    `disagree_resolved` and take the bound, not the point.
+    (`region / samples`), and `disagree_hits` is the raw count behind
+    `disagree = disagree_hits * quantum`. Keeping the count is what
+    lets a consumer form a real confidence bound: a Monte-Carlo count
+    of `k` establishes the one-sided 95% Poisson upper limit
+    `_poisson_upper_95(k) * quantum`, of which the rule of three at
+    `k = 0` is only the endpoint. The analytic `delta > 0` guarantees
+    `V_dis >= |V_A - V_0| > 0`, so the point estimate `0` is never the
+    truth; consumers that need a positive-definite quantity take
+    `disagree_ucb` (R2.1, R3.1).
     """
 
     curved: float
@@ -394,17 +439,27 @@ class DiamondVolumes:
     disagree: float
     intersect: float
     quantum: float
-
-    @property
-    def disagree_resolved(self) -> bool:
-        return self.disagree > 0.0
+    disagree_hits: int
 
     @property
     def disagree_ucb(self) -> float:
-        """95% upper confidence bound on `V_dis` (exact when hits > 0
-        dominate the quantum; the rule-of-three bound when zero)."""
+        """95% upper confidence bound on `V_dis` -- the exact Poisson
+        limit for the observed hit count, not `max(point, 3q)`."""
 
-        return max(self.disagree, 3.0 * self.quantum)
+        return _poisson_upper_95(self.disagree_hits) * self.quantum
+
+    @property
+    def disagree_resolved(self) -> bool:
+        """The point estimate is trustworthy to within `_MC_CI_FACTOR`.
+
+        `hits > 0` alone is not resolution -- a single hit has a 95%
+        upper limit near `4.7 x` its point estimate (R3.1). This holds
+        only once the count is large enough that the bound is close to
+        the point.
+        """
+
+        return (self.disagree > 0.0
+                and self.disagree_ucb <= _MC_CI_FACTOR * self.disagree)
 
 
 def diamond_volumes_mc(
@@ -433,7 +488,7 @@ def diamond_volumes_mc(
     y = rng.uniform(-slab.dy / 2.0, slab.dy / 2.0, samples)
     region = (float(q[0]) - float(p[0])) * slab.dv * slab.dx * slab.dy
 
-    in_curved = in_flat = disagree = overlap = 0
+    in_curved = in_flat = disagree = overlap = 0  # disagree: hit count
     for i in range(samples):
         a = _between(curved, p, q, u[i], v[i], x[i], y[i])
         b = _between(flat, p, q, u[i], v[i], x[i], y[i])
@@ -446,7 +501,8 @@ def diamond_volumes_mc(
         flat=region * in_flat / samples,
         disagree=region * disagree / samples,
         intersect=region * overlap / samples,
-        quantum=region / samples)
+        quantum=region / samples,
+        disagree_hits=disagree)
 
 
 def sprinklings_needed(delta_abs: float, sd_per_sprinkling: float,
@@ -485,7 +541,15 @@ OPERATING_POINTS = (
 #: not at equal density -- density is the free knob, `rho = N / V_box`.
 TARGET_N = 300
 
-K_SWEEP = (1, 2, 4, 8, 16)
+#: Every integer threshold, so an intermediate `k` that eliminates
+#: unsafe admissions while keeping guard coverage cannot hide between
+#: sampled values (R3.3). The mask is monotone in `k`, so this is the
+#: whole family up to the point where the candidate empties.
+K_SWEEP = tuple(range(1, 21))
+
+#: The subset shown in the console table; the full sweep drives the
+#: `k*` summary and the results file.
+K_DISPLAY = (2, 4, 8, 16)
 
 
 def probe_point(label: str, w: float, du: float, dv: float,
@@ -589,6 +653,7 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "v_int": v_int, "sd_z": sd_z,
         "v_dis_resolved": vols.disagree_resolved,
         "v_dis_quantum": vols.quantum,
+        "v_dis_hits": vols.disagree_hits,
         "n_marginal": n_marginal, "n_marginal_be": n_marg_be,
         "n_detect": n_detect, "n_detect_be": n_detect_be,
         "n_detect_floor": n_detect_floor,
@@ -634,28 +699,54 @@ def main(seed: int = 20260808) -> None:
     for r in rows:
         if not r["v_dis_resolved"]:
             print(f"  {r['label']}: V_dis unresolved at this MC size "
-                  f"(0 hits, quantum {r['v_dis_quantum']:.2e}); n90 is "
+                  f"({r['v_dis_hits']} hits, quantum "
+                  f"{r['v_dis_quantum']:.2e}); n90 is "
                   f"the bracket [{r['n_detect_floor']:.2g}, "
                   f"{r['n_detect']:.2g}] from the analytic floor "
                   f"delta*V_0 and the rule-of-three bound")
 
     print("\n== order-invariant candidate vs coordinate guard "
-          "(PAIR level, mean over sprinklings; R1.3) ==")
-    print(f"{'point':>12} " + " ".join(f"{'k=' + str(k):>15}"
-                                       for k in K_SWEEP))
-    print(f"{'':>12} " + " ".join(f"{'agree/c-only%':>15}"
-                                  for _ in K_SWEEP))
+          "(PAIR level, mean over sprinklings; R1.3/R3.2) ==")
+    print(f"{'point':>12} " + " ".join(f"{'k=' + str(k):>17}"
+                                       for k in K_DISPLAY))
+    print(f"{'':>12} " + " ".join(f"{'agree/c-only/g-only':>17}"
+                                  for _ in K_DISPLAY))
     for r in rows:
         cells = []
-        for k in K_SWEEP:
+        for k in K_DISPLAY:
             ags = r["agreement"][k]
             rate = float(np.mean([a.pair_rate for a in ags]))
             conly = float(np.mean(
                 [a.pair_candidate_only / a.pair_total for a in ags]))
-            cells.append(f"{rate:7.3f}/{conly:6.3f}")
-        print(f"{r['label']:>12} " + " ".join(f"{c:>15}" for c in cells))
-    print("  (element-level tables: rerun with the same seed and read "
-          "`.rate` / `.candidate_only` off the returned Agreements)")
+            gonly = float(np.mean(
+                [a.pair_guard_only / a.pair_total for a in ags]))
+            cells.append(f"{rate:.3f}/{conly:.3f}/{gonly:.3f}")
+        print(f"{r['label']:>12} " + " ".join(f"{c:>17}" for c in cells))
+
+    # R3.3: the decision the whole family turns on -- is there ANY k
+    # that admits no unsafe pair while still admitting some guarded
+    # one? Reported by scanning EVERY integer k, not the display subset.
+    print("\n  first k with zero candidate-only pairs, and the "
+          "guard-only fraction it costs there:")
+    for r in rows:
+        safe_k = None
+        for k in K_SWEEP:
+            conly = np.mean([a.pair_candidate_only for a in
+                             r["agreement"][k]])
+            if conly == 0.0:
+                safe_k = k
+                break
+        if safe_k is None:
+            print(f"    {r['label']:>12}: none in k<=20 -- every "
+                  "threshold still admits an unsafe pair")
+            continue
+        gonly = float(np.mean([a.pair_guard_only / a.pair_total
+                               for a in r["agreement"][safe_k]]))
+        rate = float(np.mean([a.pair_rate for a in r["agreement"][safe_k]]))
+        cand = float(np.mean([(a.pair_both) for a in r["agreement"][safe_k]]))
+        print(f"    {r['label']:>12}: k*={safe_k:2d}, guard-only "
+              f"{gonly:.3f} of C(N,2), candidate still admits "
+              f"{cand:.1f} pairs/sprinkling")
 
     print("\n== ambiguity (union over BOTH arms, §5.1) and cost ==")
     print(f"{'point':>12} {'ambig_frac':>10} {'esc_curved':>10} "

@@ -698,12 +698,11 @@ that very quantity. **Assigned:** §8 P1.
 
 **MEASURED (P1 probe, exploratory —
 [results](p14_probe_p1_results.md)):** the degree-count proxy does NOT
-reproduce the coordinate guard, measured at PAIR level as this item
-asks. Where anything is admitted, the candidate admits tens of times
-more uncertified pairs than the guard admits pairs at all
-(`aniso-a1.0`, `k = 4`: ~1,300 candidate-only pairs per sprinkling
-against ~26 guard-admitted); driving the uncertified admissions to
-zero leaves the candidate admitting essentially nothing. Structural:
+reproduce the coordinate guard, measured at PAIR level (both
+exclusive directions) over every integer `k` up to 20. The sharpened
+finding: at each operating point the smallest `k` that admits zero
+unsafe pairs also keeps ~0 guard-admitted pairs — there is no
+threshold that is both safe and non-empty. Structural:
 below/above counts measure interiority along the causal depth, while
 the guard's binding conditions are transverse, which no degree count
 sees. **The chain vectors stay coordinate-labeled and §7's strictly
