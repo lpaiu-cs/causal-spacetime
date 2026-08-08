@@ -37,7 +37,7 @@ def test_the_axis_volume_ratio_reproduces_the_design_pinned_values():
     `(w tau)^4 / 252` with `tau^2 = 2 du dv` instead -- importing `dv`
     into an effect `dv` cancels out of, wrong by 2.4e4x at one
     operating point and 14x at another. It was caught by the
-    consistency bound `delta <= V_dis / V_A`, an identity the probe now
+    consistency bound `delta*V_0 <= V_dis`, an identity the probe now
     asserts on every run.
 
     The pin is against the design's own committed check script

@@ -318,7 +318,7 @@ def axis_volume_ratio(a: float, nodes: int = 400) -> float:
     `tau^2 = 2 du dv` instead.** That imports `dv` into an effect `dv`
     cancels out of, overstating delta by 2.4e4x at the large-`dv`
     operating point and understating it 14x at `a = 1` -- and it was
-    caught by the probe's own consistency bound, `delta <= V_dis/V_A`,
+    caught by the probe's own consistency bound, `delta*V_0 <= V_dis`,
     not by reading. The series itself is also not usable at the large
     `a` the guard admits: at `a = 2.4` the true ratio is `1.1815`
     against the series' `1.1317`, and it diverges toward the conjugate
@@ -661,10 +661,12 @@ def probe_point(label: str, w: float, du: float, dv: float,
     # PREDICTION, never the MC difference of the volumes (fourth-order
     # in a, drowned by MC noise that is first-order in V_dis; an early
     # run returned exactly 0).
-    assert delta <= v_dis / v_curved + 4.0 / math.sqrt(mc_samples), (
-        f"{label}: delta {delta} exceeds the disagreement fraction "
-        f"{v_dis / v_curved} -- |V_A - V_0| <= V_dis is an identity, so "
-        "one of the two is being computed wrongly")
+    analytic_floor = delta * v0_exact
+    assert analytic_floor <= vols.disagree_ucb, (
+        f"{label}: analytic floor delta*V_0 = {analytic_floor:.6e} exceeds "
+        f"the CP upper bound on V_dis = {vols.disagree_ucb:.6e} -- "
+        "|V_A - V_0| <= V_dis is an identity, so one of the two is being "
+        "computed wrongly")
     signal_abs = delta * lam_0  # = rho V_0 delta, the raw N_A - N_0 shift
     # DETECTION sizing over the honest V_dis BRACKET (R2.1, R4.1). The
     # lower endpoint is a true lower bound -- the larger of the
