@@ -696,6 +696,23 @@ against the coordinate guard before anything rests on it, and selecting
 on interval cardinality directly is forbidden, since truncation biases
 that very quantity. **Assigned:** §8 P1.
 
+**MEASURED (P1 probe, exploratory —
+[results](p14_probe_p1_results.md)):** the degree-count proxy does NOT
+reproduce the coordinate guard, measured at PAIR level (both
+exclusive directions) over every integer `k` up to 20. At each
+operating point the smallest `k` that admits zero unsafe pairs also
+keeps ~0 guard-admitted pairs — no threshold in this family is both
+safe and non-empty (likely because `below/above` counts measure
+interiority along the causal depth while the guard binds
+transversally). **This rules out the specific two-threshold family
+`(below≥k)&(above≥k)`, not degree counts in general (R6.2):** in a
+finite box the cones are clipped by the transverse faces, so degrees
+can carry transverse information indirectly, and some other
+order-local feature could still isolate it. **The chain vectors stay
+coordinate-labeled and §7's strictly single-poset claim stays on item
+3a**, unless some order-invariant candidate — not excluded by this
+measurement — is found and shown to agree with the coordinate guard.
+
 ### 4.6.3 Where Class C has an operating point (R12.1, R12.2, R13.2, R13.4)
 
 **Two withdrawals, from successive rounds, both of the same kind: a
@@ -838,6 +855,24 @@ holds fewer elements at fixed density. **Assigned:** §8 P1.
 where the region is non-empty, not how much of the box it is, and §5's
 Class C statistics may still live on a thin interior population.
 **Assigned:** §8 P1.
+
+**MEASURED (P1 probe, exploratory —
+[results](p14_probe_p1_results.md)):** thin everywhere the effect
+lives, and the split is the finding. The effect for an on-axis diamond
+is a function of `a = w·Δu` ALONE — `Δv` factors out of the volume
+ratio, `R(a) − 1 = a⁴/252 + O(a⁸)`, quadrature matching the §4.4 check
+script to the digit — so the feasible region is large `a`, exactly
+where the eligible fraction collapses (`f_elem ~ 3e-4` at `a = 2.4`).
+External-anchor counting (P2's form, anchors fixed and not counted)
+survives this: ~4e2 sprinklings at `a = 2.4`, `N = 300`, to DETECT
+the predicted shift against a no-shift null via the raw same-points
+difference — P2's own residual `Z` has `E[Z] = 0` under the
+prediction, and its per-sprinkling `sd_Z` is reported separately for
+P2 to size its tolerance against.
+Sprinkled-pair Class C (§5 items 2, 3b) is starved at large `a`
+(0 eligible pairs per sprinkling) and lives only in the mid-`a`
+region (`a ≈ 1`, ~26 pairs/sprinkling, δ = 4e-3); whether that
+carries a statistic is §8 P3's question.
 
 **[TO VERIFY]** Whether the `v` component ever binds at the geometries
 the probe will actually use. Removing it entirely still produces no
@@ -1428,12 +1463,18 @@ own interval construction rather than inheriting P12's.
    reconstructed from order data alone (which would promote §5's
    diagnostic to a claim).
 3. The cost of deciding causality per pair. **Assigned:** §8 P1 for the
-   plane wave, §8.1 S1 for Schwarzschild.
+   plane wave, §8.1 S1 for Schwarzschild. **Measured for the plane wave**
+   ([results](p14_probe_p1_results.md)): ~2 µs generic, ~25× on
+   escalation.
 4. What `ambiguous_fraction` actually is at campaign densities. §5.1
    makes a large one visible rather than silent, but a bracket
    `[D_lower, D_upper]` too wide to decide anything is still a dead
    probe, and the escalation to interval arithmetic has a cost nobody
-   has measured. **Assigned:** §8 P1.
+   has measured. **Assigned:** §8 P1. **Measured at probe densities**
+   ([results](p14_probe_p1_results.md)): zero escalations in either
+   arm and zero ambiguous pairs in the both-arm union (§5.1's
+   definition) over ~7.5M generic pairs — the bracket collapses to a
+   point; campaign densities may differ and are re-measured there.
 5. What fraction of pairs the Class C guard leaves eligible. §4.6.3
    settles **where** the eligible set is non-empty over the four
    dimensionless box ratios; it does not settle how much of the box it
@@ -1443,7 +1484,8 @@ own interval construction rather than inheriting P12's.
    diagnostics** (§5 items 2 and 3b) and of §8 P2's implementation
    check — **not** of §7's single-poset claim, which rests on item 3a
    and needs no eligibility rule at all (§4.6.2, R4.1). The claim-side
-   lever is q9, not this one. **Assigned:** §8 P1.
+   lever is q9, not this one. **Assigned:** §8 P1. **Measured**
+   ([results](p14_probe_p1_results.md)) — see the note under §4.6.3.
 6. Whether the same-points pairing tightens the interval enough to
    offset the interval rule's cost, measured **between sprinklings**
    (§5.2). The benchmark it must beat is §6.1's `3.76x` at 90% power,
