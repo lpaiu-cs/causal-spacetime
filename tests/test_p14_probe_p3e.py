@@ -112,6 +112,68 @@ def test_chain_and_opportunity_counts_match_brute_force():
     assert got["opportunities"] == opp
 
 
+def test_ambiguous_pairs_never_count_as_definite_flips():
+    """The case, PR #45 review R1: `related` leaves an undecided pair
+    False, so a naive comparison counts a pair ambiguous in one arm
+    and related in the other as a DEFINITE flip -- overstating
+    §5.1's D_lower and double-counting the pair in the upper bound.
+    Hand-built censuses: pair (0,1) related in flat, AMBIGUOUS in
+    curved; pair (1,2) a genuine definite gain. The ambiguous pair
+    must appear only in the ambiguity count -- lower bound 1 flip,
+    upper bound 1 + 1, nothing twice."""
+
+    from p14_probe_p1 import RelationCensus
+
+    n = 3
+    rel_flat = np.zeros((n, n), dtype=bool)
+    rel_flat[0, 1] = True
+    rel_curved = np.zeros((n, n), dtype=bool)
+    rel_curved[1, 2] = True          # definite gain
+    flat_c = RelationCensus(related=rel_flat, ambiguous=0, escalated=0,
+                            seconds=0.0, ambiguous_pairs=())
+    curved_c = RelationCensus(related=rel_curved, ambiguous=1,
+                              escalated=0, seconds=0.0,
+                              ambiguous_pairs=((0, 1),))
+    gained, lost, amb = p3.pair_flips(flat_c, curved_c)
+    assert (gained, lost, amb) == (1, 0, 1)
+    # symmetric: ambiguous in the FLAT arm, related in curved -- the
+    # would-be "gain" (1,2) is masked, leaving only the ambiguity
+    flat_c2 = RelationCensus(related=np.zeros((n, n), dtype=bool),
+                             ambiguous=1, escalated=0, seconds=0.0,
+                             ambiguous_pairs=((1, 2),))
+    curved_c2 = RelationCensus(related=rel_curved, ambiguous=0,
+                               escalated=0, seconds=0.0,
+                               ambiguous_pairs=())
+    gained, lost, amb = p3.pair_flips(flat_c2, curved_c2)
+    assert (gained, lost, amb) == (0, 0, 1)
+
+
+def test_the_bootstrap_preserves_the_sprinkling_cluster():
+    """The case, PR #45 review R1: the ladder shares point sets, so a
+    replicate must apply ONE index vector per stratum to all of that
+    stratum's rungs. Construct full-stratum rungs where rung B's rows
+    equal rung A's rows plus a constant: under cluster resampling the
+    resampled means must differ by EXACTLY that constant in every
+    replicate; per-rung independent draws (the refuted first version)
+    break the identity almost surely."""
+
+    rungs_a, rungs_b = str(p3.W_LADDER[3]), str(p3.W_LADDER[4])
+    n = 40
+    base = np.linspace(0.01, 0.05, n)
+    raw = {"full": {"n": n, "rungs": {}}, "low": {"n": 4, "rungs": {}}}
+    for w in p3.W_LADDER:
+        key = str(w)
+        vals = base if key != rungs_b else base + 0.5
+        raw["full"]["rungs"][key] = [(float(v), 0.0, 0.0) for v in vals]
+    for w in p3.LOW_A_RUNGS:
+        raw["low"]["rungs"][str(w)] = [(0.02, 0.0, 0.0)] * 4
+    rng = np.random.default_rng(5)
+    for _ in range(25):
+        m = p3._rung_means(raw, rng)
+        assert (m[p3.W_LADDER[4]]["d"] - m[p3.W_LADDER[3]]["d"]
+                == pytest.approx(0.5, abs=1e-12))
+
+
 def test_the_auc_implementation_on_hand_values():
     """AUC = P(a > b) + 0.5 P(a = b): {1,2,3} vs {0,1,2} has six
     wins and two ties over nine pairs -> 7/9; degenerate all-equal
@@ -246,6 +308,28 @@ def test_the_results_doc_embeds_the_rendered_tables():
     assert p3.ladder_e_table(art) in doc
     assert p3.ladder_g_table(art) in doc
     assert p3.class_c_table(art) in doc
+
+
+@pytest.mark.slow
+def test_the_full_fit_block_reproduces_from_the_committed_raw():
+    """The bootstrap CIs are seeded, so the ENTIRE fits block --
+    point slopes, cluster-bootstrap CIs, failure counts, refit
+    diagnostics, swap contrast -- must reproduce from the committed
+    raw record (the partial-pinning lesson: unpinned CI fields are
+    hand-editable while the fast tests stay green)."""
+
+    art = json.loads(ARTIFACT.read_text(encoding="utf-8"))
+    fresh = p3.ladder_e_fits(art["ladder_e_raw"])
+    committed = art["ladder_e_fits"]
+    for name, *_ in p3._FITS:
+        f, c = fresh[name], committed[name]
+        assert f["slope"] == pytest.approx(c["slope"], rel=1e-12), name
+        assert f["ci95"] == pytest.approx(c["ci95"], rel=1e-9), name
+        assert f["fit_failures"] == c["fit_failures"], name
+        assert f["refit_diagnostic_drop_highest"] == pytest.approx(
+            c["refit_diagnostic_drop_highest"], rel=1e-12), name
+    assert fresh["swap_contrast"] == pytest.approx(
+        committed["swap_contrast"], rel=1e-9)
 
 
 @pytest.mark.slow

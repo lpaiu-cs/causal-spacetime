@@ -171,12 +171,24 @@ def assert_seed_layout() -> None:
 
 
 def pair_flips(c_flat, c_curved) -> tuple[int, int, int]:
-    """(gained, lost, ambiguous_union) between the two relations."""
+    """(gained, lost, ambiguous_union) between the two relations.
 
-    gained = int((c_curved.related & ~c_flat.related).sum())
-    lost = int((~c_curved.related & c_flat.related).sum())
-    amb = len(set(c_flat.ambiguous_pairs) | set(c_curved.ambiguous_pairs))
-    return gained, lost, amb
+    `RelationCensus.related` leaves an undecided pair False, so a
+    naive comparison counts a pair that is ambiguous in ONE arm and
+    related in the other as a DEFINITE flip -- overstating §5.1's
+    `D_lower` (definite flips only) and double-counting the same pair
+    in the `D + ambiguous` upper bound (PR #45 review R1). The
+    ambiguous union is masked out of gained/lost first: an undecided
+    pair contributes to the interval's upper end only, once.
+    """
+
+    gained_m = c_curved.related & ~c_flat.related
+    lost_m = ~c_curved.related & c_flat.related
+    amb_pairs = set(c_flat.ambiguous_pairs) | set(c_curved.ambiguous_pairs)
+    for i, j in amb_pairs:
+        gained_m[i, j] = False
+        lost_m[i, j] = False
+    return int(gained_m.sum()), int(lost_m.sum()), len(amb_pairs)
 
 
 # ---------------------------------------------------------------------
@@ -217,27 +229,40 @@ def run_ladder_e() -> dict:
     return {"full": full, "low": low}
 
 
-def _rung_means(raw: dict, rng: np.random.Generator | None) -> dict:
-    """Per-rung mean gained/lost fractions; optionally a bootstrap
-    resample WITHIN each stratum (the two strata are independent
-    clusters and are resampled independently)."""
+def _rung_means(raw: dict,
+                rng: np.random.Generator | None) -> dict:
+    """Per-rung mean gained/lost fractions; optionally one bootstrap
+    resample of the SPRINKLING CLUSTERS.
 
+    A sprinkling contributes to every rung of its stratum (shared
+    point sets), so a cluster bootstrap must draw ONE index vector
+    per stratum per replicate and apply it to ALL of that stratum's
+    rungs. Resampling each rung independently -- the first version of
+    this function -- destroys the cross-rung correlation the shared
+    points create and miscomputes every slope CI (PR #45 review R1).
+    The two strata are independent clusters and get independent
+    index vectors.
+    """
+
+    i_full = i_low = None
+    if rng is not None:
+        n_full = raw["full"]["n"]
+        i_full = rng.integers(0, n_full, n_full)
+        n_low = raw["low"]["n"]
+        i_low = rng.integers(0, n_low, n_low)
     out = {}
     for w in W_LADDER:
         key = str(w)
-        rows = list(raw["full"]["rungs"][key])
+        full_rows = np.asarray(raw["full"]["rungs"][key])
+        if i_full is not None:
+            full_rows = full_rows[i_full]
+        parts = [full_rows]
         if key in raw["low"]["rungs"]:
-            rows += list(raw["low"]["rungs"][key])
-        arr = np.asarray(rows)
-        if rng is not None:
-            n_full = len(raw["full"]["rungs"][key])
-            i_full = rng.integers(0, n_full, n_full)
-            parts = [np.asarray(raw["full"]["rungs"][key])[i_full]]
-            if key in raw["low"]["rungs"]:
-                n_low = len(raw["low"]["rungs"][key])
-                i_low = rng.integers(0, n_low, n_low)
-                parts.append(np.asarray(raw["low"]["rungs"][key])[i_low])
-            arr = np.concatenate(parts)
+            low_rows = np.asarray(raw["low"]["rungs"][key])
+            if i_low is not None:
+                low_rows = low_rows[i_low]
+            parts.append(low_rows)
+        arr = np.concatenate(parts)
         g, lo = arr[:, 0].mean(), arr[:, 1].mean()
         out[w] = {"d": g + lo, "dr": g - lo, "gained": g, "lost": lo,
                   "n": len(arr)}

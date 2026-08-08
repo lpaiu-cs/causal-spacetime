@@ -81,10 +81,10 @@ test asserts the doc embeds the renderings verbatim.
 
 | fit | range | slope | boot 95% CI | failures | drop-highest refit |
 |---|---|---|---|---|---|
-| d_full | A ≤ 4 | 0.932 | [0.929, 0.935] | 0/4000 | 0.941 |
-| d_low | A ≤ 0.5 | 0.961 | [0.955, 0.967] | 0/4000 | 0.972 |
-| dr_asymptotic | A ≤ 0.0625 | 1.977 | [1.809, 2.202] | 0/4000 | 2.057 |
-| dr_finite_range | A ≤ 0.5 (effective) | 1.622 | [1.573, 1.687] | 0/4000 | 1.741 |
+| d_full | A ≤ 4 | 0.932 | [0.928, 0.936] | 0/4000 | 0.941 |
+| d_low | A ≤ 0.5 | 0.961 | [0.955, 0.968] | 0/4000 | 0.972 |
+| dr_asymptotic | A ≤ 0.0625 | 1.977 | [1.827, 2.173] | 0/4000 | 2.057 |
+| dr_finite_range | A ≤ 0.5 (effective) | 1.622 | [1.564, 1.693] | 0/4000 | 1.741 |
 
 The **−A contrast** (x↔y swap at `w = 1`): paired `D` difference `+0.000146 ± 0.000196` (0.75σ); gained `0.01491` vs `0.01475`, lost `0.00082` vs `0.00083` — gained matches gained and lost matches lost across the polarization rotation, the corrected prediction (the axis of the gained pairs swaps, which only statistic #4 can see).
 
@@ -126,9 +126,9 @@ Preliminary candidate `n = 4800/팔` (normal design model): joint pass `18273/20
 **The heuristic structure holds, and the map has a sign
 reversal nobody ordered.**
 
-- **Exponents (Ladder-E).** `D` runs at slope `0.961 [0.955, 0.967]`
+- **Exponents (Ladder-E).** `D` runs at slope `0.961 [0.955, 0.968]`
   over `A ≤ 0.5` — the `O(|A|)` heuristic — while
-  `Δr`'s asymptotic fit gives `1.977 [1.809, 2.202]` with the
+  `Δr`'s asymptotic fit gives `1.977 [1.827, 2.173]` with the
   refit diagnostic (2.057) inside the CI: the `O(A²)` scalar
   suppression is measured, not assumed. The `A ≤ 0.5` effective
   exponent (1.622) documents how far from asymptotic the accessible
@@ -174,3 +174,15 @@ separately approved.
 ## Changelog
 
 Initial record.
+
+Review R1 corrected two instrument defects, neither moving a number
+the campaign measured: the ladder bootstrap resampled each rung
+independently, destroying the shared-sprinkling cluster the protocol
+itself specified -- one index vector per stratum per replicate now,
+and the CIs recomputed from the unchanged raw record (dr_asymptotic
+tightened to [1.827, 2.173]; conclusions unchanged); and
+`pair_flips` counted a pair ambiguous in one arm as a definite flip,
+overstating §5.1's D_lower and double-counting in the upper bound
+-- the ambiguous union is masked first (campaign ambiguity was
+exactly zero, so every published count stands; the flaw is closed in
+code and pinned by a one-arm-ambiguous regression test).
