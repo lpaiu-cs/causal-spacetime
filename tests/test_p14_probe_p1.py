@@ -454,3 +454,11 @@ def test_a_gross_delta_error_warns_but_does_not_crash(monkeypatch):
     # completed instead of crashing, and delta reflects the patched ratio
     assert row["delta"] == pytest.approx(99.0)
     assert math.isfinite(row["n_detect"]) and row["n_detect"] > 0.0
+    # R9.2: continuing past the warning must not emit a REVERSED bracket.
+    # This gross error drives analytic_floor above disagree_ucb, exactly
+    # the case that would invert [floor, ucb]; the upper endpoint is
+    # reconciled to the deterministic floor, so every reported interval
+    # stays ordered (main() prints them as [lower, upper]).
+    assert row["v_dis_floor"] <= row["v_dis_ucb"]
+    assert row["n_detect_floor"] <= row["n_detect_ucb"]
+    assert row["sd_z_floor"] <= row["sd_z_ucb"]

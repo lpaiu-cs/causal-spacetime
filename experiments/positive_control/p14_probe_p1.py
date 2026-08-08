@@ -709,7 +709,17 @@ def probe_point(label: str, w: float, du: float, dv: float,
     # endpoint is the 95% Poisson upper limit. n scales with V_dis, so
     # the bracket maps to [n_floor (small V_dis), n_detect (large)].
     v_dis_floor = max(delta * v0_exact, vols.disagree_lcb)
-    v_dis_ucb = vols.disagree_ucb
+    # The upper endpoint is the 95% CP limit, but never below the
+    # deterministic floor: `V_dis >= delta*V_0` is an identity, so on the
+    # rare CP miss the warning above flags (`analytic_floor >
+    # disagree_ucb`) the honest upper bound is at least that floor. Left
+    # as `disagree_ucb` the bracket would INVERT (`v_dis_floor >
+    # v_dis_ucb`), and every derived interval below -- `n_detect`,
+    # `sd_z` -- would print as `[larger, smaller]` (review R9.2). Raising
+    # a random upper limit to a deterministic lower bound cannot reduce
+    # coverage, and in every normal row `disagree_ucb` already dominates,
+    # so this is a no-op there.
+    v_dis_ucb = max(vols.disagree_ucb, v_dis_floor)
     resolved = vols.disagree_resolved
     # R5.2: a resolved row reports the POINT-estimate sizing, matching
     # the reporting contract and sd_Z (which is already the point on
@@ -834,8 +844,8 @@ def main(seed: int = 20260808) -> None:
                   f"the bracket [{r['n_detect_floor']:.2g}, "
                   f"{r['n_detect_ucb']:.2g}] and sd_Z in "
                   f"[{r['sd_z_floor']:.3f}, {r['sd_z_ucb']:.3f}], from "
-                  f"the analytic floor delta*V_0 to the 95% "
-                  f"Clopper-Pearson upper limit")
+                  f"the analytic floor delta*V_0 to the greater of the "
+                  f"95% Clopper-Pearson upper limit and that floor")
 
     print("\n== order-invariant candidate vs coordinate guard "
           "(PAIR level, mean over sprinklings; R1.3/R3.2) ==")
