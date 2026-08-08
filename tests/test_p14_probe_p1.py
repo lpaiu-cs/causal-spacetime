@@ -584,14 +584,19 @@ SIZING_JSON = (Path(__file__).resolve().parents[1]
 #: (zero-hit rows' `v_dis_floor`/`sd_z_floor`, in `_AMPLIFIED`);
 #: every `n_*` divides by `(delta*lam0)^2` (in `_AMPLIFIED`);
 #: `lam`/`lam_flat` carry delta roundoff only RELATIVELY (~2e-14,
-#: inside 1e-11); `v_dis_ucb`/`sd_z`/`sd_z_ucb` are CP/point-bound
-#: with the floor orders below; and exact-zero fields (`v_dis` at
-#: zero hits) compare as equal under `abs=0.0`.
+#: inside 1e-11); `v_dis_ucb`/`sd_z_ucb` are CP-bound with the floor
+#: orders below; `sd_z` is floor-bound on zero-hit rows (`v_dis = 0`
+#: makes `v_dis_point = max(0, floor)` -- there `sd_z = sd_z_floor ~
+#: sqrt((1+delta) delta)`, a half-power of delta, ~3.5e-10 relative
+#: at slice-a0.3), so it sits in the amplified class too (PR #44
+#: review R2 -- the first audit wrongly called it point-bound
+#: everywhere); and exact-zero fields (`v_dis` at zero hits) compare
+#: as equal under `abs=0.0`.
 _R_ROUNDOFF = 100.0 * math.ulp(1.0)
 _AMPLIFIED_FIELDS = frozenset({
     "n_unpaired", "n_unpaired_be",
     "n_detect", "n_detect_be", "n_detect_floor", "n_detect_ucb",
-    "v_dis_floor", "sd_z_floor",
+    "v_dis_floor", "sd_z", "sd_z_floor",
 })
 
 
