@@ -462,3 +462,37 @@ def test_a_gross_delta_error_warns_but_does_not_crash(monkeypatch):
     assert row["v_dis_floor"] <= row["v_dis_ucb"]
     assert row["n_detect_floor"] <= row["n_detect_ucb"]
     assert row["sd_z_floor"] <= row["sd_z_ucb"]
+
+
+def test_a_floor_conflict_forces_a_resolved_looking_row_unresolved(
+        monkeypatch):
+    """The case, review R9.3: R9.2 ordered the bracket, but the bracket
+    is only REPORTED when the row is unresolved, and `resolved` came from
+    the raw CP width alone. In the warning's conflict case the MC point
+    is `v_dis <= disagree_ucb < analytic_floor`, i.e. below the
+    deterministic floor delta*V_0 -- an impossible V_dis -- yet a tight
+    (many-hit) CP interval can still read as resolved. The row would then
+    be reported by that impossible point estimate (headline `n_detect`
+    from `v_dis`, point `sd_Z`). The floor conflict now forces the row
+    unresolved, so the constrained bracket is what gets reported.
+    """
+
+    monkeypatch.setattr(probe, "TARGET_N", 60)
+    # a large forced ratio drives analytic_floor above disagree_ucb ...
+    monkeypatch.setattr(probe, "axis_volume_ratio", lambda a, **k: 100.0)
+    with pytest.warns(UserWarning, match=r"analytic floor delta\*V_0"):
+        row = probe.probe_point("conflict", 1.0, 1.0, 1.0, 2.0, 6.0,
+                                 seed=5, sprinklings=3, mc_samples=200_000)
+    # ... while the raw CP interval on those hits is tight enough to read
+    # as resolved on its own -- a RESOLVED-LOOKING conflict, not a
+    # few-hit unresolved row
+    raw = probe.DiamondVolumes(
+        curved=1.0, flat=1.0,
+        disagree=row["v_dis_hits"] * row["v_dis_quantum"],
+        intersect=0.0, quantum=row["v_dis_quantum"],
+        disagree_hits=row["v_dis_hits"], samples=200_000)
+    assert raw.disagree_resolved, "fixture is not a resolved-looking conflict"
+    # the row is nonetheless reported unresolved, so the headline is the
+    # reconciled bracket (ucb), never the point below the floor
+    assert row["v_dis_resolved"] is False
+    assert row["n_detect"] == row["n_detect_ucb"]

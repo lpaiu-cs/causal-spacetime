@@ -720,7 +720,17 @@ def probe_point(label: str, w: float, du: float, dv: float,
     # coverage, and in every normal row `disagree_ucb` already dominates,
     # so this is a no-op there.
     v_dis_ucb = max(vols.disagree_ucb, v_dis_floor)
-    resolved = vols.disagree_resolved
+    # A resolved row reports its MC POINT estimate as the headline, so it
+    # may only do so when that point can satisfy the deterministic floor.
+    # In the warning's conflict case `analytic_floor > vols.disagree_ucb`
+    # the point is `v_dis <= disagree_ucb < analytic_floor`, i.e. BELOW
+    # `delta*V_0` -- an impossible V_dis. A tight (many-hit) CP interval
+    # can still make `disagree_resolved` True there, so gating on CP width
+    # alone would report that impossible point (review R9.3). The floor
+    # conflict forces the row unresolved, so the reconciled bracket -- not
+    # the point known to be below its minimum -- is what gets reported.
+    resolved = (vols.disagree_resolved
+                and analytic_floor <= vols.disagree_ucb)
     # R5.2: a resolved row reports the POINT-estimate sizing, matching
     # the reporting contract and sd_Z (which is already the point on
     # resolved rows); an unresolved row reports the UCB as the upper
@@ -789,7 +799,7 @@ def probe_point(label: str, w: float, du: float, dv: float,
         "v_curved": v_curved, "v_flat": v_flat, "v_dis": v_dis,
         "v_int": v_int, "sd_z": sd_z,
         "sd_z_floor": sd_z_floor, "sd_z_ucb": sd_z_ucb,
-        "v_dis_resolved": vols.disagree_resolved,
+        "v_dis_resolved": resolved,
         "v_dis_quantum": vols.quantum,
         "v_dis_hits": vols.disagree_hits,
         "n_unpaired": n_unpaired, "n_unpaired_be": n_unpaired_be,
