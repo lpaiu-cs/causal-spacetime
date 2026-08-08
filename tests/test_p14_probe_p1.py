@@ -548,3 +548,56 @@ def test_a_point_below_the_floor_cannot_carry_a_resolved_headline(
     # floor), never the impossible raw point below it
     assert row["sd_z"] == pytest.approx(math.sqrt(
         (1.0 + row["delta"]) * row["rho"] * floor))
+
+
+SIZING_JSON = (Path(__file__).resolve().parents[1]
+               / "docs" / "prereg" / "p14_probe_p1_sizing.json")
+
+
+def test_the_sizing_artifact_reproduces_field_for_field():
+    """The case, PR #41 review R1: pinning only four MC fields of the
+    committed artifact leaves `TARGET_N`, the quadrature, every derived
+    sizing number, and any stale hand-edit of the JSON free to drift
+    while the tests stay green -- the same class the erratum closed for
+    the Markdown table, moved into JSON. So the whole payload is
+    regenerated from the recorded seed through `sizing_artifact` -- the
+    SAME function that writes the file -- and compared field by field:
+    ints, bools, and strings exactly; floats at 1e-12. A change to any
+    input (`TARGET_N`, `axis_volume_ratio`, the guard, the MC) or any
+    edit to the committed file fails this test.
+    """
+
+    import json
+
+    committed = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
+    fresh = probe.sizing_artifact(committed["seed"],
+                                  committed["mc_samples"])
+    assert fresh["target_n"] == committed["target_n"]
+    assert fresh["script"] == committed["script"]
+    assert len(fresh["points"]) == len(committed["points"])
+    for f_rec, c_rec in zip(fresh["points"], committed["points"],
+                            strict=True):
+        assert set(f_rec) == set(c_rec), c_rec.get("label")
+        for k, cv in c_rec.items():
+            fv = f_rec[k]
+            if isinstance(cv, (str, bool)) or isinstance(cv, int):
+                assert fv == cv, f"{c_rec['label']}.{k}"
+            else:
+                assert fv == pytest.approx(cv, rel=1e-12), (
+                    f"{c_rec['label']}.{k}")
+
+
+def test_the_results_doc_embeds_the_rendered_feasibility_table():
+    """The doc's feasibility table is RENDERED from the artifact by
+    `feasibility_table` and embedded verbatim -- so every cell of every
+    column is pinned to the computation, not only the hits column the
+    erratum corrected (PR #41 review R1: validating one column still
+    let the other six drift).
+    """
+
+    import json
+
+    art = json.loads(SIZING_JSON.read_text(encoding="utf-8"))
+    doc = (SIZING_JSON.parent / "p14_probe_p1_results.md").read_text(
+        encoding="utf-8")
+    assert probe.feasibility_table(art) in doc
