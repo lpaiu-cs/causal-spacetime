@@ -1,0 +1,14 @@
+{
+  "stage": "S4 freeze manifest (content-addressed protocol surface)",
+  "note": "raw sha256; all paths are .gitattributes eol=lf pinned",
+  "files": {
+    "docs/prereg/p14_s4_schwarzschild_c1.md": "0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4",
+    "experiments/positive_control/s4_schwarzschild_c1.py": "2d16eae2e89dafe9433b0568b96d88ffb950bd2b957fab8a10d4f6cb4652c382",
+    "experiments/positive_control/s3_schwarzschild_probe.py": "bd58ae3d45ed48a7bbef00d5ca4b498acd29d1e09cee942063a58bb74cbb872c",
+    "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
+    "experiments/positive_control/p14_probe_p2.py": "005c4edb67578c65932f4b13559fd23e9194d7256cc9418e68231baefe558ce1",
+    "experiments/positive_control/seed_windows.py": "5a0b60d8e8d15f9283f2ebbd02aa76b724c683a3b464f1a025eab4e65be2acdf",
+    "experiments/positive_control/probe_seed_ledger.py": "7b887dc0bf4e6eb26347c14c8d0529c0858b51e02589c81eb1df26c86f3fff99",
+    "docs/prereg/p14_s3_probe_results.json": "1bd37acc1a01780c6078c895fd0fa77adb7a8acbd324b2c12a7d41d7afd7ebc8"
+  }
+}
