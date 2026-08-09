@@ -81,7 +81,8 @@ def test_symmetry_and_monotonicity_on_the_patch():
         s1.flight_time(19.0, 11.0, 1.7)[0], rel=1e-12)
     times = [s1.flight_time(12.0, 17.0, x)[0]
              for x in (0.2, 0.6, 1.0, 1.4, 1.8)]
-    assert all(a < b for a, b in zip(times, times[1:]))
+    assert all(a < b
+               for a, b in zip(times, times[1:], strict=False))
     # gravity delays: GR flight beats the flat chord everywhere tried
     for r1, r2, dpsi in ((12.0, 17.0, 1.3), (10.0, 10.0, 2.0)):
         chord = math.sqrt(r1 * r1 + r2 * r2

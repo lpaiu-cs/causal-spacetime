@@ -46,7 +46,7 @@ import math
 import platform
 import sys
 import time
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 
 import numpy as np
@@ -106,7 +106,7 @@ def _perihelion_u(b: float, m: float) -> float:
     return 0.5 * (lo + hi)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _nodes(n: int) -> tuple[np.ndarray, np.ndarray]:
     return np.polynomial.legendre.leggauss(n)
 
@@ -336,7 +336,7 @@ def bench(n: int = BENCH_N, seed: int = BENCH_SEED,
     jj = ii + 1 + rng.integers(0, n - 1 - ii)
     related = undecided = 0
     start = time.perf_counter()
-    for i, j in zip(ii, jj):
+    for i, j in zip(ii, jj, strict=True):
         rel = causal_relation(ev[i], ev[j], M, tol)
         if rel is None:
             undecided += 1
