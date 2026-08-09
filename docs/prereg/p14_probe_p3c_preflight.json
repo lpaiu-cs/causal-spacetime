@@ -27,12 +27,12 @@
   },
   "preflight": {
     "campaign_seeds": {
-      "curved": 20260841,
-      "flat": 20260842
+      "curved": 20260851,
+      "flat": 20260852
     },
     "certification_rule": "exact CP 95% LOWER bound >= 0.90 for BOTH branches",
     "certified": true,
-    "ci_constructions": "s: z*sqrt(2/n + s^2/(4(n-1))); auc: DeLong placement variance z*sqrt(S10/m + S01/n), midplacement ties; ba: z/(2 sqrt(n)); z = 1.959964",
+    "ci_constructions": "s: z*sqrt(2/n + s^2/(4(n-1))); auc: DeLong placement variance z*sqrt(S10/m + S01/n), midplacement ties, at complete separation the fixed disjoint-pair boundary bound 0.025^(1/min(m,n)); ba: z/(2 sqrt(n)); z = 1.959964",
     "effect": {
       "confirmed_ci95_exact": [
         0.9990782052568399,
@@ -74,7 +74,7 @@
       ]
     },
     "resampling": "arms drawn INDEPENDENTLY (unpaired); null = both arms from the flat sample",
-    "seconds": 28.820162499992875,
+    "seconds": 27.493063700007042,
     "source_artifact": "p14_probe_p3e_results.json ladder_g aniso-a1.0 raw samples"
   },
   "script": "experiments/positive_control/p14_probe_p3c.py"

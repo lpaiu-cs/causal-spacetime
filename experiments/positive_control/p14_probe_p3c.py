@@ -292,7 +292,10 @@ def preflight(p3e_art: dict) -> dict:
         "ci_constructions": "s: z*sqrt(2/n + s^2/(4(n-1))); "
                             "auc: DeLong placement variance "
                             "z*sqrt(S10/m + S01/n), midplacement "
-                            "ties; ba: z/(2 sqrt(n)); z = 1.959964",
+                            "ties, at complete separation the "
+                            "fixed disjoint-pair boundary bound "
+                            "0.025^(1/min(m,n)); "
+                            "ba: z/(2 sqrt(n)); z = 1.959964",
         "resampling": "arms drawn INDEPENDENTLY (unpaired); null = "
                       "both arms from the flat sample",
         "source_artifact": "p14_probe_p3e_results.json ladder_g "

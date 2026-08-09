@@ -1,5 +1,5 @@
 {
- "grade": "EXPLORATORY (downgraded, PR 48 review R2): the corrected boundary rule, the re-certified preflight, and this block's results all entered git history in one commit (5049ce8), so the freeze-before-execution ordering required for a confirmation-grade record is not provable from the commit graph; seeds 20260841/20260842 are burned and the confirmation block reruns on new streams from a clean checkout of the freeze commit, results in a subsequent commit",
+ "grade": "EXPLORATORY (downgraded, PR 48 review R2): the corrected boundary rule, the re-certified preflight, and this block's results all entered git history in one commit (5049ce8), so the freeze-before-execution ordering required for a confirmation-grade record is not provable from the commit graph; seeds 20260841/20260842 are burned and the operative confirmation block is seeds 20260851/20260852, run from a clean checkout of the freeze commit, results in a subsequent commit",
  "ambiguity": {
   "curved": {
    "ambiguous": 0,

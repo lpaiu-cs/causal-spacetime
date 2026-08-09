@@ -209,6 +209,12 @@ def test_the_preflight_artifact_is_certified_raw_integers():
     assert p["n_arm"] == p3c.N_ARM
     assert p["margins"] == pytest.approx(p3c.P3C_MARGINS, rel=1e-15)
     assert "INDEPENDENTLY" in p["resampling"]
+    # provenance tracks the frozen contract (PR #48 R3): the artifact
+    # must record the CURRENT campaign streams and the boundary rule
+    # -- a later seed or rule move fails here until the preflight is
+    # regenerated from the frozen runner
+    assert p["campaign_seeds"] == p3c.CAMPAIGN_SEEDS
+    assert "disjoint-pair" in p["ci_constructions"]
     for block, reps, key in ((p["null"], p3c.PREFLIGHT_NULL_REPS,
                               "equivalent"),
                              (p["effect"], p3c.PREFLIGHT_EFFECT_REPS,
@@ -302,13 +308,21 @@ def test_the_downgraded_campaign_records_are_kept_not_erased(path, seeds):
     corrected rule, leaving the freeze-before-execution ordering
     unprovable (R2). Each record survives as an exploratory
     artifact: grade stated, verdict downgraded, seeds burned -- a
-    protocol correction is transparent, never a deletion."""
+    protocol correction is transparent, never a deletion. And no
+    stale downstream reference (PR #48 R3): a downgraded grade may
+    point at a confirmation only by naming the CURRENT frozen
+    streams, so a later seed move fails here until every grade is
+    refreshed."""
 
     art = json.loads(path.read_text(encoding="utf-8"))
     assert "EXPLORATORY" in art["grade"]
     assert "downgraded" in art["verdict"]
     assert art["seeds"] == seeds
     assert set(art["seeds"].values()) <= set(p3c.BURNED_SEEDS)
+    pointer = (f"{p3c.CAMPAIGN_SEEDS['curved']}/"
+               f"{p3c.CAMPAIGN_SEEDS['flat']}")
+    assert pointer in art["grade"]
+    assert "fresh confirmation" not in art["grade"]
 
 
 @pytest.mark.slow
