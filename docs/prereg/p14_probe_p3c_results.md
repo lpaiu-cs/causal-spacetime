@@ -1,109 +1,96 @@
-# P14 §8 P3-C — confirmation stage: **confirmed** (exploratory chain)
+# P14 §8 P3-C — confirmation stage: third block pending (exploratory chain)
 
 The confirmation/termination stage of the P3 discriminability
 question, run under the machinery frozen and certified in the
-preflight (PR #47): three-branch verdict, DeLong AUC, full-variance
-`s`, midpoint-threshold BA with first-half training; margins
+preflight (PR #47): three-branch verdict, DeLong AUC with the exact
+disjoint-pair boundary rule, full-variance `s`,
+midpoint-threshold BA with first-half training; margins
 `ε_s = 0.0806, ε_AUC = 0.0233, ε_BA = 0.0285`; both branches
-certified at CP-lower ≥ 0.90 before execution. Fresh unpaired seed
-streams (curved `20260841`, flat `20260842`), `n = 4800`
-sprinklings per arm at aniso-a1.0, `E[N] = 300`.
+certified at CP-lower ≥ 0.90 before execution. The operative
+confirmation block runs on fresh unpaired seed streams (curved
+`20260851`, flat `20260852`), `n = 4800` sprinklings per arm at
+aniso-a1.0, `E[N] = 300`, from a clean checkout of the commit that
+freezes this rule and these seeds — its results are recorded in a
+SUBSEQUENT commit, so the freeze-before-execution ordering is
+provable from the commit graph.
 
-This is the SECOND campaign block. The first (seeds
-`20260831/20260832`) was downgraded to exploratory after review —
-see "Protocol correction" below — and its record is preserved in
-`p14_probe_p3c_results_exploratory.json`. The verdict below is the
-program's confirmation verdict; it comes from seeds never used
-before, under the corrected interval rule frozen BEFORE these
-streams were opened.
+## Status
 
-## Verdict
+**No confirmation verdict is on record yet.** Two earlier campaign
+blocks were downgraded to exploratory (PR #48 review) and their
+records preserved:
 
-| metric | value | 95% CI | band |
-|---|---|---|---|
-| s | 10.988237 | [10.827728, 11.148746] | ±0.0806 |
-| AUC | 1.000000 | [0.999232, 1.000000] | 0.5 ± 0.0233 |
-| BA | 1.000000 | [0.985855, 1.014145] | 0.5 ± 0.0285 |
+### First block (seeds `20260831/20260832`) — downgraded, R1
 
-**Verdict: `confirmed`** — every CI entirely outside its band in the frozen direction.
+Complete separation (`s = 11.103838 [10.941745, 11.265932]`, BA
+`1.0 [0.985855, 1.014145]`, means `0.074154` vs `0.023772`), but
+its AUC interval was the degenerate Wald `[1, 1]`: the estimated
+influence variance is zero at complete separation, which erases the
+finite-sample uncertainty about unobserved population overlap
+rather than measuring it. The frozen verdict rule requires valid
+95% CIs for all three metrics, so the verdict is downgraded from
+`confirmed` to `exploratory-separation`. Record:
+`p14_probe_p3c_results_exploratory.json`.
 
-The two arms' 3a samples are again completely separated in the raw
-data (min over 4800 curved values `0.0539969` exceeds max over 4800
-flat values `0.0329959`; means `0.074131` vs `0.023804`). At
-complete separation the DeLong influence variance collapses, so the
-AUC interval switches to the frozen boundary rule: the one-sided
-exact lower bound `0.025^(1/m) = 0.999232` for `m = 4800` — the
-smallest population AUC not rejected at 2.5% by `m` concordant
-paired placements. The interval `[0.999232, 1]` is a valid
-finite-sample statement; its lower endpoint clears the band by a
-wide margin, so the verdict does not lean on the boundary rule's
-tightness. Both arms recorded `ambiguous = 0, escalated = 0`
-relation censuses (stored and asserted in the artifact).
+### Second block (seeds `20260841/20260842`) — downgraded, R2
 
-## First campaign (downgraded to exploratory)
+Run under the corrected boundary rule and again completely
+separated (`s = 10.988237 [10.827728, 11.148746]`, AUC `1.0
+[0.999232, 1.0]`, BA `1.0 [0.985855, 1.014145]`, means `0.074131`
+vs `0.023804`, both arms `ambiguous = 0, escalated = 0`) — but the
+corrected rule, the re-certified preflight, and this block's
+results all entered git history in one commit (`5049ce8`), so the
+repository's freeze-before-execution ordering (commit the runner,
+then execute from a clean worktree) is not provable from the commit
+graph. Test-level reproduction shows computational reproducibility,
+not temporal ordering; the verdict is downgraded to
+`exploratory-separation`. Record:
+`p14_probe_p3c_results_exploratory2.json`.
 
-The original block on seeds `20260831/20260832` produced the same
-qualitative picture — complete separation, `s = 11.103838`
-`[10.941745, 11.265932]`, BA `1.0 [0.985855, 1.014145]`, means
-`0.074154` vs `0.023772` — but its AUC interval was the degenerate
-Wald `[1, 1]`: the estimated influence variance is zero at complete
-separation, which erases the finite-sample uncertainty about
-unobserved population overlap rather than measuring it. The frozen
-verdict rule requires valid 95% CIs for all three metrics, so that
-block's verdict is **downgraded from `confirmed` to
-`exploratory-separation`**. The record is preserved unedited (plus
-a `grade` field) in `p14_probe_p3c_results_exploratory.json`; the
-seeds are burned and appear in `BURNED_SEEDS`.
+Both blocks' streams are burned (`BURNED_SEEDS`); neither may feed
+a confirmation again.
 
 ## The licensed sentence (frozen scope)
 
 > "aniso-a1.0의 고정된 유한 상자·밀도에서 global relation fraction이 평탄 ensemble과 분리된다"
 
-Nothing wider: not a general-Weyl discriminator claim, not a
-box-independent one. The three rules close only what they measure;
-the termination sentence was not needed.
-
-## What this decides
-
-§8.3's positive branch: **P14 does not close here.** The actual
-preregistration's power section is built from P3's effect sizes and
-P4's paired-variance record (gain `1.532× [1.386, 1.698]`, preflight
-artifact) — with S1's Schwarzschild price still to be attached to
-the eventual scope statement.
-
-Everything above the licensed sentence is RENDERED from the
-committed artifact `p14_probe_p3c_results.json` by
-`campaign_table`, and a test asserts the doc embeds it verbatim;
-the metrics and verdict recompute from the stored raw samples, and
-the seed streams reproduce on a prefix (slow marker).
+— NOT yet licensed at confirmation grade; both exploratory blocks
+point the same way, but the sentence waits for the third block.
+Nothing wider in any case: not a general-Weyl discriminator claim,
+not a box-independent one.
 
 ## Changelog
 
-**Protocol correction (PR #48 review R1).** The first campaign's
+**Protocol correction 2 (PR #48 review R2).**
+
+1. The boundary lower bound's justification is corrected: the `m`
+   placements share both arms and are not independent Bernoulli
+   trials. The valid argument is the FIXED DISJOINT-PAIR bound —
+   index-pairs `(a_i, b_i)`, `i < k = min(m, n)`, fixed a priori,
+   give iid `Bernoulli(P(a > b))` indicators with
+   `P(a > b) ≤ AUC`, all successes at complete separation, hence
+   the exact CP lower bound `0.025^(1/k)`. The exponent is now
+   `min(m, n)` (identical at the campaign's equal arm sizes; the
+   number `0.999232` at 4800 is unchanged).
+2. The second campaign block is downgraded, not erased (see above),
+   its seeds burned, and the operative campaign contract at the top
+   of the runner updated to the new streams `20260851/20260852`.
+3. The third block executes only from a clean checkout of the
+   commit carrying this correction, with results in a later commit.
+
+**Protocol correction 1 (PR #48 review R1).** The first campaign's
 `confirmed` verdict relied on the degenerate `[1,1]` AUC interval,
 and this document originally described that degeneracy as "a
 property of the data, not of the interval construction". That
 framing was backwards: complete separation is the data property
 that CAUSES the Wald interval to degenerate; the degenerate
 interval itself is not a valid finite-sample population-AUC CI.
-Corrections, in order:
-
-1. `auc_delong` now returns the exact boundary interval
-   `[0.025^(1/m), 1]` when the empirical AUC is 1 (symmetric rule
-   at 0). Interior behaviour is unchanged; the rule was frozen and
-   the preflight re-certified (identical counts: null equivalent
-   `18209/20000`, CP-lower `0.90641`; effect `4000/4000`) before
-   any new data was drawn.
-2. `arm_samples` now records per-arm `ambiguous`/`escalated`
-   totals; the campaign asserts both are zero and stores them in
-   the artifact, so undecided pairs can never silently enter the
-   relation fraction as "unrelated".
-3. The first campaign was downgraded, not erased: artifact renamed
-   to `p14_probe_p3c_results_exploratory.json` with an explicit
-   `grade`, seeds `20260831/20260832` burned.
-4. A fresh confirmation block was run on new seeds
-   `20260841/20260842` under the corrected rule — the verdict
-   table above.
+The boundary rule replaced it, the preflight was re-certified
+(identical counts: null equivalent `18209/20000`, CP-lower
+`0.90641`; effect `4000/4000`), `arm_samples` began recording
+per-arm `ambiguous`/`escalated` totals (asserted zero — undecided
+pairs can never silently enter the relation fraction as
+"unrelated"), and the first block was downgraded.
 
 Initial record: first campaign, seeds `20260831/20260832`
-(superseded as the confirmation verdict by this correction).
+(superseded as the confirmation verdict by correction 1).

@@ -33,16 +33,18 @@ P3E_ART = (Path(__file__).resolve().parents[1]
 
 
 def test_the_seed_layout_is_frozen_and_fresh():
-    """The fresh confirmation block runs on 20260841/42; the first
-    campaign's 20260831/32 are burned with everything before them
-    (its verdict was downgraded to exploratory in the PR #48 review,
-    so its streams may never feed a confirmation again)."""
+    """The confirmation block runs on 20260851/52; both downgraded
+    campaign blocks' streams -- 20260831/32 (invalid boundary CI at
+    run time, PR #48 R1) and 20260841/42 (rule and results in one
+    commit, freeze ordering unprovable, PR #48 R2) -- are burned
+    with everything before them, so no downgraded stream can ever
+    feed a confirmation again."""
 
-    assert p3c.CAMPAIGN_SEEDS == {"curved": 20260841, "flat": 20260842}
+    assert p3c.CAMPAIGN_SEEDS == {"curved": 20260851, "flat": 20260852}
     for s in (20260808, 777, 778, 779, 780, 781,
               20260811, 20260812, 20260813, 20260814,
               20260821, 20260822, 20260823, 20260824,
-              20260831, 20260832):
+              20260831, 20260832, 20260841, 20260842):
         assert s in p3c.BURNED_SEEDS, s
     p3c.assert_seed_layout()
 
@@ -117,22 +119,32 @@ def test_the_boundary_rule_replaces_the_degenerate_wald_interval():
     DeLong interval degenerates to [1, 1] -- which is NOT a valid
     finite-sample CI for the POPULATION AUC (the sample separating
     does not make the population overlap exactly zero). The frozen
-    boundary rule is the exact placement bound: all m of V10 equal 1
-    gives the one-sided 97.5% CP lower bound 0.025^(1/m) on
-    P(V10 = 1) <= AUC. Symmetric at zero. At m = 4800 this is
-    0.999232 -- the review's independently computed number."""
+    boundary rule is the exact FIXED DISJOINT-PAIR bound (review R2:
+    the placements share both arms, so they are never independent
+    trials): index-pair a_i with b_i, i < k = min(m, n), fixed a
+    priori; across unpaired iid streams the indicators 1[a_i > b_i]
+    are iid Bernoulli(P(a > b)) with P(a > b) <= AUC, and complete
+    separation makes all k successes, so 0.025^(1/k) is an exact
+    97.5% one-sided lower bound. Symmetric at zero. At k = 4800 this
+    is 0.999232 -- the review's independently computed number."""
 
-    m = 4
+    k = 4
     auc, lo, hi = p3c.auc_delong(np.array([3.0, 4.0, 5.0, 6.0]),
                                  np.array([1.0, 2.0, 2.5, 2.9]))
     assert auc == 1.0 and hi == 1.0
-    assert lo == pytest.approx(0.025 ** (1.0 / m), rel=1e-12)
+    assert lo == pytest.approx(0.025 ** (1.0 / k), rel=1e-12)
     assert lo < 1.0
-    # symmetric at zero
-    auc, lo, hi = p3c.auc_delong(np.array([1.0, 2.0]),
-                                 np.array([3.0, 4.0]))
+    # unequal sizes: only min(m, n) disjoint pairs exist, so the six
+    # extra curved values add no Bernoulli trials
+    auc, lo, hi = p3c.auc_delong(
+        np.array([3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]),
+        np.array([1.0, 2.0]))
+    assert auc == 1.0 and lo == pytest.approx(0.025 ** 0.5, rel=1e-12)
+    # symmetric at zero, again with k = min(m, n) = 1
+    auc, lo, hi = p3c.auc_delong(np.array([1.0]),
+                                 np.array([3.0, 4.0, 5.0]))
     assert auc == 0.0 and lo == 0.0
-    assert hi == pytest.approx(1.0 - 0.025 ** 0.5, rel=1e-12)
+    assert hi == pytest.approx(1.0 - 0.025, rel=1e-12)
     # the review's n = 4800 value
     assert 0.025 ** (1.0 / 4800) == pytest.approx(0.999232, abs=5e-7)
 
@@ -240,17 +252,25 @@ CAMPAIGN = (Path(__file__).resolve().parents[1]
 EXPLORATORY = (Path(__file__).resolve().parents[1]
                / "docs" / "prereg"
                / "p14_probe_p3c_results_exploratory.json")
+EXPLORATORY2 = (Path(__file__).resolve().parents[1]
+                / "docs" / "prereg"
+                / "p14_probe_p3c_results_exploratory2.json")
 
 
 def test_the_campaign_verdict_recomputes_from_the_raw_samples():
     """The committed CONFIRMATION record (fresh streams, corrected
-    boundary rule): metrics and verdict must recompute from the
-    stored per-sprinkling samples through the same frozen pipeline;
-    seeds, sizes, margins, and the frozen positive-sentence scope
-    must be the preflight's; ambiguity totals must be recorded and
-    zero (undecided is never a silent False, PR #48 review R2); and
-    the results doc embeds the rendered verdict table verbatim."""
+    boundary rule, run from a clean checkout of the freeze commit):
+    metrics and verdict must recompute from the stored
+    per-sprinkling samples through the same frozen pipeline; seeds,
+    sizes, margins, and the frozen positive-sentence scope must be
+    the preflight's; ambiguity totals must be recorded and zero
+    (undecided is never a silent False, PR #48 review R1); and the
+    results doc embeds the rendered verdict table verbatim."""
 
+    if not CAMPAIGN.exists():
+        pytest.skip("confirmation block not yet run at this freeze "
+                    "point -- its results land in a commit AFTER the "
+                    "one freezing the rule and seeds (PR #48 R2)")
     art = json.loads(CAMPAIGN.read_text(encoding="utf-8"))
     assert art["seeds"] == p3c.CAMPAIGN_SEEDS
     assert art["n_arm"] == p3c.N_ARM and art["e_n"] == p3c.E_N
@@ -271,18 +291,23 @@ def test_the_campaign_verdict_recomputes_from_the_raw_samples():
     assert p3c.campaign_table(art) in doc
 
 
-def test_the_first_campaign_record_is_downgraded_not_erased():
-    """The PR #48 review downgraded the first campaign (its AUC
-    interval was the degenerate [1,1], so the frozen valid-CI
-    requirement was unmet at run time). The record survives as the
-    exploratory artifact: grade stated, verdict downgraded, seeds
-    the burned 20260831/32 -- a protocol correction is transparent,
-    never a deletion."""
+@pytest.mark.parametrize("path,seeds", [
+    (EXPLORATORY, {"curved": 20260831, "flat": 20260832}),
+    (EXPLORATORY2, {"curved": 20260841, "flat": 20260842}),
+], ids=["first-block-R1", "second-block-R2"])
+def test_the_downgraded_campaign_records_are_kept_not_erased(path, seeds):
+    """The PR #48 review downgraded both earlier campaigns: the
+    first ran under the degenerate [1,1] AUC interval (R1), the
+    second's results entered history in the same commit as the
+    corrected rule, leaving the freeze-before-execution ordering
+    unprovable (R2). Each record survives as an exploratory
+    artifact: grade stated, verdict downgraded, seeds burned -- a
+    protocol correction is transparent, never a deletion."""
 
-    art = json.loads(EXPLORATORY.read_text(encoding="utf-8"))
+    art = json.loads(path.read_text(encoding="utf-8"))
     assert "EXPLORATORY" in art["grade"]
     assert "downgraded" in art["verdict"]
-    assert art["seeds"] == {"curved": 20260831, "flat": 20260832}
+    assert art["seeds"] == seeds
     assert set(art["seeds"].values()) <= set(p3c.BURNED_SEEDS)
 
 
@@ -292,8 +317,8 @@ def test_the_campaign_streams_reproduce_on_a_prefix():
     reproducibility that matters is pinned on a prefix: the first 20
     values of each arm (and their zero ambiguity), recomputed from
     the frozen seeds through the same `arm_samples`, must equal the
-    committed raw record exactly -- for the confirmation record AND
-    the downgraded exploratory one."""
+    committed raw record exactly -- for the confirmation record
+    (once it exists) AND both downgraded exploratory ones."""
 
     from p14_plane_wave import Slab, arms
     label, w, du, dv, dx, dy = p3c.POINT
@@ -301,7 +326,9 @@ def test_the_campaign_streams_reproduce_on_a_prefix():
     rho = p3c.E_N / slab.coordinate_volume
     curved, flat = arms(slab, w)
     k = 20
-    for path in (CAMPAIGN, EXPLORATORY):
+    for path in (CAMPAIGN, EXPLORATORY, EXPLORATORY2):
+        if not path.exists():  # results land after the freeze commit
+            continue
         art = json.loads(path.read_text(encoding="utf-8"))
         fresh_a, amb_a, _ = p3c.arm_samples(
             curved, rho, art["seeds"]["curved"], k)

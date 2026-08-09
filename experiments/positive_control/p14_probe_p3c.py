@@ -57,10 +57,16 @@ saturated). Margins are `p14_probe_p3e.P3C_MARGINS`, frozen -- they
 never move to meet a power result.
 
 **Campaign (held until preflight approval).** Two UNPAIRED arms at
-aniso-a1.0, `E[N] = 300`, fresh seed streams (curved 20260831, flat
-20260832; one rng stream per arm), `n = 4800` sprinklings per arm,
+aniso-a1.0, `E[N] = 300`, fresh seed streams (curved 20260851, flat
+20260852; one rng stream per arm), `n = 4800` sprinklings per arm,
 3a per sprinkling, then the three CIs and the branch verdict, all
-into a raw-integer artifact.
+into a raw-integer artifact. Two earlier blocks are downgraded to
+exploratory and their streams burned (PR #48 review): 20260831/32
+ran under an invalid boundary CI, and 20260841/42's results entered
+history in the same commit as the corrected rule, so the
+freeze-before-execution ordering is not provable. Never rerun those
+streams as confirmation; the operative block runs from a clean
+checkout of the freeze commit, results recorded in a LATER commit.
 
 Run:  python experiments/positive_control/p14_probe_p3c.py preflight
       python experiments/positive_control/p14_probe_p3c.py campaign
@@ -87,17 +93,21 @@ N_ARM = 4_800
 POINT = ("aniso-a1.0", 1.0, 1.0, 1.0, 2.0, 6.0)
 E_N = 300
 
-#: One rng stream per arm; unpaired by construction. 20260831/32 fed
-#: the FIRST campaign, whose verdict was downgraded to exploratory in
-#: the PR #48 review (the AUC interval degenerated at complete
+#: One rng stream per arm; unpaired by construction. Two campaign
+#: blocks are downgraded to exploratory and burned (PR #48 review):
+#: 20260831/32 (R1: the AUC interval degenerated at complete
 #: separation, so the frozen valid-CI requirement was unmet at run
-#: time) -- they are burned, and the fresh confirmation block runs on
-#: new streams under the corrected boundary rule.
-CAMPAIGN_SEEDS = {"curved": 20260841, "flat": 20260842}
+#: time) and 20260841/42 (R2: the corrected rule, the re-certified
+#: preflight, and that block's results all entered git history in
+#: ONE commit, so the freeze-before-execution ordering is not
+#: provable from the commit graph). The confirmation block runs
+#: from a clean checkout of the freeze commit that carries these
+#: seeds, and its results are recorded in a SUBSEQUENT commit.
+CAMPAIGN_SEEDS = {"curved": 20260851, "flat": 20260852}
 BURNED_SEEDS = (20260808, 777, 778, 779, 780, 781,
                 20260811, 20260812, 20260813, 20260814,
                 20260821, 20260822, 20260823, 20260824,
-                20260831, 20260832)
+                20260831, 20260832, 20260841, 20260842)
 
 PREFLIGHT_NULL_REPS = 20_000
 PREFLIGHT_EFFECT_REPS = 4_000
@@ -144,7 +154,7 @@ def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     ties -- the null-form `1/(6n)` is not an upper bound off the
     null (PR #47 review) and appears nowhere in the verdict path.
     At the boundaries the frozen rule switches to the exact
-    placement bound (PR #48 review; see inline).
+    fixed disjoint-pair bound (PR #48 review; see inline).
     """
 
     m, n = len(a), len(b)
@@ -163,14 +173,21 @@ def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     # finite-sample CI for the POPULATION AUC (PR #48 review: the
     # empirical AUC being 1 shows the sample separates, not that the
     # population overlap is exactly zero). The frozen boundary rule is
-    # the exact placement bound: all m values of V10 equal 1 means the
-    # one-sided 97.5% CP lower bound on P(V10 = 1) is 0.025^(1/m), and
-    # AUC = E[V10] >= P(V10 = 1), so [0.025^(1/m), 1] is a valid 95%
-    # interval; symmetric at 0.
+    # the exact FIXED DISJOINT-PAIR bound. NOT a placement argument:
+    # the m placements share both arms, so they are not independent
+    # trials (PR #48 review R2). Instead pair a_i with b_i by index,
+    # i < k = min(m, n), fixed a priori. Across two unpaired iid
+    # streams the indicators 1[a_i > b_i] are iid Bernoulli(theta)
+    # with theta = P(a > b) <= AUC (equality when ties have measure
+    # zero), and complete separation makes all k of them successes,
+    # so the one-sided 97.5% CP lower bound 0.025^(1/k) on theta is
+    # a valid lower bound on the AUC: [0.025^(1/k), 1] is a valid
+    # 95% interval; symmetric at 0.
+    k = min(m, n)
     if auc >= 1.0:
-        return 1.0, 0.025 ** (1.0 / m), 1.0
+        return 1.0, 0.025 ** (1.0 / k), 1.0
     if auc <= 0.0:
-        return 0.0, 0.0, 1.0 - 0.025 ** (1.0 / m)
+        return 0.0, 0.0, 1.0 - 0.025 ** (1.0 / k)
     var = (v10.var(ddof=1) / m if m > 1 else 0.0) \
         + (v01.var(ddof=1) / n if n > 1 else 0.0)
     se = math.sqrt(max(var, 0.0))
