@@ -11,6 +11,27 @@ memo). What the identity controls is the sampling MEASURE; individual
 diamond volumes differ under the two predicates, and that difference
 is part of the signal, not a confound.
 
+Scope discipline: Delta is a statement about the FROZEN Schwarzschild
+coordinates and S1 domain (exterior shell, polar cap, coordinate-time
+box). The Shapiro-delay sign argument behind the expected Delta < 0
+is coordinate-tied, so every downstream sentence keeps the frozen
+coordinates and domain explicit.
+
+Sampling law: the event count per reading is N ~ Poisson(E_N), so the
+point process is the Poisson process of the common volume measure
+(S2/PR review R1 -- a fixed N would be a binomial process conditioned
+on N, and its variance would not transfer to Poisson-based sizing).
+
+Ambiguity: an undecided pair after escalation is COUNTED, and the
+census reports interval bounds -- f_M in [related/pairs,
+(related + ambiguous)/pairs] -- so Delta is reported as
+[Delta_lower, Delta_upper]. With zero ambiguity the bounds coincide.
+
+Provenance: the git state is captured at ENTRY; official runs refuse
+a dirty tree, re-capture at EXIT, and refuse to write on any
+mismatch. `--pilot` permits a dirty tree and writes to the pilot
+artifact path with both states recorded.
+
 Exploration only -- no preregistered gate. The output (sign, size and
 spread of Delta) sizes a later operationally-anchored confirmation in
 the P3-C pattern, which needs no diamond-volume oracle.
@@ -28,36 +49,21 @@ from pathlib import Path
 import numpy as np
 import s1_schwarzschild_cost as s1
 from p14_probe_p2 import student_t_crit
-from seed_windows import (
-    P11_P13_SPENT_RANGES,
-    P12_ALLOCATION_DECADE,
-    assert_point_seeds_fresh,
-)
+from probe_seed_ledger import S3_SEED, assert_probe_seed_fresh
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
 # ---------------------------------------------------------------------
 
-N_EVENTS = 300               # events per reading (S1 bench scale)
+E_N = 300                    # Poisson mean events per reading
 N_READINGS = 300             # paired readings
-SEED = 40_000_201            # fresh vs every ledger, see SPENT_SCALARS
+SEED = S3_SEED               # 40_000_201, ledger-asserted at entry
 TOL = s1.DEFAULT_TOL         # 1e-8, the priced S1 operating point
 TOL_ESCALATED = 1e-10        # last rung of s1.TOL_LADDER
 
-#: Every scalar seed the program has spent, across all chains: the
-#: P14 probe/campaign families (777-781 including the (781, k)
-#: SeedSequence roots, 2026xxxx probe seeds) and the 40M block
-#: (C1/C2 execution, S1 bench).
-SPENT_SCALARS = frozenset({
-    777, 778, 779, 780, 781,
-    20_260_808, 20_260_811, 20_260_812, 20_260_813, 20_260_814,
-    20_260_821, 20_260_822, 20_260_823, 20_260_824,
-    20_260_851, 20_260_852,
-    40_000_061, 40_000_071, 40_000_072, 40_000_101,
-})
-
 _ARTIFACT = (Path(__file__).resolve().parents[2]
              / "docs" / "prereg" / "p14_s3_probe_results.json")
+_PILOT_ARTIFACT = _ARTIFACT.with_name("p14_s3_pilot_results.json")
 
 
 # ---------------------------------------------------------------------
@@ -89,14 +95,13 @@ def flat_relation(p: np.ndarray, q: np.ndarray) -> bool:
 
 
 def reading(rng: np.random.Generator,
-            n_events: int = N_EVENTS) -> tuple[float, float, int, int]:
-    """(f_M, f_0, ambiguous, escalated) on one shared sprinkle.
+            n_events: int) -> tuple[float, float, float, int, int]:
+    """(f_M_lower, f_M_upper, f_0, ambiguous, escalated) on one shared
+    sprinkle of `n_events` events (the caller draws the Poisson count).
 
-    The Schwarzschild side inherits the undecided-is-never-a-silent-
-    False contract: an undecided pair at TOL escalates to
-    TOL_ESCALATED; a pair still undecided there is COUNTED as
-    ambiguous (and surfaced in the artifact) before being left
-    unrelated, bounding the bias by ambiguous/pairs."""
+    A pair undecided at TOL escalates to TOL_ESCALATED; a pair still
+    undecided is counted as ambiguous and enters the census as the
+    interval [unrelated, related] -- never a silent False."""
 
     pts = s1.sample_events(n_events, rng)
     pts = pts[np.argsort(pts[:, 0], kind="stable")]
@@ -112,12 +117,12 @@ def reading(rng: np.random.Generator,
             if rel is None:
                 escalated += 1
                 rel = s1.causal_relation(p, q, tol=TOL_ESCALATED)
-                if rel is None:
-                    ambiguous += 1
-                    rel = False
-            if rel:
+            if rel is None:
+                ambiguous += 1
+            elif rel:
                 rel_m += 1
-    return rel_m / pairs, rel_0 / pairs, ambiguous, escalated
+    return (rel_m / pairs, (rel_m + ambiguous) / pairs, rel_0 / pairs,
+            ambiguous, escalated)
 
 
 # ---------------------------------------------------------------------
@@ -133,74 +138,107 @@ def _git_state() -> dict:
     return {"rev": rev, "dirty": bool(dirty)}
 
 
+def _summary(values: np.ndarray) -> dict:
+    n = len(values)
+    mean = float(np.mean(values))
+    sd = float(np.std(values, ddof=1))
+    sem = sd / math.sqrt(n)
+    tcrit = student_t_crit(n - 1)
+    return {"mean": mean, "sd": sd, "sem": sem,
+            "ci95_student_t": [mean - tcrit * sem, mean + tcrit * sem],
+            "per_reading": [float(v) for v in values]}
+
+
 def main() -> None:
     smoke = "--smoke" in sys.argv
-    n_events = 40 if smoke else N_EVENTS
+    pilot = "--pilot" in sys.argv
     n_readings = 3 if smoke else N_READINGS
+    e_n = 40 if smoke else E_N
 
-    assert_point_seeds_fresh(
-        {"s3_exploration": SEED}, SPENT_SCALARS,
-        P11_P13_SPENT_RANGES + (P12_ALLOCATION_DECADE,), "S3")
+    assert_probe_seed_fresh("s3_exploration")
+    state_start = _git_state()
+    if state_start["dirty"] and not (pilot or smoke):
+        raise SystemExit(
+            "S3: refusing an official run from a dirty tree "
+            f"(rev {state_start['rev']}); commit first or pass --pilot.")
 
     rng = np.random.default_rng(SEED)
-    fm = np.empty(n_readings)
+    fm_lo = np.empty(n_readings)
+    fm_hi = np.empty(n_readings)
     f0 = np.empty(n_readings)
+    counts = np.empty(n_readings, dtype=int)
     ambiguous = escalated = 0
     start = time.perf_counter()
     for k in range(n_readings):
-        fm[k], f0[k], amb, esc = reading(rng, n_events)
+        n = int(rng.poisson(e_n))
+        if n < 2:
+            raise SystemExit(f"S3: degenerate sprinkle n={n}")
+        counts[k] = n
+        fm_lo[k], fm_hi[k], f0[k], amb, esc = reading(rng, n)
         ambiguous += amb
         escalated += esc
         if (k + 1) % 10 == 0 or k == 0 or (k + 1) == n_readings:
             dt = time.perf_counter() - start
             eta = dt / (k + 1) * (n_readings - k - 1)
             print(f"  s3 {k + 1}/{n_readings}  "
-                  f"delta so far {np.mean(fm[:k + 1] - f0[:k + 1]):+.6f}  "
+                  f"delta so far {np.mean(fm_lo[:k + 1] - f0[:k + 1]):+.6f}  "
                   f"elapsed {dt / 60:.1f} min, eta {eta / 60:.1f} min",
                   flush=True)
     runtime = time.perf_counter() - start
 
-    delta = fm - f0
-    n = n_readings
-    mean = float(np.mean(delta))
-    sd = float(np.std(delta, ddof=1))
-    sem = sd / math.sqrt(n)
-    tcrit = student_t_crit(n - 1)
-    ci = [mean - tcrit * sem, mean + tcrit * sem]
+    state_end = _git_state()
+    if not (pilot or smoke):
+        if state_end != state_start:
+            raise SystemExit(
+                "S3: refusing to write -- the tree changed during the "
+                f"run ({state_start} -> {state_end}).")
 
+    delta_lower = fm_lo - f0
+    delta_upper = fm_hi - f0
     result = {
-        "probe": "S3 Schwarzschild paired exploration",
-        "design": "one sprinkle, dual census (measure identity, S2 memo)",
+        "probe": "S3 Schwarzschild paired exploration"
+                 + (" (PILOT)" if pilot else ""),
+        "design": ("one sprinkle, dual census (measure identity, S2 "
+                   "memo); N ~ Poisson(E_N); Delta statements are tied "
+                   "to the frozen Schwarzschild coordinates and domain"),
         "domain": {"m": s1.M, "r_shell": [s1.R_MIN, s1.R_MAX],
                    "cap_half_angle": s1.CAP_HALF_ANGLE,
                    "t_extent": s1.T_EXTENT},
-        "params": {"n_events": n_events, "n_readings": n_readings,
-                   "seed": SEED, "tol": TOL,
-                   "tol_escalated": TOL_ESCALATED, "smoke": smoke},
-        "delta": {"mean": mean, "sd": sd, "sem": sem,
-                  "ci95_student_t": ci,
-                  "per_reading": [float(d) for d in delta]},
-        "f_flat": {"mean": float(np.mean(f0)), "sd": float(np.std(f0, ddof=1))},
-        "f_schwarzschild": {"mean": float(np.mean(fm)),
-                            "sd": float(np.std(fm, ddof=1))},
-        "ambiguity": {"ambiguous": ambiguous, "escalated": escalated,
-                      "pairs_per_reading": n_events * (n_events - 1) // 2},
+        "params": {"e_n": e_n, "n_readings": n_readings, "seed": SEED,
+                   "tol": TOL, "tol_escalated": TOL_ESCALATED,
+                   "smoke": smoke, "pilot": pilot},
+        "event_counts": {"mean": float(np.mean(counts)),
+                         "min": int(counts.min()),
+                         "max": int(counts.max())},
+        "delta_lower": _summary(delta_lower),
+        "delta_upper": _summary(delta_upper),
+        "bounds_note": ("delta_lower counts undecided pairs as "
+                        "unrelated, delta_upper as related; identical "
+                        "when ambiguity is 0"),
+        "f_flat": {"mean": float(np.mean(f0)),
+                   "sd": float(np.std(f0, ddof=1))},
+        "f_schwarzschild_lower": {"mean": float(np.mean(fm_lo)),
+                                  "sd": float(np.std(fm_lo, ddof=1))},
+        "ambiguity": {"ambiguous": ambiguous, "escalated": escalated},
         "runtime_seconds": runtime,
-        "code": _git_state(),
+        "code": {"start": state_start, "end": state_end},
     }
 
-    print(f"\nS3: delta mean {mean:+.6f}  sd {sd:.6f}  "
-          f"CI95 [{ci[0]:+.6f}, {ci[1]:+.6f}]  "
-          f"f0 {np.mean(f0):.6f} -> fM {np.mean(fm):.6f}  "
+    lo, hi = result["delta_lower"], result["delta_upper"]
+    print(f"\nS3: delta_lower mean {lo['mean']:+.6f} "
+          f"CI95 [{lo['ci95_student_t'][0]:+.6f}, "
+          f"{lo['ci95_student_t'][1]:+.6f}]  "
+          f"delta_upper mean {hi['mean']:+.6f}  "
           f"ambiguous {ambiguous}, escalated {escalated}  "
           f"({runtime / 3600:.2f} h)")
 
     if smoke:
         print("smoke run -- artifact NOT written")
         return
-    _ARTIFACT.write_text(json.dumps(result, indent=2) + "\n",
-                         encoding="utf-8")
-    print(f"wrote {_ARTIFACT}")
+    target = _PILOT_ARTIFACT if pilot else _ARTIFACT
+    target.write_text(json.dumps(result, indent=2) + "\n",
+                      encoding="utf-8")
+    print(f"wrote {target}")
 
 
 if __name__ == "__main__":
