@@ -56,8 +56,8 @@ def test_the_frozen_constants_and_margins():
 
 def test_the_frozen_ci_constructions():
     """s carries the FULL variance (the null form sqrt(2/n) is
-    anti-conservative at large observed s); AUC and BA carry their
-    null-form maxima (conservative outside the band)."""
+    anti-conservative at large observed s); BA carries its binomial
+    variance maximum. AUC is DeLong (separate test below)."""
 
     n = 400
     lo, hi = p3c.ci_s(2.0, n)
@@ -67,13 +67,46 @@ def test_the_frozen_ci_constructions():
     assert hi0 - lo0 == pytest.approx(
         2 * 1.959964 * math.sqrt(2.0 / n), rel=1e-12)
     assert (hi - lo) > (hi0 - lo0)  # full variance widens at s != 0
-    lo, hi = p3c.ci_auc(0.7, n)
-    assert hi - lo == pytest.approx(
-        2 * 1.959964 * math.sqrt((2 * n + 1) / (12.0 * n * n)),
-        rel=1e-12)
     lo, hi = p3c.ci_ba(0.9, n)
     assert hi - lo == pytest.approx(
         2 * 1.959964 / (2.0 * math.sqrt(n)), rel=1e-12)
+
+
+def test_the_auc_ci_is_delong_and_beats_the_null_form_off_null():
+    """The case, PR #47 review R1: the Mann-Whitney null variance
+    `1/(6n)`-form is NOT an upper bound under alternatives, so a CI
+    built on it can manufacture `confirmed`. The reviewer's
+    counterexample, pinned: flat constant, curved two-valued above/
+    below with probability p = 0.55 -- AUC = 0.55 and the DeLong
+    variance reproduces the asymptotic `p(1-p)/m`, ~48% ABOVE the
+    null form. Plus an exact small hand case with ties, and the
+    identity mean(V10) = midrank AUC."""
+
+    n = 1000
+    rng = np.random.default_rng(3)
+    curved = np.where(rng.random(n) < 0.55, 1.0, -1.0)
+    flat = np.zeros(n)
+    auc, lo, hi = p3c.auc_delong(curved, flat)
+    p_hat = (curved > 0).mean()
+    assert auc == pytest.approx(p_hat, rel=1e-12)
+    se = (hi - auc) / 1.959964
+    want_var = curved.size / (curved.size - 1) * p_hat * (1 - p_hat) / n
+    assert se ** 2 == pytest.approx(want_var, rel=1e-9)
+    assert se ** 2 > (2 * n + 1) / (12.0 * n * n)  # beats null form
+
+    # exact hand case with ties: a = [2,2,3,3], b = [1,1,2,0]
+    a = np.array([2.0, 2.0, 3.0, 3.0])
+    b = np.array([1.0, 1.0, 2.0, 0.0])
+    auc, lo, hi = p3c.auc_delong(a, b)
+    assert auc == pytest.approx(15.0 / 16.0)
+    v10 = np.array([0.875, 0.875, 1.0, 1.0])   # placements of a in b
+    v01 = np.array([1.0, 1.0, 0.75, 1.0])      # placements of b in a
+    var = v10.var(ddof=1) / 4 + v01.var(ddof=1) / 4
+    assert ((hi - auc) / 1.959964) ** 2 == pytest.approx(var, rel=1e-9)
+    # complete separation degenerates to a zero-width CI at 1
+    auc, lo, hi = p3c.auc_delong(np.array([3.0, 4.0]),
+                                 np.array([1.0, 2.0]))
+    assert (auc, lo, hi) == (1.0, 1.0, 1.0)
 
 
 def test_the_three_branch_verdict_rules():
@@ -115,6 +148,9 @@ def test_metric_cis_on_hand_data():
     # AUC with ties: pairs a>b: 2>1 x4, 3>1 x4, 3>2 x2, 2>0 x2, 3>0
     # x2 -> 14; ties 2=2 x2 -> +1 ; total 15/16
     assert m["auc"] == pytest.approx(15.0 / 16.0)
+    # the CI in the pipeline IS the DeLong one
+    assert m["ci_auc"] == pytest.approx(
+        p3c.auc_delong(a, b)[1:], rel=1e-12)
     # equal training means -> everything classifies flat, ba = 0.5
     m2 = p3c.metric_cis(np.array([1.0, 1.0, 5.0, 5.0]),
                         np.array([1.0, 1.0, 0.0, 9.0]))

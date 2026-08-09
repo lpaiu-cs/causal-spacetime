@@ -29,14 +29,20 @@ campaign; this identity is the review's requirement):
 - `s`:   `s_hat ± z * sqrt(2/n + s_hat^2 / (4(n-1)))` -- the full
   variance; the null-form `sqrt(2/n)` is ANTI-conservative at large
   observed `s`;
-- `AUC`: `auc ± z * sqrt((2n+1)/(12 n^2))` -- the null-form SE,
-  which is the variance maximum, hence conservative outside the
-  band;
+- `AUC`: `auc ± z * sqrt(S10/m + S01/n)` -- the DELONG variance from
+  the placement values (ties via midplacements). The null-form
+  `(2n+1)/(12 n^2)` used by the first preflight is the variance
+  under the identical-continuous-distributions null ONLY, not an
+  upper bound under alternatives (PR #47 review: flat constant with
+  curved two-valued at 0.55/0.45 gives AUC = 0.55 with asymptotic
+  variance `0.2475/n`, ~48% above `1/(6n)` -- an anti-conservative
+  CI that can manufacture `confirmed`); DeLong tracks the
+  alternative and the certification was re-run with it;
 - `BA`:  `ba ± z / (2 sqrt(n))` -- the binomial variance maximum
-  (test half is `n/2` per arm), conservative likewise. The threshold
-  and direction are learned on the first half of each arm's stream
-  and applied to the second half, in certification replicates and in
-  the campaign alike.
+  `p(1-p) <= 1/4` (test half is `n/2` per arm), genuinely
+  conservative. The threshold and direction are learned on the first
+  half of each arm's stream and applied to the second half, in
+  certification replicates and in the campaign alike.
 
 **Certification (both branches, empirical distributions).** Powers
 are measured on bootstrap draws from P3-E's stored aniso-a1.0
@@ -122,9 +128,33 @@ def ci_s(s_hat: float, n: int) -> tuple[float, float]:
     return s_hat - _Z * se, s_hat + _Z * se
 
 
-def ci_auc(auc: float, n: int) -> tuple[float, float]:
-    se = math.sqrt((2 * n + 1) / (12.0 * n * n))
-    return auc - _Z * se, auc + _Z * se
+def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
+    """(AUC, ci_lo, ci_hi) with the DeLong variance.
+
+    Placements: `V10_i = P(b < a_i) + 0.5 P(b = a_i)` over the flat
+    sample, `V01_j = P(a > b_j) + 0.5 P(a = b_j)` over the curved
+    one; `AUC = mean(V10) = mean(V01)` and
+    `Var = var(V10)/m + var(V01)/n`. Valid under alternatives and
+    ties -- the null-form `1/(6n)` is not an upper bound off the
+    null (PR #47 review) and appears nowhere in the verdict path.
+    Complete separation gives a zero-width CI at the boundary, the
+    standard DeLong degeneracy.
+    """
+
+    m, n = len(a), len(b)
+    b_sorted = np.sort(b)
+    left = np.searchsorted(b_sorted, a, side="left")
+    right = np.searchsorted(b_sorted, a, side="right")
+    v10 = (left + 0.5 * (right - left)) / n
+    a_sorted = np.sort(a)
+    hi_idx = np.searchsorted(a_sorted, b, side="right")
+    lo_idx = np.searchsorted(a_sorted, b, side="left")
+    v01 = ((m - hi_idx) + 0.5 * (hi_idx - lo_idx)) / m
+    auc = float(v10.mean())
+    var = (v10.var(ddof=1) / m if m > 1 else 0.0) \
+        + (v01.var(ddof=1) / n if n > 1 else 0.0)
+    se = math.sqrt(max(var, 0.0))
+    return auc, auc - _Z * se, auc + _Z * se
 
 
 def ci_ba(ba: float, n: int) -> tuple[float, float]:
@@ -165,7 +195,7 @@ def metric_cis(a: np.ndarray, b: np.ndarray) -> dict:
     assert len(b) == n
     sd = math.sqrt(0.5 * (a.var(ddof=1) + b.var(ddof=1)))
     s_hat = float((a.mean() - b.mean()) / sd) if sd > 0 else 0.0
-    auc = _mw_auc(a, b)
+    auc, auc_lo, auc_hi = auc_delong(a, b)
     h = n // 2
     ta, tb = a[:h].mean(), b[:h].mean()
     thr = 0.5 * (ta + tb)
@@ -178,28 +208,9 @@ def metric_cis(a: np.ndarray, b: np.ndarray) -> dict:
     else:
         acc_a, acc_b = 0.0, 1.0
     ba = 0.5 * (acc_a + acc_b)
-    return {"s": s_hat, "auc": float(auc), "ba": ba,
-            "ci_s": ci_s(s_hat, n), "ci_auc": ci_auc(float(auc), n),
+    return {"s": s_hat, "auc": auc, "ba": ba,
+            "ci_s": ci_s(s_hat, n), "ci_auc": (auc_lo, auc_hi),
             "ci_ba": ci_ba(ba, n)}
-
-
-def _mw_auc(a: np.ndarray, b: np.ndarray) -> float:
-    both = np.concatenate([a, b])
-    order = both.argsort(kind="mergesort")
-    sorted_v = both[order]
-    ranks_sorted = np.arange(1, len(both) + 1, dtype=float)
-    i = 0
-    while i < len(both):
-        j = i
-        while j + 1 < len(both) and sorted_v[j + 1] == sorted_v[i]:
-            j += 1
-        if j > i:
-            ranks_sorted[i:j + 1] = 0.5 * (i + 1 + j + 1)
-        i = j + 1
-    ranks = np.empty_like(ranks_sorted)
-    ranks[order] = ranks_sorted
-    ra = ranks[:len(a)].sum()
-    return (ra - len(a) * (len(a) + 1) / 2.0) / (len(a) * len(b))
 
 
 # ---------------------------------------------------------------------
@@ -242,8 +253,9 @@ def preflight(p3e_art: dict) -> dict:
         "n_arm": N_ARM,
         "margins": dict(P3C_MARGINS),
         "ci_constructions": "s: z*sqrt(2/n + s^2/(4(n-1))); "
-                            "auc: z*sqrt((2n+1)/(12n^2)); "
-                            "ba: z/(2 sqrt(n)); z = 1.959964",
+                            "auc: DeLong placement variance "
+                            "z*sqrt(S10/m + S01/n), midplacement "
+                            "ties; ba: z/(2 sqrt(n)); z = 1.959964",
         "resampling": "arms drawn INDEPENDENTLY (unpaired); null = "
                       "both arms from the flat sample",
         "source_artifact": "p14_probe_p3e_results.json ladder_g "
