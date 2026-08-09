@@ -151,6 +151,10 @@ def test_artifact_midpoint_residual_matches_its_own_readings():
     if not _ARTIFACT.exists():
         pytest.skip("W1 artifact not present in this checkout")
     r = json.loads(_ARTIFACT.read_text(encoding="utf-8"))
+    # The committed W1 artifact is a deterministic replay of the
+    # observed stream and must say so at the artifact boundary.
+    assert r["run_kind"] == "replay"
+    assert "40000211" in r["replay_of"]
     vac = r["delta"]["vacuum"]["per_reading"]
     ric = r["delta"]["ricci"]["per_reading"]
     mix = r["delta"]["mixed"]["per_reading"]

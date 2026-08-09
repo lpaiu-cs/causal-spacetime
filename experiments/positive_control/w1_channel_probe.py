@@ -69,7 +69,7 @@ import p14_probe_p3c as p3c
 from p14_plane_wave import Relation, Slab, arms, sprinkle
 from p14_probe_p1 import relation_census
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import W1_SEED, replay_scalar
+from probe_seed_ledger import FRESH_PROBE_SCALARS, W1_SEED, replay_scalar
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
@@ -87,8 +87,8 @@ MIXED = ("flat", "focus")
 #: a'' = (1/2) dH/da = c_a a.
 _H_COEFF = {"defocus": +1.0, "focus": -1.0, "flat": 0.0}
 
-_ARTIFACT = (Path(__file__).resolve().parents[2]
-             / "docs" / "prereg" / "p14_w1_channel_results.json")
+_REPO = Path(__file__).resolve().parents[2]
+_ARTIFACT = _REPO / "docs" / "prereg" / "p14_w1_channel_results.json"
 
 
 def channel_curvature(channel: tuple[str, str], w: float) -> dict:
@@ -223,10 +223,18 @@ def channel_census(channel: tuple[str, str], points: np.ndarray,
 
 
 def _git_state() -> dict:
-    rev = subprocess.run(["git", "rev-parse", "HEAD"],
-                         capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain"],
-                           capture_output=True, text=True).stdout.strip()
+    """The state of THIS script's repository, pinned via cwd=_REPO --
+    never the process working directory, where a different (or no)
+    repository could fabricate a clean lineage -- and with check=True
+    so a failed git call refuses instead of recording rev='' clean
+    (PR review)."""
+
+    rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=_REPO,
+                         capture_output=True, text=True,
+                         check=True).stdout.strip()
+    dirty = subprocess.run(["git", "status", "--porcelain"], cwd=_REPO,
+                           capture_output=True, text=True,
+                           check=True).stdout.strip()
     return {"rev": rev, "dirty": bool(dirty)}
 
 
@@ -311,8 +319,18 @@ def main() -> None:
                                        - 0.5 * (deltas["vacuum"]
                                                 + deltas["ricci"]))}
 
+    run_kind = ("fresh_observation"
+                if "w1_exploration" in FRESH_PROBE_SCALARS
+                else "replay")
     result = {
         "probe": "W1 Weyl/Ricci channel decomposition",
+        "run_kind": run_kind,
+        "replay_of": (None if run_kind == "fresh_observation" else
+                      "observed stream 40000211; readings are "
+                      "byte-identical to the first full observation "
+                      "(the superseded pre-provenance run) -- the "
+                      "deterministic-replay label the fresh/replay "
+                      "ledger split requires at the artifact boundary"),
         "design": ("one sprinkle per reading (det g = -1 for every H), "
                    "four censuses on the same points; vacuum and flat "
                    "by the frozen predicate, ricci and mixed by the "

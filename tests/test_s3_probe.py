@@ -50,6 +50,23 @@ def test_smoke_stream_is_separate_from_the_official_stream():
                                  ledger.SPENT_RANGES, "S3")
 
 
+def test_git_state_reports_the_scripts_repo_not_the_cwd(tmp_path,
+                                                        monkeypatch):
+    """PR review: provenance must be pinned to the repository the
+    script belongs to. From a non-repo cwd the old implementation
+    recorded rev='' with dirty=False -- a fabricated clean lineage."""
+
+    import subprocess
+
+    import w1_channel_probe as w1
+    expected = subprocess.run(["git", "rev-parse", "HEAD"],
+                              cwd=EXPERIMENT_DIR, capture_output=True,
+                              text=True, check=True).stdout.strip()
+    monkeypatch.chdir(tmp_path)
+    assert s3._git_state()["rev"] == expected
+    assert w1._git_state()["rev"] == expected
+
+
 def test_official_artifact_pins_seed_and_clean_lineage():
     """The committed artifact: seed is the observed stream, entry and
     exit git states match and are clean, the delta bounds recompute
@@ -65,6 +82,11 @@ def test_official_artifact_pins_seed_and_clean_lineage():
     assert r["params"]["seed"] == ledger.replay_scalar("s3_exploration")
     assert r["code"]["start"] == r["code"]["end"]
     assert r["code"]["start"]["dirty"] is False
+    # The committed artifact IS the fresh observation (produced while
+    # 40_000_231 was an active fresh allocation, before run_kind
+    # existed). A replay must not silently replace it: doing so flips
+    # run_kind to "replay" and consciously fails here.
+    assert r.get("run_kind", "fresh_observation") == "fresh_observation"
     f0 = r["f_flat"]["per_reading"]
     fl = r["f_schwarzschild_lower"]["per_reading"]
     fh = r["f_schwarzschild_upper"]["per_reading"]

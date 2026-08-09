@@ -66,7 +66,12 @@ from pathlib import Path
 import numpy as np
 import s1_schwarzschild_cost as s1
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SEED, S3_SMOKE_SEED, replay_scalar
+from probe_seed_ledger import (
+    FRESH_PROBE_SCALARS,
+    S3_SEED,
+    S3_SMOKE_SEED,
+    replay_scalar,
+)
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
@@ -82,8 +87,8 @@ SMOKE_SEED = S3_SMOKE_SEED   # 40_000_221, the observed smoke stream --
 TOL = s1.DEFAULT_TOL         # 1e-8, the priced S1 operating point
 TOL_ESCALATED = 1e-10        # last rung of s1.TOL_LADDER
 
-_ARTIFACT = (Path(__file__).resolve().parents[2]
-             / "docs" / "prereg" / "p14_s3_probe_results.json")
+_REPO = Path(__file__).resolve().parents[2]
+_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s3_probe_results.json"
 
 
 # ---------------------------------------------------------------------
@@ -151,10 +156,18 @@ def reading(rng: np.random.Generator,
 
 
 def _git_state() -> dict:
-    rev = subprocess.run(["git", "rev-parse", "HEAD"],
-                         capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain"],
-                           capture_output=True, text=True).stdout.strip()
+    """The state of THIS script's repository, pinned via cwd=_REPO --
+    never the process working directory, where a different (or no)
+    repository could fabricate a clean lineage -- and with check=True
+    so a failed git call refuses instead of recording rev='' clean
+    (PR review)."""
+
+    rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=_REPO,
+                         capture_output=True, text=True,
+                         check=True).stdout.strip()
+    dirty = subprocess.run(["git", "status", "--porcelain"], cwd=_REPO,
+                           capture_output=True, text=True,
+                           check=True).stdout.strip()
     return {"rev": rev, "dirty": bool(dirty)}
 
 
@@ -221,8 +234,17 @@ def main() -> None:
     delta_upper = fm_hi - f0
     lo_sum = _summary(delta_lower)
     hi_sum = _summary(delta_upper)
+    run_kind = ("fresh_observation"
+                if "s3_exploration" in FRESH_PROBE_SCALARS
+                else "replay")
     result = {
         "probe": "S3 Schwarzschild paired exploration",
+        "run_kind": run_kind,
+        "replay_of": (None if run_kind == "fresh_observation" else
+                      "observed stream 40000231; the fresh observation "
+                      "is the artifact committed at fe3f353 -- a replay "
+                      "reproduces its readings byte-identically and "
+                      "must not silently replace it (contract test)"),
         "design": ("one sprinkle, dual census (measure identity, S2 "
                    "memo); N ~ Poisson(E_N); Delta statements are tied "
                    "to the frozen Schwarzschild coordinates and domain"),
