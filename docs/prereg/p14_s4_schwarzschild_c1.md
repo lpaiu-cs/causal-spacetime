@@ -138,8 +138,19 @@ ambiguity가 0이면 아래의 lower/upper 계열이 일치하고 통상 CI로 �
 ## 8. 실행 규율
 
 - **Freeze-commit 분리**: 이 문서 + 시드 등록 + 러너 + 테스트가 freeze
-  커밋(결과 없음) → 정확히 그 커밋의 클린 체크아웃에서 단일 실행 →
-  결과는 이후 커밋
+  커밋(결과 없음) → 정확히 그 freeze 내용의 클린 체크아웃에서 단일 실행
+  → 결과는 이후 커밋
+- **콘텐츠-주소 freeze 검증**: 프로토콜 표면 8개 파일 — 이 문서, 러너
+  `s4_schwarzschild_c1.py`, `s3_schwarzschild_probe.py`,
+  `s1_schwarzschild_cost.py`, `p14_probe_p2.py`, `seed_windows.py`,
+  `probe_seed_ledger.py`, S3 비교 아티팩트
+  `p14_s3_probe_results.json` — 의 raw SHA-256을
+  `p14_s4_freeze_manifest.json`에 동결하고, 러너가 **entry에서 검증,
+  exit에서 재검증**한다. clean이지만 freeze 이후의 커밋(드리프트된
+  프로토콜·비교 데이터)에서 일회성 신선 시드를 소모하는 경로를
+  차단하며, 커밋 SHA가 아닌 내용 주소라 merge 커밋에도 생존한다.
+  manifest 자체의 무결성은 freeze 커밋 리뷰가 정박한다. (해시 대상
+  경로는 전부 `.gitattributes`로 LF 핀 — 워킹트리 bytes == blob bytes.)
 - 실행 계보: entry/exit git-state 봉인(cwd=repo, check=True),
   `run_kind: fresh_observation`; 결과 커밋에서 40_000_241을 OBSERVED로
   이동하고 러너를 replay 경로로 전환

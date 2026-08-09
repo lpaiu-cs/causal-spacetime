@@ -127,6 +127,41 @@ def test_replicated_forces_gate_a_at_these_margins():
     assert checked > 150
 
 
+def test_freeze_manifest_matches_the_working_tree():
+    """The content-addressed freeze identity: every protocol-surface
+    file matches its frozen digest, the runner pins ITSELF, and the
+    S3 comparison block is pinned -- any change to any of them must
+    consciously regenerate the manifest under review."""
+
+    import json
+    m = json.loads(s4._FREEZE_MANIFEST.read_text(encoding="utf-8"))
+    files = m["files"]
+    assert len(files) == 8
+    for rel in ("experiments/positive_control/s4_schwarzschild_c1.py",
+                "docs/prereg/p14_s3_probe_results.json",
+                "docs/prereg/p14_s4_schwarzschild_c1.md"):
+        assert rel in files
+    repo = Path(__file__).resolve().parents[1]
+    for rel, want in files.items():
+        assert s4._sha256(repo / rel) == want, rel
+    s4.verify_freeze("test")
+
+
+def test_freeze_verification_refuses_drift(monkeypatch, tmp_path):
+    """A doctored digest must abort -- the clean-but-later-tree
+    scenario from the PR #57 review."""
+
+    import json
+    m = json.loads(s4._FREEZE_MANIFEST.read_text(encoding="utf-8"))
+    m["files"]["experiments/positive_control/s4_schwarzschild_c1.py"] = \
+        "0" * 64
+    doctored = tmp_path / "manifest.json"
+    doctored.write_text(json.dumps(m), encoding="utf-8")
+    monkeypatch.setattr(s4, "_FREEZE_MANIFEST", doctored)
+    with pytest.raises(SystemExit):
+        s4.verify_freeze("test")
+
+
 def test_power_certification_fast_sanity():
     """B=500 per row must already sit above the 90% target."""
 

@@ -33,6 +33,7 @@ runner's entry to the replay path.
 from __future__ import annotations
 
 import functools
+import hashlib
 import json
 import math
 import subprocess
@@ -48,6 +49,34 @@ from s3_schwarzschild_probe import reading
 _REPO = Path(__file__).resolve().parents[2]
 _S3_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s3_probe_results.json"
 _ARTIFACT = _REPO / "docs" / "prereg" / "p14_s4_results.json"
+_FREEZE_MANIFEST = _REPO / "docs" / "prereg" / "p14_s4_freeze_manifest.json"
+
+
+def _sha256(path: Path) -> str:
+    """Raw-byte digest; every manifest path is .gitattributes-pinned
+    to LF, so the working-tree bytes equal the committed blob bytes
+    on every platform (the PR #55 storage-boundary rule)."""
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def verify_freeze(stage: str) -> None:
+    """Refuse unless every protocol-surface file matches the frozen
+    digest table -- the content-addressed freeze identity, which
+    survives merge commits (PR #57 review: a clean-but-LATER tree
+    must not consume the once-only fresh seed on a drifted protocol;
+    a clean-tree check alone cannot see that). Verified at entry and
+    re-verified at exit before the artifact is written."""
+
+    manifest = json.loads(_FREEZE_MANIFEST.read_text(encoding="utf-8"))
+    for rel, want in manifest["files"].items():
+        got = _sha256(_REPO / rel)
+        if got != want:
+            raise SystemExit(
+                f"S4 {stage}: frozen protocol surface drifted: {rel}\n"
+                f"  frozen {want}\n  found  {got}\n"
+                "The campaign must run from the exact freeze content; "
+                "any change requires review and a new freeze commit.")
 
 # ---------------------------------------------------------------------
 # FROZEN constants (docs/prereg/p14_s4_schwarzschild_c1.md)
@@ -266,6 +295,7 @@ def main() -> None:
     n_readings = 3 if smoke else N_READINGS
     e_n = 40 if smoke else E_N
 
+    verify_freeze("entry")
     if smoke:
         seed = SMOKE_SEED
     else:
@@ -275,7 +305,7 @@ def main() -> None:
         raise SystemExit(
             "S4: refusing a campaign run from a dirty tree "
             f"(rev {state_start['rev']}); the rule requires the exact "
-            "freeze-commit checkout.")
+            "freeze content.")
 
     rng = np.random.default_rng(seed)
     fm_lo = np.empty(n_readings)
@@ -306,6 +336,8 @@ def main() -> None:
         raise SystemExit(
             "S4: refusing to write -- the tree changed during the run "
             f"({state_start} -> {state_end}).")
+    if not smoke:
+        verify_freeze("exit")
 
     delta_lower = fm_lo - f0
     delta_upper = fm_hi - f0
