@@ -97,13 +97,18 @@ def _perihelion_u(b: float, m: float) -> float:
     lo, hi = 0.0, 1.0 / (3.0 * m)
     if _big_r(hi, b, m) > 0.0:
         raise ValueError(f"no turning point: b={b} under critical")
-    for _ in range(200):
+    # bisect to adjacent floats and STOP -- this runs at every step
+    # of the impact-parameter solve, and iterations past float
+    # convergence would inflate the very wall-clock this measurement
+    # exists to report (PR #50 review)
+    while True:
         mid = 0.5 * (lo + hi)
+        if mid == lo or mid == hi:
+            return mid
         if _big_r(mid, b, m) > 0.0:
             lo = mid
         else:
             hi = mid
-    return 0.5 * (lo + hi)
 
 
 @cache
@@ -242,7 +247,12 @@ def flight_time(r1: float, r2: float, dpsi: float,
         if details is not None:
             details.update(family="equal-perihelion", b=b_eq,
                            r_perihelion=1.0 / u_in)
-        return t_eq, e_eq + tol
+        # dT/dpsi = b exactly, so the skipped angle mismatch is a
+        # TIME error of b_eq * |dpsi - a_eq| -- on this patch b_eq
+        # is >> 1 and adding bare `tol` under-reported the bound by
+        # over an order, letting dt values inside the true band be
+        # silently classified (PR #50 review)
+        return t_eq, e_eq + abs(dpsi - a_eq) * b_eq
     one_turn = dpsi > a_eq
     if one_turn:
         lo, hi = 3.0 * math.sqrt(3.0) * m * (1.0 + 1e-9), b_eq

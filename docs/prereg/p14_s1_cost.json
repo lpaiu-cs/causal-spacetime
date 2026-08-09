@@ -21,8 +21,8 @@
    "n": 300,
    "pairs_sampled": 1500,
    "tol": 1e-06,
-   "seconds": 1.2845811000006506,
-   "us_per_pair": 856.3874000004337,
+   "seconds": 0.9072923999920022,
+   "us_per_pair": 604.8615999946682,
    "related": 373,
    "undecided": 0
   },
@@ -30,8 +30,8 @@
    "n": 300,
    "pairs_sampled": 1500,
    "tol": 1e-08,
-   "seconds": 1.7707900999957928,
-   "us_per_pair": 1180.5267333305285,
+   "seconds": 1.152227500002482,
+   "us_per_pair": 768.1516666683214,
    "related": 373,
    "undecided": 0
   },
@@ -39,8 +39,8 @@
    "n": 300,
    "pairs_sampled": 1500,
    "tol": 1e-10,
-   "seconds": 1.924168199999258,
-   "us_per_pair": 1282.7787999995053,
+   "seconds": 1.4227625000057742,
+   "us_per_pair": 948.5083333371828,
    "related": 373,
    "undecided": 0
   }
@@ -50,20 +50,20 @@
   {
    "n": 1000,
    "pairs": 499500,
-   "seconds_per_sample": 589.673103298599,
-   "hours_per_4800_samples": 786.2308043981319
+   "seconds_per_sample": 383.69175750082655,
+   "hours_per_4800_samples": 511.589010001102
   },
   {
    "n": 2000,
    "pairs": 1999000,
-   "seconds_per_sample": 2359.8729399277263,
-   "hours_per_4800_samples": 3146.497253236969
+   "seconds_per_sample": 1535.5351816699742,
+   "hours_per_4800_samples": 2047.3802422266324
   },
   {
    "n": 4000,
    "pairs": 7998000,
-   "seconds_per_sample": 9441.852813177566,
-   "hours_per_4800_samples": 12589.137084236756
+   "seconds_per_sample": 6143.677030013234,
+   "hours_per_4800_samples": 8191.569373350979
   }
  ],
  "plane_wave_reference": {
@@ -71,7 +71,7 @@
   "n": 299,
   "pairs": 44551,
   "seed": 40000102,
-  "us_per_pair": 2.057240017138948
+  "us_per_pair": 2.111171466569618
  },
- "price_ratio_at_default_tol": 573.8400592519655
+ "price_ratio_at_default_tol": 363.8509135008673
 }

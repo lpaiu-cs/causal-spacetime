@@ -29,19 +29,22 @@ at `3 M`).
 
 | tol | μs/pair |
 |---|---|
-| 1e-06 | 856 |
-| 1e-08 (default) | **1181** |
-| 1e-10 | 1283 |
+| 1e-06 | 605 |
+| 1e-08 (default) | **768** |
+| 1e-10 | 949 |
 
-Plane-wave predicate on the same host at aniso-a1.0: `2.06 μs/pair`
-→ **price ratio ≈ 574×**. Projection at the default tolerance
-(single core, `O(n²)` relations per sample, P11–P13-like sizes):
+Plane-wave predicate on the same host at aniso-a1.0: `2.11 μs/pair`
+→ **price ratio ≈ 364×**. (An earlier draft quoted 1181 μs/574×;
+~35% of that was the perihelion root-finder iterating past float
+convergence — solver waste, not physics, and the review caught it.)
+Projection at the default tolerance (single core, `O(n²)` relations
+per sample, P11–P13-like sizes):
 
 | n per sample | s/sample | hours per 4800 samples |
 |---|---|---|
-| 1000 | 590 | **786** |
-| 2000 | 2360 | 3146 |
-| 4000 | 9442 | 12589 |
+| 1000 | 384 | **512** |
+| 2000 | 1536 | 2047 |
+| 4000 | 6144 | 8192 |
 
 1500 sampled pairs at every tolerance rung: `373` related, `0`
 undecided. Wall-clock is host-dependent; the artifact records the
@@ -52,9 +55,9 @@ range.
 ## The sentence this buys (for the preregistration's freeze manifest)
 
 > S1은 해당 solver·patch·N에서 인과 술어 구성요소의 비용을 기록한다:
-> shell r∈[10,20]M·cap 2 rad·tol 1e-8에서 **~1.2 ms/pair —
-> plane-wave 술어의 ~570×, n=1000 기준 4800-표본 캠페인 환산
-> ~790시간(단일 코어)**. 감당 가능하더라도 Schwarzschild
+> shell r∈[10,20]M·cap 2 rad·tol 1e-8에서 **~0.77 ms/pair —
+> plane-wave 술어의 ~360×, n=1000 기준 4800-표본 캠페인 환산
+> ~510시간(단일 코어)**. 감당 가능하더라도 Schwarzschild
 > 부피·캠페인 경로는 별도 미해결이며, 감당 불가능하면 해당
 > solver·도메인·예산 경로만 보류한다.
 

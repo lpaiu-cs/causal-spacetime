@@ -11,6 +11,7 @@ Wall-clock SECONDS are host-dependent and are never pinned.
 
 from __future__ import annotations
 
+import json
 import math
 import sys
 from pathlib import Path
@@ -143,3 +144,24 @@ def test_the_sample_and_bench_are_deterministic():
     assert b1["related"] == b2["related"]
     assert b1["undecided"] == b2["undecided"]
     assert b1["pairs_sampled"] == 40
+
+
+def test_the_frozen_benchmark_counts_are_pinned():
+    """The artifact's counts as LITERALS, recomputed with the frozen
+    parameters (PR #50 review: determinism alone would pass a solver
+    regression that shifts the counts deterministically): the
+    BENCH_SEED/BENCH_N/1500-pair sample decides 373 related and 0
+    undecided, identically at every tolerance rung of the committed
+    artifact."""
+
+    row = s1.bench(n=s1.BENCH_N, seed=s1.BENCH_SEED, tol=1e-6,
+                   k_pairs=1_500)
+    assert row["related"] == 373
+    assert row["undecided"] == 0
+    art_path = (Path(__file__).resolve().parents[1]
+                / "docs" / "prereg" / "p14_s1_cost.json")
+    art = json.loads(art_path.read_text(encoding="utf-8"))
+    for rung in art["ladder"]:
+        assert rung["related"] == 373, rung["tol"]
+        assert rung["undecided"] == 0, rung["tol"]
+        assert rung["pairs_sampled"] == 1_500
