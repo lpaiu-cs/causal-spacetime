@@ -1,4 +1,4 @@
-# P14 사전등록 — v0.4 (준비 커밋; 최종 freeze 아님)
+# P14 사전등록 — v0.4 (STAGE COMPLETE: POSITIVE)
 
 Status: **STAGE COMPLETE — POSITIVE.** 설계 v0.4 승인(in-session
 4라운드 + R-5) → 준비 커밋(PR #49) → ledger 단일화 P′=`51875a2` →
