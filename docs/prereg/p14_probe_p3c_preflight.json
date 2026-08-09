@@ -1,0 +1,81 @@
+{
+  "p4": {
+    "arm_correlation": 0.5010089290848669,
+    "bootstrap": {
+      "B": 4000,
+      "corr_ci95": [
+        0.4076647040357874,
+        0.586986809788125
+      ],
+      "gain_ci95": [
+        1.3856891310277555,
+        1.6980957109035602
+      ],
+      "resampling": "pair-level joint (one index vector for both arms)",
+      "seed_path": [
+        781,
+        41
+      ]
+    },
+    "independent_arm_variance_sum": 3.679081536977379e-05,
+    "n_sprinklings": 250,
+    "paired_variance": 2.400861242290918e-05,
+    "point": "aniso-a1.0",
+    "sizing_note": "paired design needs 1/gain of the unpaired sprinklings for equal mean-difference precision",
+    "source_artifact": "p14_probe_p3e_results.json ladder_g aniso-a1.0 raw samples",
+    "variance_gain": 1.5324007369400385
+  },
+  "preflight": {
+    "campaign_seeds": {
+      "curved": 20260831,
+      "flat": 20260832
+    },
+    "certification_rule": "exact CP 95% LOWER bound >= 0.90 for BOTH branches",
+    "certified": true,
+    "ci_constructions": "s: z*sqrt(2/n + s^2/(4(n-1))); auc: z*sqrt((2n+1)/(12n^2)); ba: z/(2 sqrt(n)); z = 1.959964",
+    "effect": {
+      "confirmed_ci95_exact": [
+        0.9990782052568399,
+        1.0
+      ],
+      "confirmed_rate": 1.0,
+      "counts": {
+        "confirmed": 4000,
+        "equivalent": 0,
+        "inconclusive": 0
+      },
+      "reps": 4000,
+      "seed_path": [
+        781,
+        51
+      ]
+    },
+    "margins": {
+      "eps_auc": 0.02327162927894983,
+      "eps_ba": 0.02850002741226752,
+      "eps_s": 0.08061025058886742
+    },
+    "n_arm": 4800,
+    "null": {
+      "counts": {
+        "confirmed": 0,
+        "equivalent": 18209,
+        "inconclusive": 1791
+      },
+      "equivalent_ci95_exact": [
+        0.9064078331575443,
+        0.9143723859333264
+      ],
+      "equivalent_rate": 0.91045,
+      "reps": 20000,
+      "seed_path": [
+        781,
+        50
+      ]
+    },
+    "resampling": "arms drawn INDEPENDENTLY (unpaired); null = both arms from the flat sample",
+    "seconds": 37.007911499997135,
+    "source_artifact": "p14_probe_p3e_results.json ladder_g aniso-a1.0 raw samples"
+  },
+  "script": "experiments/positive_control/p14_probe_p3c.py"
+}
