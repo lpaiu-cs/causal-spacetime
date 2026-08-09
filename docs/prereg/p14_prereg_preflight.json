@@ -1,0 +1,90 @@
+{
+ "code_version": "51875a2af4e5adc2ca545f2a4f07ba47b093044b",
+ "source_digests": {
+  "p14_prereg.py": "f2be65bbfa663aa211b6ac7af97e7a51ba2e70abde0b502f1df63058fefa28db",
+  "p14_probe_p3c.py": "8e63dc2afd4a954c18f27bfc08951ad77ecc11feddb143f84aeada3bdc7a31d0",
+  "p14_probe_p3e.py": "d6c011ce570750d41186595e387b809514d3a9ec1b568ba2bfe987ad2a3ed760",
+  "p14_probe_p2.py": "005c4edb67578c65932f4b13559fd23e9194d7256cc9418e68231baefe558ce1",
+  "p14_probe_p1.py": "42b7508834757f9febaa30579b950133e9bc47d2e00049771751cce55af25356",
+  "p14_plane_wave.py": "8fc0db68f7a0df5996ea7d4f5d0619c3a18ed6b355ad11bb6f69fc5d98f9228f",
+  "seed_windows.py": "5a0b60d8e8d15f9283f2ebbd02aa76b724c683a3b464f1a025eab4e65be2acdf"
+ },
+ "point": "aniso-a1.0",
+ "e_n": 300,
+ "n_c1": 3000,
+ "n_c2": 4800,
+ "eps_delta": 0.0003578762,
+ "eps_delta_anchor": [
+  0.08061025,
+  0.0044395871
+ ],
+ "margins_c2": {
+  "eps_s": 0.08061025058886742,
+  "eps_auc": 0.02327162927894983,
+  "eps_ba": 0.02850002741226752
+ },
+ "campaign_seeds": {
+  "c1_paired": 40000061,
+  "c2_curved": 40000071,
+  "c2_flat": 40000072
+ },
+ "boot_roots": {
+  "joint_effect": [
+   781,
+   60
+  ],
+  "c1_null": [
+   781,
+   61
+  ],
+  "c2_null": [
+   781,
+   62
+  ]
+ },
+ "boot_children": {
+  "joint_effect": 3,
+  "c1_null": 1,
+  "c2_null": 2
+ },
+ "effect_source": "p14_probe_p3e_results.json ladder_g aniso-a1.0 raw paired samples",
+ "branches": {
+  "joint_effect": {
+   "reps": 4000,
+   "counts": {
+    "joint_confirmed": 4000,
+    "c1_confirmed": 4000,
+    "c2_confirmed": 4000
+   },
+   "pass_key": "joint_confirmed",
+   "pass_ci95_exact": [
+    0.9990782052568399,
+    1.0
+   ]
+  },
+  "c1_null": {
+   "reps": 20000,
+   "counts": {
+    "equivalent": 19211
+   },
+   "pass_key": "equivalent",
+   "pass_ci95_exact": [
+    0.9577593747515949,
+    0.9632057062912287
+   ]
+  },
+  "c2_null": {
+   "reps": 20000,
+   "counts": {
+    "equivalent": 18196
+   },
+   "pass_key": "equivalent",
+   "pass_ci95_exact": [
+    0.905745014081961,
+    0.9137353978659215
+   ]
+  }
+ },
+ "certified": true,
+ "seconds": 30.006866199997603
+}
