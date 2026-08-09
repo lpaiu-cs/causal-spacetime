@@ -57,10 +57,16 @@ saturated). Margins are `p14_probe_p3e.P3C_MARGINS`, frozen -- they
 never move to meet a power result.
 
 **Campaign (held until preflight approval).** Two UNPAIRED arms at
-aniso-a1.0, `E[N] = 300`, fresh seed streams (curved 20260831, flat
-20260832; one rng stream per arm), `n = 4800` sprinklings per arm,
+aniso-a1.0, `E[N] = 300`, fresh seed streams (curved 20260851, flat
+20260852; one rng stream per arm), `n = 4800` sprinklings per arm,
 3a per sprinkling, then the three CIs and the branch verdict, all
-into a raw-integer artifact.
+into a raw-integer artifact. Two earlier blocks are downgraded to
+exploratory and their streams burned (PR #48 review): 20260831/32
+ran under an invalid boundary CI, and 20260841/42's results entered
+history in the same commit as the corrected rule, so the
+freeze-before-execution ordering is not provable. Never rerun those
+streams as confirmation; the operative block runs from a clean
+checkout of the freeze commit, results recorded in a LATER commit.
 
 Run:  python experiments/positive_control/p14_probe_p3c.py preflight
       python experiments/positive_control/p14_probe_p3c.py campaign
@@ -87,11 +93,21 @@ N_ARM = 4_800
 POINT = ("aniso-a1.0", 1.0, 1.0, 1.0, 2.0, 6.0)
 E_N = 300
 
-#: One rng stream per arm; unpaired by construction.
-CAMPAIGN_SEEDS = {"curved": 20260831, "flat": 20260832}
+#: One rng stream per arm; unpaired by construction. Two campaign
+#: blocks are downgraded to exploratory and burned (PR #48 review):
+#: 20260831/32 (R1: the AUC interval degenerated at complete
+#: separation, so the frozen valid-CI requirement was unmet at run
+#: time) and 20260841/42 (R2: the corrected rule, the re-certified
+#: preflight, and that block's results all entered git history in
+#: ONE commit, so the freeze-before-execution ordering is not
+#: provable from the commit graph). The confirmation block runs
+#: from a clean checkout of the freeze commit that carries these
+#: seeds, and its results are recorded in a SUBSEQUENT commit.
+CAMPAIGN_SEEDS = {"curved": 20260851, "flat": 20260852}
 BURNED_SEEDS = (20260808, 777, 778, 779, 780, 781,
                 20260811, 20260812, 20260813, 20260814,
-                20260821, 20260822, 20260823, 20260824)
+                20260821, 20260822, 20260823, 20260824,
+                20260831, 20260832, 20260841, 20260842)
 
 PREFLIGHT_NULL_REPS = 20_000
 PREFLIGHT_EFFECT_REPS = 4_000
@@ -137,8 +153,8 @@ def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     `Var = var(V10)/m + var(V01)/n`. Valid under alternatives and
     ties -- the null-form `1/(6n)` is not an upper bound off the
     null (PR #47 review) and appears nowhere in the verdict path.
-    Complete separation gives a zero-width CI at the boundary, the
-    standard DeLong degeneracy.
+    At the boundaries the frozen rule switches to the exact
+    fixed disjoint-pair bound (PR #48 review; see inline).
     """
 
     m, n = len(a), len(b)
@@ -151,6 +167,27 @@ def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     lo_idx = np.searchsorted(a_sorted, b, side="left")
     v01 = ((m - hi_idx) + 0.5 * (hi_idx - lo_idx)) / m
     auc = float(v10.mean())
+    # At the boundaries the Wald/DeLong interval DEGENERATES to zero
+    # width -- complete separation makes every placement 1 (or 0), the
+    # influence variance vanishes, and [1, 1] is not a valid
+    # finite-sample CI for the POPULATION AUC (PR #48 review: the
+    # empirical AUC being 1 shows the sample separates, not that the
+    # population overlap is exactly zero). The frozen boundary rule is
+    # the exact FIXED DISJOINT-PAIR bound. NOT a placement argument:
+    # the m placements share both arms, so they are not independent
+    # trials (PR #48 review R2). Instead pair a_i with b_i by index,
+    # i < k = min(m, n), fixed a priori. Across two unpaired iid
+    # streams the indicators 1[a_i > b_i] are iid Bernoulli(theta)
+    # with theta = P(a > b) <= AUC (equality when ties have measure
+    # zero), and complete separation makes all k of them successes,
+    # so the one-sided 97.5% CP lower bound 0.025^(1/k) on theta is
+    # a valid lower bound on the AUC: [0.025^(1/k), 1] is a valid
+    # 95% interval; symmetric at 0.
+    k = min(m, n)
+    if auc >= 1.0:
+        return 1.0, 0.025 ** (1.0 / k), 1.0
+    if auc <= 0.0:
+        return 0.0, 0.0, 1.0 - 0.025 ** (1.0 / k)
     var = (v10.var(ddof=1) / m if m > 1 else 0.0) \
         + (v01.var(ddof=1) / n if n > 1 else 0.0)
     se = math.sqrt(max(var, 0.0))
@@ -255,7 +292,10 @@ def preflight(p3e_art: dict) -> dict:
         "ci_constructions": "s: z*sqrt(2/n + s^2/(4(n-1))); "
                             "auc: DeLong placement variance "
                             "z*sqrt(S10/m + S01/n), midplacement "
-                            "ties; ba: z/(2 sqrt(n)); z = 1.959964",
+                            "ties, at complete separation the "
+                            "fixed disjoint-pair boundary bound "
+                            "0.025^(1/min(m,n)); "
+                            "ba: z/(2 sqrt(n)); z = 1.959964",
         "resampling": "arms drawn INDEPENDENTLY (unpaired); null = "
                       "both arms from the flat sample",
         "source_artifact": "p14_probe_p3e_results.json ladder_g "
@@ -336,6 +376,35 @@ def p4_block(p3e_art: dict) -> dict:
 # ---------------------------------------------------------------------
 
 
+def arm_samples(geom, rho: float, seed: int,
+                count: int) -> tuple[np.ndarray, int, int]:
+    """One unpaired arm's per-sprinkling 3a values from a single rng
+    stream, plus the arm's TOTAL ambiguous and escalated pair counts.
+
+    `related` leaves an undecided pair False, so summing it without
+    reading `ambiguous` silently counts undecided as unrelated --
+    the "undecided is never a silent False" contract (PR #48 review
+    R2). The campaign stores both totals and asserts ambiguity is
+    zero; a nonzero count would require bracketing the relation
+    fraction instead. Module-level so a test can rerun a PREFIX of
+    the stream against the committed raw record.
+    """
+
+    rng = np.random.default_rng(seed)
+    out = np.empty(count)
+    amb = esc = 0
+    for i in range(count):
+        pts = sprinkle(geom, rho, rng)
+        n = len(pts)
+        cen = relation_census(geom, pts)
+        out[i] = cen.related.sum() / (n * (n - 1) / 2)
+        amb += cen.ambiguous
+        esc += cen.escalated
+        if (i + 1) % 500 == 0:
+            print(f"    {seed}: {i + 1}/{count}", flush=True)
+    return out, amb, esc
+
+
 def run_campaign() -> dict:
     """Two unpaired arms, fresh seed streams, n = 4800 sprinklings
     per arm; 3a per sprinkling; the frozen pipeline and verdict."""
@@ -346,22 +415,15 @@ def run_campaign() -> dict:
     rho = E_N / slab.coordinate_volume
     curved, flat = arms(slab, w)
 
-    def one_arm(geom, seed: int) -> np.ndarray:
-        rng = np.random.default_rng(seed)
-        out = np.empty(N_ARM)
-        for i in range(N_ARM):
-            pts = sprinkle(geom, rho, rng)
-            n = len(pts)
-            cen = relation_census(geom, pts)
-            out[i] = cen.related.sum() / (n * (n - 1) / 2)
-            if (i + 1) % 500 == 0:
-                print(f"    {seed}: {i + 1}/{N_ARM}", flush=True)
-        return out
-
     print("  curved arm ...", flush=True)
-    f_curved = one_arm(curved, CAMPAIGN_SEEDS["curved"])
+    f_curved, amb_a, esc_a = arm_samples(curved, rho,
+                                         CAMPAIGN_SEEDS["curved"], N_ARM)
     print("  flat arm ...", flush=True)
-    f_flat = one_arm(flat, CAMPAIGN_SEEDS["flat"])
+    f_flat, amb_0, esc_0 = arm_samples(flat, rho,
+                                       CAMPAIGN_SEEDS["flat"], N_ARM)
+    # undecided is never a silent False: with any ambiguity the
+    # relation fraction would need bracketing, not a point value
+    assert amb_a == 0 and amb_0 == 0, (amb_a, amb_0)
     m = metric_cis(f_curved, f_flat)
     verdict = classify(m["ci_s"], m["ci_auc"], m["ci_ba"])
     art = {
@@ -369,6 +431,8 @@ def run_campaign() -> dict:
         "point": label, "e_n": E_N, "n_arm": N_ARM,
         "seeds": dict(CAMPAIGN_SEEDS),
         "margins": dict(P3C_MARGINS),
+        "ambiguity": {"curved": {"ambiguous": amb_a, "escalated": esc_a},
+                      "flat": {"ambiguous": amb_0, "escalated": esc_0}},
         "raw": {"f_curved": [float(v) for v in f_curved],
                 "f_flat": [float(v) for v in f_flat]},
         "metrics": m,
@@ -383,6 +447,26 @@ def run_campaign() -> dict:
         f.write("\n")
     print(f"verdict: {verdict}; artifact: {_CAMPAIGN_ARTIFACT}")
     return art
+
+
+def campaign_table(art: dict) -> str:
+    """The campaign verdict table the results doc embeds verbatim."""
+
+    m = art["metrics"]
+    mg = art["margins"]
+    rows = [
+        ("s", m["s"], m["ci_s"], f"±{mg['eps_s']:.4f}"),
+        ("AUC", m["auc"], m["ci_auc"], f"0.5 ± {mg['eps_auc']:.4f}"),
+        ("BA", m["ba"], m["ci_ba"], f"0.5 ± {mg['eps_ba']:.4f}"),
+    ]
+    lines = ["| metric | value | 95% CI | band |",
+             "|---|---|---|---|"]
+    for name, v, ci, band in rows:
+        lines.append(f"| {name} | {v:.6f} | [{ci[0]:.6f}, "
+                     f"{ci[1]:.6f}] | {band} |")
+    lines.append(f"\n**Verdict: `{art['verdict']}`** — every CI "
+                 "entirely outside its band in the frozen direction.")
+    return "\n".join(lines)
 
 
 def main(mode: str) -> None:
