@@ -1,0 +1,13 @@
+{
+ "preflight_digest": "173b7063c1a6d45204bc7f22155e8253a153e18c66d0c4867e756c828e4ae34e",
+ "preflight_code_version": "51875a2af4e5adc2ca545f2a4f07ba47b093044b",
+ "s1_sentence": "S1은 해당 solver·patch·N에서 인과 술어 구성요소의 비용을 기록한다: shell r∈[10,20]M·cap 2 rad·tol 1e-8에서 ~0.77 ms/pair — plane-wave 술어의 ~360×, n=1000 기준 4800-표본 캠페인 환산 ~510시간(단일 코어). 감당 가능하더라도 Schwarzschild 부피·캠페인 경로는 별도 미해결이며, 감당 불가능하면 해당 solver·도메인·예산 경로만 보류한다. (근거: docs/prereg/p14_s1_cost.json, PR 50 merge 0d9ab83)",
+ "n_c1": 3000,
+ "n_c2": 4800,
+ "eps_delta": 0.0003578762,
+ "campaign_seeds": {
+  "c1_paired": 40000061,
+  "c2_curved": 40000071,
+  "c2_flat": 40000072
+ }
+}

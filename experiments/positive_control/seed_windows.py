@@ -22,6 +22,30 @@ from __future__ import annotations
 
 Range = tuple[str, int, int]
 
+#: The house integer ledger -- every spent/reserved scalar range of
+#: the P11-P13 lineage. ONE SOURCE: `p12_stage_b.SPENT_RANGES` is an
+#: alias of this tuple, so a future addition propagates to both P12
+#: and the P14 preregistration. It lives here (not in `p12_stage_b`)
+#: because that module drags the whole P13/P10/P3 import chain,
+#: which a standalone runner cannot resolve -- and because this file
+#: IS in the preregistration's frozen-source digest table while
+#: `p12_stage_b` is not.
+P11_P13_SPENT_RANGES: tuple[Range, ...] = (
+    ("P11/P12 experimental", 1_000_000, 1_999_999),
+    ("P12 design check", 2_000_000, 5_999_999),
+    ("P13 campaign v1", 6_000_000, 6_475_999),
+    ("P13 campaign v2", 8_000_000, 8_795_999),
+    ("P13 11.3 diagnostic", 14_000_000, 14_549_999),
+    ("P13 campaign v3", 15_000_000, 21_503_999),
+    ("P13 design-check reservation", 22_000_000, 29_999_999),
+)
+
+#: P12's DOCUMENTED allocation boundary -- the full decade, not its
+#: used ceiling 33263999 (P14 prereg review R-5); P12 declared the
+#: space from 40000000 on as the next allocation.
+P12_ALLOCATION_DECADE: Range = (
+    "P12 allocation decade", 30_000_000, 39_999_999)
+
 
 def assert_windows_disjoint_and_fresh(
         blocks: list[Range],

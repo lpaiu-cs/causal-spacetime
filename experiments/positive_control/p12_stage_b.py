@@ -56,6 +56,7 @@ from pathlib import Path
 
 import numpy as np
 import p13_tau_ell as P13
+import seed_windows as _seed_windows
 from p10_continuum_ladder import _stable_seed
 from p11_metric import (
     PILOT_SAMPLES,
@@ -189,15 +190,10 @@ SCORE_OFFSET = P13.SCORE_OFFSET
 #: (Section 10.11 item 7 asks it be asserted against the RANGES rather
 #: than against a floor, so a future window that lands *below* a spent
 #: range is caught too).
-SPENT_RANGES = (
-    ("P11/P12 experimental", 1_000_000, 1_999_999),
-    ("P12 design check", 2_000_000, 5_999_999),
-    ("P13 campaign v1", 6_000_000, 6_475_999),
-    ("P13 campaign v2", 8_000_000, 8_795_999),
-    ("P13 11.3 diagnostic", 14_000_000, 14_549_999),
-    ("P13 campaign v3", 15_000_000, 21_503_999),
-    ("P13 design-check reservation", 22_000_000, 29_999_999),
-)
+#: Alias of the ONE-SOURCE house ledger in `seed_windows` (moved
+#: there for the P14 preregistration, whose standalone runner cannot
+#: import this module's P13/P10/P3 chain); values unchanged.
+SPENT_RANGES = _seed_windows.P11_P13_SPENT_RANGES
 
 # --------------------------------------------------------------------
 # Verification-B's completeness pin, PER RUNG. Section 10.10 first wrote

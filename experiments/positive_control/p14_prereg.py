@@ -50,12 +50,15 @@ import time
 from pathlib import Path
 
 import numpy as np
-import p12_stage_b
 import p14_probe_p3c as p3c
 from p14_plane_wave import Slab, arms, sprinkle
 from p14_probe_p1 import clopper_pearson, relation_census
 from p14_probe_p2 import student_t_crit
-from seed_windows import assert_point_seeds_fresh
+from seed_windows import (
+    P11_P13_SPENT_RANGES,
+    P12_ALLOCATION_DECADE,
+    assert_point_seeds_fresh,
+)
 
 # ---------------------------------------------------------------------
 # Frozen constants (prereg v0.4)
@@ -136,9 +139,12 @@ _SPENT_SCALARS = frozenset(p3c.BURNED_SEEDS) \
 #: The house integer ledger: P11-P13 spent ranges plus P12's FULL
 #: allocation decade -- the documented boundary, not just the used
 #: ceiling 33263999 (review R-5: the check must be as strong as the
-#: declared allocation).
-_SPENT_RANGES = p12_stage_b.SPENT_RANGES + (
-    ("P12 allocation decade", 30_000_000, 39_999_999),)
+#: declared allocation). Imported from `seed_windows`, the ledger's
+#: ONE SOURCE (P12 aliases the same tuple) -- importing p12_stage_b
+#: here would drag the P13/P10/P3 chain a standalone runner cannot
+#: resolve, and would put the ledger outside the frozen-source
+#: digest table.
+_SPENT_RANGES = P11_P13_SPENT_RANGES + (P12_ALLOCATION_DECADE,)
 
 
 def assert_seed_layout() -> None:

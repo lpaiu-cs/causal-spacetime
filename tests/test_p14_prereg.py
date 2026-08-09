@@ -104,6 +104,11 @@ def test_the_extracted_helper_keeps_p12_behavior():
 
     blocks = p12_stage_b.assert_windows_disjoint_and_fresh()
     assert blocks and all(len(b) == 3 for b in blocks)
+    # the house ledger has ONE source: P12 aliases seed_windows'
+    # tuple, so a future spend added there reaches both consumers
+    import seed_windows
+    assert p12_stage_b.SPENT_RANGES \
+        is seed_windows.P11_P13_SPENT_RANGES
     with pytest.raises(SystemExit, match="leaves T's window"):
         assert_windows_disjoint_and_fresh(
             [("a", 5, 15)], (), 10, 20, "T")
