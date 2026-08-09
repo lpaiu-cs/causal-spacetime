@@ -1,0 +1,29 @@
+{
+  "artifact": "p14_s3_pilot_results.json",
+  "status": "PILOT ONLY -- effect-size and variance reference; not a clean-provenance exploration artifact",
+  "raw_preservation": "the pilot JSON is preserved byte-for-byte as produced (renamed only); raw sha256 of the as-produced CRLF bytes: c8294b88b007c4dfbe19717ffc46eb0925f2b659dd0715a755b5ff7b87f97986; the committed blob is the git-normalized LF form of the same content",
+  "true_lineage": {
+    "started": "2026-08-09T21:13:56+09:00",
+    "finished": "2026-08-10T00:13:41+09:00",
+    "runtime_seconds": 10784.2,
+    "tree_at_start": "HEAD beee56e with the not-yet-committed probe files (dirty); the implementation commit 69b555a (2026-08-09T21:22:49+09:00) and the later review commits landed DURING the run",
+    "executing_script_blob": "0db5c334e6f464500b60b8a775783eb8e90dc09c = 69b555a:experiments/positive_control/s3_schwarzschild_probe.py, byte-identical to the file as launched; later rewrites of the file did not affect the already-loaded module",
+    "embedded_code_field": "records the EXIT-time state only ({rev: be27792, dirty: false}) because the pilot ran the original single-capture _git_state; it does NOT describe the start state and is superseded by this sidecar"
+  },
+  "protocol_deviations_from_official": {
+    "sampling_law": "fixed N = 300 per reading (a binomial point process conditioned on N), not N ~ Poisson(300)",
+    "seed": "40000201, observed-spent in probe_seed_ledger",
+    "artifact_schema": "delta point summary only; no per-reading raw f arrays, no identified_ci95, no claim_class field"
+  },
+  "headline_pilot_numbers": {
+    "delta_mean": -0.036077,
+    "delta_sd": 0.00119,
+    "delta_ci95_student_t": [-0.036213, -0.035942],
+    "f_flat_mean": 0.448692,
+    "f_schwarzschild_mean": 0.412615,
+    "ambiguous": 0,
+    "escalated": 0,
+    "use": "sizing reference only; the official run re-measures on a fresh unobserved stream"
+  },
+  "official_run": "seed 40000231 (fresh, never observed), N ~ Poisson(300), entry/exit git-state sealed, launched from a clean checkout at or after be27792"
+}
