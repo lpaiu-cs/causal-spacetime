@@ -336,6 +336,25 @@ def p4_block(p3e_art: dict) -> dict:
 # ---------------------------------------------------------------------
 
 
+def arm_samples(geom, rho: float, seed: int,
+                count: int) -> np.ndarray:
+    """One unpaired arm's per-sprinkling 3a values from a single rng
+    stream -- module-level so a test can rerun a PREFIX of the
+    stream and pin the campaign's raw record without the full
+    wall-clock."""
+
+    rng = np.random.default_rng(seed)
+    out = np.empty(count)
+    for i in range(count):
+        pts = sprinkle(geom, rho, rng)
+        n = len(pts)
+        cen = relation_census(geom, pts)
+        out[i] = cen.related.sum() / (n * (n - 1) / 2)
+        if (i + 1) % 500 == 0:
+            print(f"    {seed}: {i + 1}/{count}", flush=True)
+    return out
+
+
 def run_campaign() -> dict:
     """Two unpaired arms, fresh seed streams, n = 4800 sprinklings
     per arm; 3a per sprinkling; the frozen pipeline and verdict."""
@@ -346,22 +365,10 @@ def run_campaign() -> dict:
     rho = E_N / slab.coordinate_volume
     curved, flat = arms(slab, w)
 
-    def one_arm(geom, seed: int) -> np.ndarray:
-        rng = np.random.default_rng(seed)
-        out = np.empty(N_ARM)
-        for i in range(N_ARM):
-            pts = sprinkle(geom, rho, rng)
-            n = len(pts)
-            cen = relation_census(geom, pts)
-            out[i] = cen.related.sum() / (n * (n - 1) / 2)
-            if (i + 1) % 500 == 0:
-                print(f"    {seed}: {i + 1}/{N_ARM}", flush=True)
-        return out
-
     print("  curved arm ...", flush=True)
-    f_curved = one_arm(curved, CAMPAIGN_SEEDS["curved"])
+    f_curved = arm_samples(curved, rho, CAMPAIGN_SEEDS["curved"], N_ARM)
     print("  flat arm ...", flush=True)
-    f_flat = one_arm(flat, CAMPAIGN_SEEDS["flat"])
+    f_flat = arm_samples(flat, rho, CAMPAIGN_SEEDS["flat"], N_ARM)
     m = metric_cis(f_curved, f_flat)
     verdict = classify(m["ci_s"], m["ci_auc"], m["ci_ba"])
     art = {
@@ -383,6 +390,26 @@ def run_campaign() -> dict:
         f.write("\n")
     print(f"verdict: {verdict}; artifact: {_CAMPAIGN_ARTIFACT}")
     return art
+
+
+def campaign_table(art: dict) -> str:
+    """The campaign verdict table the results doc embeds verbatim."""
+
+    m = art["metrics"]
+    mg = art["margins"]
+    rows = [
+        ("s", m["s"], m["ci_s"], f"±{mg['eps_s']:.4f}"),
+        ("AUC", m["auc"], m["ci_auc"], f"0.5 ± {mg['eps_auc']:.4f}"),
+        ("BA", m["ba"], m["ci_ba"], f"0.5 ± {mg['eps_ba']:.4f}"),
+    ]
+    lines = ["| metric | value | 95% CI | band |",
+             "|---|---|---|---|"]
+    for name, v, ci, band in rows:
+        lines.append(f"| {name} | {v:.6f} | [{ci[0]:.6f}, "
+                     f"{ci[1]:.6f}] | {band} |")
+    lines.append(f"\n**Verdict: `{art['verdict']}`** — every CI "
+                 "entirely outside its band in the frozen direction.")
+    return "\n".join(lines)
 
 
 def main(mode: str) -> None:

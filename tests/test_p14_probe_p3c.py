@@ -207,6 +207,64 @@ def test_the_p4_block_recomputes_from_the_p3e_samples():
     assert "pair-level joint" in p4["bootstrap"]["resampling"]
 
 
+CAMPAIGN = (Path(__file__).resolve().parents[1]
+            / "docs" / "prereg" / "p14_probe_p3c_results.json")
+
+
+def test_the_campaign_verdict_recomputes_from_the_raw_samples():
+    """The committed campaign record: metrics and the CONFIRMED
+    verdict must recompute from the stored per-sprinkling samples
+    through the same frozen pipeline; the seeds, sizes, margins, and
+    the frozen positive-sentence scope must be the preflight's; and
+    the AUC = 1 degeneracy must reflect genuine complete separation
+    of the raw samples, not an artifact of the CI."""
+
+    art = json.loads(CAMPAIGN.read_text(encoding="utf-8"))
+    assert art["seeds"] == p3c.CAMPAIGN_SEEDS
+    assert art["n_arm"] == p3c.N_ARM and art["e_n"] == p3c.E_N
+    assert art["margins"] == pytest.approx(p3c.P3C_MARGINS, rel=1e-15)
+    assert "고정된 유한 상자·밀도" in art["positive_sentence_scope"]
+    fa = np.asarray(art["raw"]["f_curved"])
+    f0 = np.asarray(art["raw"]["f_flat"])
+    assert len(fa) == len(f0) == p3c.N_ARM
+    m = p3c.metric_cis(fa, f0)
+    for k, v in art["metrics"].items():
+        assert v == pytest.approx(m[k], rel=1e-12), k
+    assert p3c.classify(m["ci_s"], m["ci_auc"], m["ci_ba"]) \
+        == art["verdict"] == "confirmed"
+    # complete separation is a property of the DATA here
+    assert fa.min() > f0.max()
+    # and the results doc embeds the rendered verdict table verbatim
+    doc = (CAMPAIGN.parent / "p14_probe_p3c_results.md").read_text(
+        encoding="utf-8")
+    assert p3c.campaign_table(art) in doc
+
+
+@pytest.mark.slow
+def test_the_campaign_streams_reproduce_on_a_prefix():
+    """The full 2 x 4800-sprinkling rerun is ~35 minutes; the stream
+    reproducibility that matters is pinned on a prefix: the first 20
+    values of each arm, recomputed from the frozen seeds through the
+    same `arm_samples`, must equal the committed raw record
+    exactly."""
+
+    art = json.loads(CAMPAIGN.read_text(encoding="utf-8"))
+    from p14_plane_wave import Slab, arms
+    label, w, du, dv, dx, dy = p3c.POINT
+    slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
+    rho = p3c.E_N / slab.coordinate_volume
+    curved, flat = arms(slab, w)
+    k = 20
+    fresh_a = p3c.arm_samples(curved, rho,
+                              p3c.CAMPAIGN_SEEDS["curved"], k)
+    fresh_0 = p3c.arm_samples(flat, rho,
+                              p3c.CAMPAIGN_SEEDS["flat"], k)
+    assert fresh_a == pytest.approx(
+        np.asarray(art["raw"]["f_curved"][:k]), rel=1e-12)
+    assert fresh_0 == pytest.approx(
+        np.asarray(art["raw"]["f_flat"][:k]), rel=1e-12)
+
+
 @pytest.mark.slow
 def test_the_preflight_effect_branch_reproduces_exactly():
     """The effect-branch certification (4000 replicates of the full
