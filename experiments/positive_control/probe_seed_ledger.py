@@ -55,12 +55,17 @@ OBSERVED_PROBE_SCALARS = {
 #: Active fresh allocations, not yet observed when allocated. A
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
 #: the same change that adds the observed artifact.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: s4_campaign: the S4 preregistered confirmation
+#: (docs/prereg/p14_s4_schwarzschild_c1.md).
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "s4_campaign": 40_000_241,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
 S3_SMOKE_SEED = OBSERVED_PROBE_SCALARS["s3_smoke"]
 S3_SEED = OBSERVED_PROBE_SCALARS["s3_exploration"]
+S4_SEED = FRESH_PROBE_SCALARS["s4_campaign"]
 
 SPENT_RANGES = P11_P13_SPENT_RANGES + (P12_ALLOCATION_DECADE,)
 

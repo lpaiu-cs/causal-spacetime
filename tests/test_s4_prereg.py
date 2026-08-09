@@ -1,0 +1,146 @@
+"""S4 prereg contract tests: the frozen constants, the gate logic
+(including the falsifiability battery and strict boundary rule), the
+seed discipline, and the power-certification table. The doc is
+docs/prereg/p14_s4_schwarzschild_c1.md; anything asserted here is
+frozen there."""
+
+from __future__ import annotations
+
+import math
+import sys
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+EXPERIMENT_DIR = (Path(__file__).resolve().parents[1]
+                  / "experiments" / "positive_control")
+sys.path.insert(0, str(EXPERIMENT_DIR))
+
+import probe_seed_ledger as ledger  # noqa: E402
+import s4_schwarzschild_c1 as s4  # noqa: E402
+
+
+def test_s4_seed_is_a_fresh_allocation_and_smoke_is_separate():
+    assert ledger.assert_fresh_scalar("s4_campaign") == s4.SEED
+    assert s4.SEED == 40_000_241
+    assert s4.SMOKE_SEED == 40_000_221
+    assert s4.SMOKE_SEED in ledger.spent_scalars()
+    assert s4.SEED not in ledger.spent_scalars()
+
+
+def test_frozen_constants_match_the_document():
+    assert s4.N_READINGS == 300
+    assert s4.E_N == 300
+    assert s4.EPS_DET == 0.0036
+    assert s4.EPS_REP == 0.0012
+    assert s4.KAPPA == 3.0e-4
+    assert s4.SD_CONS == 0.00129861497
+    assert s4.POWER_SEED == (781, 4840)
+    assert s4.POWER_B == 20_000
+
+
+def test_sd_cons_is_the_chi2_upper_bound_of_the_s3_sd():
+    """SD_cons = SD_S3 * sqrt(299 / chi2_{0.05,299}); the quantile is
+    checked through the Wilson-Hilferty approximation, which is
+    accurate to ~1e-3 relative at df=299."""
+
+    d3 = s4.s3_block()
+    sd3 = float(d3.std(ddof=1))
+    assert sd3 == pytest.approx(0.0012108375, abs=1e-9)
+    df = 299
+    z05 = -1.6448536269514722
+    wh = df * (1.0 - 2.0 / (9.0 * df) + z05 * math.sqrt(2.0 / (9.0 * df))) ** 3
+    sd_cons_wh = sd3 * math.sqrt(df / wh)
+    assert s4.SD_CONS == pytest.approx(sd_cons_wh, rel=2e-3)
+    assert s4.SD_CONS > sd3
+
+
+def test_identified_ci_reduces_to_student_t_when_unambiguous():
+    rng = np.random.default_rng(7)
+    x = rng.normal(-0.036, 0.0012, 300)
+    lo, hi = s4.identified_ci(x, x)
+    from p14_probe_p2 import student_t_crit
+    t = student_t_crit(299)
+    h = t * x.std(ddof=1) / math.sqrt(300)
+    assert lo == pytest.approx(x.mean() - h, abs=1e-15)
+    assert hi == pytest.approx(x.mean() + h, abs=1e-15)
+
+
+def test_boundary_rule_is_strict():
+    """The strict-comparison rule lives in the gate predicates, so it
+    is pinned by feeding intervals that sit EXACTLY on each boundary:
+    none may pass. (A mean() round-trip cannot construct an exact
+    float boundary, which is precisely why the rule is strict.)"""
+
+    assert not s4.gate_a((-0.037, -s4.EPS_DET))
+    assert not s4.gate_null((-s4.EPS_DET, 0.0))
+    assert not s4.gate_null((0.0, s4.EPS_DET))
+    assert s4.gate_b((-0.0005, s4.EPS_REP)) != "REPLICATED"
+    assert s4.gate_b((-s4.EPS_REP, 0.0005)) != "REPLICATED"
+    assert s4.gate_b((s4.EPS_REP, 0.002)) != "DISCORDANT"
+    assert s4.gate_b((s4.EPS_REP, 0.002)) == "B-INCONCLUSIVE"
+
+
+def test_negative_controls_prove_the_gates_can_fail():
+    """The frozen falsifiability battery (doc section 7): every
+    negative construction fails its gate, and the A-only construction
+    reaches DETECTED-NOT-REPLICATED."""
+
+    nc = s4.negative_controls()
+    assert nc["gate_a_at_threshold"] is False
+    assert nc["gate_a_inside"] is False
+    assert nc["gate_b_offband"] != "REPLICATED"
+    assert nc["null_at_2eps"] is False
+    assert nc["a_only_stage"] == "DETECTED-NOT-REPLICATED"
+    assert nc["a_only_b_label"] != "REPLICATED"
+
+
+def test_stage_partition_covers_every_case_exactly_once():
+    """Constructed CI/WCI pairs hit each verdict; the partition of
+    doc section 4 is total."""
+
+    conf = s4.stage_verdict((-0.037, -0.035), (-0.0005, 0.0005))
+    assert conf == ("CONFIRMED", "REPLICATED")
+    dnr = s4.stage_verdict((-0.041, -0.039), (-0.005, -0.003))
+    assert dnr[0] == "DETECTED-NOT-REPLICATED"
+    nod = s4.stage_verdict((-0.001, 0.001), (0.033, 0.037))
+    assert nod[0] == "NO-DETECTION"
+    inc = s4.stage_verdict((-0.005, -0.001), (0.02, 0.04))
+    assert inc[0] == "INCONCLUSIVE"
+
+
+def test_replicated_forces_gate_a_at_these_margins():
+    """The frozen inclusion: on real-scale blocks, whenever Gate B
+    says REPLICATED, Gate A holds (doc section 4 derivation)."""
+
+    s3d = s4.s3_block()
+    src, m3 = s4._power_source()
+    rng = np.random.default_rng(11)
+    checked = 0
+    for _ in range(200):
+        x = src[rng.integers(0, len(src), 300)] + m3
+        wci = s4.welch_identified_ci(x, x, s3d)
+        if s4.gate_b(wci) == "REPLICATED":
+            assert s4.gate_a(s4.identified_ci(x, x))
+            checked += 1
+    assert checked > 150
+
+
+def test_power_certification_fast_sanity():
+    """B=500 per row must already sit above the 90% target."""
+
+    for j in range(5):
+        assert s4.power_row(j, b=500) >= 450
+
+
+@pytest.mark.slow
+def test_power_certification_full_table():
+    """The frozen table: 20000/20000 on every row, CP95 lower bound
+    0.9998156 >= 0.90."""
+
+    for j in range(5):
+        assert s4.power_row(j) == s4.POWER_B
+    assert s4.cp_lower_all_success(s4.POWER_B) == pytest.approx(
+        0.9998156, abs=5e-8)
+    assert s4.cp_lower_all_success(s4.POWER_B) >= 0.90
