@@ -1,6 +1,6 @@
 # Paper A claim boundary
 
-Complements manuscript Section 7. Every claim is a controlled validation in a
+Complements manuscript Section 8. Every claim is a controlled validation in a
 known model and tied to a cited experiment output. The clean-checkout evidence
 boundary is recorded separately in `artifact_manifest.md`.
 
@@ -27,6 +27,16 @@ boundary is recorded separately in `artifact_manifest.md`.
   (exp18-20, exp23).
 - **Rindler wedge** is the reconstructible region for an accelerated observer; a
   horizon appears as a reconstruction-inaccessibility boundary (exp16, exp17).
+- **Capstone C1 (preregistered, 3+1D).** At the frozen operating point of the
+  pure-Weyl plane-wave construction, the paired ensemble mean of the global
+  relation-fraction change exceeds its frozen margin: 0.0502929
+  [0.0501046, 0.0504812] vs epsilon_Delta = 3.579e-4
+  (`docs/prereg/p14_prereg_results.json`).
+- **Capstone C2 (preregistered replication, 3+1D).** A frozen single-poset
+  classifier separates curved from flat ensembles under three frozen interval
+  rules (s = 11.199 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0];
+  BA = 1.0 [0.986, 1.014]), independently replicating the probe chain's
+  confirmation (same file).
 
 ## Negative results (bounding the ladder)
 
@@ -52,5 +62,14 @@ boundary is recorded separately in `artifact_manifest.md`.
   are convention-dependent and stated where used.
 - Paper B's N=600 action-weighted samples are not certified equilibrium draws;
   no equilibrium transition or finite-size scaling is imported into Paper A.
-- Fourteen of the 19 cited summary tables are not yet archived in the clean
-  checkout; manuscript submission requires the complete evidence package.
+- Fourteen of the 19 cited legacy summary tables are not yet archived in the
+  clean checkout; manuscript submission requires the 19 legacy tables plus the
+  finalized Section 6 capstone evidence bundle (which itself carries no
+  regeneration debt).
+- Capstone non-claims: NOT a general-Weyl discriminator (Petrov type N, exact
+  volume form is unrepresentative); NOT Weyl-tensor recovery (no reconstructed
+  quantity — a boundary experiment, not a ladder rung); NOT box- or
+  density-independent (licensed at the frozen operating point only); NO verdict
+  on the Schwarzschild path (S1 prices one solver path only; the diamond-volume
+  oracle is open). Priority is claimed only within this program — no
+  literature-wide first before a priority search.
