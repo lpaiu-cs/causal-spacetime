@@ -1,5 +1,7 @@
 {
   "probe": "W1 Weyl/Ricci channel decomposition",
+  "run_kind": "replay",
+  "replay_of": "observed stream 40000211; readings are byte-identical to the first full observation (the superseded pre-provenance run) -- the deterministic-replay label the fresh/replay ledger split requires at the artifact boundary",
   "design": "one sprinkle per reading (det g = -1 for every H), four censuses on the same points; vacuum and flat by the frozen predicate, ricci and mixed by the channel predicate composed from frozen legs",
   "operating_point": {
     "label": "aniso-a1.0",
@@ -2278,14 +2280,14 @@
       "mixed": 0
     }
   },
-  "runtime_seconds": 130.4536334000004,
+  "runtime_seconds": 104.8346875999996,
   "code": {
     "start": {
-      "rev": "c93dbe3925661516dba3253bdcb1b1ef9a9372dc",
+      "rev": "b012b22406ad2f607a6e7055dfc9d308e7377e08",
       "dirty": false
     },
     "end": {
-      "rev": "c93dbe3925661516dba3253bdcb1b1ef9a9372dc",
+      "rev": "b012b22406ad2f607a6e7055dfc9d308e7377e08",
       "dirty": false
     }
   }
