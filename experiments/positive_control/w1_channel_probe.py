@@ -43,6 +43,13 @@ tree and refuse to write if the exit state differs. A nonzero
 ambiguity count anywhere refuses artifact promotion (the probe's f
 would otherwise silently treat undecided as False).
 
+Seed semantics (PR review R2): W1's stream 40_000_211 is OBSERVED --
+its results exist. Any rerun of this script is therefore a
+deterministic REPLAY of that observed stream (the committed artifact
+is one such replay, regenerated for corrected entry/exit provenance
+with byte-identical readings), never a new observation. The ledger
+entry point is `replay_scalar`, not a freshness assert.
+
 Exploration only -- no preregistered gate.
 """
 
@@ -62,14 +69,14 @@ import p14_probe_p3c as p3c
 from p14_plane_wave import Relation, Slab, arms, sprinkle
 from p14_probe_p1 import relation_census
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import W1_SEED, assert_probe_seed_fresh
+from probe_seed_ledger import W1_SEED, replay_scalar
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
 # ---------------------------------------------------------------------
 
 N_READINGS = 300
-SEED = W1_SEED               # 40_000_211, ledger-asserted at entry
+SEED = W1_SEED               # 40_000_211, OBSERVED -- reruns replay it
 
 #: Channel signatures: (x-leg, y-leg), each "defocus"|"focus"|"flat".
 VACUUM = ("defocus", "focus")
@@ -238,7 +245,9 @@ def main() -> None:
     smoke = "--smoke" in sys.argv
     n_readings = 5 if smoke else N_READINGS
 
-    assert_probe_seed_fresh("w1_exploration")
+    if SEED != replay_scalar("w1_exploration"):
+        raise SystemExit("W1: SEED drifted from the observed stream; "
+                         "a rerun must be a replay of it.")
     state_start = _git_state()
     if state_start["dirty"] and not smoke:
         raise SystemExit(

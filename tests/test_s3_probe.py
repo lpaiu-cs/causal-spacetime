@@ -23,26 +23,31 @@ import s3_schwarzschild_probe as s3  # noqa: E402
 from seed_windows import assert_point_seeds_fresh  # noqa: E402
 
 
-def test_s3_seed_is_fresh_against_the_aggregated_ledger():
-    ledger.assert_probe_seed_fresh("s3_exploration")
+def test_s3_official_seed_is_a_fresh_allocation():
+    assert ledger.assert_fresh_scalar("s3_exploration") == s3.SEED
+    assert s3.SEED == 40_000_221
 
 
-def test_aggregated_ledger_contains_the_seeds_the_hand_copy_missed():
-    """PR review regression: the first cut hand-copied the spent set
-    and missed these; the aggregation must carry them."""
+def test_aggregated_ledger_carries_every_review_caught_omission():
+    """PR review regressions: the hand-copy missed the 2026083x/4x
+    seeds, the first union missed S1's BENCH_SEED + 1, and the pilot
+    and W1 streams are observed-spent."""
 
-    spent = ledger.spent_scalars("s3_exploration")
-    for missed in (20_260_831, 20_260_832, 20_260_841, 20_260_842):
+    spent = ledger.spent_scalars()
+    for missed in (20_260_831, 20_260_832, 20_260_841, 20_260_842,
+                   40_000_102):
         assert missed in spent
+    assert ledger.S3_PILOT_SEED in spent
     assert ledger.W1_SEED in spent
 
 
-def test_spent_scalars_would_be_rejected():
-    """The S1 bench seed and a C1 execution seed must both abort,
-    proving the aggregated set actually guards."""
+def test_observed_scalars_would_be_rejected_as_fresh():
+    """The pilot's own seed, the S1 bench seed, and a C1 execution
+    seed must all abort a fresh allocation -- reuse of an observed
+    stream can never pass as fresh (PR review R2)."""
 
-    spent = ledger.spent_scalars("s3_exploration")
-    for taken in (40_000_101, 40_000_061, 20_260_841):
+    spent = ledger.spent_scalars()
+    for taken in (40_000_201, 40_000_101, 40_000_061, 20_260_841):
         with pytest.raises(SystemExit):
             assert_point_seeds_fresh({"s3_exploration": taken}, spent,
                                      ledger.SPENT_RANGES, "S3")
@@ -51,7 +56,7 @@ def test_spent_scalars_would_be_rejected():
 def test_p12_decade_would_be_rejected():
     with pytest.raises(SystemExit):
         assert_point_seeds_fresh({"s3_exploration": 34_000_061},
-                                 ledger.spent_scalars("s3_exploration"),
+                                 ledger.spent_scalars(),
                                  ledger.SPENT_RANGES, "S3")
 
 

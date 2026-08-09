@@ -38,9 +38,15 @@ def _operating_point():
     return w, rho, curved, flat
 
 
-def test_w1_seed_is_fresh_and_s3_seed_is_spent():
-    ledger.assert_probe_seed_fresh("w1_exploration")
-    assert ledger.S3_SEED in ledger.spent_scalars("w1_exploration")
+def test_w1_stream_is_observed_and_reruns_are_replays():
+    """W1's results exist, so its seed is observed-spent: the ledger
+    hands it out only through the replay path, and a fresh allocation
+    of it must abort."""
+
+    assert ledger.replay_scalar("w1_exploration") == w1.SEED
+    assert w1.SEED in ledger.spent_scalars()
+    assert ledger.S3_PILOT_SEED in ledger.spent_scalars()
+    assert ledger.S3_SEED not in ledger.spent_scalars()
 
 
 def test_channel_curvature_decomposition_is_pinned():

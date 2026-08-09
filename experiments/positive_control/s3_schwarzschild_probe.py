@@ -27,14 +27,25 @@ census reports interval bounds -- f_M in [related/pairs,
 (related + ambiguous)/pairs] -- so Delta is reported as
 [Delta_lower, Delta_upper]. With zero ambiguity the bounds coincide.
 
-Provenance: the git state is captured at ENTRY; official runs refuse
-a dirty tree, re-capture at EXIT, and refuse to write on any
-mismatch. `--pilot` permits a dirty tree and writes to the pilot
-artifact path with both states recorded.
+Provenance: the git state is captured at ENTRY; the run refuses a
+dirty tree, re-captures at EXIT, and refuses to write on any
+mismatch. The historical fixed-N pilot is preserved separately with a
+provenance sidecar; its seed 40_000_201 is ledger-spent (observed),
+and this official run draws the FRESH allocation 40_000_221 -- seed
+freshness and replay are distinct ledger operations (PR review R2).
 
-Exploration only -- no preregistered gate. The output (sign, size and
-spread of Delta) sizes a later operationally-anchored confirmation in
-the P3-C pattern, which needs no diamond-volume oracle.
+Claim boundary (PR review R2): the paired estimand Delta = f_M - f_0
+on one point set is C1-class counterfactual sensitivity in the P14
+taxonomy. It sizes a C1-style paired confirmation with an
+operationally anchored margin (the epsilon_Delta pattern), which
+needs no diamond-volume oracle. It is NOT a C2-class single-poset
+discrimination; that would need independently sprinkled
+Schwarzschild/flat arms and an unpaired protocol, designed
+separately. The artifact stores the per-reading raw f arrays so such
+a design (and unpaired power models) can be sized from this
+exploration.
+
+Exploration only -- no preregistered gate.
 """
 
 from __future__ import annotations
@@ -49,7 +60,7 @@ from pathlib import Path
 import numpy as np
 import s1_schwarzschild_cost as s1
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SEED, assert_probe_seed_fresh
+from probe_seed_ledger import S3_SEED, assert_fresh_scalar
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
@@ -57,13 +68,13 @@ from probe_seed_ledger import S3_SEED, assert_probe_seed_fresh
 
 E_N = 300                    # Poisson mean events per reading
 N_READINGS = 300             # paired readings
-SEED = S3_SEED               # 40_000_201, ledger-asserted at entry
+SEED = S3_SEED               # 40_000_221 fresh allocation (pilot's
+                             # 40_000_201 is observed-spent)
 TOL = s1.DEFAULT_TOL         # 1e-8, the priced S1 operating point
 TOL_ESCALATED = 1e-10        # last rung of s1.TOL_LADDER
 
 _ARTIFACT = (Path(__file__).resolve().parents[2]
              / "docs" / "prereg" / "p14_s3_probe_results.json")
-_PILOT_ARTIFACT = _ARTIFACT.with_name("p14_s3_pilot_results.json")
 
 
 # ---------------------------------------------------------------------
@@ -151,16 +162,15 @@ def _summary(values: np.ndarray) -> dict:
 
 def main() -> None:
     smoke = "--smoke" in sys.argv
-    pilot = "--pilot" in sys.argv
     n_readings = 3 if smoke else N_READINGS
     e_n = 40 if smoke else E_N
 
-    assert_probe_seed_fresh("s3_exploration")
+    assert_fresh_scalar("s3_exploration")
     state_start = _git_state()
-    if state_start["dirty"] and not (pilot or smoke):
+    if state_start["dirty"] and not smoke:
         raise SystemExit(
             "S3: refusing an official run from a dirty tree "
-            f"(rev {state_start['rev']}); commit first or pass --pilot.")
+            f"(rev {state_start['rev']}); commit first.")
 
     rng = np.random.default_rng(SEED)
     fm_lo = np.empty(n_readings)
@@ -187,38 +197,52 @@ def main() -> None:
     runtime = time.perf_counter() - start
 
     state_end = _git_state()
-    if not (pilot or smoke):
-        if state_end != state_start:
-            raise SystemExit(
-                "S3: refusing to write -- the tree changed during the "
-                f"run ({state_start} -> {state_end}).")
+    if not smoke and state_end != state_start:
+        raise SystemExit(
+            "S3: refusing to write -- the tree changed during the "
+            f"run ({state_start} -> {state_end}).")
 
     delta_lower = fm_lo - f0
     delta_upper = fm_hi - f0
+    lo_sum = _summary(delta_lower)
+    hi_sum = _summary(delta_upper)
     result = {
-        "probe": "S3 Schwarzschild paired exploration"
-                 + (" (PILOT)" if pilot else ""),
+        "probe": "S3 Schwarzschild paired exploration",
         "design": ("one sprinkle, dual census (measure identity, S2 "
                    "memo); N ~ Poisson(E_N); Delta statements are tied "
                    "to the frozen Schwarzschild coordinates and domain"),
+        "claim_class": ("C1 counterfactual sensitivity (paired, same "
+                        "point set); NOT a C2 single-poset "
+                        "discrimination -- raw per-reading f arrays "
+                        "are stored so an unpaired C2-style design "
+                        "can be sized separately"),
         "domain": {"m": s1.M, "r_shell": [s1.R_MIN, s1.R_MAX],
                    "cap_half_angle": s1.CAP_HALF_ANGLE,
                    "t_extent": s1.T_EXTENT},
         "params": {"e_n": e_n, "n_readings": n_readings, "seed": SEED,
                    "tol": TOL, "tol_escalated": TOL_ESCALATED,
-                   "smoke": smoke, "pilot": pilot},
+                   "smoke": smoke},
         "event_counts": {"mean": float(np.mean(counts)),
                          "min": int(counts.min()),
-                         "max": int(counts.max())},
-        "delta_lower": _summary(delta_lower),
-        "delta_upper": _summary(delta_upper),
+                         "max": int(counts.max()),
+                         "per_reading": [int(c) for c in counts]},
+        "delta_lower": lo_sum,
+        "delta_upper": hi_sum,
+        "identified_ci95": [lo_sum["ci95_student_t"][0],
+                            hi_sum["ci95_student_t"][1]],
         "bounds_note": ("delta_lower counts undecided pairs as "
                         "unrelated, delta_upper as related; identical "
-                        "when ambiguity is 0"),
+                        "when ambiguity is 0; identified_ci95 spans "
+                        "the lower CI's bottom to the upper CI's top"),
         "f_flat": {"mean": float(np.mean(f0)),
-                   "sd": float(np.std(f0, ddof=1))},
+                   "sd": float(np.std(f0, ddof=1)),
+                   "per_reading": [float(v) for v in f0]},
         "f_schwarzschild_lower": {"mean": float(np.mean(fm_lo)),
-                                  "sd": float(np.std(fm_lo, ddof=1))},
+                                  "sd": float(np.std(fm_lo, ddof=1)),
+                                  "per_reading": [float(v) for v in fm_lo]},
+        "f_schwarzschild_upper": {"mean": float(np.mean(fm_hi)),
+                                  "sd": float(np.std(fm_hi, ddof=1)),
+                                  "per_reading": [float(v) for v in fm_hi]},
         "ambiguity": {"ambiguous": ambiguous, "escalated": escalated},
         "runtime_seconds": runtime,
         "code": {"start": state_start, "end": state_end},
@@ -235,10 +259,9 @@ def main() -> None:
     if smoke:
         print("smoke run -- artifact NOT written")
         return
-    target = _PILOT_ARTIFACT if pilot else _ARTIFACT
-    target.write_text(json.dumps(result, indent=2) + "\n",
-                      encoding="utf-8")
-    print(f"wrote {target}")
+    _ARTIFACT.write_text(json.dumps(result, indent=2) + "\n",
+                         encoding="utf-8")
+    print(f"wrote {_ARTIFACT}")
 
 
 if __name__ == "__main__":
