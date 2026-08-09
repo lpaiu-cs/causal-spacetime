@@ -1,0 +1,77 @@
+{
+ "domain": {
+  "m": 1.0,
+  "r_shell": [
+   10.0,
+   20.0
+  ],
+  "cap_half_angle": 1.0,
+  "t_extent": 40.0,
+  "psi_max": 2.0,
+  "bench_seed": 40000101,
+  "bench_n": 300
+ },
+ "scope": "이 가격은 해당 solver·patch·N 경로만 연다/보류한다; 감당 가능해도 Schwarzschild 부피·캠페인 경로는 별도 미해결이다 (p14_weyl_curvature.md §8.1)",
+ "host": {
+  "machine": "AMD64",
+  "python": "3.11.9"
+ },
+ "ladder": [
+  {
+   "n": 300,
+   "pairs_sampled": 1500,
+   "tol": 1e-06,
+   "seconds": 1.2845811000006506,
+   "us_per_pair": 856.3874000004337,
+   "related": 373,
+   "undecided": 0
+  },
+  {
+   "n": 300,
+   "pairs_sampled": 1500,
+   "tol": 1e-08,
+   "seconds": 1.7707900999957928,
+   "us_per_pair": 1180.5267333305285,
+   "related": 373,
+   "undecided": 0
+  },
+  {
+   "n": 300,
+   "pairs_sampled": 1500,
+   "tol": 1e-10,
+   "seconds": 1.924168199999258,
+   "us_per_pair": 1282.7787999995053,
+   "related": 373,
+   "undecided": 0
+  }
+ ],
+ "default_tol": 1e-08,
+ "projection_at_default_tol": [
+  {
+   "n": 1000,
+   "pairs": 499500,
+   "seconds_per_sample": 589.673103298599,
+   "hours_per_4800_samples": 786.2308043981319
+  },
+  {
+   "n": 2000,
+   "pairs": 1999000,
+   "seconds_per_sample": 2359.8729399277263,
+   "hours_per_4800_samples": 3146.497253236969
+  },
+  {
+   "n": 4000,
+   "pairs": 7998000,
+   "seconds_per_sample": 9441.852813177566,
+   "hours_per_4800_samples": 12589.137084236756
+  }
+ ],
+ "plane_wave_reference": {
+  "point": "aniso-a1.0",
+  "n": 299,
+  "pairs": 44551,
+  "seed": 40000102,
+  "us_per_pair": 2.057240017138948
+ },
+ "price_ratio_at_default_tol": 573.8400592519655
+}
