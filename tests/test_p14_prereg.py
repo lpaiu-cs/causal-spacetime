@@ -267,6 +267,83 @@ def test_the_doc_carries_the_frozen_numbers():
         assert token in doc, token
 
 
+def test_the_stage_results_recompute_from_the_raw_samples():
+    """The committed stage record: every metric and verdict must
+    recompute from the stored per-sprinkling samples through the
+    frozen pipelines; the paired identity delta = f_A - f_0 must
+    hold; sentences must be the frozen tables'; ambiguity must be
+    recorded and zero; seeds and sizes must be the frozen layout.
+    Skips until the results commit R exists."""
+
+    if not RESULTS.exists():
+        pytest.skip("campaign not yet run -- results land in commit "
+                    "R after the final freeze (doc §8)")
+    art = json.loads(RESULTS.read_text(encoding="utf-8"))
+    assert art["seeds"] == pr.CAMPAIGN_SEEDS
+    assert art["n_c1"] == pr.N_C1 and art["n_c2"] == pr.N_C2
+    assert art["eps_delta"] == pr.EPS_DELTA
+    c1 = art["c1"]
+    delta = np.asarray(c1["raw"]["delta"])
+    fa = np.asarray(c1["raw"]["f_curved"])
+    f0 = np.asarray(c1["raw"]["f_flat"])
+    assert len(delta) == pr.N_C1
+    assert delta == pytest.approx(fa - f0, rel=1e-12)
+    m1 = pr.c1_metrics(delta)
+    assert c1["metrics"]["mean"] == pytest.approx(m1["mean"],
+                                                 rel=1e-12)
+    assert list(c1["metrics"]["ci"]) == pytest.approx(
+        list(m1["ci"]), rel=1e-12)
+    assert c1["verdict"] == pr.c1_classify(m1["ci"])
+    assert c1["sentence"] == pr.C1_SENTENCES[c1["verdict"]]
+    c2 = art["c2"]
+    a = np.asarray(c2["raw"]["f_curved"])
+    b = np.asarray(c2["raw"]["f_flat"])
+    assert len(a) == len(b) == pr.N_C2
+    m2 = p3c.metric_cis(a, b)
+    for k, v in c2["metrics"].items():
+        assert v == pytest.approx(m2[k], rel=1e-12), k
+    assert c2["verdict"] == p3c.classify(m2["ci_s"], m2["ci_auc"],
+                                         m2["ci_ba"])
+    assert c2["sentence"] == pr.C2_SENTENCES[c2["verdict"]]
+    for blk in (c1["ambiguity"], c2["ambiguity"]):
+        for arm in blk.values():
+            assert arm["ambiguous"] == 0
+    assert art["stage_positive"] == (
+        c1["verdict"] == "confirmed" and c2["verdict"] == "confirmed")
+
+
+@pytest.mark.slow
+def test_the_stage_streams_reproduce_on_a_prefix():
+    """The first values of every frozen stream, recomputed through
+    the same `paired_samples`/`arm_samples`, must equal the committed
+    raw record exactly (the full rerun is the campaign itself)."""
+
+    if not RESULTS.exists():
+        pytest.skip("campaign not yet run -- results land in commit "
+                    "R after the final freeze (doc §8)")
+    from p14_plane_wave import Slab, arms
+    art = json.loads(RESULTS.read_text(encoding="utf-8"))
+    label, w, du, dv, dx, dy = pr.POINT
+    slab = Slab(du=du, dv=dv, dx=dx, dy=dy)
+    rho = pr.E_N / slab.coordinate_volume
+    curved, flat = arms(slab, w)
+    k = 20
+    d, fa, f0, amb = pr.paired_samples(
+        curved, flat, rho, art["seeds"]["c1_paired"], k)
+    assert d == pytest.approx(
+        np.asarray(art["c1"]["raw"]["delta"][:k]), rel=1e-12)
+    assert all(v["ambiguous"] == 0 for v in amb.values())
+    a, amb_a, _ = p3c.arm_samples(
+        curved, rho, art["seeds"]["c2_curved"], k)
+    b, amb_b, _ = p3c.arm_samples(
+        flat, rho, art["seeds"]["c2_flat"], k)
+    assert amb_a == 0 and amb_b == 0
+    assert a == pytest.approx(
+        np.asarray(art["c2"]["raw"]["f_curved"][:k]), rel=1e-12)
+    assert b == pytest.approx(
+        np.asarray(art["c2"]["raw"]["f_flat"][:k]), rel=1e-12)
+
+
 def _git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=REPO, capture_output=True,
                           text=True, check=True).stdout.strip()

@@ -1,10 +1,11 @@
-# P14 사전등록 — v0.4 (준비 커밋; 최종 freeze 아님)
+# P14 사전등록 — v0.4 (STAGE COMPLETE: POSITIVE)
 
-Status: **PREPARATION COMMIT (§8 step 1).** 통계 설계는 in-session
-리뷰 4라운드(v0.1→v0.4)로 승인, 실행 시드 재배치는 R-5 조건부
-승인으로 확정(§5). 최종 freeze는 preflight 인증 아티팩트와 S1
-문장을 담은 별도 커밋(§8 step 4)이며, 캠페인 실행은 그 이후 별도
-승인이다.
+Status: **STAGE COMPLETE — POSITIVE.** 설계 v0.4 승인(in-session
+4라운드 + R-5) → 준비 커밋(PR #49) → ledger 단일화 P′=`51875a2` →
+clean checkout P′에서 preflight 인증 → 최종 freeze F=`b858b08`
+(PR #51, S1 가격 첨부) → 실행 승인 후 **정확한 F checkout**에서
+캠페인 단일 실행 → 이 결과 커밋 R. 판정: **C1 confirmed ∧ C2
+confirmed** (아래 결과 절).
 
 Runner: `experiments/positive_control/p14_prereg.py`. 이 문서의
 상수는 러너의 동결 상수와 테스트로 동기화된다.
@@ -186,6 +187,31 @@ Weyl 경로를 열지도 닫지도 못하며, scope 문장은 비용 기록 이�
 (`git merge-base --is-ancestor`). 상수 동일성 테스트는 값의 일치만
 보이고 실행 커밋을 증명하지 못하므로 병행이지 대체가 아니다. 모든
 확률적 모드는 dirty worktree에서 실행을 거부한다.
+
+## 결과 (커밋 R; `code_version = F = b858b08`)
+
+실행 전 점검: HEAD == F 정확 일치, `git status --porcelain` 공백,
+결과 아티팩트 부재 — 셋 다 확인 후 동결 `campaign` 모드 1회 실행
+(2026-08-09). 아티팩트: `p14_prereg_results.json`.
+
+| 주장 | 판정 | 수치 (95% CI) |
+|---|---|---|
+| C1 (paired, n=3000, 시드 40000061) | **confirmed** | Δ̄ = 0.05029290 [0.05010457, 0.05048123]; 하한이 +ε_Δ = 0.0003579의 140배 |
+| C2 (replication, n=4800/arm, 시드 40000071/72) | **confirmed** | s = 11.1985 [11.0351, 11.3618]; AUC = 1.0 [0.999232, 1.0]; BA = 1.0 [0.9859, 1.0141] |
+
+**Stage: POSITIVE** (C1 confirmed ∧ C2 confirmed — joint 사전
+인증분). 동결 문장 그대로: C1 "paired ensemble 평균 이동이 ε_Δ를
+넘는다"; C2 **"P3-C 분리를 독립적으로 재현했다."** 네 relation
+census(C1 양읽기 + C2 양팔) 모두 ambiguous = escalated = 0,
+아티팩트에 기록·단언. C2는 완전분리를 재현했고 AUC 구간은 동결
+disjoint-pair 경계 규칙이다. 검증: 지표·판정은 저장 원시 표본에서
+재계산되고(테스트), 시드 스트림은 prefix로 재현되며(slow), git
+ancestry `P′ ≺ F ≺ R`가 테스트로 단언된다.
+
+라이선스 범위(§1 그대로): aniso-a1.0의 고정 slab·밀도·profile —
+paired 앙상블 평균 이동의 존재(C1)와 단일-poset 3a classifier의
+앙상블 판별(C2). 더 넓은 주장 없음; 일반화 경로의 가격은 S1
+문장(freeze manifest)이 운반한다.
 
 ## 리뷰 이력
 
