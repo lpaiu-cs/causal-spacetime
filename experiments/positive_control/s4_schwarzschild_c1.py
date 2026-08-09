@@ -397,8 +397,12 @@ def main() -> None:
     if smoke:
         print("smoke run -- artifact NOT written")
         return
+    # newline="\n": the artifact must be LF in the WORKING TREE too,
+    # not only in the blob after git normalizes -- a CRLF working copy
+    # is what broke the S3-artifact digest across platforms (PR #57
+    # R2: the storage-boundary rule applies at write time).
     _ARTIFACT.write_text(json.dumps(result, indent=2, ensure_ascii=False)
-                         + "\n", encoding="utf-8")
+                         + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {_ARTIFACT}")
 
 
