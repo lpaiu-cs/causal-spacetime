@@ -1,0 +1,4 @@
+check,expected,observed,absolute_error
+flat_full_diamond_volume,2.0,1.9999998807324815,1.192675185279768e-07
+constant_scale_full_diamond_volume,4.5,4.499999731648083,2.683519166879478e-07
+constant_scale_central_proper_time,3.0,3.0,0.0
