@@ -1,9 +1,11 @@
 # An operational reconstruction ladder for spacetime quantities from causal order
 
-**Draft v0.3.** Causal Spacetime Lab. Every quantitative result is tied to a
+**Draft v0.4.** Causal Spacetime Lab. Every quantitative result is tied to a
 producing experiment and expected output path. Five figure-source summaries are
-committed; the remaining cited tables require regeneration before submission
-(Section 9 and `artifact_manifest.md`). No number is from memory.
+committed; the remaining cited legacy tables require regeneration before
+submission, while the Section 6 capstone cites only committed,
+provenance-locked artifacts (Section 10 and `artifact_manifest.md`). No number
+is from memory.
 
 ## Abstract
 
@@ -27,7 +29,12 @@ ambiguity, and density-rescaled reconstruction is stable in the tested
 random-thinning protocol. We also give a Rindler horizon analogue, in which an
 accelerated observer's two-way radar reconstruction is confined to the expected
 wedge, and a finite-speed lattice counterexample showing that finite signal
-speed alone does not produce Lorentzian structure. The contribution is not any
+speed alone does not produce Lorentzian structure. As a capstone we validate,
+in a preregistered two-claim design on a 3+1D vacuum plane wave whose
+coordinate volume form and sprinkling law are exactly flat, that the
+conformal-class information order carries is detectable at finite density:
+both the paired mean shift of the global relation fraction and a single-poset
+classifier confirm against frozen margins. The contribution is not any
 single reconstruction — most are standard — but the explicit accounting of what
 each rung requires and the negative results that bound it. We make no claim
 that spacetime is reducible to causal order; the reconstructions are controlled
@@ -62,8 +69,11 @@ quantities by the minimal supplied ingredient set, with per-rung error behavior 
 controlled models; (2) grounded validations of dimension, proper time, radar
 decomposition, Lorentz-map and atlas consistency, and measure-dependent volume;
 (3) three bounding negative results (conformal scale, reflection degeneracy,
-finite-speed lattice); and (4) a Rindler reconstruction-inaccessibility
-analogue. All results are controlled validations, not evidence that geometry
+finite-speed lattice); (4) a Rindler reconstruction-inaccessibility
+analogue; and (5) a preregistered 3+1D capstone validation that a pure-Weyl
+deformation of the light cones — at identical coordinate volume form and
+sprinkling law — measurably moves the causal order at finite density
+(Section 6). All results are controlled validations, not evidence that geometry
 reduces to order.
 
 ## 2. The reconstruction ladder
@@ -328,7 +338,131 @@ validated spacelike estimator: the counts vary strongly with the sampling
 region rather than tracking spacelike distance cleanly (exp06;
 `outputs/data/spacelike_distance_proxy_summary.csv`).
 
-## 6. Discussion
+## 6. Capstone validation: finite-density detectability of the conformal class
+
+The ladder reconstructs quantities from supplied ingredients inside flat
+models; Section 5 bounds it from below. This section caps it from the other
+side, with the converse of the first negative result. Section 4.6 showed that
+*within* a conformal class, order carries no scale: positive rescalings leave
+the causal matrix unchanged. By the theorems that motivate the program, order
+determines the conformal class itself — so *across* conformal classes order
+must differ. Whether that difference survives finite density, for a curvature
+channel that touches nothing but the order, is the question this capstone
+answers affirmatively, as a preregistered experiment (P14 in the program's
+internal numbering; within this program, the first finite-density crossing of
+the conformal-flatness ceiling, via a 4D type N pure-Weyl construction).
+
+### 6.1 The 1+1D conformal ceiling
+
+Every 1+1D metric is conformally flat, so in the 1+1D stages of this program
+(and its curvature-focused companions P12-P13) curvature could reach the order
+only through the volume-coefficient channel: those experiments tested
+curvature entering through the measure/counting channel, and the channel in
+which order directly carries a conformal-class difference could not be tested
+there at all. This was an intended dimensional limit of the models, not a
+confounded experiment: Weyl curvature — the conformal-class content of
+curvature — is identically zero below four spacetime dimensions, so a direct
+test needs a 4D construction built so that the measure channel is exactly
+frozen while the conformal class moves.
+
+### 6.2 Pure-Weyl control construction
+
+The construction is a vacuum plane wave in Brinkmann coordinates with profile
+`A(u)(x^2 - y^2)` on a constant-`A` slab: Ricci-flat, Petrov type N, with
+`det g = -1` identically. Because `det g = -1`, the coordinate volume form and
+the Poisson sprinkling law are *identical* to flat spacetime, and the control
+arm is the *same sprinkled point set* read with `A = 0`: any difference
+between the arms is a functional of the relation change alone — it cannot be
+a sampling artifact, an intensity mismatch, or a calibration residual. What
+is *not* identical is the causal-diamond volume: the light-cone boundary
+tilts, and at equal proper time the curved-arm diamond volume sits 0.4%
+(`wT = 1`) to 7.3% (`wT = 2`) above flat — a deterministic design check pins
+both numbers. "Same measure" here means the volume form and sprinkling law
+only, never interval volumes; conflating the two was the first design draft's
+central error, caught in review, and the distinction is load-bearing.
+
+### 6.3 Finite-density detection design
+
+An exploratory probe chain (four probes and a confirmation stage, run on
+seed streams disjoint from everything that follows) selected the operating
+point — slab `(1.0, 1.0, 2.0, 6.0)`, `w = 1.0`, expected 300 events per
+sprinkling — and the primary statistic, the global relation fraction (the one
+candidate computable from a single poset alone). The preregistered stage then
+froze two claims with deliberately different boundaries, never merged into
+one sentence:
+
+- **C1 (paired ensemble mean).** The estimand is
+  `theta_Delta = E[f_A - f_0]`, the ensemble mean of the *net* change of the
+  relation fraction over paired readings of the same points — not any single
+  point set's displacement, and not the gained-plus-lost total motion.
+  Confirmation requires the 95% Student-t interval of the mean paired
+  difference (n = 3000 sprinklings) to sit entirely above a frozen margin
+  `epsilon_Delta = 3.579e-4`, an operational margin anchored to the probe
+  chain's confirmed block.
+- **C2 (single-poset classifier, independent replication).** A frozen
+  classifier reading only the single-poset relation fraction must separate
+  curved from flat ensembles (n = 4800 per unpaired arm) under three frozen
+  interval rules (standardized separation, AUC with an exact boundary bound
+  at complete separation, balanced accuracy), each with its own equivalence
+  band. This claim replicates the probe chain's confirmation stage on fresh
+  seeds; its failure would have been reported as a conflicting replication,
+  never a retroactive cancellation.
+
+The stage verdict POSITIVE requires both claims confirmed, certified as a
+joint event before execution (4000/4000 joint-effect replicates; the null
+branches certify each claim's equivalence power separately at an exact
+Clopper-Pearson 95% lower bound of at least 0.90; a joint equivalence verdict
+is deliberately not defined, because its joint null rate sits below that
+floor at the frozen sizes).
+
+### 6.4 Preregistered result
+
+The campaign ran once, from a clean checkout of the freeze commit, on frozen
+seeds, and recorded the executing commit in the artifact. Both claims
+confirmed; the stage is POSITIVE.
+
+| Claim | Verdict | Result (95% CI) |
+| --- | --- | --- |
+| C1 paired ensemble mean, n = 3000 | confirmed | mean 0.0502929 [0.0501046, 0.0504812]; lower end 140x the margin 3.579e-4 |
+| C2 classifier replication, n = 4800/arm | confirmed | separation s = 11.199 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0]; balanced accuracy = 1.0 [0.986, 1.014] |
+
+The two arms' relation-fraction samples are completely separated (the minimum
+curved-arm value exceeds the maximum flat-arm value in 4800 draws per arm);
+the AUC interval at complete separation is the frozen exact bound, not the
+degenerate Wald interval. Every relation census in both claims recorded zero
+ambiguous and zero escalated pairs. Frozen sentences are carried verbatim:
+C1 "the paired ensemble mean shift exceeds epsilon_Delta"; C2 "the probe
+chain's separation is independently reproduced"
+(`docs/prereg/p14_prereg_results.json`).
+
+### 6.5 What this establishes
+
+At a fixed box, density, and profile, an order-only statistic separates flat
+from curved ensembles: the conformal-class information that order carries by
+theorem is *detectable at finite density*, in the one construction where the
+sprinkling measure is exactly frozen. Together with Section 4.6 this closes
+the conformal story in both directions — within a class, order is blind to
+scale; across classes, at least at this operating point, order visibly moves.
+
+### 6.6 What this does not establish
+
+It is not a general-Weyl discriminator (the plane wave is Petrov type N and
+its exact volume form is unrepresentative); it is not Weyl-tensor recovery
+(detection and recovery are different claims; no reconstructed quantity is
+produced, which is why this is a capstone boundary experiment and not a new
+ladder rung); it does not establish box- or density-independence (the licensed
+sentence is bound to the frozen operating point); and it does not open the
+Schwarzschild generalization. A separate cost measurement (S1) prices only the
+causal-predicate component of that path — about 0.77 ms per pair on the tested
+solver, patch, and tolerance, roughly 360x the plane-wave predicate — and even
+an affordable predicate leaves the Schwarzschild diamond-volume oracle
+unresolved; an unaffordable one would hold only that solver-domain-budget
+path (`docs/prereg/p14_s1_cost.json`).
+
+The full execution provenance — the preregistration's freeze ordering, its
+mechanical gates, and the commit-ancestry contract — is in Appendix B.
+
+## 7. Discussion
 
 The ladder is a branched accounting device, not a single cumulative chain.
 Across its dependency rows it recovers a substantial fraction of operational
@@ -348,9 +482,13 @@ open question. Everything here is reconstruction inside known models: the
 geometry is put in (by sprinkling from Minkowski or by a supplied protocol) and
 recovered. It does not address whether geometry could *emerge* from an order
 that was not built from a geometry — the representability question — which
-requires a validated discriminator and is taken up separately.
+requires a validated discriminator and is taken up separately. The Section 6
+capstone sharpens the boundary from the other side: the one piece of geometry
+that order itself carries — the conformal class — is not merely present by
+theorem but detectable at finite density, exactly where the measure channel is
+frozen and only the light cones move.
 
-## 7. Claim boundary
+## 8. Claim boundary
 
 We claim, as controlled validations in known 1+1D (and higher-D for dimension)
 models: dimension is estimated from order statistics in flat sprinklings;
@@ -362,20 +500,37 @@ with an orientation reference, and atlas transition maps with overlapping
 oriented, calibrated charts; volume is recoverable with supplied global
 density and local measure information and is stable
 under density-rescaled coarse-graining; and a Rindler wedge is the
-reconstructible region for an accelerated observer.
+reconstructible region for an accelerated observer. As the preregistered
+capstone (Section 6), at the frozen 3+1D operating point: the paired ensemble
+mean of the relation-fraction change under a pure-Weyl deformation exceeds its
+frozen margin (C1), and a frozen single-poset classifier separates curved from
+flat ensembles, independently replicating the probe chain's confirmation (C2).
 
 We do not claim: that spacetime is reducible to, or emerges from, causal order;
 that causal order alone yields absolute scale, the conformal factor, signed
 coordinates, or a unique atlas; that finite signal speed implies relativity; or
 that any of these finite validations establish a physical theory. Reconstructing
 a geometry that was put into the model is not deriving geometry from order.
+For the capstone we additionally do not claim: a general-Weyl discriminator,
+Weyl-tensor recovery, box- or density-independence of the separation, or any
+verdict on the Schwarzschild path (S1 supplies a price for one solver path,
+not a verdict; the diamond-volume oracle remains open). Priority is claimed
+only within this program; no literature-wide first is asserted before a
+priority search.
 
-## 8. Limitations and future work
+## 9. Limitations and future work
 
-Results are controlled and mostly 1+1D (dimension is checked to 4D). The
+Results are controlled and mostly 1+1D (dimension is checked to 4D, and the
+Section 6 capstone is 3+1D). The
 constants are convention-dependent (chain endpoint convention, null-inclusive
 causal relation, Myrheim-Meyer normalization); we state each where it is used.
-The spacelike proxy is exploratory. The natural next question — whether
+The spacelike proxy is exploratory. The capstone is bounded by its
+construction: Petrov type N with an exactly flat volume form — the property
+that makes the experiment clean also makes it unrepresentative of generic
+`Weyl != 0` spacetimes — and by its single frozen operating point;
+generalizing beyond type N sits behind the unresolved Schwarzschild
+diamond-volume oracle, with only the causal-predicate component priced so
+far. The natural next question — whether
 observer-relative distance *order* can be validated as recovering latent
 geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this
@@ -387,17 +542,28 @@ instrument, while the beta = 32 bipartite-start control blocks structurally.
 These are not certified equilibrium draws, and the companion study did not
 establish an equilibrium transition or finite-size scaling.
 
-## 9. Reproducibility
+## 10. Reproducibility
 
 Foundation-layer baseline commit `325df55`. Every number in Sections 4-5 has a
 cited `experiments/exp*.py` producer and expected summary path. Five summaries
 used by the figures are committed under `figures/data/`; the other named
 `outputs/data/` tables are gitignored generated outputs and are not present in
 a clean checkout. `artifact_manifest.md` records this boundary and the hashes
-of the committed summaries. The full 19-table evidence package must be
-regenerated and committed before submission. Conventions (sprinkling measure,
-causal relation, chain and interval normalizations, Myrheim-Meyer inversion)
-are fixed in the foundation modules and stated in Section 3.
+of the committed summaries. The submission gate is the 19 legacy tables plus
+the finalized Section 6 evidence bundle, provenance-locked. Conventions
+(sprinkling measure, causal relation, chain and interval normalizations,
+Myrheim-Meyer inversion) are fixed in the foundation modules and stated in
+Section 3.
+
+Section 6 carries no regeneration debt: every number it cites lives in a
+committed artifact, and the repository's test suite recomputes the capstone's
+metrics, verdicts, and sentences from the stored raw samples, reproduces a
+prefix of every frozen seed stream, and asserts the commit-ancestry contract
+of Appendix B. The stage runner (`experiments/positive_control/p14_prereg.py`)
+exposes three modes — `preflight`, `manifest`, `campaign` — and the campaign
+mode refuses to run unless the freeze manifest exists, its recorded preflight
+digest matches the committed artifact, and the certified source digests match
+the checked-out files.
 
 ## Appendix A: conventions and normalizations
 
@@ -413,6 +579,37 @@ are fixed in the foundation modules and stated in Section 3.
 These are stated so the reported constants (e.g. the sqrt(2) chain
 normalization, the interval-volume factor) are unambiguous; each is fixed in
 the foundation modules.
+
+## Appendix B: capstone execution provenance
+
+The Section 6 result is reproducible not merely in the sense that its code is
+committed, but in the sense that the *order of operations* — freeze before
+execution, execution before recording — is provable from the repository's
+commit graph and enforced by mechanical gates.
+
+**Commit chain.** Design and probe chain: PR #38-#48. Preregistration:
+preparation commit (PR #49), S1 cost measurement (PR #50), then
+`P' = 51875a2` (a one-source seed-ledger fix) -> preflight executed on a clean
+checkout of `P'`, its artifact recording `code_version = P'` and the SHA-256
+digests of every execution-relevant source file -> final-freeze commit
+`F = b858b08` carrying the certification artifact and the freeze manifest
+(preflight digest, `preflight_code_version = P'`, the S1 price sentence, the
+frozen sizes and seeds; PR #51) -> the campaign executed on a checkout of
+exactly `F` (not a descendant merge commit, so the recorded executing HEAD is
+`F` itself) -> results commit `R = 5126ddf`, a direct child of `F` (PR #52).
+A test asserts `P' ≺ F ≺ R` with `git merge-base --is-ancestor`.
+
+**Gates.** Stochastic modes refuse a dirty worktree at entry. The campaign
+mode refuses to run unless (i) the freeze manifest exists, (ii) its recorded
+preflight digest matches the committed preflight artifact, and (iii) the
+source digests certified at preflight entry match the checked-out files —
+captured at entry and re-checked at exit, so a mid-run edit aborts the run
+with nothing recorded. Interrupted runs restart the same seed; an ambiguity
+violation blocks the stage rather than permitting a seed swap.
+
+**Artifacts.** The complete Section 6 evidence bundle, with digests, is
+enumerated in `artifact_manifest.md`; the per-sentence mapping from manuscript
+text to evidence file is recorded there as the citation-to-artifact inventory.
 
 ## References
 

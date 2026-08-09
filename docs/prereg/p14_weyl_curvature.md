@@ -17,7 +17,9 @@ campaign — those need the probe's numbers first and a separate review,
 and §8.2's fresh-seed boundary stands between them. Two deterministic design checks HAVE run and
 are committed beside this document (`docs/prereg/p14_checks/`), because an
 output pasted into prose is not a check; their frozen, stamped copies move
-to `docs/prereg/frozen/p14/` if and when this design freezes. The document
+to `docs/prereg/frozen/p14/` if and when this design freezes *(superseded —
+see the Section 9 status note: the freeze landed as `p14_prereg.md` plus
+committed artifacts, and no `frozen/p14/` directory exists)*. The document
 still states no gates, thresholds, sample sizes, or seed windows: those
 belong in a freeze that follows Section 8's probe.
 
@@ -1426,7 +1428,13 @@ Both scripts live in `docs/prereg/p14_checks/`, run by hand at draft
 stage, abort on failure rather than recording it, and pin every number
 this document quotes so prose and computation cannot drift (the C25/C28
 lesson applied at draft stage). Frozen, stamped copies move to
-`docs/prereg/frozen/p14/` if and when this design freezes.
+`docs/prereg/frozen/p14/` if and when this design freezes. *(Status
+update 2026-08-09: the freeze took a different, stronger form than a
+stamped copy — the actual preregistration is `p14_prereg.md` with its
+committed preflight/freeze/results artifacts (PR #49–#52), the design
+checks stay here at `docs/prereg/p14_checks/`, and the whole evidence
+bundle is enumerated with digests in Paper A's
+`artifact_manifest.md`. No `frozen/p14/` directory was created.)*
 
 **Check 1 — `p14_brinkmann_vacuum_check.py`** (sympy, exact, `A(u)`
 undetermined):
