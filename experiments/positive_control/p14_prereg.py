@@ -292,9 +292,13 @@ def preflight(p3e_art: dict) -> dict:
     failure may raise B or n automatically -- the stage blocks and
     the design review reopens (doc §4/§6). The clean-checkout gate
     runs at ENTRY (PR #49 review P2) -- a dirty tree must not get
-    hours of bootstrap before hearing no."""
+    hours of bootstrap before hearing no -- and the source digests
+    are CAPTURED at entry and RE-CHECKED at exit (review R2): this
+    process keeps executing the imported code even if a file changes
+    mid-run, so a late hash would certify code that never ran."""
 
     ver = code_version()
+    digests = _source_digests()
     fa, f0 = _p3e_pairs(p3e_art)
     delta = fa - f0
     centered = delta - delta.mean()
@@ -348,9 +352,14 @@ def preflight(p3e_art: dict) -> dict:
                                  block["reps"])
         block["pass_ci95_exact"] = [lo, hi]
         certified = certified and lo >= 0.90
+    if _source_digests() != digests:
+        raise SystemExit("execution sources changed DURING the "
+                         "preflight run -- the imported code that "
+                         "certified is not the code on disk; nothing "
+                         "recorded, rerun on a quiet checkout")
     return {
         "code_version": ver,
-        "source_digests": _source_digests(),
+        "source_digests": digests,
         "point": POINT[0], "e_n": E_N,
         "n_c1": N_C1, "n_c2": N_C2,
         "eps_delta": EPS_DELTA,
@@ -445,6 +454,11 @@ def run_campaign() -> dict:
     m2 = p3c.metric_cis(a, b)
     v2 = p3c.classify(m2["ci_s"], m2["ci_auc"], m2["ci_ba"])
 
+    if _source_digests() != current:
+        raise SystemExit("execution sources changed DURING the "
+                         "campaign run -- stage blocked, nothing "
+                         "recorded (same TOCTOU class as the "
+                         "preflight, closed once for both)")
     art = {
         "code_version": ver,
         "point": label, "e_n": E_N,
