@@ -437,10 +437,12 @@ The two arms' relation-fraction samples are completely separated (the minimum
 curved-arm value exceeds the maximum flat-arm value in 4800 draws per arm);
 the AUC interval at complete separation is the frozen exact bound, not the
 degenerate Wald interval. Every relation census in both claims recorded zero
-ambiguous and zero escalated pairs. Frozen sentences are carried verbatim:
-C1 "the paired ensemble mean shift exceeds epsilon_Delta"; C2 "the probe
-chain's separation is independently reproduced"
-(`docs/prereg/p14_prereg_results.json`).
+ambiguous and zero escalated pairs. The frozen sentences are recorded in
+Korean in the artifact and are quoted here verbatim, each followed by an
+explicit (non-frozen) English translation: C1 "paired ensemble 평균 이동이
+ε_Δ를 넘는다" (*the paired ensemble mean shift exceeds epsilon_Delta*);
+C2 "P3-C 분리를 독립적으로 재현했다." (*the probe chain's separation is
+independently reproduced*) (`docs/prereg/p14_prereg_results.json`).
 
 ### 6.5 What this establishes
 
