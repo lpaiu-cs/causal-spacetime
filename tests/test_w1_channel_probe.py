@@ -46,7 +46,7 @@ def test_w1_stream_is_observed_and_reruns_are_replays():
     assert ledger.replay_scalar("w1_exploration") == w1.SEED
     assert w1.SEED in ledger.spent_scalars()
     assert ledger.S3_PILOT_SEED in ledger.spent_scalars()
-    assert ledger.S3_SEED not in ledger.spent_scalars()
+    assert ledger.S3_SEED in ledger.spent_scalars()
 
 
 def test_channel_curvature_decomposition_is_pinned():

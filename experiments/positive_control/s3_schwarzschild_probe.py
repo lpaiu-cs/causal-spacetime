@@ -30,13 +30,15 @@ census reports interval bounds -- f_M in [related/pairs,
 Provenance: the git state is captured at ENTRY; the run refuses a
 dirty tree, re-captures at EXIT, and refuses to write on any
 mismatch. The historical fixed-N pilot is preserved separately with a
-provenance sidecar; its seed 40_000_201 is ledger-spent (observed),
-and this official run draws the FRESH allocation 40_000_231 -- seed
+provenance sidecar; its seed 40_000_201 is ledger-spent (observed).
+The official artifact was observed on stream 40_000_231 (allocated
+fresh, moved to OBSERVED in the results commit), so any rerun of the
+official path is a deterministic REPLAY of that stream -- seed
 freshness and replay are distinct ledger operations (PR review R2).
 `--smoke` draws only the dedicated observed smoke stream 40_000_221
 (the first official allocation, demoted after its smoke output was
 observed during review-R2 validation), so validation can never spend
-the official seed (PR review R3).
+an official seed (PR review R3).
 
 Claim boundary (PR review R2): the paired estimand Delta = f_M - f_0
 on one point set is C1-class counterfactual sensitivity in the P14
@@ -64,7 +66,7 @@ from pathlib import Path
 import numpy as np
 import s1_schwarzschild_cost as s1
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SEED, S3_SMOKE_SEED, assert_fresh_scalar
+from probe_seed_ledger import S3_SEED, S3_SMOKE_SEED, replay_scalar
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
@@ -72,9 +74,9 @@ from probe_seed_ledger import S3_SEED, S3_SMOKE_SEED, assert_fresh_scalar
 
 E_N = 300                    # Poisson mean events per reading
 N_READINGS = 300             # paired readings
-SEED = S3_SEED               # 40_000_231 fresh allocation, touched by
-                             # the OFFICIAL path only (pilot 40_000_201
-                             # and first-cut 40_000_221 are observed)
+SEED = S3_SEED               # 40_000_231, OBSERVED (official artifact
+                             # exists) -- reruns are deterministic
+                             # replays of that stream, never fresh
 SMOKE_SEED = S3_SMOKE_SEED   # 40_000_221, the observed smoke stream --
                              # smoke may never draw the official seed
 TOL = s1.DEFAULT_TOL         # 1e-8, the priced S1 operating point
@@ -175,7 +177,10 @@ def main() -> None:
     if smoke:
         seed = SMOKE_SEED
     else:
-        seed = assert_fresh_scalar("s3_exploration")
+        seed = replay_scalar("s3_exploration")
+        if SEED != seed:
+            raise SystemExit("S3: SEED drifted from the observed "
+                             "stream; a rerun must be a replay of it.")
     state_start = _git_state()
     if state_start["dirty"] and not smoke:
         raise SystemExit(

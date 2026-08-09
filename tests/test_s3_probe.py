@@ -23,24 +23,60 @@ import s3_schwarzschild_probe as s3  # noqa: E402
 from seed_windows import assert_point_seeds_fresh  # noqa: E402
 
 
-def test_s3_official_seed_is_a_fresh_allocation():
-    assert ledger.assert_fresh_scalar("s3_exploration") == s3.SEED
+def test_s3_stream_is_observed_and_reruns_are_replays():
+    """The official artifact exists, so 40_000_231 is observed-spent:
+    the ledger hands it out only through the replay path, and a fresh
+    allocation of it must abort."""
+
+    assert ledger.replay_scalar("s3_exploration") == s3.SEED
     assert s3.SEED == 40_000_231
+    assert s3.SEED in ledger.spent_scalars()
+    with pytest.raises(SystemExit):
+        assert_point_seeds_fresh({"s3_exploration": s3.SEED},
+                                 ledger.spent_scalars(),
+                                 ledger.SPENT_RANGES, "S3")
 
 
-def test_smoke_stream_is_separate_and_cannot_burn_the_official_seed():
+def test_smoke_stream_is_separate_from_the_official_stream():
     """PR review R3: `--smoke` draws only the dedicated observed
-    stream; the official allocation stays untouched and unobserved,
-    and re-allocating the smoke stream as fresh must abort."""
+    stream, and re-allocating it as fresh must abort."""
 
     assert s3.SMOKE_SEED != s3.SEED
     assert s3.SMOKE_SEED == 40_000_221
     assert s3.SMOKE_SEED in ledger.spent_scalars()
-    assert s3.SEED not in ledger.spent_scalars()
     with pytest.raises(SystemExit):
         assert_point_seeds_fresh({"s3_smoke": s3.SMOKE_SEED},
                                  ledger.spent_scalars(),
                                  ledger.SPENT_RANGES, "S3")
+
+
+def test_official_artifact_pins_seed_and_clean_lineage():
+    """The committed artifact: seed is the observed stream, entry and
+    exit git states match and are clean, the delta bounds recompute
+    from the raw f arrays, and identified_ci95 is exactly the outer
+    endpoints of the two bound summaries."""
+
+    artifact = (Path(__file__).resolve().parents[1] / "docs" / "prereg"
+                / "p14_s3_probe_results.json")
+    if not artifact.exists():
+        pytest.skip("S3 artifact not present in this checkout")
+    import json
+    r = json.loads(artifact.read_text(encoding="utf-8"))
+    assert r["params"]["seed"] == ledger.replay_scalar("s3_exploration")
+    assert r["code"]["start"] == r["code"]["end"]
+    assert r["code"]["start"]["dirty"] is False
+    f0 = r["f_flat"]["per_reading"]
+    fl = r["f_schwarzschild_lower"]["per_reading"]
+    fh = r["f_schwarzschild_upper"]["per_reading"]
+    lo = r["delta_lower"]["per_reading"]
+    hi = r["delta_upper"]["per_reading"]
+    assert len(f0) == len(fl) == len(fh) == len(lo) == len(hi)
+    for a, b, c, d, e in zip(f0, fl, fh, lo, hi, strict=True):
+        assert abs(d - (b - a)) < 1e-15
+        assert abs(e - (c - a)) < 1e-15
+    assert r["identified_ci95"] == [
+        r["delta_lower"]["ci95_student_t"][0],
+        r["delta_upper"]["ci95_student_t"][1]]
 
 
 def test_aggregated_ledger_carries_every_review_caught_omission():
