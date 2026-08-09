@@ -211,9 +211,7 @@ def test_the_p4_block_recomputes_from_the_p3e_samples():
 def test_the_preflight_effect_branch_reproduces_exactly():
     """The effect-branch certification (4000 replicates of the full
     pipeline at the frozen seed path) must reproduce its committed
-    raw counts exactly; the 20k-replicate null branch is pinned by
-    the same seeded machinery and checked here only through its
-    committed CP identity (a full rerun is minutes)."""
+    raw counts exactly."""
 
     art = json.loads(PREFLIGHT.read_text(encoding="utf-8"))
     p3e_art = json.loads(P3E_ART.read_text(encoding="utf-8"))
@@ -225,3 +223,25 @@ def test_the_preflight_effect_branch_reproduces_exactly():
                                p3c.PREFLIGHT_EFFECT_REPS,
                                p3c.PREFLIGHT_EFFECT_SEED)
     assert fresh == art["preflight"]["effect"]["counts"]
+
+
+@pytest.mark.slow
+def test_the_preflight_null_branch_reproduces_exactly():
+    """The case, PR #47 review R2: the null/equivalence branch is
+    what actually DECIDES n = 4800, yet the first version reran only
+    the effect branch -- a later change to `metric_cis` or
+    `classify` could shift the null pass rate while the committed
+    artifact stayed stale and every test stayed green (exactly the
+    scenario of this PR's own CI-construction change). The full 20k
+    replicates rerun here at the frozen seed path and must equal the
+    committed counts integer for integer."""
+
+    art = json.loads(PREFLIGHT.read_text(encoding="utf-8"))
+    p3e_art = json.loads(P3E_ART.read_text(encoding="utf-8"))
+    rec = next(r for r in p3e_art["ladder_g"]
+               if r["label"] == p3c.POINT[0])
+    f0 = np.asarray(rec["raw"]["f_flat"])
+    fresh = p3c._branch_counts(f0, f0, p3c.N_ARM,
+                               p3c.PREFLIGHT_NULL_REPS,
+                               p3c.PREFLIGHT_NULL_SEED)
+    assert fresh == art["preflight"]["null"]["counts"]
