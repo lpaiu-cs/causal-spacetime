@@ -370,11 +370,18 @@ frozen while the conformal class moves.
 The construction is a vacuum plane wave in Brinkmann coordinates with profile
 `A(u)(x^2 - y^2)` on a constant-`A` slab: Ricci-flat, Petrov type N, with
 `det g = -1` identically. Because `det g = -1`, the coordinate volume form and
-the Poisson sprinkling law are *identical* to flat spacetime, and the control
-arm is the *same sprinkled point set* read with `A = 0`: any difference
-between the arms is a functional of the relation change alone — it cannot be
-a sampling artifact, an intensity mismatch, or a calibration residual. What
-is *not* identical is the causal-diamond volume: the light-cone boundary
+the Poisson sprinkling law are *identical* to flat spacetime. That identity
+supports the strongest form of pairing, and *C1 uses it*: C1's control
+reading is the *same sprinkled point set* read with `A = 0`, so for C1 any
+difference between the two readings is a functional of the relation change
+alone — it cannot be a sampling artifact, an intensity mismatch, or a
+calibration residual. C2 deliberately does *not* pair: its two arms are
+independent, unpaired sprinkling streams drawn under the identical sprinkling
+law, with finite-sample variation controlled by its frozen interval rules
+rather than removed by pairing — because its claim is about telling one
+ensemble's posets from the other's, not about a within-point-set
+counterfactual (Section 6.3). What is *not* identical between geometries is
+the causal-diamond volume: the light-cone boundary
 tilts, and at equal proper time the curved-arm diamond volume sits 0.4%
 (`wT = 1`) to 7.3% (`wT = 2`) above flat — a deterministic design check pins
 both numbers. "Same measure" here means the volume form and sprinkling law

@@ -84,7 +84,7 @@ If any bundle file changes, this table must be regenerated in the same commit.
 
 | Manuscript location | Cited content | Evidence file |
 | --- | --- | --- |
-| 6.1 | 1+1D conformal ceiling, measure/counting channel framing | frozen P12/P13 records (`docs/prereg/frozen/p12*`, `frozen/p13v3/`); `outputs/data/conformal_order_ambiguity_summary.csv` (exp18, legacy table debt) |
+| 6.1 | 1+1D conformal ceiling, measure/counting channel framing | frozen P12/P13 records (`docs/prereg/frozen/p12/`, `docs/prereg/frozen/p13v3/`); `outputs/data/conformal_order_ambiguity_summary.csv` (exp18, legacy table debt) |
 | 6.2 | det g = -1, vacuum, Weyl != 0 (exact) | `docs/prereg/p14_checks/p14_brinkmann_vacuum_check.py` |
 | 6.2 | diamond volume +0.4% (wT=1) / +7.3% (wT=2) | `docs/prereg/p14_checks/p14_interval_volume_constant_a.py`; `docs/prereg/p14_weyl_curvature.md` §4.4 |
 | 6.3 | operating point and primary-statistic selection | `docs/prereg/p14_probe_p3e_results.json` |
