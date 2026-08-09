@@ -211,13 +211,44 @@ def test_paired_samples_reads_the_same_points_twice():
     assert d1 == pytest.approx(d2, rel=1e-15)
 
 
-def test_the_campaign_refuses_to_run_before_the_final_freeze():
-    """Doc §8's order is a mechanical gate, not a convention: without
-    a freeze manifest the campaign mode aborts."""
+def test_the_campaign_gates_are_mechanical(tmp_path, monkeypatch):
+    """Doc §8's order is enforced by three gates checked BEFORE any
+    computation, exercised here against temporary paths so the tests
+    survive the real manifest landing at the final freeze (PR #49
+    review P2): (1) no manifest -> refuse; (2) manifest/artifact
+    digest mismatch -> refuse; (3) execution sources changed since
+    certification -> refuse (PR #49 review P1: without this, code
+    edited between P and F runs an UNCERTIFIED pipeline while every
+    other check passes)."""
 
-    assert not pr._FREEZE_MANIFEST.exists()
+    monkeypatch.setattr(pr, "_FREEZE_MANIFEST", tmp_path / "none.json")
     with pytest.raises(SystemExit, match="no freeze manifest"):
         pr.run_campaign()
+
+    pre_path = tmp_path / "preflight.json"
+    man_path = tmp_path / "freeze.json"
+    monkeypatch.setattr(pr, "_PREFLIGHT_ARTIFACT", pre_path)
+    monkeypatch.setattr(pr, "_FREEZE_MANIFEST", man_path)
+    pre_path.write_text(json.dumps(
+        {"certified": True, "source_digests": pr._source_digests()}),
+        encoding="utf-8")
+    man_path.write_text(json.dumps({"preflight_digest": "not-it"}),
+                        encoding="utf-8")
+    with pytest.raises(SystemExit, match="does not match the freeze"):
+        pr.run_campaign()
+
+    stale = dict(pr._source_digests())
+    stale["p14_probe_p3c.py"] = "0" * 64
+    pre_path.write_text(json.dumps(
+        {"certified": True, "source_digests": stale}), encoding="utf-8")
+    man_path.write_text(json.dumps(
+        {"preflight_digest": pr._sha256(pre_path)}), encoding="utf-8")
+    with pytest.raises(SystemExit,
+                       match=r"sources changed.*p14_probe_p3c\.py"):
+        pr.run_campaign()
+
+    # and the digest table covers exactly the frozen source list
+    assert set(pr._source_digests()) == set(pr._FROZEN_SOURCES)
 
 
 def test_the_doc_carries_the_frozen_numbers():

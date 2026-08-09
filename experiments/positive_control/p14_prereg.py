@@ -28,8 +28,11 @@ the certification artifact, the frozen n, and S1's cost sentence in
 the freeze manifest -> the campaign runs on a clean checkout of F,
 results record `code_version = F` -> results commit R. A test
 asserts P is an ancestor of F is an ancestor of R. The campaign mode
-REFUSES to run without the freeze manifest, and every stochastic
-mode refuses to run on a dirty worktree.
+REFUSES to run without the freeze manifest, refuses when any
+execution-relevant source changed since the certification (the
+preflight artifact records their digests -- F may only ADD
+artifacts), and every stochastic mode refuses a dirty worktree at
+ENTRY.
 
 Run:  python experiments/positive_control/p14_prereg.py preflight
       python experiments/positive_control/p14_prereg.py manifest <s1.txt>
@@ -189,6 +192,23 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+#: Every module whose code decides the campaign's numbers. The
+#: preflight records their digests and the campaign refuses to run if
+#: ANY changed after certification (PR #49 review P1: the final-freeze
+#: commit F may only ADD artifacts -- without this check, code edited
+#: between P and F would pass both the manifest-digest and the
+#: ancestry checks and run an UNCERTIFIED pipeline).
+_FROZEN_SOURCES = ("p14_prereg.py", "p14_probe_p3c.py",
+                   "p14_probe_p3e.py", "p14_probe_p2.py",
+                   "p14_probe_p1.py", "p14_plane_wave.py",
+                   "seed_windows.py")
+
+
+def _source_digests() -> dict[str, str]:
+    base = Path(__file__).resolve().parent
+    return {name: _sha256(base / name) for name in _FROZEN_SOURCES}
+
+
 # ---------------------------------------------------------------------
 # C1: paired mean difference, t-interval, three branches
 # ---------------------------------------------------------------------
@@ -270,8 +290,11 @@ def preflight(p3e_art: dict) -> dict:
     C1 centered null (B=20000), C2 null (B=20000); every branch must
     reach an exact CP 95% LOWER bound of 0.90. No certification
     failure may raise B or n automatically -- the stage blocks and
-    the design review reopens (doc §4/§6)."""
+    the design review reopens (doc §4/§6). The clean-checkout gate
+    runs at ENTRY (PR #49 review P2) -- a dirty tree must not get
+    hours of bootstrap before hearing no."""
 
+    ver = code_version()
     fa, f0 = _p3e_pairs(p3e_art)
     delta = fa - f0
     centered = delta - delta.mean()
@@ -326,7 +349,8 @@ def preflight(p3e_art: dict) -> dict:
         block["pass_ci95_exact"] = [lo, hi]
         certified = certified and lo >= 0.90
     return {
-        "code_version": code_version(),
+        "code_version": ver,
+        "source_digests": _source_digests(),
         "point": POINT[0], "e_n": E_N,
         "n_c1": N_C1, "n_c2": N_C2,
         "eps_delta": EPS_DELTA,
@@ -387,6 +411,15 @@ def run_campaign() -> dict:
     if manifest["preflight_digest"] != _sha256(_PREFLIGHT_ARTIFACT):
         raise SystemExit("preflight artifact does not match the freeze "
                          "manifest digest -- stage blocked")
+    pre = json.loads(_PREFLIGHT_ARTIFACT.read_text(encoding="utf-8"))
+    current = _source_digests()
+    if pre["source_digests"] != current:
+        changed = sorted(k for k in current
+                         if pre["source_digests"].get(k) != current[k])
+        raise SystemExit("execution sources changed since the "
+                         f"certification: {changed} -- the certified "
+                         "pipeline and the campaign pipeline are no "
+                         "longer the same code; stage blocked")
     assert_seed_layout()
     ver = code_version()
 

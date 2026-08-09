@@ -173,8 +173,13 @@ Weyl 경로를 열지도 닫지도 못하며, scope 문장은 비용 기록 이�
    (preflight digest, `preflight_code_version = P`, S1 문장, 동결
    n·시드). "freeze"라는 단어는 여기서만 쓴다.
 5. clean checkout `F`에서 **캠페인 실행** (별도 실행 승인 후) →
-   결과 아티팩트에 **`code_version = F`** 기록. 캠페인 모드는
-   manifest 부재·digest 불일치 시 실행을 거부한다(기계적 게이트).
+   결과 아티팩트에 **`code_version = F`** 기록. 캠페인 모드는 3중
+   기계 게이트를 통과해야만 실행된다: manifest 존재, manifest의
+   preflight digest 일치, 그리고 **preflight 아티팩트에 기록된
+   실행 관련 소스 digest들(`_FROZEN_SOURCES`: 러너·P3-C/P3-E/P2/P1
+   파이프라인·geometry·seed helper)이 현재 파일과 일치**. 마지막
+   게이트가 P→F 사이 코드 변경을 차단한다 — F는 아티팩트 추가만
+   가능하며, 코드가 바뀌면 preflight부터 다시다.
 6. **후속 결과 커밋 `R`.**
 
 **Ancestry 계약:** 테스트가 `P ≺ F ≺ R`을 git으로 단언
