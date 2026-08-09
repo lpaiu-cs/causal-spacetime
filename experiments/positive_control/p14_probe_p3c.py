@@ -87,11 +87,17 @@ N_ARM = 4_800
 POINT = ("aniso-a1.0", 1.0, 1.0, 1.0, 2.0, 6.0)
 E_N = 300
 
-#: One rng stream per arm; unpaired by construction.
-CAMPAIGN_SEEDS = {"curved": 20260831, "flat": 20260832}
+#: One rng stream per arm; unpaired by construction. 20260831/32 fed
+#: the FIRST campaign, whose verdict was downgraded to exploratory in
+#: the PR #48 review (the AUC interval degenerated at complete
+#: separation, so the frozen valid-CI requirement was unmet at run
+#: time) -- they are burned, and the fresh confirmation block runs on
+#: new streams under the corrected boundary rule.
+CAMPAIGN_SEEDS = {"curved": 20260841, "flat": 20260842}
 BURNED_SEEDS = (20260808, 777, 778, 779, 780, 781,
                 20260811, 20260812, 20260813, 20260814,
-                20260821, 20260822, 20260823, 20260824)
+                20260821, 20260822, 20260823, 20260824,
+                20260831, 20260832)
 
 PREFLIGHT_NULL_REPS = 20_000
 PREFLIGHT_EFFECT_REPS = 4_000
@@ -137,8 +143,8 @@ def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     `Var = var(V10)/m + var(V01)/n`. Valid under alternatives and
     ties -- the null-form `1/(6n)` is not an upper bound off the
     null (PR #47 review) and appears nowhere in the verdict path.
-    Complete separation gives a zero-width CI at the boundary, the
-    standard DeLong degeneracy.
+    At the boundaries the frozen rule switches to the exact
+    placement bound (PR #48 review; see inline).
     """
 
     m, n = len(a), len(b)
@@ -151,6 +157,20 @@ def auc_delong(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     lo_idx = np.searchsorted(a_sorted, b, side="left")
     v01 = ((m - hi_idx) + 0.5 * (hi_idx - lo_idx)) / m
     auc = float(v10.mean())
+    # At the boundaries the Wald/DeLong interval DEGENERATES to zero
+    # width -- complete separation makes every placement 1 (or 0), the
+    # influence variance vanishes, and [1, 1] is not a valid
+    # finite-sample CI for the POPULATION AUC (PR #48 review: the
+    # empirical AUC being 1 shows the sample separates, not that the
+    # population overlap is exactly zero). The frozen boundary rule is
+    # the exact placement bound: all m values of V10 equal 1 means the
+    # one-sided 97.5% CP lower bound on P(V10 = 1) is 0.025^(1/m), and
+    # AUC = E[V10] >= P(V10 = 1), so [0.025^(1/m), 1] is a valid 95%
+    # interval; symmetric at 0.
+    if auc >= 1.0:
+        return 1.0, 0.025 ** (1.0 / m), 1.0
+    if auc <= 0.0:
+        return 0.0, 0.0, 1.0 - 0.025 ** (1.0 / m)
     var = (v10.var(ddof=1) / m if m > 1 else 0.0) \
         + (v01.var(ddof=1) / n if n > 1 else 0.0)
     se = math.sqrt(max(var, 0.0))
@@ -337,22 +357,32 @@ def p4_block(p3e_art: dict) -> dict:
 
 
 def arm_samples(geom, rho: float, seed: int,
-                count: int) -> np.ndarray:
+                count: int) -> tuple[np.ndarray, int, int]:
     """One unpaired arm's per-sprinkling 3a values from a single rng
-    stream -- module-level so a test can rerun a PREFIX of the
-    stream and pin the campaign's raw record without the full
-    wall-clock."""
+    stream, plus the arm's TOTAL ambiguous and escalated pair counts.
+
+    `related` leaves an undecided pair False, so summing it without
+    reading `ambiguous` silently counts undecided as unrelated --
+    the "undecided is never a silent False" contract (PR #48 review
+    R2). The campaign stores both totals and asserts ambiguity is
+    zero; a nonzero count would require bracketing the relation
+    fraction instead. Module-level so a test can rerun a PREFIX of
+    the stream against the committed raw record.
+    """
 
     rng = np.random.default_rng(seed)
     out = np.empty(count)
+    amb = esc = 0
     for i in range(count):
         pts = sprinkle(geom, rho, rng)
         n = len(pts)
         cen = relation_census(geom, pts)
         out[i] = cen.related.sum() / (n * (n - 1) / 2)
+        amb += cen.ambiguous
+        esc += cen.escalated
         if (i + 1) % 500 == 0:
             print(f"    {seed}: {i + 1}/{count}", flush=True)
-    return out
+    return out, amb, esc
 
 
 def run_campaign() -> dict:
@@ -366,9 +396,14 @@ def run_campaign() -> dict:
     curved, flat = arms(slab, w)
 
     print("  curved arm ...", flush=True)
-    f_curved = arm_samples(curved, rho, CAMPAIGN_SEEDS["curved"], N_ARM)
+    f_curved, amb_a, esc_a = arm_samples(curved, rho,
+                                         CAMPAIGN_SEEDS["curved"], N_ARM)
     print("  flat arm ...", flush=True)
-    f_flat = arm_samples(flat, rho, CAMPAIGN_SEEDS["flat"], N_ARM)
+    f_flat, amb_0, esc_0 = arm_samples(flat, rho,
+                                       CAMPAIGN_SEEDS["flat"], N_ARM)
+    # undecided is never a silent False: with any ambiguity the
+    # relation fraction would need bracketing, not a point value
+    assert amb_a == 0 and amb_0 == 0, (amb_a, amb_0)
     m = metric_cis(f_curved, f_flat)
     verdict = classify(m["ci_s"], m["ci_auc"], m["ci_ba"])
     art = {
@@ -376,6 +411,8 @@ def run_campaign() -> dict:
         "point": label, "e_n": E_N, "n_arm": N_ARM,
         "seeds": dict(CAMPAIGN_SEEDS),
         "margins": dict(P3C_MARGINS),
+        "ambiguity": {"curved": {"ambiguous": amb_a, "escalated": esc_a},
+                      "flat": {"ambiguous": amb_0, "escalated": esc_0}},
         "raw": {"f_curved": [float(v) for v in f_curved],
                 "f_flat": [float(v) for v in f_flat]},
         "metrics": m,

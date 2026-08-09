@@ -27,8 +27,8 @@
   },
   "preflight": {
     "campaign_seeds": {
-      "curved": 20260831,
-      "flat": 20260832
+      "curved": 20260841,
+      "flat": 20260842
     },
     "certification_rule": "exact CP 95% LOWER bound >= 0.90 for BOTH branches",
     "certified": true,
@@ -74,7 +74,7 @@
       ]
     },
     "resampling": "arms drawn INDEPENDENTLY (unpaired); null = both arms from the flat sample",
-    "seconds": 27.153518799997983,
+    "seconds": 28.820162499992875,
     "source_artifact": "p14_probe_p3e_results.json ladder_g aniso-a1.0 raw samples"
   },
   "script": "experiments/positive_control/p14_probe_p3c.py"
