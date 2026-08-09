@@ -1,8 +1,14 @@
 # P14: which pure-order statistic reads a pure-Weyl deformation, and at what density? — design draft
 
 Status: **DESIGN DRAFT v0.8 (2026-08-01). APPROVED FOR THE EXPLORATORY
-PROBE (P0–P4, S1) on 2026-08-01. NO STOCHASTIC PROBE OR CAMPAIGN HAS RUN
-YET. NOTHING IS FROZEN.**
+PROBE (P0–P4, S1) on 2026-08-01.** *Status update 2026-08-09: the
+probe chain this document authorized has COMPLETED (PR #38–#48, merge
+`1025c50`) — P0·P1·P2·P3-E·P3-C·P4 all ran; §8.3's positive branch was
+realized (P3-C `confirmed` at aniso-a1.0). The actual preregistration
+is a separate document, `p14_prereg.md`, which starts from that
+explicit input lineage rather than from this status line; S1 is still
+outstanding and attaches there. The body below is the 2026-08-01
+design record and is unchanged.*
 
 **What the approval covers, and what it does not.** It authorises the
 exploratory probe only. It is **not** approval to freeze a

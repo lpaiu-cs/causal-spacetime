@@ -847,26 +847,17 @@ def seed_blocks() -> list[tuple[str, int, int]]:
 
 
 def assert_windows_disjoint_and_fresh() -> list[tuple[str, int, int]]:
-    """Pairwise disjointness, containment, and freshness. Aborts."""
+    """Pairwise disjointness, containment, and freshness. Aborts.
 
-    blocks = seed_blocks()
-    for label, lo, hi in blocks:
-        if not (WINDOW_FLOOR <= lo and hi <= WINDOW_CEIL):
-            raise SystemExit(
-                f"seed block {label} [{lo}..{hi}] leaves Stage B's "
-                f"window [{WINDOW_FLOOR}..{WINDOW_CEIL}]")
-        for name, slo, shi in SPENT_RANGES:
-            if not (hi < slo or shi < lo):
-                raise SystemExit(
-                    f"seed block {label} [{lo}..{hi}] overlaps the "
-                    f"already-spent {name} [{slo}..{shi}]")
-    for i, (la, loa, hia) in enumerate(blocks):
-        for lb, lob, hib in blocks[i + 1:]:
-            if not (hia < lob or hib < loa):
-                raise SystemExit(
-                    f"seed blocks overlap: {la} [{loa}..{hia}] vs "
-                    f"{lb} [{lob}..{hib}]")
-    return blocks
+    Wrapper: the logic is the parameterized pure function in
+    `seed_windows` (extracted for the P14 preregistration, which was
+    told to inherit this check rather than write a third variant);
+    this name and behavior stay for P12's own callers and tests.
+    """
+
+    from seed_windows import assert_windows_disjoint_and_fresh as check
+    return check(seed_blocks(), SPENT_RANGES,
+                 WINDOW_FLOOR, WINDOW_CEIL, "Stage B")
 
 
 def cross_stage_gate() -> dict:
