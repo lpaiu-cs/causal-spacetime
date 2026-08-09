@@ -320,7 +320,7 @@ def preflight(p3e_art: dict) -> dict:
                     "pass_key": "equivalent"},
     }
     certified = True
-    for name, block in branches.items():
+    for block in branches.values():
         lo, hi = clopper_pearson(block["counts"][block["pass_key"]],
                                  block["reps"])
         block["pass_ci95_exact"] = [lo, hi]
