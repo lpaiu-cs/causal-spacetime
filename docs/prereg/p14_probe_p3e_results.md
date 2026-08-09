@@ -123,30 +123,40 @@ Preliminary candidate `n = 4800/팔` (normal design model): joint pass `18273/20
 
 ## Reading
 
-**The heuristic structure holds, and the map has a sign
-reversal nobody ordered.**
+**One asymptotic structure is measured, one is deferred by the
+probe's own rule, and the map has a sign reversal nobody ordered.**
 
-- **Exponents (Ladder-E).** `D` runs at slope `0.961 [0.955, 0.968]`
-  over `A ≤ 0.5` — the `O(|A|)` heuristic — while
-  `Δr`'s asymptotic fit gives `1.977 [1.827, 2.173]` with the
-  refit diagnostic (2.057) inside the CI: the `O(A²)` scalar
-  suppression is measured, not assumed. The `A ≤ 0.5` effective
-  exponent (1.622) documents how far from asymptotic the accessible
-  amplitudes run. Zero fit failures in 4000 cluster-bootstrap
-  replicates; the −A contrast matches distributionally.
+- **Exponents (Ladder-E).** `Δr`'s asymptotic fit gives
+  `1.977 [1.827, 2.173]` with the refit diagnostic (2.057) INSIDE
+  the CI: the `O(A²)` scalar suppression is measured, not assumed.
+  `D`'s low-A slope is `0.961 [0.955, 0.968]`, approaching 1 from
+  below — **directionally consistent with the `O(|A|)` heuristic,
+  but its refit diagnostic (0.972) falls OUTSIDE the CI, so by the
+  frozen rule the asymptotic-recovery claim for `D` is DEFERRED:
+  not yet asymptotic at measurable amplitudes.** The `A ≤ 0.5`
+  effective `Δr` exponent (1.622) documents the same pre-asymptotic
+  reality from the other side. Zero fit failures in 4000
+  cluster-bootstrap replicates; the −A contrast matches
+  distributionally.
 - **The map (Ladder-G).** The unsigned probe `D` is strong wherever
   `a` is large (0.043–0.051 at aniso/high/edge). The SIGNED 3a
-  shift is not monotone: `+0.050` at aniso-a1.0 (g/l = 98),
-  `+0.018` at high-a2.0 (g/l = 2.4), and **`−0.015` at
-  edge-a2.4 (g/l = 0.5)** — the net relation balance REVERSES
-  between `a = 2.0` and `a = 2.4`, so somewhere between them the 3a
-  channel passes through zero while `D` stays large. roomy-a0.2 is
-  an in-protocol negative control (`s = −0.00`, AUC 0.499).
+  shift REVERSES across operating points: `+0.050` at aniso-a1.0
+  (g/l = 98), `+0.018` at high-a2.0 (g/l = 2.4), **`−0.015` at
+  edge-a2.4 (g/l = 0.5)**. What this establishes is that the sign
+  DEPENDS ON THE OPERATING POINT / window shape — high-a2.0 and
+  edge-a2.4 differ in `dv`, transverse aspect, and density, not in
+  `a` alone (edge's defocusing-`x` window is wider than its
+  focusing-`y`, favouring losses; aniso's `dy ≫ dx` amplifies
+  gains). A fixed-geometry zero crossing in `a ∈ (2.0, 2.4)` is NOT
+  established; showing one needs a fixed-box, fixed-density ladder
+  in `w` alone — an interesting follow-up diagnostic, not blocking
+  P3-C. roomy-a0.2 is a LOW-SIGNAL control (`A ≠ 0`; `s = −0.00`,
+  AUC 0.499) — the true null is `w = 0`, the pipeline check.
 - **Primary-candidate reading** (P3-E's choice, frozen for P3-C):
   **aniso-a1.0** — the largest `|Δf|`, `s = 11.70 ±
   0.38`, AUC pinned at 1.000, and Class C characterization already
-  co-located there. The reversal makes edge-a2.4 a poor 3a operating
-  point (near the zero crossing the mean channel dies) but a
+  co-located there. The shape-dependent reversal makes edge-a2.4 a
+  poor 3a operating point (its mean channel is nearly dead) but a
   fascinating physics target for statistic #4.
 - **Class C.** At `E[N] = 2400` every zero-rate is 0/72 and pooled
   `Ĉ_2`/`Ĉ_3` differ between arms at the ~1e-2 relative
@@ -174,6 +184,18 @@ separately approved.
 ## Changelog
 
 Initial record.
+
+Post-merge review corrected two INTERPRETATIONS, no numbers: the
+`D` asymptotic-recovery claim violated the probe's own frozen refit
+rule (drop-highest 0.972 sits outside [0.955, 0.968]) and is
+deferred -- directionally consistent with `O(|A|)`, "not yet
+asymptotic at measurable amplitudes"; and the "zero crossing in
+`a ∈ (2.0, 2.4)`" over-read the operating-point map -- high-a2.0
+and edge-a2.4 differ in window shape and density, not `a` alone, so
+what is established is a SHAPE-DEPENDENT sign reversal (a
+fixed-geometry `w`-ladder would be the follow-up diagnostic).
+roomy-a0.2 is relabelled a low-signal control (`A != 0`; the true
+null is `w = 0`).
 
 Review R1 corrected two instrument defects, neither moving a number
 the campaign measured: the ladder bootstrap resampled each rung
