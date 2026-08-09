@@ -25,7 +25,22 @@ from seed_windows import assert_point_seeds_fresh  # noqa: E402
 
 def test_s3_official_seed_is_a_fresh_allocation():
     assert ledger.assert_fresh_scalar("s3_exploration") == s3.SEED
-    assert s3.SEED == 40_000_221
+    assert s3.SEED == 40_000_231
+
+
+def test_smoke_stream_is_separate_and_cannot_burn_the_official_seed():
+    """PR review R3: `--smoke` draws only the dedicated observed
+    stream; the official allocation stays untouched and unobserved,
+    and re-allocating the smoke stream as fresh must abort."""
+
+    assert s3.SMOKE_SEED != s3.SEED
+    assert s3.SMOKE_SEED == 40_000_221
+    assert s3.SMOKE_SEED in ledger.spent_scalars()
+    assert s3.SEED not in ledger.spent_scalars()
+    with pytest.raises(SystemExit):
+        assert_point_seeds_fresh({"s3_smoke": s3.SMOKE_SEED},
+                                 ledger.spent_scalars(),
+                                 ledger.SPENT_RANGES, "S3")
 
 
 def test_aggregated_ledger_carries_every_review_caught_omission():

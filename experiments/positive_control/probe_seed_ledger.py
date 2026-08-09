@@ -38,18 +38,26 @@ from seed_windows import (
 #: s3_pilot: the fixed-N dirty-tree run preserved as pilot only.
 #: w1_exploration: the approved W1 artifact (its official regeneration
 #: was a deterministic replay of the same stream, not a new draw).
+#: s3_smoke: first allocated as the official S3 seed, then
+#: smoke-observed during review-R2 validation (twice, 3 readings at
+#: E_N = 40) -- demoted to the dedicated smoke/validation stream by
+#: the review-R3 principle that observing ANY output spends the seed.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
+    "s3_smoke": 40_000_221,
 }
 
-#: Active fresh allocations, not yet observed when allocated.
+#: Active fresh allocations, not yet observed when allocated. A
+#: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
+#: the same change that adds the observed artifact.
 FRESH_PROBE_SCALARS = {
-    "s3_exploration": 40_000_221,
+    "s3_exploration": 40_000_231,
 }
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
+S3_SMOKE_SEED = OBSERVED_PROBE_SCALARS["s3_smoke"]
 S3_SEED = FRESH_PROBE_SCALARS["s3_exploration"]
 
 SPENT_RANGES = P11_P13_SPENT_RANGES + (P12_ALLOCATION_DECADE,)

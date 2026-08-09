@@ -31,8 +31,12 @@ Provenance: the git state is captured at ENTRY; the run refuses a
 dirty tree, re-captures at EXIT, and refuses to write on any
 mismatch. The historical fixed-N pilot is preserved separately with a
 provenance sidecar; its seed 40_000_201 is ledger-spent (observed),
-and this official run draws the FRESH allocation 40_000_221 -- seed
+and this official run draws the FRESH allocation 40_000_231 -- seed
 freshness and replay are distinct ledger operations (PR review R2).
+`--smoke` draws only the dedicated observed smoke stream 40_000_221
+(the first official allocation, demoted after its smoke output was
+observed during review-R2 validation), so validation can never spend
+the official seed (PR review R3).
 
 Claim boundary (PR review R2): the paired estimand Delta = f_M - f_0
 on one point set is C1-class counterfactual sensitivity in the P14
@@ -60,7 +64,7 @@ from pathlib import Path
 import numpy as np
 import s1_schwarzschild_cost as s1
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SEED, assert_fresh_scalar
+from probe_seed_ledger import S3_SEED, S3_SMOKE_SEED, assert_fresh_scalar
 
 # ---------------------------------------------------------------------
 # Exploration constants (NOT frozen -- this is a probe, not a stage)
@@ -68,8 +72,11 @@ from probe_seed_ledger import S3_SEED, assert_fresh_scalar
 
 E_N = 300                    # Poisson mean events per reading
 N_READINGS = 300             # paired readings
-SEED = S3_SEED               # 40_000_221 fresh allocation (pilot's
-                             # 40_000_201 is observed-spent)
+SEED = S3_SEED               # 40_000_231 fresh allocation, touched by
+                             # the OFFICIAL path only (pilot 40_000_201
+                             # and first-cut 40_000_221 are observed)
+SMOKE_SEED = S3_SMOKE_SEED   # 40_000_221, the observed smoke stream --
+                             # smoke may never draw the official seed
 TOL = s1.DEFAULT_TOL         # 1e-8, the priced S1 operating point
 TOL_ESCALATED = 1e-10        # last rung of s1.TOL_LADDER
 
@@ -165,14 +172,17 @@ def main() -> None:
     n_readings = 3 if smoke else N_READINGS
     e_n = 40 if smoke else E_N
 
-    assert_fresh_scalar("s3_exploration")
+    if smoke:
+        seed = SMOKE_SEED
+    else:
+        seed = assert_fresh_scalar("s3_exploration")
     state_start = _git_state()
     if state_start["dirty"] and not smoke:
         raise SystemExit(
             "S3: refusing an official run from a dirty tree "
             f"(rev {state_start['rev']}); commit first.")
 
-    rng = np.random.default_rng(SEED)
+    rng = np.random.default_rng(seed)
     fm_lo = np.empty(n_readings)
     fm_hi = np.empty(n_readings)
     f0 = np.empty(n_readings)
@@ -219,7 +229,7 @@ def main() -> None:
         "domain": {"m": s1.M, "r_shell": [s1.R_MIN, s1.R_MAX],
                    "cap_half_angle": s1.CAP_HALF_ANGLE,
                    "t_extent": s1.T_EXTENT},
-        "params": {"e_n": e_n, "n_readings": n_readings, "seed": SEED,
+        "params": {"e_n": e_n, "n_readings": n_readings, "seed": seed,
                    "tol": TOL, "tol_escalated": TOL_ESCALATED,
                    "smoke": smoke},
         "event_counts": {"mean": float(np.mean(counts)),
@@ -228,6 +238,9 @@ def main() -> None:
                          "per_reading": [int(c) for c in counts]},
         "delta_lower": lo_sum,
         "delta_upper": hi_sum,
+        # Each endpoint carries 97.5% one-sided coverage, so taking
+        # the outer endpoints is a conservative joint 95% interval by
+        # the union bound.
         "identified_ci95": [lo_sum["ci95_student_t"][0],
                             hi_sum["ci95_student_t"][1]],
         "bounds_note": ("delta_lower counts undecided pairs as "
