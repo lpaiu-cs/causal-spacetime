@@ -54,9 +54,11 @@ against the committed files, so manifest and evidence cannot drift silently.
 ## Committed evidence hashes (all 19 tables)
 
 Files are under `docs/paper/paper_a/figures/data/`. All hashes in this
-manifest are SHA-256 of the LF-NORMALIZED content -- the committed blob
-bytes -- because working-tree line endings vary by platform (git's
-autocrlf); the contract test normalizes the same way.
+manifest are SHA-256 of the raw committed bytes. Line endings of every
+hashed artifact are pinned to LF at the storage boundary
+(`.gitattributes`, `eol=lf`), so the same digest is reported by plain
+`sha256sum` on any checkout of any platform, and any byte change --
+including a line-ending change -- breaks the contract test.
 
 | File | Rows | SHA-256 |
 | --- | --- | --- |

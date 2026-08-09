@@ -1,0 +1,12 @@
+# Evidence artifacts whose raw SHA-256 is asserted by contract tests
+# (tests/test_paper_a_manifest.py; the P14 frozen-source digest gates)
+# are pinned to LF so working-tree bytes equal the committed blob bytes
+# on every platform and every autocrlf setting.
+# docs/prereg/frozen/ is deliberately NOT pinned: those blobs are frozen
+# as committed (legacy CSVs contain CRLF) and must never be rewritten.
+docs/paper/paper_a/figures/data/*.csv text eol=lf
+docs/prereg/*.md text eol=lf
+docs/prereg/*.json text eol=lf
+docs/prereg/p14_checks/*.py text eol=lf
+experiments/positive_control/*.py text eol=lf
+tests/*.py text eol=lf

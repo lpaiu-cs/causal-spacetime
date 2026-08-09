@@ -19,14 +19,14 @@ FIG_DATA = REPO / "docs" / "paper" / "paper_a" / "figures" / "data"
 
 
 def _sha(path: Path) -> str:
-    """SHA-256 of the LF-normalized content -- the committed blob
-    bytes. Working-tree line endings vary by platform (git's
-    autocrlf materializes CRLF on Windows and normalizes back to LF
-    on commit), so hashing raw working-tree bytes would make the
-    contract checkout-dependent."""
+    """SHA-256 of the raw file bytes. Every hashed artifact is pinned
+    to LF at the storage boundary (.gitattributes, eol=lf), so the
+    working-tree bytes equal the committed blob bytes on every platform
+    and this digest is what plain sha256sum reports on any checkout.
+    Hashing raw bytes keeps the contract sensitive to every byte,
+    including a line-ending change."""
 
-    return hashlib.sha256(
-        path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_the_19_table_package_matches_its_manifest_hashes():
