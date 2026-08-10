@@ -34,7 +34,12 @@ in a preregistered two-claim design on a 3+1D vacuum plane wave whose
 coordinate volume form and sprinkling law are exactly flat, that the
 conformal-class information order carries is detectable at finite density:
 both the paired mean shift of the global relation fraction and a single-poset
-classifier confirm against frozen margins. The contribution is not any
+classifier confirm against frozen margins. A preregistered extension carries
+the paired claim across Petrov classes: on a Schwarzschild exterior patch,
+whose coordinate volume element is likewise mass-independent, the same
+same-point-set mean shift confirms against frozen detection and replication
+margins (type D; the single-poset classifier claim is not extended). The
+contribution is not any
 single reconstruction — most are standard — but the explicit accounting of what
 each rung requires and the negative results that bound it. We make no claim
 that spacetime is reducible to causal order; the reconstructions are controlled
@@ -73,8 +78,9 @@ finite-speed lattice); (4) a Rindler reconstruction-inaccessibility
 analogue; and (5) a preregistered 3+1D capstone validation that a pure-Weyl
 deformation of the light cones — at identical coordinate volume form and
 sprinkling law — measurably moves the causal order at finite density
-(Section 6). All results are controlled validations, not evidence that geometry
-reduces to order.
+(Section 6), together with its preregistered type-D (Schwarzschild) C1-paired
+extension (Section 6.7). All results are controlled validations, not evidence
+that geometry reduces to order.
 
 ## 2. The reconstruction ladder
 
@@ -456,20 +462,84 @@ sprinkling measure is exactly frozen. Together with Section 4.6 this closes
 the conformal story in both directions — within a class, order is blind to
 scale; across classes, at least at this operating point, order visibly moves.
 
-### 6.6 What this does not establish
+### 6.6 What the plane-wave result alone does not establish
 
 It is not a general-Weyl discriminator (the plane wave is Petrov type N and
 its exact volume form is unrepresentative); it is not Weyl-tensor recovery
 (detection and recovery are different claims; no reconstructed quantity is
 produced, which is why this is a capstone boundary experiment and not a new
 ladder rung); it does not establish box- or density-independence (the licensed
-sentence is bound to the frozen operating point); and it does not open the
-Schwarzschild generalization. A separate cost measurement (S1) prices only the
-causal-predicate component of that path — about 0.77 ms per pair on the tested
-solver, patch, and tolerance, roughly 360x the plane-wave predicate — and even
-an affordable predicate leaves the Schwarzschild diamond-volume oracle
-unresolved; an unaffordable one would hold only that solver-domain-budget
-path (`docs/prereg/p14_s1_cost.json`).
+sentence is bound to the frozen operating point); and, by itself, it does not
+open the Schwarzschild generalization. The C1-paired component of that path is
+opened by the preregistered extension of Section 6.7; the single-poset
+(C2-class) discrimination and the diamond-volume oracle remain open there. A
+separate cost measurement (S1) prices the causal-predicate component — about
+0.77 ms per pair on the tested solver, patch, and tolerance, roughly 360x the
+plane-wave predicate (`docs/prereg/p14_s1_cost.json`).
+
+### 6.7 Type-D extension: preregistered C1-paired confirmation in Schwarzschild
+
+The paired half of the capstone design transfers to the Schwarzschild
+exterior on a measure identity: in Schwarzschild coordinates the volume
+element is `sqrt(-g) = r^2 sin(theta)` — independent of the mass and equal to
+the flat spherical element — so one sprinkle of a coordinate patch serves
+both geometries, exactly as `det g = -1` served the plane wave. What the
+identity controls is the sampling measure; individual diamond volumes differ
+under the two causal structures, and that difference is part of the signal
+(the Section 6.2 distinction, unchanged). The frozen patch is the S1 solver
+domain (`M = 1`, exterior shell `r` in `[10, 20]`, polar cap, coordinate-time
+extent 40), with `N ~ Poisson(300)` events per reading and the S1 predicate
+at tolerance 1e-8 with escalation to 1e-10.
+
+An exploration stage (S3, seed-ledger disciplined, preserved with its raw
+per-reading arrays) measured the paired shift and sized a preregistered
+confirmation (S4). The frozen rule
+(`docs/prereg/p14_s4_schwarzschild_c1.md`) fixes two gates evaluated on
+identified intervals with strict comparisons: a primary detection gate
+(identified CI95 above the frozen threshold `eps_det = 0.0036`, about 10% of
+the exploration anchor, in the frozen negative direction) and a secondary
+replication gate (the independent two-sample Welch CI95 of the S4-S3
+difference inside `+-eps_rep = +-0.0012`, one exploration reading-SD); a
+verified inclusion makes the joint verdict numerically equivalent to the
+replication gate at these margins. Branch powers were certified before the
+freeze by resampling both blocks from a conservatively scaled empirical
+distribution (20000/20000 on every branch, exact Clopper-Pearson 95% lower
+bound 0.9998), with a constructed negative-control battery proving each gate
+can fail. The campaign ran once, from the exact freeze checkout, with an
+8-file content-addressed manifest verified at entry and at exit.
+
+| Gate | Frozen condition | Result | Verdict |
+| --- | --- | --- | --- |
+| A: C1 detection (primary) | identified CI95 top < -0.0036 | CI95 [-0.036211, -0.035953] | pass (10x margin) |
+| B: replication (secondary) | Welch CI95 of S4-S3 inside +-0.0012 | [-0.000183, +0.000194] | REPLICATED |
+
+Stage verdict: CONFIRMED. The census recorded zero ambiguous pairs and one
+escalated pair, resolved at the tighter tolerance. The frozen sentences are
+recorded in Korean in the artifact (`docs/prereg/p14_s4_results.json`) and
+quoted verbatim (unwrapped, so the byte sequence matches the artifact), each
+followed by a non-frozen English translation:
+"동결된 Schwarzschild 좌표·도메인(M=1, r∈[10,20], 극관각 캡 1.0, T=40)의 공통 측도 위에서, paired 앙상블 평균 이동의 identified CI95가 동결 방향으로 검출문턱 ε_det = 0.0036을 초과했다 — 유한밀도 인과 census가 type D 진공 곡률의 빛원뿔 변형을 C1-급으로 검출했다(프로그램 내부 진술)."
+(*on the frozen Schwarzschild coordinates and domain, the paired ensemble
+mean shift exceeds the frozen detection threshold in the frozen direction — a
+finite-density causal census detects the light-cone deformation of type-D
+vacuum curvature at C1 grade; a program-internal statement*);
+"S4 블록과 S3 탐색 블록의 독립 두-표본 차이의 identified Welch CI95가 ±ε_rep = ±0.0012 안에 들어, 탐색 효과가 정량적으로 재현됐다."
+(*the independent two-sample difference between the S4 and S3 blocks lies
+inside the replication band: the exploration effect is quantitatively
+reproduced*).
+
+What this extends, and at what grade: the plane-wave stage certified the
+joint C1-and-C2 claim; the Schwarzschild extension certifies the C1 paired
+claim only, on its frozen coordinates and domain, as a program-internal
+statement. It is not a single-poset discriminator there: a stored-data
+feasibility audit (`docs/prereg/p14_c2_feasibility_audit.json`, exploratory,
+zero additional solver calls) indicates a C2-class design is computationally
+feasible but with imperfect separation, and such a stage is being designed —
+until it is preregistered and run, no C2-grade Schwarzschild sentence is
+licensed. The extension likewise establishes no mass-generality (a single
+frozen `M`) and uses no diamond-volume oracle (its margins are operationally
+anchored). Execution provenance, including the executed-freeze manifest
+snapshot, is in Appendix B.
 
 The full execution provenance — the preregistration's freeze ordering, its
 mechanical gates, and the commit-ancestry contract — is in Appendix B.
@@ -540,9 +610,16 @@ The spacelike proxy is exploratory. The capstone is bounded by its
 construction: Petrov type N with an exactly flat volume form — the property
 that makes the experiment clean also makes it unrepresentative of generic
 `Weyl != 0` spacetimes — and by its single frozen operating point;
-generalizing beyond type N sits behind the unresolved Schwarzschild
-diamond-volume oracle, with only the causal-predicate component priced so
-far. The natural next question — whether
+generalizing beyond type N is now partially opened rather than closed: the
+Schwarzschild C1-paired extension is confirmed (Section 6.7), a single-poset
+(C2-class) Schwarzschild stage is being designed on a committed stored-data
+feasibility audit, and the diamond-volume oracle is a partially derived
+theoretical path — the static-spacetime reduction of the diamond volume to a
+closed-form-in-time integral, and to a 2D integral for radially aligned
+anchors via the optical metric, is derived in a public note
+(`docs/theory/schwarzschild_volume_oracle_note.md`), while the numerical
+flight-time error certification, anchor-diamond containment proof, and grid
+sizing remain open. The natural next question — whether
 observer-relative distance *order* can be validated as recovering latent
 geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this
@@ -557,12 +634,15 @@ establish an equilibrium transition or finite-size scaling.
 ## 10. Reproducibility
 
 Foundation-layer baseline commit `325df55`. Every number in Sections 4-5 has a
-cited `experiments/exp*.py` producer and expected summary path. Five summaries
-used by the figures are committed under `figures/data/`; the other named
-`outputs/data/` tables are gitignored generated outputs and are not present in
-a clean checkout. `artifact_manifest.md` records this boundary and the hashes
-of the committed summaries. The submission gate is the 19 legacy tables plus
-the finalized Section 6 evidence bundle, provenance-locked. Conventions
+cited `experiments/exp*.py` producer and expected summary path. All 19 cited
+summary tables are committed under `figures/data/`, regenerated in one
+recorded environment (CPython 3.11.9, numpy 2.4.6, matplotlib 3.11.1) from
+the unmodified baseline producers; `artifact_manifest.md` records the
+regeneration, per-file row counts, and raw SHA-256 digests under the
+repository's LF storage-boundary rule, and a contract test recomputes every
+digest. The submission gate — the 19 legacy tables plus
+the finalized Section 6 evidence bundle, provenance-locked — is met.
+Conventions
 (sprinkling measure, causal relation, chain and interval normalizations,
 Myrheim-Meyer inversion) are fixed in the foundation modules and stated in
 Section 3.
@@ -576,6 +656,15 @@ exposes three modes — `preflight`, `manifest`, `campaign` — and the campaign
 mode refuses to run unless the freeze manifest exists, its recorded preflight
 digest matches the committed artifact, and the certified source digests match
 the checked-out files.
+
+Section 6.7 inherits the same standard: its runner
+(`experiments/positive_control/s4_schwarzschild_c1.py`) refuses to run unless
+an 8-file content-addressed freeze manifest matches the checked-out protocol
+surface byte-for-byte, verified at entry and re-verified at exit; a contract
+test recomputes the CONFIRMED verdict from the stored per-reading arrays
+through the frozen gate functions; and the seed ledger separates fresh
+allocation from deterministic replay, with replay output owned by a separate
+path that can never replace the fresh-observation artifact.
 
 ## Appendix A: conventions and normalizations
 
@@ -622,6 +711,26 @@ violation blocks the stage rather than permitting a seed swap.
 **Artifacts.** The complete Section 6 evidence bundle, with digests, is
 enumerated in `artifact_manifest.md`; the per-sentence mapping from manuscript
 text to evidence file is recorded there as the citation-to-artifact inventory.
+
+**Section 6.7 (Schwarzschild extension) provenance.** Freeze commit
+`ceed85d` (PR #57, merge `5cffd90`) carries the frozen rule, the fresh seed
+registration, the runner, the contract tests, and the 8-file
+content-addressed freeze manifest — and no results. The campaign executed
+once on a clean checkout of exactly `ceed85d`; the runner captured the git
+state at entry, refused a dirty tree, verified every manifest digest at entry,
+and re-verified both at exit before writing, so the artifact's recorded
+lineage is `start == end == ceed85d`, clean, `run_kind = fresh_observation`.
+The results commit (PR #58, merge `492e61f`) added the artifact, moved the
+campaign seed from fresh to observed in the ledger, and flipped the runner's
+campaign path to a deterministic replay whose output is owned by a separate
+file and can never replace the fresh observation. Because that flip
+legitimately changed two protocol-surface files, the CURRENT tree's manifest
+hashes the post-result replay surface; the manifest that governed the
+executed run is preserved byte-for-byte as
+`docs/prereg/p14_s4_executed_freeze_manifest.json`, and a contract test
+verifies that snapshot against the historical blobs at `ceed85d` directly.
+Interrupted runs restart the same seed; undecided pairs are absorbed by
+identified intervals rather than a stop rule.
 
 ## References
 
