@@ -95,18 +95,22 @@ def main() -> None:
     stats = {name: _block_stats(fm, f0, rng)
              for name, (fm, f0) in blocks.items()}
 
-    fm = np.concatenate([blocks["S3"][0], blocks["S4"][0]])
-    f0 = np.concatenate([blocks["S3"][1], blocks["S4"][1]])
-    pooled_sd = math.sqrt(0.5 * (fm.std(ddof=1) ** 2
-                                 + f0.std(ddof=1) ** 2))
-    a = _auc_offdiag(fm, f0)
+    # Sizing uses the CONSERVATIVE block (S3 -- the weaker separation
+    # of the two stored blocks), per the declared anchor rule; the
+    # pooled estimate below is context only and must not size a
+    # prereg (PR #59 review: pooling with the stronger S4 block would
+    # underestimate the required n).
+    fm_s3, f0_s3 = blocks["S3"]
+    sd_s3 = math.sqrt(0.5 * (fm_s3.std(ddof=1) ** 2
+                             + f0_s3.std(ddof=1) ** 2))
+    a = _auc_offdiag(fm_s3, f0_s3)
     q1, q2 = a / (2 - a), 2 * a * a / (1 + a)
 
     def auc_se(n: int) -> float:
         return math.sqrt((a * (1 - a) + (n - 1) * (q1 - a * a)
                           + (n - 1) * (q2 - a * a)) / (n * n))
 
-    d = float((f0.mean() - fm.mean()) / pooled_sd)
+    d = float((f0_s3.mean() - fm_s3.mean()) / sd_s3)
     sizing = []
     for n in (300, 600, 1200, 2400, 4800):
         sizing.append({
@@ -117,6 +121,13 @@ def main() -> None:
             "curved_arm_hours": n * PAIRS_PER_READING
             * COST_US_PER_PAIR / 1e6 / 3600,
         })
+
+    fm_pool = np.concatenate([blocks["S3"][0], blocks["S4"][0]])
+    f0_pool = np.concatenate([blocks["S3"][1], blocks["S4"][1]])
+    pool_sd = math.sqrt(0.5 * (fm_pool.std(ddof=1) ** 2
+                               + f0_pool.std(ddof=1) ** 2))
+    pooled_d = float((f0_pool.mean() - fm_pool.mean()) / pool_sd)
+    pooled_auc = _auc_offdiag(fm_pool, f0_pool)
 
     rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=_REPO,
                          capture_output=True, text=True,
@@ -131,10 +142,12 @@ def main() -> None:
         "inputs": ["docs/prereg/p14_s3_probe_results.json",
                    "docs/prereg/p14_s4_results.json"],
         "blocks": stats,
-        "pooled": {"d": d, "auc_offdiag": a,
-                   "note": "pooled shown for context; a prereg anchors "
-                           "on the conservative block (S3)"},
+        "pooled_context_only": {
+            "d": pooled_d, "auc_offdiag": pooled_auc,
+            "note": "context only -- MUST NOT size a prereg; sizing "
+                    "below anchors on the conservative block (S3)"},
         "conservative_anchor_block": "S3",
+        "sizing_anchor": {"block": "S3", "d": d, "auc_offdiag": a},
         "sizing_table": sizing,
         "verdict": ("computationally feasible; separation is strong "
                     "but imperfect (unlike the plane-wave C2's "
@@ -152,7 +165,8 @@ def main() -> None:
         print(f"{name}: d {s['unpaired_d']['point']:.3f}  "
               f"AUC {s['auc_offdiag']['point']:.4f}  "
               f"corr {s['within_reading_corr']:.4f}")
-    print(f"pooled d {d:.3f}  AUC {a:.4f}")
+    print(f"sizing anchor (S3, conservative): d {d:.3f}  AUC {a:.4f}")
+    print(f"pooled (context only): d {pooled_d:.3f}  AUC {pooled_auc:.4f}")
 
 
 if __name__ == "__main__":
