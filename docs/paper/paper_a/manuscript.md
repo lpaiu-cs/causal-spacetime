@@ -34,11 +34,11 @@ in a preregistered two-claim design on a 3+1D vacuum plane wave whose
 coordinate volume form and sprinkling law are exactly flat, that the
 conformal-class information order carries is detectable at finite density:
 both the paired mean shift of the global relation fraction and a single-poset
-classifier confirm against frozen margins. A preregistered extension carries
-the paired claim across Petrov classes: on a Schwarzschild exterior patch,
-whose coordinate volume element is likewise mass-independent, the same
-same-point-set mean shift confirms against frozen detection and replication
-margins (type D; the single-poset classifier claim is not extended). The
+classifier confirm against frozen margins. Separate preregistered stages
+extend both claim classes to a frozen Schwarzschild exterior patch (type D,
+whose coordinate volume element is likewise mass-independent): the C1 paired
+effect is confirmed, while C2 single-poset discrimination is detected with
+incomplete separation. The
 contribution is not any
 single reconstruction — most are standard — but the explicit accounting of what
 each rung requires and the negative results that bound it. We make no claim
@@ -78,9 +78,10 @@ finite-speed lattice); (4) a Rindler reconstruction-inaccessibility
 analogue; and (5) a preregistered 3+1D capstone validation that a pure-Weyl
 deformation of the light cones — at identical coordinate volume form and
 sprinkling law — measurably moves the causal order at finite density
-(Section 6), together with its preregistered type-D (Schwarzschild) C1-paired
-extension (Section 6.7). All results are controlled validations, not evidence
-that geometry reduces to order.
+(Section 6), together with its type-D (Schwarzschild) extension, where
+separate preregistered stages confirm the paired claim and detect single-poset
+discrimination (Section 6.7). All results are controlled validations, not
+evidence that geometry reduces to order.
 
 ## 2. The reconstruction ladder
 
@@ -470,14 +471,15 @@ its exact volume form is unrepresentative); it is not Weyl-tensor recovery
 produced, which is why this is a capstone boundary experiment and not a new
 ladder rung); it does not establish box- or density-independence (the licensed
 sentence is bound to the frozen operating point); and, by itself, it does not
-open the Schwarzschild generalization. The C1-paired component of that path is
-opened by the preregistered extension of Section 6.7; the single-poset
-(C2-class) discrimination and the diamond-volume oracle remain open there. A
+open the Schwarzschild generalization. Both claim classes are carried there by
+the separate preregistered extensions of Section 6.7 — the C1 paired claim
+confirmed, C2 single-poset discrimination detected with incomplete
+separation; the diamond-volume oracle remains open there. A
 separate cost measurement (S1) prices the causal-predicate component — about
 0.77 ms per pair on the tested solver, patch, and tolerance, roughly 360x the
 plane-wave predicate (`docs/prereg/p14_s1_cost.json`).
 
-### 6.7 Type-D extension: preregistered C1-paired confirmation in Schwarzschild
+### 6.7 Type-D extension: preregistered C1-paired confirmation and C2-unpaired detection in Schwarzschild
 
 The paired half of the capstone design transfers to the Schwarzschild
 exterior on a measure identity: in Schwarzschild coordinates the volume
@@ -528,18 +530,52 @@ vacuum curvature at C1 grade; a program-internal statement*);
 inside the replication band: the exploration effect is quantitatively
 reproduced*).
 
-What this extends, and at what grade: the plane-wave stage certified the
-joint C1-and-C2 claim; the Schwarzschild extension certifies the C1 paired
-claim only, on its frozen coordinates and domain, as a program-internal
-statement. It is not a single-poset discriminator there: a stored-data
-feasibility audit (`docs/prereg/p14_c2_feasibility_audit.json`, exploratory,
-zero additional solver calls) indicates a C2-class design is computationally
-feasible but with imperfect separation, and such a stage is being designed —
-until it is preregistered and run, no C2-grade Schwarzschild sentence is
-licensed. The extension likewise establishes no mass-generality (a single
-frozen `M`) and uses no diamond-volume oracle (its margins are operationally
-anchored). Execution provenance, including the executed-freeze manifest
-snapshot, is in Appendix B.
+A second, separate preregistered stage (S5) carries the single-poset claim
+class. Guided by a committed stored-data feasibility audit
+(`docs/prereg/p14_c2_feasibility_audit.json`, exploratory, zero additional
+solver calls, conservatively anchored), its rule
+(`docs/prereg/p14_s5_schwarzschild_c2.md`) declares — before sizing and
+independently of the confirmation data — AUC 0.60 as the minimum practically
+useful single-poset discrimination. Two INDEPENDENT arms (fresh Schwarzschild
+and fresh flat sprinkles; 300 readings each by a pre-declared minimum-n rule
+with directly certified branch powers) score each reading by its global
+relation fraction; the primary gate is an unclipped DeLong AUC CI95 with a
+four-way outcome (detected / equivalent-at-margin / direction-reversed /
+inconclusive, strict comparisons, identified-agreement across the curved
+bound series), and a secondary out-of-sample balanced-accuracy gate uses a
+deterministic Clopper-Pearson-Bonferroni interval with a train-half-only
+threshold. The campaign ran once from its own exact freeze checkout:
+
+| Gate | Frozen condition | Result | Verdict |
+| --- | --- | --- | --- |
+| Primary: AUC (DeLong) | CI95 lower > 0.60 | AUC 0.9734, CI95 [0.9630, 0.9837] | **DETECTED** |
+| Secondary: out-of-sample BA | joint CI95 lower > 0.60 | BA 0.9033, CI95 [0.8356, 0.9500] | pass |
+
+Zero ambiguous and zero escalated pairs; both identified bound series agree.
+The frozen sentences are recorded in Korean in the artifact
+(`docs/prereg/p14_s5_results.json`) and quoted verbatim (unwrapped), each
+followed by a non-frozen English translation:
+"동결된 Schwarzschild 도메인·밀도에서, 단일 causal set의 global relation fraction은 flat/Schwarzschild 앙상블을 우연 수준보다 판별하는 정보를 운반한다 (AUC CI95 하한 > 0.60, 프로그램 내부 진술)."
+(*on the frozen Schwarzschild domain and density, the global relation
+fraction of a single causal set carries information that discriminates flat
+from Schwarzschild ensembles above chance — AUC CI95 lower bound above 0.60;
+a program-internal statement*);
+"out-of-sample balanced accuracy의 결합 95% 하한이 0.60을 넘어, 학습-외 판별이 확인됐다 (secondary)."
+(*the joint 95% lower bound of out-of-sample balanced accuracy exceeds 0.60:
+out-of-training discrimination holds; a secondary verdict*).
+
+What this extends, and at what grade: on the same frozen Schwarzschild domain,
+the two claim classes of the plane-wave capstone are now each supported by a
+SEPARATE preregistered stage — the C1 paired claim CONFIRMED (S4), C2
+single-poset discrimination DETECTED (S5). There was no joint primary
+verdict, and the grades differ from the plane wave: its C2 separation was
+complete, while the Schwarzschild discrimination is strong but imperfect
+(AUC ≈ 0.973; no completeness gate was preregistered); the secondary BA
+verdict neither strengthens nor combines with the primary. The extension
+establishes no mass-generality (a single frozen `M`) and uses no
+diamond-volume oracle (margins operationally anchored or independently
+declared). Execution provenance for both stages, including the
+executed-freeze manifest snapshots, is in Appendix B.
 
 The full execution provenance — the preregistration's freeze ordering, its
 mechanical gates, and the commit-ancestry contract — is in Appendix B.
@@ -594,9 +630,11 @@ coordinates, or a unique atlas; that finite signal speed implies relativity; or
 that any of these finite validations establish a physical theory. Reconstructing
 a geometry that was put into the model is not deriving geometry from order.
 For the capstone we additionally do not claim: a general-Weyl discriminator,
-Weyl-tensor recovery, box- or density-independence of the separation, or any
-verdict on the Schwarzschild path (S1 supplies a price for one solver path,
-not a verdict; the diamond-volume oracle remains open). Priority is claimed
+Weyl-tensor recovery, or box- or density-independence of the separation. The
+Schwarzschild path carries its own preregistered verdicts (Section 6.7: C1
+confirmed and C2 detected with incomplete separation, in separate stages with
+no joint primary verdict) and its own non-claims; the diamond-volume oracle
+remains open there. Priority is claimed
 only within this program; no literature-wide first is asserted before a
 priority search.
 
@@ -611,9 +649,9 @@ construction: Petrov type N with an exactly flat volume form — the property
 that makes the experiment clean also makes it unrepresentative of generic
 `Weyl != 0` spacetimes — and by its single frozen operating point;
 generalizing beyond type N is now partially opened rather than closed: the
-Schwarzschild C1-paired extension is confirmed (Section 6.7), a single-poset
-(C2-class) Schwarzschild stage is being designed on a committed stored-data
-feasibility audit, and the diamond-volume oracle is a partially derived
+Schwarzschild C1-paired extension is confirmed and the single-poset (C2-class)
+Schwarzschild stage is preregistered and detected with incomplete separation
+(Section 6.7), and the diamond-volume oracle is a partially derived
 theoretical path — the static-spacetime reduction of the diamond volume to a
 closed-form-in-time integral, and to a 2D integral for radially aligned
 anchors via the optical metric, is derived in a public note
@@ -657,14 +695,18 @@ mode refuses to run unless the freeze manifest exists, its recorded preflight
 digest matches the committed artifact, and the certified source digests match
 the checked-out files.
 
-Section 6.7 inherits the same standard: its runner
-(`experiments/positive_control/s4_schwarzschild_c1.py`) refuses to run unless
+Section 6.7 inherits the same standard for both of its stages: each runner
+(`experiments/positive_control/s4_schwarzschild_c1.py`,
+`experiments/positive_control/s5_schwarzschild_c2.py`) refuses to run unless
 an 8-file content-addressed freeze manifest matches the checked-out protocol
-surface byte-for-byte, verified at entry and re-verified at exit; a contract
-test recomputes the CONFIRMED verdict from the stored per-reading arrays
-through the frozen gate functions; and the seed ledger separates fresh
-allocation from deterministic replay, with replay output owned by a separate
-path that can never replace the fresh-observation artifact.
+surface byte-for-byte, verified at entry and re-verified at exit, behind a
+fail-closed CLI; contract tests recompute the CONFIRMED (S4) and DETECTED
+(S5) verdicts — including the DeLong interval, the balanced-accuracy
+threshold and Clopper-Pearson-Bonferroni interval, and the frozen sentences —
+from the stored per-reading arrays through the frozen gate functions; and the
+seed ledger separates fresh allocation from deterministic replay, with replay
+output owned by a separate path that can never replace a fresh-observation
+artifact.
 
 ## Appendix A: conventions and normalizations
 
@@ -731,6 +773,23 @@ executed run is preserved byte-for-byte as
 verifies that snapshot against the historical blobs at `ceed85d` directly.
 Interrupted runs restart the same seed; undecided pairs are absorbed by
 identified intervals rather than a stop rule.
+
+**Section 6.7 second stage (S5) provenance.** Freeze commit `1c26224`
+(PR #60, merge `3aeb8e5`) carried the rule, the fresh seed registrations, the
+runner, and the power certification; an execution review then caught an
+exact-versus-approximate chi-square mismatch in the certified resampling
+source, and the corrected freeze is `86e3674` (PR #61, merge `f286508`) —
+certification unchanged under the exact factor. The campaign executed once on
+a clean checkout of exactly `86e3674` (entry == exit git state, the 8-file
+content-addressed manifest verified at both ends, fail-closed CLI,
+`run_kind = fresh_observation`, curved seed 40000251 / flat seed 40000261).
+The results commit (PR #62, merge `d1e0d20`) added the artifact, moved both
+seeds to observed, flipped the campaign path to a replay whose output is
+owned by a separate file, and preserved the manifest that governed the
+executed run byte-for-byte as
+`docs/prereg/p14_s5_executed_freeze_manifest.json`, verified against the
+historical blobs at `86e3674` by a contract test; the CURRENT
+`p14_s5_freeze_manifest.json` hashes the post-result replay surface.
 
 ## References
 

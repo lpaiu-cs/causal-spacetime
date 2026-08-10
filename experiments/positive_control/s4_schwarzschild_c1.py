@@ -35,12 +35,12 @@ and a replay must not silently replace the fresh-observation artifact
 
 from __future__ import annotations
 
+import argparse
 import functools
 import hashlib
 import json
 import math
 import subprocess
-import sys
 import time
 from pathlib import Path
 
@@ -317,7 +317,20 @@ def _git_state() -> dict:
 
 
 def main() -> None:
-    smoke = "--smoke" in sys.argv
+    # Fail-closed CLI (PR #63 review, the S5 rule applied uniformly):
+    # the ONLY accepted argument is --smoke; unknown arguments
+    # (including abbreviations) exit code 2 and --help exits code 0,
+    # both before any seed or replay work is touched.
+    parser = argparse.ArgumentParser(
+        description="S4 preregistered campaign runner "
+                    "(docs/prereg/p14_s4_schwarzschild_c1.md); the "
+                    "no-argument form runs the campaign path (now a "
+                    "replay of the observed stream).",
+        allow_abbrev=False)
+    parser.add_argument("--smoke", action="store_true",
+                        help="validation run on the observed smoke "
+                             "stream; writes no artifact")
+    smoke = parser.parse_args().smoke
     n_readings = 3 if smoke else N_READINGS
     e_n = 40 if smoke else E_N
 

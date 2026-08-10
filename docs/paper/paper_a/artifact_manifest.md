@@ -129,15 +129,34 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | --- | --- |
 | `docs/prereg/p14_s4_schwarzschild_c1.md` | `0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4` |
 | `docs/prereg/p14_s4_executed_freeze_manifest.json` | `9e604fbc3d4e1399d7cfdc410a2f97e4bc7645ff2d1ceab4638b4c3cd9661071` |
-| `docs/prereg/p14_s4_freeze_manifest.json` | `beed11fa130bc8bba06b4853e634584a8c41dd80e38ad61b263e81f086b37e18` |
+| `docs/prereg/p14_s4_freeze_manifest.json` | `135b7790ecda6afced2445e1157ba39f1b00ecd5ac1daebe2a04b351759158ea` |
 | `docs/prereg/p14_s4_results.json` | `3c728bbeaab6ee1b02a700c972d7d77d542da0726098cb46a3ec08ec0fc5fd35` |
 | `docs/prereg/p14_s3_probe_results.json` | `1bd37acc1a01780c6078c895fd0fa77adb7a8acbd324b2c12a7d41d7afd7ebc8` |
 | `docs/prereg/p14_c2_feasibility_audit.json` | `ab133b2030a82d17f6a70629b1fedc58be52de1e5fe03bd8f5ad127548efa886` |
-| `experiments/positive_control/s4_schwarzschild_c1.py` | `cab5d517be95d5e1dda7541075235c7ed05bcd0e6bcf0859797d95494e46890a` |
+| `experiments/positive_control/s4_schwarzschild_c1.py` | `71a13cbc052d1a71e59119d4dcf385b3d3fb830a2f142dd9253690c481823805` |
 | `experiments/positive_control/probe_seed_ledger.py` | `3e125538b5ceb157df7170ae2a67515266cde23a7c7f68a5d7d2867a31233089` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
-| `tests/test_s4_prereg.py` | `a82355ca2211f734ee060c0f1cc4ade3251a1c75b00a05d907837b58d0c89c7d` |
+| `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
 | `docs/theory/schwarzschild_volume_oracle_note.md` | `a4da9247ae9b8e5273142db96f3952a2cbc4aa9f46d6d8cf341470954bc68d3a` |
+
+### Section 6.7 second-stage bundle (S5 C2-unpaired discrimination)
+
+Same digest convention. Roles mirror S4:
+`p14_s5_executed_freeze_manifest.json` is the immutable snapshot of the
+manifest that governed the executed campaign (byte-identical to the blob at
+freeze commit `86e3674`, verified against the historical blobs by
+`tests/test_s5_prereg.py`); `p14_s5_freeze_manifest.json` is the CURRENT
+manifest, hashing the post-result replay surface enforced by the runner
+today. The seed ledger row above covers both stages.
+
+| File | SHA-256 |
+| --- | --- |
+| `docs/prereg/p14_s5_schwarzschild_c2.md` | `c9f8997336b543400b10aee9548be66a175ac5eee16d1ee906398b132273c340` |
+| `docs/prereg/p14_s5_executed_freeze_manifest.json` | `0b4d28976076ef0e59122326cb53dee976f87c23aeaff5bb517b672f3d1ded08` |
+| `docs/prereg/p14_s5_freeze_manifest.json` | `1390d38dfa006f96e8aaa4f165a14fcbbb48072015143e2bdc6d9c1ca06c25bd` |
+| `docs/prereg/p14_s5_results.json` | `d5f339fb4b33d3cd048c93587f630b45314350e7919ec848d560fe7e8b8a9ad6` |
+| `experiments/positive_control/s5_schwarzschild_c2.py` | `4761e5f90e019b8823fd93c883ece1a2f55034799a45f65d40d2cbcb0f3adc19` |
+| `tests/test_s5_prereg.py` | `29525ef24558c6142eaccf44eb58e82f65a689c65d88bcc5c691505434798a4a` |
 
 ### Citation-to-artifact inventory (manuscript Section 6 / Appendix B)
 
@@ -161,3 +180,7 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | 9 | oracle analytic reductions and open items | `docs/theory/schwarzschild_volume_oracle_note.md` |
 | App. B | executed-freeze snapshot vs current replay manifest; seed ledger | `docs/prereg/p14_s4_executed_freeze_manifest.json`; `docs/prereg/p14_s4_freeze_manifest.json`; `experiments/positive_control/probe_seed_ledger.py`; contract tests in `tests/test_s4_prereg.py` |
 | §10 | S4 runner gates and replay ownership | `experiments/positive_control/s4_schwarzschild_c1.py` |
+| 6.7 | S5 frozen rule, margins, four-way gate, certification | `docs/prereg/p14_s5_schwarzschild_c2.md` |
+| 6.7 | S5 result table, DETECTED outcome, BA verdict, frozen sentences | `docs/prereg/p14_s5_results.json` |
+| App. B | S5 executed-freeze snapshot vs current replay manifest | `docs/prereg/p14_s5_executed_freeze_manifest.json`; `docs/prereg/p14_s5_freeze_manifest.json`; contract tests in `tests/test_s5_prereg.py` |
+| §10 | S5 runner gates, fail-closed CLI, replay ownership | `experiments/positive_control/s5_schwarzschild_c2.py` |

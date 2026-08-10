@@ -37,13 +37,20 @@ boundary is recorded separately in `artifact_manifest.md`.
   rules (s = 11.199 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0];
   BA = 1.0 [0.986, 1.014]), independently replicating the probe chain's
   confirmation (same file).
-- **Type-D extension (preregistered, C1-paired only).** On the frozen
+- **Type-D extension C1 (preregistered, paired).** On the frozen
   Schwarzschild coordinates and S1 domain, the same-point-set paired mean
   shift passes the frozen detection gate (identified CI95
   [-0.036211, -0.035953] vs threshold -0.0036) and quantitatively replicates
   the exploration block (Welch CI95 of the difference inside +-0.0012):
   stage verdict CONFIRMED, as a program-internal statement
   (`docs/prereg/p14_s4_results.json`).
+- **Type-D extension C2 (preregistered, single-poset, separate stage).** On
+  the same frozen domain with two independent arms, the per-reading global
+  relation fraction discriminates flat from Schwarzschild ensembles above
+  the independently declared 0.60 threshold: AUC 0.9734, DeLong CI95
+  [0.9630, 0.9837] — outcome DETECTED, with incomplete separation; secondary
+  out-of-sample BA 0.9033, CP-Bonferroni CI95 [0.8356, 0.9500]
+  (`docs/prereg/p14_s5_results.json`).
 
 ## Negative results (bounding the ladder)
 
@@ -73,17 +80,20 @@ boundary is recorded separately in `artifact_manifest.md`.
   digest-locked plus the finalized Section 6 capstone evidence bundle (which
   itself carries no regeneration debt) — is met; `artifact_manifest.md` is
   the authority for the archived state.
-- Type-D extension non-claims: NOT a single-poset (C2-class) Schwarzschild
-  discriminator — a stored-data feasibility audit is committed and such a
-  stage is being designed, but no C2-grade Schwarzschild sentence is licensed
-  until it is preregistered and run; NOT mass-general (single frozen M = 1);
-  NOT prediction-anchored — no diamond-volume oracle is used, and the oracle
-  path is only partially derived
+- Type-D extension non-claims: the C1 and C2 results arise from SEPARATE
+  preregistered stages on the same frozen domain — there is no joint primary
+  verdict, and "confirmed" applies to C1 only (the C2 outcome is DETECTED);
+  NOT complete separation (AUC ≈ 0.973, unlike the plane-wave C2, and no
+  completeness gate was preregistered); the secondary BA verdict does not
+  strengthen or combine with the primary; NOT mass-general (single frozen
+  M = 1); NOT prediction-anchored — no diamond-volume oracle is used, and the
+  oracle path is only partially derived
   (`docs/theory/schwarzschild_volume_oracle_note.md`).
 - Capstone non-claims: NOT a general-Weyl discriminator (Petrov type N, exact
   volume form is unrepresentative); NOT Weyl-tensor recovery (no reconstructed
   quantity — a boundary experiment, not a ladder rung); NOT box- or
-  density-independent (licensed at the frozen operating point only); NO verdict
-  on the Schwarzschild path (S1 prices one solver path only; the diamond-volume
-  oracle is open). Priority is claimed only within this program — no
+  density-independent (licensed at the frozen operating point only). The
+  Schwarzschild path now carries its own preregistered verdicts and
+  non-claims (the Type-D blocks above); the diamond-volume oracle remains
+  open there. Priority is claimed only within this program — no
   literature-wide first before a priority search.
