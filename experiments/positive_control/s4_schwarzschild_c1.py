@@ -24,10 +24,13 @@ blocks independently resampled from the centered SD_cons-scaled S3
 empirical distribution, row j on entropy-vector stream [781, 4840, j]
 (S4 block drawn before S3 block in each replicate).
 
-Seed discipline: the campaign draws the fresh allocation 40_000_241
-exactly once; --smoke draws only the observed smoke stream 40_000_221.
-The results commit must move the seed to OBSERVED and flip this
-runner's entry to the replay path.
+Seed discipline: the campaign drew the fresh allocation 40_000_241
+exactly once (verdict CONFIRMED, docs/prereg/p14_s4_results.json);
+the stream is OBSERVED and any rerun of the campaign path is a
+deterministic REPLAY of it -- run_kind derives from the ledger state
+and a replay must not silently replace the fresh-observation artifact
+(contract-tested). --smoke draws only the observed smoke stream
+40_000_221.
 """
 
 from __future__ import annotations
@@ -43,13 +46,36 @@ from pathlib import Path
 
 import numpy as np
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SMOKE_SEED, S4_SEED, assert_fresh_scalar
+from probe_seed_ledger import (
+    FRESH_PROBE_SCALARS,
+    S3_SMOKE_SEED,
+    S4_SEED,
+    replay_scalar,
+)
 from s3_schwarzschild_probe import reading
 
 _REPO = Path(__file__).resolve().parents[2]
 _S3_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s3_probe_results.json"
 _ARTIFACT = _REPO / "docs" / "prereg" / "p14_s4_results.json"
+_REPLAY_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s4_replay_results.json"
 _FREEZE_MANIFEST = _REPO / "docs" / "prereg" / "p14_s4_freeze_manifest.json"
+
+
+def artifact_policy(run_kind: str, fresh_exists: bool) -> Path:
+    """The write-ownership boundary (PR #58 review): replay output is
+    owned by its own path and can never claim or replace the
+    fresh-observation artifact; and a second 'fresh' run while the
+    artifact exists is refused rather than overwriting the original
+    lineage."""
+
+    if run_kind == "replay":
+        return _REPLAY_ARTIFACT
+    if fresh_exists:
+        raise SystemExit(
+            "S4: the fresh-observation artifact already exists; any "
+            "rerun is a replay of the observed stream and may not "
+            "replace it.")
+    return _ARTIFACT
 
 
 def _sha256(path: Path) -> str:
@@ -299,7 +325,10 @@ def main() -> None:
     if smoke:
         seed = SMOKE_SEED
     else:
-        seed = assert_fresh_scalar("s4_campaign")
+        seed = replay_scalar("s4_campaign")
+        if SEED != seed:
+            raise SystemExit("S4: SEED drifted from the observed "
+                             "stream; a rerun must be a replay of it.")
     state_start = _git_state()
     if state_start["dirty"] and not smoke:
         raise SystemExit(
@@ -353,10 +382,20 @@ def main() -> None:
                    "INCONCLUSIVE"):
         sentences.append(SENTENCES[verdict])
 
+    if smoke:
+        run_kind = "smoke"
+    elif "s4_campaign" in FRESH_PROBE_SCALARS:
+        run_kind = "fresh_observation"
+    else:
+        run_kind = "replay"
     result = {
         "stage": "S4 Schwarzschild C1-paired confirmation",
         "rule": "docs/prereg/p14_s4_schwarzschild_c1.md",
-        "run_kind": "fresh_observation" if not smoke else "smoke",
+        "run_kind": run_kind,
+        "replay_of": (None if run_kind != "replay" else
+                      "observed stream 40000241; the fresh observation "
+                      "is docs/prereg/p14_s4_results.json (lineage "
+                      "ceed85d) and this replay may not replace it"),
         "params": {"e_n": e_n, "n_readings": n_readings, "seed": seed,
                    "smoke": smoke},
         "margins": {"eps_det": EPS_DET, "eps_rep": EPS_REP,
@@ -397,13 +436,14 @@ def main() -> None:
     if smoke:
         print("smoke run -- artifact NOT written")
         return
+    target = artifact_policy(run_kind, _ARTIFACT.exists())
     # newline="\n": the artifact must be LF in the WORKING TREE too,
     # not only in the blob after git normalizes -- a CRLF working copy
     # is what broke the S3-artifact digest across platforms (PR #57
     # R2: the storage-boundary rule applies at write time).
-    _ARTIFACT.write_text(json.dumps(result, indent=2, ensure_ascii=False)
-                         + "\n", encoding="utf-8", newline="\n")
-    print(f"wrote {_ARTIFACT}")
+    target.write_text(json.dumps(result, indent=2, ensure_ascii=False)
+                      + "\n", encoding="utf-8", newline="\n")
+    print(f"wrote {target}")
 
 
 if __name__ == "__main__":
