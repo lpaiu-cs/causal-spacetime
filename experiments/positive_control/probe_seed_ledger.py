@@ -58,7 +58,13 @@ OBSERVED_PROBE_SCALARS = {
 #: Active fresh allocations, not yet observed when allocated. A
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
 #: the same change that adds the observed artifact.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: s5_curved / s5_flat: the two independent arms of the S5
+#: preregistered C2-unpaired discrimination
+#: (docs/prereg/p14_s5_schwarzschild_c2.md).
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "s5_curved": 40_000_251,
+    "s5_flat": 40_000_261,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
