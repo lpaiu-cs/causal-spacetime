@@ -47,24 +47,22 @@ from seed_windows import (
 #: the results-commit obligation below).
 #: s4_campaign: the S4 preregistered confirmation observed 2026-08-10
 #: (verdict CONFIRMED; docs/prereg/p14_s4_results.json).
+#: s5_curved / s5_flat: the S5 C2-unpaired campaign arms observed
+#: 2026-08-11 (outcome DETECTED; docs/prereg/p14_s5_results.json).
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
     "s3_smoke": 40_000_221,
     "s3_exploration": 40_000_231,
     "s4_campaign": 40_000_241,
+    "s5_curved": 40_000_251,
+    "s5_flat": 40_000_261,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
 #: the same change that adds the observed artifact.
-#: s5_curved / s5_flat: the two independent arms of the S5
-#: preregistered C2-unpaired discrimination
-#: (docs/prereg/p14_s5_schwarzschild_c2.md).
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "s5_curved": 40_000_251,
-    "s5_flat": 40_000_261,
-}
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
