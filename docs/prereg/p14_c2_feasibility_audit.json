@@ -1,0 +1,131 @@
+{
+  "audit": "C2-unpaired Schwarzschild feasibility (stored-data, exploratory; zero solver calls)",
+  "inputs": [
+    "docs/prereg/p14_s3_probe_results.json",
+    "docs/prereg/p14_s4_results.json"
+  ],
+  "blocks": {
+    "S3": {
+      "n_readings": 300,
+      "f_M": {
+        "mean": 0.4131880103082715,
+        "sd": 0.014044984120159185
+      },
+      "f_0": {
+        "mean": 0.4492750158921957,
+        "sd": 0.013738701293231442
+      },
+      "within_reading_corr": 0.9964440313362487,
+      "unpaired_d": {
+        "point": 2.597554104892162,
+        "ci95_bootstrap": [
+          2.4150417936954183,
+          2.8410804100858433
+        ]
+      },
+      "auc_offdiag": {
+        "point": 0.9665551839464883,
+        "ci95_bootstrap": [
+          0.9553734671125975,
+          0.9775250836120402
+        ]
+      },
+      "ba_midpoint_descriptive": {
+        "point": 0.9083333333333333,
+        "ci95_bootstrap": [
+          0.8883333333333334,
+          0.9333333333333333
+        ]
+      }
+    },
+    "S4": {
+      "n_readings": 300,
+      "f_M": {
+        "mean": 0.413045546074756,
+        "sd": 0.013206545923008139
+      },
+      "f_0": {
+        "mean": 0.44912726919334434,
+        "sd": 0.012916447637666912
+      },
+      "within_reading_corr": 0.9964570526124586,
+      "unpaired_d": {
+        "point": 2.7622790156537476,
+        "ci95_bootstrap": [
+          2.5698382322482183,
+          3.0007680942639383
+        ]
+      },
+      "auc_offdiag": {
+        "point": 0.9749498327759197,
+        "ci95_bootstrap": [
+          0.9651948160535118,
+          0.9838910256410256
+        ]
+      },
+      "ba_midpoint_descriptive": {
+        "point": 0.9166666666666667,
+        "ci95_bootstrap": [
+          0.8983333333333333,
+          0.94
+        ]
+      }
+    }
+  },
+  "pooled_context_only": {
+    "d": 2.6783074220653686,
+    "auc_offdiag": 0.9706983861992209,
+    "note": "context only -- MUST NOT size a prereg; sizing below anchors on the conservative block (S3)"
+  },
+  "conservative_anchor_block": "S3",
+  "sizing_anchor": {
+    "block": "S3",
+    "d": 2.597554104892162,
+    "auc_offdiag": 0.9665551839464883
+  },
+  "sizing_table": [
+    {
+      "n_per_arm": 300,
+      "auc_ci95_lower_hanley_mcneil": 0.9518070422129807,
+      "d_ci95_half_width": 0.21728088387813882,
+      "curved_arm_hours": 2.8704
+    },
+    {
+      "n_per_arm": 600,
+      "auc_ci95_lower_hanley_mcneil": 0.9561345508520068,
+      "d_ci95_half_width": 0.15364078641243875,
+      "curved_arm_hours": 5.7408
+    },
+    {
+      "n_per_arm": 1200,
+      "auc_ci95_lower_hanley_mcneil": 0.959189470471651,
+      "d_ci95_half_width": 0.10864044193906941,
+      "curved_arm_hours": 11.4816
+    },
+    {
+      "n_per_arm": 2400,
+      "auc_ci95_lower_hanley_mcneil": 0.9613478235802544,
+      "d_ci95_half_width": 0.07682039320621938,
+      "curved_arm_hours": 22.9632
+    },
+    {
+      "n_per_arm": 4800,
+      "auc_ci95_lower_hanley_mcneil": 0.9628733726240964,
+      "d_ci95_half_width": 0.054320220969534705,
+      "curved_arm_hours": 45.9264
+    }
+  ],
+  "verdict": "computationally feasible; separation is strong but imperfect (unlike the plane-wave C2's complete separation) -- a limitation statement, not a claim, absent a dedicated AUC-upper gate",
+  "params": {
+    "bootstrap_seed": [
+      781,
+      4841
+    ],
+    "bootstrap_b": 4000,
+    "cost_us_per_pair": 768.0
+  },
+  "code": {
+    "rev": "48b0fa67812ceb6ff0b15f175418eb20a4a8f024",
+    "dirty": false
+  }
+}

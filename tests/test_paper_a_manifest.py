@@ -50,14 +50,16 @@ def test_the_19_table_package_matches_its_manifest_hashes():
 
 
 def test_the_p14_bundle_matches_its_manifest_hashes():
-    """Every Section 6 capstone bundle row (repo-relative path |
-    sha256): the file exists and its digest matches."""
+    """Every Section 6 capstone bundle row and every Section 6.7
+    extension bundle row (repo-relative path | sha256): the file
+    exists and its digest matches. 13 capstone + 11 extension rows."""
 
     text = MANIFEST.read_text(encoding="utf-8")
     rows = re.findall(
         r"^\| `((?:docs|experiments|tests)/[^`]+)` \| `([0-9a-f]{64})` \|",
         text, re.M)
-    assert len(rows) == 13, [r[0] for r in rows]
+    assert len(rows) == 24, [r[0] for r in rows]
+    assert len({r[0] for r in rows}) == 24
     for rel, digest in rows:
         path = REPO / rel
         assert path.exists(), rel

@@ -115,11 +115,35 @@ Hashes are as of results commit `R` plus this paper-integration change to
 actual bundle location; correction recorded in that document's status notes).
 If any bundle file changes, this table must be regenerated in the same commit.
 
+### Section 6.7 extension bundle (S4 Schwarzschild + supporting evidence)
+
+Same digest convention (raw SHA-256 of the committed LF blob bytes). Roles:
+`p14_s4_executed_freeze_manifest.json` is the immutable snapshot of the
+manifest that governed the executed campaign (byte-identical to the blob at
+freeze commit `ceed85d`, verified against the historical blobs by
+`tests/test_s4_prereg.py`); `p14_s4_freeze_manifest.json` is the CURRENT
+manifest, which hashes the post-result replay surface and is what the runner
+enforces today. The C2 feasibility audit is exploratory (stored-data only).
+
+| File | SHA-256 |
+| --- | --- |
+| `docs/prereg/p14_s4_schwarzschild_c1.md` | `0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4` |
+| `docs/prereg/p14_s4_executed_freeze_manifest.json` | `9e604fbc3d4e1399d7cfdc410a2f97e4bc7645ff2d1ceab4638b4c3cd9661071` |
+| `docs/prereg/p14_s4_freeze_manifest.json` | `e01ed8f5c2c108f297fbc412d4e0804fd9dd308dbd670c95c23ffc62b504623c` |
+| `docs/prereg/p14_s4_results.json` | `3c728bbeaab6ee1b02a700c972d7d77d542da0726098cb46a3ec08ec0fc5fd35` |
+| `docs/prereg/p14_s3_probe_results.json` | `1bd37acc1a01780c6078c895fd0fa77adb7a8acbd324b2c12a7d41d7afd7ebc8` |
+| `docs/prereg/p14_c2_feasibility_audit.json` | `ab133b2030a82d17f6a70629b1fedc58be52de1e5fe03bd8f5ad127548efa886` |
+| `experiments/positive_control/s4_schwarzschild_c1.py` | `cab5d517be95d5e1dda7541075235c7ed05bcd0e6bcf0859797d95494e46890a` |
+| `experiments/positive_control/probe_seed_ledger.py` | `4a0ffbb9ac7155283d1c38c9a2493b0891b8193ec89a50b748f033b5b6294dba` |
+| `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
+| `tests/test_s4_prereg.py` | `a82355ca2211f734ee060c0f1cc4ade3251a1c75b00a05d907837b58d0c89c7d` |
+| `docs/theory/schwarzschild_volume_oracle_note.md` | `a4da9247ae9b8e5273142db96f3952a2cbc4aa9f46d6d8cf341470954bc68d3a` |
+
 ### Citation-to-artifact inventory (manuscript Section 6 / Appendix B)
 
 | Manuscript location | Cited content | Evidence file |
 | --- | --- | --- |
-| 6.1 | 1+1D conformal ceiling, measure/counting channel framing | frozen P12/P13 records (`docs/prereg/frozen/p12/`, `docs/prereg/frozen/p13v3/`); `outputs/data/conformal_order_ambiguity_summary.csv` (exp18, legacy table debt) |
+| 6.1 | 1+1D conformal ceiling, measure/counting channel framing | frozen P12/P13 records (`docs/prereg/frozen/p12/`, `docs/prereg/frozen/p13v3/`); `figures/data/conformal_order_ambiguity_summary.csv` (exp18, committed) |
 | 6.2 | det g = -1, vacuum, Weyl != 0 (exact) | `docs/prereg/p14_checks/p14_brinkmann_vacuum_check.py` |
 | 6.2 | diamond volume +0.4% (wT=1) / +7.3% (wT=2) | `docs/prereg/p14_checks/p14_interval_volume_constant_a.py`; `docs/prereg/p14_weyl_curvature.md` §4.4 |
 | 6.3 | operating point and primary-statistic selection | `docs/prereg/p14_probe_p3e_results.json` |
@@ -130,3 +154,10 @@ If any bundle file changes, this table must be regenerated in the same commit.
 | 6.6 | S1 price (0.77 ms/pair, ~360x, projections) | `docs/prereg/p14_s1_cost.json`, `docs/prereg/p14_s1_cost.md` |
 | App. B | freeze manifest contents, code_version chain | `docs/prereg/p14_prereg_freeze.json`; ancestry/gate tests in `tests/test_p14_prereg.py` |
 | §10 | runner modes and gates | `experiments/positive_control/p14_prereg.py` |
+| 6.7 | frozen rule, gates, margins, power certification | `docs/prereg/p14_s4_schwarzschild_c1.md` |
+| 6.7 | result table, verdict, frozen sentences, ambiguity/escalation | `docs/prereg/p14_s4_results.json` |
+| 6.7 | exploration block (comparison arm of the replication gate) | `docs/prereg/p14_s3_probe_results.json` |
+| 6.7 | C2 feasibility audit (exploratory, stored-data) | `docs/prereg/p14_c2_feasibility_audit.json`; `experiments/positive_control/c2_feasibility_audit.py` |
+| 9 | oracle analytic reductions and open items | `docs/theory/schwarzschild_volume_oracle_note.md` |
+| App. B | executed-freeze snapshot vs current replay manifest; seed ledger | `docs/prereg/p14_s4_executed_freeze_manifest.json`; `docs/prereg/p14_s4_freeze_manifest.json`; `experiments/positive_control/probe_seed_ledger.py`; contract tests in `tests/test_s4_prereg.py` |
+| §10 | S4 runner gates and replay ownership | `experiments/positive_control/s4_schwarzschild_c1.py` |

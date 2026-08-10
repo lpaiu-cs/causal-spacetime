@@ -53,6 +53,42 @@ def test_replay_write_ownership_cannot_touch_the_fresh_artifact():
         s4.artifact_policy("fresh_observation", True)
 
 
+def test_executed_freeze_snapshot_matches_the_historical_blobs():
+    """Paper A integration review: the CURRENT manifest hashes the
+    post-result replay surface, so the manifest that governed the
+    EXECUTED campaign is preserved as an immutable snapshot and
+    verified here directly against the historical blobs at the freeze
+    commit -- every digest it froze must equal the blob at ceed85d,
+    and the executed artifact's lineage must be exactly that commit."""
+
+    import hashlib
+    import json
+    import subprocess
+    repo = Path(__file__).resolve().parents[1]
+    snap = repo / "docs" / "prereg" / "p14_s4_executed_freeze_manifest.json"
+    if not snap.exists():
+        pytest.skip("executed-freeze snapshot not present")
+    freeze = "ceed85d8bc0eb8e3cdddb071a2381defe1d3fe15"
+
+    def blob(rel):
+        return subprocess.run(
+            ["git", "cat-file", "blob", f"{freeze}:{rel}"], cwd=repo,
+            capture_output=True, check=True).stdout
+
+    hist = blob("docs/prereg/p14_s4_freeze_manifest.json")
+    assert snap.read_bytes().replace(b"\r\n", b"\n") == hist
+    m = json.loads(hist.decode("utf-8"))
+    assert len(m["files"]) == 8
+    for rel, want in m["files"].items():
+        assert hashlib.sha256(blob(rel)).hexdigest() == want, rel
+    r = json.loads((repo / "docs" / "prereg" / "p14_s4_results.json")
+                   .read_text(encoding="utf-8"))
+    assert r["code"]["start"]["rev"] == freeze
+    # the current replay-surface manifest is intentionally different
+    cur = (repo / "docs" / "prereg" / "p14_s4_freeze_manifest.json")
+    assert cur.read_bytes().replace(b"\r\n", b"\n") != hist
+
+
 def test_campaign_artifact_pins_the_frozen_outcome():
     """The committed artifact: the observed seed, the exact freeze
     checkout at entry AND exit, run_kind = fresh_observation (a replay
