@@ -3,7 +3,7 @@
   "note": "raw sha256; all paths are .gitattributes eol=lf pinned",
   "files": {
     "docs/prereg/p14_s4_schwarzschild_c1.md": "0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4",
-    "experiments/positive_control/s4_schwarzschild_c1.py": "9b58b663cb0df284b7e00c8ff57f33e473532352bff0faaa7e9547a3175dc177",
+    "experiments/positive_control/s4_schwarzschild_c1.py": "cab5d517be95d5e1dda7541075235c7ed05bcd0e6bcf0859797d95494e46890a",
     "experiments/positive_control/s3_schwarzschild_probe.py": "bd58ae3d45ed48a7bbef00d5ca4b498acd29d1e09cee942063a58bb74cbb872c",
     "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
     "experiments/positive_control/p14_probe_p2.py": "005c4edb67578c65932f4b13559fd23e9194d7256cc9418e68231baefe558ce1",

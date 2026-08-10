@@ -38,6 +38,21 @@ def test_s4_stream_is_observed_and_reruns_are_replays():
                                  ledger.SPENT_RANGES, "S4")
 
 
+def test_replay_write_ownership_cannot_touch_the_fresh_artifact():
+    """PR #58 review: the write boundary. In the current ledger state
+    every non-smoke run is a replay, replay output is owned by the
+    replay path regardless of what exists, and a 'fresh' run while
+    the fresh artifact exists refuses instead of overwriting the
+    original lineage."""
+
+    assert "s4_campaign" not in ledger.FRESH_PROBE_SCALARS
+    assert s4.artifact_policy("replay", True) == s4._REPLAY_ARTIFACT
+    assert s4.artifact_policy("replay", False) == s4._REPLAY_ARTIFACT
+    assert s4.artifact_policy("fresh_observation", False) == s4._ARTIFACT
+    with pytest.raises(SystemExit):
+        s4.artifact_policy("fresh_observation", True)
+
+
 def test_campaign_artifact_pins_the_frozen_outcome():
     """The committed artifact: the observed seed, the exact freeze
     checkout at entry AND exit, run_kind = fresh_observation (a replay

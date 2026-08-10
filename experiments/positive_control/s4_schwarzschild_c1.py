@@ -46,13 +46,36 @@ from pathlib import Path
 
 import numpy as np
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SMOKE_SEED, S4_SEED, replay_scalar
+from probe_seed_ledger import (
+    FRESH_PROBE_SCALARS,
+    S3_SMOKE_SEED,
+    S4_SEED,
+    replay_scalar,
+)
 from s3_schwarzschild_probe import reading
 
 _REPO = Path(__file__).resolve().parents[2]
 _S3_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s3_probe_results.json"
 _ARTIFACT = _REPO / "docs" / "prereg" / "p14_s4_results.json"
+_REPLAY_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s4_replay_results.json"
 _FREEZE_MANIFEST = _REPO / "docs" / "prereg" / "p14_s4_freeze_manifest.json"
+
+
+def artifact_policy(run_kind: str, fresh_exists: bool) -> Path:
+    """The write-ownership boundary (PR #58 review): replay output is
+    owned by its own path and can never claim or replace the
+    fresh-observation artifact; and a second 'fresh' run while the
+    artifact exists is refused rather than overwriting the original
+    lineage."""
+
+    if run_kind == "replay":
+        return _REPLAY_ARTIFACT
+    if fresh_exists:
+        raise SystemExit(
+            "S4: the fresh-observation artifact already exists; any "
+            "rerun is a replay of the observed stream and may not "
+            "replace it.")
+    return _ARTIFACT
 
 
 def _sha256(path: Path) -> str:
@@ -359,10 +382,20 @@ def main() -> None:
                    "INCONCLUSIVE"):
         sentences.append(SENTENCES[verdict])
 
+    if smoke:
+        run_kind = "smoke"
+    elif "s4_campaign" in FRESH_PROBE_SCALARS:
+        run_kind = "fresh_observation"
+    else:
+        run_kind = "replay"
     result = {
         "stage": "S4 Schwarzschild C1-paired confirmation",
         "rule": "docs/prereg/p14_s4_schwarzschild_c1.md",
-        "run_kind": "fresh_observation" if not smoke else "smoke",
+        "run_kind": run_kind,
+        "replay_of": (None if run_kind != "replay" else
+                      "observed stream 40000241; the fresh observation "
+                      "is docs/prereg/p14_s4_results.json (lineage "
+                      "ceed85d) and this replay may not replace it"),
         "params": {"e_n": e_n, "n_readings": n_readings, "seed": seed,
                    "smoke": smoke},
         "margins": {"eps_det": EPS_DET, "eps_rep": EPS_REP,
@@ -403,13 +436,14 @@ def main() -> None:
     if smoke:
         print("smoke run -- artifact NOT written")
         return
+    target = artifact_policy(run_kind, _ARTIFACT.exists())
     # newline="\n": the artifact must be LF in the WORKING TREE too,
     # not only in the blob after git normalizes -- a CRLF working copy
     # is what broke the S3-artifact digest across platforms (PR #57
     # R2: the storage-boundary rule applies at write time).
-    _ARTIFACT.write_text(json.dumps(result, indent=2, ensure_ascii=False)
-                         + "\n", encoding="utf-8", newline="\n")
-    print(f"wrote {_ARTIFACT}")
+    target.write_text(json.dumps(result, indent=2, ensure_ascii=False)
+                      + "\n", encoding="utf-8", newline="\n")
+    print(f"wrote {target}")
 
 
 if __name__ == "__main__":
