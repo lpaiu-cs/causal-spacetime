@@ -72,41 +72,46 @@
       }
     }
   },
-  "pooled": {
+  "pooled_context_only": {
     "d": 2.6783074220653686,
     "auc_offdiag": 0.9706983861992209,
-    "note": "pooled shown for context; a prereg anchors on the conservative block (S3)"
+    "note": "context only -- MUST NOT size a prereg; sizing below anchors on the conservative block (S3)"
   },
   "conservative_anchor_block": "S3",
+  "sizing_anchor": {
+    "block": "S3",
+    "d": 2.597554104892162,
+    "auc_offdiag": 0.9665551839464883
+  },
   "sizing_table": [
     {
       "n_per_arm": 300,
-      "auc_ci95_lower_hanley_mcneil": 0.956901521259927,
-      "d_ci95_half_width": 0.22039711699162234,
+      "auc_ci95_lower_hanley_mcneil": 0.9518070422129807,
+      "d_ci95_half_width": 0.21728088387813882,
       "curved_arm_hours": 2.8704
     },
     {
       "n_per_arm": 600,
-      "auc_ci95_lower_hanley_mcneil": 0.9609499829623613,
-      "d_ci95_half_width": 0.15584429597874103,
+      "auc_ci95_lower_hanley_mcneil": 0.9561345508520068,
+      "d_ci95_half_width": 0.15364078641243875,
       "curved_arm_hours": 5.7408
     },
     {
       "n_per_arm": 1200,
-      "auc_ci95_lower_hanley_mcneil": 0.9638078608939795,
-      "d_ci95_half_width": 0.11019855849581117,
+      "auc_ci95_lower_hanley_mcneil": 0.959189470471651,
+      "d_ci95_half_width": 0.10864044193906941,
       "curved_arm_hours": 11.4816
     },
     {
       "n_per_arm": 2400,
-      "auc_ci95_lower_hanley_mcneil": 0.9658269815221203,
-      "d_ci95_half_width": 0.07792214798937051,
+      "auc_ci95_lower_hanley_mcneil": 0.9613478235802544,
+      "d_ci95_half_width": 0.07682039320621938,
       "curved_arm_hours": 22.9632
     },
     {
       "n_per_arm": 4800,
-      "auc_ci95_lower_hanley_mcneil": 0.9672541126512451,
-      "d_ci95_half_width": 0.055099279247905586,
+      "auc_ci95_lower_hanley_mcneil": 0.9628733726240964,
+      "d_ci95_half_width": 0.054320220969534705,
       "curved_arm_hours": 45.9264
     }
   ],
@@ -120,7 +125,7 @@
     "cost_us_per_pair": 768.0
   },
   "code": {
-    "rev": "c551c1e51b0aa622df66e9057c24feeb82f470b0",
+    "rev": "48b0fa67812ceb6ff0b15f175418eb20a4a8f024",
     "dirty": false
   }
 }
