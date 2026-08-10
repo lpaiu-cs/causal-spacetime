@@ -24,10 +24,13 @@ blocks independently resampled from the centered SD_cons-scaled S3
 empirical distribution, row j on entropy-vector stream [781, 4840, j]
 (S4 block drawn before S3 block in each replicate).
 
-Seed discipline: the campaign draws the fresh allocation 40_000_241
-exactly once; --smoke draws only the observed smoke stream 40_000_221.
-The results commit must move the seed to OBSERVED and flip this
-runner's entry to the replay path.
+Seed discipline: the campaign drew the fresh allocation 40_000_241
+exactly once (verdict CONFIRMED, docs/prereg/p14_s4_results.json);
+the stream is OBSERVED and any rerun of the campaign path is a
+deterministic REPLAY of it -- run_kind derives from the ledger state
+and a replay must not silently replace the fresh-observation artifact
+(contract-tested). --smoke draws only the observed smoke stream
+40_000_221.
 """
 
 from __future__ import annotations
@@ -43,7 +46,7 @@ from pathlib import Path
 
 import numpy as np
 from p14_probe_p2 import student_t_crit
-from probe_seed_ledger import S3_SMOKE_SEED, S4_SEED, assert_fresh_scalar
+from probe_seed_ledger import S3_SMOKE_SEED, S4_SEED, replay_scalar
 from s3_schwarzschild_probe import reading
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -299,7 +302,10 @@ def main() -> None:
     if smoke:
         seed = SMOKE_SEED
     else:
-        seed = assert_fresh_scalar("s4_campaign")
+        seed = replay_scalar("s4_campaign")
+        if SEED != seed:
+            raise SystemExit("S4: SEED drifted from the observed "
+                             "stream; a rerun must be a replay of it.")
     state_start = _git_state()
     if state_start["dirty"] and not smoke:
         raise SystemExit(

@@ -21,12 +21,53 @@ import probe_seed_ledger as ledger  # noqa: E402
 import s4_schwarzschild_c1 as s4  # noqa: E402
 
 
-def test_s4_seed_is_a_fresh_allocation_and_smoke_is_separate():
-    assert ledger.assert_fresh_scalar("s4_campaign") == s4.SEED
+def test_s4_stream_is_observed_and_reruns_are_replays():
+    """The campaign artifact exists, so 40_000_241 is observed-spent:
+    the ledger hands it out only through the replay path, and a fresh
+    allocation of it must abort."""
+
+    assert ledger.replay_scalar("s4_campaign") == s4.SEED
     assert s4.SEED == 40_000_241
+    assert s4.SEED in ledger.spent_scalars()
     assert s4.SMOKE_SEED == 40_000_221
     assert s4.SMOKE_SEED in ledger.spent_scalars()
-    assert s4.SEED not in ledger.spent_scalars()
+    from seed_windows import assert_point_seeds_fresh
+    with pytest.raises(SystemExit):
+        assert_point_seeds_fresh({"s4_campaign": s4.SEED},
+                                 ledger.spent_scalars(),
+                                 ledger.SPENT_RANGES, "S4")
+
+
+def test_campaign_artifact_pins_the_frozen_outcome():
+    """The committed artifact: the observed seed, the exact freeze
+    checkout at entry AND exit, run_kind = fresh_observation (a replay
+    must not silently replace it), and the CONFIRMED verdict
+    recomputes from the stored raw per-reading arrays through the
+    frozen gate functions."""
+
+    import json
+    artifact = (Path(__file__).resolve().parents[1] / "docs" / "prereg"
+                / "p14_s4_results.json")
+    if not artifact.exists():
+        pytest.skip("S4 results not present in this checkout")
+    r = json.loads(artifact.read_text(encoding="utf-8"))
+    assert r["params"]["seed"] == ledger.replay_scalar("s4_campaign")
+    assert r["code"]["start"] == r["code"]["end"]
+    assert r["code"]["start"]["dirty"] is False
+    assert r["code"]["start"]["rev"] == \
+        "ceed85d8bc0eb8e3cdddb071a2381defe1d3fe15"
+    assert r["run_kind"] == "fresh_observation"
+    lower = np.array(r["delta_lower"]["per_reading"])
+    upper = np.array(r["delta_upper"]["per_reading"])
+    ci = s4.identified_ci(lower, upper)
+    wci = s4.welch_identified_ci(lower, upper, s4.s3_block())
+    assert list(ci) == r["identified_ci95"]
+    assert list(wci) == r["welch_identified_ci95"]
+    verdict, b_label = s4.stage_verdict(ci, wci)
+    assert verdict == r["verdict"] == "CONFIRMED"
+    assert b_label == r["gate_b"] == "REPLICATED"
+    assert r["gate_a"] is True and s4.gate_a(ci)
+    assert r["ambiguity"]["ambiguous"] == 0
 
 
 def test_frozen_constants_match_the_document():

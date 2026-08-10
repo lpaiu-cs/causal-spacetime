@@ -45,27 +45,26 @@ from seed_windows import (
 #: s3_exploration: the official S3 artifact was observed 2026-08-10
 #: (moved from FRESH in the same commit that added the artifact, per
 #: the results-commit obligation below).
+#: s4_campaign: the S4 preregistered confirmation observed 2026-08-10
+#: (verdict CONFIRMED; docs/prereg/p14_s4_results.json).
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
     "s3_smoke": 40_000_221,
     "s3_exploration": 40_000_231,
+    "s4_campaign": 40_000_241,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
 #: the same change that adds the observed artifact.
-#: s4_campaign: the S4 preregistered confirmation
-#: (docs/prereg/p14_s4_schwarzschild_c1.md).
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "s4_campaign": 40_000_241,
-}
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
 S3_SMOKE_SEED = OBSERVED_PROBE_SCALARS["s3_smoke"]
 S3_SEED = OBSERVED_PROBE_SCALARS["s3_exploration"]
-S4_SEED = FRESH_PROBE_SCALARS["s4_campaign"]
+S4_SEED = OBSERVED_PROBE_SCALARS["s4_campaign"]
 
 SPENT_RANGES = P11_P13_SPENT_RANGES + (P12_ALLOCATION_DECADE,)
 
