@@ -67,7 +67,11 @@ from pathlib import Path
 
 import numpy as np
 import s1_schwarzschild_cost as s1
-from probe_seed_ledger import S3_SMOKE_SEED, assert_fresh_scalar
+from probe_seed_ledger import (
+    FRESH_PROBE_SCALARS,
+    S3_SMOKE_SEED,
+    replay_scalar,
+)
 from s3_schwarzschild_probe import flat_relation, reading
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -93,8 +97,8 @@ POWER_SEED_BASE = (781, 4860)
 #: required branch (20000/20000, 19564/20000, 20000/20000).
 N_ARM = 300
 E_N = 300
-SEED_CURVED = 40_000_251     # fresh, ledger-asserted at entry
-SEED_FLAT = 40_000_261       # fresh, ledger-asserted at entry
+SEED_CURVED = 40_000_251     # OBSERVED (outcome DETECTED) -- reruns
+SEED_FLAT = 40_000_261       # of the campaign path are replays
 SMOKE_SEED = S3_SMOKE_SEED   # 40_000_221, observed smoke stream
 
 SENTENCES = {
@@ -568,8 +572,11 @@ def main() -> None:
     if smoke:
         seed_c = seed_f = SMOKE_SEED
     else:
-        seed_c = assert_fresh_scalar("s5_curved")
-        seed_f = assert_fresh_scalar("s5_flat")
+        seed_c = replay_scalar("s5_curved")
+        seed_f = replay_scalar("s5_flat")
+        if (SEED_CURVED, SEED_FLAT) != (seed_c, seed_f):
+            raise SystemExit("S5: seeds drifted from the observed "
+                             "streams; a rerun must replay them.")
     state_start = _git_state()
     if state_start["dirty"] and not smoke:
         raise SystemExit(
@@ -597,7 +604,13 @@ def main() -> None:
 
     sentences = [SENTENCES[outcome],
                  SENTENCES["BA_PASS" if ba_pass else "BA_FAIL"]]
-    run_kind = "smoke" if smoke else "fresh_observation"
+    if smoke:
+        run_kind = "smoke"
+    elif ("s5_curved" in FRESH_PROBE_SCALARS
+          and "s5_flat" in FRESH_PROBE_SCALARS):
+        run_kind = "fresh_observation"
+    else:
+        run_kind = "replay"
     result = {
         "stage": "S5 Schwarzschild C2-unpaired discrimination",
         "rule": "docs/prereg/p14_s5_schwarzschild_c2.md",
@@ -631,11 +644,22 @@ def main() -> None:
     if smoke:
         print("smoke run -- artifact NOT written")
         return
-    target = _ARTIFACT if not _ARTIFACT.exists() else _REPLAY_ARTIFACT
-    if target == _REPLAY_ARTIFACT:
+    # Write-ownership boundary (the S4/PR #58 rule): replay output is
+    # owned by its own path; a 'fresh' run while the fresh artifact
+    # exists refuses instead of replacing the executed lineage.
+    if run_kind == "replay":
+        target = _REPLAY_ARTIFACT
+        result["replay_of"] = ("observed streams 40000251/40000261; "
+                               "the fresh observation is "
+                               "docs/prereg/p14_s5_results.json "
+                               "(lineage 86e3674) and this replay may "
+                               "not replace it")
+    elif _ARTIFACT.exists():
         raise SystemExit(
-            "S5: the fresh-observation artifact already exists; flip "
-            "the ledger/runner to replay before any rerun.")
+            "S5: the fresh-observation artifact already exists; any "
+            "rerun is a replay and may not replace it.")
+    else:
+        target = _ARTIFACT
     target.write_text(json.dumps(result, indent=2, ensure_ascii=False)
                       + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {target}")

@@ -30,14 +30,93 @@ def _s3_arms():
             np.array(r["f_flat"]["per_reading"]))
 
 
-def test_s5_seeds_are_fresh_distinct_allocations():
-    assert ledger.assert_fresh_scalar("s5_curved") == s5.SEED_CURVED
-    assert ledger.assert_fresh_scalar("s5_flat") == s5.SEED_FLAT
+def test_s5_streams_are_observed_and_reruns_are_replays():
+    """The campaign artifact exists: both arm streams are
+    observed-spent, the ledger hands them out only through the replay
+    path, and fresh re-allocation aborts."""
+
+    from seed_windows import assert_point_seeds_fresh
+    assert ledger.replay_scalar("s5_curved") == s5.SEED_CURVED
+    assert ledger.replay_scalar("s5_flat") == s5.SEED_FLAT
     assert s5.SEED_CURVED == 40_000_251
     assert s5.SEED_FLAT == 40_000_261
     assert s5.SEED_CURVED != s5.SEED_FLAT
-    assert s5.SEED_CURVED not in ledger.spent_scalars()
-    assert s5.SEED_FLAT not in ledger.spent_scalars()
+    assert s5.SEED_CURVED in ledger.spent_scalars()
+    assert s5.SEED_FLAT in ledger.spent_scalars()
+    for taken in (s5.SEED_CURVED, s5.SEED_FLAT):
+        with pytest.raises(SystemExit):
+            assert_point_seeds_fresh({"s5": taken},
+                                     ledger.spent_scalars(),
+                                     ledger.SPENT_RANGES, "S5")
+
+
+def test_executed_freeze_snapshot_matches_the_historical_blobs():
+    """The current manifest hashes the post-result replay surface;
+    the manifest that governed the EXECUTED campaign is preserved as
+    an immutable snapshot, verified against the blobs at the freeze
+    commit 86e3674, and the artifact lineage is exactly that commit."""
+
+    import hashlib
+    import subprocess
+    repo = Path(__file__).resolve().parents[1]
+    snap = repo / "docs" / "prereg" / "p14_s5_executed_freeze_manifest.json"
+    if not snap.exists():
+        pytest.skip("executed-freeze snapshot not present")
+    freeze = "86e36743e99a721a0e801686895febf4a57efbea"
+
+    def blob(rel):
+        return subprocess.run(
+            ["git", "cat-file", "blob", f"{freeze}:{rel}"], cwd=repo,
+            capture_output=True, check=True).stdout
+
+    hist = blob("docs/prereg/p14_s5_freeze_manifest.json")
+    assert snap.read_bytes().replace(b"\r\n", b"\n") == hist
+    m = json.loads(hist.decode("utf-8"))
+    assert len(m["files"]) == 8
+    for rel, want in m["files"].items():
+        assert hashlib.sha256(blob(rel)).hexdigest() == want, rel
+    r = json.loads((repo / "docs" / "prereg" / "p14_s5_results.json")
+                   .read_text(encoding="utf-8"))
+    assert r["code"]["start"]["rev"] == freeze
+    cur = repo / "docs" / "prereg" / "p14_s5_freeze_manifest.json"
+    assert cur.read_bytes().replace(b"\r\n", b"\n") != hist
+
+
+def test_campaign_artifact_pins_the_frozen_outcome():
+    """The committed artifact: observed seeds, exact freeze lineage at
+    entry AND exit, run_kind fresh_observation (a replay must not
+    silently replace it), and the DETECTED outcome plus the BA verdict
+    recompute from the stored per-reading arrays through the frozen
+    gate functions."""
+
+    repo = Path(__file__).resolve().parents[1]
+    artifact = repo / "docs" / "prereg" / "p14_s5_results.json"
+    if not artifact.exists():
+        pytest.skip("S5 results not present in this checkout")
+    r = json.loads(artifact.read_text(encoding="utf-8"))
+    assert r["params"]["seed_curved"] == ledger.replay_scalar("s5_curved")
+    assert r["params"]["seed_flat"] == ledger.replay_scalar("s5_flat")
+    assert r["code"]["start"] == r["code"]["end"]
+    assert r["code"]["start"]["dirty"] is False
+    assert r["code"]["start"]["rev"] == \
+        "86e36743e99a721a0e801686895febf4a57efbea"
+    assert r["run_kind"] == "fresh_observation"
+    c_lo = np.array(r["curved_f_lower"]["per_reading"])
+    c_hi = np.array(r["curved_f_upper"]["per_reading"])
+    f = np.array(r["flat_f"]["per_reading"])
+    outcome, detail = s5.stage_outcome(c_lo, c_hi, f)
+    assert outcome == r["outcome"] == "DETECTED"
+    assert list(detail["auc_lower_series"]) == r["auc"]["auc_lower_series"]
+    ct, cs = s5.train_test_split(c_hi)
+    ft, fs = s5.train_test_split(f)
+    thr = s5.learn_threshold(ct, ft)
+    ba, lo, hi = s5.ba_cp_bonferroni(cs, fs, thr)
+    assert thr == r["ba"]["threshold_train_midpoint"]
+    assert [lo, hi] == r["ba"]["ci95_cp_bonferroni"]
+    assert s5.ba_gate((lo, hi)) is r["ba"]["pass"] is True
+    assert r["ambiguity"]["ambiguous"] == 0
+    assert r["sentences"][0] == s5.SENTENCES["DETECTED"]
+    assert r["sentences"][1] == s5.SENTENCES["BA_PASS"]
 
 
 def test_frozen_constants_match_the_document():
