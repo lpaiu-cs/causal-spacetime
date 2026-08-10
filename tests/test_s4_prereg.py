@@ -121,6 +121,21 @@ def test_campaign_artifact_pins_the_frozen_outcome():
     assert r["ambiguity"]["ambiguous"] == 0
 
 
+def test_cli_is_fail_closed(monkeypatch):
+    """PR #63 review: the S5 fail-closed CLI rule applied uniformly --
+    an unknown argument (abbreviations included) or --help must exit
+    at the CLI boundary before any seed or replay work is touched."""
+
+    monkeypatch.setattr(sys, "argv", ["s4_schwarzschild_c1", "--smok"])
+    with pytest.raises(SystemExit) as bad:
+        s4.main()
+    assert bad.value.code == 2
+    monkeypatch.setattr(sys, "argv", ["s4_schwarzschild_c1", "--help"])
+    with pytest.raises(SystemExit) as help_exit:
+        s4.main()
+    assert help_exit.value.code == 0
+
+
 def test_frozen_constants_match_the_document():
     assert s4.N_READINGS == 300
     assert s4.E_N == 300

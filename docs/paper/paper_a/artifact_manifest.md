@@ -129,14 +129,14 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | --- | --- |
 | `docs/prereg/p14_s4_schwarzschild_c1.md` | `0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4` |
 | `docs/prereg/p14_s4_executed_freeze_manifest.json` | `9e604fbc3d4e1399d7cfdc410a2f97e4bc7645ff2d1ceab4638b4c3cd9661071` |
-| `docs/prereg/p14_s4_freeze_manifest.json` | `beed11fa130bc8bba06b4853e634584a8c41dd80e38ad61b263e81f086b37e18` |
+| `docs/prereg/p14_s4_freeze_manifest.json` | `135b7790ecda6afced2445e1157ba39f1b00ecd5ac1daebe2a04b351759158ea` |
 | `docs/prereg/p14_s4_results.json` | `3c728bbeaab6ee1b02a700c972d7d77d542da0726098cb46a3ec08ec0fc5fd35` |
 | `docs/prereg/p14_s3_probe_results.json` | `1bd37acc1a01780c6078c895fd0fa77adb7a8acbd324b2c12a7d41d7afd7ebc8` |
 | `docs/prereg/p14_c2_feasibility_audit.json` | `ab133b2030a82d17f6a70629b1fedc58be52de1e5fe03bd8f5ad127548efa886` |
-| `experiments/positive_control/s4_schwarzschild_c1.py` | `cab5d517be95d5e1dda7541075235c7ed05bcd0e6bcf0859797d95494e46890a` |
+| `experiments/positive_control/s4_schwarzschild_c1.py` | `71a13cbc052d1a71e59119d4dcf385b3d3fb830a2f142dd9253690c481823805` |
 | `experiments/positive_control/probe_seed_ledger.py` | `3e125538b5ceb157df7170ae2a67515266cde23a7c7f68a5d7d2867a31233089` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
-| `tests/test_s4_prereg.py` | `a82355ca2211f734ee060c0f1cc4ade3251a1c75b00a05d907837b58d0c89c7d` |
+| `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
 | `docs/theory/schwarzschild_volume_oracle_note.md` | `a4da9247ae9b8e5273142db96f3952a2cbc4aa9f46d6d8cf341470954bc68d3a` |
 
 ### Section 6.7 second-stage bundle (S5 C2-unpaired discrimination)

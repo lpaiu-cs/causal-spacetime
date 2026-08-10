@@ -92,7 +92,8 @@ boundary is recorded separately in `artifact_manifest.md`.
 - Capstone non-claims: NOT a general-Weyl discriminator (Petrov type N, exact
   volume form is unrepresentative); NOT Weyl-tensor recovery (no reconstructed
   quantity — a boundary experiment, not a ladder rung); NOT box- or
-  density-independent (licensed at the frozen operating point only); NO verdict
-  on the Schwarzschild path (S1 prices one solver path only; the diamond-volume
-  oracle is open). Priority is claimed only within this program — no
+  density-independent (licensed at the frozen operating point only). The
+  Schwarzschild path now carries its own preregistered verdicts and
+  non-claims (the Type-D blocks above); the diamond-volume oracle remains
+  open there. Priority is claimed only within this program — no
   literature-wide first before a priority search.
