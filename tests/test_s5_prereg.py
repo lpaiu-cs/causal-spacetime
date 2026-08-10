@@ -143,10 +143,22 @@ def test_power_certification_full_table_and_selection():
         assert r["cp95_lower"] >= s5.POWER_TARGET
 
 
-def test_sd_upper_factor_is_a_widening_factor():
-    assert s5._sd_upper_factor(0.014, 299) > 1.0
-    assert s5._sd_upper_factor(0.014, 299) == pytest.approx(
-        math.sqrt(299 / 259.9), rel=2e-3)
+def test_sd_upper_factor_is_the_exact_chi2_value():
+    """PR #60 execution review: the frozen doc says the EXACT
+    chi-square one-sided 95% upper factor; the Wilson-Hilferty
+    approximation (relative error -5.65e-7 at df=299, optimistic)
+    is rejected. Pinned against the review's independent constant,
+    and the gamma implementation is verified through two closed-form
+    identities."""
+
+    assert s5._sd_upper_factor(299) == pytest.approx(
+        1.0724931824796697, abs=1e-12)
+    assert s5._sd_upper_factor(299) > 1.0
+    for x in (0.1, 0.5, 1.7, 4.0):
+        assert s5._gammp(0.5, x) == pytest.approx(
+            math.erf(math.sqrt(x)), abs=1e-13)
+        assert s5._gammp(1.0, x) == pytest.approx(
+            1.0 - math.exp(-x), abs=1e-13)
 
 
 def test_frozen_sentences_are_verbatim_in_the_document():

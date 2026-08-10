@@ -257,20 +257,73 @@ def learn_threshold(curved_train: np.ndarray,
 # ---------------------------------------------------------------------
 
 
-def _sd_upper_factor(sd: float, df: int) -> float:
-    """chi-square one-sided 95% upper bound factor for a sample SD,
-    via bisection on the chi2 CDF expressed through the regularized
-    gamma (Wilson-Hilferty-free, exact to bisection tolerance)."""
+def _gammp(a: float, x: float) -> float:
+    """Regularized lower incomplete gamma P(a, x), exact to double
+    precision: series for x < a + 1, continued fraction otherwise
+    (the standard gammp/gammq pair). Verified independently by the
+    identities P(1/2, x) = erf(sqrt(x)) and P(1, x) = 1 - e^-x in the
+    contract tests."""
 
-    # chi2 CDF via lower incomplete gamma series/continued fraction is
-    # heavy to hand-roll; the S4-established route is the quantile of
-    # chi2(df) at 0.05. Use Wilson-Hilferty as in the S4 test contract
-    # (relative error ~1e-3 at df ~ 300, conservative direction
-    # checked by the assertion below).
-    z05 = -1.6448536269514722
-    wh = df * (1.0 - 2.0 / (9.0 * df)
-               + z05 * math.sqrt(2.0 / (9.0 * df))) ** 3
-    factor = math.sqrt(df / wh)
+    if x < 0.0 or a <= 0.0:
+        raise ValueError("gammp domain")
+    if x == 0.0:
+        return 0.0
+    lg = math.lgamma(a)
+    if x < a + 1.0:
+        ap, term, total = a, 1.0 / a, 1.0 / a
+        for _ in range(500):
+            ap += 1.0
+            term *= x / ap
+            total += term
+            if abs(term) < abs(total) * 1e-16:
+                break
+        return total * math.exp(-x + a * math.log(x) - lg)
+    tiny = 1e-300
+    b = x + 1.0 - a
+    c = 1.0 / tiny
+    d = 1.0 / b
+    h = d
+    for i in range(1, 500):
+        an = -i * (i - a)
+        b += 2.0
+        d = an * d + b
+        if abs(d) < tiny:
+            d = tiny
+        c = b + an / c
+        if abs(c) < tiny:
+            c = tiny
+        d = 1.0 / d
+        delta = d * c
+        h *= delta
+        if abs(delta - 1.0) < 1e-16:
+            break
+    return 1.0 - math.exp(-x + a * math.log(x) - lg) * h
+
+
+@functools.lru_cache(maxsize=32)
+def chi2_quantile(p: float, df: int) -> float:
+    """EXACT chi-square quantile by bisection on the CDF
+    P(df/2, q/2) -- the frozen replacement for the Wilson-Hilferty
+    approximation the review caught (relative error -5.65e-7 at
+    df = 299, optimistic direction)."""
+
+    lo, hi = 0.0, df * 10.0 + 100.0
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if _gammp(df / 2.0, mid / 2.0) < p:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def _sd_upper_factor(df: int) -> float:
+    """Exact chi-square one-sided 95% upper-bound factor for a sample
+    SD: sqrt(df / chi2_quantile(0.05, df)). At df = 299 this is
+    1.0724931824796697 (pinned by test against the review's
+    independent computation)."""
+
+    factor = math.sqrt(df / chi2_quantile(0.05, df))
     assert factor > 1.0
     return factor
 
@@ -279,10 +332,8 @@ def power_sources(s3_curved: np.ndarray, s3_flat: np.ndarray) -> dict:
     """The frozen resampling sources (module docstring)."""
 
     mc, mf = float(s3_curved.mean()), float(s3_flat.mean())
-    df = len(s3_curved) - 1
-    fc = _sd_upper_factor(float(s3_curved.std(ddof=1)), df)
-    ff = _sd_upper_factor(float(s3_flat.std(ddof=1)),
-                          len(s3_flat) - 1)
+    fc = _sd_upper_factor(len(s3_curved) - 1)
+    ff = _sd_upper_factor(len(s3_flat) - 1)
     return {
         "null_pool": s3_curved,
         "effect_curved": mc + (s3_curved - mc) * fc,
