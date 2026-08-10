@@ -7,10 +7,8 @@
 ## 1. 목적·허용 문장·주장 클래스
 
 S4의 type-D 결과를 C1 counterfactual에서 **단일-poset 판별(C2-급)**로
-승격한다. 허용 문장(양성 시): "동결된 Schwarzschild 도메인·밀도에서,
-단일 causal set의 global relation fraction은 flat/Schwarzschild
-앙상블을 우연 수준보다 판별하는 정보를 운반한다." 프로그램 내부 진술,
-동결 좌표·도메인 결부.
+승격한다. 허용 문장(양성 시)은 §8의 DETECTED 동결 문장이며, 프로그램
+내부 진술로서 동결 좌표·도메인에 결부된다.
 
 ## 2. 마진 선언 (선언 순서가 규율이다)
 
@@ -39,9 +37,11 @@ power가 결정했다(§6). ε_BA = 0.10 (BA 문턱 0.60 = 0.5 + ε_BA).
 | 조건 | 판정 |
 | --- | --- |
 | AUC CI95 하한 > 0.60 | **DETECTED** |
-| CI95 전체 ⊂ (0.40, 0.60) | **EQUIVALENT-AT-MARGIN** — "AUC가 chance의 동결 ±0.10 무시가능성 밴드 안으로 해상됐다"(판별력 부재의 단언이 아님) |
-| CI95 상단 < 0.40 | **DIRECTION-REVERSED** — 동결 방향 규칙 위반, stage 실패로 기록·원인 재검토 (INCONCLUSIVE에 은닉 금지) |
+| CI95 전체 ⊂ (0.40, 0.60) | **EQUIVALENT-AT-MARGIN** (판별력 부재의 단언이 아님 — §8 문장에 명시) |
+| CI95 상단 < 0.40 | **DIRECTION-REVERSED** (역방향 강결과의 INCONCLUSIVE 은닉 금지) |
 | 그 외 | **INCONCLUSIVE** |
+
+각 분기의 동결 문장은 §8에 있으며, 러너 `SENTENCES`가 정본이다.
 
 **DeLong 동결 명세**: 동률은 midrank(ψ = 1(c<f) + ½·1(c=f)), 분산 =
 S10/m + S01/n (placement 성분의 표본분산, ddof=1), CI = Â ±
@@ -102,8 +102,16 @@ S10/m + S01/n (placement 성분의 표본분산, ddof=1), CI = Â ±
 
 ## 8. 동결 문장
 
-§4 표의 4분기 문장(러너 SENTENCES와 바이트 동일) + BA secondary 2문장
-(통과/불통과). DETECTED 문장이 §1의 허용 문장이다.
+정본은 러너 `SENTENCES`이며, 아래 인용은 그것과 **바이트 동일**하다
+(줄바꿈 없이 한 줄; 계약 테스트가 exact containment로 pin). DETECTED
+문장이 §1의 허용 문장이다.
+
+- DETECTED: "동결된 Schwarzschild 도메인·밀도에서, 단일 causal set의 global relation fraction은 flat/Schwarzschild 앙상블을 우연 수준보다 판별하는 정보를 운반한다 (AUC CI95 하한 > 0.60, 프로그램 내부 진술)."
+- EQUIVALENT-AT-MARGIN: "AUC가 chance의 동결 ±0.10 무시가능성 밴드 안으로 해상됐다 — 판별력 부재의 단언이 아니다."
+- DIRECTION-REVERSED: "판별이 동결 방향과 반대로 해상됐다 — 동결 방향 규칙 위반, stage 실패로 기록하고 원인을 재검토한다."
+- INCONCLUSIVE: "어느 분기 조건도 충족되지 않아 판정을 유보한다."
+- BA 통과: "out-of-sample balanced accuracy의 결합 95% 하한이 0.60을 넘어, 학습-외 판별이 확인됐다 (secondary)."
+- BA 불통과: "out-of-sample balanced accuracy는 0.60 문턱을 넘지 못했다 (secondary; stage 판정에 불참)."
 
 ## 9. 범위 제외
 

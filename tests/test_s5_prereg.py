@@ -149,6 +149,33 @@ def test_sd_upper_factor_is_a_widening_factor():
         math.sqrt(299 / 259.9), rel=2e-3)
 
 
+def test_frozen_sentences_are_verbatim_in_the_document():
+    """PR #60 review: the runner SENTENCES dict is the canonical
+    source and every sentence appears byte-identically (unwrapped) in
+    the prereg document's section 8."""
+
+    doc = (Path(__file__).resolve().parents[1] / "docs" / "prereg"
+           / "p14_s5_schwarzschild_c2.md").read_text(encoding="utf-8")
+    for key, sentence in s5.SENTENCES.items():
+        assert sentence in doc, key
+
+
+def test_cli_is_fail_closed(monkeypatch):
+    """PR #60 review: an unknown argument or --help must exit at the
+    CLI boundary and can never fall through into the fresh-seed
+    campaign (argparse rejects unknowns with exit code 2 and handles
+    --help with exit code 0, both before any seed is touched)."""
+
+    monkeypatch.setattr(sys, "argv", ["s5_schwarzschild_c2", "--smok"])
+    with pytest.raises(SystemExit) as bad:
+        s5.main()
+    assert bad.value.code == 2
+    monkeypatch.setattr(sys, "argv", ["s5_schwarzschild_c2", "--help"])
+    with pytest.raises(SystemExit) as help_exit:
+        s5.main()
+    assert help_exit.value.code == 0
+
+
 def test_freeze_manifest_matches_the_working_tree():
     m = json.loads(s5._FREEZE_MANIFEST.read_text(encoding="utf-8"))
     files = m["files"]

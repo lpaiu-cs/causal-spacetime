@@ -2,8 +2,8 @@
   "stage": "S5 freeze manifest (content-addressed protocol surface)",
   "note": "raw sha256; all paths are .gitattributes eol=lf pinned",
   "files": {
-    "docs/prereg/p14_s5_schwarzschild_c2.md": "3b596a393000e7fbf7dd334c0af657d9fd2fd29a6679e36d8ef4f76d9e6ffdb0",
-    "experiments/positive_control/s5_schwarzschild_c2.py": "bc6a944a1520da4e415b3126e4a36d42e78e49c8bd845ae314ef45dc2b127d1c",
+    "docs/prereg/p14_s5_schwarzschild_c2.md": "b26c04be69a11ccfda09fa1116e23e8b56d4553bb19f7da7da0b483339bf9a1d",
+    "experiments/positive_control/s5_schwarzschild_c2.py": "8faaedf513409f8dc04d9949c0022cd5e4190d449c5501f500f32ab33845f61b",
     "experiments/positive_control/s3_schwarzschild_probe.py": "bd58ae3d45ed48a7bbef00d5ca4b498acd29d1e09cee942063a58bb74cbb872c",
     "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
     "experiments/positive_control/p14_probe_p2.py": "005c4edb67578c65932f4b13559fd23e9194d7256cc9418e68231baefe558ce1",

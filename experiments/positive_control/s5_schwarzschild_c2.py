@@ -56,12 +56,12 @@ freeze manifest snapshot immediately.
 
 from __future__ import annotations
 
+import argparse
 import functools
 import hashlib
 import json
 import math
 import subprocess
-import sys
 import time
 from pathlib import Path
 
@@ -103,7 +103,8 @@ SENTENCES = {
                  "우연 수준보다 판별하는 정보를 운반한다 (AUC CI95 하한 > "
                  "0.60, 프로그램 내부 진술)."),
     "EQUIVALENT-AT-MARGIN": ("AUC가 chance의 동결 ±0.10 무시가능성 밴드 "
-                             "안으로 해상됐다."),
+                             "안으로 해상됐다 — 판별력 부재의 단언이 "
+                             "아니다."),
     "DIRECTION-REVERSED": ("판별이 동결 방향과 반대로 해상됐다 — 동결 "
                            "방향 규칙 위반, stage 실패로 기록하고 원인을 "
                            "재검토한다."),
@@ -495,7 +496,20 @@ def stage_outcome(c_lower: np.ndarray, c_upper: np.ndarray,
 
 
 def main() -> None:
-    smoke = "--smoke" in sys.argv
+    # Fail-closed CLI (PR #60 review): the ONLY accepted argument is
+    # --smoke. argparse rejects unknown arguments and handles --help
+    # by exiting, so a typo or a help invocation can never fall
+    # through into the fresh-seed campaign.
+    parser = argparse.ArgumentParser(
+        description="S5 preregistered campaign runner "
+                    "(docs/prereg/p14_s5_schwarzschild_c2.md); the "
+                    "no-argument form runs the ONE official campaign "
+                    "and consumes the fresh seeds.",
+        allow_abbrev=False)
+    parser.add_argument("--smoke", action="store_true",
+                        help="validation run on the observed smoke "
+                             "stream; writes no artifact")
+    smoke = parser.parse_args().smoke
     n_readings = 6 if smoke else N_ARM
     e_n = 40 if smoke else E_N
 
