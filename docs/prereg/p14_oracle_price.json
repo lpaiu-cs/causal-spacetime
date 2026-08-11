@@ -149,23 +149,23 @@
     "n_sub": 32,
     "floor_ratio": 0.0002146571816099565,
     "frozen_target_estimated_reachable": true,
-    "calls_extrapolated": 217671.67767542228,
+    "calls_extrapolated": 186099.5533233744,
     "calls_extrapolated_range": [
-     185725.53773289462,
-     233402.77717478873
+     162868.37515159033,
+     197832.8496963343
     ],
-    "wall_s_extrapolated": 38553.70623169864
+    "wall_s_extrapolated": 32961.69527106942
    },
    {
     "n_sub": 64,
     "floor_ratio": 5.292061797600206e-05,
     "frozen_target_estimated_reachable": true,
-    "calls_extrapolated": 217082.72519410768,
+    "calls_extrapolated": 178996.29631470365,
     "calls_extrapolated_range": [
-     185375.08745216497,
-     232540.95415931905
+     157704.12994764472,
+     189710.7157951041
     ],
-    "wall_s_extrapolated": 76898.78356696463
+    "wall_s_extrapolated": 63407.15244515587
    }
   ],
   "note": "configuration GUIDANCE for PR-O3, not frozen numbers: every row is a model-based extrapolation (floor model + fitted exponent + linear cost scaling), and the review ruling on PR #65 forbids freezing any of them as an execution cap before the mode-width diagnostic has run",

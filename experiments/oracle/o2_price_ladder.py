@@ -105,25 +105,35 @@ def _fit_refine(curve: list[dict], floor: float, window: float,
     return slope, my - slope * mx
 
 
-def _calls_range(target: float, floor: float, curve: list[dict],
-                 ) -> dict | None:
-    """The frozen-target extrapolation across every fit window:
-    {primary, min, max} calls, or None when no window can fit or the
-    target sits at/below the floor."""
+def _calls_range(target: float, fit_floor: float, proj_floor: float,
+                 curve: list[dict]) -> dict | None:
+    """The target extrapolation across every fit window: {primary,
+    min, max} calls, or None when no window can fit or the target
+    sits at/below the projection floor.
 
-    if target <= floor:
+    Two DISTINCT floors (review R1 on this PR): the refinable
+    component E(calls) = ratio - floor is fitted with the floor of
+    the quadrature the curve was actually MEASURED at (`fit_floor`,
+    always the N_SUB floor) -- refitting the same curve with a
+    candidate's smaller floor absorbs the floor difference into the
+    power law and flattens the slope artificially. The candidate's
+    floor (`proj_floor`) enters only when the fixed fit is projected
+    onto the target: calls = E^-1(target - proj_floor)."""
+
+    if target <= proj_floor:
         return None
     vals = []
     for w in FIT_WINDOWS:
-        fit = _fit_refine(curve, floor, w)
+        fit = _fit_refine(curve, fit_floor, w)
         if fit is None:
             continue
-        vals.append(_calls_for(target, floor, fit))
-    vals = [v for v in vals if v is not None]
+        v = _calls_for(target, proj_floor, fit)
+        if v is not None:
+            vals.append(v)
     if not vals:
         return None
-    primary_fit = _fit_refine(curve, floor, FIT_WINDOWS[0])
-    primary = (_calls_for(target, floor, primary_fit)
+    primary_fit = _fit_refine(curve, fit_floor, FIT_WINDOWS[0])
+    primary = (_calls_for(target, proj_floor, primary_fit)
                if primary_fit else vals[0])
     return {"primary": primary, "min": min(vals), "max": max(vals)}
 
@@ -155,7 +165,7 @@ def _summarize(curve: list[dict], crossings: dict, final: dict,
     for t in TARGETS:
         if t in crossings or fit is None:
             continue
-        rng = _calls_range(t, floor, curve)
+        rng = _calls_range(t, floor, floor, curve)
         row = {"target_ratio": t}
         if rng is None:
             row["estimated_reachable_at_this_n_sub"] = False
@@ -175,7 +185,10 @@ def _summarize(curve: list[dict], crossings: dict, final: dict,
 
     plan = []
     for f in floors:
-        rng = _calls_range(FROZEN_TARGET, f["floor_ratio"], curve)
+        # fit with the MEASURED floor (N_SUB), project with the
+        # candidate's floor -- see _calls_range
+        rng = _calls_range(FROZEN_TARGET, floor, f["floor_ratio"],
+                           curve)
         # a call costs roughly linearly in n_sub (the quadrature is
         # the inner loop), so scale the measured rate accordingly --
         # a MODEL assumption, like everything else in this table
