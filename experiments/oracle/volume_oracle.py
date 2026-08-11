@@ -421,7 +421,10 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
                 "raw_total_before_intersection": 0.0,
                 "certified_total_after_intersection": 0.0,
                 "intersection_active": False, "wall_s": 0.0,
-                "certificate": None, "crossings": {}, "curve": []}
+                "certificate": None, "crossings": {}, "curve": [],
+                "termination_reason": "empty-diamond",
+                "max_depth_reached": 0, "cells_at_max_depth": 0,
+                "uncosted_cells": 0}
     cert = containment_certificate(cfg.r_in, cfg.r_out, cfg.dt,
                                    cfg.m)
     st = _State(cfg, m_i, dt_i, rho_p, rho_q, angle_cost_iv(m_i))
@@ -488,14 +491,35 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
             state["done"] = True
         return total
 
+    # termination provenance (freeze-review ruling): a 24 h frozen
+    # run whose caps fire must say WHICH cap fired -- lumping every
+    # exit into `target-not-met` is not fail-explicit. The reason is
+    # decided at the exit point, with a fixed priority when several
+    # conditions hold at once: target > calls > wall > depth > heap.
+    reason = "heap-exhausted"
     since_recompute = _RECOMPUTE_EVERY  # force an initial check
     while True:
         if since_recompute >= _RECOMPUTE_EVERY:
             since_recompute = 0
             checkpoint()
             if state["done"]:
+                reason = "target-met"
                 break
-        if _over_budget(st) or not heap:
+        if st.calls >= cfg.max_calls:
+            reason = "max-calls"
+            break
+        if time.perf_counter() - st.t0 >= cfg.max_wall_s:
+            reason = "max-wall"
+            break
+        if not heap:
+            # heap drained: either every remaining live cell sits at
+            # max_depth (refinement is depth-blocked and the caps
+            # never fired), or nothing refinable remains at all
+            blocked = any(not c.dead and c.mode != "pruned"
+                          and c.depth >= cfg.max_depth
+                          for c in cells)
+            reason = ("max-depth-exhausted" if blocked
+                      else "heap-exhausted")
             break
         _, _, worst = heapq.heappop(heap)
         if (worst.dead or worst.depth >= cfg.max_depth
@@ -525,6 +549,11 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         since_recompute += 1
 
     total = checkpoint()
+    if state["done"]:
+        # the final checkpoint may credit a crossing reached in the
+        # last splits before a cap fired (PR #65 R1); the reason must
+        # then agree with the status
+        reason = "target-met"
     status = "target-met" if state["done"] else "target-not-met"
     denom = float(total.lo + total.hi)
     ratio = (total.width() / denom) if denom > 0 else None
@@ -559,6 +588,14 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         "certificate": cert,
         "crossings": crossings,
         "curve": curve,
+        "termination_reason": reason,
+        "max_depth_reached": max((c.depth for c in alive),
+                                 default=0),
+        "cells_at_max_depth": sum(
+            1 for c in alive
+            if c.mode != "pruned" and c.depth >= cfg.max_depth),
+        "uncosted_cells": sum(1 for c in alive
+                              if c.mode == "uncosted"),
     }
 
 
