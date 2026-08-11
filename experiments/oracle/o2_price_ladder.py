@@ -73,17 +73,26 @@ _ARTIFACT = (Path(__file__).resolve().parents[2]
              / "docs" / "prereg" / "p14_oracle_price.json")
 
 
-def _fit_refine(curve: list[dict], floor: float,
+# fit windows: fraction of the trace (from the end) used for the
+# log-log fit. The spread of the extrapolation across windows is the
+# honest error bar of the model -- a single window makes the number
+# look sharper than the model is (review ruling on PR #65: the
+# window-sensitivity range moved the frozen-target calls by tens of
+# thousands, so the range is reported, never one value alone)
+FIT_WINDOWS = (0.50, 0.33, 0.67)
+
+
+def _fit_refine(curve: list[dict], floor: float, window: float,
                 ) -> tuple[float, float] | None:
     """Least-squares slope of log(ratio - floor) vs log(calls) over
-    the latter half of the trace. Fitting the REFINABLE part, not
-    the total, is what makes the extrapolation consistent with the
-    floor diagnostic."""
+    the trailing `window` fraction of the trace. Fitting the
+    REFINABLE part, not the total, is what keeps the extrapolation
+    consistent with the floor diagnostic."""
 
     pts = [(math.log(s["calls"]), math.log(s["ratio"] - floor))
            for s in curve
            if s["calls"] > 0 and s["ratio"] - floor > 0.0]
-    pts = pts[len(pts) // 2:]
+    pts = pts[int(len(pts) * (1.0 - window)):]
     if len(pts) < 3:
         return None
     n = len(pts)
@@ -94,6 +103,39 @@ def _fit_refine(curve: list[dict], floor: float,
         return None
     slope = sum((x - mx) * (y - my) for x, y in pts) / sxx
     return slope, my - slope * mx
+
+
+def _calls_range(target: float, fit_floor: float, proj_floor: float,
+                 curve: list[dict]) -> dict | None:
+    """The target extrapolation across every fit window: {primary,
+    min, max} calls, or None when no window can fit or the target
+    sits at/below the projection floor.
+
+    Two DISTINCT floors (review R1 on this PR): the refinable
+    component E(calls) = ratio - floor is fitted with the floor of
+    the quadrature the curve was actually MEASURED at (`fit_floor`,
+    always the N_SUB floor) -- refitting the same curve with a
+    candidate's smaller floor absorbs the floor difference into the
+    power law and flattens the slope artificially. The candidate's
+    floor (`proj_floor`) enters only when the fixed fit is projected
+    onto the target: calls = E^-1(target - proj_floor)."""
+
+    if target <= proj_floor:
+        return None
+    vals = []
+    for w in FIT_WINDOWS:
+        fit = _fit_refine(curve, fit_floor, w)
+        if fit is None:
+            continue
+        v = _calls_for(target, proj_floor, fit)
+        if v is not None:
+            vals.append(v)
+    if not vals:
+        return None
+    primary_fit = _fit_refine(curve, fit_floor, FIT_WINDOWS[0])
+    primary = (_calls_for(target, proj_floor, primary_fit)
+               if primary_fit else vals[0])
+    return {"primary": primary, "min": min(vals), "max": max(vals)}
 
 
 def _calls_for(target: float, floor: float,
@@ -117,40 +159,50 @@ def _summarize(curve: list[dict], crossings: dict, final: dict,
                 for t in TARGETS if t in crossings]
     base = next((f for f in floors if f["n_sub"] == N_SUB), None)
     floor = base["floor_ratio"] if base else 0.0
-    fit = _fit_refine(curve, floor)
+    fit = _fit_refine(curve, floor, FIT_WINDOWS[0])
 
     extrapolated = []
     for t in TARGETS:
         if t in crossings or fit is None:
             continue
-        calls = _calls_for(t, floor, fit)
+        rng = _calls_range(t, floor, floor, curve)
         row = {"target_ratio": t}
-        if calls is None:
-            row["reachable_at_this_n_sub"] = False
+        if rng is None:
+            row["estimated_reachable_at_this_n_sub"] = False
             row["reason"] = (
-                f"target {t:g} is at or below the quadrature floor "
-                f"{floor:.5f} at n_sub={N_SUB}: no amount of cell "
-                f"refinement reaches it, a larger n_sub is required")
+                f"target {t:g} is at or below the estimated "
+                f"quadrature floor {floor:.5f} at n_sub={N_SUB}: "
+                f"cell refinement alone is not expected to reach "
+                f"it, a larger n_sub would be required")
         else:
-            row["reachable_at_this_n_sub"] = True
-            row["calls_extrapolated"] = calls
-            row["wall_s_extrapolated"] = calls / max(rate, 1e-9)
+            row["estimated_reachable_at_this_n_sub"] = True
+            row["calls_extrapolated"] = rng["primary"]
+            row["calls_extrapolated_range"] = [rng["min"],
+                                               rng["max"]]
+            row["wall_s_extrapolated"] = (rng["primary"]
+                                          / max(rate, 1e-9))
         extrapolated.append(row)
 
     plan = []
     for f in floors:
-        calls = (_calls_for(FROZEN_TARGET, f["floor_ratio"], fit)
-                 if fit else None)
+        # fit with the MEASURED floor (N_SUB), project with the
+        # candidate's floor -- see _calls_range
+        rng = _calls_range(FROZEN_TARGET, floor, f["floor_ratio"],
+                           curve)
         # a call costs roughly linearly in n_sub (the quadrature is
-        # the inner loop), so scale the measured rate accordingly
+        # the inner loop), so scale the measured rate accordingly --
+        # a MODEL assumption, like everything else in this table
         scaled_rate = rate * N_SUB / f["n_sub"]
         plan.append({
             "n_sub": f["n_sub"],
             "floor_ratio": f["floor_ratio"],
-            "frozen_target_reachable": calls is not None,
-            "calls_extrapolated": calls,
-            "wall_s_extrapolated": (calls / max(scaled_rate, 1e-9)
-                                    if calls else None),
+            "frozen_target_estimated_reachable": rng is not None,
+            "calls_extrapolated": (rng["primary"] if rng else None),
+            "calls_extrapolated_range": ([rng["min"], rng["max"]]
+                                         if rng else None),
+            "wall_s_extrapolated": (rng["primary"]
+                                    / max(scaled_rate, 1e-9)
+                                    if rng else None),
         })
 
     return {
@@ -160,44 +212,59 @@ def _summarize(curve: list[dict], crossings: dict, final: dict,
             {"model": "ratio = floor + exp(intercept) * calls^slope",
              "log_log_slope": fit[0], "log_intercept": fit[1],
              "floor_ratio_used": floor,
-             "note": ("fitted on the latter half of the trace's "
-                      "REFINABLE part (ratio - floor); an "
-                      "extrapolation aid, not a certified claim")}
+             "fit_windows": list(FIT_WINDOWS),
+             "note": ("fitted on the trailing part of the trace's "
+                      "REFINABLE component (ratio - floor); the "
+                      "window-to-window spread is reported as "
+                      "calls_extrapolated_range because the single "
+                      "number is sharper than the model deserves. "
+                      "An extrapolation aid, not a certified claim "
+                      "and not an execution cap.")}
             if fit else None),
         "quadrature_floor": {
             "rows": floors,
-            "binding_lever": ("quadrature" if
-                              floor > 0.5 * final["ratio"]
-                              else "cell-refinement"),
-            "note": ("DIAGNOSTIC. floor_ratio is the ratio that cell "
-                     "refinement alone converges to at that n_sub, "
-                     "because every interior cell keeps its center "
-                     "flight-time's uncertainty. Estimated "
-                     "standalone (support integral on a fixed grid "
-                     "with the fast non-certified solver, widths "
-                     "from the certified solver); never part of a "
-                     "certified interval."),
+            "binding_lever_estimate": (
+                "quadrature" if floor > 0.5 * final["ratio"]
+                else "cell-refinement"),
+            "note": ("DIAGNOSTIC ESTIMATE. floor_ratio is the ratio "
+                     "cell refinement alone is modelled to converge "
+                     "to at that n_sub, because every interior cell "
+                     "keeps its center flight-time's uncertainty. "
+                     "The n_sub=32/64 rows are NOT full-integrator "
+                     "runs: they combine flight-time widths at a "
+                     "few probe points with a linear cost model. "
+                     "Estimated standalone (support integral on a "
+                     "fixed grid with the fast non-certified "
+                     "solver, widths from the certified solver); "
+                     "never part of a certified interval."),
         },
         "frozen_target_plan": {
             "target_ratio": FROZEN_TARGET,
             "rows": plan,
-            "note": ("what PR-O3 must configure to reach the frozen "
-                     "target; wall times scale the measured rate by "
-                     "N_SUB/n_sub and are EXTRAPOLATIONS"),
-            "reading": ("A larger n_sub does NOT pay here: it buys "
-                        "a lower floor that was never binding, "
+            "note": ("configuration GUIDANCE for PR-O3, not frozen "
+                     "numbers: every row is a model-based "
+                     "extrapolation (floor model + fitted exponent "
+                     "+ linear cost scaling), and the review ruling "
+                     "on PR #65 forbids freezing any of them as an "
+                     "execution cap before the mode-width "
+                     "diagnostic has run"),
+            "reading": ("n_sub=16 is the current RECOMMENDED PLAN. "
+                        "'A larger n_sub is counterproductive' is a "
+                        "MODEL-BASED EXPECTATION -- it buys a lower "
+                        "floor that the model says never binds, "
                         "while every call costs proportionally "
-                        "more, so the extrapolated wall clock gets "
-                        "worse with n_sub. The cost is cell "
-                        "refinement, whose exponent degrades over "
-                        "the run. NOT YET MEASURED, and the next "
-                        "diagnostic PR-O3 should run: which cell "
-                        "MODE carries the remaining width -- the "
-                        "anchor neighbourhoods use the first-order "
-                        "mode, whose per-cell width is O(h) against "
-                        "the tangent mode's O(h^2), so they are the "
-                        "suspect. `assemble` now reports "
-                        "width_by_mode for exactly this."),
+                        "more -- not a full-integrator measurement. "
+                        "The refinement exponent degrades over the "
+                        "run; the allowed statement is that cell "
+                        "refinement is the LIKELY binding lever and "
+                        "the first-order mode a CANDIDATE carrier "
+                        "of the remaining width (O(h) per cell "
+                        "against the tangent mode's O(h^2)). The "
+                        "mode-width diagnostic on the neighbor "
+                        "configuration (o2_mode_width.py, "
+                        "p14_oracle_mode_width.json) is what "
+                        "settles it, and it must run BEFORE any "
+                        "O3 budget or algorithm decision."),
         },
     }
 
@@ -236,7 +303,13 @@ def _measure() -> dict:
                   "v_hi": float(v.hi), "ratio": res["ratio"],
                   "calls": res["calls"], "cells": res["cells"],
                   "modes": res["modes"],
-                  "width_by_mode": res["width_by_mode"],
+                  "raw_width_by_mode": res["raw_width_by_mode"],
+                  "raw_total_before_intersection":
+                      res["raw_total_before_intersection"],
+                  "certified_total_after_intersection":
+                      res["certified_total_after_intersection"],
+                  "intersection_active":
+                      res["intersection_active"],
                   "wall_s": res["wall_s"]},
         "crossings": res["crossings"],
         "curve": res["curve"],
@@ -286,15 +359,17 @@ def main() -> None:
               f"calls, {row['cells']} cells, {row['wall_s']:.0f}s",
               flush=True)
     for row in derived["extrapolated_targets"]:
-        if row["reachable_at_this_n_sub"]:
+        if row["estimated_reachable_at_this_n_sub"]:
+            lo, hi = row["calls_extrapolated_range"]
             print(f"  NOT MET {row['target_ratio']:g}: extrapolated "
-                  f"{row['calls_extrapolated']:.0f} calls",
-                  flush=True)
+                  f"{row['calls_extrapolated']:.0f} calls "
+                  f"(window range {lo:.0f}-{hi:.0f})", flush=True)
         else:
             print(f"  NOT MET {row['target_ratio']:g}: below the "
-                  f"quadrature floor at n_sub={N_SUB}", flush=True)
-    print("  binding lever: "
-          f"{derived['quadrature_floor']['binding_lever']}",
+                  f"estimated quadrature floor at n_sub={N_SUB}",
+                  flush=True)
+    print("  binding lever (estimate): "
+          f"{derived['quadrature_floor']['binding_lever_estimate']}",
           flush=True)
 
     art = {

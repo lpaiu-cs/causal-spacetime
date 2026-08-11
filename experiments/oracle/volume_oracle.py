@@ -375,12 +375,25 @@ def _evaluate(st: _State, c: _Cell) -> None:
 
 
 def _total(st: _State, cells: list[_Cell],
-           prev: Iv | None) -> Iv:
-    tot = iv_sum(c.contrib for c in cells
+           prev: Iv | None) -> tuple[Iv, Iv]:
+    """(raw, certified): the plain directed sum of the live cells,
+    and that sum intersected with the previous certified total
+    (L6d nesting -- an empty intersection means an enclosure was
+    wrong and intersect() hard-fails). Both are returned because the
+    per-mode width decomposition below is a decomposition of the RAW
+    sum: whenever the intersection clips, the certified total is
+    tighter than the sum of its parts and the split is only an upper
+    bound on each mode's share."""
+
+    raw = iv_sum(c.contrib for c in cells
                  if not c.dead) * _TWO * Iv.pi()
-    # L6d: refinement must nest -- an empty intersection means an
-    # enclosure was wrong and intersect() hard-fails
-    return tot if prev is None else tot.intersect(prev)
+    return raw, (raw if prev is None else raw.intersect(prev))
+
+
+def _raw_width_by_mode(alive: list[_Cell]) -> dict:
+    return {mode: sum(c.contrib.width() for c in alive
+                      if c.mode == mode)
+            for mode in _MODES}
 
 
 def assemble(cfg: OracleConfig, targets: list[float] | None = None,
@@ -404,7 +417,10 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
     if dt_i.certainly_lt(rho_q - rho_p):
         return {"v": Iv(0), "status": "empty-diamond", "ratio": None,
                 "target_ratio": cfg.target_ratio, "calls": 0,
-                "cells": 0, "modes": {}, "wall_s": 0.0,
+                "cells": 0, "modes": {}, "raw_width_by_mode": {},
+                "raw_total_before_intersection": 0.0,
+                "certified_total_after_intersection": 0.0,
+                "intersection_active": False, "wall_s": 0.0,
                 "certificate": None, "crossings": {}, "curve": []}
     cert = containment_certificate(cfg.r_in, cfg.r_out, cfg.dt,
                                    cfg.m)
@@ -436,7 +452,8 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
                      reverse=True)
     crossings: dict[float, dict] = {}
     curve: list[dict] = []
-    state: dict = {"prev": None, "done": False}
+    state: dict = {"prev": None, "raw": None, "done": False,
+                   "clipped": False}
 
     def checkpoint() -> Iv:
         """Recompute the certified total, record the curve sample,
@@ -446,15 +463,20 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         `target-not-met` and misfiled as an extrapolation, which is
         exactly what the price ladder must never do (review R1)."""
 
-        total = _total(st, cells, state["prev"])
+        raw, total = _total(st, cells, state["prev"])
         state["prev"] = total
+        state["raw"] = raw
+        if raw.lo != total.lo or raw.hi != total.hi:
+            state["clipped"] = True
         denom = float(total.lo + total.hi)
         if not (total.certainly_gt(Iv(0)) and denom > 0):
             return total
-        sample = {"calls": st.calls,
-                  "cells": sum(1 for c in cells if not c.dead),
+        alive = [c for c in cells if not c.dead]
+        sample = {"calls": st.calls, "cells": len(alive),
                   "ratio": total.width() / denom,
                   "v_lo": float(total.lo), "v_hi": float(total.hi),
+                  "raw_width": raw.width(),
+                  "raw_width_by_mode": _raw_width_by_mode(alive),
                   "wall_s": time.perf_counter() - st.t0}
         if not curve or curve[-1]["calls"] != sample["calls"]:
             curve.append(sample)
@@ -520,11 +542,19 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         # many cells each has: the two answers differ sharply when
         # the anchor neighbourhoods (first-order, O(h) per cell) sit
         # among many well-behaved tangent cells (O(h^2)), and it is
-        # the width split that says where to spend the next lever
-        "width_by_mode": {
-            mode: sum(c.contrib.width() for c in alive
-                      if c.mode == mode)
-            for mode in _MODES},
+        # the width split that says where to spend the next lever.
+        # The split decomposes the RAW directed sum; when the L6d
+        # intersection has clipped (intersection_active), the
+        # certified total is tighter than the sum of its parts and
+        # each mode's share is an upper bound, not an exact part of
+        # the certified width -- both totals are reported so the
+        # gap is visible instead of implied away.
+        "raw_width_by_mode": _raw_width_by_mode(alive),
+        "raw_total_before_intersection": (
+            state["raw"].width() if state["raw"] is not None
+            else total.width()),
+        "certified_total_after_intersection": total.width(),
+        "intersection_active": state["clipped"],
         "wall_s": time.perf_counter() - st.t0,
         "certificate": cert,
         "crossings": crossings,

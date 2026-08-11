@@ -77,8 +77,12 @@
  "extrapolated_targets": [
   {
    "target_ratio": 0.01,
-   "reachable_at_this_n_sub": true,
+   "estimated_reachable_at_this_n_sub": true,
    "calls_extrapolated": 220331.33687440015,
+   "calls_extrapolated_range": [
+    187306.2709747744,
+    237297.17765328396
+   ],
    "wall_s_extrapolated": 19512.39069365659
   }
  ],
@@ -87,7 +91,12 @@
   "log_log_slope": -0.4212424197522324,
   "log_intercept": 0.4845014814624138,
   "floor_ratio_used": 0.000886484361302216,
-  "note": "fitted on the latter half of the trace's REFINABLE part (ratio - floor); an extrapolation aid, not a certified claim"
+  "fit_windows": [
+   0.5,
+   0.33,
+   0.67
+  ],
+  "note": "fitted on the trailing part of the trace's REFINABLE component (ratio - floor); the window-to-window spread is reported as calls_extrapolated_range because the single number is sharper than the model deserves. An extrapolation aid, not a certified claim and not an execution cap."
  },
  "quadrature_floor": {
   "rows": [
@@ -119,8 +128,8 @@
     "probes": 12
    }
   ],
-  "binding_lever": "cell-refinement",
-  "note": "DIAGNOSTIC. floor_ratio is the ratio that cell refinement alone converges to at that n_sub, because every interior cell keeps its center flight-time's uncertainty. Estimated standalone (support integral on a fixed grid with the fast non-certified solver, widths from the certified solver); never part of a certified interval."
+  "binding_lever_estimate": "cell-refinement",
+  "note": "DIAGNOSTIC ESTIMATE. floor_ratio is the ratio cell refinement alone is modelled to converge to at that n_sub, because every interior cell keeps its center flight-time's uncertainty. The n_sub=32/64 rows are NOT full-integrator runs: they combine flight-time widths at a few probe points with a linear cost model. Estimated standalone (support integral on a fixed grid with the fast non-certified solver, widths from the certified solver); never part of a certified interval."
  },
  "frozen_target_plan": {
   "target_ratio": 0.01,
@@ -128,27 +137,39 @@
    {
     "n_sub": 16,
     "floor_ratio": 0.000886484361302216,
-    "frozen_target_reachable": true,
+    "frozen_target_estimated_reachable": true,
     "calls_extrapolated": 220331.33687440015,
+    "calls_extrapolated_range": [
+     187306.2709747744,
+     237297.17765328396
+    ],
     "wall_s_extrapolated": 19512.39069365659
    },
    {
     "n_sub": 32,
     "floor_ratio": 0.0002146571816099565,
-    "frozen_target_reachable": true,
+    "frozen_target_estimated_reachable": true,
     "calls_extrapolated": 186099.5533233744,
+    "calls_extrapolated_range": [
+     162868.37515159033,
+     197832.8496963343
+    ],
     "wall_s_extrapolated": 32961.69527106942
    },
    {
     "n_sub": 64,
     "floor_ratio": 5.292061797600206e-05,
-    "frozen_target_reachable": true,
+    "frozen_target_estimated_reachable": true,
     "calls_extrapolated": 178996.29631470365,
+    "calls_extrapolated_range": [
+     157704.12994764472,
+     189710.7157951041
+    ],
     "wall_s_extrapolated": 63407.15244515587
    }
   ],
-  "note": "what PR-O3 must configure to reach the frozen target; wall times scale the measured rate by N_SUB/n_sub and are EXTRAPOLATIONS",
-  "reading": "A larger n_sub does NOT pay here: it buys a lower floor that was never binding, while every call costs proportionally more, so the extrapolated wall clock gets worse with n_sub. The cost is cell refinement, whose exponent degrades over the run. NOT YET MEASURED, and the next diagnostic PR-O3 should run: which cell MODE carries the remaining width -- the anchor neighbourhoods use the first-order mode, whose per-cell width is O(h) against the tangent mode's O(h^2), so they are the suspect. `assemble` now reports width_by_mode for exactly this."
+  "note": "configuration GUIDANCE for PR-O3, not frozen numbers: every row is a model-based extrapolation (floor model + fitted exponent + linear cost scaling), and the review ruling on PR #65 forbids freezing any of them as an execution cap before the mode-width diagnostic has run",
+  "reading": "n_sub=16 is the current RECOMMENDED PLAN. 'A larger n_sub is counterproductive' is a MODEL-BASED EXPECTATION -- it buys a lower floor that the model says never binds, while every call costs proportionally more -- not a full-integrator measurement. The refinement exponent degrades over the run; the allowed statement is that cell refinement is the LIKELY binding lever and the first-order mode a CANDIDATE carrier of the remaining width (O(h) per cell against the tangent mode's O(h^2)). The mode-width diagnostic on the neighbor configuration (o2_mode_width.py, p14_oracle_mode_width.json) is what settles it, and it must run BEFORE any O3 budget or algorithm decision."
  },
  "curve": [
   {
