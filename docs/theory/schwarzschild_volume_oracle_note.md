@@ -1,11 +1,14 @@
 # Schwarzschild diamond-volume oracle: analytic reductions and open items
 
-Status note (2026-08-10). This records what is DERIVED versus what
-remains open on the path to a bounded-error diamond-volume oracle for
-the Schwarzschild exterior — the prediction-anchored claim class that
-Paper A's Section 6.7 deliberately does not use. Verdicts here are
-mathematical statements about the continuum setup; nothing below is a
-numerical certification.
+Status note (2026-08-10; Section 4 updated 2026-08-12 after the O3
+campaign). This records what is DERIVED versus what remains open on
+the path to a bounded-error diamond-volume oracle for the
+Schwarzschild exterior — the prediction-anchored claim class that
+Paper A's Section 6.7 deliberately does not use. Sections 1-3 are
+mathematical statements about the continuum setup; the numerical
+certification that closed Section 4's items lives in
+`schwarzschild_volume_oracle_certification.md`, and Section 4 now
+records its outcome.
 
 ## 1. [VERIFIED analytic] Staticity removes the time integral (4D -> 3D)
 
@@ -55,23 +58,35 @@ optical metric, giving explicit coordinate bounds
 (dr, d(theta)) cell — the skeleton of a deterministic cell-refinement
 enclosure with O(h) convergence.
 
-## 4. Open items (the reasons this is not yet an oracle)
+## 4. Former open items — closed (2026-08-12)
 
-- [TO CERTIFY] Numerical flight-time enclosure. The S1 solver's
-  reported err is the difference between successive Gauss-Legendre
-  refinements — a stopping heuristic, not a proven upper bound on the
-  true quadrature error. Until the per-call bound is certified (e.g.
-  by derivative-bounded remainder terms or validated/interval
-  quadrature), the pointwise integrand interval is not rigorous and
-  the assembled volume interval is not a bounded-error statement.
-- [TO VERIFY] Anchor-diamond containment. The chosen anchors' diamond
-  must be PROVEN to lie inside the solver's validated domain (the
-  exterior shell and angular cap); a containment criterion in terms of
-  the optical distance to the domain boundary is the natural form.
-- [TO SIZE] Grid and cost. The cell count needed for a target volume
-  error has not been derived; per-anchor cost figures quoted so far
-  (1e4-1e5 predicate calls, ~15 s - 2.5 min) are estimates, not a
-  price table.
+- [CERTIFIED] Numerical flight-time enclosure (PR #64). The
+  Gauss-Legendre successive-refinement err was discarded as
+  certification grounds. The per-call enclosure is now MPFR
+  directed-rounding interval arithmetic end to end, with a certified
+  composite-midpoint remainder (interval-evaluated second-derivative
+  bounds) — see the certification document, L1-L2.
+- [VERIFIED] Anchor-diamond containment (PR #64). The frozen anchors
+  (12, 18, 8.5)M carry a containment certificate proven uniformly, in
+  the optical-distance form anticipated here: margins
+  1.5600 / 3.3326 / 2.9111 / 1.8923, box r in [11.3536, 18.6950] M,
+  psi <= 0.817913, perihelion floor 10.417 M (L4).
+- [SIZED, then EXECUTED] Grid and cost (PR #65-#67 + campaign). The
+  measured neighbor price ladder (`docs/prereg/p14_oracle_price.json`)
+  replaced the earlier estimates, and the frozen campaign is the
+  final price point: 137,958 predicate calls, 3.72 h wall clock.
+
+The oracle result. Executed once from the clean exact freeze checkout
+`785148e` under the frozen caps (600,000 calls / 24 h / depth 18),
+the frozen configuration's certified volume is
+
+  V = [56.212737, 57.348019]   (outward binary64 endpoints),
+  (V_hi - V_lo) / (V_hi + V_lo) = 0.009997 <= 0.01,
+
+terminated `target-met` (max depth reached 12, no uncosted cells, the
+L6d intersection never active — so the mode decomposition is exact).
+Artifact: `docs/prereg/p14_o3_volume.json` (write-once); executed
+freeze surface: `docs/prereg/p14_o3_executed_freeze_manifest.json`.
 
 ## 5. Relation to Paper A
 
@@ -79,4 +94,8 @@ Section 6.7's Schwarzschild confirmation is operationally anchored and
 does not use this oracle. The note exists so that the manuscript's
 "partially derived theoretical path" phrasing has a public referent:
 Sections 1-2 are derived; Section 3 is a standard-result application
-with explicit constants; Section 4 is the open boundary.
+with explicit constants; Section 4's former open boundary is now
+closed by the certification document and the executed campaign. Any
+prediction-anchored USE of the certified volume (sprinkle counts vs
+rho*V) is a separate, not-yet-designed stage; nothing in Paper A is
+upgraded by this note.
