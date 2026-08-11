@@ -296,3 +296,79 @@ def test_frozen_anchor_calls_stay_certifiable_across_the_box():
 
 def test_interval_module_precision_is_the_documented_contract():
     assert ci.PRECISION == 96
+
+
+# ---------------------------------------------------------------------
+# review round 1 regressions
+# ---------------------------------------------------------------------
+
+
+def test_directed_float_conversions_are_outward():
+    """R1: plain float() rounds to nearest and can shrink an
+    enclosure inward; lo_float/hi_float must round outward. 1/3 is
+    not binary64-representable, so both directions must move
+    strictly."""
+
+    third = Iv(1) / Iv(3)
+    lo_f, hi_f = third.lo_float(), third.hi_float()
+    assert gmpy2.mpfr(lo_f, 200) <= third.lo
+    assert gmpy2.mpfr(hi_f, 200) >= third.hi
+    assert lo_f < hi_f
+    exact = Iv(0.25)  # representable: conversions must be exact
+    assert exact.lo_float() == 0.25 and exact.hi_float() == 0.25
+    assert ci.float_down(third.lo) <= third.lo
+    assert ci.float_up(third.hi) >= third.hi
+
+
+@pytest.mark.parametrize("r1,r2,psi", [
+    (12.0, 12.0, 0.5),      # one-turn
+    (15.0, 10.0, 1.0),      # one-turn
+    (12.0, 18.0, 0.818),    # no-turn
+    (11.5, 18.5, 0.1),      # no-turn
+])
+def test_returned_b_hull_contains_the_matched_clairaut_constant(
+        r1, r2, psi):
+    """R1: the returned `b` must enclose the TRUE dT/dpsi -- never
+    the bisection search bracket. Diagnostic containment: the S1
+    heuristic's matched impact parameter (accurate to ~tol) must lie
+    inside the certified hull with a wide safety band."""
+
+    ft = flight_time_certified(r1, r2, psi, m=1.0)
+    details: dict = {}
+    s1_flight_time(r1, r2, psi, details=details)
+    b_matched = details["b"]
+    assert (float(ft.b.lo) - 1e-6 <= b_matched
+            <= float(ft.b.hi) + 1e-6), (ft.family, b_matched)
+
+
+def test_corridor_b_hull_spans_both_families():
+    """R1: inside the A_eq decidability corridor the request angle
+    may sit on either family side, so the certified b* hull must
+    reach down to 0 (the no-turn side), not collapse to the thin
+    b_eq interval."""
+
+    r1, r2 = 12.0, 18.0
+    # land on the corridor: the S1 heuristic's A_eq is accurate to
+    # ~1e-8, far inside the corridor's quadrature-enclosure width
+    import s1_schwarzschild_cost as s1
+
+    u_in = 1.0 / min(r1, r2)
+    b_eq = 1.0 / (u_in * (1.0 - 2.0 * u_in) ** 0.5)
+    a_eq, _, _ = s1._arc_integrals(1.0 / max(r1, r2), u_in, b_eq,
+                                   1.0, False)
+    ft = flight_time_certified(r1, r2, a_eq, m=1.0)
+    assert ft.family == "equal-perihelion"
+    assert float(ft.b.lo) == 0.0
+    assert float(ft.b.hi) >= b_eq - 1e-9
+
+
+def test_perihelion_bracket_top_is_recertified_at_the_float_point():
+    """R1: the root-bracket top is an outward-rounded float whose
+    sign is re-certified AT that point; the returned bracket must
+    straddle the root (R changes sign across it)."""
+
+    b, m = Iv(9.0), Iv(1.0)
+    u_t = cft._perihelion_bracket(b, m)
+    assert u_t is not None
+    assert cft.big_r_iv(Iv(u_t.lo), b, m).certainly_gt(Iv(0))
+    assert cft.big_r_iv(Iv(u_t.hi), b, m).certainly_lt(Iv(0))

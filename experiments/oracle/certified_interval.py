@@ -209,6 +209,21 @@ class Iv:
             raise CertificationError(f"widen by signed {d}")
         return _wrap(_DN.sub(self.lo, d.hi), _UP.add(self.hi, d.hi))
 
+    # -- directed float conversions (outward: coverage-preserving) ----
+
+    def lo_float(self) -> float:
+        """self.lo rounded DOWN to binary64 -- never above the true
+        lower endpoint. Plain float() rounds to nearest and can shrink
+        an enclosure inward; certified paths must use these."""
+
+        return float_down(self.lo)
+
+    def hi_float(self) -> float:
+        """self.hi rounded UP to binary64 -- never below the true
+        upper endpoint."""
+
+        return float_up(self.hi)
+
     # -- non-certified conveniences (diagnostics only) ----------------
 
     def width(self) -> float:
@@ -236,6 +251,25 @@ def iv_min(a: Iv, b: Iv) -> Iv:
 
 def iv_max(a: Iv, b: Iv) -> Iv:
     return _wrap(max(a.lo, b.lo), max(a.hi, b.hi))
+
+
+_DN53 = gmpy2.context(precision=53, round=gmpy2.RoundDown)
+_UP53 = gmpy2.context(precision=53, round=gmpy2.RoundUp)
+_ZERO = gmpy2.mpfr(0)
+
+
+def float_down(x: gmpy2.mpfr) -> float:
+    """x rounded toward -inf to binary64 (result <= x, exactly
+    representable): a directed 53-bit rounding, then an exact
+    float() of the 53-bit value."""
+
+    return float(_DN53.add(x, _ZERO))
+
+
+def float_up(x: gmpy2.mpfr) -> float:
+    """x rounded toward +inf to binary64 (result >= x)."""
+
+    return float(_UP53.add(x, _ZERO))
 
 
 def iv_sum(terms) -> Iv:

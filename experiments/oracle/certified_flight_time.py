@@ -87,8 +87,15 @@ def q_iv(u: Iv, u_t: Iv, m: Iv) -> Iv:
 
 @dataclass(frozen=True)
 class CertifiedFlightTime:
-    """A certified enclosure of the optical distance T, with the
-    matched family and diagnostics."""
+    """A certified enclosure of the optical distance T.
+
+    `b` is a certified enclosure of the TRUE Clairaut constant
+    b* = dT/dpsi at the requested configuration, built from theory
+    (L1/L2a: one-turn b* in [w(r_floor), b_eq]; no-turn and the
+    equal-perihelion corridor only certify b* in [0, b_eq]) -- NEVER
+    from the bisection search bracket, which narrows by comparisons
+    whose monotonicity is not certified and so encloses nothing.
+    L6a consumers must hull their gradient over this interval."""
 
     t: Iv
     family: str
@@ -129,15 +136,20 @@ def _arc_enclosure(u_from: Iv, u_t: Iv, b: Iv, m: Iv,
             t = a / (b * u_box.sq() * (Iv(1) - _TWO * m * u_box))
             tim_terms.append(t.hull(Iv(0)) if tail else t)
 
-    body_hi = float(s_hi.lo)
+    # directed float conversions: the body top rounds DOWN and the
+    # tail top rounds UP, so [0, body_hi] u [body_hi, tail_hi] COVERS
+    # the true [0, s_hi*] (plain float() rounds to nearest and could
+    # shrink the range inward)
+    body_hi = s_hi.lo_float()
+    tail_hi = s_hi.hi_float()
     if body_hi > 0.0:
         pts = _grid(0.0, body_hi, n_sub)
         for s0, s1 in zip(pts[:-1], pts[1:], strict=True):
             push(s0, s1, tail=False)
-    if float(s_hi.hi) > body_hi:
+    if tail_hi > body_hi:
         # the true upper limit lies in [s_hi.lo, s_hi.hi]; the tail
         # contribution is between 0 and the full subinterval bound
-        push(body_hi, float(s_hi.hi), tail=True)
+        push(body_hi, tail_hi, tail=True)
     ang = iv_sum(ang_terms) if ang_terms else Iv(0)
     tim = iv_sum(tim_terms) if tim_terms else Iv(0)
     return ang, tim
@@ -150,7 +162,9 @@ def _direct_enclosure(u_lo: Iv, u_hi: Iv, b: Iv, m: Iv,
     turning point exists: L2d certified)."""
 
     ang_terms, tim_terms = [], []
-    pts = _grid(float(u_lo.lo), float(u_hi.hi), n_sub)
+    # outward-directed float endpoints: the grid COVERS the true
+    # integration range (nearest-rounding float() could shrink it)
+    pts = _grid(u_lo.lo_float(), u_hi.hi_float(), n_sub)
     for x0, x1 in zip(pts[:-1], pts[1:], strict=True):
         u_box = Iv(x0, x1)
         r_val = big_r_iv(u_box, b, m)
@@ -196,7 +210,14 @@ def _perihelion_bracket(b: Iv, m: Iv, iters: int = 80) -> Iv | None:
     if not r_cap.certainly_lt(Iv(0)):
         raise CertificationError(
             f"impact parameter {b} not certifiably super/sub-critical")
-    lo, hi = 0.0, float(u_cap.lo)
+    # outward-rounded float cap, with the bracket invariant
+    # re-certified AT the float point (nearest-rounding float() could
+    # land outside the interval the sign was certified on)
+    hi = u_cap.hi_float()
+    if not big_r_iv(Iv(hi), b, m).certainly_lt(Iv(0)):
+        raise CertificationError(
+            f"root-bracket top {hi} not certifiably past the root")
+    lo = 0.0
     for _ in range(iters):
         mid = 0.5 * (lo + hi)
         if mid == lo or mid == hi:
@@ -275,10 +296,15 @@ def flight_time_certified(r1: float, r2: float, dpsi: float,
     a_eq, t_eq = _arc_enclosure(u_out, u_in, b_eq, m_i, n_sub, True)
 
     if not (dpsi_i.certainly_gt(a_eq) or dpsi_i.certainly_lt(a_eq)):
+        # decidability corridor: the request angle may sit on either
+        # family side of the true A_eq, so the certified b* hull is
+        # the union of both families' ranges, [0, b_eq] -- returning
+        # the razor-thin b_eq here would hand L6a a gradient the true
+        # b* can sit outside of (review R1)
         t = t_eq.widen(lip * (dpsi_i - a_eq).abs())
         return CertifiedFlightTime(t.intersect(mono_box),
-                                   "equal-perihelion", b_eq,
-                                   a_eq, n_sub)
+                                   "equal-perihelion",
+                                   Iv(0).hull(b_eq), a_eq, n_sub)
 
     one_turn = dpsi_i.certainly_gt(a_eq)
     if one_turn:
@@ -288,11 +314,17 @@ def flight_time_certified(r1: float, r2: float, dpsi: float,
         if not r_floor.certainly_gt(Iv(3) * m_i):
             raise CertificationError(
                 f"perihelion floor {r_floor} not above photon sphere")
-        b_lo = float(w_iv(r_floor, m_i).lo)
-        b_hi = float(b_eq.hi)
+        # certified b* hull (L1/L2a): b* = w(r_p) with
+        # r_floor <= r_p <= r_inner, so w(r_floor) <= b* <= b_eq
+        b_cert = Iv(w_iv(r_floor, m_i).lo, b_eq.hi)
+        b_lo = b_cert.lo_float()
+        b_hi = b_cert.hi_float()
     else:
-        b_lo = float(b_eq.lo) * 1e-8
-        b_hi = float(b_eq.hi)
+        # no-turn: only 0 <= b* <= b_eq is certified (the bisection
+        # bracket is a search aid, not an enclosure)
+        b_cert = Iv(0).hull(b_eq)
+        b_lo = b_eq.lo_float() * 1e-8
+        b_hi = b_eq.hi_float()
 
     lo, hi = b_lo, b_hi
     n_scan = max(16, n_sub // 4)
@@ -330,7 +362,7 @@ def flight_time_certified(r1: float, r2: float, dpsi: float,
     t = tim.widen(lip * (dpsi_i - ang).abs())
     return CertifiedFlightTime(
         t.intersect(mono_box), "one-turn" if one_turn else "no-turn",
-        Iv(lo, hi), ang, n_sub)
+        b_cert, ang, n_sub)
 
 
 # ---------------------------------------------------------------------

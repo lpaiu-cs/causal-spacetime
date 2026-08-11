@@ -180,12 +180,20 @@ w' = (1 - 3M/r)/sqrt(f) and w'' = (M/(r^2 sqrt(f)))(2 - 3M/r):
     K(r) = - 2M/r^3 + 3M^2/r^4  =  -(2M/r^3)(1 - 3M/2r),
 
 negative for all r > 1.5M, hence on the whole exterior. |K| is
-decreasing in r for r > 2M, so on a cell with r >= r_lo,
+decreasing in r for r > 2M. The comparison in L3b runs along the
+WHOLE minimizing geodesic from the anchor to the evaluation point,
+not just through the evaluation cell -- a one-turn geodesic dips to
+its perihelion, which can lie below the cell's own radial range. So
+the certified curvature constant is
 
-    kappa^2 = sup |K| = 2M/r_lo^3 - 3M^2/r_lo^4,
+    kappa^2 = sup |K| = 2M/r_geo^3 - 3M^2/r_geo^4,
 
-a certified interval quantity. On the S1 shell (r_lo = 10M):
-kappa^2 <= 0.0017 / M^2, kappa <= 0.0413 / M.
+with r_geo a certified lower bound on the radius ALONG the geodesic:
+by L2a, r_geo = min(r_anchor, r_cell_lo) cos(psi_max_cell / 2), and
+on the frozen L4 box every geodesic satisfies r_geo >= 10.417M
+(the frozen perihelion floor), giving kappa^2 <= 1.52e-3 / M^2,
+kappa <= 0.0390 / M. Using the cell's own r_lo instead of r_geo is
+NOT admissible.
 
 **L3b (two-sided Hessian comparison).** Let d = d_{g_2}(P, .) on the
 Cartan-Hadamard plane (no cut locus, L0d), and let
@@ -213,10 +221,11 @@ Gamma^psi_{rho psi} = w'/w. For a distance sum S = T_1 + T_2 (both
     |S_rho psi| <= lam w + 2 w',
     |S_psi psi| <= lam w^2 + 2 w w',
 
-with lam = sum_i kappa coth(kappa d_i,min) and every w, w', d_i,min
-taken as certified interval bounds over the cell. (Each bound is
-|Hess| <= lam on the metric components plus |Gamma . grad S| with
-|S_rho| <= 2, |S_psi| <= 2w.)
+with lam = sum_i kappa_i coth(kappa_i d_i,min), where each kappa_i
+is the PATH-WISE constant of L3a for anchor i (r_geo, not the cell's
+r_lo) and w, w', d_i,min are certified interval bounds over the
+cell. (Each bound is |Hess| <= lam on the metric components plus
+|Gamma . grad S| with |S_rho| <= 2, |S_psi| <= 2w.)
 
 ## L4. Anchor-diamond containment (frozen configuration)
 
@@ -298,10 +307,18 @@ distances to both anchors are certified >= d_i,min > 0:
 1. Certified center values: S(c) in [S_lo, S_hi] via the L1-L5
    flight-time contract (two calls).
 2. Certified gradient at c via the eikonal (L1):
-   dT_i/dpsi = b_i (the solver's certified bracket) and
-   dT_i/drho = sigma_i sqrt(1 - b_i^2 / w^2), with the sign sigma_i
-   determined by the arc geometry when certifiable and otherwise
-   hulled over {-1, +1} (sound, wider).
+   dT_i/dpsi = b_i, where b_i is the certified b* hull the
+   flight-time contract returns -- one-turn calls certify
+   b* in [w(r_floor), b_eq] (L2a), while no-turn and
+   equal-perihelion-corridor calls certify only b* in [0, b_eq];
+   the tangent model must hull the gradient over the WHOLE returned
+   interval (the bisection search bracket is not an enclosure and
+   is never returned). dT_i/drho = sigma_i sqrt(1 - b_i^2 / w^2),
+   with the sign sigma_i determined by the arc geometry when
+   certifiable and otherwise hulled over {-1, +1} (sound, wider).
+   A certified family-wise angle-monotonicity lemma tightening the
+   no-turn hull is an admissible PR-O2 addition if the price table
+   demands it; until then the wide hull is the contract.
 3. Remainder: for x in C, the straight coordinate segment from c
    stays in C, so by L3c
 
@@ -313,13 +330,25 @@ distances to both anchors are certified >= d_i,min > 0:
 4. The hinge is 1-Lipschitz and monotone:
    [Delta t - S]_+ on C is enclosed by applying the hinge to the
    affine model +- E_C endpoints.
-5. The cell integral encloses INT INT r^2 sin theta (affine hinge)
-   either (i) analytically -- the integral of an affine function's
-   positive part over a box with r^2 sin theta enclosed by its exact
-   per-cell interval (both factors monotone on the patch) -- or
-   (ii) by an interval subcell sum that COVERS the cell (directed
-   Riemann enclosure on every subcell, no point sampling). Finite
-   pointwise sampling of the model is not admissible as a bound.
+5. The cell integral carries the COORDINATE JACOBIAN of the
+   (rho, psi) chart: with dr = f drho,
+
+       V = 2 pi INT INT r^2 sin psi dr dpsi
+         = 2 pi INT INT r^2 f(r) sin psi drho dpsi,
+
+   so the per-cell weight is r^2 f sin psi = r (r - 2M) sin psi --
+   strictly increasing in r (hence in rho) for r > M and monotone in
+   psi on the cap, so its exact per-cell interval sits at the cell
+   corners. The cell integral encloses
+   INT INT (r^2 f sin psi) (affine hinge) drho dpsi either
+   (i) analytically -- the integral of an affine function's positive
+   part over the (rho, psi) box with the weight enclosed by its
+   exact per-cell interval -- or (ii) by an interval subcell sum
+   that COVERS the cell (directed Riemann enclosure on every
+   subcell, no point sampling). Dropping the f factor, or applying
+   the affine-over-a-box rule in (r, psi) where the model is affine
+   in rho, is NOT admissible. Finite pointwise sampling of the
+   model is not admissible as a bound.
 
 **L6b (anchor balls).** Cells within optical distance delta_b of an
 anchor (where 1/d blows up) are excised and their contribution
