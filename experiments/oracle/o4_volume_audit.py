@@ -96,6 +96,14 @@ _WRITE_ONCE = (_RESERVATION, _ARTIFACT)
 _RESERVATION_REMOTE = "origin"
 _RESERVATION_REF = "refs/o4/reservation"
 
+#: ...and `origin` is only a local alias (review R3). A fork or mirror
+#: holding the same approved SHA would find ITS OWN reservation ref
+#: empty and claim the same streams on a different server, which
+#: `verify_rev` cannot see because the commit SHA is identical. The
+#: authority is therefore the canonical repository identity, and the
+#: alias must resolve to it.
+_CANONICAL_AUTHORITY = "github.com/lpaiu-cs/causal-spacetime"
+
 #: The frozen configuration. Sizes come from `o4_sizing`, which
 #: derives them from the sampler's own boundaries in one path -- they
 #: are re-asserted here so a desynchronised edit fails loudly.
@@ -209,6 +217,45 @@ def verify_rev(stage: str, freeze_rev: str, state: dict) -> None:
             f"commit the approval does not name")
 
 
+def _normalise_remote(url: str) -> str:
+    """`host/owner/repo`, from any of git's URL spellings."""
+
+    u = url.strip().rstrip("/")
+    for scheme in ("ssh://", "git+ssh://", "git://", "https://",
+                   "http://"):
+        u = u.removeprefix(scheme)
+    u = u.removesuffix(".git").rstrip("/")
+    head, _, rest = u.partition("/")
+    if "@" in head:                       # user@host, incl. scp form
+        head = head.split("@", 1)[1]
+    if ":" in head:                       # scp form host:owner/repo
+        host, _, tail = head.partition(":")
+        head, rest = host, f"{tail}/{rest}" if rest else tail
+    return f"{head}/{rest}".rstrip("/").lower()
+
+
+def reservation_authority() -> str:
+    """The reservation remote's URL, once it is proved to BE the
+    canonical repository and not a same-named local alias."""
+
+    got = subprocess.run(
+        ["git", "remote", "get-url", _RESERVATION_REMOTE],
+        cwd=_REPO, input="", capture_output=True, text=True)
+    if got.returncode != 0:
+        raise SystemExit(
+            f"reservation: no `{_RESERVATION_REMOTE}` remote "
+            f"({got.stderr.strip()}) -- the campaign cannot reach the "
+            f"authority that serialises its streams")
+    url = got.stdout.strip()
+    if _normalise_remote(url) != _CANONICAL_AUTHORITY:
+        raise SystemExit(
+            f"reservation: `{_RESERVATION_REMOTE}` points at {url!r}, "
+            f"not {_CANONICAL_AUTHORITY} -- a fork or mirror has its "
+            f"own empty reservation ref and would let the same "
+            f"streams be drawn twice")
+    return url
+
+
 def remote_reservation() -> str | None:
     """The object at the reservation ref, or None if the ref is free.
 
@@ -216,6 +263,7 @@ def remote_reservation() -> str | None:
     the whole point of the ref is that no checkout may open the
     streams without consulting the one authority."""
 
+    reservation_authority()
     probe = subprocess.run(
         ["git", "ls-remote", _RESERVATION_REMOTE, _RESERVATION_REF],
         cwd=_REPO, capture_output=True, text=True)
@@ -239,6 +287,7 @@ def probe_reservation_namespace() -> None:
     stand in for the claim itself, which must be made by the run that
     draws."""
 
+    reservation_authority()
     probe_ref = _RESERVATION_REF + "-preflight-probe"
     obj = subprocess.run(
         ["git", "commit-tree", "-m", "o4 preflight probe",
@@ -695,6 +744,7 @@ def main() -> None:
                  "node": platform.node(), "pid": os.getpid()},
     }
     record["reservation_ref"] = _RESERVATION_REF
+    record["reservation_authority"] = _CANONICAL_AUTHORITY
     record["reservation_object"] = reserve_remote(record)
     _publish_write_once(_RESERVATION, json.dumps(
         record, ensure_ascii=False, indent=1) + "\n")
@@ -727,6 +777,7 @@ def main() -> None:
                  "approved_freeze_rev": args.freeze_rev.strip().lower(),
                  "reservation": _RESERVATION.name,
                  "reservation_ref": _RESERVATION_REF,
+                 "reservation_authority": _CANONICAL_AUTHORITY,
                  "reservation_object": record["reservation_object"]},
         "result": res,
         "total_wall_s": time.perf_counter() - t0,

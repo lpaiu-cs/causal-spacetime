@@ -284,8 +284,15 @@ fail-closed path leaves no result artifact, and without the
 reservation the already-observed streams would read as fresh on the
 next attempt.
 
-The claim lives on the remote ref `refs/o4/reservation`, not in the
-working tree. A local file is local state — `os.link` serialises only
+The claim lives on the remote ref `refs/o4/reservation` of the
+canonical repository `github.com/lpaiu-cs/causal-spacetime`, not in
+the working tree. The authority is that identity, not the name
+`origin`: `origin` is a per-checkout alias, so a fork or mirror
+holding the same approved SHA would find *its own* reservation ref
+empty and claim the same streams on a different server — which the
+SHA check cannot see, the commit being identical. Every path to the
+ref first proves that `origin` resolves to the canonical identity
+(any of git's URL spellings), and refuses otherwise. A local file is local state — `os.link` serialises only
 processes sharing that directory, so two clones of the same approved
 SHA would each create their own reservation and draw the same streams,
 and an aborted run whose worktree is then discarded would take its

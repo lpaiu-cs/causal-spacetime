@@ -7,10 +7,10 @@
     "experiments/oracle/empirical_bernstein.py": "7a7d865988ad03ad3a8d44b200ec99c4fc45ce8e2dc20a1dcd4f3850b7076500",
     "experiments/oracle/exact_binomial.py": "f133421749a2a2b2f22ac69e46687593cac0b8fea272a303b4ca5bf93256ed85",
     "experiments/oracle/o4_sizing.py": "424dfcf74743aeb1071951ed543643b8ba2876089477716e624506719836603a",
-    "experiments/oracle/o4_volume_audit.py": "c0c30c4ebcec5480f9c38fe5fbec8482af4ea87fe3d5799025d976cda40421b9",
+    "experiments/oracle/o4_volume_audit.py": "d6e52c206dd69941fc8ae30687381ceda07c7af2c44efdb72495a916735d146b",
     "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
     "experiments/positive_control/probe_seed_ledger.py": "8aba33b77492134336bdeffcceebadcd0b1ab65d9c0a8d952e5235a48f4fab5e",
-    "docs/prereg/p14_o4_volume_audit.md": "8cc5eb173c368dec20412e88f65b2f1fd28162d350f18d93e699f23ff9371c62",
+    "docs/prereg/p14_o4_volume_audit.md": "cfaf4f1d57239fe181f54b20c010d1d25e7257820fb7a646f52a29fec04ae93d",
     "docs/prereg/p14_o4_sizing.json": "7a7d5328d2b71ff756898f1fb5169d076f7c276ad47128451b34f65fedd194c0",
     "docs/prereg/p14_o3_volume.json": "aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f",
     "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"

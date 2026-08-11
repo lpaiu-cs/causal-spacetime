@@ -468,7 +468,62 @@ def _fake_remote(tmp_path, monkeypatch):
                 ["remote", "add", "origin", str(bare)]):
         subprocess.run(["git", "-C", str(work), *cmd], check=True)
     monkeypatch.setattr(o4, "_REPO", work)
+    url = subprocess.run(["git", "-C", str(work), "remote", "get-url",
+                          "origin"], check=True, capture_output=True,
+                         text=True).stdout.strip()
+    monkeypatch.setattr(o4, "_CANONICAL_AUTHORITY",
+                        o4._normalise_remote(url))
     return work
+
+
+@pytest.mark.parametrize("url", [
+    "https://github.com/lpaiu-cs/causal-spacetime.git",
+    "https://github.com/lpaiu-cs/causal-spacetime",
+    "https://lpaiu-cs@github.com/lpaiu-cs/causal-spacetime.git",
+    "git@github.com:lpaiu-cs/causal-spacetime.git",
+    "ssh://git@github.com/lpaiu-cs/causal-spacetime.git",
+    "git://github.com/lpaiu-cs/causal-spacetime.git",
+    "https://github.com/lpaiu-cs/causal-spacetime/",
+])
+def test_every_spelling_of_the_canonical_repository_is_accepted(url):
+    assert o4._normalise_remote(url) == o4._CANONICAL_AUTHORITY
+
+
+@pytest.mark.parametrize("url", [
+    "https://github.com/someone-else/causal-spacetime.git",
+    "git@github.com:lpaiu-cs/causal-spacetime-mirror.git",
+    "https://gitlab.com/lpaiu-cs/causal-spacetime.git",
+    "/srv/mirrors/causal-spacetime.git",
+])
+def test_a_fork_or_mirror_is_not_the_reservation_authority(url):
+    assert o4._normalise_remote(url) != o4._CANONICAL_AUTHORITY
+
+
+def test_the_authority_is_an_identity_not_a_local_alias(monkeypatch,
+                                                        tmp_path):
+    """`origin` is a per-checkout alias: a fork or mirror holding the
+    same approved SHA would find ITS OWN reservation ref empty and
+    claim the same streams elsewhere, which the SHA check cannot see
+    (review R3)."""
+
+    work = _fake_remote(tmp_path, monkeypatch)
+    o4.reservation_authority()          # the patched local authority
+    monkeypatch.setattr(o4, "_CANONICAL_AUTHORITY",
+                        "github.com/lpaiu-cs/causal-spacetime")
+    with pytest.raises(SystemExit, match="not github.com/lpaiu-cs"):
+        o4.reservation_authority()
+    # and no path to the ref may skip the identity check
+    with pytest.raises(SystemExit, match="not github.com/lpaiu-cs"):
+        o4.remote_reservation()
+    with pytest.raises(SystemExit, match="not github.com/lpaiu-cs"):
+        o4.reserve_remote({"attempt": 1})
+    with pytest.raises(SystemExit, match="not github.com/lpaiu-cs"):
+        o4.probe_reservation_namespace()
+
+    subprocess.run(["git", "-C", str(work), "remote", "remove",
+                    "origin"], check=True)
+    with pytest.raises(SystemExit, match="no `origin` remote"):
+        o4.reservation_authority()
 
 
 def test_reservation_is_global_not_local_to_a_checkout(monkeypatch,
@@ -497,9 +552,8 @@ def test_reservation_is_global_not_local_to_a_checkout(monkeypatch,
 
 def test_an_unreachable_authority_refuses_rather_than_assumes_free(
         monkeypatch, tmp_path):
-    work = _fake_remote(tmp_path, monkeypatch)
-    subprocess.run(["git", "-C", str(work), "remote", "set-url",
-                    "origin", str(tmp_path / "gone.git")], check=True)
+    _fake_remote(tmp_path, monkeypatch)
+    (tmp_path / "remote.git").rename(tmp_path / "moved.git")
     with pytest.raises(SystemExit, match="reservation authority"):
         o4.remote_reservation()
 
@@ -526,8 +580,7 @@ def test_preflight_proves_the_claim_can_actually_be_made(monkeypatch,
                            "origin"], capture_output=True, text=True)
     assert "probe" not in left.stdout, "the probe ref was not cleaned"
 
-    subprocess.run(["git", "-C", str(work), "remote", "set-url",
-                    "origin", str(tmp_path / "gone.git")], check=True)
+    (tmp_path / "remote.git").rename(tmp_path / "moved.git")
     with pytest.raises(SystemExit, match="must not start"):
         o4.probe_reservation_namespace()
 
