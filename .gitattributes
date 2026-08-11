@@ -12,3 +12,7 @@ experiments/positive_control/*.py text eol=lf
 experiments/oracle/*.py text eol=lf
 docs/theory/*.md text eol=lf
 tests/*.py text eol=lf
+# digest-pinned by the O3 freeze manifest (dependency-lock surface):
+# without eol=lf an autocrlf=true checkout materializes CRLF and the
+# raw SHA-256 stops being checkout-independent
+pyproject.toml text eol=lf

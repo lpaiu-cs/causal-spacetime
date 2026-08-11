@@ -45,6 +45,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -159,6 +160,63 @@ def preflight() -> dict:
     return {"manifest": manifest, "git": state}
 
 
+def _serialize_result(res: dict) -> dict:
+    """The certified interval's endpoints serialized OUTWARD
+    (lo_float/hi_float, never plain float()): a nearest-rounding
+    conversion can move the lower endpoint up or the upper endpoint
+    down, after which the stored numbers no longer contain the true
+    value and the artifact stops being a certified interval (review
+    R1). This artifact is the frozen run's only certified result, so
+    the binary64 pair must still enclose the MPFR interval."""
+
+    v = res["v"]
+    return {
+        "v_lo": v.lo_float(), "v_hi": v.hi_float(),
+        "ratio": res["ratio"],
+        "status": res["status"],
+        "termination_reason": res["termination_reason"],
+        "calls": res["calls"], "cells": res["cells"],
+        "wall_s": res["wall_s"],
+        "max_depth_reached": res["max_depth_reached"],
+        "cells_at_max_depth": res["cells_at_max_depth"],
+        "uncosted_cells": res["uncosted_cells"],
+        "cell_counts_by_mode": res["modes"],
+        "raw_width_by_mode": res["raw_width_by_mode"],
+        "raw_total_before_intersection":
+            res["raw_total_before_intersection"],
+        "certified_total_after_intersection":
+            res["certified_total_after_intersection"],
+        "intersection_active": res["intersection_active"],
+    }
+
+
+def _publish_write_once(path: Path, payload: str) -> None:
+    """Atomic no-clobber publication (review R1): the payload is
+    fully written and fsynced to a per-process temp file in the SAME
+    directory, then hard-linked to the destination -- os.link fails
+    atomically if the destination exists, so a concurrent second run
+    can never overwrite the first observation, and a crash mid-write
+    leaves only the temp file, never a truncated destination that a
+    later preflight would mistake for the write-once result."""
+
+    tmp = path.with_name(f"{path.name}.tmp.{os.getpid()}")
+    try:
+        with open(tmp, "w", encoding="utf-8", newline="\n") as f:
+            f.write(payload)
+            f.flush()
+            os.fsync(f.fileno())
+        try:
+            os.link(tmp, path)
+        except FileExistsError:
+            raise SystemExit(
+                f"publish: {path.name} already exists -- the frozen "
+                f"volume is write-once and the first observation "
+                f"stands; this run's payload is NOT published"
+            ) from None
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
@@ -201,7 +259,6 @@ def main() -> None:
             "the tree changed underneath the campaign -- refusing "
             "to write a result with broken lineage")
 
-    v = res["v"]
     art = {
         "stage": ("O3: certified diamond volume of the frozen "
                   "anchors (12, 18, 8.5)M"),
@@ -210,31 +267,14 @@ def main() -> None:
         "host": {"machine": platform.machine(),
                  "system": platform.system()},
         "code": {"start": start, "end": end},
-        "result": {
-            "v_lo": float(v.lo), "v_hi": float(v.hi),
-            "ratio": res["ratio"],
-            "status": res["status"],
-            "termination_reason": res["termination_reason"],
-            "calls": res["calls"], "cells": res["cells"],
-            "wall_s": res["wall_s"],
-            "max_depth_reached": res["max_depth_reached"],
-            "cells_at_max_depth": res["cells_at_max_depth"],
-            "uncosted_cells": res["uncosted_cells"],
-            "cell_counts_by_mode": res["modes"],
-            "raw_width_by_mode": res["raw_width_by_mode"],
-            "raw_total_before_intersection":
-                res["raw_total_before_intersection"],
-            "certified_total_after_intersection":
-                res["certified_total_after_intersection"],
-            "intersection_active": res["intersection_active"],
-        },
+        "result": _serialize_result(res),
         "curve": res["curve"],
         "total_wall_s": time.perf_counter() - t0,
     }
-    with open(_ARTIFACT, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(art, f, ensure_ascii=False, indent=1)
-        f.write("\n")
-    print(f"result: V=[{float(v.lo):.6f}, {float(v.hi):.6f}] "
+    payload = json.dumps(art, ensure_ascii=False, indent=1) + "\n"
+    _publish_write_once(_ARTIFACT, payload)
+    r = art["result"]
+    print(f"result: V=[{r['v_lo']:.6f}, {r['v_hi']:.6f}] "
           f"ratio={res['ratio']:.6f} {res['status']} "
           f"({res['termination_reason']})")
     print(f"artifact: {_ARTIFACT}")

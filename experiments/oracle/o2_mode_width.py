@@ -138,7 +138,8 @@ def main() -> None:
                  "python": platform.python_version()},
         "final": {
             "status": res["status"],
-            "v_lo": float(v.lo), "v_hi": float(v.hi),
+            # OUTWARD endpoints (PR #67 review R1)
+            "v_lo": v.lo_float(), "v_hi": v.hi_float(),
             "ratio": res["ratio"], "calls": res["calls"],
             "cells": res["cells"],
             "cell_counts_by_mode": res["modes"],

@@ -299,8 +299,10 @@ def _measure() -> dict:
     print(f"MC diagnostic: {mc['estimate']:.4f} +- {mc['se']:.4f} "
           f"overlap={overlap}", flush=True)
     return {
-        "final": {"status": res["status"], "v_lo": float(v.lo),
-                  "v_hi": float(v.hi), "ratio": res["ratio"],
+        # OUTWARD endpoints: serialized intervals must still contain
+        # the true value (PR #67 review R1)
+        "final": {"status": res["status"], "v_lo": v.lo_float(),
+                  "v_hi": v.hi_float(), "ratio": res["ratio"],
                   "calls": res["calls"], "cells": res["cells"],
                   "modes": res["modes"],
                   "raw_width_by_mode": res["raw_width_by_mode"],

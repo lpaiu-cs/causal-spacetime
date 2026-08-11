@@ -475,9 +475,15 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         if not (total.certainly_gt(Iv(0)) and denom > 0):
             return total
         alive = [c for c in cells if not c.dead]
+        # OUTWARD-rounded endpoints (lo_float/hi_float): these
+        # samples end up serialized in artifacts, and a nearest
+        # float() can shrink a certified interval inward -- after
+        # which it no longer contains the true value (review R1 on
+        # the O3 freeze)
         sample = {"calls": st.calls, "cells": len(alive),
                   "ratio": total.width() / denom,
-                  "v_lo": float(total.lo), "v_hi": float(total.hi),
+                  "v_lo": total.lo_float(),
+                  "v_hi": total.hi_float(),
                   "raw_width": raw.width(),
                   "raw_width_by_mode": _raw_width_by_mode(alive),
                   "wall_s": time.perf_counter() - st.t0}

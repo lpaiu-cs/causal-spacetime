@@ -112,6 +112,70 @@ def test_preflight_refuses_a_dirty_tree(monkeypatch):
         o3.preflight()
 
 
+def test_result_serialization_is_outward():
+    """R1: the artifact's binary64 endpoints must still ENCLOSE the
+    MPFR interval -- a nearest float() can shrink a certified
+    interval inward, after which the stored numbers no longer
+    contain the true value. 1/3 is not binary64-representable, so
+    both directions must move strictly outward."""
+
+    from certified_interval import Iv
+    third = Iv(1) / Iv(3)
+    res = {"v": third, "ratio": 0.0, "status": "target-met",
+           "termination_reason": "target-met", "calls": 1,
+           "cells": 1, "wall_s": 0.0, "max_depth_reached": 0,
+           "cells_at_max_depth": 0, "uncosted_cells": 0,
+           "modes": {}, "raw_width_by_mode": {},
+           "raw_total_before_intersection": 0.0,
+           "certified_total_after_intersection": 0.0,
+           "intersection_active": False}
+    out = o3._serialize_result(res)
+    import gmpy2
+    assert gmpy2.mpfr(out["v_lo"], 200) <= third.lo
+    assert gmpy2.mpfr(out["v_hi"], 200) >= third.hi
+    assert out["v_lo"] < out["v_hi"]
+
+
+def test_publish_is_atomic_and_write_once(tmp_path):
+    """R1: publication must be no-clobber ATOMICALLY -- the exists()
+    check in preflight is not linked to the write, and a plain 'w'
+    open would let a second long run overwrite the first
+    observation, while a crash mid-write would leave a truncated
+    destination that preflight then treats as the result. The
+    hard-link publish fails on an existing destination and never
+    exposes a partial file."""
+
+    dst = tmp_path / "result.json"
+    o3._publish_write_once(dst, '{"first": true}\n')
+    assert json.loads(dst.read_text(encoding="utf-8")) == {
+        "first": True}
+    with pytest.raises(SystemExit, match="write-once"):
+        o3._publish_write_once(dst, '{"second": true}\n')
+    # the first observation stands and no temp litter remains
+    assert json.loads(dst.read_text(encoding="utf-8")) == {
+        "first": True}
+    assert list(tmp_path.iterdir()) == [dst]
+
+
+def test_pyproject_is_lf_pinned_for_the_manifest():
+    """R1: every digest-pinned path must be eol=lf so the raw sha256
+    is checkout-independent -- pyproject.toml is in the manifest, so
+    an autocrlf checkout without the attribute would materialize
+    CRLF and fail preflight on an exact freeze checkout."""
+
+    attrs = (_REPO / ".gitattributes").read_text(encoding="utf-8")
+    manifest = json.loads(o3._MANIFEST.read_text(encoding="utf-8"))
+    for rel in manifest["files"]:
+        name = rel.rsplit("/", 1)[-1]
+        parent = rel.rsplit("/", 1)[0] if "/" in rel else ""
+        covered = any(
+            line.split()[0] in (rel, name, f"{parent}/*{Path(name).suffix}")
+            and "eol=lf" in line
+            for line in attrs.splitlines()
+            if line.strip() and not line.startswith("#"))
+        assert covered, rel
+
+
 def test_cli_is_fail_closed():
     """Unknown arguments exit 2 and --help exits 0, both before any
     freeze machinery runs -- same contract as the S4/S5 runners."""
