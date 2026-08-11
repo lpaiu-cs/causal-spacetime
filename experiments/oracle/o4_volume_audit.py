@@ -256,6 +256,33 @@ def reservation_authority() -> str:
     return url
 
 
+def _make_commit(message: str) -> str:
+    """A commit object over the empty tree, carrying `message`.
+
+    The identity is supplied explicitly rather than read from git's
+    configuration: the reservation must not depend on the ambient
+    `user.name`/`user.email` of whatever machine runs the campaign,
+    and a checkout with none configured (CI is one) would otherwise
+    fail at `commit-tree` -- which CI duly caught."""
+
+    env = dict(os.environ)
+    for role in ("AUTHOR", "COMMITTER"):
+        env[f"GIT_{role}_NAME"] = "o4-reservation"
+        env[f"GIT_{role}_EMAIL"] = "o4-reservation@invalid"
+    empty_tree = subprocess.run(
+        ["git", "hash-object", "-t", "tree", "--stdin"], cwd=_REPO,
+        input="", capture_output=True, text=True, check=True
+    ).stdout.strip()
+    made = subprocess.run(
+        ["git", "commit-tree", empty_tree, "-m", message], cwd=_REPO,
+        input="", capture_output=True, text=True, env=env)
+    if made.returncode != 0:
+        raise SystemExit(
+            f"reservation: `git commit-tree` failed: "
+            f"{made.stderr.strip()}")
+    return made.stdout.strip()
+
+
 def remote_reservation() -> str | None:
     """The object at the reservation ref, or None if the ref is free.
 
@@ -289,13 +316,7 @@ def probe_reservation_namespace() -> None:
 
     reservation_authority()
     probe_ref = _RESERVATION_REF + "-preflight-probe"
-    obj = subprocess.run(
-        ["git", "commit-tree", "-m", "o4 preflight probe",
-         subprocess.run(["git", "hash-object", "-t", "tree", "--stdin"],
-                        cwd=_REPO, input="", capture_output=True,
-                        text=True, check=True).stdout.strip()],
-        cwd=_REPO, input="", capture_output=True, text=True,
-        check=True).stdout.strip()
+    obj = _make_commit("o4 preflight probe")
     push = subprocess.run(
         ["git", "push", "--force", _RESERVATION_REMOTE,
          f"{obj}:{probe_ref}"],
@@ -324,24 +345,14 @@ def reserve_remote(payload: dict) -> str:
     carrying this run's payload -- so `--force-with-lease=<ref>:`
     ("the ref must not exist") rejects every later attempt."""
 
-    def git(*args: str) -> str:
-        out = subprocess.run(["git", *args], cwd=_REPO, input="",
-                             capture_output=True, text=True)
-        if out.returncode != 0:
-            raise SystemExit(
-                f"reservation: `git {' '.join(args)}` failed: "
-                f"{out.stderr.strip()}")
-        return out.stdout.strip()
-
     if (held := remote_reservation()) is not None:
         raise SystemExit(
             f"reservation: {_RESERVATION_REF} is already held by "
             f"{held} -- a campaign has already opened these streams "
             f"from some checkout; the seeds are spent whether or not "
             f"that run published a result")
-    empty_tree = git("hash-object", "-t", "tree", "--stdin")
-    obj = git("commit-tree", empty_tree, "-m",
-              json.dumps(payload, ensure_ascii=False, sort_keys=True))
+    obj = _make_commit(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True))
     push = subprocess.run(
         ["git", "push", f"--force-with-lease={_RESERVATION_REF}:",
          _RESERVATION_REMOTE, f"{obj}:{_RESERVATION_REF}"],

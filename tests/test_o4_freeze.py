@@ -68,6 +68,22 @@ def test_environment_lock_covers_the_whole_apparatus(monkeypatch):
 _REV = "0" * 40
 
 
+@pytest.fixture
+def offline(monkeypatch):
+    """Preflight's later steps talk to the real reservation authority
+    -- including a push. Tests that are about the EARLIER checks must
+    not reach it: CI caught `test_preflight_refuses_any_commit...`
+    pushing a probe ref to the live repository."""
+
+    def forbidden(*a, **k):                          # pragma: no cover
+        raise AssertionError("this test must not touch the remote")
+
+    monkeypatch.setattr(o4, "remote_reservation", lambda: None)
+    monkeypatch.setattr(o4, "probe_reservation_namespace",
+                        lambda: None)
+    monkeypatch.setattr(o4, "reserve_remote", forbidden)
+
+
 def test_freeze_commit_carries_no_result():
     assert not o4._ARTIFACT.exists()
     assert not o4._RESERVATION.exists()
@@ -75,7 +91,7 @@ def test_freeze_commit_carries_no_result():
 
 @pytest.mark.parametrize("which", [0, 1])
 def test_preflight_refuses_when_a_write_once_output_exists(
-        monkeypatch, tmp_path, which):
+        monkeypatch, tmp_path, which, offline):
     """Both the reservation and the result are terminal: the audit is
     write-once, so a second attempt on the same streams is refused
     whether or not the first one produced a verdict."""
@@ -93,7 +109,7 @@ def test_preflight_refuses_when_a_write_once_output_exists(
         o4.preflight(_REV)
 
 
-def test_preflight_refuses_a_dirty_tree(monkeypatch):
+def test_preflight_refuses_a_dirty_tree(monkeypatch, offline):
     monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(o4, "_git_state",
                         lambda: {"rev": _REV, "dirty": True})
@@ -102,7 +118,7 @@ def test_preflight_refuses_a_dirty_tree(monkeypatch):
 
 
 def test_preflight_refuses_any_commit_the_approval_does_not_name(
-        monkeypatch):
+        monkeypatch, offline):
     """Digest verification cannot certify the manifest itself: a later
     commit that edits a protocol file and re-pins the manifest in the
     SAME commit passes every digest check. The approved SHA is the only
@@ -118,6 +134,23 @@ def test_preflight_refuses_any_commit_the_approval_does_not_name(
             o4.preflight(junk)
     # case-insensitive, whitespace-tolerant, but otherwise exact
     o4.preflight("  " + "A" * 40 + "\n")
+
+
+def test_preflight_does_consult_the_authority(monkeypatch):
+    """Guard against the `offline` fixture hiding a regression: a
+    preflight that clears every local check must still have asked the
+    authority and proved it can write there."""
+
+    called = []
+    monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": _REV, "dirty": False})
+    monkeypatch.setattr(o4, "remote_reservation",
+                        lambda: called.append("read"))
+    monkeypatch.setattr(o4, "probe_reservation_namespace",
+                        lambda: called.append("probe"))
+    o4.preflight(_REV)
+    assert called == ["read", "probe"]
 
 
 def test_campaign_refuses_to_run_without_the_approved_sha(monkeypatch):
