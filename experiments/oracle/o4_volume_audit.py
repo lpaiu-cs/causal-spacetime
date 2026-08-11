@@ -85,6 +85,17 @@ _RESERVATION = _REPO / "docs" / "prereg" / "p14_o4_reservation.json"
 #: the entry/exit clean-tree checks ignore exactly these two.
 _WRITE_ONCE = (_RESERVATION, _ARTIFACT)
 
+#: The reservation's AUTHORITATIVE home (review R2). A file in the
+#: working tree is local state: `os.link` serialises only processes
+#: sharing that directory, so two clones of the same approved SHA
+#: would each create their own reservation and observe the same
+#: streams, and a fail-closed abort followed by a discarded worktree
+#: would leave the ledger reading `fresh` on seeds that were already
+#: drawn from. The remote ref is one object shared by every checkout,
+#: and its update is atomic at the server.
+_RESERVATION_REMOTE = "origin"
+_RESERVATION_REF = "refs/o4/reservation"
+
 #: The frozen configuration. Sizes come from `o4_sizing`, which
 #: derives them from the sampler's own boundaries in one path -- they
 #: are re-asserted here so a desynchronised edit fails loudly.
@@ -198,6 +209,105 @@ def verify_rev(stage: str, freeze_rev: str, state: dict) -> None:
             f"commit the approval does not name")
 
 
+def remote_reservation() -> str | None:
+    """The object at the reservation ref, or None if the ref is free.
+
+    A network or configuration failure is FATAL, never "assume free":
+    the whole point of the ref is that no checkout may open the
+    streams without consulting the one authority."""
+
+    probe = subprocess.run(
+        ["git", "ls-remote", _RESERVATION_REMOTE, _RESERVATION_REF],
+        cwd=_REPO, capture_output=True, text=True)
+    if probe.returncode != 0:
+        raise SystemExit(
+            f"cannot read {_RESERVATION_REMOTE}/{_RESERVATION_REF}: "
+            f"{probe.stderr.strip()} -- refusing to open the campaign "
+            f"streams without reaching the reservation authority")
+    line = probe.stdout.strip()
+    return line.split()[0] if line else None
+
+
+def probe_reservation_namespace() -> None:
+    """Prove at PREFLIGHT that the reservation can actually be made.
+
+    Push permission and the server's ref-namespace policy are only
+    exercised by a real push, so without this the first thing a
+    campaign could learn -- after clearing every other check -- is
+    that it cannot claim its streams. The probe uses a DIFFERENT ref
+    and is deleted immediately; it observes nothing, and it cannot
+    stand in for the claim itself, which must be made by the run that
+    draws."""
+
+    probe_ref = _RESERVATION_REF + "-preflight-probe"
+    obj = subprocess.run(
+        ["git", "commit-tree", "-m", "o4 preflight probe",
+         subprocess.run(["git", "hash-object", "-t", "tree", "--stdin"],
+                        cwd=_REPO, input="", capture_output=True,
+                        text=True, check=True).stdout.strip()],
+        cwd=_REPO, input="", capture_output=True, text=True,
+        check=True).stdout.strip()
+    push = subprocess.run(
+        ["git", "push", "--force", _RESERVATION_REMOTE,
+         f"{obj}:{probe_ref}"],
+        cwd=_REPO, capture_output=True, text=True)
+    if push.returncode != 0:
+        raise SystemExit(
+            f"preflight: cannot write {_RESERVATION_REMOTE}/"
+            f"{probe_ref}: {push.stderr.strip()} -- the campaign could "
+            f"not claim its streams, so it must not start")
+    drop = subprocess.run(
+        ["git", "push", _RESERVATION_REMOTE, f":{probe_ref}"],
+        cwd=_REPO, capture_output=True, text=True)
+    if drop.returncode != 0:
+        print(f"warning: left {probe_ref} behind on "
+              f"{_RESERVATION_REMOTE}; delete it manually "
+              f"({drop.stderr.strip()})")
+
+
+def reserve_remote(payload: dict) -> str:
+    """Claim the campaign streams globally, before the first draw.
+
+    Create-only semantics need care: pushing the freeze commit itself
+    would be a no-op "everything up-to-date" against an existing
+    reservation at the same SHA, i.e. a silent second claim. The
+    pushed object is therefore unique to this ATTEMPT -- a commit
+    carrying this run's payload -- so `--force-with-lease=<ref>:`
+    ("the ref must not exist") rejects every later attempt."""
+
+    def git(*args: str) -> str:
+        out = subprocess.run(["git", *args], cwd=_REPO, input="",
+                             capture_output=True, text=True)
+        if out.returncode != 0:
+            raise SystemExit(
+                f"reservation: `git {' '.join(args)}` failed: "
+                f"{out.stderr.strip()}")
+        return out.stdout.strip()
+
+    if (held := remote_reservation()) is not None:
+        raise SystemExit(
+            f"reservation: {_RESERVATION_REF} is already held by "
+            f"{held} -- a campaign has already opened these streams "
+            f"from some checkout; the seeds are spent whether or not "
+            f"that run published a result")
+    empty_tree = git("hash-object", "-t", "tree", "--stdin")
+    obj = git("commit-tree", empty_tree, "-m",
+              json.dumps(payload, ensure_ascii=False, sort_keys=True))
+    push = subprocess.run(
+        ["git", "push", f"--force-with-lease={_RESERVATION_REF}:",
+         _RESERVATION_REMOTE, f"{obj}:{_RESERVATION_REF}"],
+        cwd=_REPO, capture_output=True, text=True)
+    if push.returncode != 0:
+        raise SystemExit(
+            f"reservation: could not claim {_RESERVATION_REF}: "
+            f"{push.stderr.strip()} -- another checkout won the race")
+    if remote_reservation() != obj:
+        raise SystemExit(
+            "reservation: the ref does not hold this attempt's object "
+            "-- refusing to draw on streams reserved by someone else")
+    return obj
+
+
 def preflight(freeze_rev: str) -> dict:
     manifest = verify_freeze("preflight")
     state = _git_state()
@@ -212,6 +322,12 @@ def preflight(freeze_rev: str) -> dict:
                 f"preflight: {path.name} already exists -- a campaign "
                 f"was already started on these streams; the audit is "
                 f"write-once and the first attempt stands")
+    if (held := remote_reservation()) is not None:
+        raise SystemExit(
+            f"preflight: {_RESERVATION_REF} is already held by {held} "
+            f"-- these streams were opened by some checkout and are "
+            f"spent regardless of whether a result was published")
+    probe_reservation_namespace()
     for name in ("g1_audit", "g2_leakage"):
         assert_fresh_scalar(name)
     return {"manifest": manifest, "git": state}
@@ -548,8 +664,9 @@ def main() -> None:
     if args.preflight:
         print("preflight PASS: freeze digests, environment lock, "
               f"clean tree at the approved {checks['git']['rev'][:9]}, "
-              "no reservation, no result artifact, campaign seeds "
-              "fresh. Nothing was observed.")
+              f"no local reservation, {_RESERVATION_REMOTE}/"
+              f"{_RESERVATION_REF} free, no result artifact, campaign "
+              "seeds fresh. Nothing was observed.")
         return
 
     start = _git_state()
@@ -560,10 +677,11 @@ def main() -> None:
     # reads the ledger and returns; it creates no persistent state, so
     # without this a run that aborts on a fail-closed path -- an
     # undecided `causal_relation`, a non-finite flight time -- would
-    # leave already-observed streams looking fresh, and two concurrent
-    # runs could both pass preflight. `os.link` is atomic, so exactly
-    # one process may ever start these streams, whatever the outcome.
-    _publish_write_once(_RESERVATION, json.dumps({
+    # leave already-observed streams looking fresh. The claim is made
+    # on the REMOTE ref, not in this working tree (review R2): a local
+    # file would not survive a discarded worktree and would not be
+    # seen by a second clone of the same approved SHA.
+    record = {
         "stage": "O4",
         "note": ("streams opened; observing ANY output spends them, "
                  "so this reservation stands even if the run aborts "
@@ -573,8 +691,13 @@ def main() -> None:
         "g3_seed_lineage": "inherited from g1_audit, no seed of its own",
         "environment": _environment(),
         "host": {"machine": platform.machine(),
-                 "system": platform.system()},
-    }, ensure_ascii=False, indent=1) + "\n")
+                 "system": platform.system(),
+                 "node": platform.node(), "pid": os.getpid()},
+    }
+    record["reservation_ref"] = _RESERVATION_REF
+    record["reservation_object"] = reserve_remote(record)
+    _publish_write_once(_RESERVATION, json.dumps(
+        record, ensure_ascii=False, indent=1) + "\n")
 
     def show(stage: str, done: int, budget: _Budget) -> None:
         print(f"  {stage} {done:,} pts  calls={budget.calls:,}  "
@@ -602,7 +725,9 @@ def main() -> None:
                  "system": platform.system()},
         "code": {"start": start, "end": end,
                  "approved_freeze_rev": args.freeze_rev.strip().lower(),
-                 "reservation": _RESERVATION.name},
+                 "reservation": _RESERVATION.name,
+                 "reservation_ref": _RESERVATION_REF,
+                 "reservation_object": record["reservation_object"]},
         "result": res,
         "total_wall_s": time.perf_counter() - t0,
     }

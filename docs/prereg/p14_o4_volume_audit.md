@@ -276,14 +276,37 @@ artifact as provenance for samples G1 produced; the scalar is
 withdrawn **unspent** and returns to the unallocated pool.
 
 **Reservation.** `assert_fresh_scalar` reads the ledger and returns; it
-creates no persistent state. The campaign therefore publishes a
-write-once `p14_o4_reservation.json` **before its first draw**, and
-preflight refuses when it exists. This is what makes "observing any
-output spends the seed" enforceable rather than aspirational: a run
-that aborts on a fail-closed path leaves no result artifact, and
-without the reservation the already-observed streams would read as
-fresh on the next attempt. Publication is by `os.link`, so of two
-concurrent runs at most one may ever open these streams.
+creates no persistent state. The campaign therefore claims its streams
+**before its first draw**, and preflight refuses when the claim is
+already held. This is what makes "observing any output spends the
+seed" enforceable rather than aspirational: a run that aborts on a
+fail-closed path leaves no result artifact, and without the
+reservation the already-observed streams would read as fresh on the
+next attempt.
+
+The claim lives on the remote ref `refs/o4/reservation`, not in the
+working tree. A local file is local state — `os.link` serialises only
+processes sharing that directory, so two clones of the same approved
+SHA would each create their own reservation and draw the same streams,
+and an aborted run whose worktree is then discarded would take its
+reservation with it. Create-only semantics need one detail: pushing
+the freeze commit itself would be a no-op *everything up-to-date*
+against an existing reservation at the same SHA, so the pushed object
+is unique to the **attempt** (a commit carrying that run's payload)
+and `--force-with-lease=refs/o4/reservation:` — "the ref must not
+exist" — rejects every later attempt. Reading the ref is fail-closed:
+an unreachable remote refuses the run rather than assuming the
+streams are free. Preflight additionally pushes and deletes a
+throwaway probe ref, so that push rights and the server's namespace
+policy — which only a real push exercises — fail *before* the run
+rather than after every other check has cleared. `p14_o4_reservation.json` remains as the local,
+committable record of the claim, and carries the reserving object.
+
+What this does and does not buy: it makes one authority answer "have
+these streams been opened?" for every checkout, which local state
+cannot. It is not tamper-proof — a ref can be deleted by anyone with
+push rights. The durable record remains the results (or abort) commit;
+the ref prevents the accident, not the decision.
 
 ## 10. Freeze identity
 

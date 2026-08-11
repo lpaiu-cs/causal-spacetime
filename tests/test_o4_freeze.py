@@ -453,6 +453,85 @@ def test_g3_declares_the_lineage_it_actually_has():
     assert "inherited from G1" in out["seed_lineage"]
 
 
+def _fake_remote(tmp_path, monkeypatch):
+    """A real bare repo standing in for `origin`, so the reservation's
+    create-only semantics are exercised against git itself rather than
+    against a mock of what git is assumed to do."""
+
+    bare, work = tmp_path / "remote.git", tmp_path / "work"
+    subprocess.run(["git", "init", "-q", "--bare", str(bare)],
+                   check=True)
+    subprocess.run(["git", "init", "-q", str(work)], check=True)
+    for cmd in (["config", "user.email", "o4@test"],
+                ["config", "user.name", "o4"],
+                ["commit", "-q", "--allow-empty", "-m", "freeze"],
+                ["remote", "add", "origin", str(bare)]):
+        subprocess.run(["git", "-C", str(work), *cmd], check=True)
+    monkeypatch.setattr(o4, "_REPO", work)
+    return work
+
+
+def test_reservation_is_global_not_local_to_a_checkout(monkeypatch,
+                                                       tmp_path):
+    """A working-tree file serialises only processes sharing that
+    directory: two clones of the same approved SHA would each make
+    their own reservation, and an aborted run whose worktree is
+    discarded would take its reservation with it (review R2). The
+    claim therefore lives on a remote ref."""
+
+    _fake_remote(tmp_path, monkeypatch)
+    assert o4.remote_reservation() is None
+    first = o4.reserve_remote({"attempt": 1})
+    assert o4.remote_reservation() == first
+
+    # a second checkout -- fresh tree, same approved commit, no local
+    # reservation file anywhere -- must still be refused
+    with pytest.raises(SystemExit, match="already held"):
+        o4.reserve_remote({"attempt": 2})
+    # ... and refused even when it pushes the very same payload, which
+    # a plain `git push` would have accepted as "everything up-to-date"
+    with pytest.raises(SystemExit, match="already held"):
+        o4.reserve_remote({"attempt": 1})
+    assert o4.remote_reservation() == first
+
+
+def test_an_unreachable_authority_refuses_rather_than_assumes_free(
+        monkeypatch, tmp_path):
+    work = _fake_remote(tmp_path, monkeypatch)
+    subprocess.run(["git", "-C", str(work), "remote", "set-url",
+                    "origin", str(tmp_path / "gone.git")], check=True)
+    with pytest.raises(SystemExit, match="reservation authority"):
+        o4.remote_reservation()
+
+
+def test_preflight_refuses_when_the_streams_are_already_claimed(
+        monkeypatch):
+    monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": _REV, "dirty": False})
+    monkeypatch.setattr(o4, "remote_reservation", lambda: "d" * 40)
+    with pytest.raises(SystemExit, match="already held"):
+        o4.preflight(_REV)
+
+
+def test_preflight_proves_the_claim_can_actually_be_made(monkeypatch,
+                                                         tmp_path):
+    """Push rights and the server's ref-namespace policy are only
+    exercised by a real push; without the probe, a campaign could
+    clear every check and then fail to claim its streams."""
+
+    work = _fake_remote(tmp_path, monkeypatch)
+    o4.probe_reservation_namespace()
+    left = subprocess.run(["git", "-C", str(work), "ls-remote",
+                           "origin"], capture_output=True, text=True)
+    assert "probe" not in left.stdout, "the probe ref was not cleaned"
+
+    subprocess.run(["git", "-C", str(work), "remote", "set-url",
+                    "origin", str(tmp_path / "gone.git")], check=True)
+    with pytest.raises(SystemExit, match="must not start"):
+        o4.probe_reservation_namespace()
+
+
 def test_streams_are_reserved_before_the_first_draw(monkeypatch,
                                                     tmp_path):
     """An aborted campaign must still spend its seeds. Without a
@@ -467,6 +546,9 @@ def test_streams_are_reserved_before_the_first_draw(monkeypatch,
     monkeypatch.setattr(o4, "_git_state",
                         lambda: {"rev": _REV, "dirty": False})
     monkeypatch.setattr(o4, "assert_fresh_scalar", lambda name: 7)
+    claimed: list[dict] = []
+    monkeypatch.setattr(o4, "reserve_remote",
+                        lambda payload: claimed.append(payload) or "c" * 40)
 
     def abort(*a, **k):
         raise SystemExit("fail-closed: causal_relation returned "
@@ -483,6 +565,9 @@ def test_streams_are_reserved_before_the_first_draw(monkeypatch,
     assert rec["seeds"] == {"g1": 7, "g2": 7}
     assert "g3" not in rec["seeds"]
     assert "even if the run aborts" in rec["note"]
+    assert rec["reservation_object"] == "c" * 40
+    # the global claim is made first: the local file only records it
+    assert claimed and claimed[0]["seeds"] == {"g1": 7, "g2": 7}
 
     # and a second attempt on the same streams is now refused
     with pytest.raises(SystemExit, match="write-once"):
