@@ -38,6 +38,7 @@ from volume_oracle import (  # noqa: E402
 _DN200 = gmpy2.context(precision=200, round=gmpy2.RoundDown)
 _UP200 = gmpy2.context(precision=200, round=gmpy2.RoundUp)
 _PRICE = _REPO / "docs" / "prereg" / "p14_oracle_price.json"
+_MODEW = _REPO / "docs" / "prereg" / "p14_oracle_mode_width.json"
 
 
 def _flat_exact_bounds(dt: float, d: float) -> tuple:
@@ -119,10 +120,17 @@ def test_containment_violation_refuses_without_numbers():
         assemble(OracleConfig(12.0, 18.0, 12.0, m=1.0))
 
 
-def test_schwarzschild_assembly_is_sound_and_mc_overlaps():
+def test_schwarzschild_assembly_is_sound_and_mc_is_not_a_gate():
     """Coarse neighbor-configuration run: certified positive
-    interval, tangent cells actually firing, and the (diagnostic)
-    MC estimate overlapping the certified interval."""
+    interval, tangent cells firing, and the raw/certified width
+    decomposition present and internally consistent.
+
+    The MC cross-check is exercised STRUCTURALLY only. Per the
+    PR #65 review ruling, overlap must never be a pass/fail
+    criterion: a probabilistic comparison can fail against a
+    perfectly correct oracle, so gating CI on it contradicts the
+    documented \"MC is never a verdict\" contract. Overlap is
+    computed and recorded by the runners; nothing asserts it."""
 
     cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=0.5,
                        n_sub=16, max_calls=400, max_wall_s=240.0,
@@ -132,9 +140,19 @@ def test_schwarzschild_assembly_is_sound_and_mc_overlaps():
     assert v.certainly_gt(Iv(0))
     assert res["modes"]["tangent"] > 0
     assert res["modes"]["pruned"] > 0
+    # decomposition contract: the certified width never exceeds the
+    # raw sum, and the per-mode split decomposes the raw sum
+    assert (res["certified_total_after_intersection"]
+            <= res["raw_total_before_intersection"] + 1e-12)
+    assert isinstance(res["intersection_active"], bool)
+    split = sum(res["raw_width_by_mode"].values())
+    import math
+    assert math.isclose(split * 2.0 * math.pi,
+                        res["raw_total_before_intersection"],
+                        rel_tol=1e-6)
     mc = mc_diagnostic(cfg, 500, 40_000_271)
-    assert not (mc["ci95"][1] < float(v.lo)
-                or mc["ci95"][0] > float(v.hi))
+    assert mc["se"] > 0 and mc["ci95"][0] < mc["ci95"][1]
+    assert mc["n"] == 500 and mc["seed"] == 40_000_271
 
 
 def test_angle_lower_bound_is_below_certified_flight_times():
@@ -186,10 +204,16 @@ def test_price_artifact_separates_measured_from_extrapolated():
     assert set(m_targets).isdisjoint(e_targets)
     assert m_targets == sorted(m_targets, reverse=True)
     for row in extrap:
-        # never a measured-looking key on an extrapolated row
+        # never a measured-looking key on an extrapolated row, and
+        # reachability is explicitly an ESTIMATE (review ruling)
         assert "calls" not in row and "cells" not in row
-        if row["reachable_at_this_n_sub"]:
+        if row["estimated_reachable_at_this_n_sub"]:
             assert row["calls_extrapolated"] > 0
+            lo, hi = row["calls_extrapolated_range"]
+            # the fit-window spread is the model's honest error bar
+            # and must bracket the primary number
+            assert lo <= row["calls_extrapolated"] <= hi
+            assert lo < hi
         else:
             assert "calls_extrapolated" not in row
             assert "floor" in row["reason"]
@@ -202,6 +226,8 @@ def test_price_artifact_separates_measured_from_extrapolated():
         assert "floor" in fit["model"]
         assert (fit["floor_ratio_used"]
                 == art["quadrature_floor"]["rows"][0]["floor_ratio"])
+        assert len(fit["fit_windows"]) >= 2
+        assert "not an execution cap" in fit["note"]
 
 
 def test_price_artifact_curve_is_monotone_and_consistent():
@@ -228,8 +254,12 @@ def test_price_artifact_records_the_binding_lever_and_mc_role():
 
     art = json.loads(_PRICE.read_text(encoding="utf-8"))
     qf = art["quadrature_floor"]
-    assert qf["binding_lever"] in ("quadrature", "cell-refinement")
+    assert qf["binding_lever_estimate"] in ("quadrature",
+                                            "cell-refinement")
     assert "DIAGNOSTIC" in qf["note"]
+    # the n_sub=32/64 rows are probe-based models, and the note has
+    # to say so rather than let them read as integrator runs
+    assert "NOT full-integrator" in qf["note"]
     for row in qf["rows"]:
         assert 0.0 < row["floor_ratio"] < 1.0
         assert row["probes"] > 0
@@ -267,8 +297,51 @@ def test_price_artifact_plan_covers_the_frozen_target():
     floors = {r["n_sub"] for r in art["quadrature_floor"]["rows"]}
     assert {r["n_sub"] for r in plan["rows"]} == floors
     for row in plan["rows"]:
-        assert isinstance(row["frozen_target_reachable"], bool)
-        if row["frozen_target_reachable"]:
+        assert isinstance(row["frozen_target_estimated_reachable"],
+                          bool)
+        if row["frozen_target_estimated_reachable"]:
             assert row["calls_extrapolated"] > 0
             assert row["wall_s_extrapolated"] > 0
-    assert "NOT YET MEASURED" in plan["reading"]
+            lo, hi = row["calls_extrapolated_range"]
+            assert lo <= row["calls_extrapolated"] <= hi
+    # the wording boundary the review froze: recommended plan and
+    # model-based expectation, with the mode-width diagnostic as
+    # the prerequisite for any O3 budget decision
+    assert "RECOMMENDED PLAN" in plan["reading"]
+    assert "MODEL-BASED EXPECTATION" in plan["reading"]
+    assert "CANDIDATE" in plan["reading"]
+    assert "not frozen" in plan["note"]
+
+
+def test_mode_width_artifact_carries_the_ruled_decomposition():
+    """The PR #65 ruling's prerequisite for O3: the bottleneck
+    diagnostic must be run on the NEIGHBOR configuration and its
+    artifact must carry the exact decomposition fields the ruling
+    listed -- raw per-mode split, raw and certified totals,
+    intersection flag, per-mode cell counts -- with the raw/
+    certified relationship intact."""
+
+    art = json.loads(_MODEW.read_text(encoding="utf-8"))
+    na = art["neighbor_anchors"]
+    assert (na["r_in"], na["r_out"]) == FROZEN_ANCHORS[:2]
+    assert na["dt"] != FROZEN_ANCHORS[2]
+    assert "unobserved" in art["scope"]
+    fin = art["final"]
+    for key in ("raw_width_by_mode", "raw_total_before_intersection",
+                "certified_total_after_intersection",
+                "intersection_active", "cell_counts_by_mode"):
+        assert key in fin, key
+    assert (fin["certified_total_after_intersection"]
+            <= fin["raw_total_before_intersection"] + 1e-12)
+    assert isinstance(fin["intersection_active"], bool)
+    shares = fin["raw_width_shares"]
+    assert abs(sum(shares.values()) - 1.0) < 1e-9
+    assert set(fin["raw_width_by_mode"]) == set(
+        fin["cell_counts_by_mode"])
+    # the verdict must stay within what one neighbor run supports
+    assert art["verdict"].startswith("MEASURED on the neighbor")
+    assert "UPPER BOUND" in art["decomposition_note"]
+    # the trend is auditable: every curve sample carries the split
+    assert len(art["curve"]) >= 3
+    for s in art["curve"]:
+        assert "raw_width_by_mode" in s and "raw_width" in s

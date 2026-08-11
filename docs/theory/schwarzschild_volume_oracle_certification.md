@@ -468,8 +468,40 @@ on which lever binds before it was caught.
 
 Extrapolations live in fields that cannot be mistaken for measured
 crossings, and the artifact carries a per-`n_sub` plan for the
-FROZEN target so PR-O3 has a configuration answer instead of a
+FROZEN target so PR-O3 has configuration GUIDANCE instead of a
 number to guess.
+
+**Epistemic grading of the plan (review ruling on PR #65).** The
+plan rows are model-based, and the wording is bounded accordingly:
+
+- `n_sub = 16` is the current RECOMMENDED PLAN, not a frozen
+  parameter;
+- "a larger `n_sub` is counterproductive" is a MODEL-BASED
+  EXPECTATION -- the `n_sub = 32/64` floor rows combine flight-time
+  widths at a few probe points with a linear cost model, they are
+  not full-integrator runs;
+- the frozen target is ESTIMATED reachable; the extrapolated call
+  count is reported with its fit-window range (the spread across
+  windows is the model's honest error bar) and is NEVER frozen as
+  an execution cap;
+- the allowed bottleneck statement is that cell refinement is the
+  LIKELY binding lever and the first-order mode a CANDIDATE carrier
+  of the remaining width -- until the mode-width diagnostic
+  (`o2_mode_width.py`, run on the NEIGHBOR configuration only, with
+  raw/certified width decomposition and intersection accounting)
+  has been executed and committed. That diagnostic is a
+  PREREQUISITE for any O3 budget or algorithm decision; running the
+  frozen configuration first and deciding afterwards would collapse
+  the freeze boundary.
+
+**MC is never a CI gate.** The Monte Carlo cross-check's overlap
+with the certified interval is computed and RECORDED by the
+runners, but no test may pass or fail on it: a probabilistic
+comparison can reject a perfectly correct oracle, so gating CI on
+overlap would contradict the "never a verdict" contract above. If a
+probabilistic gate is ever wanted, it must be redesigned with
+frozen coverage and failure-rate accounting -- as a separate,
+explicitly approved change.
 
 ## Relation to the note and to Paper A
 
