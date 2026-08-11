@@ -59,8 +59,11 @@ from seed_windows import (
 #: allocated, because the contract tests run smoke assemblies on it
 #: and observing ANY output spends the seed (the S3 review-R3
 #: principle); it exists precisely so smoke may never draw a campaign
-#: seed. Its two consecutive successors are reserved with it, since
-#: the smoke path derives its G2/G3 streams as SEED+1 and SEED+2.
+#: seed. Its two consecutive successors are reserved with it: the
+#: smoke path derives its G2 stream as SEED+1, and `o4_smoke_g3`
+#: (SEED+2) stays retired although the G3 seed-inheritance fix left it
+#: unread -- a seed once listed as spent is never un-spent, since the
+#: safe direction of that error is to retire one value too many.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -79,13 +82,20 @@ OBSERVED_PROBE_SCALARS = {
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
 #: the same change that adds the observed artifact.
 #:
-#: g1_audit / g2_leakage / g3_wrapper: the three O4 strata. They are
+#: g1_audit / g2_leakage: the two O4 strata that DRAW. They are
 #: separate scalars rather than children of one, so that a stratum
 #: rerun can never re-enter another stratum's stream.
+#:
+#: There is deliberately no G3 scalar. G3's unit is the boundary-stress
+#: cluster drawn from `G1 measure | L_S1 > 0`, and it inherits G1's own
+#: accepted points; the v1 O4 draft allocated `g3_wrapper = 40_000_301`
+#: and then never read it, which would have recorded a spent seed as G3
+#: provenance for samples G1 produced (O4 review R1). The value is
+#: withdrawn unspent -- it was never drawn from, so it is not moved to
+#: OBSERVED; `40_000_301` simply returns to the unallocated pool.
 FRESH_PROBE_SCALARS: dict[str, int] = {
     "g1_audit": 40_000_281,
     "g2_leakage": 40_000_291,
-    "g3_wrapper": 40_000_301,
 }
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]

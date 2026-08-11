@@ -74,6 +74,17 @@ from probe_seed_ledger import (  # noqa: E402
 _MANIFEST = _REPO / "docs" / "prereg" / "p14_o4_freeze_manifest.json"
 _ARTIFACT = _REPO / "docs" / "prereg" / "p14_o4_results.json"
 
+#: Write-once seed reservation, created BEFORE the first draw (review
+#: R1). The digest manifest cannot certify itself: a later commit that
+#: edits a protocol file and re-pins the manifest in the same commit
+#: passes `verify_freeze` unchanged, so the freeze SHA named in the
+#: execution approval is supplied explicitly and checked here.
+_RESERVATION = _REPO / "docs" / "prereg" / "p14_o4_reservation.json"
+
+#: Paths the campaign itself creates; they are not protocol drift, so
+#: the entry/exit clean-tree checks ignore exactly these two.
+_WRITE_ONCE = (_RESERVATION, _ARTIFACT)
+
 #: The frozen configuration. Sizes come from `o4_sizing`, which
 #: derives them from the sampler's own boundaries in one path -- they
 #: are re-asserted here so a desynchronised edit fails loudly.
@@ -152,28 +163,56 @@ def verify_freeze(stage: str) -> dict:
 
 
 def _git_state() -> dict:
+    """HEAD and dirtiness, where the campaign's own write-once outputs
+    do not count as dirt (they are results, not protocol drift)."""
+
     rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=_REPO,
                          check=True, capture_output=True,
                          text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain"], cwd=_REPO,
-                           check=True, capture_output=True,
-                           text=True).stdout.strip()
-    return {"rev": rev, "dirty": bool(dirty)}
+    porcelain = subprocess.run(["git", "status", "--porcelain"],
+                               cwd=_REPO, check=True,
+                               capture_output=True,
+                               text=True).stdout.splitlines()
+    mine = {p.relative_to(_REPO).as_posix() for p in _WRITE_ONCE}
+    dirt = [ln for ln in porcelain
+            if ln.strip() and ln[3:].strip().strip('"') not in mine]
+    return {"rev": rev, "dirty": bool(dirt)}
 
 
-def preflight() -> dict:
+def verify_rev(stage: str, freeze_rev: str, state: dict) -> None:
+    """The manifest cannot certify itself (review R1). A commit after
+    the approved freeze that edits a protocol file and re-pins the
+    manifest in the SAME commit passes every digest check, so the
+    campaign additionally demands the exact 40-hex SHA named in the
+    execution approval and refuses anything else."""
+
+    want = freeze_rev.strip().lower()
+    if len(want) != 40 or any(c not in "0123456789abcdef" for c in want):
+        raise SystemExit(
+            f"{stage}: --freeze-rev must be the full 40-hex commit "
+            f"named in the execution approval, got {freeze_rev!r}")
+    if state["rev"].lower() != want:
+        raise SystemExit(
+            f"{stage}: HEAD is {state['rev']} but the approved freeze "
+            f"is {want} -- refusing to spend campaign seeds on a "
+            f"commit the approval does not name")
+
+
+def preflight(freeze_rev: str) -> dict:
     manifest = verify_freeze("preflight")
     state = _git_state()
+    verify_rev("preflight", freeze_rev, state)
     if state["dirty"]:
         raise SystemExit(
             "preflight: working tree is dirty -- the campaign runs "
             "from a clean exact checkout only")
-    if _ARTIFACT.exists():
-        raise SystemExit(
-            f"preflight: {_ARTIFACT.name} already exists -- the audit "
-            f"is write-once; a rerun may not overwrite or relabel the "
-            f"first observation")
-    for name in ("g1_audit", "g2_leakage", "g3_wrapper"):
+    for path in _WRITE_ONCE:
+        if path.exists():
+            raise SystemExit(
+                f"preflight: {path.name} already exists -- a campaign "
+                f"was already started on these streams; the audit is "
+                f"write-once and the first attempt stands")
+    for name in ("g1_audit", "g2_leakage"):
         assert_fresh_scalar(name)
     return {"manifest": manifest, "git": state}
 
@@ -385,7 +424,17 @@ def run_g3(cfg: dict, stress: list, budget: _Budget) -> dict:
     The reported rate is over the frozen boundary-stress
     distribution -- G1's sampling measure conditioned on L_S1 > 0,
     probed at the window midpoint and just outside its upper edge --
-    not over a generic 4D distribution."""
+    not over a generic 4D distribution.
+
+    The clusters are G1's OWN accepted points, inherited rather than
+    redrawn (review R1). The design calls for the conditional law
+    `G1 measure | L_S1 > 0`, and the leading `g3_clusters` successes of
+    an i.i.d. stream are i.i.d. draws from exactly that law, so a
+    separate stream would buy no independence the Clopper-Pearson
+    bound uses -- while a separate SEED, which the v1 draft allocated
+    and then never read, would have written false provenance into the
+    artifact. G3 therefore has no seed of its own; its lineage is
+    G1's, and `g3_wrapper` is withdrawn from the ledger unspent."""
 
     mismatched = 0
     n = 0
@@ -416,6 +465,9 @@ def run_g3(cfg: dict, stress: list, budget: _Budget) -> dict:
             "clusters": n, "clusters_target": cfg["g3_clusters"],
             "mismatching_clusters": mismatched,
             "cp_upper_rate": rate_ub,
+            "seed_lineage": ("inherited from G1: the leading accepted "
+                             "points of the g1_audit stream, no "
+                             "separate G3 seed"),
             "distribution": ("G1 sampling measure conditioned on "
                              "L_S1 > 0, probed at the window midpoint "
                              "and at the upper edge + 1e-6")}
@@ -464,6 +516,10 @@ def main() -> None:
         "--smoke", type=int, default=0, metavar="N",
         help="tiny validation run on the dedicated smoke stream; "
              "never touches the campaign seeds or the artifact")
+    parser.add_argument(
+        "--freeze-rev", metavar="SHA",
+        help="the full 40-hex freeze commit named in the execution "
+             "approval; required for --preflight and for the campaign")
     args = parser.parse_args()
 
     if args.smoke:
@@ -478,23 +534,47 @@ def main() -> None:
                         "g3_clusters": max(1, args.smoke // 100),
                         "max_calls": 10 ** 9, "max_wall_s": 3600.0}
         res = assemble(cfg, {"g1": O4_SMOKE_SEED,
-                             "g2": O4_SMOKE_SEED + 1,
-                             "g3": O4_SMOKE_SEED + 2})
+                             "g2": O4_SMOKE_SEED + 1})
         print(json.dumps({k: v for k, v in res.items()
                           if k != "curve"}, indent=1, default=str))
         return
 
-    checks = preflight()
+    if not args.freeze_rev:
+        raise SystemExit(
+            "--freeze-rev is required: the campaign runs only on the "
+            "commit the execution approval names, and a self-pinned "
+            "manifest cannot establish that by itself")
+    checks = preflight(args.freeze_rev)
     if args.preflight:
         print("preflight PASS: freeze digests, environment lock, "
-              f"clean tree at {checks['git']['rev'][:9]}, no result "
-              "artifact, campaign seeds fresh. Nothing was observed.")
+              f"clean tree at the approved {checks['git']['rev'][:9]}, "
+              "no reservation, no result artifact, campaign seeds "
+              "fresh. Nothing was observed.")
         return
 
     start = _git_state()
     seeds = {"g1": assert_fresh_scalar("g1_audit"),
-             "g2": assert_fresh_scalar("g2_leakage"),
-             "g3": assert_fresh_scalar("g3_wrapper")}
+             "g2": assert_fresh_scalar("g2_leakage")}
+
+    # Reserve BEFORE the first draw (review R1). `assert_fresh_scalar`
+    # reads the ledger and returns; it creates no persistent state, so
+    # without this a run that aborts on a fail-closed path -- an
+    # undecided `causal_relation`, a non-finite flight time -- would
+    # leave already-observed streams looking fresh, and two concurrent
+    # runs could both pass preflight. `os.link` is atomic, so exactly
+    # one process may ever start these streams, whatever the outcome.
+    _publish_write_once(_RESERVATION, json.dumps({
+        "stage": "O4",
+        "note": ("streams opened; observing ANY output spends them, "
+                 "so this reservation stands even if the run aborts "
+                 "with no result artifact"),
+        "freeze_rev": start["rev"],
+        "seeds": seeds,
+        "g3_seed_lineage": "inherited from g1_audit, no seed of its own",
+        "environment": _environment(),
+        "host": {"machine": platform.machine(),
+                 "system": platform.system()},
+    }, ensure_ascii=False, indent=1) + "\n")
 
     def show(stage: str, done: int, budget: _Budget) -> None:
         print(f"  {stage} {done:,} pts  calls={budget.calls:,}  "
@@ -520,7 +600,9 @@ def main() -> None:
         "environment": _environment(),
         "host": {"machine": platform.machine(),
                  "system": platform.system()},
-        "code": {"start": start, "end": end},
+        "code": {"start": start, "end": end,
+                 "approved_freeze_rev": args.freeze_rev.strip().lower(),
+                 "reservation": _RESERVATION.name},
         "result": res,
         "total_wall_s": time.perf_counter() - t0,
     }

@@ -258,14 +258,32 @@ band and collapse the freeze boundary (the O3 lesson).
 
 ## 9. Seeds
 
-`g1_audit = 40_000_281`, `g2_leakage = 40_000_291`,
-`g3_wrapper = 40_000_301`, allocated fresh in
-`probe_seed_ledger.FRESH_PROBE_SCALARS` and moved to
+`g1_audit = 40_000_281` and `g2_leakage = 40_000_291`, allocated fresh
+in `probe_seed_ledger.FRESH_PROBE_SCALARS` and moved to
 `OBSERVED_PROBE_SCALARS` by the results commit. Separate scalars
 rather than children of one, so a stratum rerun can never re-enter
 another stratum's stream. The smoke stream `40_000_311` (with its two
 reserved successors) is spent from allocation, because the contract
 tests observe its output.
+
+**G3 has no seed of its own.** Its unit is the boundary-stress cluster
+drawn from `G1 measure | L_S1 > 0`, and the leading `g3_clusters`
+accepted points of an i.i.d. G1 stream are i.i.d. draws from exactly
+that conditional law — so a separate stream would buy no independence
+the Clopper–Pearson bound uses. The v1 draft allocated `g3_wrapper`
+and then never read it, which would have written a spent seed into the
+artifact as provenance for samples G1 produced; the scalar is
+withdrawn **unspent** and returns to the unallocated pool.
+
+**Reservation.** `assert_fresh_scalar` reads the ledger and returns; it
+creates no persistent state. The campaign therefore publishes a
+write-once `p14_o4_reservation.json` **before its first draw**, and
+preflight refuses when it exists. This is what makes "observing any
+output spends the seed" enforceable rather than aspirational: a run
+that aborts on a fail-closed path leaves no result artifact, and
+without the reservation the already-observed streams would read as
+fresh on the next attempt. Publication is by `os.link`, so of two
+concurrent runs at most one may ever open these streams.
 
 ## 10. Freeze identity
 
@@ -274,5 +292,19 @@ certified surface, the statistics modules, the sizing certification,
 the runner, this document, and the O3 result the audit is measured
 against; plus an environment lock (python, gmpy2, MPFR, GMP, numpy).
 Verified at entry and exit; `--preflight` additionally requires a
-clean tree, the absence of the result artifact, and fresh campaign
-seeds, and observes nothing. Publication is atomic and write-once.
+clean tree, the absence of the reservation and of the result artifact,
+and fresh campaign seeds, and observes nothing. Publication is atomic
+and write-once.
+
+**The manifest cannot certify itself.** A commit made after the
+approved freeze that edits a protocol file and re-pins the manifest in
+the *same* commit passes every digest check, so digest verification
+alone would let a drifted-but-self-consistent tree spend the campaign
+seeds; recording the start SHA in the artifact makes that traceable
+afterwards but does not prevent it. Both `--preflight` and the
+campaign therefore take `--freeze-rev`, the full 40-hex commit named
+in the execution approval, and refuse fail-closed unless `HEAD` equals
+it exactly. This deliberately replaces the O3 "no-argument official
+run" convention: the one argument is the approval itself, and a SHA
+the approval does not name is a protocol violation recorded in the
+artifact.

@@ -65,27 +65,87 @@ def test_environment_lock_covers_the_whole_apparatus(monkeypatch):
         o4.verify_environment("test", manifest)
 
 
+_REV = "0" * 40
+
+
 def test_freeze_commit_carries_no_result():
     assert not o4._ARTIFACT.exists()
+    assert not o4._RESERVATION.exists()
 
 
-def test_preflight_refuses_when_a_result_exists(monkeypatch, tmp_path):
-    fake = tmp_path / "p14_o4_results.json"
-    fake.write_text("{}", encoding="utf-8")
-    monkeypatch.setattr(o4, "_ARTIFACT", fake)
+@pytest.mark.parametrize("which", [0, 1])
+def test_preflight_refuses_when_a_write_once_output_exists(
+        monkeypatch, tmp_path, which):
+    """Both the reservation and the result are terminal: the audit is
+    write-once, so a second attempt on the same streams is refused
+    whether or not the first one produced a verdict."""
+
+    names = ("p14_o4_reservation.json", "p14_o4_results.json")
+    fakes = [tmp_path / n for n in names]
+    fakes[which].write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(o4, "_RESERVATION", fakes[0])
+    monkeypatch.setattr(o4, "_ARTIFACT", fakes[1])
+    monkeypatch.setattr(o4, "_WRITE_ONCE", tuple(fakes))
     monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(o4, "_git_state",
-                        lambda: {"rev": "x", "dirty": False})
+                        lambda: {"rev": _REV, "dirty": False})
     with pytest.raises(SystemExit, match="write-once"):
-        o4.preflight()
+        o4.preflight(_REV)
 
 
 def test_preflight_refuses_a_dirty_tree(monkeypatch):
     monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(o4, "_git_state",
-                        lambda: {"rev": "x", "dirty": True})
+                        lambda: {"rev": _REV, "dirty": True})
     with pytest.raises(SystemExit, match="clean exact checkout"):
-        o4.preflight()
+        o4.preflight(_REV)
+
+
+def test_preflight_refuses_any_commit_the_approval_does_not_name(
+        monkeypatch):
+    """Digest verification cannot certify the manifest itself: a later
+    commit that edits a protocol file and re-pins the manifest in the
+    SAME commit passes every digest check. The approved SHA is the only
+    thing that distinguishes it (review R1)."""
+
+    monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": "a" * 40, "dirty": False})
+    with pytest.raises(SystemExit, match="the approval does not name"):
+        o4.preflight(_REV)
+    for junk in ("", "abc", "a" * 39, "z" * 40, "A" * 41):
+        with pytest.raises(SystemExit, match="full 40-hex"):
+            o4.preflight(junk)
+    # case-insensitive, whitespace-tolerant, but otherwise exact
+    o4.preflight("  " + "A" * 40 + "\n")
+
+
+def test_campaign_refuses_to_run_without_the_approved_sha(monkeypatch):
+    script = str(_REPO / "experiments" / "oracle"
+                 / "o4_volume_audit.py")
+    out = subprocess.run([sys.executable, script, "--preflight"],
+                         capture_output=True, text=True)
+    assert out.returncode != 0
+    assert "--freeze-rev is required" in out.stderr
+
+
+def test_the_campaigns_own_outputs_do_not_read_as_a_dirty_tree(
+        monkeypatch):
+    """The reservation is written BEFORE the run, so the exit lineage
+    check must not mistake it for protocol drift -- while any other
+    modified path still must."""
+
+    lines = ["?? docs/prereg/p14_o4_reservation.json",
+             "?? docs/prereg/p14_o4_results.json"]
+
+    def fake_run(cmd, **kw):
+        out = ("\n".join(lines) if "status" in cmd else "f" * 40)
+        return subprocess.CompletedProcess(cmd, 0, out + "\n", "")
+
+    monkeypatch.setattr(o4.subprocess, "run", fake_run)
+    assert o4._git_state() == {"rev": "f" * 40, "dirty": False}
+    lines.append(" M experiments/oracle/o4_sizing.py")
+    assert o4._git_state()["dirty"] is True
 
 
 def test_cli_is_fail_closed():
@@ -364,8 +424,7 @@ def test_seeds_are_allocated_fresh_and_separately():
         assert_fresh_scalar,
     )
     assert FRESH_PROBE_SCALARS == {"g1_audit": 40_000_281,
-                                   "g2_leakage": 40_000_291,
-                                   "g3_wrapper": 40_000_301}
+                                   "g2_leakage": 40_000_291}
     for name in FRESH_PROBE_SCALARS:
         assert_fresh_scalar(name)
     # the smoke stream and its two derived successors are already spent
@@ -375,6 +434,59 @@ def test_seeds_are_allocated_fresh_and_separately():
             == OBSERVED_PROBE_SCALARS["o4_smoke_g2"])
     assert (OBSERVED_PROBE_SCALARS["o4_smoke"] + 2
             == OBSERVED_PROBE_SCALARS["o4_smoke_g3"])
+
+
+def test_g3_declares_the_lineage_it_actually_has():
+    """G3 reuses G1's accepted points, so it must not also hold a seed
+    it never reads: that would record a spent scalar as provenance for
+    samples G1 produced (review R1)."""
+
+    import inspect
+    assert list(inspect.signature(o4.run_g3).parameters) == [
+        "cfg", "stress", "budget"]
+    src = inspect.getsource(o4)
+    assert 'seeds["g3"]' not in src and "'g3':" not in src
+    assert '"g3": ' not in src.split("def run_g3")[0]
+
+    budget = o4._Budget(o4.FROZEN)
+    out = o4.run_g3(o4.FROZEN | {"g3_clusters": 0}, [], budget)
+    assert "inherited from G1" in out["seed_lineage"]
+
+
+def test_streams_are_reserved_before_the_first_draw(monkeypatch,
+                                                    tmp_path):
+    """An aborted campaign must still spend its seeds. Without a
+    persistent reservation, a fail-closed abort leaves no artifact and
+    the next attempt would read the already-observed streams as
+    fresh."""
+
+    reservation = tmp_path / "p14_o4_reservation.json"
+    monkeypatch.setattr(o4, "_RESERVATION", reservation)
+    monkeypatch.setattr(o4, "_ARTIFACT", tmp_path / "p14_o4_results.json")
+    monkeypatch.setattr(o4, "preflight", lambda rev: {"git": {}})
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": _REV, "dirty": False})
+    monkeypatch.setattr(o4, "assert_fresh_scalar", lambda name: 7)
+
+    def abort(*a, **k):
+        raise SystemExit("fail-closed: causal_relation returned "
+                         "undecided at a G3 stress point")
+
+    monkeypatch.setattr(o4, "assemble", abort)
+    monkeypatch.setattr(sys, "argv",
+                        ["o4", "--freeze-rev", _REV])
+    with pytest.raises(SystemExit, match="fail-closed"):
+        o4.main()
+
+    assert reservation.exists(), "the abort left the streams unreserved"
+    rec = json.loads(reservation.read_text(encoding="utf-8"))
+    assert rec["seeds"] == {"g1": 7, "g2": 7}
+    assert "g3" not in rec["seeds"]
+    assert "even if the run aborts" in rec["note"]
+
+    # and a second attempt on the same streams is now refused
+    with pytest.raises(SystemExit, match="write-once"):
+        o4._publish_write_once(reservation, "{}\n")
 
 
 def test_prereg_pins_the_epistemic_boundary():
