@@ -113,6 +113,79 @@ def test_empty_diamond_returns_exact_zero():
     assert res["status"] == "empty-diamond"
     assert float(res["v"].lo) == 0.0 and float(res["v"].hi) == 0.0
     assert res["calls"] == 0
+    assert res["termination_reason"] == "empty-diamond"
+
+
+# ---------------------------------------------------------------------
+# termination provenance (O3 freeze-review ruling): every exit path
+# must name its reason -- a 24 h frozen run whose caps fire is not
+# fail-explicit if all caps collapse into one `target-not-met`
+# ---------------------------------------------------------------------
+
+
+def test_termination_reason_target_met():
+    cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=0.9,
+                       n_sub=16, max_calls=4000, max_wall_s=240.0,
+                       init_rho=6, init_psi=6)
+    res = assemble(cfg)
+    assert res["status"] == "target-met"
+    assert res["termination_reason"] == "target-met"
+
+
+def test_termination_reason_max_calls():
+    cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=1e-9,
+                       n_sub=16, max_calls=30, max_wall_s=240.0,
+                       init_rho=6, init_psi=6)
+    res = assemble(cfg)
+    assert res["status"] == "target-not-met"
+    assert res["termination_reason"] == "max-calls"
+    assert res["uncosted_cells"] > 0
+    assert res["calls"] >= 30
+
+
+def test_termination_reason_max_wall():
+    cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=1e-9,
+                       n_sub=16, max_calls=10_000, max_wall_s=1e-6,
+                       init_rho=6, init_psi=6)
+    res = assemble(cfg)
+    assert res["status"] == "target-not-met"
+    assert res["termination_reason"] == "max-wall"
+    assert res["calls"] < 10_000
+
+
+def test_termination_reason_max_depth_exhausted():
+    """max_depth=0 blocks every split: the heap drains with live
+    unpruned cells sitting at the depth cap, and the result must say
+    the DEPTH was the limit -- the ruling explicitly forbids
+    assuming a depth cap is sufficient without the result showing
+    when it was not."""
+
+    cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=1e-9,
+                       n_sub=16, max_calls=4000, max_wall_s=240.0,
+                       init_rho=6, init_psi=6, max_depth=0)
+    res = assemble(cfg)
+    assert res["status"] == "target-not-met"
+    assert res["termination_reason"] == "max-depth-exhausted"
+    assert res["cells_at_max_depth"] > 0
+    assert res["max_depth_reached"] == 0
+
+
+def test_termination_reason_heap_exhausted(monkeypatch):
+    """The defensive branch: a drained heap with NO depth-blocked
+    live cells. L6c makes this unreachable naturally (a cell meeting
+    the diamond never prunes), so the classification logic is pinned
+    with a doctored lower bound that prunes everything."""
+
+    monkeypatch.setattr(
+        vo, "_closed_form_lower",
+        lambda st, c: vo.Iv(1e6))
+    cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=1e-9,
+                       n_sub=16, max_calls=4000, max_wall_s=240.0,
+                       init_rho=4, init_psi=4)
+    res = assemble(cfg)
+    assert res["termination_reason"] == "heap-exhausted"
+    assert res["cells_at_max_depth"] == 0
+    assert res["modes"]["pruned"] == 16
 
 
 def test_containment_violation_refuses_without_numbers():
