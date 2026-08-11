@@ -80,11 +80,20 @@ def test_frozen_configuration_is_the_ruled_one():
     }
 
 
-def test_freeze_commit_carries_no_result():
-    """The freeze-commit-split discipline: the result artifact must
-    NOT exist until the separately approved execution writes it."""
+def test_freeze_commit_carried_no_result():
+    """The freeze-commit-split discipline, as a permanent historical
+    fact: the freeze merge commit must NOT contain the result
+    artifact -- the separately approved execution wrote it later.
+    (The working tree DOES contain it once the results commit lands,
+    so the assertion is against the freeze commit's tree, not the
+    checkout.)"""
 
-    assert not o3._ARTIFACT.exists()
+    probe = subprocess.run(
+        ["git", "cat-file", "-e",
+         "785148ecf8be8b7b1baaa1f3866d5d827b8dfdf7:"
+         "docs/prereg/p14_o3_volume.json"],
+        cwd=_REPO, capture_output=True)
+    assert probe.returncode != 0
 
 
 def test_preflight_refuses_when_a_result_exists(monkeypatch,

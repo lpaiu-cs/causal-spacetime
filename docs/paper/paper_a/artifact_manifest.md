@@ -137,7 +137,7 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | `experiments/positive_control/probe_seed_ledger.py` | `8c1be51b59cf7c83eef873c254f54bfb8c2a29f62524880fcbd9fc33b5674b3c` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
 | `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
-| `docs/theory/schwarzschild_volume_oracle_note.md` | `a4da9247ae9b8e5273142db96f3952a2cbc4aa9f46d6d8cf341470954bc68d3a` |
+| `docs/theory/schwarzschild_volume_oracle_note.md` | `e4634637ab17a00cb4ba668d65011aedb9e1f06d5c4cecb9a5c33fc5f2b31f51` |
 
 ### Section 6.7 second-stage bundle (S5 C2-unpaired discrimination)
 
