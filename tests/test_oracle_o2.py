@@ -69,6 +69,44 @@ def test_flat_control_contains_the_closed_form():
     assert v.certainly_gt(Iv(0))
 
 
+def test_cost_caps_bind_during_the_initial_grid_and_stay_sound():
+    """R1: the caps must bind while the INITIAL grid is being
+    evaluated, not only inside the refinement loop -- otherwise a
+    small cap is blown through before the first target check. The
+    zero-call fallback the capped cells fall back to must keep the
+    enclosure valid, so the flat closed form must still be inside."""
+
+    cfg = OracleConfig(12.0, 18.0, 8.5, m=0.0, target_ratio=0.001,
+                       n_sub=16, max_calls=20, max_wall_s=240.0,
+                       init_rho=8, init_psi=8)
+    res = assemble(cfg)
+    assert res["calls"] <= 22, res["calls"]   # 2 calls per cell
+    assert res["modes"]["uncosted"] > 0
+    lo, hi = _flat_exact_bounds(8.5, 6.0)
+    assert res["v"].lo <= lo and hi <= res["v"].hi
+
+
+@pytest.mark.parametrize("max_calls,target", [(320, 0.45), (520, 0.38)])
+def test_a_crossing_before_the_cap_is_never_misfiled(max_calls,
+                                                     target):
+    """R1: target accounting happens on a 32-split cadence, so a
+    crossing in the final splits before a cap must still be credited
+    -- otherwise the ladder records a rung it actually reached as an
+    extrapolation. The invariant is exact in both directions."""
+
+    cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, n_sub=16,
+                       max_calls=max_calls, max_wall_s=240.0,
+                       init_rho=8, init_psi=8)
+    res = assemble(cfg, targets=[target])
+    if res["ratio"] is not None and res["ratio"] <= target:
+        assert res["status"] == "target-met"
+        assert target in res["crossings"]
+        assert res["crossings"][target]["ratio"] <= target
+    else:
+        assert res["status"] == "target-not-met"
+        assert target not in res["crossings"]
+
+
 def test_empty_diamond_returns_exact_zero():
     res = assemble(OracleConfig(12.0, 18.0, 5.0, m=1.0))
     assert res["status"] == "empty-diamond"

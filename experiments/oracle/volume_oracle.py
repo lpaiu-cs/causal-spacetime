@@ -64,6 +64,7 @@ from certified_interval import (
 
 _TWO = Iv(2)
 _RECOMPUTE_EVERY = 32   # splits between certified total recomputes
+_MODES = ("pruned", "tangent", "first-order", "uncosted")
 
 
 @dataclass(frozen=True)
@@ -327,12 +328,39 @@ def _tangent_model(st: _State, c: _Cell, r_cell: Iv,
     return iv_sum(terms)
 
 
+def _trivial_bound(st: _State, c: _Cell, r_cell: Iv) -> Iv:
+    """The certified enclosure that costs NO solver calls: T1, T2 are
+    nonnegative, so the hinge lies in [0, dt] and the cell integral
+    in area * weight * [0, dt]. Sound, merely wide -- what a cell
+    gets when the cost caps are already spent."""
+
+    area = (Iv(c.rho1) - Iv(c.rho0)) * (Iv(c.psi1) - Iv(c.psi0))
+    weight = _weight(st, Iv(c.rho0, c.rho1), Iv(c.psi0, c.psi1),
+                     r_cell)
+    return area * weight * Iv(0).hull(st.dt)
+
+
+def _over_budget(st: _State) -> bool:
+    if st.calls >= st.cfg.max_calls:
+        return True
+    # t0 == 0.0 means "not started under a clock" (direct use
+    # outside assemble); only assemble stamps it
+    return (st.t0 > 0.0
+            and time.perf_counter() - st.t0 >= st.cfg.max_wall_s)
+
+
 def _evaluate(st: _State, c: _Cell) -> None:
     lower = _closed_form_lower(st, c)
     if lower.certainly_gt(st.dt):
         c.contrib, c.mode = Iv(0), "pruned"
         return
     r_cell = _cell_r(st, c)
+    if _over_budget(st):
+        # the caps bind HERE, not only in the refinement loop: the
+        # initial grid is solver work too, and a small cap must not
+        # be blown through before the first target check (review R1)
+        c.contrib, c.mode = _trivial_bound(st, c, r_cell), "uncosted"
+        return
     d1 = _anchor_distance_lower(st, c, st.rho_p)
     d2 = _anchor_distance_lower(st, c, st.rho_q)
     if (st.cfg.m > 0.0 and d1.lo > st.cfg.d_switch
@@ -408,33 +436,44 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
                      reverse=True)
     crossings: dict[float, dict] = {}
     curve: list[dict] = []
-    prev_total: Iv | None = None
-    status = "target-not-met"
+    state: dict = {"prev": None, "done": False}
+
+    def checkpoint() -> Iv:
+        """Recompute the certified total, record the curve sample,
+        and credit every target it crosses. Runs on the periodic
+        cadence AND once more after the loop exits: a crossing in
+        the last few splits before a cap would otherwise be lost to
+        `target-not-met` and misfiled as an extrapolation, which is
+        exactly what the price ladder must never do (review R1)."""
+
+        total = _total(st, cells, state["prev"])
+        state["prev"] = total
+        denom = float(total.lo + total.hi)
+        if not (total.certainly_gt(Iv(0)) and denom > 0):
+            return total
+        sample = {"calls": st.calls,
+                  "cells": sum(1 for c in cells if not c.dead),
+                  "ratio": total.width() / denom,
+                  "v_lo": float(total.lo), "v_hi": float(total.hi),
+                  "wall_s": time.perf_counter() - st.t0}
+        if not curve or curve[-1]["calls"] != sample["calls"]:
+            curve.append(sample)
+            if progress is not None:
+                progress(sample)
+        while pending and sample["ratio"] <= pending[0]:
+            crossings[pending.pop(0)] = dict(sample)
+        if not pending:
+            state["done"] = True
+        return total
+
     since_recompute = _RECOMPUTE_EVERY  # force an initial check
     while True:
         if since_recompute >= _RECOMPUTE_EVERY:
             since_recompute = 0
-            total = _total(st, cells, prev_total)
-            prev_total = total
-            denom = float(total.lo + total.hi)
-            if total.certainly_gt(Iv(0)) and denom > 0:
-                ratio = total.width() / denom
-                alive_n = sum(1 for c in cells if not c.dead)
-                sample = {"calls": st.calls, "cells": alive_n,
-                          "ratio": ratio, "v_lo": float(total.lo),
-                          "v_hi": float(total.hi),
-                          "wall_s": time.perf_counter() - st.t0}
-                curve.append(sample)
-                if progress is not None:
-                    progress(sample)
-                while pending and ratio <= pending[0]:
-                    crossings[pending.pop(0)] = dict(sample)
-                if not pending:
-                    status = "target-met"
-                    break
-        if (st.calls >= cfg.max_calls
-                or time.perf_counter() - st.t0 >= cfg.max_wall_s
-                or not heap):
+            checkpoint()
+            if state["done"]:
+                break
+        if _over_budget(st) or not heap:
             break
         _, _, worst = heapq.heappop(heap)
         if (worst.dead or worst.depth >= cfg.max_depth
@@ -463,7 +502,8 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
             tie += 1
         since_recompute += 1
 
-    total = _total(st, cells, prev_total)
+    total = checkpoint()
+    status = "target-met" if state["done"] else "target-not-met"
     denom = float(total.lo + total.hi)
     ratio = (total.width() / denom) if denom > 0 else None
     alive = [c for c in cells if not c.dead]
@@ -475,7 +515,7 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         "calls": st.calls,
         "cells": len(alive),
         "modes": {mode: sum(1 for c in alive if c.mode == mode)
-                  for mode in ("pruned", "tangent", "first-order")},
+                  for mode in _MODES},
         # which cell MODE carries the remaining width, not just how
         # many cells each has: the two answers differ sharply when
         # the anchor neighbourhoods (first-order, O(h) per cell) sit
@@ -484,7 +524,7 @@ def assemble(cfg: OracleConfig, targets: list[float] | None = None,
         "width_by_mode": {
             mode: sum(c.contrib.width() for c in alive
                       if c.mode == mode)
-            for mode in ("pruned", "tangent", "first-order")},
+            for mode in _MODES},
         "wall_s": time.perf_counter() - st.t0,
         "certificate": cert,
         "crossings": crossings,
