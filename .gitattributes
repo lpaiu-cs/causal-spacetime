@@ -9,4 +9,6 @@ docs/prereg/*.md text eol=lf
 docs/prereg/*.json text eol=lf
 docs/prereg/p14_checks/*.py text eol=lf
 experiments/positive_control/*.py text eol=lf
+experiments/oracle/*.py text eol=lf
+docs/theory/*.md text eol=lf
 tests/*.py text eol=lf

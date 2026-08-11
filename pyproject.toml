@@ -24,6 +24,12 @@ dev = [
 ]
 experiments = [
   "numba>=0.59",
+  # MPFR-backed directed-rounding intervals for the volume-oracle
+  # certification (experiments/oracle). The oracle contract tests
+  # import gmpy2 unconditionally -- no importorskip -- so a missing
+  # wheel fails CI instead of silently skipping the certification
+  # gate (the same reasoning as numba above).
+  "gmpy2>=2.2",
 ]
 
 [tool.setuptools.packages.find]
