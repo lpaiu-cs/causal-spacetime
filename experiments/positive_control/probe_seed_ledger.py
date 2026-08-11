@@ -55,6 +55,12 @@ from seed_windows import (
 #: deterministic; MC disjointness raises an investigation flag, never
 #: a verdict), but the observing-spends principle still applies: this
 #: stream is permanently spent for any claim-bearing use.
+#: o4_smoke: the O4 validation stream. Spent from the moment it was
+#: allocated, because the contract tests run smoke assemblies on it
+#: and observing ANY output spends the seed (the S3 review-R3
+#: principle); it exists precisely so smoke may never draw a campaign
+#: seed. Its two consecutive successors are reserved with it, since
+#: the smoke path derives its G2/G3 streams as SEED+1 and SEED+2.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -64,18 +70,30 @@ OBSERVED_PROBE_SCALARS = {
     "s5_curved": 40_000_251,
     "s5_flat": 40_000_261,
     "oracle_mc_diagnostic": 40_000_271,
+    "o4_smoke": 40_000_311,
+    "o4_smoke_g2": 40_000_312,
+    "o4_smoke_g3": 40_000_313,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
 #: the same change that adds the observed artifact.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#:
+#: g1_audit / g2_leakage / g3_wrapper: the three O4 strata. They are
+#: separate scalars rather than children of one, so that a stratum
+#: rerun can never re-enter another stratum's stream.
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "g1_audit": 40_000_281,
+    "g2_leakage": 40_000_291,
+    "g3_wrapper": 40_000_301,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
 S3_SMOKE_SEED = OBSERVED_PROBE_SCALARS["s3_smoke"]
 S3_SEED = OBSERVED_PROBE_SCALARS["s3_exploration"]
 S4_SEED = OBSERVED_PROBE_SCALARS["s4_campaign"]
+O4_SMOKE_SEED = OBSERVED_PROBE_SCALARS["o4_smoke"]
 
 SPENT_RANGES = P11_P13_SPENT_RANGES + (P12_ALLOCATION_DECADE,)
 

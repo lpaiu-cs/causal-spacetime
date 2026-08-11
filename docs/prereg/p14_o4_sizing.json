@@ -1,0 +1,79 @@
+{
+ "stage": "O4 sizing: analytic worst-case certification of the G1 equivalence gate, with G2/G3 companions",
+ "cost_convention": "one flight_time call = 768 us (p14_s1_cost.json, tol 1e-8); one spatial point = 2 calls = 1.536 ms; one G3 cluster = 4 causal_relation calls",
+ "geometry": {
+  "source": "certified_flight_time.containment_certificate",
+  "anchors": {
+   "r_in": 12.0,
+   "r_out": 18.0,
+   "dt": 8.5
+  },
+  "sampling_box": {
+   "r_lo": 11.353642200099546,
+   "r_hi": 18.694960053851013,
+   "psi_max": 0.8179128813519699
+  },
+  "patch": {
+   "r_lo": 10.0,
+   "r_hi": 20.0,
+   "cap_half_angle": 1.0
+  },
+  "B_box": 3358.4200556945643,
+  "B_out": 3381.100138503929,
+  "scale_dt_B_box": 28546.5704734038,
+  "L_max_upper_bound": 1.559992741508529,
+  "Z_ceiling_c": 0.18352855782453284
+ },
+ "oracle": {
+  "v_lo": 56.21273686780051,
+  "v_hi": 57.348018526434714,
+  "v_ref": 56.780377697117615,
+  "certified_half_width": 0.009997130211867515,
+  "tau_floor_full_width": 0.01999426042373503
+ },
+ "gate": {
+  "tau": 0.03,
+  "band_abs": 1.7034113309135284,
+  "delta_g1_per_side": 0.02,
+  "alpha_g2_per_end": 0.005,
+  "alpha_g3": 0.05,
+  "leak_budget_frac": 0.0025,
+  "familywise": 0.05,
+  "total_sentence": 0.0325
+ },
+ "g1": {
+  "n": 26200000,
+  "accept_window": [
+   55.97740172838194,
+   57.578793255653025
+  ],
+  "eb_half_width_at_V_hi": 0.3367016940055359,
+  "failure_upper_bound": 0.09666240648691565,
+  "power_lower_bound": 0.9033375935130843,
+  "failure_at_endpoints": {
+   "V_lo": 0.08318313923073463,
+   "V_ref": 9.323896983658939e-13,
+   "V_hi": 0.09588840409478742
+  },
+  "worst_endpoint": "V_hi",
+  "boxes": 3,
+  "splits": 1,
+  "power_normal_diagnostic": 0.9848791499523055
+ },
+ "g2": {
+  "points": 1072696,
+  "leak_bound_abs": 0.14195094424279403
+ },
+ "g3": {
+  "clusters": 100000,
+  "cp_upper_zero_mismatch": 2.995687401941005e-05
+ },
+ "budget": {
+  "calls": 54945392,
+  "hours": 11.721683626666666,
+  "cap_calls": 80000000,
+  "cap_wall_s": 86400.0,
+  "cap_calls_ratio": 1.45599106836839,
+  "cap_wall_ratio": 2.047487439893049
+ }
+}

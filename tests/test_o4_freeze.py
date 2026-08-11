@@ -1,0 +1,388 @@
+"""O4 freeze contract tests.
+
+The freeze-commit discipline, as for O3: the frozen gate, the
+content-addressed manifest, the write-once/no-results boundary and the
+fail-closed CLI are pinned BEFORE execution. What is new here is that
+the STATISTICAL machinery carries contract tests of its own -- the
+review ruling is explicit that coverage is bought by Maurer-Pontil
+Theorem 4 itself, so what must be pinned is the identity of this
+implementation with the theorem's statement, never a simulation.
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+_REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_REPO / "experiments" / "oracle"))
+sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
+
+import empirical_bernstein as eb  # noqa: E402
+import exact_binomial as xb  # noqa: E402
+import o4_sizing as sz  # noqa: E402
+import o4_volume_audit as o4  # noqa: E402
+
+# ------------------------------------------------------- freeze shell
+
+def test_manifest_digests_match_the_working_tree():
+    """The pinned set covers the certified surface, the statistics
+    modules, the sizing certification, the runner, the preregistration,
+    the INSTRUMENT UNDER AUDIT, and the O3 result the audit is measured
+    against."""
+
+    manifest = o4.verify_digests("test")
+    assert set(manifest["files"]) == {
+        "experiments/oracle/certified_interval.py",
+        "experiments/oracle/certified_flight_time.py",
+        "experiments/oracle/empirical_bernstein.py",
+        "experiments/oracle/exact_binomial.py",
+        "experiments/oracle/o4_sizing.py",
+        "experiments/oracle/o4_volume_audit.py",
+        "experiments/positive_control/s1_schwarzschild_cost.py",
+        "experiments/positive_control/probe_seed_ledger.py",
+        "docs/prereg/p14_o4_volume_audit.md",
+        "docs/prereg/p14_o4_sizing.json",
+        "docs/prereg/p14_o3_volume.json",
+        "pyproject.toml",
+    }
+
+
+def test_environment_lock_covers_the_whole_apparatus(monkeypatch):
+    manifest = json.loads(o4._MANIFEST.read_text(encoding="utf-8"))
+    env = manifest["environment"]
+    assert set(env) == {"python", "gmpy2", "mpfr", "gmp", "numpy"}
+    monkeypatch.setattr(o4, "_environment", lambda: dict(env))
+    o4.verify_environment("test", manifest)
+    monkeypatch.setattr(o4, "_environment",
+                        lambda: dict(env, numpy="0.0.0"))
+    with pytest.raises(SystemExit, match="environment drift"):
+        o4.verify_environment("test", manifest)
+
+
+def test_freeze_commit_carries_no_result():
+    assert not o4._ARTIFACT.exists()
+
+
+def test_preflight_refuses_when_a_result_exists(monkeypatch, tmp_path):
+    fake = tmp_path / "p14_o4_results.json"
+    fake.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(o4, "_ARTIFACT", fake)
+    monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": "x", "dirty": False})
+    with pytest.raises(SystemExit, match="write-once"):
+        o4.preflight()
+
+
+def test_preflight_refuses_a_dirty_tree(monkeypatch):
+    monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": "x", "dirty": True})
+    with pytest.raises(SystemExit, match="clean exact checkout"):
+        o4.preflight()
+
+
+def test_cli_is_fail_closed():
+    script = str(_REPO / "experiments" / "oracle"
+                 / "o4_volume_audit.py")
+    bad = subprocess.run([sys.executable, script, "--preflght"],
+                         capture_output=True, text=True)
+    assert bad.returncode == 2
+    helped = subprocess.run([sys.executable, script, "--help"],
+                            capture_output=True, text=True)
+    assert helped.returncode == 0
+    assert "--preflight" in helped.stdout
+
+
+def test_smoke_is_capped_against_pre_observation():
+    """A large smoke run on the FROZEN anchors would pre-observe V_S1
+    at a precision comparable to the equivalence band -- the O3 lesson
+    about collapsing the freeze boundary."""
+
+    script = str(_REPO / "experiments" / "oracle"
+                 / "o4_volume_audit.py")
+    out = subprocess.run(
+        [sys.executable, script, "--smoke",
+         str(o4.SMOKE_MAX + 1)], capture_output=True, text=True)
+    assert out.returncode != 0
+    assert "collapse the freeze boundary" in out.stderr
+
+
+# -------------------------------------- Maurer-Pontil Theorem 4
+
+def test_variance_is_the_theorems_pairwise_form():
+    """V_n = sum_{i<j}(Z_i-Z_j)^2 / (n(n-1)) is what Theorem 4 names;
+    the streaming accumulator must compute exactly that."""
+
+    xs = [0.0, 0.25, 0.5, 0.125, 1.0, 0.75, 0.03125]
+    acc = eb.Accumulator()
+    for x in xs:
+        acc.add(x)
+    assert acc.var == pytest.approx(eb.pairwise_variance(xs),
+                                    rel=1e-12)
+
+
+def test_half_width_is_the_literal_theorem_formula():
+    n, var, delta = 26_200_000, 3.5e-4, 0.02
+    ln = math.log(2.0 / delta)
+    want = math.sqrt(2.0 * var * ln / n) + 7.0 * ln / (3.0 * (n - 1))
+    assert eb.half_width(n, var, delta) == pytest.approx(want,
+                                                         rel=1e-15)
+
+
+def test_out_of_range_aborts_rather_than_clipping():
+    """Clipping would bias the mean and void the [0,1] hypothesis, so
+    the precondition is fail-closed rather than repaired."""
+
+    acc = eb.Accumulator()
+    with pytest.raises(eb.EBError, match=r"outside \[0, 1\]"):
+        acc.add(1.0000001)
+    with pytest.raises(eb.EBError, match="non-finite"):
+        acc.add(float("nan"))
+
+
+def test_interval_needs_two_samples():
+    acc = eb.Accumulator()
+    acc.add(0.5)
+    with pytest.raises(eb.EBError, match="n >= 2"):
+        eb.interval(acc, 0.02)
+
+
+def test_statistic_is_invariant_to_stream_partition():
+    """The i.i.d. unit is the sample POINT: a partitioned run must
+    produce the same mean and V_n as a single-stream run over the same
+    points, so the number of generating streams can never enter the
+    inference."""
+
+    xs = [(i * 37 % 101) / 200.0 for i in range(500)]
+    whole = eb.Accumulator()
+    for x in xs:
+        whole.add(x)
+    parts = []
+    for lo, hi in ((0, 111), (111, 260), (260, 500)):
+        a = eb.Accumulator()
+        for x in xs[lo:hi]:
+            a.add(x)
+        parts.append(a)
+    merged = eb.Accumulator()
+    for a in parts:
+        merged.merge(a)
+    assert merged.n == whole.n
+    assert merged.mean == pytest.approx(whole.mean, rel=1e-12)
+    assert merged.var == pytest.approx(whole.var, rel=1e-10)
+
+
+def test_rescaling_preserves_the_interval_monotonically():
+    acc = eb.Accumulator()
+    for x in (0.1, 0.2, 0.3, 0.4):
+        acc.add(x)
+    iv = eb.interval(acc, 0.02)
+    lo, hi = iv.rescaled(sz.SCALE)
+    assert lo == pytest.approx(sz.SCALE * iv.lo, rel=1e-15)
+    assert hi == pytest.approx(sz.SCALE * iv.hi, rel=1e-15)
+    with pytest.raises(eb.EBError):
+        iv.rescaled(0.0)
+
+
+# ------------------------------------------- Clopper-Pearson
+
+def test_zero_count_matches_the_closed_form():
+    for n in (100, 50_000, 1_072_696):
+        for alpha in (0.05, 0.005):
+            assert xb.cp_upper(0, n, alpha) == pytest.approx(
+                xb.cp_upper_zero(n, alpha), rel=1e-9)
+
+
+def test_cp_upper_is_exact_at_the_defining_equation():
+    p = xb.cp_upper(3, 1000, 0.005)
+    assert xb.binom_cdf(3, 1000, p) == pytest.approx(0.005, rel=1e-6)
+
+
+def test_g3_cluster_bound_is_the_frozen_number():
+    assert sz.g3_upper() == pytest.approx(2.995687e-05, rel=1e-6)
+
+
+# ---------------------------------------------- sizing certification
+
+def test_l_max_is_an_upward_bound_never_a_nearest_rounding():
+    """A downward L_max would understate the variance ceiling and
+    inflate the power claim, so the frozen constant must dominate the
+    certified margin -- 1.5599927 (nearest at 7 places) would be
+    BELOW it and is rejected here by construction."""
+
+    cert = sz._CERT["margins"]["nonempty"]
+    assert sz.L_MAX_UB >= float(cert.hi)
+    assert sz.L_MAX_UB >= 1.5599927415085288
+    assert 1.5599927 < float(cert.lo)      # the trap this test closes
+
+
+def test_geometry_constants_sit_inside_their_enclosures():
+    for value, iv in ((sz.B_BOX, sz.B_BOX_IV),
+                      (sz.B_OUT, sz.B_OUT_IV),
+                      (sz.SCALE, sz.SCALE_IV)):
+        assert iv.lo_float() <= value <= iv.hi_float()
+
+
+def test_tau_clears_the_full_width_floor():
+    """The floor is the oracle's FULL certified width, not its
+    half-width: the identified set absorbs the whole interval because
+    V_true's position inside it is unknown."""
+
+    floor = (sz.V_HI - sz.V_LO) / sz.V_REF
+    assert floor == pytest.approx(0.01999426, rel=1e-5)
+    assert sz.TAU > floor
+    assert 0.015 < floor                   # tau = 1.5% is impossible
+
+
+def test_power_is_certified_on_the_continuum_not_a_grid():
+    """Interval-arithmetic branch and bound over the whole segment
+    [V_lo, V_hi]; a finite grid is not a certification."""
+
+    cert = sz.certify_power(sz.N_G1)
+    assert cert["power_lower_bound"] >= sz.POWER_TARGET
+    assert cert["worst_endpoint"] == "V_hi"
+    assert cert["boxes"] >= 1
+
+
+def test_frozen_size_dominates_the_minimum_certified_size():
+    assert sz.N_G1 >= 26_012_722
+    assert sz.certify_power(26_012_722)["power_lower_bound"] \
+        < sz.certify_power(sz.N_G1)["power_lower_bound"]
+
+
+def test_exp_bound_is_an_upper_bound_on_the_true_exponential():
+    """Validity everywhere; tightness where the branch and bound
+    actually decides. Truncating exp(x)'s series always UNDER-states
+    it, so the reciprocal always OVER-states exp(-x) -- the direction
+    the proof needs. The residual looseness grows with x, but by then
+    exp(-x) is far below the 0.0967 the bound must beat."""
+
+    from certified_interval import Iv
+    for x in (0.0, 0.5, 2.30258509, 12.0):
+        got = sz.exp_neg_upper(Iv(x)).hi_float()
+        assert got >= math.exp(-x)
+        assert got <= math.exp(-x) * (1.0 + 1e-9)
+    far = sz.exp_neg_upper(Iv(40.0)).hi_float()
+    assert math.exp(-40.0) <= far < 1e-17
+
+
+def test_sizing_artifact_matches_the_module():
+    art = json.loads(
+        (_REPO / "docs" / "prereg" / "p14_o4_sizing.json")
+        .read_text(encoding="utf-8"))
+    assert art["g1"]["n"] == sz.N_G1
+    assert art["g2"]["points"] == sz.g2_points()
+    assert art["gate"]["tau"] == sz.TAU
+    assert art["gate"]["familywise"] == pytest.approx(0.05)
+    assert art["gate"]["total_sentence"] == pytest.approx(0.0325)
+    assert art["geometry"]["L_max_upper_bound"] == sz.L_MAX_UB
+
+
+def test_cap_headroom_is_stated_as_two_distinct_ratios():
+    """Review item 4: 80M calls is 1.46x the expectation while 24 h is
+    2.05x the wall clock -- the wording must not merge them."""
+
+    b = json.loads(
+        (_REPO / "docs" / "prereg" / "p14_o4_sizing.json")
+        .read_text(encoding="utf-8"))["budget"]
+    assert b["cap_calls"] == o4.FROZEN["max_calls"]
+    assert b["cap_wall_s"] == o4.FROZEN["max_wall_s"]
+    assert 1.4 < b["cap_calls_ratio"] < 1.5
+    assert 2.0 < b["cap_wall_ratio"] < 2.1
+    assert abs(b["cap_calls_ratio"] - b["cap_wall_ratio"]) > 0.5
+
+
+# ------------------------------------------------ verdict composition
+
+def _g1(status, powered=True):
+    return {"status": status, "power_certified": powered}
+
+
+def test_verdict_composition_covers_every_branch():
+    ok3 = {"valid": True}
+    assert o4.compose_verdict(_g1("concordant"),
+                              {"status": "concordant"},
+                              ok3) == "CONCORDANT"
+    assert o4.compose_verdict(_g1("discordant"),
+                              {"status": "concordant"},
+                              ok3) == "DISCORDANT"
+    assert o4.compose_verdict(_g1("concordant"),
+                              {"status": "discordant"},
+                              ok3) == "DISCORDANT"
+    assert o4.compose_verdict(_g1("inconclusive"),
+                              {"status": "concordant"},
+                              ok3) == "INCONCLUSIVE"
+    assert o4.compose_verdict(_g1("concordant", powered=False),
+                              {"status": "concordant"},
+                              ok3) == "INCONCLUSIVE"
+
+
+def test_g3_failure_is_invalid_never_scientific_discordance():
+    """The wrapper contract is instrumentation: a broken one voids the
+    stage rather than reporting a physics disagreement."""
+
+    bad3 = {"valid": False}
+    for g1 in ("concordant", "discordant", "inconclusive"):
+        for g2 in ("concordant", "discordant"):
+            assert o4.compose_verdict(_g1(g1), {"status": g2},
+                                      bad3) == "INVALID"
+
+
+def test_discordance_survives_an_underpowered_run():
+    """Disjointness is a coverage statement, so it holds at any n;
+    concordance is not, so it needs the frozen n."""
+
+    assert o4.compose_verdict(_g1("discordant", powered=False),
+                              {"status": "concordant"},
+                              {"valid": True}) == "DISCORDANT"
+
+
+# -------------------------------------------------- frozen agreement
+
+def test_frozen_config_matches_the_ruled_design():
+    assert o4.FROZEN["tau"] == 0.030
+    assert o4.FROZEN["delta_g1_per_side"] == 0.02
+    assert o4.FROZEN["alpha_g2_per_end"] == 0.005
+    assert o4.FROZEN["alpha_g3"] == 0.05
+    assert o4.FROZEN["leak_budget_frac"] == 0.0025
+    assert o4.FROZEN["n_g1"] == 26_200_000
+    assert o4.FROZEN["g3_clusters"] == 100_000
+    assert o4.FROZEN["max_calls"] == 80_000_000
+    assert o4.FROZEN["max_wall_s"] == 86_400.0
+
+
+def test_seeds_are_allocated_fresh_and_separately():
+    from probe_seed_ledger import (
+        FRESH_PROBE_SCALARS,
+        OBSERVED_PROBE_SCALARS,
+        assert_fresh_scalar,
+    )
+    assert FRESH_PROBE_SCALARS == {"g1_audit": 40_000_281,
+                                   "g2_leakage": 40_000_291,
+                                   "g3_wrapper": 40_000_301}
+    for name in FRESH_PROBE_SCALARS:
+        assert_fresh_scalar(name)
+    # the smoke stream and its two derived successors are already spent
+    for k in ("o4_smoke", "o4_smoke_g2", "o4_smoke_g3"):
+        assert k in OBSERVED_PROBE_SCALARS
+    assert (OBSERVED_PROBE_SCALARS["o4_smoke"] + 1
+            == OBSERVED_PROBE_SCALARS["o4_smoke_g2"])
+    assert (OBSERVED_PROBE_SCALARS["o4_smoke"] + 2
+            == OBSERVED_PROBE_SCALARS["o4_smoke_g3"])
+
+
+def test_prereg_pins_the_epistemic_boundary():
+    doc = (_REPO / "docs" / "prereg" / "p14_o4_volume_audit.md") \
+        .read_text(encoding="utf-8")
+    plain = " ".join(doc.replace("**", "").split())
+    assert "Nothing in Paper A is upgraded" in plain
+    assert "not a Poisson-count audit" in plain
+    assert "never called a certification" in plain
+    assert "full certified width" in plain
+    assert "three-way consistency" in plain
