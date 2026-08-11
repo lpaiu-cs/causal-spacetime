@@ -74,6 +74,19 @@ def w_glob_iv(m: Iv) -> Iv:
     return Iv(27).sqrt() * m
 
 
+def angle_cost_iv(m: Iv) -> Iv:
+    """Certified constant c with d_opt >= c * dpsi between shell
+    points: 3 sqrt(3) M for M > 0 (w's global exterior minimum, L4).
+    For M = 0 there is NO photon-sphere floor (w = r has infimum 0),
+    so the flat constant comes from the chord instead:
+    chord >= 2 sqrt(r1 r2) sin(psi/2) >= (2 R_MIN / pi) psi on the
+    shell (sin x >= 2x/pi on [0, pi/2])."""
+
+    if m.lo == 0 and m.hi == 0:
+        return Iv(2) * Iv(R_MIN) / Iv.pi()
+    return w_glob_iv(m)
+
+
 def big_r_iv(u: Iv, b: Iv, m: Iv) -> Iv:
     return Iv(1) / b.sq() - u.sq() * (Iv(1) - _TWO * m * u)
 
@@ -111,87 +124,231 @@ def _grid(lo: float, hi: float, n: int) -> list[float]:
     return pts
 
 
+def _even_poly(coeffs: list[Iv], s: Iv) -> Iv:
+    """c0 + c1 x + c2 x^2 + ... with x = s^2 (even polynomial in s),
+    interval Horner."""
+
+    x = s.sq()
+    acc = coeffs[-1]
+    for c in reversed(coeffs[:-1]):
+        acc = acc * x + c
+    return acc
+
+
+def _arc_polys(u_t: Iv, b: Iv, m: Iv,
+               ) -> tuple[list[Iv], list[Iv]]:
+    """Even-polynomial forms of the factored arc integrands in
+    s = sqrt(u_t - u) (exact substitution; at an exact root u_t the
+    leading coefficient satisfies d0 = 1/b -- a sanity diagnostic,
+    not an enforced identity, since u_t arrives as an interval):
+
+      Q~(s) = Q(u_t - s^2) = c0 + c2 s^2 + c4 s^4,
+        c0 = 2 u_t (1 - 3 m u_t), c2 = 6 m u_t - 1, c4 = -2m
+      D~(s) = b u^2 (1 - 2 m u)|_{u = u_t - s^2}
+            = d0 + d2 s^2 + d4 s^4 + d6 s^6,
+        d0 = b u_t^2 (1 - 2 m u_t) = 1/b,  d2 = -2 b u_t (1 - 3 m u_t),
+        d4 = b (1 - 6 m u_t),              d6 = 2 m b
+
+    Coefficient lists are in powers of x = s^2."""
+
+    one = Iv(1)
+    q_c = [_TWO * u_t * (one - Iv(3) * m * u_t),
+           Iv(6) * m * u_t - one,
+           -_TWO * m]
+    d_c = [b * u_t.sq() * (one - _TWO * m * u_t),
+           -_TWO * b * u_t * (one - Iv(3) * m * u_t),
+           b * (one - Iv(6) * m * u_t),
+           _TWO * m * b]
+    return q_c, d_c
+
+
+def _even_d1(coeffs: list[Iv], s: Iv) -> Iv:
+    """d/ds of an even polynomial: sum 2k c_k s^(2k-1)."""
+
+    x = s.sq()
+    acc = Iv(0)
+    for k in range(len(coeffs) - 1, 0, -1):
+        acc = acc * x + Iv(2 * k) * coeffs[k]
+    return acc * s
+
+
+def _even_d2(coeffs: list[Iv], s: Iv) -> Iv:
+    """d^2/ds^2 of an even polynomial: sum 2k(2k-1) c_k s^(2k-2)."""
+
+    x = s.sq()
+    acc = Iv(0)
+    for k in range(len(coeffs) - 1, 0, -1):
+        acc = acc * x + Iv(2 * k * (2 * k - 1)) * coeffs[k]
+    return acc
+
+
+def _midpoint_term(f_mid: Iv, f_dd: Iv, s0: float, s1: float) -> Iv:
+    """Certified composite-midpoint step: the integral over [s0, s1]
+    lies in h f(mid) +- h^3 |f''|_sup / 24."""
+
+    h = Iv(s1) - Iv(s0)
+    err = h * h.sq() * Iv(f_dd.abs().hi) / Iv(24)
+    return (h * f_mid).widen(err)
+
+
 def _arc_enclosure(u_from: Iv, u_t: Iv, b: Iv, m: Iv,
                    n_sub: int, want_time: bool) -> tuple[Iv, Iv]:
     """(angle, time) enclosure of one arc from u_from to the turning
-    point u_t, over s = sqrt(u_t - u): interval Riemann sum of
-    2/sqrt(Q) on [0, s_hi.lo] plus a [0, +] tail covering the
-    uncertain top of the range (u_t is itself an interval)."""
+    point u_t, over s = sqrt(u_t - u): certified composite midpoint
+    rule (second order) on [0, s_hi.lo] with interval bounds on the
+    exact even-polynomial second derivatives, plus a first-order
+    [0, +] tail covering the uncertain top of the range (u_t is
+    itself an interval). Every step re-certifies Q > 0 (L2b)."""
 
     du = u_t - u_from
     if du.hi < 0:
         raise CertificationError(f"arc with u_from above u_t: {du}")
     s_hi = du.sqrt0()
+    q_c, d_c = _arc_polys(u_t, b, m)
     ang_terms, tim_terms = [], []
 
-    def push(s0: float, s1: float, tail: bool) -> None:
-        s_box = Iv(s0, s1)
-        u_box = u_t - s_box.sq()
-        q = q_iv(u_box, u_t, m)
+    def eval_fs(s: Iv) -> tuple[Iv, Iv]:
+        """(g, tau) = (2 Q~^-1/2, 2 Q~^-1/2 / D~) at s."""
+
+        q = _even_poly(q_c, s)
         g = _TWO / q.sqrt()
-        ds = Iv(s1) - Iv(s0)
-        a = ds * g
-        ang_terms.append(a.hull(Iv(0)) if tail else a)
-        if want_time:
-            t = a / (b * u_box.sq() * (Iv(1) - _TWO * m * u_box))
-            tim_terms.append(t.hull(Iv(0)) if tail else t)
+        if not want_time:
+            return g, g
+        return g, g / _even_poly(d_c, s)
+
+    def eval_dd(s_box: Iv) -> tuple[Iv, Iv]:
+        """Interval bounds of g'' and tau'' over s_box, via
+        A = Q~^-1/2, B = D~^-1:
+          A'  = -1/2 Q^-3/2 Q', A'' = 3/4 Q^-5/2 Q'^2 - 1/2 Q^-3/2 Q''
+          B'  = -D^-2 D',       B'' = 2 D^-3 D'^2 - D^-2 D''
+          g'' = 2 A'',          tau'' = 2 (A'' B + 2 A' B' + A B'')."""
+
+        q = _even_poly(q_c, s_box)
+        qp = _even_d1(q_c, s_box)
+        qpp = _even_d2(q_c, s_box)
+        sq_ = q.sqrt()
+        q32 = q * sq_
+        q52 = q.sq() * sq_
+        a2 = Iv(3) / Iv(4) * qp.sq() / q52 - qpp / (_TWO * q32)
+        g_dd = _TWO * a2
+        if not want_time:
+            return g_dd, g_dd
+        d = _even_poly(d_c, s_box)
+        dp = _even_d1(d_c, s_box)
+        dpp = _even_d2(d_c, s_box)
+        a0 = Iv(1) / sq_
+        a1 = -qp / (_TWO * q32)
+        b0 = Iv(1) / d
+        b1 = -dp / d.sq()
+        b2 = _TWO * dp.sq() / (d * d.sq()) - dpp / d.sq()
+        t_dd = _TWO * (a2 * b0 + _TWO * a1 * b1 + a0 * b2)
+        return g_dd, t_dd
 
     # directed float conversions: the body top rounds DOWN and the
     # tail top rounds UP, so [0, body_hi] u [body_hi, tail_hi] COVERS
-    # the true [0, s_hi*] (plain float() rounds to nearest and could
-    # shrink the range inward)
+    # the true [0, s_hi*]
     body_hi = s_hi.lo_float()
     tail_hi = s_hi.hi_float()
     if body_hi > 0.0:
         pts = _grid(0.0, body_hi, n_sub)
         for s0, s1 in zip(pts[:-1], pts[1:], strict=True):
-            push(s0, s1, tail=False)
+            g_dd, t_dd = eval_dd(Iv(s0, s1))
+            g_mid, t_mid = eval_fs(Iv(0.5 * (s0 + s1)))
+            ang_terms.append(_midpoint_term(g_mid, g_dd, s0, s1))
+            if want_time:
+                tim_terms.append(_midpoint_term(t_mid, t_dd, s0, s1))
     if tail_hi > body_hi:
-        # the true upper limit lies in [s_hi.lo, s_hi.hi]; the tail
+        # first-order tail: the true upper limit lies inside, so the
         # contribution is between 0 and the full subinterval bound
-        push(body_hi, tail_hi, tail=True)
+        s_box = Iv(body_hi, tail_hi)
+        q = _even_poly(q_c, s_box)
+        g = _TWO / q.sqrt()
+        ds = Iv(tail_hi) - Iv(body_hi)
+        ang_terms.append((ds * g).hull(Iv(0)))
+        if want_time:
+            t = ds * g / _even_poly(d_c, s_box)
+            tim_terms.append(t.hull(Iv(0)))
     ang = iv_sum(ang_terms) if ang_terms else Iv(0)
     tim = iv_sum(tim_terms) if tim_terms else Iv(0)
     return ang, tim
 
 
+def _poly(coeffs: list[Iv], x: Iv) -> Iv:
+    acc = coeffs[-1]
+    for c in reversed(coeffs[:-1]):
+        acc = acc * x + c
+    return acc
+
+
+def _poly_d(coeffs: list[Iv]) -> list[Iv]:
+    return [Iv(k) * c for k, c in enumerate(coeffs)][1:]
+
+
 def _direct_enclosure(u_lo: Iv, u_hi: Iv, b: Iv, m: Iv,
                       n_sub: int, want_time: bool) -> tuple[Iv, Iv]:
-    """(angle, time) enclosure of a monotone sub-critical arc by
-    direct interval Riemann integration of 1/sqrt(R) in u (no
-    turning point exists: L2d certified)."""
+    """(angle, time) enclosure of a monotone sub-critical arc by a
+    certified composite midpoint rule in u (no turning point exists:
+    L2d certified): integrands R^-1/2 and R^-1/2 / D with
+    R = 1/b^2 - u^2 + 2 m u^3 and D = b (u^2 - 2 m u^3), second
+    derivatives bounded by interval evaluation of the exact
+    polynomial derivatives."""
 
+    r_c = [Iv(1) / b.sq(), Iv(0), Iv(-1), _TWO * m]
+    d_c = [Iv(0), Iv(0), b, -_TWO * m * b]
+    r_c1, d_c1 = _poly_d(r_c), _poly_d(d_c)
+    r_c2, d_c2 = _poly_d(r_c1), _poly_d(d_c1)
     ang_terms, tim_terms = [], []
-    # outward-directed float endpoints: the grid COVERS the true
-    # integration range (nearest-rounding float() could shrink it)
-    pts = _grid(u_lo.lo_float(), u_hi.hi_float(), n_sub)
+    # endpoint-uncertainty slivers get their OWN [0, +] cells so the
+    # two-sided body runs exactly over the PROVEN-inside range
+    # [u_lo.hi, u_hi.lo] -- excluding whole grid cells at the
+    # boundary would cost an O(1/n) lower-bound deficit that buries
+    # the midpoint rule's O(1/n^2)
+    a0, a1 = u_lo.lo_float(), u_lo.hi_float()
+    b0_f, b1_f = u_hi.lo_float(), u_hi.hi_float()
+    if a1 >= b0_f:
+        # endpoint uncertainties overlap (near-degenerate range):
+        # one [0, +] cell over the whole covering range is sound
+        u_box = Iv(a0, b1_f)
+        g = Iv(1) / _poly(r_c, u_box).sqrt()
+        ds = Iv(b1_f) - Iv(a0)
+        ang = (ds * g).hull(Iv(0))
+        if not want_time:
+            return ang, Iv(0)
+        return ang, (ds * g / _poly(d_c, u_box)).hull(Iv(0))
+    for s_lo, s_hi in ((a0, a1), (b0_f, b1_f)):
+        if s_hi > s_lo:
+            u_box = Iv(s_lo, s_hi)
+            g = Iv(1) / _poly(r_c, u_box).sqrt()
+            ds = Iv(s_hi) - Iv(s_lo)
+            ang_terms.append((ds * g).hull(Iv(0)))
+            if want_time:
+                t = ds * g / _poly(d_c, u_box)
+                tim_terms.append(t.hull(Iv(0)))
+    pts = _grid(a1, b0_f, n_sub)
     for x0, x1 in zip(pts[:-1], pts[1:], strict=True):
         u_box = Iv(x0, x1)
-        r_val = big_r_iv(u_box, b, m)
-        g = Iv(1) / r_val.sqrt()
-        ds = Iv(x1) - Iv(x0)
-        a = ds * g
-        ang_terms.append(a)
+        r_box = _poly(r_c, u_box)
+        sq_ = r_box.sqrt()
+        rp, rpp = _poly(r_c1, u_box), _poly(r_c2, u_box)
+        r32, r52 = r_box * sq_, r_box.sq() * sq_
+        a2 = Iv(3) / Iv(4) * rp.sq() / r52 - rpp / (_TWO * r32)
+        u_mid = Iv(0.5 * (x0 + x1))
+        g_mid = Iv(1) / _poly(r_c, u_mid).sqrt()
         if want_time:
-            tim_terms.append(
-                a / (b * u_box.sq() * (Iv(1) - _TWO * m * u_box)))
-    # the grid range [u_lo.lo, u_hi.hi] COVERS the true integration
-    # range [u_lo*, u_hi*] (positive integrand: upper bound), while
-    # the lower bound may only count cells PROVEN inside it -- cells
-    # with x0 >= u_lo.hi and x1 <= u_hi.lo
-    ang_full = iv_sum(ang_terms)
-    tim_full = iv_sum(tim_terms) if want_time else Iv(0)
-    inside = [i for i, (x0, x1) in
-              enumerate(zip(pts[:-1], pts[1:], strict=True))
-              if x0 >= u_lo.hi and x1 <= u_hi.lo]
-    if len(inside) == len(ang_terms):
-        return ang_full, tim_full
-    core_a = iv_sum(ang_terms[i] for i in inside)
-    ang = Iv(min(core_a.lo, ang_full.lo), ang_full.hi)
-    if not want_time:
-        return ang, Iv(0)
-    core_t = iv_sum(tim_terms[i] for i in inside)
-    return ang, Iv(min(core_t.lo, tim_full.lo), tim_full.hi)
+            d_box = _poly(d_c, u_box)
+            dp, dpp = _poly(d_c1, u_box), _poly(d_c2, u_box)
+            a0 = Iv(1) / sq_
+            a1 = -rp / (_TWO * r32)
+            b0 = Iv(1) / d_box
+            b1 = -dp / d_box.sq()
+            b2 = (_TWO * dp.sq() / (d_box * d_box.sq())
+                  - dpp / d_box.sq())
+            t_dd = a2 * b0 + _TWO * a1 * b1 + a0 * b2
+            t_mid = g_mid / _poly(d_c, u_mid)
+            tim_terms.append(_midpoint_term(t_mid, t_dd, x0, x1))
+        ang_terms.append(_midpoint_term(g_mid, a2, x0, x1))
+    return (iv_sum(ang_terms),
+            iv_sum(tim_terms) if want_time else Iv(0))
 
 
 def _perihelion_bracket(b: Iv, m: Iv, iters: int = 80) -> Iv | None:
@@ -240,17 +397,30 @@ def _swept_enclosure(u_a: Iv, u_b: Iv, b: Iv, m: Iv, one_turn: bool,
     (sub-critical, no turning point) -- S1's `_swept`, certified."""
 
     u_t = _perihelion_bracket(b, m)
-    if u_t is not None:
+    if one_turn:
+        if u_t is None:
+            raise CertificationError(
+                "one-turn arc requested at sub-critical impact "
+                "parameter")
         a_a, t_a = _arc_enclosure(u_a, u_t, b, m, n_sub, want_time)
         a_b, t_b = _arc_enclosure(u_b, u_t, b, m, n_sub, want_time)
-        if one_turn:
-            return a_a + a_b, t_a + t_b
-        return (a_a - a_b).abs(), (t_a - t_b).abs()
-    if one_turn:
-        raise CertificationError(
-            "one-turn arc requested at sub-critical impact parameter")
-    return _direct_enclosure(iv_min(u_a, u_b), iv_max(u_a, u_b),
-                             b, m, n_sub, want_time)
+        return a_a + a_b, t_a + t_b
+    # no-turn: two regular representations, picked by where the
+    # turning point sits. With u_t well above the range (certified
+    # u_t > 2 u_in) the DIRECT form is well-conditioned -- R(u_in)
+    # >= (u_t - u_in) Q > 0 with a fat margin -- and the
+    # arc-difference form would subtract two near-equal large-domain
+    # integrals (the flat near-radial case has u_t = 1/b -> huge:
+    # catastrophically wide). With u_t close to the range (b near
+    # b_eq) the direct integrand is near-singular at u_in and the
+    # s-substituted arc DIFFERENCE is the regular representation.
+    u_in = iv_max(u_a, u_b)
+    if u_t is None or u_t.certainly_gt(u_in * _TWO):
+        return _direct_enclosure(iv_min(u_a, u_b), u_in,
+                                 b, m, n_sub, want_time)
+    a_a, t_a = _arc_enclosure(u_a, u_t, b, m, n_sub, want_time)
+    a_b, t_b = _arc_enclosure(u_b, u_t, b, m, n_sub, want_time)
+    return (a_a - a_b).abs(), (t_a - t_b).abs()
 
 
 def flight_time_certified(r1: float, r2: float, dpsi: float,
@@ -320,8 +490,12 @@ def flight_time_certified(r1: float, r2: float, dpsi: float,
         b_lo = b_cert.lo_float()
         b_hi = b_cert.hi_float()
     else:
-        # no-turn: only 0 <= b* <= b_eq is certified (the bisection
-        # bracket is a search aid, not an enclosure)
+        # no-turn: ang(b) is strictly increasing (L2e: fixed limits,
+        # pointwise-decreasing R), so a bracket whose endpoint angles
+        # certifiably straddle dpsi ENCLOSES the unique b*. The upper
+        # straddle is the branch condition itself (dpsi < a_eq); the
+        # lower is certified by evaluation, with the family hull
+        # [0, b_eq] as the sound fallback.
         b_cert = Iv(0).hull(b_eq)
         b_lo = b_eq.lo_float() * 1e-8
         b_hi = b_eq.hi_float()
@@ -329,6 +503,14 @@ def flight_time_certified(r1: float, r2: float, dpsi: float,
     lo, hi = b_lo, b_hi
     n_scan = max(16, n_sub // 4)
     n_scan_cap = 8 * n_sub
+    straddle = False
+    if not one_turn:
+        try:
+            ang0, _ = _swept_enclosure(u1, u2, Iv(lo), m_i, False,
+                                       n_scan, want_time=False)
+            straddle = ang0.certainly_lt(dpsi_i)
+        except CertificationError:
+            straddle = False
     for _ in range(bisect_iters):
         mid = 0.5 * (lo + hi)
         if mid == lo or mid == hi or (hi - lo) <= 1e-13 * mid:
@@ -356,6 +538,11 @@ def flight_time_certified(r1: float, r2: float, dpsi: float,
             lo = mid
         else:
             hi = mid
+    if not one_turn and straddle:
+        # L2e: every accepted lo carried a certified ang < dpsi and
+        # every hi a certified ang > dpsi (b_eq's via the branch
+        # condition dpsi < a_eq), so [lo, hi] encloses b*
+        b_cert = Iv(lo, hi).intersect(b_cert)
     b_hat = 0.5 * (lo + hi)
     ang, tim = _swept_enclosure(u1, u2, Iv(b_hat), m_i, one_turn,
                                 max(n_sub, n_scan), want_time=True)
@@ -385,7 +572,7 @@ def containment_certificate(r_in: float, r_out: float, dt: float,
     rho_out = tortoise_iv(Iv(r_out), m_i)
     rho_smin = tortoise_iv(Iv(shell[0]), m_i)
     rho_smax = tortoise_iv(Iv(shell[1]), m_i)
-    wg = w_glob_iv(m_i) if m > 0.0 else None
+    wg = angle_cost_iv(m_i)
 
     margins = {
         "nonempty": dt_i - (rho_out - rho_in),
@@ -393,10 +580,8 @@ def containment_certificate(r_in: float, r_out: float, dt: float,
         - dt_i,
         "outer_shell": (rho_smax - rho_in) + (rho_smax - rho_out)
         - dt_i,
+        "polar_cap": _TWO * wg * Iv(cap_half_angle) - dt_i,
     }
-    if wg is not None:
-        margins["polar_cap"] = (_TWO * wg * Iv(cap_half_angle)
-                                - dt_i)
     bad = [k for k, v in margins.items()
            if not v.certainly_gt(Iv(0))]
     if bad:
@@ -408,12 +593,10 @@ def containment_certificate(r_in: float, r_out: float, dt: float,
     rho_hi = (rho_in + rho_out + dt_i) / _TWO
     r_lo = _invert_tortoise(rho_lo, m_i, shell)
     r_hi = _invert_tortoise(rho_hi, m_i, shell)
-    out = {"margins": margins, "r_box": (r_lo, r_hi)}
-    if wg is not None:
-        psi_max = dt_i / (_TWO * wg)
-        out["psi_max"] = psi_max
-        out["perihelion_floor"] = r_lo * (psi_max / _TWO).cos()
-    return out
+    psi_max = dt_i / (_TWO * wg)
+    return {"margins": margins, "r_box": (r_lo, r_hi),
+            "psi_max": psi_max,
+            "perihelion_floor": r_lo * (psi_max / _TWO).cos()}
 
 
 def _invert_tortoise(rho_target: Iv, m: Iv,

@@ -171,6 +171,23 @@ stops the refinement and returns the current bracket -- sound, merely
 wider. u_t, b, and every downstream quantity are intervals; nothing
 is ever a point estimate.
 
+**L2e (no-turn angle monotonicity: the Clairaut constant is
+identifiable).** For a no-turn configuration the swept angle is
+ang(b) = INT_{u_out}^{u_in} du / sqrt(R(u; b)) with integration
+limits INDEPENDENT of b, and R(u; b) = 1/b^2 - u^2 (1 - 2Mu) is
+strictly decreasing in b pointwise, so the integrand is strictly
+increasing in b pointwise: **ang(b) is strictly increasing on the
+no-turn family.** (This is pure pointwise comparison; no derivative
+interchange is needed. It does NOT extend to the one-turn family,
+whose limits move with b -- no monotonicity is claimed or used
+there.) Consequence: a bisection bracket [b_lo, b_hi] whose
+endpoint angles are CERTIFIED to straddle the requested dpsi
+encloses the unique matched b*, so for no-turn calls the certified
+b* enclosure is the final straddling bracket -- as tight as the
+bisection converges -- rather than the family-wide hull [0, b_eq].
+If the straddle cannot be certified (quadrature too coarse at an
+endpoint), the contract falls back to [0, b_eq], sound and wider.
+
 ## L3. Curvature and the two-sided Hessian comparison
 
 **L3a (closed-form curvature).** For a surface of revolution
@@ -312,13 +329,15 @@ distances to both anchors are certified >= d_i,min > 0:
    b* in [w(r_floor), b_eq] (L2a), while no-turn and
    equal-perihelion-corridor calls certify only b* in [0, b_eq];
    the tangent model must hull the gradient over the WHOLE returned
-   interval (the bisection search bracket is not an enclosure and
-   is never returned). dT_i/drho = sigma_i sqrt(1 - b_i^2 / w^2),
-   with the sign sigma_i determined by the arc geometry when
-   certifiable and otherwise hulled over {-1, +1} (sound, wider).
-   A certified family-wise angle-monotonicity lemma tightening the
-   no-turn hull is an admissible PR-O2 addition if the price table
-   demands it; until then the wide hull is the contract.
+   interval. For no-turn calls, L2e upgrades the enclosure to the
+   certified straddling bisection bracket (tight); the family-wide
+   hull remains the fallback whenever the straddle is not certified.
+   dT_i/drho = sigma_i sqrt(1 - b_i^2 / w^2), with the sign sigma_i
+   determined by the arc geometry when certifiable (no-turn: the
+   sign of r_X - r_anchor, since r is monotone along the arc;
+   one-turn: +1 at the non-anchor endpoint, which sits past the
+   perihelion on the outgoing side) and otherwise hulled over
+   {-1, +1} (sound, wider).
 3. Remainder: for x in C, the straight coordinate segment from c
    stays in C, so by L3c
 
@@ -350,22 +369,43 @@ distances to both anchors are certified >= d_i,min > 0:
    in rho, is NOT admissible. Finite pointwise sampling of the
    model is not admissible as a bound.
 
-**L6b (anchor balls).** Cells within optical distance delta_b of an
-anchor (where 1/d blows up) are excised and their contribution
-enclosed explicitly as [0, U_ball]. The ball lies in the coordinate
-box |rho - rho_anchor| <= delta_b, psi <= delta_b / w_lb (rho is
-1-Lipschitz and w_lb psi is 1-Lipschitz with w_lb the certified w
-lower bound on the box, both from L4's functionals); its r-extent is
-at most 2 delta_b f(r_hi) since dr/drho = f. The integrand is at most
-r_hi^2 sin theta * Delta t, so
+**L6b (anchor neighborhoods).** Near an anchor the tangent model's
+curvature constant 1/d blows up, so cells within a declared optical
+distance d_switch of either anchor are handled by one of two
+admissible certified treatments:
 
-    U_ball = 2 pi * Delta t * r_hi^2 * (1 - cos(delta_b / w_lb))
-             * 2 delta_b f(r_hi),
+1. (implemented) the FIRST-ORDER mode: center flight-time calls
+   plus the L1 coordinate Lipschitz bounds |dS/drho| <= 2,
+   |dS/dpsi| <= 2 w -- valid at every distance because no curvature
+   constant enters; anchor neighborhoods then need no excision at
+   all, and their enclosures tighten under the same adaptive
+   refinement as every other cell (the small sin psi weight near the
+   axis does the rest);
+2. (admissible alternative) explicit excision of an optical ball of
+   radius delta_b with its contribution ADDED as [0, U_ball],
+   U_ball = 2 pi * Delta t * r_hi^2 * (1 - cos(delta_b / w_lb))
+   * 2 delta_b f(r_hi), from the ball's coordinate bounding box
+   (|rho - rho_anchor| <= delta_b, psi <= delta_b / w_lb, r-extent
+   <= 2 delta_b f(r_hi) since dr/drho = f).
 
-computed as a certified interval. U_ball is ADDED to the global
-interval -- never dropped as "negligible"; delta_b is sized so U_ball
-is small against the target, and the sizing is visible in the
-artifact.
+Either way, nothing is ever dropped as "negligible": option 1 keeps
+the cells in the certified sum, option 2 keeps the ball term in it.
+
+**L6b' (shell-local angular cost).** The pruning and anchor-distance
+functionals may use, in place of the global w_glob = 3 sqrt(3) M,
+the sharper certified bound
+
+    d >= max( |Delta rho|,
+              min( w(R_MIN) dpsi,
+                   (rho_a - rho(R_MIN)) + (rho_X - rho(R_MIN)) ) ):
+
+any path either stays in the shell r >= R_MIN, paying at least
+w(R_MIN) per unit angle (w monotone above the photon sphere), or
+leaves it, paying the tortoise exit cost from both endpoints. For
+M = 0 the constant is 2 R_MIN / pi instead, from the chord bound
+chord >= 2 sqrt(r1 r2) sin(psi/2) >= (2 R_MIN / pi) psi -- flat
+space has NO photon-sphere floor and a naive "w >= R_MIN" would be
+unsound.
 
 **L6c (pruning tier).** A cell where the closed-form L4 lower bounds
 already certify T_1 + T_2 > Delta t contributes exactly [0, 0]
@@ -391,6 +431,45 @@ interval.
 Failure to reach it under the cost caps (solver-call cap, wall-clock
 cap, refinement-depth cap) returns the certified interval with status
 `target-not-met`; the interval itself remains certified regardless.
+
+**Price-measurement discipline (the [TO SIZE] deliverable).** The
+cost of reaching each ratio is measured on a NEIGHBOR anchor
+configuration, not on the frozen one: the oracle is deterministic,
+but the freeze discipline exists so that nothing about the frozen
+run is chosen after seeing its number, so the frozen configuration's
+volume stays unobserved until the PR-O3 execution. The ladder is ONE
+adaptive pass that records the cost at each first crossing (a
+restarted run per rung discards every earlier rung's refinement and
+measures the same numbers at several times the price), it streams
+its trace so a slow run is distinguishable from a hung one, and it
+publishes the full (calls, cells, ratio, wall) curve so the
+convergence exponent is auditable.
+
+The convergence is **floor-limited**, and the analysis has to say
+so. Every cell strictly inside the diamond keeps its center flight
+time's uncertainty however small the cell becomes, so cell
+refinement converges not to zero but to
+
+    W_floor(n_sub) ~ width(T1 + T2) * 2 pi INT INT r^2 sin psi
+                      dr dpsi   over the diamond's support,
+
+which only a larger `n_sub` reduces. The artifact reports this floor
+per quadrature setting and extrapolates unreached targets with the
+floor-aware model `ratio = floor + C * calls^slope`; a plain power
+law would contradict the floor diagnostic printed beside it. A
+target at or below the floor is reported as unreachable at that
+`n_sub`, never as a call count. The floor is measured STANDALONE
+(support integral on a fixed grid with the fast non-certified
+solver, widths from the certified solver): a per-cell tally
+accumulated inside the integrator also counts cells OUTSIDE the
+diamond, whose true contribution width is zero, and overstates the
+floor by orders of magnitude -- an error that inverted the verdict
+on which lever binds before it was caught.
+
+Extrapolations live in fields that cannot be mistaken for measured
+crossings, and the artifact carries a per-`n_sub` plan for the
+FROZEN target so PR-O3 has a configuration answer instead of a
+number to guess.
 
 ## Relation to the note and to Paper A
 

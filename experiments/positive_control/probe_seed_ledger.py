@@ -49,6 +49,12 @@ from seed_windows import (
 #: (verdict CONFIRMED; docs/prereg/p14_s4_results.json).
 #: s5_curved / s5_flat: the S5 C2-unpaired campaign arms observed
 #: 2026-08-11 (outcome DETECTED; docs/prereg/p14_s5_results.json).
+#: oracle_mc_diagnostic: the volume-oracle Monte Carlo cross-check
+#: stream, first observed 2026-08-11 (PR-O2 development). DIAGNOSTIC
+#: ONLY -- no statistical claim ever attaches to it (the oracle is
+#: deterministic; MC disjointness raises an investigation flag, never
+#: a verdict), but the observing-spends principle still applies: this
+#: stream is permanently spent for any claim-bearing use.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -57,6 +63,7 @@ OBSERVED_PROBE_SCALARS = {
     "s4_campaign": 40_000_241,
     "s5_curved": 40_000_251,
     "s5_flat": 40_000_261,
+    "oracle_mc_diagnostic": 40_000_271,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
