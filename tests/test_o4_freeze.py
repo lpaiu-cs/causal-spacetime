@@ -167,20 +167,23 @@ def test_preflight_refuses_any_commit_the_approval_does_not_name(
         o4.preflight("  " + "A" * 40 + "\n")
 
 
-def test_the_executed_freeze_can_no_longer_start_a_campaign():
+def test_the_executed_freeze_can_no_longer_start_a_campaign(
+        monkeypatch, offline):
     """The streams this freeze names were drawn and retired, so its own
-    preflight must refuse -- there is no configuration of the tree in
-    which `1eb9461` may run again. A re-run needs a new freeze with new
-    scalars."""
+    preflight must refuse for THAT reason.
 
-    out = subprocess.run(
-        [sys.executable, str(_REPO / "experiments" / "oracle"
-                             / "o4_volume_audit.py"),
-         "--preflight", "--freeze-rev", _FREEZE_REV],
-        cwd=_REPO, capture_output=True, text=True)
-    assert out.returncode != 0
-    combined = out.stdout + out.stderr
-    assert "never re-entered" in combined or "dirty" in combined
+    The rev check is isolated deliberately (review R1). Running the
+    current checkout's runner with `--freeze-rev 1eb9461` refuses at
+    `verify_rev` on any committed branch, since HEAD is not the freeze
+    -- which proves nothing about the seeds and hid this test's real
+    claim behind a `dirty` match while the tree happened to be both
+    the freeze commit and unclean. So the check is granted exactly what
+    it needs: a clean checkout that IS the freeze commit."""
+
+    monkeypatch.setattr(o4, "_git_state",
+                        lambda: {"rev": _FREEZE_REV, "dirty": False})
+    with pytest.raises(KeyError, match="never re-entered"):
+        o4.preflight(_FREEZE_REV)
 
 
 def test_preflight_does_consult_the_authority(monkeypatch,
