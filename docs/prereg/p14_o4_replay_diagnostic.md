@@ -180,10 +180,33 @@ python experiments/oracle/o4_replay_diagnostic.py \
 게시가 확정이다. `--clusters` 는 동결 `g3_clusters = 100,000` 을 넘을
 수 없다 — stress 집합은 동결돼 있고 진단이 그 밖으로 나갈 수 없다.
 
+## 6a. Census 충분통계
+
+전체 실행이 세야 할 양들은 **`p14_o4_g3_redesign.md` §5 에서 동결**됐다.
+요지만 적으면:
+
+- `(probe, leg, outcome)` 12칸을 **어떤 축으로도 합산하지 않는다.** 이전
+  스키마는 outside probe 의 두 leg 를 합쳐 세어 `L + 10⁻⁶ ≤ err₁` 과
+  `err₂ ≥ 10⁻⁶` 을 구분하지 못했다 — 이 진단이 답하겠다고 한 질문을
+  정작 답할 수 없는 형태였다.
+- `err₁`·`err₂`·`L`·`L − err₁ − err₂` 는 **모두 술어 좌표 `dpsi` 에서
+  재계산한 값**이며, 사전 동결된 bin edge·분위수로 요약한다.
+- η 후보 격자별 `W_robust > 0` 개수. 격자와 strictness 는 동결돼 있고,
+  **η = 10⁻¹² 자체는 census 와 무관하게** 부동소수점 분리 논거로
+  정해졌다.
+- boolean mismatch 의 분모는 **양쪽 leg 가 모두 판정된 probe** 뿐이다.
+- 진단 전용 두 가지: `T(θ)` 대 `t_min(dpsi)` 차이(재설계가 제거한 항의
+  규모)와 하단 probe 의 `t_x ≥ 0` 도달 실패 개수(probe coverage). 둘 다
+  **gate 가 아니다.**
+
+이 집계들도 §4 의 억제 규칙을 따른다 — 고정 stress 집합 전체를 훑지
+않으면 아예 만들지 않는다.
+
 ## 7. 이 진단이 닫지 않는 것
 
-- G3 재설계. `[T₁+err₁+η, Δt−T₂−err₂−η]` 적격 규칙과 G3a/G3b 분리는
-  사전등록 재개방에서 다룬다.
+- G3 재설계. G3a/G3b 분리와 `W_robust > 0` 적격 규칙은
+  [`p14_o4_g3_redesign.md`](p14_o4_g3_redesign.md) 에 설계돼 있으며,
+  크기·임계값 동결은 사전등록 재개방에서 다룬다.
 - O4 재실행. 새 freeze 와 새 G1/G2 스칼라가 필요하고, 실행 승인은
   언제나 동결 승인과 별도다.
 - 러너의 관측성 결함. 향후 러너는 모든 abort 경로에서 write-once
