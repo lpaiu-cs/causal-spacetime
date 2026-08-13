@@ -209,14 +209,14 @@ def test_the_inference_is_labelled_as_inference():
 def test_the_undecided_algebra_is_pinned_against_the_frozen_code():
     """The document's central claim is an identity, not a measurement:
     the outside probe's second leg sits a hard-coded 1e-6 from the edge
-    it tests, so its undecided condition is `err >= 1e-6` and involves
-    no geometry. Pin the three code facts it rests on, so a later edit
+    it tests, so its undecided condition reduces to `err >= 1e-6` with
+    no `L` in it. Pin the three code facts it rests on, so a later edit
     to either file cannot silently falsify the write-up."""
 
     doc = (_PREREG / "p14_o4_incident.md").read_text(encoding="utf-8")
     plain = " ".join(doc.replace("**", "").split())
     assert "err₂ ≥ 1e-6" in plain
-    assert "does not involve the geometry at all" in plain
+    assert "with no `L` in it" in plain
 
     s1 = (_REPO / "experiments" / "positive_control"
           / "s1_schwarzschild_cost.py").read_text(encoding="utf-8")
@@ -229,6 +229,18 @@ def test_the_undecided_algebra_is_pinned_against_the_frozen_code():
     assert "(hi_edge + off, False)" in g3
     assert "0.5 * (lo_edge + hi_edge), True" in g3
     assert '"g3_stress_offset": 1e-6' in runner
+
+
+def test_the_document_does_not_overclaim_geometry_independence():
+    """What is geometry-independent is the decision DISTANCE, not the
+    outcome: `err₂` depends on the path, so geometry decides whether
+    the fixed gap is resolved. The write-up must say both halves."""
+
+    doc = (_PREREG / "p14_o4_incident.md").read_text(encoding="utf-8")
+    plain = " ".join(doc.replace("**", "").split())
+    assert "does not adapt to the local `err₂`" in plain
+    assert "decided by an `err₂` that geometry controls" in plain
+    assert "does not involve the geometry at all" not in plain
 
 
 def test_the_incident_document_refuses_to_grade_s1():

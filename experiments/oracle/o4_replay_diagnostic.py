@@ -1,4 +1,4 @@
-"""O4 G3 abort: a REPLAY-ONLY diagnostic. It observes nothing.
+"""O4 G3 abort: a REPLAY-ONLY diagnostic.
 
 The O4 campaign drawn from the freeze `1eb9461` completed G1's points
 and G2's call, entered G3, and stopped on the frozen fail-closed path
@@ -6,13 +6,19 @@ with no verdict (`docs/prereg/p14_o4_incident.json`). The frozen runner
 recorded no failure coordinates, so this module reproduces the stress
 points and reads out what the predicate actually returned at each one.
 
-WHAT THIS IS NOT. A replay is a reproduction, never an observation. No
-value produced here may be promoted into a scientific result, and
-nothing here changes a frozen rule: the G3 redesign happens in a
+WHAT THIS IS NOT. A replay is not a new independent sample and not a
+scientific result: no value produced here may be promoted into one,
+and nothing here changes a frozen rule -- the G3 redesign happens in a
 separate prereg re-opening, not as a consequence of these numbers. The
 module therefore computes NO G1 statistic, NO G2 leakage, and NO
 verdict, and its artifact carries a schema disjoint from the results
 and gate schemas (`run_kind: replay`).
+
+What it is NOT free of is observation. Its deterministic diagnostic
+output IS observed when it runs, and a partial run was already made
+from a dirty tree during development (see the protocol's disclosure
+section). "Observes nothing" would be the wrong claim; the right one
+is that what it observes cannot become evidence.
 
 Scope, fixed by the PI's boundary list:
 
@@ -453,10 +459,20 @@ def assemble(clusters: int, progress=None) -> dict:
         "replay_of": REPLAY_OF,
         "incident_record": _INCIDENT.relative_to(_REPO).as_posix(),
         "not_a_result": (
-            "A replay is a reproduction, never an observation. Nothing "
+            "A replay is not a new independent sample and not a "
+            "scientific result. Its deterministic output IS observed "
+            "when it runs -- the claim is not that nothing is seen, "
+            "but that what is seen cannot become evidence. Nothing "
             "here is a scientific quantity, no gate has a status, and "
             "no frozen rule changes as a consequence: the G3 redesign "
             "is a separate prereg re-opening."),
+        "prior_partial_observation": (
+            "a partial replay was run from a dirty tree during this "
+            "module's development and reached the first undecided "
+            "cluster; a later full run over the same frozen stress set "
+            "is therefore a census of the remaining counts, NOT an "
+            "independent confirmation. See "
+            "docs/prereg/p14_o4_replay_diagnostic.md."),
         "replayed_stream": {
             "name": _STREAM, "seed": _STREAM_SEED,
             "via": "probe_seed_ledger.replay_scalar",

@@ -78,13 +78,22 @@ condition in closed form. With `lo = T1`, `hi = dt - T2`, `L = hi - lo`:
 | outside `hi + 1e-6` | `p → x` | `L + 1e-6` | `L + 1e-6 ≤ err₁` |
 | **outside `hi + 1e-6`** | **`x → q`** | **`1e-6` exactly** | **`err₂ ≥ 1e-6`** |
 
-The last row is the important one. The outside probe's second leg sits
-a hard-coded `1e-6` from the boundary it is testing, and its undecided
-condition therefore **does not involve the geometry at all** — it is
-purely `err₂ ≥ 1e-6`. `err` is the solver's own reported bound,
-inflated by the angle-mismatch term `|ang - dpsi| · b` and by `tol`;
-G3 never consults it. If that quantity commonly exceeds `1e-6`, then
-*every* cluster aborts, and the first one suffices.
+The last row is the important one, and it must be stated precisely.
+What is geometry-independent is the **decision distance**: the outside
+probe's second leg sits a hard-coded `1e-6` from the boundary it is
+testing, whatever the cluster looks like, so unlike every other row it
+does not shrink with the window. The undecided condition reduces to
+`err₂ ≥ 1e-6` — a comparison between a fixed offset and the solver's
+reported bound, with no `L` in it.
+
+That is not the same as saying the outcome is geometry-independent.
+`err₂` is the solver's own reported bound at that leg, inflated by the
+angle-mismatch term `|ang - dpsi| · b` and by `tol`, and it therefore
+depends on the path and hence on the geometry. The precise statement
+is: **the fixed offset does not adapt to the local `err₂`; the
+boundary gap is fixed regardless of geometry, but whether that gap is
+resolved is decided by an `err₂` that geometry controls.** G3 never
+consults `err` at all, so it cannot notice either half of this.
 
 The midpoint rows add a second, geometry-dependent path: G3's clusters
 are selected by `L_S1 > 0` alone, which admits arbitrarily thin

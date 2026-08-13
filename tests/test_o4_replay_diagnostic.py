@@ -78,6 +78,51 @@ def test_no_key_anywhere_could_be_read_as_a_result():
         f"{offenders}")
 
 
+def test_the_artifact_does_not_claim_to_observe_nothing():
+    """The honest boundary is narrower than the one first written. A
+    replay is not a new independent sample and not a result, but its
+    deterministic output IS observed when it runs; claiming otherwise
+    was false, and the partial development run makes it plainly so."""
+
+    art = rd.assemble(1)
+    says = art["not_a_result"]
+    assert "IS observed" in says
+    assert "cannot become evidence" in says
+    assert "never an observation" not in says
+    assert '"Observes nothing" would be the wrong claim' in _SOURCE
+
+
+def _protocol_prose() -> str:
+    """The protocol with markdown emphasis and blockquote markers
+    flattened, so an assertion matches the sentence and not the
+    typesetting."""
+
+    doc = (_REPO / "docs" / "prereg"
+           / "p14_o4_replay_diagnostic.md").read_text(encoding="utf-8")
+    lines = [ln.lstrip("> ") for ln in doc.replace("**", "").split("\n")]
+    return " ".join(" ".join(lines).split())
+
+
+def test_the_prior_partial_observation_is_disclosed():
+    art = rd.assemble(1)
+    disclosed = art["prior_partial_observation"]
+    assert "dirty tree" in disclosed
+    assert "first undecided" in disclosed
+    assert "NOT an independent confirmation" in disclosed
+    plain = _protocol_prose()
+    assert "사전 관측 공개" in plain
+    assert "cluster 604" in plain
+    assert "정식 아티팩트는 발행하지 않았다" in plain
+    assert "census" in plain
+
+
+def test_the_protocol_does_not_overclaim_geometry_independence():
+    plain = _protocol_prose()
+    assert "기하와 무관한 것은 판정 거리(decision distance)뿐이다" in plain
+    assert "고정 offset 은 국소 `err₂` 에 적응하지 않는다" in plain
+    assert "abort 여부는 기하에 따른 솔버의 `err₂` 가 결정한다" in plain
+
+
 def test_the_scope_says_what_was_not_computed():
     art = rd.assemble(1)
     absent = art["scope"]["not_computed"]
@@ -244,10 +289,11 @@ def test_probing_past_the_frozen_stress_set_is_refused(monkeypatch):
 # ------------------------------------------------------- the algebra
 
 def test_the_outside_probe_second_leg_carries_the_fixed_offset():
-    """The identity the incident record derived without executing:
-    at the outside probe, the `x->q` leg's decision distance is the
-    fixed offset itself, with no geometry in it at all. That is why
-    `err >= 1e-6` decides the outcome on its own."""
+    """The identity the incident record derived without executing: at
+    the outside probe, the `x->q` leg's decision DISTANCE is the fixed
+    offset itself, with no `L` in it -- unlike every other row it does
+    not shrink with the window. What that distance is measured against,
+    `err`, is a different matter and is measured, not pinned."""
 
     index, r, th, t1, t2 = next(iter(
         rd.stress_clusters(rd._STREAM_SEED, 1, o4.FROZEN["tol"])))
@@ -471,4 +517,6 @@ def test_the_published_artifact_names_the_incident_it_replays(
     art = json.loads(out.read_text(encoding="utf-8"))
     assert art["incident_record"] == "docs/prereg/p14_o4_incident.json"
     assert (_REPO / art["incident_record"]).exists()
-    assert "never an observation" in art["not_a_result"]
+    assert "not a scientific result" in art["not_a_result"]
+    assert "NOT an independent confirmation" in (
+        art["prior_partial_observation"])
