@@ -67,9 +67,28 @@ def test_environment_lock_covers_the_whole_apparatus(monkeypatch):
 
 _REV = "0" * 40
 
+#: The freeze merge the approved campaign ran from.
+_FREEZE_REV = "1eb9461f1af739968403c633a7a44cbba9a9f948"
+
 
 @pytest.fixture
-def offline(monkeypatch):
+def clean_outputs(monkeypatch, tmp_path):
+    """The campaign HAS run, so `p14_o4_reservation.json` now exists in
+    the tree and preflight's write-once check fires before anything
+    else. Tests of the other checks redirect the two write-once paths
+    to an empty directory; the live files are asserted on separately,
+    in the incident record's own tests."""
+
+    fakes = (tmp_path / "p14_o4_reservation.json",
+             tmp_path / "p14_o4_results.json")
+    monkeypatch.setattr(o4, "_RESERVATION", fakes[0])
+    monkeypatch.setattr(o4, "_ARTIFACT", fakes[1])
+    monkeypatch.setattr(o4, "_WRITE_ONCE", fakes)
+    return fakes
+
+
+@pytest.fixture
+def offline(monkeypatch, clean_outputs):
     """Preflight's later steps talk to the real reservation authority
     -- including a push. Tests that are about the EARLIER checks must
     not reach it: CI caught `test_preflight_refuses_any_commit...`
@@ -84,9 +103,18 @@ def offline(monkeypatch):
     monkeypatch.setattr(o4, "reserve_remote", forbidden)
 
 
-def test_freeze_commit_carries_no_result():
-    assert not o4._ARTIFACT.exists()
-    assert not o4._RESERVATION.exists()
+def test_the_freeze_commit_carried_neither_result_nor_reservation():
+    """Historical, as for O3: the campaign has since run and left a
+    reservation in the tree, so only the frozen commit can attest that
+    the rules were sealed with nothing observed. The result artifact
+    never appeared at all -- the run aborted in G3."""
+
+    for rel in ("p14_o4_results.json", "p14_o4_reservation.json"):
+        probe = subprocess.run(
+            ["git", "cat-file", "-e", f"{_FREEZE_REV}:docs/prereg/{rel}"],
+            cwd=_REPO, capture_output=True)
+        assert probe.returncode != 0, rel
+    assert not o4._ARTIFACT.exists(), "no verdict was ever published"
 
 
 @pytest.mark.parametrize("which", [0, 1])
@@ -132,11 +160,31 @@ def test_preflight_refuses_any_commit_the_approval_does_not_name(
     for junk in ("", "abc", "a" * 39, "z" * 40, "A" * 41):
         with pytest.raises(SystemExit, match="full 40-hex"):
             o4.preflight(junk)
-    # case-insensitive, whitespace-tolerant, but otherwise exact
-    o4.preflight("  " + "A" * 40 + "\n")
+    # case-insensitive and whitespace-tolerant, but otherwise exact: a
+    # matching SHA now gets past the rev check and dies later, on the
+    # retired streams (see the un-runnable test below)
+    with pytest.raises(KeyError, match="never re-entered"):
+        o4.preflight("  " + "A" * 40 + "\n")
 
 
-def test_preflight_does_consult_the_authority(monkeypatch):
+def test_the_executed_freeze_can_no_longer_start_a_campaign():
+    """The streams this freeze names were drawn and retired, so its own
+    preflight must refuse -- there is no configuration of the tree in
+    which `1eb9461` may run again. A re-run needs a new freeze with new
+    scalars."""
+
+    out = subprocess.run(
+        [sys.executable, str(_REPO / "experiments" / "oracle"
+                             / "o4_volume_audit.py"),
+         "--preflight", "--freeze-rev", _FREEZE_REV],
+        cwd=_REPO, capture_output=True, text=True)
+    assert out.returncode != 0
+    combined = out.stdout + out.stderr
+    assert "never re-entered" in combined or "dirty" in combined
+
+
+def test_preflight_does_consult_the_authority(monkeypatch,
+                                             clean_outputs):
     """Guard against the `offline` fixture hiding a regression: a
     preflight that clears every local check must still have asked the
     authority and proved it can write there."""
@@ -149,7 +197,10 @@ def test_preflight_does_consult_the_authority(monkeypatch):
                         lambda: called.append("read"))
     monkeypatch.setattr(o4, "probe_reservation_namespace",
                         lambda: called.append("probe"))
-    o4.preflight(_REV)
+    # the seed check is last and now refuses (streams retired), so the
+    # call still proves the authority was consulted on the way there
+    with pytest.raises(KeyError, match="never re-entered"):
+        o4.preflight(_REV)
     assert called == ["read", "probe"]
 
 
@@ -450,17 +501,23 @@ def test_frozen_config_matches_the_ruled_design():
     assert o4.FROZEN["max_wall_s"] == 86_400.0
 
 
-def test_seeds_are_allocated_fresh_and_separately():
-    from probe_seed_ledger import (
-        FRESH_PROBE_SCALARS,
-        OBSERVED_PROBE_SCALARS,
-        assert_fresh_scalar,
-    )
-    assert FRESH_PROBE_SCALARS == {"g1_audit": 40_000_281,
-                                   "g2_leakage": 40_000_291}
-    for name in FRESH_PROBE_SCALARS:
-        assert_fresh_scalar(name)
-    # the smoke stream and its two derived successors are already spent
+def test_the_freeze_commit_carried_two_fresh_campaign_scalars():
+    """A historical assertion, as for O3's no-result check: the freeze
+    commit is what must have held these as FRESH. They were drawn on
+    2026-08-12 and are retired now, so the live ledger cannot state
+    this -- only the frozen blob can."""
+
+    blob = subprocess.run(
+        ["git", "show", f"{_FREEZE_REV}:experiments/positive_control/"
+         f"probe_seed_ledger.py"],
+        cwd=_REPO, capture_output=True, text=True, check=True).stdout
+    frozen = blob.split("FRESH_PROBE_SCALARS")[1].split("}")[0]
+    assert '"g1_audit": 40_000_281' in frozen
+    assert '"g2_leakage": 40_000_291' in frozen
+
+
+def test_the_smoke_stream_and_its_successors_stay_retired():
+    from probe_seed_ledger import OBSERVED_PROBE_SCALARS
     for k in ("o4_smoke", "o4_smoke_g2", "o4_smoke_g3"):
         assert k in OBSERVED_PROBE_SCALARS
     assert (OBSERVED_PROBE_SCALARS["o4_smoke"] + 1
@@ -592,7 +649,7 @@ def test_an_unreachable_authority_refuses_rather_than_assumes_free(
 
 
 def test_preflight_refuses_when_the_streams_are_already_claimed(
-        monkeypatch):
+        monkeypatch, clean_outputs):
     monkeypatch.setattr(o4, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(o4, "_git_state",
                         lambda: {"rev": _REV, "dirty": False})

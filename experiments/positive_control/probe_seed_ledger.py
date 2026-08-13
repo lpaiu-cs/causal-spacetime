@@ -64,6 +64,16 @@ from seed_windows import (
 #: (SEED+2) stays retired although the G3 seed-inheritance fix left it
 #: unread -- a seed once listed as spent is never un-spent, since the
 #: safe direction of that error is to retire one value too many.
+#: o4_aborted_g1 / o4_aborted_g2: the O4 campaign strata, drawn on
+#: 2026-08-12 from the freeze merge `1eb9461`. The run completed G1's
+#: 26.2M points and G2's call, entered G3, and stopped on the frozen
+#: fail-closed path (`causal_relation` undecided at a stress point), so
+#: it published NO result and NO gate has a status
+#: (docs/prereg/p14_o4_incident.json). The names say `aborted` rather
+#: than `campaign` precisely so nothing downstream can read these as
+#: the provenance of a verdict. They are spent all the same: the points
+#: were observed, and the streams are retired whether or not a verdict
+#: came of them.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -76,15 +86,20 @@ OBSERVED_PROBE_SCALARS = {
     "o4_smoke": 40_000_311,
     "o4_smoke_g2": 40_000_312,
     "o4_smoke_g3": 40_000_313,
+    "o4_aborted_g1": 40_000_281,
+    "o4_aborted_g2": 40_000_291,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
 #: results commit MUST move the scalar to OBSERVED_PROBE_SCALARS in
-#: the same change that adds the observed artifact.
+#: the same change that adds the observed artifact -- and so must an
+#: ABORT record, since spending does not depend on the run succeeding.
 #:
-#: g1_audit / g2_leakage: the two O4 strata that DRAW. They are
-#: separate scalars rather than children of one, so that a stratum
-#: rerun can never re-enter another stratum's stream.
+#: Empty: the O4 strata `g1_audit`/`g2_leakage` were drawn on
+#: 2026-08-12 and are now retired as `o4_aborted_g1`/`o4_aborted_g2`.
+#: A re-run of O4 needs a NEW freeze with NEW scalars; the retired
+#: streams may not be re-entered, and replaying them is a reproduction,
+#: never an observation (`replay_scalar`).
 #:
 #: There is deliberately no G3 scalar. G3's unit is the boundary-stress
 #: cluster drawn from `G1 measure | L_S1 > 0`, and it inherits G1's own
@@ -92,11 +107,9 @@ OBSERVED_PROBE_SCALARS = {
 #: and then never read it, which would have recorded a spent seed as G3
 #: provenance for samples G1 produced (O4 review R1). The value is
 #: withdrawn unspent -- it was never drawn from, so it is not moved to
-#: OBSERVED; `40_000_301` simply returns to the unallocated pool.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "g1_audit": 40_000_281,
-    "g2_leakage": 40_000_291,
-}
+#: OBSERVED; `40_000_301` simply returns to the unallocated pool, and
+#: the abort does not change that (nothing ever drew from it).
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
@@ -126,6 +139,15 @@ def assert_fresh_scalar(name: str) -> int:
     scalars, the other active allocations, and the spent ranges.
     Returns the seed."""
 
+    if name not in FRESH_PROBE_SCALARS:
+        retired = sorted(k for k in OBSERVED_PROBE_SCALARS
+                         if k.endswith(name.split("_")[0])
+                         or name.split("_")[0] in k)
+        raise KeyError(
+            f"{name!r} has no fresh allocation. A retired stream is "
+            f"never re-entered: allocate a NEW scalar under a new "
+            f"freeze, or use replay_scalar() for a reproduction that "
+            f"is labelled as one. Related retired entries: {retired}")
     seed = FRESH_PROBE_SCALARS[name]
     others = {n: s for n, s in FRESH_PROBE_SCALARS.items() if n != name}
     assert_point_seeds_fresh(
