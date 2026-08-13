@@ -56,6 +56,7 @@ Run (no artifact is written unless `--out` is given):
 from __future__ import annotations
 
 import argparse
+import bisect
 import hashlib
 import json
 import math
@@ -70,6 +71,7 @@ _REPO = _HERE.parents[1]
 sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
 
+import o4_g3_redesign as g3  # noqa: E402
 import o4_sizing as sz  # noqa: E402
 import o4_volume_audit as o4  # noqa: E402
 import s1_schwarzschild_cost as s1  # noqa: E402
@@ -114,6 +116,38 @@ CAUSE_MIDPOINT = "midpoint-in-error-band"
 CAUSE_OUTSIDE = "outside-in-error-band"
 CAUSE_MISMATCH = "boolean-mismatch"
 CAUSES = (CAUSE_MIDPOINT, CAUSE_OUTSIDE, CAUSE_MISMATCH)
+
+OUTCOMES = ("true", "false", "undecided")
+
+#: The redesign's frozen constants have one home, `o4_g3_redesign`.
+#: They are re-exported here because the census scans them, never
+#: redefined -- a second definition is how a document and its code
+#: drift apart.
+ETA = g3.ETA
+ETA_GRID = g3.ETA_GRID
+
+
+def _log_edges(lo_decade: int = -16, hi_decade: int = -2,
+               per_decade: int = 3) -> tuple[float, ...]:
+    return tuple(10.0 ** (lo_decade + i / per_decade)
+                 for i in range((hi_decade - lo_decade) * per_decade
+                                + 1))
+
+
+def _linear_edges(hi: float, bins: int = 32) -> tuple[float, ...]:
+    return tuple(hi * i / bins for i in range(bins + 1))
+
+
+#: Frozen histogram edges. Bins are [lo, hi) left-closed, except the
+#: last which is [lo, hi]; values outside fall in `underflow` /
+#: `overflow`. Declared here and in the protocol before any full run.
+ERR_EDGES = _log_edges()
+LEN_EDGES = _linear_edges(sz.L_MAX_UB)
+
+#: Frozen quantile probabilities and interpolation. Tails matter here,
+#: centres do not -- and no mean or variance is reported.
+QUANTILE_PROBS = (0.001, 0.01, 0.1, 0.5, 0.9, 0.99, 0.999)
+QUANTILE_METHOD = "linear"
 
 
 # ------------------------------------------------------- replay surface
@@ -237,14 +271,66 @@ def stress_clusters(seed: int, clusters: int, tol: float,
                 progress(seen, found, now)
 
 
+# ------------------------------------------- the predicate's own view
+
+def solver_state(r: float, theta: float, tol: float) -> dict:
+    """Everything the predicate will decide against at one cluster,
+    computed ONCE in the predicate's own coordinates.
+
+    Neither `t_min` nor `err` depends on the probe time, so the two
+    frozen probes share these values; computing them per cluster is
+    what makes `err1`/`err2`/`L` well-defined per-cluster quantities
+    for the census rather than per-leg repeats.
+
+    The angle is the predicate's `acos(cos theta)`, not the `theta`
+    that `_ell` handed to `flight_time`. The redesign builds its whole
+    window here for that reason (p14_o4_g3_redesign.md section 4.1);
+    the census measures the difference the choice removes."""
+
+    p = np.array([0.0, sz.R_IN, 0.0, 0.0])
+    q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
+    x = np.array([0.0, r, theta, 0.0])       # dpsi ignores the time
+    dpsi_in, dpsi_out = _dpsi(p, x), _dpsi(x, q)
+    t1, err1 = s1.flight_time(sz.R_IN, r, dpsi_in, s1.M, tol)
+    t2, err2 = s1.flight_time(r, sz.R_OUT, dpsi_out, s1.M, tol)
+    lo, hi = t1, sz.DT - t2
+    length = hi - lo
+    return {"dpsi_in": dpsi_in, "dpsi_out": dpsi_out,
+            "t1": t1, "err1": err1, "t2": t2, "err2": err2,
+            "lo": lo, "hi": hi, "L": length,
+            "L_minus_errs": length - err1 - err2}
+
+
+def eligibility(state: dict) -> list[dict]:
+    """`W_robust > 0` across the frozen eta grid, plus whether the
+    redesign's lower-boundary probe would land at a non-negative time.
+
+    Both are arithmetic on quantities the cluster already produced, so
+    the census pays no extra solver call for them."""
+
+    rows = []
+    for eta in ETA_GRID:
+        t_x = g3.lower_probe_time(state["lo"], state["err1"], eta)
+        rows.append({
+            "eta": eta,
+            "w_robust": g3.w_robust(state["L"], state["err1"],
+                                    state["err2"], eta),
+            "eligible": g3.is_eligible(state["L"], state["err1"],
+                                       state["err2"], eta),
+            "lower_probe_t_x": t_x,
+            "lower_probe_t_x_nonnegative": t_x >= 0.0,
+        })
+    return rows
+
+
 # ------------------------------------------------------- the G3 probes
 
-def _leg(r_from: float, r_to: float, dt: float, dpsi: float,
-         tol: float, leg: str, returned) -> dict:
+def _leg(dt: float, dpsi: float, t_min: float, err: float,
+         leg: str, returned) -> dict:
     """One `causal_relation` call, opened up.
 
-    `t_min` and `err` are re-derived from the same `flight_time` call
-    the predicate makes, at the same `dpsi`, so the record is what the
+    `t_min` and `err` come from the same `flight_time` call the
+    predicate makes, at the same `dpsi`, so the record is what the
     predicate saw and not a paraphrase. The re-derivation is then
     checked against the value the predicate actually returned; a
     disagreement would mean this module has misread the predicate, and
@@ -258,9 +344,8 @@ def _leg(r_from: float, r_to: float, dt: float, dpsi: float,
     if dt < 0.0:
         return {"leg": leg, "dt": dt, "dpsi": dpsi,
                 "short_circuited_negative_dt": True,
-                "undecided": False, "returned": got,
+                "undecided": False, "outcome": got, "returned": got,
                 "rederivation_agrees": got == "false"}
-    t_min, err = s1.flight_time(r_from, r_to, dpsi, s1.M, tol)
     gap = abs(dt - t_min)
     undecided = gap <= err
     expect = "undecided" if undecided else (
@@ -271,7 +356,7 @@ def _leg(r_from: float, r_to: float, dt: float, dpsi: float,
         "decision_margin": gap - err,
         "short_circuited_negative_dt": False,
         "undecided": undecided,
-        "returned": got,
+        "outcome": got, "returned": got,
         "rederivation_agrees": got == expect,
     }
 
@@ -281,10 +366,17 @@ def probe_cluster(index: int, r: float, theta: float, t1: float,
     """The frozen G3 probes at one cluster, with the tri-state opened.
 
     Geometry, probe order and offsets are `run_g3`'s; what differs is
-    that an undecided return is recorded instead of aborting."""
+    that an undecided return is recorded instead of aborting, and that
+    the predicate's own solver state is carried alongside so the
+    redesign's quantities can be derived without a further call.
+
+    `t1`/`t2` are `_ell`'s values at `theta`; `state` holds the
+    predicate's at `dpsi`. Both are kept, and their difference is the
+    quantity section 4.1 of the redesign exists to eliminate."""
 
     off = o4.FROZEN["g3_stress_offset"]
     lo_edge, hi_edge = t1, sz.DT - t2
+    state = solver_state(r, theta, tol)
     p = np.array([0.0, sz.R_IN, 0.0, 0.0])
     q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
     probes = []
@@ -294,14 +386,16 @@ def probe_cluster(index: int, r: float, theta: float, t1: float,
         a = s1.causal_relation(p, x, s1.M, tol)
         b = s1.causal_relation(x, q, s1.M, tol)
         legs = [
-            _leg(sz.R_IN, r, t_x, _dpsi(p, x), tol, LEG_PX, a),
-            _leg(r, sz.R_OUT, sz.DT - t_x, _dpsi(x, q), tol,
-                 LEG_XQ, b),
+            _leg(t_x, state["dpsi_in"], state["t1"], state["err1"],
+                 LEG_PX, a),
+            _leg(sz.DT - t_x, state["dpsi_out"], state["t2"],
+                 state["err2"], LEG_XQ, b),
         ]
         undecided = a is None or b is None
         probes.append({
             "probe": kind, "t_x": t_x, "want": want,
             "undecided": undecided,
+            "fully_decided": not undecided,
             "boolean_mismatch": (not undecided
                                  and bool(a and b) is not want),
             "legs": legs,
@@ -312,6 +406,13 @@ def probe_cluster(index: int, r: float, theta: float, t1: float,
         "window": {"lo": lo_edge, "hi": hi_edge,
                    "L": hi_edge - lo_edge},
         "probes": probes,
+        "predicate_state": state,
+        "eligibility": eligibility(state),
+        "angle_recovery": {
+            "t_min_minus_T_in": state["t1"] - t1,
+            "t_min_minus_T_out": state["t2"] - t2,
+            "dpsi_legs_agree": state["dpsi_in"] == state["dpsi_out"],
+        },
     }
 
 
@@ -362,6 +463,221 @@ def site(record: dict, cause: str) -> dict:
     }
 
 
+# -------------------------------------------------------- the census
+
+def histogram(values, edges) -> dict:
+    """Counts over frozen edges. Bins are `[lo, hi)` left-closed and
+    right-open, except the last which is `[lo, hi]`; anything else
+    lands in `underflow` or `overflow`."""
+
+    counts = [0] * (len(edges) - 1)
+    under = over = 0
+    for v in values:
+        if v < edges[0]:
+            under += 1
+        elif v > edges[-1]:
+            over += 1
+        elif v == edges[-1]:
+            counts[-1] += 1
+        else:
+            i = bisect.bisect_right(edges, v) - 1
+            counts[i] += 1
+    return {"edges": list(edges), "counts": counts,
+            "underflow": under, "overflow": over,
+            "bin_convention": ("[lo, hi) left-closed right-open; the "
+                               "last bin is [lo, hi] closed")}
+
+
+def summarise(values, edges) -> dict:
+    """The frozen summary of one quantity: histogram, extremes, and
+    quantiles at frozen probabilities. No mean, no variance -- what
+    the redesign needs is the tail."""
+
+    if not values:
+        return {"n": 0}
+    qs = np.quantile(np.asarray(values, dtype=float),
+                     QUANTILE_PROBS, method=QUANTILE_METHOD)
+    return {
+        "n": len(values),
+        "min": min(values), "max": max(values),
+        "quantile_probs": list(QUANTILE_PROBS),
+        "quantile_method": QUANTILE_METHOD,
+        "quantiles": [float(q) for q in qs],
+        "histogram": histogram(values, edges),
+    }
+
+
+class _Census:
+    """The sufficient statistics the G3 redesign needs, accumulated as
+    the walk goes (p14_o4_g3_redesign.md section 5).
+
+    Everything here is derived from calls the walk already makes, so
+    the census costs no extra solver time."""
+
+    def __init__(self) -> None:
+        self.outcomes = {(p, lg): dict.fromkeys(OUTCOMES, 0)
+                         for p in (MIDPOINT, OUTSIDE)
+                         for lg in (LEG_PX, LEG_XQ)}
+        self.fully_decided = dict.fromkeys((MIDPOINT, OUTSIDE), 0)
+        self.mismatch = dict.fromkeys((MIDPOINT, OUTSIDE), 0)
+        self.short_circuits = {(p, lg): 0
+                               for p in (MIDPOINT, OUTSIDE)
+                               for lg in (LEG_PX, LEG_XQ)}
+        self.err2_nominal = 0
+        self.err2_realized = 0
+        self.err2_disagreements = 0
+        self.first_err2_disagreement: dict | None = None
+        self.eligible = dict.fromkeys(ETA_GRID, 0)
+        self.lower_t_x_negative = dict.fromkeys(ETA_GRID, 0)
+        self.eligible_lower_t_x_negative = dict.fromkeys(ETA_GRID, 0)
+        self.values: dict[str, list[float]] = {
+            "err1": [], "err2": [], "L": [], "L_minus_errs": [],
+            "abs_t_min_minus_T_in": [], "abs_t_min_minus_T_out": []}
+        self.dpsi_leg_disagreements = 0
+
+    def add(self, rec: dict) -> None:
+        state = rec["predicate_state"]
+        for probe in rec["probes"]:
+            kind = probe["probe"]
+            self.fully_decided[kind] += int(probe["fully_decided"])
+            self.mismatch[kind] += int(probe["boolean_mismatch"])
+            for leg in probe["legs"]:
+                key = (kind, leg["leg"])
+                self.outcomes[key][leg["outcome"]] += 1
+                self.short_circuits[key] += int(
+                    leg["short_circuited_negative_dt"])
+                if kind == OUTSIDE and leg["leg"] == LEG_XQ:
+                    self._outside_xq(rec, leg, state)
+
+        for row in rec["eligibility"]:
+            eta = row["eta"]
+            unreachable = not row["lower_probe_t_x_nonnegative"]
+            self.eligible[eta] += int(row["eligible"])
+            self.lower_t_x_negative[eta] += int(unreachable)
+            # the JOINT, not just the two marginals: probe (iii) runs
+            # only where the cluster is eligible, so its coverage
+            # question is "among eligible clusters", and two marginals
+            # cannot answer it (review R2)
+            self.eligible_lower_t_x_negative[eta] += int(
+                row["eligible"] and unreachable)
+
+        self.values["err1"].append(state["err1"])
+        self.values["err2"].append(state["err2"])
+        self.values["L"].append(state["L"])
+        self.values["L_minus_errs"].append(state["L_minus_errs"])
+        angle = rec["angle_recovery"]
+        self.values["abs_t_min_minus_T_in"].append(
+            abs(angle["t_min_minus_T_in"]))
+        self.values["abs_t_min_minus_T_out"].append(
+            abs(angle["t_min_minus_T_out"]))
+        self.dpsi_leg_disagreements += int(
+            not angle["dpsi_legs_agree"])
+
+    def _outside_xq(self, rec: dict, leg: dict, state: dict) -> None:
+        """The two readings of "the outside probe's second leg fails".
+
+        NOMINAL compares `err2` against the frozen offset; REALIZED is
+        what the predicate did, i.e. `err2` against the gap it actually
+        formed. The gap is `1e-6` only up to rounding, so the two can
+        part -- and that parting is one more instance of a margin that
+        does not adapt. They are counted separately and the first
+        disagreement is kept, rather than asserted equal."""
+
+        nominal = state["err2"] >= o4.FROZEN["g3_stress_offset"]
+        realized = leg["undecided"]
+        self.err2_nominal += int(nominal)
+        self.err2_realized += int(realized)
+        if nominal is not realized:
+            self.err2_disagreements += 1
+            if self.first_err2_disagreement is None:
+                self.first_err2_disagreement = {
+                    "cluster_index": rec["cluster_index"],
+                    "r": rec["r"], "theta": rec["theta"],
+                    "err2": state["err2"],
+                    "abs_dt_minus_t_min": leg["abs_dt_minus_t_min"],
+                    "frozen_offset": o4.FROZEN["g3_stress_offset"],
+                    "nominal": nominal, "realized": realized}
+
+    def report(self) -> dict:
+        return {
+            "outcomes_by_probe_and_leg": [
+                {"probe": p, "leg": lg,
+                 **{o: self.outcomes[(p, lg)][o] for o in OUTCOMES},
+                 "short_circuited_negative_dt":
+                     self.short_circuits[(p, lg)]}
+                for p in (MIDPOINT, OUTSIDE) for lg in (LEG_PX, LEG_XQ)],
+            "outcomes_are": ("counted per (probe, leg, outcome) and "
+                             "never summed across any axis -- the "
+                             "earlier schema merged the two legs of "
+                             "the outside probe and so could not "
+                             "separate `L + 1e-6 <= err1` from "
+                             "`err2 >= 1e-6`"),
+            "outside_xq_err2_at_least_frozen_offset": {
+                "frozen_offset": o4.FROZEN["g3_stress_offset"],
+                "comparison": "err2 >= frozen_offset",
+                "nominal": self.err2_nominal,
+                "realized_undecided": self.err2_realized,
+                "disagreements": self.err2_disagreements,
+                "first_disagreement": self.first_err2_disagreement,
+                "why_two": ("the formed gap equals the frozen offset "
+                            "only up to rounding, so the nominal and "
+                            "realized conditions can part; they are "
+                            "cross-checked, not assumed equal")},
+            "boolean_mismatch_by_probe": [
+                {"probe": p, "mismatching_probes": self.mismatch[p],
+                 "fully_decided_probes": self.fully_decided[p]}
+                for p in (MIDPOINT, OUTSIDE)],
+            "mismatch_denominator_is": (
+                "probes with BOTH legs decided; an undecided probe "
+                "never reaches the boolean test and is not in the "
+                "denominator. `construction-unavailable` has no census "
+                "analogue -- the census constructs no probes of its "
+                "own -- and its nearest quantity is the lower-probe "
+                "reach below"),
+            "eligibility_by_eta": [
+                {"eta": eta, "eligible_clusters": self.eligible[eta],
+                 "lower_probe_t_x_negative":
+                     self.lower_t_x_negative[eta],
+                 "eligible_and_lower_probe_t_x_negative":
+                     self.eligible_lower_t_x_negative[eta]}
+                for eta in ETA_GRID],
+            "lower_probe_coverage_is": (
+                "read `eligible_and_lower_probe_t_x_negative` against "
+                "`eligible_clusters`: probe (iii) runs only where the "
+                "cluster is eligible, so the reach question is about "
+                "the eligible set. The two marginals alone would "
+                "overstate coverage whenever the unreachable clusters "
+                "are mostly ineligible anyway, and with the totals "
+                "they do not determine the joint -- this cell plus the "
+                "marginals and the denominator do"),
+            "eligibility_rule": ("W_robust = L - err1 - err2 - 2*eta, "
+                                 "eligible iff W_robust > 0 (strict); "
+                                 "L, err1, err2 are all recomputed in "
+                                 "the predicate's dpsi coordinates"),
+            "eta_grid_is": ("an exploratory scan of eligibility and "
+                            "cost. The frozen eta = 1e-12 is fixed by "
+                            "the float-separation argument in section "
+                            "4 of the redesign and is NOT chosen from "
+                            "any frequency here"),
+            "distributions": {
+                name: summarise(
+                    vals,
+                    LEN_EDGES if name in ("L", "L_minus_errs")
+                    else ERR_EDGES)
+                for name, vals in self.values.items()},
+            "distributions_are": ("diagnostic summaries in the "
+                                  "predicate's dpsi coordinates, with "
+                                  "frozen edges and quantile "
+                                  "probabilities; no mean and no "
+                                  "variance is reported"),
+            "angle_recovery_note": (
+                "abs_t_min_minus_T_* is the term the redesign removes "
+                "by building its window in the predicate's own "
+                "coordinates; it is diagnostic, never a gate"),
+            "dpsi_leg_disagreements": self.dpsi_leg_disagreements,
+        }
+
+
 # ---------------------------------------------------------------- walk
 
 def walk(clusters: int, tol: float, progress=None) -> dict:
@@ -375,10 +691,12 @@ def walk(clusters: int, tol: float, progress=None) -> dict:
     firsts: dict[str, dict] = {}
     first_undecided = None
     disagreements = clean = n = 0
+    census = _Census()
     for index, r, th, t1, t2 in stress_clusters(
             seed, clusters, tol, progress):
         rec = probe_cluster(index, r, th, t1, t2, tol)
         n += 1
+        census.add(rec)
         for probe in rec["probes"]:
             disagreements += sum(1 for lg in probe["legs"]
                                  if not lg["rederivation_agrees"])
@@ -409,6 +727,7 @@ def walk(clusters: int, tol: float, progress=None) -> dict:
     covers = n == o4.FROZEN["g3_clusters"]
     tally = {
         "clusters_with_no_cause": clean,
+        "census": census.report(),
         "counts": [{"cause": c, "clusters": per_cause[c],
                     "occurrences": per_cause_legs[c]} for c in CAUSES],
         "counts_are": ("diagnostic frequencies over ONE frozen stress "
@@ -422,10 +741,11 @@ def walk(clusters: int, tol: float, progress=None) -> dict:
     } if covers else {
         "counts_withheld": (
             f"this walk probed {n} of the frozen "
-            f"{o4.FROZEN['g3_clusters']} stress clusters, so no "
-            f"frequency is reported: a count over the leading prefix "
-            f"is not a count over the frozen stress set, and "
-            f"publishing one would invite exactly that reading"),
+            f"{o4.FROZEN['g3_clusters']} stress clusters, so neither "
+            f"the cause counts nor the census tallies are reported: a "
+            f"count over the leading prefix is not a count over the "
+            f"frozen stress set, and publishing one would invite "
+            f"exactly that reading"),
     }
     return {
         "clusters_probed": n,

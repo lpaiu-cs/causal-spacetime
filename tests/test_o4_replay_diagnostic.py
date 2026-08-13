@@ -17,16 +17,19 @@ import math
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 _REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "experiments" / "oracle"))
 sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
 
+import o4_g3_redesign as g3  # noqa: E402
 import o4_replay_diagnostic as rd  # noqa: E402
 import o4_sizing as sz  # noqa: E402
 import o4_volume_audit as o4  # noqa: E402
 import probe_seed_ledger as ledger  # noqa: E402
+import s1_schwarzschild_cost as s1  # noqa: E402
 
 _SOURCE = (_REPO / "experiments" / "oracle"
            / "o4_replay_diagnostic.py").read_text(encoding="utf-8")
@@ -345,10 +348,10 @@ def test_dpsi_is_the_predicates_angle_not_theta():
 
 
 def test_a_negative_dt_is_recorded_as_the_short_circuit():
-    leg = rd._leg(sz.R_IN, 15.0, -1.0, 0.4, o4.FROZEN["tol"],
-                  rd.LEG_PX, False)
+    leg = rd._leg(-1.0, 0.4, 2.0, 1e-9, rd.LEG_PX, False)
     assert leg["short_circuited_negative_dt"] is True
     assert leg["undecided"] is False
+    assert leg["outcome"] == "false"
     assert leg["rederivation_agrees"] is True
     assert "t_min" not in leg
 
@@ -362,12 +365,13 @@ def _fake_leg(leg: str, undecided: bool) -> dict:
 
     gap = 1e-7 if undecided else 1.0
     err = 1e-6 if undecided else 1e-9
+    outcome = "undecided" if undecided else "true"
     return {"leg": leg, "dt": 1.0, "dpsi": 0.1, "t_min": 1.0 - gap,
             "err": err, "abs_dt_minus_t_min": gap,
             "decision_margin": gap - err,
             "short_circuited_negative_dt": False,
             "undecided": undecided,
-            "returned": "undecided" if undecided else "true",
+            "outcome": outcome, "returned": outcome,
             "rederivation_agrees": True}
 
 
@@ -379,15 +383,25 @@ def _fake_cluster(index: int, *, undecided_probe=None,
         probes.append({
             "probe": kind, "t_x": 1.0, "want": kind == rd.MIDPOINT,
             "undecided": undecided,
+            "fully_decided": not undecided,
             "boolean_mismatch": (not undecided
                                  and kind == mismatch_probe),
             "legs": [_fake_leg(rd.LEG_PX, undecided),
                      _fake_leg(rd.LEG_XQ, False)],
         })
+    state = {"dpsi_in": 0.1, "dpsi_out": 0.1,
+             "t1": 1.0, "err1": 1e-9, "t2": 1.0, "err2": 1e-9,
+             "lo": 1.0, "hi": 7.5, "L": 6.5,
+             "L_minus_errs": 6.5 - 2e-9}
     return {"cluster_index": index, "r": 15.0, "theta": 0.1,
             "T1": 1.0, "T2": 1.0,
             "window": {"lo": 1.0, "hi": 7.5, "L": 6.5},
-            "probes": probes}
+            "probes": probes,
+            "predicate_state": state,
+            "eligibility": rd.eligibility(state),
+            "angle_recovery": {"t_min_minus_T_in": 0.0,
+                               "t_min_minus_T_out": 0.0,
+                               "dpsi_legs_agree": True}}
 
 
 @pytest.fixture
@@ -484,6 +498,246 @@ def test_a_full_walk_does_report_its_frequencies(synthetic,
     assert found["covers_frozen_stress_set"] is True
     assert found["clusters_with_no_cause"] == 2
     assert "counts_withheld" not in found
+
+
+# ----------------------------------------------- the census schema
+
+@pytest.fixture
+def census(synthetic, monkeypatch):
+    """A covering five-cluster walk, so the census tallies exist."""
+
+    monkeypatch.setitem(o4.FROZEN, "g3_clusters", 5)
+    return rd.walk(5, o4.FROZEN["tol"])["census"]
+
+
+def test_outcomes_are_separated_by_probe_leg_and_outcome(census):
+    """The defect the redesign's schema fixes: the old shape merged
+    the outside probe's two legs, so `L + 1e-6 <= err1` could not be
+    told apart from `err2 >= 1e-6`."""
+
+    rows = census["outcomes_by_probe_and_leg"]
+    assert {(r["probe"], r["leg"]) for r in rows} == {
+        (p, lg) for p in (rd.MIDPOINT, rd.OUTSIDE)
+        for lg in (rd.LEG_PX, rd.LEG_XQ)}
+    for row in rows:
+        assert set(rd.OUTCOMES) <= set(row)
+        assert sum(row[o] for o in rd.OUTCOMES) == 5
+
+
+def test_the_outside_xq_count_is_cross_checked_not_asserted(census):
+    """Nominal (`err2 >= 1e-6`) and realized (what the predicate did)
+    can part by rounding, so the census reports both and the
+    disagreement rather than claiming they agree."""
+
+    row = census["outside_xq_err2_at_least_frozen_offset"]
+    assert row["frozen_offset"] == 1e-6
+    assert row["comparison"] == "err2 >= frozen_offset"
+    for field in ("nominal", "realized_undecided", "disagreements"):
+        assert isinstance(row[field], int)
+    assert "first_disagreement" in row
+
+
+def test_a_disagreement_is_recorded_with_its_coordinates(monkeypatch):
+    """Cross-checking is worthless if a parting is merely counted."""
+
+    census = rd._Census()
+    state = {"err1": 1e-9, "err2": 1e-6, "L": 6.5,
+             "L_minus_errs": 6.5, "t1": 1.0, "t2": 1.0,
+             "lo": 1.0, "hi": 7.5, "dpsi_in": 0.1, "dpsi_out": 0.1}
+    leg = {"undecided": False, "abs_dt_minus_t_min": 1.0000001e-06}
+    census._outside_xq({"cluster_index": 7, "r": 15.0, "theta": 0.1},
+                       leg, state)
+    assert census.err2_disagreements == 1
+    first = census.first_err2_disagreement
+    assert first["cluster_index"] == 7
+    assert first["nominal"] is True and first["realized"] is False
+
+
+def test_mismatch_carries_a_fully_decided_denominator(census):
+    for row in census["boolean_mismatch_by_probe"]:
+        assert row["fully_decided_probes"] >= row["mismatching_probes"]
+    assert "BOTH legs decided" in census["mismatch_denominator_is"]
+    assert "construction-unavailable" in (
+        census["mismatch_denominator_is"])
+
+
+def test_the_eta_grid_is_exactly_the_frozen_list(census):
+    assert rd.ETA_GRID == (0.0, 1e-15, 1e-14, 1e-13, 1e-12, 1e-11,
+                           1e-10, 1e-9, 1e-8, 1e-7, 1e-6)
+    assert rd.ETA in rd.ETA_GRID
+    assert [row["eta"] for row in census["eligibility_by_eta"]] == list(
+        rd.ETA_GRID)
+    assert "W_robust > 0 (strict)" in census["eligibility_rule"]
+    assert "dpsi coordinates" in census["eligibility_rule"]
+
+
+def test_eta_is_not_chosen_from_a_frequency(census):
+    assert rd.ETA == 1e-12
+    assert "NOT chosen from any frequency" in census["eta_grid_is"]
+
+
+def test_eligibility_delegates_to_the_shared_arithmetic():
+    """The census must not carry its own copy of the rule."""
+
+    state = {"lo": 1.0, "err1": 0.5, "err2": 0.25, "L": 1.0,
+             "L_minus_errs": 0.25}
+    for row in rd.eligibility(state):
+        eta = row["eta"]
+        assert row["w_robust"] == g3.w_robust(1.0, 0.5, 0.25, eta)
+        assert row["eligible"] is g3.is_eligible(1.0, 0.5, 0.25, eta)
+        assert row["lower_probe_t_x"] == g3.lower_probe_time(
+            1.0, 0.5, eta)
+    rows = {row["eta"]: row for row in rd.eligibility(state)}
+    assert rows[0.0]["lower_probe_t_x"] == 0.5
+    assert rows[0.0]["lower_probe_t_x_nonnegative"] is True
+
+
+def test_eligibility_is_strict_not_inclusive():
+    state = {"lo": 1.0, "err1": 0.4, "err2": 0.4, "L": 1.0,
+             "L_minus_errs": 0.2}
+    rows = {row["eta"]: row for row in rd.eligibility(state)}
+    assert rows[1e-6]["w_robust"] == pytest.approx(0.2 - 2e-6)
+    assert rows[1e-6]["eligible"] is True
+    assert g3.is_eligible(1.0, 0.4, 0.4, 0.1) is False      # exactly 0
+
+
+def test_the_lower_probe_reach_is_counted_jointly_with_eligibility(
+        census):
+    """Probe (iii) runs only on eligible clusters, so its coverage is
+    a question about the eligible set -- and two marginals plus a
+    total do not determine that cell."""
+
+    for row in census["eligibility_by_eta"]:
+        joint = row["eligible_and_lower_probe_t_x_negative"]
+        assert joint <= row["eligible_clusters"]
+        assert joint <= row["lower_probe_t_x_negative"]
+    assert "the eligible set" in census["lower_probe_coverage_is"]
+
+
+def test_the_joint_cell_is_not_implied_by_the_marginals():
+    """Two clusters, same marginals, different joint: without the
+    intersection the census cannot tell these apart."""
+
+    def cluster(index, length, lo):
+        state = {"dpsi_in": 0.1, "dpsi_out": 0.1, "t1": lo,
+                 "err1": 0.5, "t2": 1.0, "err2": 0.0,
+                 "lo": lo, "hi": lo + length, "L": length,
+                 "L_minus_errs": length - 0.5}
+        return {"cluster_index": index, "r": 15.0, "theta": 0.1,
+                "T1": lo, "T2": 1.0,
+                "window": {"lo": lo, "hi": lo + length, "L": length},
+                "probes": [], "predicate_state": state,
+                "eligibility": rd.eligibility(state),
+                "angle_recovery": {"t_min_minus_T_in": 0.0,
+                                   "t_min_minus_T_out": 0.0,
+                                   "dpsi_legs_agree": True}}
+
+    #  eligible + unreachable in the same cluster ...
+    together = rd._Census()
+    together.add(cluster(0, 4.0, 0.25))     # L large, lo - err1 < 0
+    together.add(cluster(1, 0.1, 4.0))      # ineligible, reachable
+    #  ... versus the two properties split across clusters
+    apart = rd._Census()
+    apart.add(cluster(0, 0.1, 0.25))        # ineligible, unreachable
+    apart.add(cluster(1, 4.0, 4.0))         # eligible, reachable
+
+    def row(census):
+        return next(r for r in census.report()["eligibility_by_eta"]
+                    if r["eta"] == rd.ETA)
+
+    a, b = row(together), row(apart)
+    assert a["eligible_clusters"] == b["eligible_clusters"] == 1
+    assert a["lower_probe_t_x_negative"] == (
+        b["lower_probe_t_x_negative"]) == 1
+    assert a["eligible_and_lower_probe_t_x_negative"] == 1
+    assert b["eligible_and_lower_probe_t_x_negative"] == 0
+
+
+def test_distributions_declare_their_edges_and_quantiles(census):
+    dists = census["distributions"]
+    assert set(dists) == {"err1", "err2", "L", "L_minus_errs",
+                          "abs_t_min_minus_T_in",
+                          "abs_t_min_minus_T_out"}
+    for name, summary in dists.items():
+        assert summary["quantile_probs"] == list(rd.QUANTILE_PROBS)
+        assert summary["quantile_method"] == "linear"
+        hist = summary["histogram"]
+        expected = (rd.LEN_EDGES if name in ("L", "L_minus_errs")
+                    else rd.ERR_EDGES)
+        assert hist["edges"] == list(expected)
+        assert len(hist["counts"]) == len(expected) - 1
+        assert "left-closed right-open" in hist["bin_convention"]
+        assert (sum(hist["counts"]) + hist["underflow"]
+                + hist["overflow"] == summary["n"])
+
+
+def test_no_mean_or_variance_is_reported(census):
+    offenders = [key for _, key in _walk_keys(census)
+                 if key in ("mean", "var", "variance", "std", "sd")]
+    assert offenders == []
+
+
+def test_histogram_bins_are_left_closed_except_the_last():
+    edges = (0.0, 1.0, 2.0)
+    got = rd.histogram([-0.5, 0.0, 0.999, 1.0, 1.5, 2.0, 2.5], edges)
+    assert got["underflow"] == 1                  # -0.5
+    assert got["counts"] == [2, 3]                # [0,1) and [1,2]
+    assert got["overflow"] == 1                   # 2.5
+
+
+def test_the_census_is_withheld_on_a_partial_walk(synthetic):
+    found = rd.walk(5, o4.FROZEN["tol"])
+    assert "census" not in found
+    assert "census tallies" in found["counts_withheld"]
+
+
+# --------------------------------------------- the predicate's window
+
+def test_flight_time_is_deterministic():
+    """The whole separation argument assumes it. Pin it."""
+
+    args = (sz.R_IN, 15.0, 0.3, s1.M, o4.FROZEN["tol"])
+    first = s1.flight_time(*args)
+    for _ in range(3):
+        assert s1.flight_time(*args) == first
+
+
+def test_the_solver_state_is_in_the_predicates_coordinates():
+    index, r, th, t1, t2 = next(iter(
+        rd.stress_clusters(rd._STREAM_SEED, 1, o4.FROZEN["tol"])))
+    state = rd.solver_state(r, th, o4.FROZEN["tol"])
+    p = np.array([0.0, sz.R_IN, 0.0, 0.0])
+    x = np.array([3.0, r, th, 0.0])
+    assert state["dpsi_in"] == rd._dpsi(p, x)
+    assert state["dpsi_in"] == state["dpsi_out"]
+    assert (state["t1"], state["err1"]) == s1.flight_time(
+        sz.R_IN, r, state["dpsi_in"], s1.M, o4.FROZEN["tol"])
+    assert (state["t2"], state["err2"]) == s1.flight_time(
+        r, sz.R_OUT, state["dpsi_out"], s1.M, o4.FROZEN["tol"])
+    assert state["L"] == state["hi"] - state["lo"]
+
+
+def test_the_angle_recovery_term_is_measured_not_assumed():
+    index, r, th, t1, t2 = next(iter(
+        rd.stress_clusters(rd._STREAM_SEED, 1, o4.FROZEN["tol"])))
+    rec = rd.probe_cluster(index, r, th, t1, t2, o4.FROZEN["tol"])
+    angle = rec["angle_recovery"]
+    assert angle["t_min_minus_T_in"] == rec["predicate_state"]["t1"] - t1
+    assert angle["t_min_minus_T_out"] == (
+        rec["predicate_state"]["t2"] - t2)
+
+
+def test_acos_of_cos_is_not_bounded_in_ulps_of_theta():
+    """The finding that forced the window into the predicate's
+    coordinates: the recovery error grows like 1/theta, so a margin of
+    a few ulps cannot cover it."""
+
+    def recovered(t):
+        return math.acos(max(-1.0, min(1.0, math.cos(t))))
+
+    small = abs(recovered(1e-5) - 1e-5)
+    assert small > 1e-13
+    assert small / math.ulp(1e-5) > 1e6
 
 
 # ------------------------------------------------------- publication
