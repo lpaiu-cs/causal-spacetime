@@ -392,17 +392,17 @@ def walk(clusters: int, tol: float, progress=None) -> dict:
         undecided = [c for c in causes if c != CAUSE_MISMATCH]
         if first_undecided is None and undecided:
             first_undecided = site(rec, undecided[0])
-    return {
-        "clusters_probed": n,
-        "clusters_requested": clusters,
-        "clusters_frozen": o4.FROZEN["g3_clusters"],
-        "covers_frozen_stress_set": n == o4.FROZEN["g3_clusters"],
+
+    # A partial walk yields no frequency AT ALL (review R1). Counts
+    # over the leading prefix of the frozen stress set are not counts
+    # over that set, and a published partial artifact -- or a console
+    # line pasted into a note -- would read as though they were. The
+    # per-site records survive, because "cluster 604 was undecided
+    # here, with these numbers" is an exact fact about a prefix; a
+    # frequency is not.
+    covers = n == o4.FROZEN["g3_clusters"]
+    tally = {
         "clusters_with_no_cause": clean,
-        "first_undecided": first_undecided,
-        "first_site_per_cause": [
-            {"cause": c, **{k: v for k, v in firsts[c].items()
-                            if k != "cause"}}
-            for c in CAUSES if c in firsts],
         "counts": [{"cause": c, "clusters": per_cause[c],
                     "occurrences": per_cause_legs[c]} for c in CAUSES],
         "counts_are": ("diagnostic frequencies over ONE frozen stress "
@@ -413,6 +413,24 @@ def walk(clusters: int, tol: float, progress=None) -> dict:
                        "the two band causes and mismatching PROBES for "
                        "the third, since a mismatch is a property of "
                        "the probe rather than of one leg"),
+    } if covers else {
+        "counts_withheld": (
+            f"this walk probed {n} of the frozen "
+            f"{o4.FROZEN['g3_clusters']} stress clusters, so no "
+            f"frequency is reported: a count over the leading prefix "
+            f"is not a count over the frozen stress set, and "
+            f"publishing one would invite exactly that reading"),
+    }
+    return {
+        "clusters_probed": n,
+        "clusters_requested": clusters,
+        "clusters_frozen": o4.FROZEN["g3_clusters"],
+        "covers_frozen_stress_set": covers,
+        "first_undecided": first_undecided,
+        "first_site_per_cause": [
+            {"cause": c, **{k: v for k, v in firsts[c].items()
+                            if k != "cause"}}
+            for c in CAUSES if c in firsts],
         "rederivation_disagreements": disagreements,
         "rederivation_note": (
             "this module re-derives dt/t_min/err from the same "
@@ -420,7 +438,7 @@ def walk(clusters: int, tol: float, progress=None) -> dict:
             "result against what causal_relation actually returned; a "
             "non-zero count would mean the readout is wrong, not the "
             "predicate"),
-    }
+    } | tally
 
 
 # ------------------------------------------------------------ artifact
@@ -511,11 +529,17 @@ def main() -> None:
         print(f"  err={s['err']!r}  |dt-t_min|="
               f"{s['abs_dt_minus_t_min']!r}  margin="
               f"{s['decision_margin']!r}")
-    for row in found["counts"]:
-        print(f"  {row['cause']}: {row['clusters']:,} clusters, "
-              f"{row['occurrences']:,} occurrences")
-    print(f"clean clusters: {found['clusters_with_no_cause']:,} / "
-          f"{found['clusters_probed']:,}")
+    for record in found["first_site_per_cause"]:
+        print(f"first {record['cause']}: cluster "
+              f"{record['cluster_index']}")
+    if found["covers_frozen_stress_set"]:
+        for row in found["counts"]:
+            print(f"  {row['cause']}: {row['clusters']:,} clusters, "
+                  f"{row['occurrences']:,} occurrences")
+        print(f"clean clusters: {found['clusters_with_no_cause']:,} / "
+              f"{found['clusters_probed']:,}")
+    else:
+        print(found["counts_withheld"])
     if found["rederivation_disagreements"]:
         print(f"WARNING: {found['rederivation_disagreements']} legs "
               f"where the readout disagrees with causal_relation")

@@ -39,6 +39,16 @@ _FORBIDDEN = ("mean", "var", "half_width", "v_s1", "identified",
               "band", "verdict", "gate", "status", "estimate")
 
 
+@pytest.fixture
+def covering(monkeypatch):
+    """Shrink the frozen stress set so a one-cluster walk counts as
+    covering it. The suppression rule is `probed == frozen`, and this
+    is the only way to exercise the covering branch without paying for
+    100,000 clusters."""
+
+    monkeypatch.setitem(o4.FROZEN, "g3_clusters", 1)
+
+
 def _walk_keys(node, path=""):
     if isinstance(node, dict):
         for key, value in node.items():
@@ -77,7 +87,7 @@ def test_the_scope_says_what_was_not_computed():
     assert art["scope"]["does_not_stop_at_first_undecided"] is True
 
 
-def test_counts_are_labelled_diagnostic_not_estimates():
+def test_counts_are_labelled_diagnostic_not_estimates(covering):
     art = rd.assemble(1)
     says = art["findings"]["counts_are"]
     assert "not estimates" in says
@@ -358,9 +368,13 @@ def synthetic(monkeypatch):
 
 
 def test_the_walk_continues_past_every_undecided(synthetic):
+    """Clusters 3 and 4 lie past the first undecided at cluster 1, and
+    both are still reached -- G3 could not have seen either."""
+
     found = rd.walk(5, o4.FROZEN["tol"])
     assert found["clusters_probed"] == 5
-    assert found["clusters_with_no_cause"] == 2
+    assert {s["cluster_index"] for s in found["first_site_per_cause"]
+            } == {1, 3, 4}
 
 
 def test_the_first_undecided_is_the_first_one_not_the_worst(synthetic):
@@ -369,11 +383,44 @@ def test_the_first_undecided_is_the_first_one_not_the_worst(synthetic):
     assert found["first_undecided"]["cause"] == rd.CAUSE_OUTSIDE
 
 
-def test_every_cause_is_counted_separately(synthetic):
+def test_every_cause_is_counted_separately(synthetic, monkeypatch):
+    monkeypatch.setitem(o4.FROZEN, "g3_clusters", 5)
     counts = {row["cause"]: row["clusters"]
               for row in rd.walk(5, o4.FROZEN["tol"])["counts"]}
     assert counts == {rd.CAUSE_MIDPOINT: 1, rd.CAUSE_OUTSIDE: 1,
                       rd.CAUSE_MISMATCH: 1}
+
+
+def test_a_partial_walk_reports_no_frequency_at_all(synthetic):
+    """A count over the leading prefix is not a count over the frozen
+    stress set, and a published partial artifact would read as though
+    it were."""
+
+    found = rd.walk(5, o4.FROZEN["tol"])
+    assert found["covers_frozen_stress_set"] is False
+    for withheld in ("counts", "counts_are", "clusters_with_no_cause"):
+        assert withheld not in found
+    assert "not a count over the frozen stress set" in (
+        found["counts_withheld"])
+
+
+def test_a_partial_walk_still_reports_its_sites(synthetic):
+    """Suppression is of frequencies, not of facts: "cluster 1 was
+    undecided here, with these numbers" is exact about a prefix."""
+
+    found = rd.walk(5, o4.FROZEN["tol"])
+    assert found["first_undecided"]["cluster_index"] == 1
+    assert len(found["first_site_per_cause"]) == 3
+
+
+def test_the_console_does_not_print_a_partial_frequency(
+        monkeypatch, capsys, synthetic):
+    monkeypatch.setattr(sys, "argv",
+                        ["o4_replay_diagnostic.py", "--clusters", "5"])
+    rd.main()
+    out = capsys.readouterr().out
+    assert "clean clusters" not in out
+    assert "not a count over the frozen stress set" in out
 
 
 def test_each_cause_records_its_first_site(synthetic):
@@ -384,11 +431,13 @@ def test_each_cause_records_its_first_site(synthetic):
                       rd.CAUSE_MISMATCH: 4}
 
 
-def test_a_partial_walk_says_it_does_not_cover_the_frozen_set(
-        synthetic):
+def test_a_full_walk_does_report_its_frequencies(synthetic,
+                                                 monkeypatch):
+    monkeypatch.setitem(o4.FROZEN, "g3_clusters", 5)
     found = rd.walk(5, o4.FROZEN["tol"])
-    assert found["covers_frozen_stress_set"] is False
-    assert found["clusters_frozen"] == o4.FROZEN["g3_clusters"]
+    assert found["covers_frozen_stress_set"] is True
+    assert found["clusters_with_no_cause"] == 2
+    assert "counts_withheld" not in found
 
 
 # ------------------------------------------------------- publication
