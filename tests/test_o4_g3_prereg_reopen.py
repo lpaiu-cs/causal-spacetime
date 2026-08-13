@@ -141,15 +141,34 @@ def test_the_case_table_is_frozen_in_code_and_named_in_the_document():
                                 "equal-perihelion", "one-turn"}
 
 
-def test_the_radial_threshold_is_strict_and_straddled():
-    """`dpsi < 1e-12`, so the threshold itself is NOT radial. The table
-    carries both sides."""
+def test_the_wrapper_cannot_reach_the_radial_threshold():
+    """The finding that moved the table into theta space: the wrapper
+    recovers `dpsi` as `acos(clamp(cos theta))`, whose smallest nonzero
+    value is 1.49e-08 -- so the solver's own 1e-12 threshold sits in a
+    gap no coordinate can produce."""
 
-    assert g3.RADIAL_THRESHOLD == 1e-12
-    inside = math.nextafter(g3.RADIAL_THRESHOLD, -math.inf)
-    assert g3.family_at(13.0, 17.0, inside, s1.M, _TOL) == "radial"
-    assert g3.family_at(13.0, 17.0, g3.RADIAL_THRESHOLD, s1.M,
+    smallest = math.acos(math.nextafter(1.0, -math.inf))
+    assert smallest == pytest.approx(1.4901161193847656e-08, rel=1e-12)
+    assert g3.RADIAL_THRESHOLD < smallest
+    reachable = {g3.wrapper_dpsi(t) for t in
+                 (0.0, 1e-12, 1e-10, 1e-9, 1e-8, 2e-8, 1e-7)}
+    assert not any(0.0 < d < smallest for d in reachable)
+    assert "도달 불가 구간 안에 있다" in _prose()
+
+
+def test_the_radial_edge_the_table_straddles_is_the_reachable_one():
+    below = g3.resolve_theta(("x", "radial-edge", "below"), 13.0, 17.0,
+                             s1.M, _TOL, sz.PSI_MAX)
+    above = g3.resolve_theta(("x", "radial-edge", "above"), 13.0, 17.0,
+                             s1.M, _TOL, sz.PSI_MAX)
+    assert math.nextafter(below, math.inf) == above   # adjacent thetas
+    assert g3.wrapper_dpsi(below) == 0.0
+    assert g3.wrapper_dpsi(above) > 0.0
+    assert g3.family_at(13.0, 17.0, g3.wrapper_dpsi(below), s1.M,
+                        _TOL) == "radial"
+    assert g3.family_at(13.0, 17.0, g3.wrapper_dpsi(above), s1.M,
                         _TOL) != "radial"
+    assert "radial-reachable-edge-*" in _prose()
 
 
 def test_the_radial_branch_reports_exactly_zero_error():
@@ -182,13 +201,74 @@ def test_a_geometry_with_no_band_raises_instead_of_pretending():
         g3.equal_perihelion_band(15.0, 15.0, s1.M, _TOL)
 
 
+def test_every_case_is_a_theta_the_wrapper_can_be_handed():
+    """The R1 defect: a case frozen at an unreachable `dpsi` would
+    pre-compute on one branch while the wrapper took another."""
+
+    import numpy as np
+    for spec in g3.G3A_ANGLE_SPECS:
+        theta = g3.resolve_theta(spec, 13.0, 17.0, s1.M, _TOL,
+                                 sz.PSI_MAX)
+        p = np.array([0.0, 13.0, 0.0, 0.0])
+        x = np.array([1.0, 17.0, theta, 0.0])
+        cosang = (math.sin(p[2]) * math.sin(x[2])
+                  * math.cos(p[3] - x[3])
+                  + math.cos(p[2]) * math.cos(x[2]))
+        assert g3.wrapper_dpsi(theta) == math.acos(
+            max(-1.0, min(1.0, cosang)))
+
+
 def test_the_table_covers_every_family_on_a_representative_geometry():
     seen = set()
     for spec in g3.G3A_ANGLE_SPECS:
-        dpsi = g3.resolve_angle(spec, 13.0, 17.0, s1.M, _TOL,
-                                sz.PSI_MAX)
-        seen.add(g3.family_at(13.0, 17.0, dpsi, s1.M, _TOL))
+        theta = g3.resolve_theta(spec, 13.0, 17.0, s1.M, _TOL,
+                                 sz.PSI_MAX)
+        seen.add(g3.family_at(13.0, 17.0, g3.wrapper_dpsi(theta),
+                              s1.M, _TOL))
     assert seen == set(g3.FAMILIES)
+
+
+def test_the_band_edges_are_straddled_by_adjacent_thetas():
+    for which in ("lower", "upper"):
+        below = g3.resolve_theta(("x", "band-edge", f"{which}-below"),
+                                 13.0, 17.0, s1.M, _TOL, sz.PSI_MAX)
+        above = g3.resolve_theta(("x", "band-edge", f"{which}-above"),
+                                 13.0, 17.0, s1.M, _TOL, sz.PSI_MAX)
+        assert math.nextafter(below, math.inf) == above
+        fams = [g3.family_at(13.0, 17.0, g3.wrapper_dpsi(t), s1.M,
+                             _TOL) for t in (below, above)]
+        assert ("equal-perihelion" in fams) and fams[0] != fams[1]
+    assert "인접한 binary64 `θ` 쌍" in _prose()
+
+
+def test_every_frozen_geometry_resolves_and_covers_what_it_can():
+    """Each geometry either reaches all four families, or says which
+    it cannot reach and why. Equal radii have a zero arc, so no-turn
+    and equal-perihelion do not exist there -- that is geometry, not a
+    gap in the table."""
+
+    radii = {"R_LO": sz.R_LO, "R_HI": sz.R_HI}
+    for name, r1, r2 in g3.G3A_GEOMETRIES:
+        if r1 is None:
+            r1, r2 = sz.R_IN, sz.R_OUT
+        r1 = radii.get(r1, r1)
+        r2 = radii.get(r2, r2)
+        families, bandless = set(), False
+        for spec in g3.G3A_ANGLE_SPECS:
+            try:
+                theta = g3.resolve_theta(spec, r1, r2, s1.M, _TOL,
+                                         sz.PSI_MAX)
+            except ValueError:
+                bandless = True
+                continue
+            families.add(g3.family_at(r1, r2, g3.wrapper_dpsi(theta),
+                                      s1.M, _TOL))
+        if name == "equal-radius":
+            assert bandless is True
+            assert families == {"radial", "one-turn"}
+        else:
+            assert bandless is False, name
+            assert families == set(g3.FAMILIES), name
 
 
 def test_row_b_must_not_collapse_into_the_negative_dt_row():
@@ -217,11 +297,19 @@ def test_the_negative_dt_row_must_prove_the_solver_was_not_called():
     assert "반환값만 보는 검사는" in _prose()
 
 
-def test_bit_identity_is_discharged_in_two_pieces():
+def test_bit_identity_needs_the_recovery_not_just_determinism():
+    """Determinism alone does not establish that the wrapper used OUR
+    arguments -- the R1 defect in one sentence."""
+
     plain = _prose()
-    assert "비트 동일" in plain
-    args = (13.0, 17.0, 0.3, s1.M, _TOL)
+    assert "결정론만 확인하는 검사는 이 조건을 확인하지 못한다" in plain
+    assert "wrapper_dpsi(θ) = acos(clamp(cos θ))` 에서" in plain
+
+    theta = 0.3
+    args = (13.0, 17.0, g3.wrapper_dpsi(theta), s1.M, _TOL)
     assert s1.flight_time(*args) == s1.flight_time(*args)
+    # and the recovery is not the identity on theta, which is the point
+    assert g3.wrapper_dpsi(theta) != theta
 
 
 def test_the_error_jump_at_the_band_edge_is_recorded_as_measured():

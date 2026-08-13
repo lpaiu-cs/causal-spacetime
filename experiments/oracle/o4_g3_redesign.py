@@ -149,20 +149,30 @@ G3A_GEOMETRIES = (
     ("shell-both-edges", "R_LO", "R_HI"),
 )
 
-#: Angle specifications, resolved deterministically per geometry. The
-#: equal-perihelion rows are located by bisecting on the family the
-#: solver REPORTS, so the table straddles the real branch edge rather
-#: than a re-derivation of it that could drift.
+#: Cases are specified in THETA, the coordinate, not in `dpsi`.
+#:
+#: The wrapper never receives `dpsi`; it recovers it as
+#: `acos(clamp(cos theta))`, and that composition does not reach every
+#: float. Its smallest nonzero value is `acos(nextafter(1, -inf))` =
+#: 1.4901e-08, so NOTHING lies between 0 and that -- and the solver's
+#: own radial threshold, 1e-12, sits inside the gap (review R1). A case
+#: frozen at an unreachable `dpsi` would pre-compute `(t_min, err)` on
+#: one branch while the wrapper took another, and G3a would report
+#: `INVALID` against itself.
+#:
+#: So every case names a `theta` the wrapper can actually be handed,
+#: and the branch edges are straddled by ADJACENT binary64 thetas found
+#: by bisecting on the family the solver reports.
 G3A_ANGLE_SPECS = (
-    ("radial-well-inside", "absolute", 0.0),
-    ("radial-boundary-inside", "radial-nextafter", -1),
-    ("radial-boundary-outside", "absolute", RADIAL_THRESHOLD),
+    ("radial", "theta", 0.0),
+    ("radial-reachable-edge-below", "radial-edge", "below"),
+    ("radial-reachable-edge-above", "radial-edge", "above"),
     ("no-turn-mid", "band-fraction", 0.5),
-    ("equal-perihelion-inside", "band", "centre"),
-    ("equal-perihelion-lower-edge", "band", "lower"),
-    ("equal-perihelion-upper-edge", "band", "upper"),
-    ("equal-perihelion-outside-below", "band", "below"),
-    ("equal-perihelion-outside-above", "band", "above"),
+    ("equal-perihelion-inside", "band-centre", None),
+    ("equal-perihelion-lower-edge-below", "band-edge", "lower-below"),
+    ("equal-perihelion-lower-edge-above", "band-edge", "lower-above"),
+    ("equal-perihelion-upper-edge-below", "band-edge", "upper-below"),
+    ("equal-perihelion-upper-edge-above", "band-edge", "upper-above"),
     ("one-turn-beyond", "band-multiple", 1.5),
     ("patch-max-angle", "psi-max", None),
 )
@@ -239,36 +249,76 @@ def equal_perihelion_band(r1: float, r2: float, m: float, tol: float,
     return edge(lo, inside, True), edge(inside, hi, False)
 
 
-def resolve_angle(spec: tuple, r1: float, r2: float, m: float,
-                  tol: float, psi_max: float) -> float:
-    """One angle specification, resolved to a binary64 `dpsi`.
+def wrapper_dpsi(theta: float) -> float:
+    """The angle the wrapper recovers from a `theta` coordinate.
 
-    Deterministic: the same table and the same solver give the same
-    numbers, so freezing the SPEC freezes the case."""
+    Written out rather than imported so this module states the
+    composition it is reasoning about: for the G3 geometry the two
+    events differ only in polar angle, so `cosang` is `cos(theta)`
+    exactly and the recovery is `acos(clamp(cos theta))`."""
+
+    return math.acos(max(-1.0, min(1.0, math.cos(theta))))
+
+
+def straddle_theta(predicate, low: float, high: float,
+                   steps: int = 200) -> tuple[float, float]:
+    """Adjacent binary64 thetas whose RECOVERED angles fall on opposite
+    sides of `predicate`.
+
+    Adjacent in theta, because theta is what the wrapper is handed.
+    Straddling in `dpsi` space would name floats the wrapper cannot
+    produce."""
+
+    if predicate(wrapper_dpsi(low)) == predicate(wrapper_dpsi(high)):
+        raise ValueError(
+            f"theta bracket [{low!r}, {high!r}] does not straddle the "
+            f"predicate: both sides agree")
+    for _ in range(steps):
+        mid = 0.5 * (low + high)
+        if not low < mid < high:
+            break
+        if predicate(wrapper_dpsi(mid)) == predicate(
+                wrapper_dpsi(low)):
+            low = mid
+        else:
+            high = mid
+        if math.nextafter(low, high) >= high:
+            break
+    return low, high
+
+
+def resolve_theta(spec: tuple, r1: float, r2: float, m: float,
+                  tol: float, psi_max: float) -> float:
+    """One case specification, resolved to a binary64 `theta`.
+
+    Deterministic: the same table, the same solver, the same numbers.
+    Freezing the SPEC freezes the case."""
 
     _, kind, value = spec
-    if kind == "absolute":
+    if kind == "theta":
         return float(value)
-    if kind == "radial-nextafter":
-        return math.nextafter(RADIAL_THRESHOLD,
-                              -math.inf if value < 0 else math.inf)
     if kind == "psi-max":
         return psi_max
+    if kind == "radial-edge":
+        # the reachability edge: where cos(theta) stops rounding to 1
+        below, above = straddle_theta(lambda d: d == 0.0, 0.0, 1e-6)
+        return below if value == "below" else above
+
     lower, upper = equal_perihelion_band(r1, r2, m, tol)
+    centre = 0.5 * (lower + upper)
     if kind == "band-fraction":
         return lower * float(value)
     if kind == "band-multiple":
         return upper * float(value)
-    if kind == "band":
-        if value == "centre":
-            return 0.5 * (lower + upper)
-        if value == "lower":
-            return lower
-        if value == "upper":
-            return upper
-        if value == "below":
-            return math.nextafter(lower, -math.inf)
-        if value == "above":
-            return math.nextafter(upper, math.inf)
-    raise ValueError(f"unknown angle spec {spec!r}")
+    if kind == "band-centre":
+        return centre
+    if kind == "band-edge":
+        which, side = value.split("-")
+        bracket = ((lower * 0.5, centre) if which == "lower"
+                   else (centre, upper * 1.5))
+        below, above = straddle_theta(
+            lambda d: family_at(r1, r2, d, m, tol) == "equal-perihelion",
+            *bracket)
+        return below if side == "below" else above
+    raise ValueError(f"unknown case spec {spec!r}")
 
