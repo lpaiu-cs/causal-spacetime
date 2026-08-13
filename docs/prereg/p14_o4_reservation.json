@@ -1,0 +1,26 @@
+{
+ "stage": "O4",
+ "note": "streams opened; observing ANY output spends them, so this reservation stands even if the run aborts with no result artifact",
+ "freeze_rev": "1eb9461f1af739968403c633a7a44cbba9a9f948",
+ "seeds": {
+  "g1": 40000281,
+  "g2": 40000291
+ },
+ "g3_seed_lineage": "inherited from g1_audit, no seed of its own",
+ "environment": {
+  "python": "3.11",
+  "gmpy2": "2.3.1",
+  "mpfr": "MPFR 4.2.2",
+  "gmp": "GMP 6.3.0",
+  "numpy": "2.4.6"
+ },
+ "host": {
+  "machine": "AMD64",
+  "system": "Windows",
+  "node": "lpaiu-c",
+  "pid": 45236
+ },
+ "reservation_ref": "refs/o4/reservation",
+ "reservation_authority": "github.com/lpaiu-cs/causal-spacetime",
+ "reservation_object": "c4da1626463e6a6505374813cf3f56d6b429c209"
+}

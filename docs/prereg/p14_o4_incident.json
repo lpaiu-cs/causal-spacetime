@@ -1,0 +1,103 @@
+{
+ "stage": "O4",
+ "kind": "protocol-abort incident record -- NO scientific verdict",
+ "verdict": null,
+ "termination_reason": "g3-undecided",
+ "exit_code": 1,
+ "results_artifact": null,
+ "note": "The campaign reached G3 and stopped on the frozen fail-closed path: `causal_relation` returned undecided at a G3 stress point, so no result was published. This file records the EVENT. It is not a result, it grades nothing, and no gate may be reported as passed on its basis.",
+ "lineage": {
+  "freeze_rev": "1eb9461f1af739968403c633a7a44cbba9a9f948",
+  "executed_freeze_manifest": "p14_o4_executed_freeze_manifest.json",
+  "reservation_ref": "refs/o4/reservation",
+  "reservation_object": "c4da1626463e6a6505374813cf3f56d6b429c209",
+  "reservation_record": "p14_o4_reservation.json",
+  "reservation_ref_retained": true,
+  "reservation_ref_retention_reason": "the claim is permanent: these streams were opened and may never be reused, so the ref stays as the standing global record"
+ },
+ "seeds": {
+  "spent": {
+   "o4_aborted_g1": 40000281,
+   "o4_aborted_g2": 40000291
+  },
+  "spent_note": "drawn from and observed; retired regardless of the absence of a verdict",
+  "g3": "no seed of its own -- G3 inherits G1's accepted points",
+  "not_spent": {
+   "40000301": "the withdrawn g3_wrapper scalar was never drawn from and remains unallocated"
+  }
+ },
+ "gates": {
+  "g1": {
+   "execution": "completed",
+   "statistics": "unavailable -- computed in memory, never persisted",
+   "status": "unavailable",
+   "last_logged_progress": {
+    "points": 26181632,
+    "calls": 52363264,
+    "runner_elapsed_s": 42031
+   },
+   "points_target": 26200000
+  },
+  "g2": {
+   "execution": "completed",
+   "statistics": "unavailable -- computed in memory, never persisted",
+   "status": "unavailable",
+   "progress_logging": "none -- the frozen runner emits no G2 progress"
+  },
+  "g3": {
+   "execution": "aborted",
+   "statistics": "unavailable",
+   "status": "unavailable",
+   "clusters_completed": null,
+   "failure_coordinates": "unavailable -- see observability_defects"
+  }
+ },
+ "what_is_not_claimed": [
+  "that any gate passed, failed, or was inconclusive",
+  "that V_S1 is concordant or discordant with the O3 certified interval",
+  "any value of the G1 mean, variance, half-width or interval",
+  "any G2 leakage bound",
+  "any G3 mismatch rate",
+  "that the run exhausted or approached either frozen cap"
+ ],
+ "timing": {
+  "git_stamped": {
+   "reservation_commit": "2026-08-12T10:40:41+09:00",
+   "source": "commit date of the reservation object, written by git at claim time"
+  },
+  "runner_log": {
+   "last_g1_progress_elapsed_s": 42031,
+   "source": "the runner's own perf_counter, printed every 300 s; relative only, no absolute clock"
+  },
+  "operator_record": {
+   "launch": "2026-08-12T10:40:35+09:00",
+   "exit": "2026-08-12T22:48:22+09:00",
+   "elapsed_s": 43667,
+   "source": "`date` in the operator's launch wrapper, NOT the runner's clock"
+  },
+  "caps": {
+   "max_wall_s": 86400.0,
+   "max_calls": 80000000,
+   "bound": false,
+   "bound_note": "termination was the fail-closed path, not a cap"
+  }
+ },
+ "inference_not_record": {
+  "claim": "the abort occurred at or very near G3's first clusters",
+  "basis": "G1's logged average rate is 1245.8 calls/s; the G1 remainder after the last progress line is 36,736 calls (~29 s) and G2's 2,145,392 calls are ~1,722 s at that rate, totalling ~1,752 s, against the 1,636 s actually available between the last G1 progress line and exit -- so G2 ran slightly faster than G1 and left essentially no time inside G3",
+  "status": "arithmetic on logged counters, NOT a recorded fact; the replay diagnostic settles it",
+  "cannot_be_pinned_further": "G3's whole span is ~400,000 calls (~5 min), and the runner logs no G3 progress"
+ },
+ "observability_defects": [
+  "the v1 runner records no G3 stress-point coordinates, so the failing (r, theta) and leg are unavailable",
+  "the v1 runner records no per-leg dt, T_min or err, so the undecided margin is unavailable",
+  "the v1 runner emits no G2 progress, so G2's boundary in time is only inferable",
+  "the v1 runner publishes NOTHING on a fail-closed abort: fail-closed must mean `no scientific verdict is published`, never `no record is left`"
+ ],
+ "required_before_any_rerun": [
+  "a write-once incident artifact emitted by the runner itself on every abort path",
+  "G3 stress-point observability: coordinates, per-leg dt/T_min/err, returned tri-state, and a cause classification",
+  "a G3 contract that accounts for `causal_relation` being tri-state by design (see p14_o4_incident.md)",
+  "a new freeze and new G1/G2 scalars -- this run's raw samples and statistics were not preserved, and a replay may never be promoted into a scientific result"
+ ]
+}
