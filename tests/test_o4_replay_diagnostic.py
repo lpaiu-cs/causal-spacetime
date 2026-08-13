@@ -24,6 +24,7 @@ _REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "experiments" / "oracle"))
 sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
 
+import o4_g3_redesign as g3  # noqa: E402
 import o4_replay_diagnostic as rd  # noqa: E402
 import o4_sizing as sz  # noqa: E402
 import o4_volume_audit as o4  # noqa: E402
@@ -575,14 +576,29 @@ def test_eta_is_not_chosen_from_a_frequency(census):
     assert "NOT chosen from any frequency" in census["eta_grid_is"]
 
 
-def test_eligibility_is_strict_and_uses_the_predicate_window():
-    state = {"lo": 1.0, "err1": 0.5, "L_minus_errs": 2e-12}
+def test_eligibility_delegates_to_the_shared_arithmetic():
+    """The census must not carry its own copy of the rule."""
+
+    state = {"lo": 1.0, "err1": 0.5, "err2": 0.25, "L": 1.0,
+             "L_minus_errs": 0.25}
+    for row in rd.eligibility(state):
+        eta = row["eta"]
+        assert row["w_robust"] == g3.w_robust(1.0, 0.5, 0.25, eta)
+        assert row["eligible"] is g3.is_eligible(1.0, 0.5, 0.25, eta)
+        assert row["lower_probe_t_x"] == g3.lower_probe_time(
+            1.0, 0.5, eta)
     rows = {row["eta"]: row for row in rd.eligibility(state)}
-    assert rows[1e-12]["w_robust"] == 0.0
-    assert rows[1e-12]["eligible"] is False       # strict, not >=
-    assert rows[1e-13]["eligible"] is True
     assert rows[0.0]["lower_probe_t_x"] == 0.5
     assert rows[0.0]["lower_probe_t_x_nonnegative"] is True
+
+
+def test_eligibility_is_strict_not_inclusive():
+    state = {"lo": 1.0, "err1": 0.4, "err2": 0.4, "L": 1.0,
+             "L_minus_errs": 0.2}
+    rows = {row["eta"]: row for row in rd.eligibility(state)}
+    assert rows[1e-6]["w_robust"] == pytest.approx(0.2 - 2e-6)
+    assert rows[1e-6]["eligible"] is True
+    assert g3.is_eligible(1.0, 0.4, 0.4, 0.1) is False      # exactly 0
 
 
 def test_the_lower_probe_reach_is_counted(census):
@@ -647,8 +663,10 @@ def test_the_solver_state_is_in_the_predicates_coordinates():
     x = np.array([3.0, r, th, 0.0])
     assert state["dpsi_in"] == rd._dpsi(p, x)
     assert state["dpsi_in"] == state["dpsi_out"]
-    assert state["t1"], state["err1"] == s1.flight_time(
+    assert (state["t1"], state["err1"]) == s1.flight_time(
         sz.R_IN, r, state["dpsi_in"], s1.M, o4.FROZEN["tol"])
+    assert (state["t2"], state["err2"]) == s1.flight_time(
+        r, sz.R_OUT, state["dpsi_out"], s1.M, o4.FROZEN["tol"])
     assert state["L"] == state["hi"] - state["lo"]
 
 

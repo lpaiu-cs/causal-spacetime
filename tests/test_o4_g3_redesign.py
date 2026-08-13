@@ -16,10 +16,13 @@ import math
 import sys
 from pathlib import Path
 
+import pytest
+
 _REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "experiments" / "oracle"))
 sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
 
+import o4_g3_redesign as g3  # noqa: E402
 import o4_replay_diagnostic as rd  # noqa: E402
 import o4_sizing as sz  # noqa: E402
 import o4_volume_audit as o4  # noqa: E402
@@ -132,8 +135,66 @@ def test_using_err_to_place_probes_is_distinguished_from_inference():
 # ----------------------------------- the code agrees with the document
 
 def test_eta_matches_the_constant_the_census_uses():
-    assert rd.ETA == 1e-12
+    assert g3.ETA == 1e-12
+    assert rd.ETA is g3.ETA          # re-exported, never redefined
     assert "η = 10⁻¹² (frozen)" in _prose()
+
+
+def test_max_nudges_is_frozen_now_not_after_the_census():
+    """The cap decides whether a cluster yields a valid probe or an
+    unavailable one, so choosing it later would let the census pick
+    which clusters count -- the same trap eta was kept out of."""
+
+    plain = _prose()
+    assert g3.MAX_NUDGES == 64
+    assert "`MAX_NUDGES = 64` (frozen)" in plain
+    assert "census 가 어떤 cluster 를 셀지 고르게 된다" in plain
+    assert "실제로 쓴 걸음 수도 함께 기록한다" in plain
+
+
+def test_the_post_census_list_excludes_both_frozen_constants():
+    plain = _prose()
+    assert "η 와 `MAX_NUDGES` 는 여기 없다" in plain
+
+
+def test_the_nudge_bound_follows_from_the_rounding_argument():
+    """17 steps suffice at the worst step size; 64 is the frozen cap."""
+
+    worst_shortfall = 4 * 0.5 * math.ulp(8.5)
+    smallest_step = math.ulp(1.0)
+    assert math.ceil(worst_shortfall / smallest_step) <= g3.MAX_NUDGES
+    assert "약 17 걸음이면 충분하고" in _prose()
+
+
+def test_the_redesign_arithmetic_has_one_home():
+    """A constant with two definitions is how a document and its code
+    drift apart."""
+
+    source = (_REPO / "experiments" / "oracle"
+              / "o4_replay_diagnostic.py").read_text(encoding="utf-8")
+    assert "ETA = g3.ETA" in source
+    assert "ETA = 1e-12" not in source
+
+
+def test_probe_times_place_each_probe_where_the_proofs_say():
+    lo, hi, e1, e2 = 1.0, 7.0, 1e-6, 2e-6
+    times = g3.probe_times(lo, hi, e1, e2)
+    assert times["outside_above"] == hi + e2 + g3.ETA
+    assert times["outside_below"] == lo - e1 - g3.ETA
+    assert times["inside"] == 0.5 * ((lo + e1 + g3.ETA)
+                                     + (hi - e2 - g3.ETA))
+    # the inside probe's two margins sum to W_robust + 2*eta, so at the
+    # midpoint each is at least eta exactly when the point is eligible
+    margin_a = times["inside"] - lo - e1
+    margin_b = (hi - times["inside"]) - e2
+    assert margin_a + margin_b == pytest.approx(
+        g3.w_robust(hi - lo, e1, e2) + 2 * g3.ETA, rel=1e-12)
+    assert min(margin_a, margin_b) >= g3.ETA
+
+
+def test_eligibility_is_strict_in_the_shared_module():
+    assert g3.is_eligible(1.0, 0.4, 0.4, 0.1) is False   # exactly 0
+    assert g3.is_eligible(1.0, 0.4, 0.4, 0.09) is True
 
 
 def test_the_eta_grid_in_the_document_is_the_grid_in_the_code():
@@ -168,7 +229,8 @@ def test_the_bin_convention_matches_the_code():
 def test_the_strictness_of_the_eligibility_comparison_matches():
     assert "W_robust > 0" in _prose()
     rows = {r["eta"]: r for r in rd.eligibility(
-        {"lo": 1.0, "err1": 0.0, "L_minus_errs": 0.0})}
+        {"lo": 1.0, "err1": 0.0, "err2": 0.0, "L": 0.0,
+         "L_minus_errs": 0.0})}
     assert rows[0.0]["w_robust"] == 0.0
     assert rows[0.0]["eligible"] is False
 

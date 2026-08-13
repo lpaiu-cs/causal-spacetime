@@ -76,7 +76,15 @@ condition in closed form. With `lo = T1`, `hi = dt - T2`, `L = hi - lo`:
 | midpoint `(lo+hi)/2` | `p → x` | `L / 2` | `L/2 ≤ err₁` |
 | midpoint `(lo+hi)/2` | `x → q` | `L / 2` | `L/2 ≤ err₂` |
 | outside `hi + 1e-6` | `p → x` | `L + 1e-6` | `L + 1e-6 ≤ err₁` |
-| **outside `hi + 1e-6`** | **`x → q`** | **`1e-6` exactly** | **`err₂ ≥ 1e-6`** |
+| **outside `hi + 1e-6`** | **`x → q`** | **`1e-6`** | **`err₂ ≥ 1e-6`** |
+
+(These are identities in real arithmetic. In binary64 the gap the
+predicate actually forms equals `1e-6` only up to rounding — the first
+undecided cluster gave `9.99999999695e-07` — so the nominal condition
+`err₂ ≥ 1e-6` and the realized one `err₂ ≥ |dt − t_min|` can part on a
+cluster whose `err₂` lands in that neighbourhood. The census counts
+both rather than assuming they agree; see
+`p14_o4_replay_diagnostic.md` section 5a.)
 
 The last row is the important one, and it must be stated precisely.
 What is geometry-independent is the **decision distance**: the outside

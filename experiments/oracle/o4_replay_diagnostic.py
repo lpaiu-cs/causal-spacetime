@@ -71,6 +71,7 @@ _REPO = _HERE.parents[1]
 sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
 
+import o4_g3_redesign as g3  # noqa: E402
 import o4_sizing as sz  # noqa: E402
 import o4_volume_audit as o4  # noqa: E402
 import s1_schwarzschild_cost as s1  # noqa: E402
@@ -118,15 +119,12 @@ CAUSES = (CAUSE_MIDPOINT, CAUSE_OUTSIDE, CAUSE_MISMATCH)
 
 OUTCOMES = ("true", "false", "undecided")
 
-#: The G3 redesign's separation margin (p14_o4_g3_redesign.md section
-#: 4). Frozen here so the census's eligibility grid brackets it, and
-#: NOT derived from any frequency the census reports.
-ETA = 1e-12
-
-#: The exact eta grid the census scans, frozen before the run. The
-#: comparison is strict: eligible iff `L - err1 - err2 - 2*eta > 0`.
-ETA_GRID = (0.0, 1e-15, 1e-14, 1e-13, 1e-12, 1e-11, 1e-10, 1e-9,
-            1e-8, 1e-7, 1e-6)
+#: The redesign's frozen constants have one home, `o4_g3_redesign`.
+#: They are re-exported here because the census scans them, never
+#: redefined -- a second definition is how a document and its code
+#: drift apart.
+ETA = g3.ETA
+ETA_GRID = g3.ETA_GRID
 
 
 def _log_edges(lo_decade: int = -16, hi_decade: int = -2,
@@ -312,11 +310,13 @@ def eligibility(state: dict) -> list[dict]:
 
     rows = []
     for eta in ETA_GRID:
-        t_x = state["lo"] - state["err1"] - eta
+        t_x = g3.lower_probe_time(state["lo"], state["err1"], eta)
         rows.append({
             "eta": eta,
-            "w_robust": state["L_minus_errs"] - 2.0 * eta,
-            "eligible": state["L_minus_errs"] - 2.0 * eta > 0.0,
+            "w_robust": g3.w_robust(state["L"], state["err1"],
+                                    state["err2"], eta),
+            "eligible": g3.is_eligible(state["L"], state["err1"],
+                                       state["err2"], eta),
             "lower_probe_t_x": t_x,
             "lower_probe_t_x_nonnegative": t_x >= 0.0,
         })
