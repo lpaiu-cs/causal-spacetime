@@ -152,6 +152,13 @@ def test_max_nudges_is_frozen_now_not_after_the_census():
     assert "실제로 쓴 걸음 수도 함께 기록한다" in plain
 
 
+def test_lower_probe_coverage_is_specified_as_a_joint():
+    plain = _prose()
+    assert "주변합만으로는 답이 나오지 않는다" in plain
+    assert "eligible_and_lower_probe_t_x_negative" in plain
+    assert "적격 cluster 에서만" in plain
+
+
 def test_the_post_census_list_excludes_both_frozen_constants():
     plain = _prose()
     assert "η 와 `MAX_NUDGES` 는 여기 없다" in plain

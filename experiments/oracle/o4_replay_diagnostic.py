@@ -529,6 +529,7 @@ class _Census:
         self.first_err2_disagreement: dict | None = None
         self.eligible = dict.fromkeys(ETA_GRID, 0)
         self.lower_t_x_negative = dict.fromkeys(ETA_GRID, 0)
+        self.eligible_lower_t_x_negative = dict.fromkeys(ETA_GRID, 0)
         self.values: dict[str, list[float]] = {
             "err1": [], "err2": [], "L": [], "L_minus_errs": [],
             "abs_t_min_minus_T_in": [], "abs_t_min_minus_T_out": []}
@@ -549,9 +550,16 @@ class _Census:
                     self._outside_xq(rec, leg, state)
 
         for row in rec["eligibility"]:
-            self.eligible[row["eta"]] += int(row["eligible"])
-            self.lower_t_x_negative[row["eta"]] += int(
-                not row["lower_probe_t_x_nonnegative"])
+            eta = row["eta"]
+            unreachable = not row["lower_probe_t_x_nonnegative"]
+            self.eligible[eta] += int(row["eligible"])
+            self.lower_t_x_negative[eta] += int(unreachable)
+            # the JOINT, not just the two marginals: probe (iii) runs
+            # only where the cluster is eligible, so its coverage
+            # question is "among eligible clusters", and two marginals
+            # cannot answer it (review R2)
+            self.eligible_lower_t_x_negative[eta] += int(
+                row["eligible"] and unreachable)
 
         self.values["err1"].append(state["err1"])
         self.values["err2"].append(state["err2"])
@@ -629,8 +637,19 @@ class _Census:
             "eligibility_by_eta": [
                 {"eta": eta, "eligible_clusters": self.eligible[eta],
                  "lower_probe_t_x_negative":
-                     self.lower_t_x_negative[eta]}
+                     self.lower_t_x_negative[eta],
+                 "eligible_and_lower_probe_t_x_negative":
+                     self.eligible_lower_t_x_negative[eta]}
                 for eta in ETA_GRID],
+            "lower_probe_coverage_is": (
+                "read `eligible_and_lower_probe_t_x_negative` against "
+                "`eligible_clusters`: probe (iii) runs only where the "
+                "cluster is eligible, so the reach question is about "
+                "the eligible set. The two marginals alone would "
+                "overstate coverage whenever the unreachable clusters "
+                "are mostly ineligible anyway, and with the totals "
+                "they do not determine the joint -- this cell plus the "
+                "marginals and the denominator do"),
             "eligibility_rule": ("W_robust = L - err1 - err2 - 2*eta, "
                                  "eligible iff W_robust > 0 (strict); "
                                  "L, err1, err2 are all recomputed in "

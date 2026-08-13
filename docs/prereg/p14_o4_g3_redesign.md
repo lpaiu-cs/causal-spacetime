@@ -349,11 +349,22 @@ census 양은 §5.8 의 하단 probe 도달 실패 개수이며, 아티팩트가
 
 §4.1 이 제거한 항의 규모. histogram + max + 분위수. **gate 가 아니다.**
 
-### 5.8 (진단 전용) `t_x ≥ 0` 실패 개수
+### 5.8 (진단 전용) 하단 probe 도달 실패 — 적격과 **결합해서** 센다
 
 probe (iii) 의 `lo − e₁ − η ≥ 0` 위반 빈도. probe coverage 정보이며
 **gate 가 아니다.** §3.4 의 `negative-dt-short-circuit` 이 얼마나 흔할지를
 미리 알려준다.
+
+**주변합만으로는 답이 나오지 않는다.** probe (iii) 은 `W_robust > 0` 인
+**적격 cluster 에서만** 실행되므로, coverage 질문은 "적격 집합 안에서
+얼마나 도달하지 못하는가" 이다. `eligible_clusters` 와 전체
+`lower_probe_t_x_negative` 두 주변합만 남기면, 도달 실패 cluster 대부분이
+애초에 무적격인 경우에 coverage 를 크게 **과장**하고, 총수와 함께 두어도
+결합분포가 복원되지 않는다.
+
+따라서 η 별로 교집합
+**`eligible_and_lower_probe_t_x_negative`** 를 함께 센다. 이 한 칸에
+두 주변합과 분모를 더하면 2×2 가 결정된다.
 
 ---
 

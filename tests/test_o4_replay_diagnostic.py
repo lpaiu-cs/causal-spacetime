@@ -601,9 +601,56 @@ def test_eligibility_is_strict_not_inclusive():
     assert g3.is_eligible(1.0, 0.4, 0.4, 0.1) is False      # exactly 0
 
 
-def test_the_lower_probe_reach_is_counted(census):
-    rows = {row["eta"]: row for row in census["eligibility_by_eta"]}
-    assert all("lower_probe_t_x_negative" in r for r in rows.values())
+def test_the_lower_probe_reach_is_counted_jointly_with_eligibility(
+        census):
+    """Probe (iii) runs only on eligible clusters, so its coverage is
+    a question about the eligible set -- and two marginals plus a
+    total do not determine that cell."""
+
+    for row in census["eligibility_by_eta"]:
+        joint = row["eligible_and_lower_probe_t_x_negative"]
+        assert joint <= row["eligible_clusters"]
+        assert joint <= row["lower_probe_t_x_negative"]
+    assert "the eligible set" in census["lower_probe_coverage_is"]
+
+
+def test_the_joint_cell_is_not_implied_by_the_marginals():
+    """Two clusters, same marginals, different joint: without the
+    intersection the census cannot tell these apart."""
+
+    def cluster(index, length, lo):
+        state = {"dpsi_in": 0.1, "dpsi_out": 0.1, "t1": lo,
+                 "err1": 0.5, "t2": 1.0, "err2": 0.0,
+                 "lo": lo, "hi": lo + length, "L": length,
+                 "L_minus_errs": length - 0.5}
+        return {"cluster_index": index, "r": 15.0, "theta": 0.1,
+                "T1": lo, "T2": 1.0,
+                "window": {"lo": lo, "hi": lo + length, "L": length},
+                "probes": [], "predicate_state": state,
+                "eligibility": rd.eligibility(state),
+                "angle_recovery": {"t_min_minus_T_in": 0.0,
+                                   "t_min_minus_T_out": 0.0,
+                                   "dpsi_legs_agree": True}}
+
+    #  eligible + unreachable in the same cluster ...
+    together = rd._Census()
+    together.add(cluster(0, 4.0, 0.25))     # L large, lo - err1 < 0
+    together.add(cluster(1, 0.1, 4.0))      # ineligible, reachable
+    #  ... versus the two properties split across clusters
+    apart = rd._Census()
+    apart.add(cluster(0, 0.1, 0.25))        # ineligible, unreachable
+    apart.add(cluster(1, 4.0, 4.0))         # eligible, reachable
+
+    def row(census):
+        return next(r for r in census.report()["eligibility_by_eta"]
+                    if r["eta"] == rd.ETA)
+
+    a, b = row(together), row(apart)
+    assert a["eligible_clusters"] == b["eligible_clusters"] == 1
+    assert a["lower_probe_t_x_negative"] == (
+        b["lower_probe_t_x_negative"]) == 1
+    assert a["eligible_and_lower_probe_t_x_negative"] == 1
+    assert b["eligible_and_lower_probe_t_x_negative"] == 0
 
 
 def test_distributions_declare_their_edges_and_quantiles(census):
