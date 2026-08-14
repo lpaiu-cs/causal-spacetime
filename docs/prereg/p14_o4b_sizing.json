@@ -65,6 +65,11 @@
    "ulp_distance_total": 8120,
    "search_comparisons_total": 244,
    "distance_is_not_cost": "ulp_distance measures how far the nominal placement sat from a satisfying one; search_comparisons is the work actually done",
+   "host_dependent": [
+    "ulp_distance_total",
+    "search_comparisons_total"
+   ],
+   "why_host_dependent": "the solver reaches libm for sin/cos/acos, so `t_min` and `err` differ in their last bits across platforms and the ulp distance to a satisfying placement moves with them. CI measured 8,111 where this host measured 8,120. The CALL counts do not move, so the cost model and the contract are unaffected -- only these two diagnostics are, and they must never be pinned as constants",
    "preflight_conditions": {
     "tri_state_rows": true,
     "recovered_dpsi_bit_identical": true,

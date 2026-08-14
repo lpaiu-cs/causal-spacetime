@@ -137,6 +137,16 @@ def g3a_calls(tol: float = s1.DEFAULT_TOL) -> dict:
         "search_comparisons_total":
             result["search_comparisons_total"],
         "distance_is_not_cost": result["distance_is_not_cost"],
+        "host_dependent": ["ulp_distance_total",
+                           "search_comparisons_total"],
+        "why_host_dependent": (
+            "the solver reaches libm for sin/cos/acos, so `t_min` and "
+            "`err` differ in their last bits across platforms and the "
+            "ulp distance to a satisfying placement moves with them. "
+            "CI measured 8,111 where this host measured 8,120. The "
+            "CALL counts do not move, so the cost model and the "
+            "contract are unaffected -- only these two diagnostics "
+            "are, and they must never be pinned as constants"),
         "preflight_conditions": preflight["conditions"],
         "measures": ("run_preflight, the single authority; the stage "
                      "and this measurement read the same verdict"),
