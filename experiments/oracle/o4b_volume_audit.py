@@ -298,10 +298,26 @@ def preflight(freeze_rev: str) -> dict:
     return {"manifest": manifest, "git": state, "seeds": seeds}
 
 
-def publish_write_once(path: Path, payload: dict) -> None:
+def publish_write_once(path: Path, payload: dict,
+                       receipt: dict | None = None) -> bool:
     """Atomic no-clobber publication: fsynced temp in the same
     directory, then `os.link`, which fails atomically if the
-    destination exists."""
+    destination exists.
+
+    `receipt` is stamped `committed` the instant `os.link` returns,
+    and it is how the caller learns whether THIS CALL published
+    (review R28). The file merely existing does not mean that: the
+    destination can be created by something else during the eleven
+    hours the campaign runs, in which case `os.link` fails, this
+    function reports "the first observation stands", and a caller
+    reading `path.exists()` would conclude its own result had been
+    published -- crediting someone else's file to this run and filing
+    no incident for a campaign whose seeds are already spent.
+
+    Returns True on a commit, so a caller that can use the return
+    value does not need the receipt at all. The receipt exists for the
+    caller that cannot: an interrupt delivered between the return and
+    the assignment would leave a plain flag unset."""
 
     text = json.dumps(payload, ensure_ascii=False, indent=1) + "\n"
     tmp = path.with_name(f"{path.name}.tmp.{os.getpid()}")
@@ -317,6 +333,8 @@ def publish_write_once(path: Path, payload: dict) -> None:
                 f"publish: {path.name} already exists -- the audit is "
                 f"write-once and the first observation stands"
             ) from None
+        if receipt is not None:
+            receipt["committed"] = True     # the commit, recorded here
     finally:
         # THE COMMIT IS `os.link`, AND NOTHING AFTER IT MAY UNDO THE
         # CLAIM THAT IT HAPPENED (review R27). Removing the temporary
@@ -329,6 +347,7 @@ def publish_write_once(path: Path, payload: dict) -> None:
             tmp.unlink(missing_ok=True)
         except BaseException:                   # noqa: BLE001
             pass
+    return True
 
 
 # ------------------------------------------------------- the G3 state
@@ -997,6 +1016,7 @@ def main() -> None:
     campaign = Campaign(FROZEN, checks["seeds"], args.freeze_rev,
                         digest)
     claimed: dict = {"object": None}
+    receipt: dict = {}
 
     def claim() -> None:
         payload = {
@@ -1048,7 +1068,7 @@ def main() -> None:
     try:
         results = campaign.run(on_g3a_passed=claim,
                                on_before_publish=verify_before_publish)
-        publish_write_once(_ARTIFACT, results)
+        publish_write_once(_ARTIFACT, results, receipt=receipt)
     except stages.StageFailure as failure:
         file_incident(failure)
         raise SystemExit(
@@ -1056,13 +1076,15 @@ def main() -> None:
             f"{failure.reason}; incident written to "
             f"{_INCIDENT.name}, no verdict published") from None
     except BaseException as exc:
-        # The FILE is the authority on whether the result was
-        # published, not the exception (review R27). `os.link` is the
-        # commit; anything raised after it -- an interrupt during
-        # cleanup, a failure in a `finally` -- leaves a published
-        # artifact behind, and filing an incident then would put a
-        # verdict and an incident side by side.
-        if _ARTIFACT.exists():
+        # THIS CALL's commit, not the file's existence (review R28).
+        # `os.link` is the commit and the receipt is stamped the
+        # instant it returns, so an interrupt after it still reports a
+        # published result -- which is R27. But a file that appeared
+        # from somewhere else during the run is NOT this run's result:
+        # `os.link` would have failed, and reading `exists()` there
+        # would credit another file to this campaign and file no
+        # incident for seeds that are already spent.
+        if receipt.get("committed"):
             raise SystemExit(
                 f"{_ARTIFACT.name} was published; the failure came "
                 f"after the commit ({type(exc).__name__}: {exc}) and "

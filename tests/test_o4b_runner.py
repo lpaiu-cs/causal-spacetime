@@ -1265,8 +1265,8 @@ def test_no_incident_is_filed_over_a_published_result(monkeypatch,
     import inspect
     src = inspect.getsource(run.main)
     tail = src.split("except BaseException as exc:", 1)[1]
-    assert "if _ARTIFACT.exists():" in tail
-    guard = tail.index("if _ARTIFACT.exists():")
+    assert 'if receipt.get("committed"):' in tail
+    guard = tail.index('if receipt.get("committed"):')
     filed = tail.index("file_incident(")
     assert guard < filed, "the incident is filed before the check"
     assert "no incident is filed over a published result" in tail
@@ -1277,3 +1277,38 @@ def test_the_commit_point_is_named_in_the_publication_primitive():
     src = inspect.getsource(run.publish_write_once)
     assert "THE COMMIT IS `os.link`" in src
     assert "except BaseException" in src.split("finally:", 1)[1]
+
+
+def test_the_receipt_reports_THIS_call_not_the_file(tmp_path):
+    """A destination that appeared from somewhere else during the run
+    is not this run's result: `os.link` fails, the primitive says the
+    first observation stands, and a caller reading `exists()` would
+    credit another file to this campaign -- filing no incident for
+    seeds that are already spent."""
+
+    target = tmp_path / "results.json"
+    receipt: dict = {}
+    assert run.publish_write_once(target, {"kind": "results"},
+                                  receipt=receipt) is True
+    assert receipt["committed"] is True
+
+    # somebody else's file is already there
+    other: dict = {}
+    with pytest.raises(SystemExit, match="first observation stands"):
+        run.publish_write_once(target, {"kind": "results"},
+                               receipt=other)
+    assert other == {}                       # nothing was committed
+    assert target.exists()                   # ...and the file is there
+
+
+def test_the_receipt_is_stamped_at_the_commit_not_after_the_call():
+    """An interrupt between the return and an assignment in the caller
+    would leave a plain flag unset, which is R27 again."""
+
+    import inspect
+    src = inspect.getsource(run.publish_write_once)
+    body = src.split("os.link(tmp, path)", 1)[1]
+    stamp = body.index('receipt["committed"] = True')
+    cleanup = body.index("tmp.unlink")
+    assert stamp < cleanup
+    assert "the commit, recorded here" in body
