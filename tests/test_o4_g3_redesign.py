@@ -324,6 +324,88 @@ def test_the_inside_probe_may_not_use_the_monotone_search():
     assert "MONOTONICITY IS A PRECONDITION" in g3a.place_row.__doc__
 
 
+def test_the_only_accepted_omissions_are_the_seven_named_ones():
+    """Frozen as a list of labels, and the run has to agree with it.
+
+    Seven of the eleven specs are found by bisecting the solver's
+    equal-perihelion band, and equal radii have no such band."""
+
+    import o4b_g3a as g3a
+
+    band_specs = {"no-turn-mid", "equal-perihelion-inside",
+                  "equal-perihelion-lower-edge-below",
+                  "equal-perihelion-lower-edge-above",
+                  "equal-perihelion-upper-edge-below",
+                  "equal-perihelion-upper-edge-above",
+                  "one-turn-beyond"}
+    assert g3.EXPECTED_UNREACHABLE_LABELS == {
+        f"equal-radius/{s}" for s in band_specs}
+
+    table = g3a.run_g3a()
+    assert {u["case"] for u in table["unreachable"]} == (
+        g3.EXPECTED_UNREACHABLE_LABELS)
+    assert table["unexpected_unreachable"] == []
+    assert table["unexpectedly_reachable"] == []
+    assert all(u["expected"] for u in table["unreachable"])
+
+
+def test_an_omission_the_freeze_did_not_name_is_a_preflight_failure(
+        monkeypatch):
+    """The R2 defect. `equal_perihelion_band()` also raises when its
+    bracket or its bisection fails -- on a geometry that does have a
+    band. Swallowing that as `unreachable` dropped the cases silently,
+    and because the other geometries still covered all four families,
+    G3a could PASS with a hole in its table and fresh seeds would then
+    be spent."""
+
+    import o4b_g3a as g3a
+
+    real = g3.equal_perihelion_band
+
+    def flaky(r1, r2, m, tol, steps=200):
+        if (r1, r2) == (13.0, 17.0):
+            raise ValueError("bisection never landed in the band")
+        return real(r1, r2, m, tol, steps)
+
+    monkeypatch.setattr(g3, "equal_perihelion_band", flaky)
+    preflight = g3a.run_preflight()
+
+    table = preflight["table"]
+    lost = {u["case"] for u in table["unexpected_unreachable"]}
+    assert lost == {f"increasing-interior/{s}"
+                    for s in ("no-turn-mid", "equal-perihelion-inside",
+                              "equal-perihelion-lower-edge-below",
+                              "equal-perihelion-lower-edge-above",
+                              "equal-perihelion-upper-edge-below",
+                              "equal-perihelion-upper-edge-above",
+                              "one-turn-beyond")}
+    # the hole would not have shown up in any other condition
+    assert table["covers_every_family"]
+    assert not table["failures"]
+    assert preflight["conditions"]["only_expected_unreachable"] is False
+    assert preflight["passed"] is False
+    assert "only_expected_unreachable" in preflight["failed_conditions"]
+
+
+def test_a_named_omission_that_turns_out_buildable_also_fails(
+        monkeypatch):
+    """The list is an equality, not a lower bound: if a case the freeze
+    recorded as impossible does resolve, the frozen table no longer
+    describes the solver and the preflight has to say so."""
+
+    import o4b_g3a as g3a
+
+    monkeypatch.setattr(
+        g3, "EXPECTED_UNREACHABLE_LABELS",
+        g3.EXPECTED_UNREACHABLE_LABELS | {"anchor-pair/no-turn-mid"})
+    preflight = g3a.run_preflight()
+
+    assert preflight["table"]["unexpectedly_reachable"] == [
+        "anchor-pair/no-turn-mid"]
+    assert preflight["conditions"]["only_expected_unreachable"] is False
+    assert preflight["passed"] is False
+
+
 def test_distance_and_work_are_separate_fields():
     """`ulp_distance` is how far the nominal placement sat from a
     satisfying one; it is not a count of anything performed."""

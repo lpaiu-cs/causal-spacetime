@@ -59,6 +59,7 @@
   "g3a_detail": {
    "cases_resolved": 70,
    "cases_unreachable": 7,
+   "cases_unreachable_are_the_named_ones": true,
    "calls": 6455,
    "completed": 6455,
    "construction_unavailable_rows": 2,
@@ -75,6 +76,7 @@
     "recovered_dpsi_bit_identical": true,
     "families_covered": true,
     "ab_realized_margin": true,
+    "only_expected_unreachable": true,
     "row_d_no_solver_call": true,
     "solver_determinism": true
    },

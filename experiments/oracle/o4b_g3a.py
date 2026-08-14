@@ -323,11 +323,14 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
                 theta = g3.resolve_theta(spec, r1, r2, s1.M, tol,
                                          base.PSI_MAX)
             except ValueError as exc:
+                expected = label in g3.EXPECTED_UNREACHABLE_LABELS
                 unreachable.append({
                     "case": label, "why": str(exc),
-                    "note": ("the geometry has no such branch -- "
-                             "equal radii have a zero arc, so no-turn "
-                             "and equal-perihelion do not exist")})
+                    "expected": expected,
+                    "note": (g3.WHY_EXPECTED_UNREACHABLE if expected
+                             else "NOT an expected omission: the case "
+                                  "could not be built and the freeze "
+                                  "does not accept its absence")})
                 continue
             cases.append(check_case(label, r1, r2, theta, tol, eta))
 
@@ -352,9 +355,19 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
         if r["outcome"] == "pass" and "margin_reaches_eta" in r
         and not r["margin_reaches_eta"]]
     families = sorted({c["family"] for c in cases})
+    # Every (geometry, spec) pair lands in exactly one of `cases` or
+    # `unreachable`, so these two lists together say whether the table
+    # that ran is the table that was frozen.
+    unexpected_unreachable = [u for u in unreachable
+                              if not u["expected"]]
+    built = {c["case"] for c in cases}
+    unexpectedly_reachable = sorted(
+        g3.EXPECTED_UNREACHABLE_LABELS & built)
     return {
         "cases": len(cases),
         "unreachable": unreachable,
+        "unexpected_unreachable": unexpected_unreachable,
+        "unexpectedly_reachable": unexpectedly_reachable,
         "families_covered": families,
         "covers_every_family": set(families) == set(g3.FAMILIES),
         "construction_unavailable": sum(
@@ -375,6 +388,8 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
         "failures": failures,
         "passed": (not failures and not recovery_failures
                    and not margin_failures
+                   and not unexpected_unreachable
+                   and not unexpectedly_reachable
                    and set(families) == set(g3.FAMILIES)),
         "detail": cases,
     }
@@ -413,6 +428,9 @@ def run_preflight(tol: float = s1.DEFAULT_TOL,
         "recovered_dpsi_bit_identical": not table["recovery_failures"],
         "families_covered": table["covers_every_family"],
         "ab_realized_margin": not table["margin_failures"],
+        "only_expected_unreachable": (
+            not table["unexpected_unreachable"]
+            and not table["unexpectedly_reachable"]),
         "row_d_no_solver_call": table["row_d"]["outcome"] == "pass",
         "solver_determinism": determinism["bit_identical"],
     }
@@ -432,8 +450,10 @@ def main() -> None:
     preflight = run_preflight()
     result = preflight["table"]
     print(f"G3a: {result['cases']} cases, "
-          f"{len(result['unreachable'])} unreachable, "
-          f"families {result['families_covered']}")
+          f"{len(result['unreachable'])} unreachable "
+          f"({len(result['unexpected_unreachable'])} unexpected, "
+          f"{len(result['unexpectedly_reachable'])} expected but "
+          f"built), families {result['families_covered']}")
     print(f"  construction-unavailable rows: "
           f"{result['construction_unavailable']}")
     print(f"  row D: {result['row_d']['outcome']} "

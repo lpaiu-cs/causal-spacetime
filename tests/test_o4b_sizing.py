@@ -102,7 +102,17 @@ def test_the_g3a_cost_is_now_measured_end_to_end():
     assert detail["basis"] == (
         "end-to-end measurement of run_preflight under the meter")
     assert "single authority" in detail["measures"]
-    assert sum(detail["preflight_conditions"].values()) == 6
+    # named rather than counted, so a condition that gets renamed or
+    # dropped fails here instead of being replaced by a new one
+    assert detail["preflight_conditions"] == {
+        "tri_state_rows": True,
+        "recovered_dpsi_bit_identical": True,
+        "families_covered": True,
+        "ab_realized_margin": True,
+        "only_expected_unreachable": True,
+        "row_d_no_solver_call": True,
+        "solver_determinism": True,
+    }
     # ulp distances are HOST-DEPENDENT: the solver reaches libm, so
     # `t_min` and `err` differ in their last bits and the distance to a
     # satisfying placement moves with them (CI 8,111 vs 8,120 here).

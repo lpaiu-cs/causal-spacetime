@@ -191,6 +191,41 @@ G3A_ANGLE_SPECS = (
 #: checked once rather than per geometry.
 G3A_ROWS = ("A", "B", "C")
 
+#: The ONLY case omissions the freeze accepts, named one at a time.
+#:
+#: Seven of the eleven specs are located by bisecting the solver's own
+#: equal-perihelion band, and an equal-radius pair has a zero arc, so
+#: for that one geometry the band does not exist and those seven cases
+#: cannot be built. That is a fact about the geometry, not a failure.
+#:
+#: It is frozen as a LIST rather than inferred from an exception,
+#: because `equal_perihelion_band()` also raises when the bracket or
+#: the bisection fails -- a real defect, on a geometry that does have a
+#: band. Treating every `ValueError` as "no such branch" would let a
+#: branch the freeze meant to verify go unverified while the remaining
+#: geometries still covered all four families, and G3a would PASS on a
+#: table with a hole in it (review R2). Anything not on this list --
+#: an extra omission, or one of these seven turning out to resolve
+#: after all -- fails the preflight.
+EXPECTED_UNREACHABLE = (
+    ("equal-radius", "no-turn-mid"),
+    ("equal-radius", "equal-perihelion-inside"),
+    ("equal-radius", "equal-perihelion-lower-edge-below"),
+    ("equal-radius", "equal-perihelion-lower-edge-above"),
+    ("equal-radius", "equal-perihelion-upper-edge-below"),
+    ("equal-radius", "equal-perihelion-upper-edge-above"),
+    ("equal-radius", "one-turn-beyond"),
+)
+
+#: The same set as the labels `run_g3a` builds, so the comparison is a
+#: set membership and not a string convention repeated in two places.
+EXPECTED_UNREACHABLE_LABELS = frozenset(
+    f"{geometry}/{spec}" for geometry, spec in EXPECTED_UNREACHABLE)
+
+WHY_EXPECTED_UNREACHABLE = (
+    "equal radii have a zero arc, so the solver is one-turn everywhere "
+    "and there is no equal-perihelion band to bisect")
+
 
 def family_at(r1: float, r2: float, dpsi: float, m: float,
               tol: float) -> str:

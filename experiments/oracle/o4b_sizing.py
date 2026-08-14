@@ -129,6 +129,9 @@ def g3a_calls(tol: float = s1.DEFAULT_TOL) -> dict:
     return {
         "cases_resolved": result["cases"],
         "cases_unreachable": len(result["unreachable"]),
+        "cases_unreachable_are_the_named_ones": (
+            not result["unexpected_unreachable"]
+            and not result["unexpectedly_reachable"]),
         "calls": probe.reserved,
         "completed": probe.completed,
         "construction_unavailable_rows":
