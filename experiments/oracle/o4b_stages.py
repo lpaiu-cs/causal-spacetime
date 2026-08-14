@@ -194,7 +194,8 @@ class Prefix:
 
         return self.fully_testable + self.scan_fully_testable
 
-    def observe(self, z: float, judge=None) -> dict | None:
+    def observe(self, z: float, judge=None,
+                on_accumulated=None) -> dict | None:
         """One drawn point.
 
         `z` enters the estimator FIRST and unconditionally -- before
@@ -202,9 +203,24 @@ class Prefix:
         not. Only then is the point examined, and only if it is a
         candidate. `judge` returns a dict with `eligible` and
         `fully_testable`; it is not called for non-candidates, because
-        they are not part of the availability question."""
+        they are not part of the availability question.
+
+        TWO COMMIT BOUNDARIES, AND A FAILURE FALLS BETWEEN THEM
+        CLEANLY (review R17). `judge` runs the solver, so it can raise
+        -- a fired cap, a fail-closed path. Everything before that
+        point commits together: the estimator takes `z` and
+        `on_accumulated` advances the caller's cursor in the same
+        breath, so an incident can never report a G1 sample that
+        includes a point the cursor says was never reached. Everything
+        the judgement decides commits only if the judgement RETURNS.
+        An earlier version counted the candidate first, so a cap at
+        the `N_avail`-th one could report `complete = True` and
+        publish availability rates over a candidate that was never
+        judged."""
 
         self.acc.add(z)                 # <- before any predicate
+        if on_accumulated is not None:
+            on_accumulated()            # <- the cursor, same boundary
         frozen = self.complete          # BEFORE this point is counted
         if z <= 0.0:
             if frozen:
@@ -212,19 +228,21 @@ class Prefix:
             else:
                 self.zero_window += 1
             return None
+        if judge is None:
+            if frozen:
+                self.scan_candidates += 1
+            else:
+                self.candidates += 1
+            return None
+        verdict = judge()               # may raise: nothing counted
         if frozen:
             self.scan_candidates += 1
-        else:
-            self.candidates += 1
-        if judge is None:
-            return None
-        verdict = judge()
-        if frozen:
             # the cluster still counts toward K_G3B; it just does not
             # enter a report whose denominator was fixed before it
             if verdict.get("fully_testable"):
                 self.scan_fully_testable += 1
             return verdict
+        self.candidates += 1
         if verdict.get("eligible"):
             self.eligible += 1
         if verdict.get("fully_testable"):

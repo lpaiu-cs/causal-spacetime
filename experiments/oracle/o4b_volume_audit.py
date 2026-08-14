@@ -423,6 +423,12 @@ class Campaign:
         self.chunk_start_rng = None
         self.chunk_consumed = 0
         self.chunk_size = 0
+        #: The part of the last chunk G3b drew but did not consume.
+        #: It is HANDED TO G1, not discarded (review R16): the RNG has
+        #: already advanced past it, so throwing it away would make G1
+        #: skip that stretch of the frozen stream and integrate a
+        #: different sample.
+        self.pending: list[tuple[float, float]] = []
 
     # -- checkpoints ---------------------------------------------
 
@@ -515,18 +521,19 @@ class Campaign:
         with meter.metered(self.budget):
             while self.scanned < cap and not self._g3b_done():
                 k = min(self.cfg["chunk"], cap - self.scanned)
-                rs, ths = self._chunk(k)
-                for r, th in zip(rs, ths, strict=True):
+                points = list(zip(*self._chunk(k), strict=True))
+                for i, (r, th) in enumerate(points):
                     # STOP AT THE STOPPING TIME, not at the chunk end.
                     # The draw is batched; running on to the end of the
                     # buffer would contract-check points that lie after
                     # the sample the rule defined, and a mismatch there
                     # could turn an already complete G3b INVALID.
                     if self._g3b_done():
+                        # the RNG is already past these; G1 takes them
+                        self.pending = [(float(a), float(b))
+                                        for a, b in points[i:]]
                         break
                     self._one(float(r), float(th))
-                    self.scanned += 1
-                    self.chunk_consumed += 1
         report = self.prefix.report()
         if self.mismatches:
             raise stages.StageFailure(
@@ -546,6 +553,28 @@ class Campaign:
                 detail={"availability": report})
         self.checkpoint("g3b", {"availability": report})
         return report
+
+    def _consume(self, points, target: int) -> None:
+        """G1 points, in the order they were drawn."""
+
+        for r, th in points:
+            if self.g1.n >= target:
+                break
+            # the estimand, at the drawn theta -- the predicate's
+            # coordinate has no business here
+            ell, _, _ = self.ell(float(r), float(th), self.cfg["tol"])
+            self.g1.add(ell / sz.DT)
+            self._advance()
+
+    def _advance(self) -> None:
+        """The cursor, moved in the same breath as the accumulation.
+
+        Not after the judgement: a cap inside `judge` would then leave
+        an incident whose G1 sample includes a point the cursor says
+        was never reached (review R17)."""
+
+        self.scanned += 1
+        self.chunk_consumed += 1
 
     def _one(self, r: float, theta: float) -> None:
         """One drawn point, in BOTH coordinates and in that order.
@@ -569,7 +598,7 @@ class Campaign:
                 self._check_contract(r, theta, state, verdict)
             return verdict
 
-        self.prefix.observe(z, judge)
+        self.prefix.observe(z, judge, on_accumulated=self._advance)
 
     #: What each probe must produce, LEG BY LEG. The design fixes
     #: both legs of all three probes, and the cost model froze six
@@ -641,19 +670,13 @@ class Campaign:
 
         target = self.cfg["n_g1"]
         with meter.metered(self.budget):
+            # whatever G3b drew and did not use comes first, in order
+            self._consume(self.pending, target)
+            self.pending = []
             while self.g1.n < target:
                 k = min(self.cfg["chunk"], target - self.g1.n)
-                rs, ths = self._chunk(k)
-                for r, th in zip(rs, ths, strict=True):
-                    if self.g1.n >= target:
-                        break
-                    # the estimand, at the drawn theta -- the
-                    # predicate's coordinate has no business here
-                    ell, _, _ = self.ell(float(r), float(th),
-                                         self.cfg["tol"])
-                    self.g1.add(ell / sz.DT)
-                    self.scanned += 1
-                    self.chunk_consumed += 1
+                self._consume(list(zip(*self._chunk(k), strict=True)),
+                              target)
                 self.checkpoint("g1_chunk")
         interval = eb.interval(self.g1, self.cfg["delta_g1_per_side"])
         lo, hi = interval.rescaled(sz.SCALE)
@@ -730,6 +753,8 @@ class Campaign:
             raise                       # already the right shape
         except o4b_budget.CapReached as cap:
             self.checkpoint_on_cap(stage)
+            if self.mismatches:
+                raise self._contract_failure(stage, cap) from None
             raise stages.StageFailure(
                 stage, "INCONCLUSIVE",
                 f"completion budget exhausted ({cap.reason}) during "
@@ -755,6 +780,8 @@ class Campaign:
             if isinstance(exc, KeyboardInterrupt):
                 raise
             self.checkpoint_on_cap(stage)
+            if self.mismatches:
+                raise self._contract_failure(stage, exc) from exc
             raise stages.StageFailure(
                 stage, "ABORT",
                 f"unhandled {type(exc).__name__} during {stage}: {exc}",
@@ -762,6 +789,37 @@ class Campaign:
                 detail={"exception": {"type": type(exc).__name__,
                                       "message": str(exc)}},
             ) from exc
+
+    def _contract_failure(self, stage: str, cause) -> stages.StageFailure:
+        """An observed mismatch outranks whatever stopped the run
+        afterwards (review R18).
+
+        The frozen contract is that ONE probe disagreement is a
+        contract failure. Mismatches are collected rather than raised
+        on the spot so the record can carry several, but that meant a
+        cap firing on the very next solver call inside the same
+        `_check_contract` ended the run `INCONCLUSIVE` -- an
+        instrumentation failure already observed, reported as "we ran
+        out of budget", with the mismatches nowhere in the incident.
+
+        `INCONCLUSIVE` indicts nothing; `INVALID` indicts the
+        instrument. Having seen the instrument disagree, the second is
+        the true sentence and the interruption is a detail of it."""
+
+        return stages.StageFailure(
+            stage, "INVALID",
+            f"{len(self.mismatches)} wrapper contract mismatch(es) "
+            f"observed before the run stopped; the redesign requires "
+            f"zero",
+            preserved=self.preserved(),
+            detail={"mismatches": self.mismatches[:16],
+                    "availability": self.prefix.report(),
+                    "stopped_by": {"type": type(cause).__name__,
+                                   "message": str(cause)},
+                    "why_not_inconclusive": (
+                        "the contract failure was observed first and "
+                        "is what the run is evidence of; the "
+                        "interruption only decided when it stopped")})
 
     def checkpoint_on_cap(self, stage: str) -> None:
         """Record progress on the way out, WITHOUT destroying a record

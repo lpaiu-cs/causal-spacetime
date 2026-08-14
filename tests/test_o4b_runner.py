@@ -638,3 +638,144 @@ def test_a_g3b_cap_writes_no_checkpoint_stage_it_did_not_reach(
             bud.CapReached("max-wall", 1, 1, 9.0, 1)))
     assert not (tmp_path / "ck.json").exists()
     assert caught.value.preserved["availability"]["candidates"] == 0
+
+
+# ------------------------------- the tail G3b drew but did not use
+
+def test_g1_continues_from_the_tail_g3b_left(tmp_path, monkeypatch):
+    """The RNG has already advanced past that tail. Discarding it
+    would make G1 skip a stretch of the frozen stream and integrate a
+    different sample -- with `n_avail=2, k_g3b=2, chunk=64`, points
+    3..64 would simply vanish."""
+
+    campaign = _campaign(tmp_path, cfg=_cfg(n_avail=2, k_g3b=2,
+                                            chunk=64, n_g1=64))
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    campaign.run_g3a()
+    campaign.run_g3b()
+    assert campaign.scanned == 2
+    assert len(campaign.pending) == 62      # drawn, not yet used
+
+    tail = list(campaign.pending)
+    campaign.run_g1()
+    assert campaign.pending == []
+    assert campaign.g1.n == 64
+    # and the same stream: G3b's 2 + the 62 it handed over + 0 new
+    assert campaign.scanned == 64
+    assert tail[0] is not None
+
+
+def test_the_whole_frozen_prefix_is_the_same_points_either_way(
+        tmp_path, monkeypatch):
+    """The estimator's sample must not depend on where G3b happened to
+    stop. Run the same seed with two different stopping points and the
+    G1 sample has to be identical."""
+
+    seen = {}
+
+    def record(key):
+        def ell(r, theta, tol):
+            seen.setdefault(key, []).append((r, theta))
+            return _ell(r, theta, tol)
+        return ell
+
+    for key, k_g3b in (("early", 2), ("late", 6)):
+        campaign = _campaign(
+            tmp_path, cfg=_cfg(n_avail=k_g3b, k_g3b=k_g3b, chunk=64,
+                               n_g1=64), ell=record(key))
+        monkeypatch.setattr(campaign, "_check_contract",
+                            lambda *a, **k: None)
+        campaign.run_g3a()
+        campaign.run_g3b()
+        campaign.run_g1()
+        assert campaign.g1.n == 64
+    assert seen["early"][:64] == seen["late"][:64]
+
+
+# --------------------------- one point, one commit boundary
+
+def test_a_cap_inside_judge_leaves_the_cursor_and_g1_agreeing(
+        tmp_path):
+    """`observe` adds `z` and advances the cursor together, so an
+    incident can never report a G1 sample containing a point the
+    cursor says was never reached."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path, cfg=_cfg(n_avail=8, k_g3b=8))
+    campaign.run_g3a()
+
+    def exploding(r, theta, tol):
+        if campaign.g1.n >= 3:
+            raise bud.CapReached("max-calls", 10, 10, 1.0, 1)
+        return _state(r, theta, tol)
+
+    campaign.state_of = exploding
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", campaign.run_g3b)
+    preserved = caught.value.preserved
+    assert preserved["g1_partial"]["n"] == preserved["scanned_points"]
+    assert campaign.g1.n == campaign.scanned
+
+
+def test_an_unjudged_candidate_is_not_counted(tmp_path):
+    """Otherwise a cap at the `N_avail`-th candidate could report
+    `complete = True` and publish availability rates over a candidate
+    that was never judged."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path, cfg=_cfg(n_avail=3, k_g3b=3))
+    campaign.run_g3a()
+
+    def exploding(r, theta, tol):
+        if campaign.prefix.candidates == 2:
+            raise bud.CapReached("max-calls", 10, 10, 1.0, 1)
+        return _state(r, theta, tol)
+
+    campaign.state_of = exploding
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", campaign.run_g3b)
+    report = caught.value.preserved["availability"]
+    assert report["candidates"] == 2          # not 3
+    assert report["complete"] is False
+    assert "rates_withheld" in report
+
+
+# ------------------ a contract failure outranks a later interruption
+
+def test_a_mismatch_seen_before_a_cap_is_INVALID_not_INCONCLUSIVE(
+        tmp_path):
+    """`INCONCLUSIVE` indicts nothing; `INVALID` indicts the
+    instrument. Having seen it disagree, the second is the true
+    sentence and the cap only decided when the run stopped."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+    campaign.mismatches.append({"probe": "inside", "leg": "p_to_x"})
+
+    def fires():
+        raise bud.CapReached("max-calls", 8 * 10 ** 7, 8 * 10 ** 7,
+                             100.0, 1)
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", fires)
+    failure = caught.value
+    assert failure.outcome == "INVALID"
+    assert failure.detail["mismatches"]
+    assert failure.detail["stopped_by"]["type"] == "CapReached"
+    assert "observed first" in failure.detail["why_not_inconclusive"]
+
+
+def test_a_mismatch_seen_before_a_crash_is_also_INVALID(tmp_path):
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+    campaign.mismatches.append({"probe": "outside_above"})
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", lambda: 1 / 0)
+    assert caught.value.outcome == "INVALID"
+    assert caught.value.detail["stopped_by"]["type"] == (
+        "ZeroDivisionError")
