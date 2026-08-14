@@ -624,13 +624,20 @@ class Campaign:
             t_x = self._probe_time(name, verdict["probes"][name])
             if t_x is None:
                 continue                  # not constructible; tallied
-            got = self._legs(r, theta, t_x)
             for leg, expected in wanted.items():
-                if got[leg] is not expected:
+                # ONE call, then judge it, then the next call (review
+                # R19). Making both calls and comparing afterwards
+                # loses the first leg's disagreement when the second
+                # call trips the cap -- and then the promotion rule
+                # from R18 sees an empty list and settles for
+                # INCONCLUSIVE, which is the very masking that rule
+                # was added to prevent, one level further in.
+                got = self._leg(r, theta, t_x, leg)
+                if got is not expected:
                     self.mismatches.append({
                         "r": r, "theta": theta, "dpsi": state["dpsi"],
                         "probe": name, "leg": leg,
-                        "want": expected, "got": repr(got[leg]),
+                        "want": expected, "got": repr(got),
                         "t_x": t_x,
                         "t1": state["t1"], "err1": state["err1"],
                         "t2": state["t2"], "err2": state["err2"]})
@@ -649,17 +656,20 @@ class Campaign:
             return sz.DT - probe["dt"]     # starves x -> q
         return probe["dt"]                 # starves p -> x
 
-    def _legs(self, r, theta, t_x) -> dict:
-        """Both legs at one intermediate event. Two predicate calls,
-        which is what the budget charged."""
+    def _leg(self, r, theta, t_x, leg: str):
+        """ONE predicate call, at one intermediate event.
 
-        p = np.array([0.0, sz.R_IN, 0.0, 0.0])
+        One call per invocation on purpose: the caller commits each
+        answer before asking for the next, so an interruption cannot
+        take an already-observed disagreement with it. Six of these
+        per fully-testable cluster, which is what the budget charged."""
+
         x = np.array([t_x, r, theta, 0.0])
+        if leg == "p_to_x":
+            p = np.array([0.0, sz.R_IN, 0.0, 0.0])
+            return s1.causal_relation(p, x, s1.M, self.cfg["tol"])
         q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
-        return {
-            "p_to_x": s1.causal_relation(p, x, s1.M, self.cfg["tol"]),
-            "x_to_q": s1.causal_relation(x, q, s1.M, self.cfg["tol"]),
-        }
+        return s1.causal_relation(x, q, s1.M, self.cfg["tol"])
 
     def run_g1(self) -> dict:
         """The rest of the frozen sample, continuing the SAME stream.

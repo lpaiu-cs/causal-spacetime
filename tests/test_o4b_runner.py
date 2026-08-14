@@ -406,8 +406,8 @@ def test_a_defect_on_the_unstarved_leg_is_a_mismatch(tmp_path,
 
     campaign = _campaign(tmp_path)
     monkeypatch.setattr(
-        campaign, "_legs",
-        lambda r, th, t_x: {"p_to_x": None, "x_to_q": False})
+        campaign, "_leg",
+        lambda r, th, t_x, leg: None if leg == "p_to_x" else False)
     campaign._check_contract(
         13.0, 0.1, _state(13.0, 0.1, 1e-8),
         {"probes": {"inside": {"reached": True, "t_x": 1.0},
@@ -779,3 +779,50 @@ def test_a_mismatch_seen_before_a_crash_is_also_INVALID(tmp_path):
     assert caught.value.outcome == "INVALID"
     assert caught.value.detail["stopped_by"]["type"] == (
         "ZeroDivisionError")
+
+
+def test_each_leg_is_judged_before_the_next_call_is_made(tmp_path):
+    """R18 promoted an observed mismatch over a later cap. The same
+    masking survived one level in: making both calls and comparing
+    afterwards loses the first leg's disagreement when the second call
+    trips the cap, and the promotion rule then sees an empty list."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path)
+    calls = []
+
+    def one(r, theta, t_x, leg):
+        calls.append(leg)
+        if len(calls) == 1:
+            return None               # a real disagreement, unrecorded
+        raise bud.CapReached("max-calls", 10, 10, 1.0, 1)
+
+    campaign._leg = one
+    with pytest.raises(bud.CapReached):
+        campaign._check_contract(
+            13.0, 0.1, _state(13.0, 0.1, 1e-8),
+            {"probes": {"inside": {"reached": True, "t_x": 1.0},
+                        "outside_above": {"reached": True, "dt": 1.0},
+                        "outside_below": {"reached": True, "dt": 1.0}}})
+    # the first leg's mismatch survived the interruption
+    assert len(campaign.mismatches) == 1
+    assert campaign.mismatches[0]["leg"] == "p_to_x"
+    assert campaign.mismatches[0]["got"] == "None"
+
+    # ...so the exit promotes to INVALID rather than settling for
+    # INCONCLUSIVE, which is what R18 asked for and this restores
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", lambda: (_ for _ in ()).throw(
+            bud.CapReached("max-calls", 10, 10, 1.0, 1)))
+    assert caught.value.outcome == "INVALID"
+
+
+def test_one_predicate_call_per_invocation():
+    """Six per fully-testable cluster, and each one committed before
+    the next is asked for."""
+
+    import inspect
+    src = inspect.getsource(run.Campaign._leg)
+    assert src.count("causal_relation") == 2      # the two branches
+    assert "One call per invocation on purpose" in src
