@@ -92,10 +92,29 @@ class StageFailure(Exception):
         self.detail = detail or {}
 
 
+#: What an incident owns. A caller's run context may not supply these
+#: (review R5): the record is write-once and is the provenance an audit
+#: or a recovery reads, so a reused context carrying `stage: "g1"` or
+#: `verdict: "concordant"` would file a G3b failure as a G1 result --
+#: and break the invariant one line above it, that no path returns a
+#: verdict and an incident together. Same boundary as the checkpoint's.
+INCIDENT_KEYS = (
+    "kind", "run_kind", "stage", "termination_reason", "outcome",
+    "verdict", "why_no_verdict", "preserved", "unavailable", "detail",
+)
+
+
 def incident(failure: StageFailure, context: dict) -> dict:
     """The record every abort path writes. Write-once at the caller;
     this builds it so no path can compose a different shape."""
 
+    clashing = [k for k in INCIDENT_KEYS if k in context]
+    if clashing:
+        raise ValueError(
+            f"incident context supplies {clashing}, which the incident "
+            f"itself owns -- the failure decides its stage, outcome "
+            f"and that there is no verdict, and a run context cannot "
+            f"overrule the failure it is recording")
     return {
         "kind": "incident",
         "run_kind": "campaign",
@@ -126,40 +145,86 @@ def fresh_seed_touched(stage: str) -> bool:
 class Prefix:
     """The shared front of the G1 stream.
 
-    Holds the two tallies that must not be confused: the G1 estimator
-    accumulates EVERY point, and the availability report counts
-    `L_S1 > 0` candidates and what happened to them."""
+    Holds THREE tallies that must not be confused.
+
+      * The G1 estimator accumulates EVERY drawn point, for the whole
+        run. It never stops and it never filters.
+
+      * The availability report counts `L_S1 > 0` candidates and what
+        happened to them -- and FREEZES at the `N_avail`-th candidate.
+
+      * The scan carries on past that point, because G3b needs
+        `K_G3B` fully-testable clusters and the prefix will not have
+        supplied them all. Its counts are recorded separately.
+
+    THE FREEZE IS THE WHOLE POINT OF THE FIXED PREFIX (review R6). The
+    scan's stopping time depends on what it finds, so its denominator
+    is chosen by the results; the fixed prefix exists precisely so one
+    denominator is not. Letting the counters run on past `N_avail`
+    would put the scan's points into the fixed report's numerator
+    while the denominator stayed `N_avail` -- an `eligible_rate` above
+    1 is the visible form of that, and a slightly inflated rate is the
+    invisible one. Any prefix with even a single unavailable candidate
+    reaches this, because the scan then has to keep going.
+    """
 
     def __init__(self, accumulator, n_avail: int) -> None:
         self.acc = accumulator          # G1's estimator, unfiltered
         self.n_avail = n_avail
+        # the fixed report, frozen at the N_avail-th candidate
         self.candidates = 0             # L_S1 > 0, the report's base
         self.eligible = 0
         self.fully_testable = 0
         self.zero_window = 0            # Z = 0: accumulated, not a
         self.reasons: dict[str, int] = {}   # candidate
+        # the scan beyond it, counted apart
+        self.scan_candidates = 0
+        self.scan_fully_testable = 0
+        self.scan_zero_window = 0
 
     @property
     def complete(self) -> bool:
         return self.candidates >= self.n_avail
 
+    @property
+    def total_fully_testable(self) -> int:
+        """What the `K_G3B` completion rule counts: the contract sample
+        is every fully-testable cluster, prefix and scan alike. Only
+        the AVAILABILITY report is confined to the prefix."""
+
+        return self.fully_testable + self.scan_fully_testable
+
     def observe(self, z: float, judge=None) -> dict | None:
         """One drawn point.
 
-        `z` enters the estimator FIRST and unconditionally. Only then
-        is the point examined, and only if it is a candidate. `judge`
-        returns a dict with `eligible` and `fully_testable`; it is not
-        called for non-candidates, because they are not part of the
-        availability question."""
+        `z` enters the estimator FIRST and unconditionally -- before
+        the prefix is complete, after it is complete, candidate or
+        not. Only then is the point examined, and only if it is a
+        candidate. `judge` returns a dict with `eligible` and
+        `fully_testable`; it is not called for non-candidates, because
+        they are not part of the availability question."""
 
         self.acc.add(z)                 # <- before any predicate
+        frozen = self.complete          # BEFORE this point is counted
         if z <= 0.0:
-            self.zero_window += 1
+            if frozen:
+                self.scan_zero_window += 1
+            else:
+                self.zero_window += 1
             return None
-        self.candidates += 1
+        if frozen:
+            self.scan_candidates += 1
+        else:
+            self.candidates += 1
         if judge is None:
             return None
         verdict = judge()
+        if frozen:
+            # the cluster still counts toward K_G3B; it just does not
+            # enter a report whose denominator was fixed before it
+            if verdict.get("fully_testable"):
+                self.scan_fully_testable += 1
+            return verdict
         if verdict.get("eligible"):
             self.eligible += 1
         if verdict.get("fully_testable"):
@@ -185,6 +250,16 @@ class Prefix:
             "accumulated_points": self.acc.n,
             "accumulates_every_drawn_point": True,
             "not_fully_testable_by_reason": dict(self.reasons),
+            "beyond_the_prefix": {
+                "candidates": self.scan_candidates,
+                "fully_testable": self.scan_fully_testable,
+                "zero_window_points": self.scan_zero_window,
+                "excluded_from_the_rates_because": (
+                    "the scan's stopping time depends on what it "
+                    "finds, so these points would put a results-chosen "
+                    "numerator over a fixed denominator"),
+            },
+            "total_fully_testable_for_k_g3b": self.total_fully_testable,
         }
         if not self.complete:
             base["rates_withheld"] = (

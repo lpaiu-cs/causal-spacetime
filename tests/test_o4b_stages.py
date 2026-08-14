@@ -145,6 +145,78 @@ def test_a_complete_prefix_reports_on_the_fixed_denominator():
     assert "fixed prefix, not the scan" in report["rate_denominator"]
 
 
+def test_the_availability_counters_freeze_at_the_n_availth_candidate():
+    """The R6 defect, and the whole reason the fixed prefix exists.
+
+    The scan has to continue past `N_avail` -- G3b needs `K_G3B`
+    fully-testable clusters and a prefix with even one unavailable
+    candidate will not have supplied them. Letting the counters run on
+    puts results-chosen points in the numerator over a fixed
+    denominator; a rate above 1 is the visible form, a slightly
+    inflated rate the invisible one."""
+
+    prefix = st.Prefix(_Acc(), n_avail=3)
+    for _ in range(5):
+        prefix.observe(0.5, lambda: {"eligible": True,
+                                     "fully_testable": True})
+    assert prefix.acc.n == 5                 # the estimator took all 5
+    assert prefix.candidates == 3            # the report froze at 3
+    assert prefix.eligible == 3
+    assert prefix.fully_testable == 3
+    assert prefix.scan_candidates == 2
+    assert prefix.scan_fully_testable == 2
+
+    report = prefix.report()
+    assert report["eligible_rate"] == 1.0    # not 5/3
+    assert report["fully_testable_rate"] == 1.0
+    assert report["beyond_the_prefix"]["candidates"] == 2
+
+
+def test_the_k_g3b_count_spans_the_prefix_and_the_scan():
+    """Only the AVAILABILITY report is confined to the prefix. The
+    contract sample is every fully-testable cluster."""
+
+    prefix = st.Prefix(_Acc(), n_avail=2)
+    for i in range(6):
+        prefix.observe(0.5, lambda i=i: {"eligible": True,
+                                         "fully_testable": i % 2 == 0,
+                                         "reason": "unavailable"})
+    assert prefix.fully_testable == 1        # of the first 2
+    assert prefix.scan_fully_testable == 2   # of the next 4
+    assert prefix.total_fully_testable == 3
+    assert prefix.report()[
+        "total_fully_testable_for_k_g3b"] == 3
+    assert prefix.report()["fully_testable_rate"] == 0.5
+
+
+def test_zero_window_points_past_the_prefix_are_also_split():
+    """They still enter the estimator; they just stop entering the
+    fixed report."""
+
+    prefix = st.Prefix(_Acc(), n_avail=1)
+    prefix.observe(0.0)
+    prefix.observe(0.5, lambda: {"eligible": True,
+                                 "fully_testable": True})
+    prefix.observe(0.0)
+    assert prefix.acc.n == 3
+    assert prefix.zero_window == 1
+    assert prefix.scan_zero_window == 1
+
+
+def test_a_reused_run_context_cannot_overrule_the_failure():
+    """The R5 defect, and the same boundary as the checkpoint's. The
+    incident is write-once provenance: a context carrying `stage` or
+    `verdict` would file a G3b failure as a G1 result."""
+
+    failure = st.StageFailure("g3b", "INVALID", "contract mismatch")
+    for key in st.INCIDENT_KEYS:
+        with pytest.raises(ValueError, match="the incident itself owns"):
+            st.incident(failure, {key: "g1"})
+    record = st.incident(failure, {"freeze_sha": "0" * 40})
+    assert record["stage"] == "g3b"
+    assert record["verdict"] is None
+
+
 def test_a_g3b_failure_preserves_the_g1_prefix():
     """The statistic is already paid for and is valid independently of
     the instrumentation check. Discarding it is what O4 did."""
@@ -208,6 +280,15 @@ def test_a_checkpoint_carries_the_rng_position_not_a_draw_count(
         40_000_401).bit_generator.state
     assert record["partial"] is True
     assert record["budget"]["calls"] == 2_000
+
+
+def test_the_document_freezes_the_counter_freeze():
+    doc = (_REPO / "docs" / "prereg"
+           / "p14_o4_g3_prereg_reopen.md").read_text(encoding="utf-8")
+    assert "### 4.2 availability 카운터는 `N_avail` 번째 후보에서" in doc
+    assert "eligible_rate > 1" in doc
+    assert "beyond_the_prefix" in doc
+    assert "availability 보고뿐" in doc
 
 
 def test_the_new_campaign_scalars_are_fresh_and_301_is_untouched():
