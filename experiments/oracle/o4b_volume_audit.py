@@ -318,7 +318,17 @@ def publish_write_once(path: Path, payload: dict) -> None:
                 f"write-once and the first observation stands"
             ) from None
     finally:
-        tmp.unlink(missing_ok=True)
+        # THE COMMIT IS `os.link`, AND NOTHING AFTER IT MAY UNDO THE
+        # CLAIM THAT IT HAPPENED (review R27). Removing the temporary
+        # is housekeeping; a failure or an interrupt here would
+        # otherwise propagate as a publication failure over a result
+        # that IS published, and the caller would file an incident
+        # beside it -- a run with both a verdict and an incident,
+        # which no path is allowed to produce.
+        try:
+            tmp.unlink(missing_ok=True)
+        except BaseException:                   # noqa: BLE001
+            pass
 
 
 # ------------------------------------------------------- the G3 state
@@ -1046,6 +1056,18 @@ def main() -> None:
             f"{failure.reason}; incident written to "
             f"{_INCIDENT.name}, no verdict published") from None
     except BaseException as exc:
+        # The FILE is the authority on whether the result was
+        # published, not the exception (review R27). `os.link` is the
+        # commit; anything raised after it -- an interrupt during
+        # cleanup, a failure in a `finally` -- leaves a published
+        # artifact behind, and filing an incident then would put a
+        # verdict and an incident side by side.
+        if _ARTIFACT.exists():
+            raise SystemExit(
+                f"{_ARTIFACT.name} was published; the failure came "
+                f"after the commit ({type(exc).__name__}: {exc}) and "
+                f"no incident is filed over a published result"
+            ) from exc
         file_incident(stages.StageFailure(
             "g2", "ABORT",
             f"the campaign completed but the result could not be "

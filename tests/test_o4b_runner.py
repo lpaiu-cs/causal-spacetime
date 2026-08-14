@@ -1231,3 +1231,49 @@ def test_a_completed_campaign_that_cannot_publish_keeps_its_gates(
     record = stages.incident(failure, {"freeze_sha": "a" * 40})
     assert record["verdict"] is None
     assert record["preserved"]["completed_gates"]["g1"]["v_s1_hi"]
+
+
+# --------------- a published result is never turned back into a failure
+
+def test_cleanup_after_the_commit_cannot_undo_the_publication(
+        tmp_path, monkeypatch):
+    """`os.link` is the commit. Removing the temporary afterwards is
+    housekeeping, and a failure there must not propagate as a
+    publication failure over a result that IS published."""
+
+    target = tmp_path / "results.json"
+    real_unlink = Path.unlink
+
+    def hostile(self, missing_ok=False):
+        if self.name.startswith("results.json.tmp"):
+            raise OSError("cleanup failed")
+        return real_unlink(self, missing_ok=missing_ok)
+
+    monkeypatch.setattr(Path, "unlink", hostile)
+    run.publish_write_once(target, {"kind": "results"})
+    assert json.loads(target.read_text(encoding="utf-8"))["kind"] == (
+        "results")
+
+
+def test_no_incident_is_filed_over_a_published_result(monkeypatch,
+                                                      tmp_path):
+    """The invariant this PR states outright: no path returns a
+    verdict and an incident together. The FILE decides, not the
+    exception -- an interrupt delivered after the commit leaves the
+    artifact there."""
+
+    import inspect
+    src = inspect.getsource(run.main)
+    tail = src.split("except BaseException as exc:", 1)[1]
+    assert "if _ARTIFACT.exists():" in tail
+    guard = tail.index("if _ARTIFACT.exists():")
+    filed = tail.index("file_incident(")
+    assert guard < filed, "the incident is filed before the check"
+    assert "no incident is filed over a published result" in tail
+
+
+def test_the_commit_point_is_named_in_the_publication_primitive():
+    import inspect
+    src = inspect.getsource(run.publish_write_once)
+    assert "THE COMMIT IS `os.link`" in src
+    assert "except BaseException" in src.split("finally:", 1)[1]
