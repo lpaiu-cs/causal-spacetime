@@ -1007,10 +1007,7 @@ def main() -> None:
             raise SystemExit("internal: no claim object to verify")
         reservation.verify_still_held(obj)
 
-    try:
-        results = campaign.run(on_g3a_passed=claim,
-                               on_before_publish=verify_before_publish)
-    except stages.StageFailure as failure:
+    def file_incident(failure: stages.StageFailure) -> None:
         publish_write_once(_INCIDENT, stages.incident(failure, {
             "freeze_sha": args.freeze_rev,
             "manifest_digest": digest,
@@ -1029,11 +1026,42 @@ def main() -> None:
                             or bool(claimed.get("uncertain"))),
             "environment": environment(),
         }))
+
+    # THE PUBLICATION IS INSIDE THE BOUNDARY TOO (review R26). By this
+    # point the seeds are permanently spent and G1 and G2 have run to
+    # their frozen sample sizes, so a failure at the very last step --
+    # the artifact already existing, a full disk, an interrupt -- would
+    # end the process with no record of a campaign that cannot be
+    # repeated. The `g2_complete` checkpoint does not stand in for it:
+    # it carries running statistics, not G1's final status and
+    # interval.
+    try:
+        results = campaign.run(on_g3a_passed=claim,
+                               on_before_publish=verify_before_publish)
+        publish_write_once(_ARTIFACT, results)
+    except stages.StageFailure as failure:
+        file_incident(failure)
         raise SystemExit(
             f"{failure.stage}: {failure.outcome} -- "
             f"{failure.reason}; incident written to "
             f"{_INCIDENT.name}, no verdict published") from None
-    publish_write_once(_ARTIFACT, results)
+    except BaseException as exc:
+        file_incident(stages.StageFailure(
+            "g2", "ABORT",
+            f"the campaign completed but the result could not be "
+            f"published: {type(exc).__name__}: {exc}",
+            preserved=campaign.preserved(),
+            detail={"exception": {"type": type(exc).__name__,
+                                  "message": str(exc)},
+                    "at": "artifact publication",
+                    "note": ("the gates ran to their frozen sample "
+                             "sizes and are preserved here; the "
+                             "result artifact was never written, so "
+                             "no verdict is published")}))
+        raise SystemExit(
+            f"publication failed ({type(exc).__name__}); incident "
+            f"written to {_INCIDENT.name}, no verdict published"
+        ) from exc
     print(f"published {_ARTIFACT.name}: G1 {results['g1']['status']}, "
           f"G2 {results['g2']['status']}")
 

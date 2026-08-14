@@ -1186,3 +1186,48 @@ def test_the_exit_check_runs_after_g2_and_before_the_result(
     campaign.run(on_g3a_passed=lambda: "c" * 40,
                  on_before_publish=lambda obj: order.append("verify"))
     assert order == ["g2", "verify"]
+
+
+# ------------------- the publication is inside the boundary as well
+
+def test_the_publication_is_inside_the_incident_boundary():
+    """By then the seeds are permanently spent and both gates have run
+    to their frozen sample sizes. A failure at the very last step --
+    the artifact already existing, a full disk, an interrupt -- would
+    end the process with no record of a campaign that cannot be
+    repeated."""
+
+    import inspect
+    src = inspect.getsource(run.main)
+    body = src.split("try:", 1)[1]
+    published, caught = (body.index("publish_write_once(_ARTIFACT"),
+                         body.index("except stages.StageFailure"))
+    assert published < caught, "the publish is outside the try"
+    assert "except BaseException as exc:" in body
+    assert "at\": \"artifact publication\"" in body or (
+        '"at": "artifact publication"' in body)
+
+
+def test_a_completed_campaign_that_cannot_publish_keeps_its_gates(
+        tmp_path, monkeypatch):
+    """`preserved()` is what the incident carries, and after both
+    gates it has to hold their finished results -- the `g2_complete`
+    checkpoint does not, it carries running statistics."""
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    campaign.run(on_g3a_passed=lambda: "c" * 40,
+                 on_before_publish=lambda obj: None)
+
+    preserved = campaign.preserved()
+    assert preserved["completed_gates"]["g1"]["status"]
+    assert preserved["completed_gates"]["g2"]["status"]
+    assert preserved["completed_gates"]["g1"]["v_s1_lo"] is not None
+    failure = stages.StageFailure(
+        "g2", "ABORT", "could not publish",
+        preserved=preserved,
+        detail={"at": "artifact publication"})
+    record = stages.incident(failure, {"freeze_sha": "a" * 40})
+    assert record["verdict"] is None
+    assert record["preserved"]["completed_gates"]["g1"]["v_s1_hi"]
