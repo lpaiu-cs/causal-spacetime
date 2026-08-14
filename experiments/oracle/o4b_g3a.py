@@ -314,7 +314,7 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
     do with a failure, because that decision is the freeze's, not the
     checker's."""
 
-    cases, unreachable = [], []
+    cases, unreachable, build_failures = [], [], []
     for name, r1_spec, r2_spec in g3.G3A_GEOMETRIES:
         r1, r2 = geometry_radii(name, r1_spec, r2_spec)
         for spec in g3.G3A_ANGLE_SPECS:
@@ -322,15 +322,27 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
             try:
                 theta = g3.resolve_theta(spec, r1, r2, s1.M, tol,
                                          base.PSI_MAX)
-            except ValueError as exc:
-                expected = label in g3.EXPECTED_UNREACHABLE_LABELS
+            except g3.ExpectedUnreachable as exc:
+                # the geometry says it has no such branch. Still
+                # checked against the frozen list: the raiser says
+                # WHY, the list says WHERE, and both have to agree.
                 unreachable.append({
                     "case": label, "why": str(exc),
-                    "expected": expected,
-                    "note": (g3.WHY_EXPECTED_UNREACHABLE if expected
-                             else "NOT an expected omission: the case "
-                                  "could not be built and the freeze "
-                                  "does not accept its absence")})
+                    "expected": label in g3.EXPECTED_UNREACHABLE_LABELS,
+                    "note": g3.WHY_EXPECTED_UNREACHABLE})
+                continue
+            except ValueError as exc:
+                # the construction failed. Not an omission at all, and
+                # not excused by the label being on the list -- a
+                # bracket that went wrong on `equal-radius` would
+                # otherwise be waved through as the expected absence.
+                build_failures.append({
+                    "case": label, "why": str(exc),
+                    "on_the_expected_list": (
+                        label in g3.EXPECTED_UNREACHABLE_LABELS),
+                    "note": ("the case could not be BUILT; the freeze "
+                             "accepts a branch the geometry does not "
+                             "have, not a search that failed")})
                 continue
             cases.append(check_case(label, r1, r2, theta, tol, eta))
 
@@ -368,6 +380,7 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
         "unreachable": unreachable,
         "unexpected_unreachable": unexpected_unreachable,
         "unexpectedly_reachable": unexpectedly_reachable,
+        "case_build_failures": build_failures,
         "families_covered": families,
         "covers_every_family": set(families) == set(g3.FAMILIES),
         "construction_unavailable": sum(
@@ -390,6 +403,7 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
                    and not margin_failures
                    and not unexpected_unreachable
                    and not unexpectedly_reachable
+                   and not build_failures
                    and set(families) == set(g3.FAMILIES)),
         "detail": cases,
     }
@@ -431,6 +445,7 @@ def run_preflight(tol: float = s1.DEFAULT_TOL,
         "only_expected_unreachable": (
             not table["unexpected_unreachable"]
             and not table["unexpectedly_reachable"]),
+        "every_case_built": not table["case_build_failures"],
         "row_d_no_solver_call": table["row_d"]["outcome"] == "pass",
         "solver_determinism": determinism["bit_identical"],
     }
@@ -453,7 +468,8 @@ def main() -> None:
           f"{len(result['unreachable'])} unreachable "
           f"({len(result['unexpected_unreachable'])} unexpected, "
           f"{len(result['unexpectedly_reachable'])} expected but "
-          f"built), families {result['families_covered']}")
+          f"built), {len(result['case_build_failures'])} build "
+          f"failures, families {result['families_covered']}")
     print(f"  construction-unavailable rows: "
           f"{result['construction_unavailable']}")
     print(f"  row D: {result['row_d']['outcome']} "

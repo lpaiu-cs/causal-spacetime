@@ -56,6 +56,19 @@ REQUIRED = (
     "budget",            # calls and wall spent
 )
 
+#: Keys this module writes and a payload may not supply.
+#:
+#: Refused rather than overridden (review R3). Ordering the spread so
+#: the stamps win protects `partial`, but a payload carrying `stage`
+#: is a caller that thinks it is describing something else -- a reused
+#: run-state dict whose `stage` is the RUN stage `g1`, not the
+#: checkpoint point `g1_chunk`. Silently winning writes the right file
+#: and hides the confusion; silently losing writes a `stage` that is
+#: not even in `STAGES`, and a resume reading it continues from the
+#: wrong place. Neither is a thing to discover during a recovery, so
+#: the collision is an error at the write.
+RESERVED = ("kind", "stage", "partial", "non_verdict", "why")
+
 
 def write(path: Path, stage: str, payload: dict) -> Path:
     """Replace `path` with a checkpoint, atomically.
@@ -73,9 +86,14 @@ def write(path: Path, stage: str, payload: dict) -> Path:
             f"checkpoint at {stage!r} is missing {missing}: a "
             f"checkpoint that cannot say which freeze, which stream "
             f"and how far cannot be resumed from or audited")
+    clashing = [k for k in RESERVED if k in payload]
+    if clashing:
+        raise ValueError(
+            f"checkpoint payload supplies {clashing}, which this "
+            f"module writes: `stage` is the checkpoint point, not the "
+            f"run stage, and `partial`/`non_verdict` are what keep a "
+            f"progress record from reading as a result")
 
-    # the stamps go on LAST, so a payload carrying `partial: False`
-    # cannot promote itself to a result by supplying the key
     record = {
         "kind": "checkpoint",
         "stage": stage,

@@ -138,7 +138,13 @@ def probe_times(lo: float, hi: float, err1: float, err2: float,
 #: off `s1_schwarzschild_cost.flight_time`: `dpsi < 1e-12` is radial and
 #: reports `err` exactly 0; `|dpsi - a_eq| <= tol` is the equal-perihelion
 #: arc; above `a_eq` is one-turn and below it no-turn. Equal-radius pairs
-#: have a zero arc and are therefore always one-turn.
+#: have a zero arc, so nothing lies BELOW the band -- no-turn never
+#: occurs for them, and since the band is then `dpsi <= tol = 1e-8`
+#: while the wrapper's smallest recoverable nonzero angle is 1.4901e-08,
+#: the only families they reach are `radial` and `one-turn`. (An earlier
+#: draft said equal radii "are always one-turn"; that is wrong in `dpsi`
+#: -- the band is there, it is simply below everything the wrapper can
+#: hand over.)
 FAMILIES = ("radial", "no-turn", "equal-perihelion", "one-turn")
 
 #: The radial predicate's threshold, quoted so the boundary rows can
@@ -193,10 +199,12 @@ G3A_ROWS = ("A", "B", "C")
 
 #: The ONLY case omissions the freeze accepts, named one at a time.
 #:
-#: Seven of the eleven specs are located by bisecting the solver's own
-#: equal-perihelion band, and an equal-radius pair has a zero arc, so
-#: for that one geometry the band does not exist and those seven cases
-#: cannot be built. That is a fact about the geometry, not a failure.
+#: Seven of the eleven specs are located by bracketing the solver's
+#: no-turn/one-turn transition and bisecting for the band between
+#: them. An equal-radius pair has a zero arc, so nothing lies below
+#: the band: no-turn never occurs, there is no transition to bracket,
+#: and those seven cases cannot be built. That is a fact about the
+#: geometry, not a failure.
 #:
 #: It is frozen as a LIST rather than inferred from an exception,
 #: because `equal_perihelion_band()` also raises when the bracket or
@@ -223,8 +231,11 @@ EXPECTED_UNREACHABLE_LABELS = frozenset(
     f"{geometry}/{spec}" for geometry, spec in EXPECTED_UNREACHABLE)
 
 WHY_EXPECTED_UNREACHABLE = (
-    "equal radii have a zero arc, so the solver is one-turn everywhere "
-    "and there is no equal-perihelion band to bisect")
+    "equal radii have a zero arc, so nothing lies below the "
+    "equal-perihelion band: no-turn never occurs and there is no "
+    "transition to bracket. The band itself exists at dpsi <= tol, "
+    "below every angle the wrapper can recover, so the only families "
+    "an equal-radius pair reaches are radial and one-turn")
 
 
 def family_at(r1: float, r2: float, dpsi: float, m: float,
@@ -241,20 +252,64 @@ def family_at(r1: float, r2: float, dpsi: float, m: float,
     return details["family"]
 
 
+class ExpectedUnreachable(Exception):
+    """The geometry HAS no such branch, so the case cannot be built.
+
+    Distinct from `ValueError`, and the distinction is the point
+    (review R4). `equal_perihelion_band()` fails for two unrelated
+    reasons -- a geometry with no band, and a bracket or bisection
+    that went wrong on a geometry that has one -- and the caller has
+    to accept the first while failing on the second. A frozen list of
+    case labels separates them only by WHERE the failure happened: an
+    unexpected bracket failure on `equal-radius`, one of the seven
+    names already on the list, would still be waved through as the
+    expected omission. Only the raiser knows which reason it had, so
+    only the raiser can say."""
+
+
 def equal_perihelion_band(r1: float, r2: float, m: float, tol: float,
                           steps: int = 200) -> tuple[float, float]:
     """The closed interval of angles the solver calls
     `equal-perihelion`, located by bisection on its own label.
 
-    Returns `(lower_edge, upper_edge)`. Raises if the geometry has no
-    such band at all -- equal-radius pairs have a zero arc and are
-    one-turn everywhere, which is a fact about the geometry and must
-    surface rather than be papered over."""
+    Returns `(lower_edge, upper_edge)`. Raises `ExpectedUnreachable`
+    when the geometry has no such band -- equal-radius pairs have a
+    zero arc and are one-turn everywhere -- and `ValueError` when the
+    search itself fails on a geometry that does have one."""
 
     def fam(x: float) -> str:
         return family_at(r1, r2, x, m, tol)
 
     lo, hi = 1e-9, 3.0
+    if r1 == r2:
+        # A zero arc, `a_eq = 0`. What follows is NOT "there is no
+        # band" -- an earlier draft of this said that and it is false;
+        # the solver reports `equal-perihelion` for every
+        # `dpsi <= tol`. What is true is that nothing lies BELOW the
+        # band, so the no-turn family never occurs, and the
+        # no-turn/one-turn bracket this bisection needs cannot exist.
+        #
+        # The band is also out of reach in the coordinate the cases
+        # are written in: `tol` is 1e-8 and the smallest nonzero angle
+        # the wrapper can recover is `acos(nextafter(1, -inf))` =
+        # 1.4901e-08, so no `theta` lands inside it. Equal radii reach
+        # exactly two families through the wrapper, `radial` and
+        # `one-turn`.
+        #
+        # Confirmed rather than asserted from `r1 == r2`: the absence
+        # of a no-turn region is a claim about what the solver
+        # reports, and a surprise here is a defect, not an omission.
+        if fam(lo) == "no-turn" or fam(hi) != "one-turn":
+            raise ValueError(
+                f"({r1}, {r2}) has equal radii, so no angle should be "
+                f"below the equal-perihelion band, but the solver "
+                f"reports {fam(lo)!r} at {lo} and {fam(hi)!r} at {hi}")
+        raise ExpectedUnreachable(
+            f"({r1}, {r2}) has a zero arc: nothing lies below the "
+            f"equal-perihelion band, so the no-turn family does not "
+            f"occur and there is no transition to bracket; the band "
+            f"itself is dpsi <= tol and sits entirely below the "
+            f"smallest angle the wrapper can recover")
     if fam(lo) != "no-turn" or fam(hi) != "one-turn":
         raise ValueError(
             f"({r1}, {r2}) has no no-turn/one-turn transition to "

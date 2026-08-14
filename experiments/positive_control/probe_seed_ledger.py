@@ -109,7 +109,20 @@ OBSERVED_PROBE_SCALARS = {
 #: withdrawn unspent -- it was never drawn from, so it is not moved to
 #: OBSERVED; `40_000_301` simply returns to the unallocated pool, and
 #: the abort does not change that (nothing ever drew from it).
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: O4b: the re-run under the redesigned G3. NEW scalars, because the
+#: O4 streams were drawn from and are retired whether or not a verdict
+#: came of them. `40_000_301` stays where the O4 review left it --
+#: withdrawn unspent, back in the unallocated pool -- and is
+#: deliberately NOT reused here: reaching for it would make the
+#: withdrawal look like a deferral.
+#:
+#: Allocated, not yet observed. The first draw spends them, and the
+#: commit that records ANY outcome -- verdict, INVALID, INCONCLUSIVE
+#: or abort -- must move them to OBSERVED_PROBE_SCALARS.
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "o4b_g1_audit": 40_000_401,
+    "o4b_g2_leakage": 40_000_411,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]

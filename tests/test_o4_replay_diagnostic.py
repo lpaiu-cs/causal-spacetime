@@ -145,8 +145,19 @@ def test_counts_are_labelled_diagnostic_not_estimates(covering):
 # --------------------------------------------------- seeds and streams
 
 def test_the_diagnostic_never_allocates_a_fresh_scalar():
-    assert "assert_fresh_scalar" not in _SOURCE
-    assert ledger.FRESH_PROBE_SCALARS == {}
+    """It replays a retired stream and allocates nothing. That the
+    ledger's fresh pool happens to be empty is a fact about the
+    program's state, not about this module -- and it is no longer
+    true, because the O4b freeze allocates its own scalars."""
+
+    # from the AST, not the text: the module now DESCRIBES the rule in
+    # prose, and a substring scan cannot tell a sentence about
+    # allocation from a call that performs one -- the same distinction
+    # the reservation check below already makes
+    assert "assert_fresh_scalar" not in _identifiers()
+    assert "assert_fresh_scalar" not in _imported_names()
+    assert rd._STREAM not in ledger.FRESH_PROBE_SCALARS
+    assert rd._STREAM_SEED not in ledger.FRESH_PROBE_SCALARS.values()
 
 
 def test_the_withdrawn_scalar_stays_unspent():
@@ -160,10 +171,35 @@ def test_the_ledger_is_verified_rather_than_trusted(monkeypatch):
         rd.verify_replay_surface()
 
 
-def test_a_live_fresh_allocation_stops_the_replay(monkeypatch):
-    monkeypatch.setattr(rd, "FRESH_PROBE_SCALARS", {"future": 1})
-    with pytest.raises(SystemExit, match="fresh pool is not empty"):
+def test_a_live_allocation_ON_THIS_STREAM_stops_the_replay(monkeypatch):
+    """Either way it could be named: by the stream's name, or by a
+    different name carrying the same seed. Both mean the replay cannot
+    tell a reproduction from a draw on a live allocation."""
+
+    monkeypatch.setattr(rd, "FRESH_PROBE_SCALARS",
+                        {rd._STREAM: rd._STREAM_SEED})
+    with pytest.raises(SystemExit, match="LIVE allocation"):
         rd.verify_replay_surface()
+
+    monkeypatch.setattr(rd, "FRESH_PROBE_SCALARS",
+                        {"renamed": rd._STREAM_SEED})
+    with pytest.raises(SystemExit, match="LIVE allocation"):
+        rd.verify_replay_surface()
+
+
+def test_an_unrelated_live_allocation_does_not_stop_the_replay(
+        monkeypatch):
+    """The guard was written as "the fresh pool is empty", which was
+    true when nothing was allocated and is a different statement. Left
+    that way, the diagnostic and the next freeze would have been
+    mutually exclusive -- decided by the guard's wording rather than
+    by any risk, since a replay reproduces a RETIRED stream."""
+
+    monkeypatch.setattr(rd, "FRESH_PROBE_SCALARS", {"o4b_g1": 40_000_401})
+    surface = rd.verify_replay_surface()
+    assert surface["live_allocations_at_replay"] == ["o4b_g1"]
+    assert "none of it is the stream replayed" in (
+        surface["why_live_allocations_are_recorded"])
 
 
 def test_spending_the_withdrawn_scalar_stops_the_replay(monkeypatch):
@@ -195,6 +231,19 @@ def _identifiers() -> set[str]:
         if isinstance(node, ast.Name)} | {
         alias.name.split(".")[0] for node in ast.walk(tree)
         if isinstance(node, ast.Import) for alias in node.names}
+
+
+def _imported_names() -> set[str]:
+    """What `from ... import ...` brings in.
+
+    Separate from `_identifiers`, which only sees names the code goes
+    on to USE: an import that is never used would slip past it, and an
+    unused import of an allocator is still a module that reaches for
+    one."""
+
+    import ast
+    return {alias.name for node in ast.walk(ast.parse(_SOURCE))
+            if isinstance(node, ast.ImportFrom) for alias in node.names}
 
 
 def test_the_reservation_is_neither_claimed_nor_deleted():

@@ -22,9 +22,13 @@ is that what it observes cannot become evidence.
 
 Scope, fixed by the PI's boundary list:
 
-  * `replay_scalar("o4_aborted_g1")` only. The fresh pool is empty and
-    stays empty; `40,000,301` stays unallocated; the remote reservation
-    ref is read by nothing here and is neither claimed nor deleted.
+  * `replay_scalar("o4_aborted_g1")` only, and NOTHING is allocated:
+    `assert_fresh_scalar` is never called. The condition is that no
+    live allocation collides with the replayed stream -- not that the
+    fresh pool is empty, which is where the next freeze puts its own
+    scalars and says nothing about this module. `40,000,301` stays
+    unallocated; the remote reservation ref is read by nothing here
+    and is neither claimed nor deleted.
   * The G1 prefix is reproduced only as far as the ORIGINAL G3 stress
     points required -- the leading `g3_clusters` accepted points -- and
     not one draw further. G2 is not re-run at all.
@@ -191,12 +195,25 @@ def verify_replay_surface() -> dict:
             f"replay: the ledger maps {_STREAM!r} to {seed}, not "
             f"{_STREAM_SEED} -- the one thing the ledger contributes "
             f"to this replay does not match the incident record")
-    if FRESH_PROBE_SCALARS:
+    # The check this needs is that the replay cannot touch a live
+    # allocation. It was originally written as "the fresh pool is
+    # empty", which was true when nothing was allocated and is not the
+    # same statement. The O4b freeze allocates its own scalars, as the
+    # O4 freeze did before it, and refusing to replay for the lifetime
+    # of an unrelated allocation would make the diagnostic and the
+    # next freeze mutually exclusive -- with the guard, not the risk,
+    # deciding it. So the collision is what is forbidden, exactly, and
+    # the live allocations are recorded in the artifact instead of
+    # being grounds to stop.
+    collisions = sorted(
+        name for name, value in FRESH_PROBE_SCALARS.items()
+        if name == _STREAM or value == _STREAM_SEED)
+    if collisions:
         raise SystemExit(
-            f"replay: the fresh pool is not empty "
-            f"({sorted(FRESH_PROBE_SCALARS)}) -- a diagnostic must not "
-            f"run while an unobserved allocation is live, and it must "
-            f"never draw from one")
+            f"replay: {collisions} is a LIVE allocation on the stream "
+            f"this replay reproduces -- a diagnostic must never draw "
+            f"from an unobserved allocation, and here it could not "
+            f"tell the two apart")
     if _WITHDRAWN_UNSPENT in spent_scalars():
         raise SystemExit(
             f"replay: {_WITHDRAWN_UNSPENT} has been spent -- it was "
@@ -212,6 +229,12 @@ def verify_replay_surface() -> dict:
                           "contribution here is the replayed seed, "
                           "which is pinned in this module and checked"),
         },
+        "live_allocations_at_replay": sorted(FRESH_PROBE_SCALARS),
+        "why_live_allocations_are_recorded": (
+            "a replay reproduces a retired stream, so an unrelated "
+            "live allocation does not endanger it -- but the reader "
+            "should be able to see what was outstanding when this ran, "
+            "and that none of it is the stream replayed"),
         "environment": env,
     }
 

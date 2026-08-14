@@ -100,10 +100,18 @@ def test_the_narrative_awards_no_gate_and_no_verdict():
 
 
 def test_the_census_did_not_move_the_ledger():
-    """A replay is not an observation: nothing is spent by running it."""
+    """A replay is not an observation: nothing is spent by running it.
 
-    assert ledger.FRESH_PROBE_SCALARS == {}
+    Stated as "the census's streams did not move" rather than "the
+    fresh pool is empty" -- the pool is where the NEXT freeze puts its
+    allocations, and whether O4b has allocated yet says nothing about
+    what this census did."""
+
+    replayed = ledger.replay_scalar("o4_aborted_g1")
+    assert replayed not in ledger.FRESH_PROBE_SCALARS.values()
+    assert "o4_aborted_g1" not in ledger.FRESH_PROBE_SCALARS
     assert 40_000_301 not in ledger.spent_scalars()
+    assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
     assert ledger.replay_scalar("o4_aborted_g1") == 40_000_281
     assert "40,000,301" in _prose() and "c4da162" in _prose()
 

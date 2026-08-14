@@ -332,59 +332,143 @@ def test_the_only_accepted_omissions_are_the_seven_named_ones():
 
     import o4b_g3a as g3a
 
-    band_specs = {"no-turn-mid", "equal-perihelion-inside",
-                  "equal-perihelion-lower-edge-below",
-                  "equal-perihelion-lower-edge-above",
-                  "equal-perihelion-upper-edge-below",
-                  "equal-perihelion-upper-edge-above",
-                  "one-turn-beyond"}
     assert g3.EXPECTED_UNREACHABLE_LABELS == {
-        f"equal-radius/{s}" for s in band_specs}
+        f"equal-radius/{s}" for s in _BAND_SPECS}
 
     table = g3a.run_g3a()
     assert {u["case"] for u in table["unreachable"]} == (
         g3.EXPECTED_UNREACHABLE_LABELS)
     assert table["unexpected_unreachable"] == []
     assert table["unexpectedly_reachable"] == []
+    assert table["case_build_failures"] == []
     assert all(u["expected"] for u in table["unreachable"])
 
 
-def test_an_omission_the_freeze_did_not_name_is_a_preflight_failure(
-        monkeypatch):
-    """The R2 defect. `equal_perihelion_band()` also raises when its
-    bracket or its bisection fails -- on a geometry that does have a
-    band. Swallowing that as `unreachable` dropped the cases silently,
-    and because the other geometries still covered all four families,
-    G3a could PASS with a hole in its table and fresh seeds would then
-    be spent."""
+_BAND_SPECS = ("no-turn-mid", "equal-perihelion-inside",
+               "equal-perihelion-lower-edge-below",
+               "equal-perihelion-lower-edge-above",
+               "equal-perihelion-upper-edge-below",
+               "equal-perihelion-upper-edge-above",
+               "one-turn-beyond")
 
-    import o4b_g3a as g3a
+
+def _flaky_band(monkeypatch, radii: tuple[float, float]):
+    """Make the band search fail with a plain `ValueError` at one
+    geometry, the way a bracket or a bisection would."""
 
     real = g3.equal_perihelion_band
 
     def flaky(r1, r2, m, tol, steps=200):
-        if (r1, r2) == (13.0, 17.0):
+        if (r1, r2) == radii:
             raise ValueError("bisection never landed in the band")
         return real(r1, r2, m, tol, steps)
 
     monkeypatch.setattr(g3, "equal_perihelion_band", flaky)
+
+
+def test_a_search_that_fails_is_not_an_omission(monkeypatch):
+    """The R2 defect. `equal_perihelion_band()` fails for two
+    unrelated reasons, and swallowing both as `unreachable` dropped
+    cases silently -- while the other geometries still covered all
+    four families and no row had run to fail, so G3a would PASS with a
+    hole in its table and fresh seeds would then be spent."""
+
+    import o4b_g3a as g3a
+
+    _flaky_band(monkeypatch, (13.0, 17.0))
     preflight = g3a.run_preflight()
 
     table = preflight["table"]
-    lost = {u["case"] for u in table["unexpected_unreachable"]}
-    assert lost == {f"increasing-interior/{s}"
-                    for s in ("no-turn-mid", "equal-perihelion-inside",
-                              "equal-perihelion-lower-edge-below",
-                              "equal-perihelion-lower-edge-above",
-                              "equal-perihelion-upper-edge-below",
-                              "equal-perihelion-upper-edge-above",
-                              "one-turn-beyond")}
+    lost = {f["case"] for f in table["case_build_failures"]}
+    assert lost == {f"increasing-interior/{s}" for s in _BAND_SPECS}
     # the hole would not have shown up in any other condition
     assert table["covers_every_family"]
     assert not table["failures"]
-    assert preflight["conditions"]["only_expected_unreachable"] is False
+    assert preflight["conditions"]["every_case_built"] is False
     assert preflight["passed"] is False
-    assert "only_expected_unreachable" in preflight["failed_conditions"]
+    assert "every_case_built" in preflight["failed_conditions"]
+
+
+def test_a_search_that_fails_AT_AN_EXPECTED_NAME_is_still_a_failure(
+        monkeypatch):
+    """The R4 defect, and the reason the list of names is not enough.
+
+    A frozen list separates the two reasons only by WHERE the failure
+    happened. A bracket that went wrong on `equal-radius` lands on
+    seven names already on the list, so the label check waves it
+    through as the expected absence -- the branch goes unverified and
+    G3a passes. Only the raiser knows which reason it had, so the
+    geometry raises `ExpectedUnreachable` and everything else is a
+    build failure regardless of where it happened."""
+
+    import o4b_g3a as g3a
+
+    _flaky_band(monkeypatch, (15.0, 15.0))       # the expected names
+    preflight = g3a.run_preflight()
+
+    table = preflight["table"]
+    failed = {f["case"] for f in table["case_build_failures"]}
+    assert failed == {f"equal-radius/{s}" for s in _BAND_SPECS}
+    assert all(f["on_the_expected_list"]
+               for f in table["case_build_failures"])
+    # the label check alone is satisfied -- nothing is missing from
+    # the list, and nothing on the list got built
+    assert preflight["conditions"]["only_expected_unreachable"] is True
+    assert preflight["conditions"]["every_case_built"] is False
+    assert preflight["passed"] is False
+
+
+def test_the_geometry_raises_its_own_exception_type():
+    """`ExpectedUnreachable` is what "this branch does not exist here"
+    is spelled as; a plain `ValueError` never means that."""
+
+    import s1_schwarzschild_cost as s1
+
+    with pytest.raises(g3.ExpectedUnreachable, match="zero arc"):
+        g3.equal_perihelion_band(15.0, 15.0, s1.M, s1.DEFAULT_TOL)
+    assert issubclass(g3.ExpectedUnreachable, Exception)
+    assert not issubclass(g3.ExpectedUnreachable, ValueError)
+
+
+def test_equal_radii_DO_have_a_band_it_is_simply_out_of_reach():
+    """A correction to what this module said twice.
+
+    "Equal radii are always one-turn" is false in `dpsi`: the solver
+    reports `equal-perihelion` for every `dpsi <= tol`. What is true
+    is that nothing lies BELOW the band, so no-turn never occurs and
+    there is no transition to bracket -- and that the band sits below
+    every angle the wrapper can hand over, so no case in theta space
+    could land in it either."""
+
+    import math
+
+    import s1_schwarzschild_cost as s1
+
+    assert g3.family_at(15.0, 15.0, 1e-9, s1.M,
+                        s1.DEFAULT_TOL) == "equal-perihelion"
+    assert not any(
+        g3.family_at(15.0, 15.0, x, s1.M, s1.DEFAULT_TOL) == "no-turn"
+        for x in (1e-13, 1e-11, 1e-9, 5e-9, 9e-9, 1.1e-8, 1e-7, 1e-3))
+
+    smallest = math.acos(math.nextafter(1.0, -math.inf))
+    assert smallest == 1.4901161193847656e-08
+    assert smallest > s1.DEFAULT_TOL          # the band is unreachable
+    reached = {g3.family_at(15.0, 15.0, g3.wrapper_dpsi(t), s1.M,
+                            s1.DEFAULT_TOL)
+               for t in (0.0, 1e-9, 1e-8, 1e-7, 1e-4, 1e-2, 0.5, 1.0)}
+    assert reached == {"radial", "one-turn"}
+
+
+def test_a_surprise_at_equal_radii_is_a_defect_not_an_omission(
+        monkeypatch):
+    """The absence of a no-turn region is a claim about what the
+    solver reports, so it is confirmed rather than inferred from
+    `r1 == r2`."""
+
+    monkeypatch.setattr(g3, "family_at",
+                        lambda r1, r2, x, m, tol: "no-turn")
+    with pytest.raises(ValueError, match="below the equal-perihelion"):
+        g3.equal_perihelion_band(15.0, 15.0, 1.0, 1e-8)
 
 
 def test_a_named_omission_that_turns_out_buildable_also_fails(

@@ -77,15 +77,36 @@ def test_every_checkpoint_is_stamped_partial_and_non_verdict(tmp_path):
         assert cp.is_verdict(record) is False
 
 
-def test_a_caller_cannot_stamp_a_checkpoint_as_final(tmp_path):
-    """The stamps are applied after the payload is spread in, so a
-    payload claiming otherwise loses."""
+@pytest.mark.parametrize("key", cp.RESERVED)
+def test_a_payload_may_not_supply_the_keys_this_module_writes(
+        tmp_path, key):
+    """Refused, not overridden. Ordering the spread so the stamps win
+    would protect `partial`, but a payload carrying `stage` is a
+    caller confusion -- a reused run-state dict whose `stage` is the
+    run stage `g1`, not the checkpoint point `g1_chunk`. Winning hides
+    it; losing writes a `stage` outside STAGES and a resume continues
+    from the wrong place."""
 
-    path = cp.write(tmp_path / "ck.json", "g1_complete",
-                    _payload(partial=False, non_verdict=False))
-    record = json.loads(path.read_text(encoding="utf-8"))
+    with pytest.raises(ValueError, match="which this module writes"):
+        cp.write(tmp_path / "ck.json", "g1_complete",
+                 _payload(**{key: "g1"}))
+    assert not (tmp_path / "ck.json").exists()
+
+
+def test_a_caller_cannot_stamp_a_checkpoint_as_final(tmp_path):
+    """The specific case the stamps exist for: a payload claiming the
+    record is a result does not get to write one."""
+
+    with pytest.raises(ValueError, match="reading as a result"):
+        cp.write(tmp_path / "ck.json", "g1_complete",
+                 _payload(partial=False, non_verdict=False))
+
+    record = json.loads(cp.write(tmp_path / "ck.json", "g1_complete",
+                                 _payload()).read_text(
+                                     encoding="utf-8"))
     assert record["partial"] is True
     assert record["non_verdict"] is True
+    assert record["stage"] == "g1_complete"
 
 
 def test_a_failed_write_leaves_the_previous_checkpoint_intact(
