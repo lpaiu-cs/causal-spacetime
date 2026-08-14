@@ -343,12 +343,26 @@ wrapper 와 동일하게 `dt`·`dpsi`·`t_min`·`err` 를 재계산해
 
 ## 4. 실행 순서
 
-1. **exact-freeze checkout 에서 G3a.**
-2. 실패 → **fresh 시드를 건드리기 전에** `INVALID`, G3b 미실행, 종료.
-3. 통과 → **G1 스트림의 고정 prefix 위에서 G3b** (§2.2 의 availability
-   보고, §2.3 의 스캔).
-4. G3b 통과 → **G1 의 나머지**를 같은 스트림에서 이어 소진.
-5. 그다음 **G2**.
+1. **정적 preflight** — 동결 digest·환경·승인 SHA·clean tree, 그리고
+   결과·incident·**checkpoint 부재**. 예약은 아직 하지 않는다.
+2. **G3a** (계량됨).
+3. 실패 → **fresh 시드를 건드리기 전에** `INVALID`, 예약 미청구,
+   G3b 미실행, 종료.
+4. 통과 → **예약 청구** (`refs/o4b/reservation`). 스트림은 **여기서**
+   열린다.
+5. RNG 생성 → **G1 스트림의 고정 prefix 위에서 G3b** (§2.2 의
+   availability 보고, §2.3 의 스캔).
+6. G3b 통과 → **G1 의 나머지**를 같은 스트림에서 이어 소진.
+7. 그다음 **G2**.
+
+**예약은 G3a 뒤다** (5차 판정). 초안은 `main` 이 예약을 먼저 청구하고
+`Campaign.run()` 안에서 G3a 를 돌렸다. 그러면 G3a 실패 시 RNG 를 만들지
+않았더라도 **정책상 두 seed 는 이미 spent** 다 — 예약 ref 가 "이 스트림이
+열렸는가" 의 권위이므로, 청구했다가 버린 것도 소진이다. "generator 를
+만들지 않는다" 는 필요조건이었지 충분조건이 아니었다.
+
+G3a 는 동결된 사례표와 솔버뿐이라 스트림이 필요 없고, 그 6,537 회 호출은
+이후 캠페인과 **같은 budget 객체**에 계속 포함된다.
 
 **왜 G3b 가 G1 앞인가.** G3b 는 계측 전제조건이다 — `causal_relation` 이
 `L_S1` 이 함의하는 시간창을 실제로 받아들이는지 확인하기 전에는 G1 의
@@ -419,7 +433,7 @@ O4 abort 의 v1 관측성 결함에 대한 규칙이며, 예외가 없다.
 
 | 실패 | 남는 것 | 남지 않는 것 |
 |---|---|---|
-| G3a | incident | **fresh 시드는 접촉되지 않는다.** G3b·G1·G2 미실행 |
+| G3a | incident (`reservation_claimed: false`, `seeds_spent: false`) | **예약도 청구되지 않는다.** G3b·G1·G2 미실행 |
 | G3b | incident + **그때까지 누적된 G1 prefix 통계** | verdict |
 | 상한 | incident + 마지막 체크포인트 | verdict |
 

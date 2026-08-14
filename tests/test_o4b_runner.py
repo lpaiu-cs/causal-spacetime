@@ -588,11 +588,17 @@ def test_a_stage_failure_passes_through_unchanged(tmp_path):
     assert caught.value is original
 
 
-def test_a_keyboard_interrupt_is_not_swallowed(tmp_path):
+def test_a_keyboard_interrupt_is_recorded_rather_than_re_raised(
+        tmp_path):
+    """Superseded R14, which let it propagate. A deliberate stop is
+    still a run that spent the seeds, so it leaves an incident; it is
+    fatal either way, and `main` exits non-zero on the failure."""
+
     campaign = _campaign(tmp_path)
-    with pytest.raises(KeyboardInterrupt):
+    with pytest.raises(stages.StageFailure) as caught:
         campaign._staged("g1", lambda: (_ for _ in ()).throw(
             KeyboardInterrupt()))
+    assert caught.value.outcome == "ABORT"
 
 
 # ------------------------------- the cap must not delete a result
@@ -826,3 +832,133 @@ def test_one_predicate_call_per_invocation():
     src = inspect.getsource(run.Campaign._leg)
     assert src.count("causal_relation") == 2      # the two branches
     assert "One call per invocation on purpose" in src
+
+
+# ------------------------------- the claim comes after G3a, not before
+
+def test_the_reservation_is_claimed_only_after_g3a_passes(tmp_path,
+                                                          monkeypatch):
+    """The frozen rule is that a G3a failure has spent no fresh seed.
+    The reservation ref is the authority on whether a stream has been
+    opened, so a claim made and then abandoned retires both seeds by
+    policy -- however carefully the generator was left unconstructed.
+    Not constructing it is necessary and was never sufficient."""
+
+    order = []
+    campaign = _campaign(tmp_path)
+    for stage in ("run_g3a", "run_g3b", "run_g1", "run_g2"):
+        real = getattr(campaign, stage)
+
+        def wrapped(*a, _s=stage, _r=real, **k):
+            order.append(_s)
+            return _r(*a, **k)
+
+        monkeypatch.setattr(campaign, stage, wrapped)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    campaign.run(on_g3a_passed=lambda: order.append("claim"))
+    assert order == ["run_g3a", "claim", "run_g3b", "run_g1",
+                     "run_g2"]
+
+
+def test_a_g3a_failure_never_reaches_the_claim(tmp_path, monkeypatch):
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(
+        run.g3a, "run_preflight",
+        lambda tol, eta: {"passed": False,
+                          "failed_conditions": ["tri_state_rows"],
+                          "conditions": {}})
+
+    def claim():                                 # pragma: no cover
+        raise AssertionError("the streams were opened before G3a")
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign.run(on_g3a_passed=claim)
+    assert caught.value.stage == "g3a"
+    assert caught.value.preserved["fresh_seed_touched"] is False
+    assert campaign.rng is None
+
+
+def test_g3a_is_charged_to_the_same_budget_the_campaign_spends(
+        tmp_path, monkeypatch):
+    """One budget object across the whole run: G3a's calls are part of
+    what the cap is measured against, not a free preamble."""
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    budget = campaign.budget
+    campaign.run_g3a()
+    after_g3a = budget.reserved
+    assert after_g3a > 6_000                     # the preflight table
+    campaign.run_g3b()
+    # the same object, never reset: G3a's calls still count against
+    # the cap the campaign is measured by
+    assert campaign.budget is budget
+    assert budget.reserved >= after_g3a
+
+
+def test_the_module_and_the_document_state_the_claim_after_g3a():
+    assert "The claim sits AFTER G3a" in run.__doc__
+    assert "reservation claim" in run.__doc__
+    doc = (_REPO / "docs" / "prereg"
+           / "p14_o4_g3_prereg_reopen.md").read_text(encoding="utf-8")
+    assert "**예약은 G3a 뒤다**" in doc
+    assert "충분조건이 아니었다" in doc
+
+
+# --------------------------------- a deliberate stop is still a run
+
+def test_a_keyboard_interrupt_becomes_an_abort_incident(tmp_path):
+    """It is a deliberate stop, but once the reservation is claimed
+    the seeds are spent all the same, and "the operator meant it" is
+    not a reason to leave no record of a run that cannot be
+    repeated."""
+
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", lambda: (_ for _ in ()).throw(
+            KeyboardInterrupt()))
+    failure = caught.value
+    assert failure.outcome == "ABORT"
+    assert failure.detail["exception"]["type"] == "KeyboardInterrupt"
+    assert "g1_partial" in failure.preserved
+
+
+# ------------------------------------ no stale checkpoint at the start
+
+def test_a_leftover_checkpoint_stops_the_preflight(tmp_path,
+                                                   monkeypatch):
+    """It is not write-once and `git_state` excuses it from the
+    clean-tree check, so nothing else would notice. Left alone, an
+    early G3a failure files a fresh incident beside another attempt's
+    partial statistics and a reader cannot tell them apart."""
+
+    stale = tmp_path / "p14_o4b_checkpoint.json"
+    stale.write_text('{"stage": "g1_chunk"}', encoding="utf-8")
+    monkeypatch.setattr(run, "_CHECKPOINT", stale)
+    monkeypatch.setattr(run, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(run, "git_state",
+                        lambda: {"rev": "a" * 40, "dirty": False,
+                                 "dirt": []})
+    monkeypatch.setattr(run, "_WRITE_ONCE", ())
+    with pytest.raises(SystemExit, match="partial from an earlier"):
+        run.preflight("a" * 40)
+
+    stale.unlink()
+    monkeypatch.setattr(run.reservation, "verify_o4_ref_retained",
+                        lambda: run.reservation.RETAINED_OBJECT)
+    monkeypatch.setattr(run.reservation, "held", lambda: None)
+    monkeypatch.setattr(run.reservation, "probe_namespace",
+                        lambda: None)
+    assert run.preflight("a" * 40)["git"]["rev"] == "a" * 40
+
+
+def test_the_checkpoint_is_still_excused_from_the_clean_tree_check():
+    """Absent at the START, but created during the run -- so it must
+    not count as protocol drift once the campaign is under way."""
+
+    import inspect
+    src = inspect.getsource(run.git_state)
+    assert "_CHECKPOINT" in src

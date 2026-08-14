@@ -14,8 +14,19 @@ being a different instrument while still passing every digest check.
 
 WHAT IS NEW IS THE ORDER AND WHAT SURVIVES.
 
-    G3a  ->  G3b on the G1 stream's fixed prefix  ->  the rest of G1
+    static preflight  ->  metered G3a  ->  G3a PASS
+         ->  reservation claim  ->  the generator
+         ->  G3b on the G1 stream's fixed prefix  ->  the rest of G1
          ->  G2
+
+The claim sits AFTER G3a, not before it. The frozen rule is that a
+G3a failure has spent no fresh seed, and the reservation ref is the
+authority on whether a stream has been opened -- so a claim made and
+then abandoned retires both seeds by policy, however carefully the
+generator was left unconstructed. G3a is entirely deterministic (a
+frozen case table and a solver), so it needs no stream, and its 6,537
+calls are charged to the same budget object the campaign then
+continues to spend.
 
 O4 ran `G3a -> G1/G2 -> G3b`, spent twelve hours, found the
 instrumentation broken at the end, and kept nothing. Three things
@@ -261,6 +272,19 @@ def preflight(freeze_rev: str) -> dict:
                 f"preflight: {path.name} already exists -- a campaign "
                 f"was already started on these streams; the audit is "
                 f"write-once and the first attempt stands")
+    # ...and so must the checkpoint (review R22). It is not write-once
+    # -- the run overwrites it deliberately, and `git_state` excuses it
+    # from the clean-tree check for exactly that reason -- but a
+    # checkpoint present BEFORE the first draw is a leftover from some
+    # earlier attempt. Left alone, an early G3a failure would file a
+    # fresh incident beside another run's partial statistics, and a
+    # reader has nothing in either file to tell them apart.
+    if _CHECKPOINT.exists():
+        raise SystemExit(
+            f"preflight: {_CHECKPOINT.name} already exists -- it is a "
+            f"partial from an earlier attempt, and a new run must not "
+            f"start next to one; move it aside deliberately or "
+            f"explain it in the incident record")
     reservation.verify_o4_ref_retained()
     if (already := reservation.held()) is not None:
         raise SystemExit(
@@ -787,8 +811,12 @@ class Campaign:
             # forbids re-running them, and without this the process
             # dies with no incident at all -- which is the observability
             # defect this freeze exists to close.
-            if isinstance(exc, KeyboardInterrupt):
-                raise
+            # KeyboardInterrupt included (review R21). It is a
+            # deliberate stop, but the seeds are spent all the same
+            # once the reservation is claimed, and "the operator meant
+            # it" is not a reason to leave no record of a run that
+            # cannot be repeated. It is still fatal; it just leaves an
+            # incident on the way out.
             self.checkpoint_on_cap(stage)
             if self.mismatches:
                 raise self._contract_failure(stage, exc) from exc
@@ -851,11 +879,27 @@ class Campaign:
             self.checkpoint("g1_chunk",
                             {"availability": self.prefix.report()})
 
-    def run(self) -> dict:
+    def run(self, on_g3a_passed=None) -> dict:
         """The frozen order. Each stage's failure is raised, never
-        swallowed, and the caller turns it into an incident."""
+        swallowed, and the caller turns it into an incident.
+
+        `on_g3a_passed` runs BETWEEN G3a and G3b, and in the campaign
+        it is the reservation claim (review R20). The frozen rule is
+        that a G3a failure has spent no fresh seed, and claiming the
+        ref before G3a broke it in the only way that matters: the ref
+        is the authority on whether a stream has been opened, so a
+        claim made and then abandoned retires both seeds by policy
+        even though no generator was ever constructed. Not
+        constructing the generator is necessary and was never
+        sufficient.
+
+        The claim sits inside this method rather than in `main` so the
+        order it belongs to is the order that states it, and so a test
+        can watch the sequence."""
 
         g3a_result = self._staged("g3a", self.run_g3a)
+        if on_g3a_passed is not None:
+            on_g3a_passed()             # <- the streams are opened HERE
         availability = self._staged("g3b", self.run_g3b)
         g1 = self._staged("g1", self.run_g1)
         g2 = self._staged("g2", self.run_g2)
@@ -896,19 +940,28 @@ def main() -> None:
         return
 
     digest = _sha256(_MANIFEST)
-    reservation.claim({
-        "campaign": "o4b", "freeze_rev": args.freeze_rev,
-        "manifest_sha256": digest, "seeds": checks["seeds"],
-    })
     campaign = Campaign(FROZEN, checks["seeds"], args.freeze_rev,
                         digest)
+    claimed: dict = {"object": None}
+
+    def claim() -> None:
+        claimed["object"] = reservation.claim({
+            "campaign": "o4b", "freeze_rev": args.freeze_rev,
+            "manifest_sha256": digest, "seeds": checks["seeds"],
+        })
+
     try:
-        results = campaign.run()
+        results = campaign.run(on_g3a_passed=claim)
     except stages.StageFailure as failure:
         publish_write_once(_INCIDENT, stages.incident(failure, {
             "freeze_sha": args.freeze_rev,
             "manifest_digest": digest,
             "seeds": checks["seeds"],
+            # what the ledger has to be able to read: the seeds are
+            # spent if and only if the ref was claimed
+            "reservation_claimed": claimed["object"] is not None,
+            "reservation_object": claimed["object"],
+            "seeds_spent": claimed["object"] is not None,
             "environment": environment(),
         }))
         raise SystemExit(

@@ -182,7 +182,12 @@ def test_the_document_states_what_survives_each_failure():
     doc = (_REPO / "docs" / "prereg"
            / "p14_o4_g3_prereg_reopen.md").read_text(encoding="utf-8")
     assert "### 5.1 실패 지점별로 무엇이 남는가" in doc
-    assert "fresh 시드는 접촉되지 않는다" in doc
+    # the claim itself is what "no seed was spent" now rests on: the
+    # ref is the authority, so not constructing the generator was
+    # necessary and never sufficient
+    assert "예약도 청구되지 않는다" in doc
+    assert "reservation_claimed: false" in doc
+    assert "seeds_spent: false" in doc
     assert "그때까지 누적된 G1 prefix 통계" in doc
 
 
