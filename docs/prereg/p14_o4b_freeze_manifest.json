@@ -16,7 +16,7 @@
   "experiments/oracle/o4b_g3b.py": "c6dc61158000ebcd0006bf7e5f6faa84f33401c854308fbdace64df5a467b0f2",
   "experiments/oracle/o4b_checkpoint.py": "6a54f77d21d972700b917c63ee810fafe017b5aa877d3bd9a6441fec111b891f",
   "experiments/oracle/o4b_stages.py": "2af6378598d84769ebb0694a36b14890631c73d668aafc53c52e0da0f6b2a552",
-  "experiments/oracle/o4b_reservation.py": "0d145101545061088398def0ad869bae1cead743c7dc5821a399f043cb9961b2",
+  "experiments/oracle/o4b_reservation.py": "10093653abbe6490d5ece86b43d6b06d8f811385afade27c7f1bd2a69c49b3f0",
   "experiments/oracle/o4b_volume_audit.py": "0d8fa5198e2bd77ac6e3f23e4e2914d01932155f249296f802b1bb7c6cbefb60",
   "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
   "experiments/positive_control/probe_seed_ledger.py": "87afc7572e8432b8a8cb1e438029a890e0d46a908a3b73f5ae5bf9a3381d6158",

@@ -994,7 +994,7 @@ def test_a_claim_that_pushed_but_could_not_be_confirmed_is_recorded(
     with pytest.raises(res.ClaimUncertain) as caught:
         res.claim({"campaign": "o4b"})
     record = caught.value.as_record()
-    assert record["push_reported_success"] is True
+    assert record["push_reported"] == "success"
     assert record["seeds_must_be_treated_as"] == "spent"
     assert "unsafe direction" in record["why"]
 
@@ -1046,3 +1046,39 @@ def test_the_incident_marks_the_seeds_spent_when_the_claim_is_unsure():
     assert '"uncertain" if claimed.get("uncertain")' in src
     assert "fail-closed toward SPENT" in src
     assert 'or bool(claimed.get("uncertain"))' in src
+
+
+def test_a_push_that_never_returns_is_uncertain_too(monkeypatch):
+    """The R24 gap: `subprocess.run` itself can raise, and the request
+    may already have reached the server. An interrupt there cannot
+    un-send the push, so it takes the same exit as a lost reply."""
+
+    import o4b_reservation as res
+
+    monkeypatch.setattr(res, "verify_o4_ref_retained",
+                        lambda: res.RETAINED_OBJECT)
+    monkeypatch.setattr(res, "held", lambda: None)
+    monkeypatch.setattr(res, "_make_commit", lambda msg: "c" * 40)
+
+    for boom in (KeyboardInterrupt, OSError):
+        def raising(*a, _b=boom, **k):
+            raise _b("interrupted mid-push")
+
+        monkeypatch.setattr(res.subprocess, "run", raising)
+        with pytest.raises(res.ClaimUncertain) as caught:
+            res.claim({"campaign": "o4b"})
+        record = caught.value.as_record()
+        assert record["push_reported"] == "did not report"
+        assert record["seeds_must_be_treated_as"] == "spent"
+        assert boom.__name__ in record["detail"]
+
+
+def test_the_push_report_has_three_states_not_two():
+    """success / error / did not report. Two states cannot express
+    "the call never came back", which is the case that matters."""
+
+    import o4b_reservation as res
+
+    states = {res.ClaimUncertain("x", pushed=p, obj=None).as_record()[
+        "push_reported"] for p in (True, False, None)}
+    assert states == {"success", "error", "did not report"}

@@ -154,8 +154,14 @@ class ClaimUncertain(Exception):
     POSSIBLY SPENT -- the safe direction of the error is to over-
     record a claim, never to under-record one."""
 
-    def __init__(self, reason: str, pushed: bool, obj: str | None,
-                 detail: str = "") -> None:
+    #: What git managed to tell us. THREE states, not two (review
+    #: R24): the push can also fail to report at all -- an interrupt
+    #: or an OS error inside `subprocess.run` itself, after the
+    #: request has already reached the server. `None` is that case,
+    #: and it is the one an earlier version left outside this
+    #: exception entirely.
+    def __init__(self, reason: str, pushed: bool | None,
+                 obj: str | None, detail: str = "") -> None:
         super().__init__(reason)
         self.reason = reason
         self.pushed = pushed
@@ -165,13 +171,15 @@ class ClaimUncertain(Exception):
     def as_record(self) -> dict:
         return {
             "reason": self.reason,
-            "push_reported_success": self.pushed,
+            "push_reported": {True: "success", False: "error",
+                              None: "did not report"}[self.pushed],
             "attempt_object": self.obj,
             "detail": self.detail,
             "seeds_must_be_treated_as": "spent",
             "why": ("the push was attempted, so the ref may hold this "
-                    "attempt whatever git reported; recording the "
-                    "seeds as free would be the unsafe direction"),
+                    "attempt whatever git reported -- including when "
+                    "it reported nothing; recording the seeds as free "
+                    "would be the unsafe direction"),
         }
 
 
@@ -262,10 +270,21 @@ def claim(payload: dict) -> str:
     # FROM HERE ON THE OUTCOME IS UNCERTAIN, NOT MERELY UNSUCCESSFUL.
     # Everything above this line reads; this line writes, and a write
     # whose reply is lost has still happened at the server.
-    push = subprocess.run(
-        ["git", "push", f"--force-with-lease={REF}:", REMOTE,
-         f"{obj}:{REF}"],
-        cwd=_REPO, capture_output=True, text=True)
+    try:
+        push = subprocess.run(
+            ["git", "push", f"--force-with-lease={REF}:", REMOTE,
+             f"{obj}:{REF}"],
+            cwd=_REPO, capture_output=True, text=True)
+    except BaseException as exc:
+        # The call did not come back -- an interrupt, an OS error --
+        # and the request may already have reached the server. This
+        # is the same failure class as a lost reply, so it takes the
+        # same exit (review R24). `KeyboardInterrupt` included: a
+        # deliberate stop here still cannot un-send the push.
+        raise ClaimUncertain(
+            f"the push to {REF} did not return",
+            pushed=None, obj=obj,
+            detail=f"{type(exc).__name__}: {exc}") from exc
     if push.returncode != 0:
         raise ClaimUncertain(
             f"could not claim {REF} -- another checkout may have won "
