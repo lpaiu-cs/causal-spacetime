@@ -445,9 +445,10 @@ def test_a_fired_cap_becomes_an_inconclusive_incident(tmp_path,
     assert failure.outcome == "INCONCLUSIVE"
     assert failure.detail["cap"]["reason"] == "max-wall"
     assert "g1_partial" in failure.preserved
-    # and the checkpoint was written BEFORE the incident is composed
-    assert ck.read(tmp_path / "ck.json")["stage"] == "g3b"
-    assert ck.read(tmp_path / "ck.json")["partial"] is True
+    assert failure.preserved["budget"]["reserved"] >= 0
+    # the incident is the record here; see
+    # `test_a_g3b_cap_writes_no_checkpoint_stage_it_did_not_reach`
+    # for why no checkpoint is written at this point
 
 
 def test_a_cap_is_inconclusive_and_never_invalid():
@@ -495,3 +496,145 @@ def test_two_attempts_in_one_second_claim_different_objects(
     assert len(messages) == 2
     assert messages[0] != messages[1]
     assert all("attempt_nonce" in m for m in messages)
+
+
+# --------------------------------------- the batched draw's boundary
+
+def test_the_chunk_position_is_recorded_at_both_ends(tmp_path,
+                                                     monkeypatch):
+    """`rng_position` is the END of the last chunk drawn; the
+    accumulator holds only the consumed prefix of it. Resuming from
+    the position alone would skip the unconsumed tail and change the
+    frozen stream."""
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    campaign.run_g3a()
+    campaign.run_g3b()
+
+    chunk = ck.read(tmp_path / "ck.json")["statistics"]["chunk"]
+    assert chunk["state_before_draw"]["bit_generator"] == "PCG64"
+    assert chunk["state_before_draw"] != (
+        ck.read(tmp_path / "ck.json")["rng_position"])
+    assert 0 < chunk["consumed"] <= chunk["size"]
+    assert "skip the unconsumed" in chunk["why"]
+
+
+def test_the_scan_stops_at_the_stopping_time_not_the_chunk_end(
+        tmp_path, monkeypatch):
+    """Otherwise a mismatch found among points AFTER the sample the
+    rule defined could turn an already complete G3b INVALID."""
+
+    campaign = _campaign(tmp_path, cfg=_cfg(n_avail=2, k_g3b=2,
+                                            chunk=64))
+    checked = []
+    monkeypatch.setattr(
+        campaign, "_check_contract",
+        lambda r, th, st, v: checked.append(r))
+    campaign.run_g3a()
+    campaign.run_g3b()
+    # exactly the stopping sample, not the whole 64-point buffer
+    assert campaign.scanned == 2
+    assert len(checked) == 2
+    assert campaign.chunk_consumed == 2 < campaign.chunk_size == 64
+
+
+# ------------------------------------------ every exit leaves a record
+
+def test_a_solver_systemexit_becomes_an_abort_incident(tmp_path):
+    """The fail-closed solver paths raise `SystemExit`, which is a
+    BaseException and slips past `except Exception` entirely. Without
+    conversion the process dies with the seeds spent and no incident
+    -- the observability defect this freeze exists to close."""
+
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+
+    def fails():
+        raise SystemExit("fail-closed: flight_time returned nan")
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", fails)
+    failure = caught.value
+    assert failure.outcome == "ABORT"
+    assert failure.detail["exception"]["type"] == "SystemExit"
+    assert "fail-closed" in failure.detail["exception"]["message"]
+    assert "g1_partial" in failure.preserved
+
+
+def test_an_ordinary_exception_becomes_an_abort_incident(tmp_path):
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g1", lambda: 1 / 0)
+    assert caught.value.outcome == "ABORT"
+    assert caught.value.detail["exception"]["type"] == (
+        "ZeroDivisionError")
+
+
+def test_a_stage_failure_passes_through_unchanged(tmp_path):
+    """It is already the right shape; re-wrapping it as ABORT would
+    turn an INVALID contract failure into an unexplained crash."""
+
+    campaign = _campaign(tmp_path)
+    original = stages.StageFailure("g3b", "INVALID", "mismatch")
+
+    def raises():
+        raise original
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", raises)
+    assert caught.value is original
+
+
+def test_a_keyboard_interrupt_is_not_swallowed(tmp_path):
+    campaign = _campaign(tmp_path)
+    with pytest.raises(KeyboardInterrupt):
+        campaign._staged("g1", lambda: (_ for _ in ()).throw(
+            KeyboardInterrupt()))
+
+
+# ------------------------------- the cap must not delete a result
+
+def test_a_g2_cap_does_not_overwrite_the_completed_g1_checkpoint(
+        tmp_path, monkeypatch):
+    """Entering G2 means `g1_complete` is on disk with G1's status and
+    interval, and this exit publishes no results artifact. Overwriting
+    it would delete a G1 result the run had already established."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    campaign.run_g3a()
+    campaign.run_g3b()
+    campaign.run_g1()
+    assert ck.read(tmp_path / "ck.json")["stage"] == "g1_complete"
+    before = ck.read(tmp_path / "ck.json")
+
+    def fires():
+        raise bud.CapReached("max-calls", 8 * 10 ** 7, 8 * 10 ** 7,
+                             100.0, 1)
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g2", fires)
+    assert ck.read(tmp_path / "ck.json") == before
+    assert caught.value.preserved["g1_partial"]["n"] > 0
+
+
+def test_a_g3b_cap_writes_no_checkpoint_stage_it_did_not_reach(
+        tmp_path):
+    """A stop inside G3b has reached no checkpoint stage; writing
+    `g3b` would claim G3b finished. The incident is the record."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", lambda: (_ for _ in ()).throw(
+            bud.CapReached("max-wall", 1, 1, 9.0, 1)))
+    assert not (tmp_path / "ck.json").exists()
+    assert caught.value.preserved["availability"]["candidates"] == 0

@@ -412,6 +412,17 @@ class Campaign:
         self.rng = None
         self.mismatches: list[dict] = []
         self.scanned = 0
+        # The draw is BATCHED: one `draw` call consumes the generator
+        # for a whole chunk before any point is processed. So the
+        # generator's position and the number of points actually
+        # committed move at different times, and a stop in the middle
+        # leaves them disagreeing (review R13). Both ends of the chunk
+        # are therefore recorded: the state BEFORE the draw, which a
+        # resume can restore and redraw from, and how many of the
+        # drawn points were consumed.
+        self.chunk_start_rng = None
+        self.chunk_consumed = 0
+        self.chunk_size = 0
 
     # -- checkpoints ---------------------------------------------
 
@@ -421,8 +432,29 @@ class Campaign:
             freeze_sha=self.freeze_sha, digest=self.digest,
             seed=self.seeds["o4b_g1_audit"], rng=self.rng,
             samples=self.g1.n,
-            statistics={**_statistics(self.g1), **(extra or {})},
+            statistics={**_statistics(self.g1), **(extra or {}),
+                        "chunk": self._chunk_position()},
             budget=self.budget)
+
+    def _chunk_position(self) -> dict:
+        """Where the batched draw stands.
+
+        `rng_position` alone is the END of the last chunk drawn, which
+        is not where the committed points end. A resume restores
+        `state_before_draw`, redraws the same `size` points and skips
+        the first `consumed` -- so the stopping condition and the
+        generator move on the same boundary."""
+
+        return {
+            "state_before_draw": self.chunk_start_rng,
+            "size": self.chunk_size,
+            "consumed": self.chunk_consumed,
+            "why": ("the draw is batched, so rng_position is the end "
+                    "of the chunk while the accumulator holds only "
+                    "the consumed prefix of it; resuming from "
+                    "rng_position alone would skip the unconsumed "
+                    "tail and change the frozen stream"),
+        }
 
     def preserved(self) -> dict:
         """What a failure hands to the incident. Always the G1 prefix:
@@ -438,6 +470,19 @@ class Campaign:
                 "a preserved partial sample: the stopping rule did "
                 "not fire, so no gate has a status"),
         }
+
+    def _chunk(self, k: int):
+        """One batched draw, with both ends of it recorded."""
+
+        self.chunk_start_rng = self.rng.bit_generator.state
+        self.chunk_consumed = 0
+        self.chunk_size = k
+        return self.draw(self.rng, k, sz.R_LO, sz.R_HI, sz.PSI_MAX)
+
+    def _g3b_done(self) -> bool:
+        return (self.prefix.complete
+                and self.prefix.total_fully_testable
+                >= self.cfg["k_g3b"])
 
     # -- stages ---------------------------------------------------
 
@@ -468,16 +513,20 @@ class Campaign:
         self.rng = np.random.default_rng(self.seeds["o4b_g1_audit"])
         cap = min(g3.scan_cap(), self.cfg["n_g1"])
         with meter.metered(self.budget):
-            while (self.scanned < cap
-                   and (not self.prefix.complete
-                        or self.prefix.total_fully_testable
-                        < self.cfg["k_g3b"])):
+            while self.scanned < cap and not self._g3b_done():
                 k = min(self.cfg["chunk"], cap - self.scanned)
-                rs, ths = self.draw(self.rng, k, sz.R_LO, sz.R_HI,
-                                    sz.PSI_MAX)
+                rs, ths = self._chunk(k)
                 for r, th in zip(rs, ths, strict=True):
+                    # STOP AT THE STOPPING TIME, not at the chunk end.
+                    # The draw is batched; running on to the end of the
+                    # buffer would contract-check points that lie after
+                    # the sample the rule defined, and a mismatch there
+                    # could turn an already complete G3b INVALID.
+                    if self._g3b_done():
+                        break
                     self._one(float(r), float(th))
                     self.scanned += 1
+                    self.chunk_consumed += 1
         report = self.prefix.report()
         if self.mismatches:
             raise stages.StageFailure(
@@ -594,15 +643,17 @@ class Campaign:
         with meter.metered(self.budget):
             while self.g1.n < target:
                 k = min(self.cfg["chunk"], target - self.g1.n)
-                rs, ths = self.draw(self.rng, k, sz.R_LO, sz.R_HI,
-                                    sz.PSI_MAX)
+                rs, ths = self._chunk(k)
                 for r, th in zip(rs, ths, strict=True):
+                    if self.g1.n >= target:
+                        break
                     # the estimand, at the drawn theta -- the
                     # predicate's coordinate has no business here
                     ell, _, _ = self.ell(float(r), float(th),
                                          self.cfg["tol"])
                     self.g1.add(ell / sz.DT)
-                self.scanned += k
+                    self.scanned += 1
+                    self.chunk_consumed += 1
                 self.checkpoint("g1_chunk")
         interval = eb.interval(self.g1, self.cfg["delta_g1_per_side"])
         lo, hi = interval.rescaled(sz.SCALE)
@@ -675,10 +726,10 @@ class Campaign:
 
         try:
             return work()
+        except stages.StageFailure:
+            raise                       # already the right shape
         except o4b_budget.CapReached as cap:
-            # a checkpoint FIRST, so the incident and the recoverable
-            # state agree even if publishing then fails
-            self.checkpoint_on_cap(stage, cap)
+            self.checkpoint_on_cap(stage)
             raise stages.StageFailure(
                 stage, "INCONCLUSIVE",
                 f"completion budget exhausted ({cap.reason}) during "
@@ -691,15 +742,46 @@ class Campaign:
                                 "wall_s": cap.wall_s,
                                 "refused_call_count": cap.wanted}},
             ) from None
+        except BaseException as exc:
+            # ANY other exit through a stage (review R14). The
+            # fail-closed solver paths raise `SystemExit`, which is a
+            # BaseException and would slip past `except Exception`
+            # entirely; a numerical failure in `_ell` or
+            # `causal_relation` raises an ordinary one. Either way the
+            # seeds are already reserved and spent, the reservation
+            # forbids re-running them, and without this the process
+            # dies with no incident at all -- which is the observability
+            # defect this freeze exists to close.
+            if isinstance(exc, KeyboardInterrupt):
+                raise
+            self.checkpoint_on_cap(stage)
+            raise stages.StageFailure(
+                stage, "ABORT",
+                f"unhandled {type(exc).__name__} during {stage}: {exc}",
+                preserved=self.preserved(),
+                detail={"exception": {"type": type(exc).__name__,
+                                      "message": str(exc)}},
+            ) from exc
 
-    def checkpoint_on_cap(self, stage: str, cap) -> None:
-        """The last safe checkpoint. G1's own chunk checkpoints cover
-        it there; before the first `g3b` one exists there is nothing
-        on disk at all, which is the case worth writing for."""
+    def checkpoint_on_cap(self, stage: str) -> None:
+        """Record progress on the way out, WITHOUT destroying a record
+        of something already finished (review R15).
 
-        point = "g1_chunk" if stage in ("g1", "g2") else "g3b"
-        self.checkpoint(point, {"cap": cap.reason,
-                                "availability": self.prefix.report()})
+        Only G1 has a truthful point to write here: `g1_chunk`. A stop
+        inside G3a or G3b has reached no checkpoint stage at all, and
+        writing `g3b` would claim G3b finished. A stop inside G2 is
+        the dangerous one: the last checkpoint is `g1_complete`, which
+        carries G1's status and interval, and this exit publishes no
+        results artifact -- overwriting it with a `g1_chunk` record
+        would delete a G1 result the run had already established.
+
+        In every other case the incident is the record: it carries
+        `preserved()`, which holds the G1 partial, the availability
+        report and the budget."""
+
+        if stage == "g1":
+            self.checkpoint("g1_chunk",
+                            {"availability": self.prefix.report()})
 
     def run(self) -> dict:
         """The frozen order. Each stage's failure is raised, never
