@@ -899,7 +899,13 @@ class Campaign:
 
         g3a_result = self._staged("g3a", self.run_g3a)
         if on_g3a_passed is not None:
-            on_g3a_passed()             # <- the streams are opened HERE
+            # INSIDE the incident boundary (review R23). The claim is
+            # the point of no return, so a failure there is the one
+            # failure that most needs a record -- and the ref can be
+            # created by a push whose reply is then lost, spending the
+            # seeds while the call never returns. Attributed to `g3b`,
+            # the stage it was entering.
+            self._staged("g3b", on_g3a_passed)
         availability = self._staged("g3b", self.run_g3b)
         g1 = self._staged("g1", self.run_g1)
         g2 = self._staged("g2", self.run_g2)
@@ -945,10 +951,18 @@ def main() -> None:
     claimed: dict = {"object": None}
 
     def claim() -> None:
-        claimed["object"] = reservation.claim({
+        payload = {
             "campaign": "o4b", "freeze_rev": args.freeze_rev,
             "manifest_sha256": digest, "seeds": checks["seeds"],
-        })
+        }
+        try:
+            claimed["object"] = reservation.claim(payload)
+        except reservation.ClaimUncertain as uncertain:
+            # record before re-raising: `_staged` turns this into a
+            # StageFailure and the incident must be able to say the
+            # streams may already be open
+            claimed["uncertain"] = uncertain.as_record()
+            raise
 
     try:
         results = campaign.run(on_g3a_passed=claim)
@@ -959,9 +973,16 @@ def main() -> None:
             "seeds": checks["seeds"],
             # what the ledger has to be able to read: the seeds are
             # spent if and only if the ref was claimed
-            "reservation_claimed": claimed["object"] is not None,
+            "reservation_claimed": (
+                "uncertain" if claimed.get("uncertain")
+                else claimed["object"] is not None),
             "reservation_object": claimed["object"],
-            "seeds_spent": claimed["object"] is not None,
+            "reservation_uncertainty": claimed.get("uncertain"),
+            # fail-closed toward SPENT: a push whose reply was lost
+            # still created the ref, and under-recording a claim is
+            # the unsafe direction
+            "seeds_spent": (claimed["object"] is not None
+                            or bool(claimed.get("uncertain"))),
             "environment": environment(),
         }))
         raise SystemExit(

@@ -962,3 +962,87 @@ def test_the_checkpoint_is_still_excused_from_the_clean_tree_check():
     import inspect
     src = inspect.getsource(run.git_state)
     assert "_CHECKPOINT" in src
+
+
+# ---------------- the claim is itself inside the incident boundary
+
+def test_a_claim_that_pushed_but_could_not_be_confirmed_is_recorded(
+        tmp_path, monkeypatch):
+    """`claim` pushes and then re-reads the ref. A failure between
+    those two steps leaves the ref created -- the seeds spent -- while
+    the call never returns. An exit there produces exactly what this
+    freeze exists to prevent: streams spent with no record."""
+
+    import o4b_reservation as res
+
+    monkeypatch.setattr(res, "verify_o4_ref_retained",
+                        lambda: res.RETAINED_OBJECT)
+    monkeypatch.setattr(res, "_make_commit", lambda msg: "c" * 40)
+    calls = {"n": 0}
+
+    def held():
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return None                    # free before the push
+        raise SystemExit("ls-remote: network unreachable")
+
+    monkeypatch.setattr(res, "held", held)
+    monkeypatch.setattr(res.subprocess, "run",
+                        lambda *a, **k: type("R", (), {
+                            "returncode": 0, "stdout": "",
+                            "stderr": ""})())
+    with pytest.raises(res.ClaimUncertain) as caught:
+        res.claim({"campaign": "o4b"})
+    record = caught.value.as_record()
+    assert record["push_reported_success"] is True
+    assert record["seeds_must_be_treated_as"] == "spent"
+    assert "unsafe direction" in record["why"]
+
+
+def test_a_failed_push_is_also_uncertain_not_merely_unsuccessful():
+    """A push that returns an error can still have been applied at the
+    server, so the safe direction is to over-record a claim."""
+
+    import o4b_reservation as res
+
+    uncertain = res.ClaimUncertain("race lost", pushed=False,
+                                   obj="c" * 40, detail="rejected")
+    assert uncertain.as_record()["seeds_must_be_treated_as"] == "spent"
+    src = (_REPO / "experiments" / "oracle"
+           / "o4b_reservation.py").read_text(encoding="utf-8")
+    assert "FROM HERE ON THE OUTCOME IS UNCERTAIN" in src
+    assert "raise SystemExit" not in src.split(
+        "FROM HERE ON THE OUTCOME IS UNCERTAIN")[1]
+
+
+def test_a_claim_failure_becomes_a_stage_failure_not_an_exit(tmp_path):
+    """It runs inside `_staged`, so `main`'s incident handler sees
+    it."""
+
+    import o4b_reservation as res
+
+    campaign = _campaign(tmp_path)
+
+    def claim():
+        raise res.ClaimUncertain("pushed, then lost the reply",
+                                 pushed=True, obj="c" * 40)
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign.run(on_g3a_passed=claim)
+    failure = caught.value
+    assert failure.stage == "g3b"
+    assert failure.outcome == "ABORT"
+    assert failure.detail["exception"]["type"] == "ClaimUncertain"
+    # and it never reached G3b's draws
+    assert campaign.rng is None
+
+
+def test_the_incident_marks_the_seeds_spent_when_the_claim_is_unsure():
+    """Under-recording a claim is the unsafe direction, so an
+    uncertain outcome reports `seeds_spent: true`."""
+
+    import inspect
+    src = inspect.getsource(run.main)
+    assert '"uncertain" if claimed.get("uncertain")' in src
+    assert "fail-closed toward SPENT" in src
+    assert 'or bool(claimed.get("uncertain"))' in src

@@ -138,6 +138,43 @@ def verify_o4_ref_retained() -> str:
     return got
 
 
+class ClaimUncertain(Exception):
+    """The push was attempted and the outcome is not known to be clean.
+
+    Raised instead of exiting, so the caller can record an incident
+    (review R23). `claim()` pushes and then re-reads the ref, and a
+    network failure BETWEEN those two steps leaves the ref created --
+    the seeds spent by policy -- while the function never returns. An
+    exit there produces the one thing this freeze exists to prevent:
+    streams that are spent with no record saying so.
+
+    `pushed` is what git reported. It is not a guarantee either way:
+    a push that returns an error can still have been applied at the
+    server. So the caller must treat any instance of this as SEEDS
+    POSSIBLY SPENT -- the safe direction of the error is to over-
+    record a claim, never to under-record one."""
+
+    def __init__(self, reason: str, pushed: bool, obj: str | None,
+                 detail: str = "") -> None:
+        super().__init__(reason)
+        self.reason = reason
+        self.pushed = pushed
+        self.obj = obj
+        self.detail = detail
+
+    def as_record(self) -> dict:
+        return {
+            "reason": self.reason,
+            "push_reported_success": self.pushed,
+            "attempt_object": self.obj,
+            "detail": self.detail,
+            "seeds_must_be_treated_as": "spent",
+            "why": ("the push was attempted, so the ref may hold this "
+                    "attempt whatever git reported; recording the "
+                    "seeds as free would be the unsafe direction"),
+        }
+
+
 def _make_commit(message: str) -> str:
     """A commit object over the empty tree, carrying `message`."""
 
@@ -222,16 +259,28 @@ def claim(payload: dict) -> str:
     attempt = {**payload, "attempt_nonce": os.urandom(16).hex()}
     obj = _make_commit(
         json.dumps(attempt, ensure_ascii=False, sort_keys=True))
+    # FROM HERE ON THE OUTCOME IS UNCERTAIN, NOT MERELY UNSUCCESSFUL.
+    # Everything above this line reads; this line writes, and a write
+    # whose reply is lost has still happened at the server.
     push = subprocess.run(
         ["git", "push", f"--force-with-lease={REF}:", REMOTE,
          f"{obj}:{REF}"],
         cwd=_REPO, capture_output=True, text=True)
     if push.returncode != 0:
-        raise SystemExit(
-            f"reservation: could not claim {REF}: "
-            f"{push.stderr.strip()} -- another checkout won the race")
-    if held() != obj:
-        raise SystemExit(
-            "reservation: the ref does not hold this attempt's object "
-            "-- refusing to draw on streams reserved by someone else")
+        raise ClaimUncertain(
+            f"could not claim {REF} -- another checkout may have won "
+            f"the race, or the reply was lost after the ref was "
+            f"created", pushed=False, obj=obj,
+            detail=push.stderr.strip())
+    try:
+        confirmed = held()
+    except BaseException as exc:
+        raise ClaimUncertain(
+            f"{REF} was pushed but could not be re-read",
+            pushed=True, obj=obj, detail=str(exc)) from exc
+    if confirmed != obj:
+        raise ClaimUncertain(
+            f"{REF} holds {confirmed}, not this attempt's object -- "
+            f"refusing to draw on streams reserved by someone else",
+            pushed=True, obj=obj, detail=f"held={confirmed}")
     return obj
