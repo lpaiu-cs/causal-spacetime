@@ -140,16 +140,19 @@ def test_eta_matches_the_constant_the_census_uses():
     assert "η = 10⁻¹² (frozen)" in _prose()
 
 
-def test_max_nudges_is_frozen_now_not_after_the_census():
-    """The cap decides whether a cluster yields a valid probe or an
-    unavailable one, so choosing it later would let the census pick
-    which clusters count -- the same trap eta was kept out of."""
+def test_the_outward_search_has_no_cap_and_says_why():
+    """8,042 is evidence that an arbitrary cap is the defect, not that
+    the case should be discarded. The cap is gone from the constant,
+    the document and the verdict."""
 
     plain = _prose()
-    assert g3.MAX_NUDGES == 64
-    assert "`MAX_NUDGES = 64` (frozen)" in plain
-    assert "census 가 어떤 cluster 를 셀지 고르게 된다" in plain
-    assert "사전 동결 계산 예산" in plain
+    assert not hasattr(g3, "MAX_NUDGES")
+    assert "바깥 탐색에는 cap 이 없다" in plain
+    assert "임의 cap 이 결함" in plain
+    assert "거리는 진단값이며 비용이 아니다" in plain
+    source = (_REPO / "experiments" / "oracle"
+              / "o4_g3_redesign.py").read_text(encoding="utf-8")
+    assert "There is deliberately NO cap" in source
 
 
 def test_lower_probe_coverage_is_specified_as_a_joint():
@@ -159,35 +162,16 @@ def test_lower_probe_coverage_is_specified_as_a_joint():
     assert "적격 cluster 에서만" in plain
 
 
-def test_the_post_census_list_excludes_both_frozen_constants():
+def test_the_post_census_list_excludes_eta_and_has_no_cap_to_list():
     plain = _prose()
-    assert "η 와 `MAX_NUDGES` 는 여기 없다" in plain
+    assert "η 는 여기 없다" in plain
+    assert "탐색 cap 도 여기 없다 — 아예 존재하지 않기 때문이다" in plain
 
 
-def test_the_nudge_bound_is_a_budget_and_says_it_is_not_a_guarantee():
-    """The original derivation assumed a step gains `ulp(1.0)`. It is
-    worse than that: the margin is formed at the magnitude of `err`, so
-    a one-ulp move of `dt` moves the margin by less again. The
-    retraction has to survive in both the constant and the document."""
-
-    plain = _prose()
-    assert "철회한다" in plain
-    assert "유한한 예산으로 모든 부족분이 닫힌다는 보장은 없다" in plain
-    assert "사전 동결 계산 예산" in plain
-    # the phrase survives ONLY inside the retraction that quotes it
-    assert ("약 17 걸음이면 충분하고 64 는 3.7 배 여유\" 라고 "
-            "적었다. 이 논증은 철회한다") in plain
-
-    source = (_REPO / "experiments" / "oracle"
-              / "o4_g3_redesign.py").read_text(encoding="utf-8")
-    assert "RETRACTED" in source
-    assert "No finite budget closes every shortfall" in source
-
-
-def test_the_quoted_step_count_is_recomputed_not_transcribed():
-    """8,042 is asserted in three places. Run the loop and check it --
-    an earlier draft quoted 151 from a linear estimate that ignored
-    where the margin is formed, and it was wrong by 53x."""
+def test_the_eight_thousand_case_is_a_SUCCESS_not_an_exclusion():
+    """Run the loop: the margin IS reached, at 8,042 steps. The probe
+    is perfectly constructible, and the first response -- capping at 64
+    and recording it unavailable -- discarded a good probe."""
 
     t_min = 0.0026643057799644846
     err = 0.0026640756792607376
@@ -199,7 +183,6 @@ def test_the_quoted_step_count_is_recomputed_not_transcribed():
         if steps > 10 ** 6:
             break
     assert steps == 8_042
-    assert steps > g3.MAX_NUDGES
     assert "8,042 걸음" in _prose()
     source = (_REPO / "experiments" / "oracle"
               / "o4_g3_redesign.py").read_text(encoding="utf-8")
@@ -292,3 +275,63 @@ def test_the_document_quotes_the_measured_angle_error():
     assert "4.14e-13" in plain
     got = abs(math.acos(max(-1.0, min(1.0, math.cos(1e-5)))) - 1e-5)
     assert f"{got:.2e}" == "4.14e-13"
+
+
+def test_the_search_is_exponential_but_lands_where_the_walk_would():
+    """No cap, and no linear walk either: G3b places three probes at
+    100,000 clusters, where walking thousands of ulps would be a new
+    way to stall. The margin is monotone in float order, so bracket and
+    bisect -- and land on the SAME first-satisfying value."""
+
+    import o4b_g3a as g3a
+
+    t_min, err = 0.0026643057799644846, 0.0026640756792607376
+    walked, steps = t_min - err - g3.ETA, 0
+    while abs(walked - t_min) - err < g3.ETA:
+        walked = math.nextafter(walked, -math.inf)
+        steps += 1
+
+    placed = g3a.place_row(t_min, err, g3.ETA, above=False)
+    assert placed["reached"] is True          # a SUCCESS, not discarded
+    assert placed["dt"] == walked
+    assert placed["ulp_distance"] == steps == 8_042
+    assert "bisection" in placed["search"]
+
+
+def test_the_lower_probe_stops_at_zero_not_at_a_budget():
+    """Termination is on representability. `t_min = 0` leaves nowhere
+    below to go, and that is the only reason row B gives up there."""
+
+    import o4b_g3a as g3a
+
+    placed = g3a.place_row(0.0, 0.0, g3.ETA, above=False)
+    assert placed["reached"] is False
+    assert "short-circuit" in placed["why"]
+
+
+def test_the_inside_probe_may_not_use_the_monotone_search():
+    """Widening one leg narrows the other, so the success region is an
+    interval and an exponential jump can step over it. The constraint
+    has to be recorded before G3b is built, not discovered in it."""
+
+    plain = _prose()
+    assert "성공영역이 반직선이 아니라 구간" in plain
+    assert "두 leg 의 표현 가능 범위 교집합을 직접 구하고" in plain
+    assert "호출해서는 안 된다" in plain
+
+    import o4b_g3a as g3a
+    assert "must NOT call this function" in g3a.place_row.__doc__
+    assert "MONOTONICITY IS A PRECONDITION" in g3a.place_row.__doc__
+
+
+def test_distance_and_work_are_separate_fields():
+    """`ulp_distance` is how far the nominal placement sat from a
+    satisfying one; it is not a count of anything performed."""
+
+    import o4b_g3a as g3a
+    placed = g3a.place_row(0.0026643057799644846,
+                           0.0026640756792607376, g3.ETA, above=False)
+    assert placed["ulp_distance"] == 8_042
+    assert placed["search_comparisons"] < 40
+    assert "nudges" not in placed
+    assert "거리가 실행 횟수로 오독된다" in _prose()

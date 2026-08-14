@@ -110,12 +110,13 @@ def test_the_cp_bound_in_the_document_is_the_one_the_code_computes():
 
 def test_eta_and_max_nudges_are_untouched_by_the_reopening():
     assert g3.ETA == 1e-12
-    assert g3.MAX_NUDGES == 64
+    assert not hasattr(g3, "MAX_NUDGES")
     plain = _prose()
-    assert "census 도 이 재개방도 바꾸지 않는다" in plain
-    # the value was not re-selected; only its justification changed
-    assert "충분성 논증은 구현 중 철회" in plain
-    assert "값이 재선택된 것이 아니라" in plain
+    assert "바뀌지 않는다" in plain
+    # the cap was removed, not raised from 64 to 8,042
+    assert "`MAX_NUDGES` 는 제거됐다" in plain
+    assert "임의 cap 이 결함이다" in plain
+    assert "논리적 정정" in plain
 
 
 def test_every_abort_path_leaves_a_write_once_incident():

@@ -133,7 +133,10 @@ def g3a_calls(tol: float = s1.DEFAULT_TOL) -> dict:
         "completed": probe.completed,
         "construction_unavailable_rows":
             result["construction_unavailable"],
-        "nudges_used": result["nudges_used"],
+        "ulp_distance_total": result["ulp_distance_total"],
+        "search_comparisons_total":
+            result["search_comparisons_total"],
+        "distance_is_not_cost": result["distance_is_not_cost"],
         "preflight_conditions": preflight["conditions"],
         "measures": ("run_preflight, the single authority; the stage "
                      "and this measurement read the same verdict"),
@@ -341,7 +344,9 @@ def summary() -> dict:
                 base.certify_power(N_G1)["power_lower_bound"],
         },
         "g3": {
-            "eta": g3.ETA, "max_nudges": g3.MAX_NUDGES,
+            "eta": g3.ETA,
+            "outward_search_cap": ("none: the search ends on "
+                                   "representability, not a budget"),
             "n_avail": g3.N_AVAIL, "k_g3b": g3.K_G3B,
             "alpha_g3b": g3.ALPHA_G3B,
             "cp_upper_zero_mismatch": base.g3_upper(g3.K_G3B,

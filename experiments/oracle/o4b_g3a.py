@@ -34,6 +34,7 @@ that ran and agreed.
 from __future__ import annotations
 
 import math
+import struct
 import sys
 from pathlib import Path
 
@@ -88,44 +89,129 @@ def recovered_dpsi(p: np.ndarray, q: np.ndarray) -> float:
     return math.acos(max(-1.0, min(1.0, cosang)))
 
 
+def _bits(x: float) -> int:
+    """A non-negative double's bit pattern, which orders exactly as the
+    value does -- so "the next representable value" is "+1 here"."""
+
+    return struct.unpack("<Q", struct.pack("<d", x))[0]
+
+
+def _from_bits(n: int) -> float:
+    return struct.unpack("<d", struct.pack("<Q", n))[0]
+
+
 def place_row(t_min: float, err: float, eta: float,
               above: bool) -> dict:
-    """Place row A or row B so the REALIZED margin reaches `eta`.
+    """Place row A or row B at the FIRST representable time whose
+    realized margin reaches `eta`.
 
-    The nominal time is `t_min +/- (err + eta)`, but forming it rounds,
+    The nominal time is `t_min +/- (err + eta)`, but forming it rounds
     and the margin recomputed from the formed value can land short --
-    it does, on more than half the table, by a few ulps. So the
-    placement is nudged outward one ulp at a time with `nextafter`,
-    within a PRE-FROZEN SEARCH BUDGET of `MAX_NUDGES` steps.
+    it does, on more than half the table.
 
-    The budget is not a guarantee that any shortfall closes. One step
-    gains `ulp(dt)`, and where `t_min` nearly cancels `err` the probe
-    time collapses toward zero and that gain collapses with it. Not
-    reaching the margin inside the budget is recorded as an
-    availability outcome, `construction-unavailable`, and is never
-    reclassified as a mismatch or an instrument failure.
+    THERE IS NO STEP CAP. An earlier draft capped the search at 64 and
+    recorded anything longer as unavailable; one legitimate case needs
+    8,042 single-ulp steps, and discarding it would have been one more
+    non-adaptive margin in a stage whose whole failure was
+    non-adaptive margins.
 
-    The budget counts MOVES: the initial placement is checked first,
-    then at most `MAX_NUDGES` outward steps. A failed final check does
-    not move again.
+    Nor is the search performed one ulp at a time. Walking 8,042 steps
+    is harmless once, but G3b places three probes at 100,000 clusters
+    and a linear walk there is a new way to stall for hours. The margin
+    is monotone in the float ORDER, so the search brackets
+    exponentially in bit space and then bisects, which returns the same
+    first-satisfying value in a few dozen comparisons instead of
+    thousands of moves.
 
-    Checking the margin against the pre-computed `(t_min, err)` is
-    checking it against the wrapper's own: the events carry the same
-    `theta`, so the wrapper recovers the same `dpsi`, and `flight_time`
-    is deterministic. Those two facts are themselves checked."""
+    Termination is on representability, never on a budget:
 
-    direction = math.inf if above else -math.inf
-    dt = t_min + err + eta if above else t_min - err - eta
-    for nudges in range(g3.MAX_NUDGES + 1):
-        margin = abs(dt - t_min) - err
-        if margin >= eta:
-            return {"dt": dt, "nudges": nudges, "reached": True,
-                    "realized_margin": margin}
-        if nudges == g3.MAX_NUDGES:
-            break                 # the budget is spent; do NOT move
-        dt = math.nextafter(dt, direction)
-    return {"dt": dt, "nudges": g3.MAX_NUDGES, "reached": False,
-            "realized_margin": abs(dt - t_min) - err}
+      * a non-finite `dt` -- nothing further exists to move to;
+      * for the lower probe, `dt` reaching zero -- below it the
+        predicate short-circuits and the probe stops testing the
+        solver at all, which is row D's job.
+
+    `ulp_distance` is the DIAGNOSTIC distance from the nominal
+    placement, in representable steps -- not a count of work done, so
+    it must not be read as cost. `search_comparisons` is the work.
+
+    MONOTONICITY IS A PRECONDITION, NOT A PROPERTY OF ALL PROBES. This
+    routine may be used only where moving one way increases the margin
+    without bound: G3a's rows A and B, and G3b's two outside probes.
+    G3b's INSIDE probe is different -- widening one leg's margin
+    narrows the other's, so its success region is an INTERVAL, and an
+    exponential jump can step clean over it. That probe must intersect
+    the two legs' representable ranges directly and re-verify both
+    conditions at whatever it picks; it must NOT call this function."""
+
+    start = t_min + err + eta if above else t_min - err - eta
+
+    def margin(x: float) -> float:
+        return abs(x - t_min) - err
+
+    def reached(x: float) -> bool:
+        return math.isfinite(x) and margin(x) >= eta
+
+    if not math.isfinite(start):
+        return {"dt": start, "ulp_distance": 0,
+                "search_comparisons": 1, "reached": False,
+                "why": "non-finite probe time",
+                "realized_margin": float("nan")}
+    if not above and start < 0.0:
+        return {"dt": start, "ulp_distance": 0,
+                "search_comparisons": 1, "reached": False,
+                "why": ("dt crossed zero, where the predicate "
+                        "short-circuits and row B would duplicate "
+                        "row D"),
+                "realized_margin": margin(start)}
+    if reached(start):
+        return {"dt": start, "ulp_distance": 0,
+                "search_comparisons": 1, "reached": True,
+                "realized_margin": margin(start)}
+
+    base = _bits(start)
+    sign = 1 if above else -1
+    comparisons = 1                      # the `start` check above
+
+    def at(k: int) -> float:
+        return _from_bits(base + sign * k)
+
+    # exponential bracket: double the offset until the margin is met.
+    # Valid ONLY because the margin is monotone in this direction --
+    # see `place_row`'s note on the inside probe, where it is not.
+    hi = 1
+    while True:
+        comparisons += 1
+        if not above and base - hi <= 0:          # dt would reach zero
+            return {"dt": at(base), "ulp_distance": base,
+                    "search_comparisons": comparisons,
+                    "reached": False,
+                    "why": ("dt reached zero before the margin, where "
+                            "the predicate short-circuits"),
+                    "realized_margin": margin(_from_bits(0))}
+        candidate = at(hi)
+        if not math.isfinite(candidate):
+            return {"dt": candidate, "ulp_distance": hi,
+                    "search_comparisons": comparisons,
+                    "reached": False,
+                    "why": "non-finite probe time",
+                    "realized_margin": float("nan")}
+        if reached(candidate):
+            break
+        hi *= 2
+
+    # bisect for the FIRST offset that reaches it
+    lo = hi // 2
+    while lo + 1 < hi:
+        mid = (lo + hi) // 2
+        comparisons += 1
+        if reached(at(mid)):
+            hi = mid
+        else:
+            lo = mid
+    return {"dt": at(hi), "ulp_distance": hi,
+            "search_comparisons": comparisons, "reached": True,
+            "realized_margin": margin(at(hi)),
+            "search": "exponential bracket then bisection in float order"}
 
 
 def check_case(name: str, r1: float, r2: float, theta: float,
@@ -146,20 +232,10 @@ def check_case(name: str, r1: float, r2: float, theta: float,
                              ("B", False, "false")):
         placed = place_row(t_min, err, eta, above)
         dt = placed["dt"]
-        if not above and dt < 0.0:
-            rows.append({
-                "row": row, "outcome": "construction-unavailable",
-                "why": ("t_min - err - eta is negative, so the "
-                        "predicate would short-circuit and this row "
-                        "would duplicate row D"),
-                "dt": dt, **placed})
-            continue
         if not placed["reached"]:
-            rows.append({
-                "row": row, "outcome": "construction-unavailable",
-                "why": (f"the realized margin stayed below eta after "
-                        f"{g3.MAX_NUDGES} nudges"),
-                "want": want, **placed})
+            rows.append({"row": row,
+                         "outcome": "construction-unavailable",
+                         "want": want, **placed})
             continue
         p, q = _events(r1, r2, theta, dt)
         got = s1.causal_relation(p, q, s1.M, tol)
@@ -169,7 +245,8 @@ def check_case(name: str, r1: float, r2: float, theta: float,
             "row": row, "dt": dt, "want": want, "got": label,
             "outcome": "pass" if label == want else "FAIL",
             "abs_dt_minus_t_min": abs(dt - t_min),
-            "nudges": placed["nudges"],
+            "ulp_distance": placed["ulp_distance"],
+            "search_comparisons": placed["search_comparisons"],
             "realized_margin": placed["realized_margin"],
             "margin_reaches_eta": placed["realized_margin"] >= eta,
         })
@@ -285,8 +362,15 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
             if r["outcome"] == "construction-unavailable"),
         "recovery_failures": recovery_failures,
         "margin_failures": margin_failures,
-        "nudges_used": sum(r.get("nudges", 0) for c in cases
-                           for r in c["rows"]),
+        "ulp_distance_total": sum(r.get("ulp_distance", 0)
+                                  for c in cases for r in c["rows"]),
+        "search_comparisons_total": sum(
+            r.get("search_comparisons", 0)
+            for c in cases for r in c["rows"]),
+        "distance_is_not_cost": ("ulp_distance measures how far the "
+                                 "nominal placement sat from a "
+                                 "satisfying one; search_comparisons "
+                                 "is the work actually done"),
         "row_d": row_d,
         "failures": failures,
         "passed": (not failures and not recovery_failures

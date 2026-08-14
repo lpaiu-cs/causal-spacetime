@@ -18,7 +18,7 @@
  },
  "g3": {
   "eta": 1e-12,
-  "max_nudges": 64,
+  "outward_search_cap": "none: the search ends on representability, not a budget",
   "n_avail": 100000,
   "k_g3b": 100000,
   "alpha_g3b": 0.05,
@@ -51,7 +51,7 @@
   "items": {
    "g1": 52400000,
    "g2": 2145392,
-   "g3a": 6454,
+   "g3a": 6455,
    "g3b_state_census_projected": 200000,
    "g3b_probes": 600000,
    "g3b_state_worst": 52400000
@@ -59,10 +59,12 @@
   "g3a_detail": {
    "cases_resolved": 70,
    "cases_unreachable": 7,
-   "calls": 6454,
-   "completed": 6454,
-   "construction_unavailable_rows": 3,
-   "nudges_used": 142,
+   "calls": 6455,
+   "completed": 6455,
+   "construction_unavailable_rows": 2,
+   "ulp_distance_total": 8120,
+   "search_comparisons_total": 244,
+   "distance_is_not_cost": "ulp_distance measures how far the nominal placement sat from a satisfying one; search_comparisons is the work actually done",
    "preflight_conditions": {
     "tri_state_rows": true,
     "recovered_dpsi_bit_identical": true,
@@ -88,18 +90,18 @@
    "row_d_costs_nothing": "row D proves the predicate never consults the solver, so it spends no calls by construction"
   },
   "worst_case_is_an_upper_bound_because": "the state calls are charged only on positive candidates, but nothing committed bounds that fraction and no rate is a guarantee about a new stream, so the bound charges every G1 point",
-  "total_census_projected": 55351846,
+  "total_census_projected": 55351847,
   "census_projected_assumes": "fully-testable rate = 1, so the scan stops at K_G3B. The census measured ELIGIBILITY and the lower probe's reach, not the realized-margin and nudge conditions that fully-testable also requires, so this is a census-informed OPTIMISTIC projection and not a measured rate. If fully-testable falls short of eligible, the scan runs longer and the total rises toward the hard bound",
-  "total_hard_worst": 107551846,
+  "total_hard_worst": 107551847,
   "o4_total_for_comparison": 54945392,
-  "hours_census_projected": 11.808393813333334,
-  "hours_hard_worst": 22.944393813333335,
+  "hours_census_projected": 11.808394026666667,
+  "hours_hard_worst": 22.944394026666668,
   "caps": {
    "calls": 80000000,
    "wall_s": 86400.0
   },
-  "cap_ratio_census_projected": 1.445299584046393,
-  "cap_ratio_hard_worst": 0.7438273072504957
+  "cap_ratio_census_projected": 1.4452995579352574,
+  "cap_ratio_hard_worst": 0.7438273003345075
  },
  "cap_contract": {
   "kind": "completion budget, not a power statement",

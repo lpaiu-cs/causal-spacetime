@@ -111,7 +111,7 @@ def test_the_census_did_not_move_the_ledger():
 def test_the_frozen_constants_were_not_retuned_to_the_result():
     plain = _prose()
     assert g3.ETA == 1e-12
-    assert g3.MAX_NUDGES == 64
+    assert not hasattr(g3, "MAX_NUDGES")   # removed, not retuned
     assert "이 결과에 맞춰 아무 규칙도 바꾸지 않았다" in plain
     assert "η 와 `MAX_NUDGES` 는 여기 없다" in plain
 

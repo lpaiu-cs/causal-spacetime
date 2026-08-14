@@ -11,7 +11,8 @@ value that must NOT be chosen after seeing the census lives here now,
 which is the whole point of the split:
 
   * `ETA` is a float-separation margin (design section 4).
-  * `MAX_NUDGES` bounds the placement search (design section 4.3).
+  * the outward search has no cap; it ends on representability
+    (design section 4.3).
 
 Both are determined by rounding arguments alone. Neither may be
 revisited in light of a frequency the census reports.
@@ -35,30 +36,28 @@ ETA = 1e-12
 ETA_GRID = (0.0, 1e-15, 1e-14, 1e-13, 1e-12, 1e-11, 1e-10, 1e-9,
             1e-8, 1e-7, 1e-6)
 
-#: How many `nextafter` steps the probe placement may take before the
-#: construction is declared unavailable, frozen HERE rather than after
-#: the census -- the cap decides whether a given cluster yields a valid
-#: probe or an unavailable one, so choosing it later would let the
-#: census pick which clusters count.
+#: There is deliberately NO cap on the outward search.
 #:
-#: It is a SEARCH BUDGET, not a guarantee. An earlier draft argued
-#: that ~17 steps suffice because a step gains at least `ulp(1.0)`;
-#: that argument is RETRACTED. The gain per step is not `ulp(1.0)` and
-#: is not even `ulp(dt)`: the margin is `|dt - t_min| - err`, and that
-#: difference is formed at the magnitude of `err`, so a one-ulp move of
-#: `dt` can move the margin by far less. One case in the G3a table --
-#: `t_min = 0.0026643057799644846`, `err = 0.0026640756792607376`,
-#: `dt = 2.3e-7` -- needs 8,042 steps, counted by running the loop, not
-#: estimated. No finite budget closes every shortfall.
+#: An earlier draft froze `MAX_NUDGES = 64` and justified it by a
+#: rounding argument -- a step gains at least `ulp(1.0)`, so ~17 steps
+#: suffice. That argument was retracted: the margin is formed at the
+#: magnitude of `err`, so a one-ulp move of `dt` moves it by less
+#: again, and one case in the G3a table needs 8,042 steps.
 #:
-#: The VALUE 64 and the 1-ulp outward method were both fixed before the
-#: census and have not been re-selected since; what changed during
-#: implementation is that the sufficiency argument was withdrawn, so 64
-#: now stands as a computation budget and nothing more. Failing to
-#: reach the margin inside it is an AVAILABILITY outcome --
-#: `construction-unavailable` -- never a mismatch or an instrument
-#: failure.
-MAX_NUDGES = 64
+#: The first response was to keep 64 and record that case as
+#: unavailable. That was wrong. 8,042 is evidence that an arbitrary cap
+#: is the defect, not evidence that the case should be discarded --
+#: keeping the number would have thrown away a probe that is perfectly
+#: constructible, and would have been one more non-adaptive margin in a
+#: stage whose entire failure was non-adaptive margins.
+#:
+#: So the search runs until the realized margin is reached. It
+#: terminates on facts, not on a budget: a non-finite value, a
+#: `nextafter` that cannot move, or -- for the lower probe -- `dt`
+#: crossing zero, where the predicate short-circuits and the probe
+#: stops being a solver test. Only those are
+#: `construction-unavailable`. The step count is recorded as a
+#: diagnostic and decides nothing.
 
 
 #: G3b availability, frozen as a DOUBLE structure (prereg re-opening
