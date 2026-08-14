@@ -56,7 +56,16 @@
 | `o4_aborted_g2` (40,000,291) | 건드리지 않음 — G2 는 재실행 대상이 아니다 |
 | `40,000,301` | 미할당 상태 그대로 보존 |
 | `refs/o4/reservation` | 읽지도 쓰지도 않음. 영구 보존 |
-| `FRESH_PROBE_SCALARS` | 비어 있어야 하며, 진단은 여기서 뽑지 않는다 |
+| `FRESH_PROBE_SCALARS` | 재생 스트림과 **충돌하지 않아야** 하며, 진단은 여기서 뽑지 않는다 |
+
+**이 행은 정정됐다.** 처음에는 "비어 있어야 한다" 였다. 그때는 pool 이
+실제로 비어 있었지만, "비어 있다" 와 "이 재생이 live 할당을 건드릴 수
+있다" 는 다른 진술이다. 다음 freeze(O4b)가 자기 스칼라를 할당하면 —
+O4 freeze 가 그랬듯이 — 그 문구는 진단과 다음 freeze 를 **영구히
+상호배타**로 만든다. 위험이 아니라 문구가 그것을 결정하게 된다.
+그래서 금지되는 것은 **충돌**로 좁혔다: live 할당이 재생 스트림의
+이름이거나 같은 seed 를 들고 있으면 거부한다. 그 밖의 live 할당은
+막지 않고 **아티팩트에 기록**한다 (`live_allocations_at_replay`).
 
 진단은 `assert_fresh_scalar` 를 호출하지 않는다. 예약 권위에 닿는 함수
 (`reserve_remote` · `remote_reservation` · `reservation_authority` ·

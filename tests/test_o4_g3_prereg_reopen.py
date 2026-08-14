@@ -110,9 +110,13 @@ def test_the_cp_bound_in_the_document_is_the_one_the_code_computes():
 
 def test_eta_and_max_nudges_are_untouched_by_the_reopening():
     assert g3.ETA == 1e-12
-    assert g3.MAX_NUDGES == 64
+    assert not hasattr(g3, "MAX_NUDGES")
     plain = _prose()
-    assert "census 결과가 바꾸지 않으며, 이 재개방도 바꾸지 않는다" in plain
+    assert "바뀌지 않는다" in plain
+    # the cap was removed, not raised from 64 to 8,042
+    assert "`MAX_NUDGES` 는 제거됐다" in plain
+    assert "임의 cap 이 결함이다" in plain
+    assert "논리적 정정" in plain
 
 
 def test_every_abort_path_leaves_a_write_once_incident():
@@ -192,12 +196,15 @@ def test_the_band_is_located_by_asking_the_solver_not_re_deriving():
     assert "솔버가 보고하는 `family` 라벨을 이분법으로 좁혀" in _prose()
 
 
-def test_a_geometry_with_no_band_raises_instead_of_pretending():
-    """Equal radii have a zero arc and are one-turn everywhere. That is
-    a fact about the geometry, so it surfaces."""
+def test_a_geometry_with_no_transition_says_so_in_its_own_type():
+    """Equal radii have a zero arc, so nothing lies below the band:
+    no-turn never occurs and there is no transition to bracket. A fact
+    about the geometry, and it surfaces as its own exception rather
+    than as a `ValueError` that a search failure would also raise."""
 
     assert g3.family_at(15.0, 15.0, 0.3, s1.M, _TOL) == "one-turn"
-    with pytest.raises(ValueError, match="no no-turn/one-turn"):
+    with pytest.raises(g3.ExpectedUnreachable,
+                       match="no transition to bracket"):
         g3.equal_perihelion_band(15.0, 15.0, s1.M, _TOL)
 
 
@@ -244,8 +251,9 @@ def test_the_band_edges_are_straddled_by_adjacent_thetas():
 def test_every_frozen_geometry_resolves_and_covers_what_it_can():
     """Each geometry either reaches all four families, or says which
     it cannot reach and why. Equal radii have a zero arc, so no-turn
-    and equal-perihelion do not exist there -- that is geometry, not a
-    gap in the table."""
+    never occurs and the equal-perihelion band -- which does exist,
+    at `dpsi <= tol` -- sits below every angle the wrapper can hand
+    over. That is geometry, not a gap in the table."""
 
     radii = {"R_LO": sz.R_LO, "R_HI": sz.R_HI}
     for name, r1, r2 in g3.G3A_GEOMETRIES:
@@ -258,7 +266,7 @@ def test_every_frozen_geometry_resolves_and_covers_what_it_can():
             try:
                 theta = g3.resolve_theta(spec, r1, r2, s1.M, _TOL,
                                          sz.PSI_MAX)
-            except ValueError:
+            except g3.ExpectedUnreachable:
                 bandless = True
                 continue
             families.add(g3.family_at(r1, r2, g3.wrapper_dpsi(theta),

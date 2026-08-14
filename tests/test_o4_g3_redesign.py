@@ -140,16 +140,19 @@ def test_eta_matches_the_constant_the_census_uses():
     assert "η = 10⁻¹² (frozen)" in _prose()
 
 
-def test_max_nudges_is_frozen_now_not_after_the_census():
-    """The cap decides whether a cluster yields a valid probe or an
-    unavailable one, so choosing it later would let the census pick
-    which clusters count -- the same trap eta was kept out of."""
+def test_the_outward_search_has_no_cap_and_says_why():
+    """8,042 is evidence that an arbitrary cap is the defect, not that
+    the case should be discarded. The cap is gone from the constant,
+    the document and the verdict."""
 
     plain = _prose()
-    assert g3.MAX_NUDGES == 64
-    assert "`MAX_NUDGES = 64` (frozen)" in plain
-    assert "census 가 어떤 cluster 를 셀지 고르게 된다" in plain
-    assert "실제로 쓴 걸음 수도 함께 기록한다" in plain
+    assert not hasattr(g3, "MAX_NUDGES")
+    assert "바깥 탐색에는 cap 이 없다" in plain
+    assert "임의 cap 이 결함" in plain
+    assert "거리는 진단값이며 비용이 아니다" in plain
+    source = (_REPO / "experiments" / "oracle"
+              / "o4_g3_redesign.py").read_text(encoding="utf-8")
+    assert "There is deliberately NO cap" in source
 
 
 def test_lower_probe_coverage_is_specified_as_a_joint():
@@ -159,18 +162,32 @@ def test_lower_probe_coverage_is_specified_as_a_joint():
     assert "적격 cluster 에서만" in plain
 
 
-def test_the_post_census_list_excludes_both_frozen_constants():
+def test_the_post_census_list_excludes_eta_and_has_no_cap_to_list():
     plain = _prose()
-    assert "η 와 `MAX_NUDGES` 는 여기 없다" in plain
+    assert "η 는 여기 없다" in plain
+    assert "탐색 cap 도 여기 없다 — 아예 존재하지 않기 때문이다" in plain
 
 
-def test_the_nudge_bound_follows_from_the_rounding_argument():
-    """17 steps suffice at the worst step size; 64 is the frozen cap."""
+def test_the_eight_thousand_case_is_a_SUCCESS_not_an_exclusion():
+    """Run the loop: the margin IS reached, at 8,042 steps. The probe
+    is perfectly constructible, and the first response -- capping at 64
+    and recording it unavailable -- discarded a good probe."""
 
-    worst_shortfall = 4 * 0.5 * math.ulp(8.5)
-    smallest_step = math.ulp(1.0)
-    assert math.ceil(worst_shortfall / smallest_step) <= g3.MAX_NUDGES
-    assert "약 17 걸음이면 충분하고" in _prose()
+    t_min = 0.0026643057799644846
+    err = 0.0026640756792607376
+    dt = t_min - err - g3.ETA
+    steps = 0
+    while abs(dt - t_min) - err < g3.ETA:
+        dt = math.nextafter(dt, -math.inf)
+        steps += 1
+        if steps > 10 ** 6:
+            break
+    assert steps == 8_042
+    assert "8,042 걸음" in _prose()
+    source = (_REPO / "experiments" / "oracle"
+              / "o4_g3_redesign.py").read_text(encoding="utf-8")
+    assert "8,042 steps" in source
+    assert "151" not in source
 
 
 def test_the_redesign_arithmetic_has_one_home():
@@ -258,3 +275,340 @@ def test_the_document_quotes_the_measured_angle_error():
     assert "4.14e-13" in plain
     got = abs(math.acos(max(-1.0, min(1.0, math.cos(1e-5)))) - 1e-5)
     assert f"{got:.2e}" == "4.14e-13"
+
+
+def test_the_search_is_exponential_but_lands_where_the_walk_would():
+    """No cap, and no linear walk either: G3b places three probes at
+    100,000 clusters, where walking thousands of ulps would be a new
+    way to stall. The margin is monotone in float order, so bracket and
+    bisect -- and land on the SAME first-satisfying value."""
+
+    import o4b_g3a as g3a
+
+    t_min, err = 0.0026643057799644846, 0.0026640756792607376
+    walked, steps = t_min - err - g3.ETA, 0
+    while abs(walked - t_min) - err < g3.ETA:
+        walked = math.nextafter(walked, -math.inf)
+        steps += 1
+
+    placed = g3a.place_row(t_min, err, g3.ETA, above=False)
+    assert placed["reached"] is True          # a SUCCESS, not discarded
+    assert placed["dt"] == walked
+    assert placed["ulp_distance"] == steps == 8_042
+    assert "bisection" in placed["search"]
+
+
+def test_the_lower_probe_stops_at_zero_not_at_a_budget():
+    """Termination is on representability. `t_min = 0` leaves nowhere
+    below to go, and that is the only reason row B gives up there."""
+
+    import o4b_g3a as g3a
+
+    placed = g3a.place_row(0.0, 0.0, g3.ETA, above=False)
+    assert placed["reached"] is False
+    assert "short-circuit" in placed["why"]
+
+
+def test_the_inside_probe_may_not_use_the_monotone_search():
+    """Widening one leg narrows the other, so the success region is an
+    interval and an exponential jump can step over it. The constraint
+    has to be recorded before G3b is built, not discovered in it."""
+
+    plain = _prose()
+    assert "성공영역이 반직선이 아니라 구간" in plain
+    assert "두 leg 의 표현 가능 범위 교집합을 직접 구하고" in plain
+    assert "호출해서는 안 된다" in plain
+
+    import o4b_g3a as g3a
+    assert "must NOT call this function" in g3a.place_row.__doc__
+    assert "MONOTONICITY IS A PRECONDITION" in g3a.place_row.__doc__
+
+
+def test_the_only_accepted_omissions_are_the_seven_named_ones():
+    """Frozen as a list of labels, and the run has to agree with it.
+
+    Seven of the eleven specs are found by bisecting the solver's
+    equal-perihelion band, and equal radii have no such band."""
+
+    import o4b_g3a as g3a
+
+    assert g3.EXPECTED_UNREACHABLE_LABELS == {
+        f"equal-radius/{s}" for s in _BAND_SPECS}
+
+    table = g3a.run_g3a()
+    assert {u["case"] for u in table["unreachable"]} == (
+        g3.EXPECTED_UNREACHABLE_LABELS)
+    assert table["unexpected_unreachable"] == []
+    assert table["unexpectedly_reachable"] == []
+    assert table["case_build_failures"] == []
+    assert all(u["expected"] for u in table["unreachable"])
+
+
+#: The band-dependent specs that an equal-radius pair cannot host.
+#: `one-turn-beyond` is deliberately NOT here -- it needs the band's
+#: upper edge, which is known in closed form, and the angle above it
+#: is reachable.
+_BAND_SPECS = ("no-turn-mid", "equal-perihelion-inside",
+               "equal-perihelion-lower-edge-below",
+               "equal-perihelion-lower-edge-above",
+               "equal-perihelion-upper-edge-below",
+               "equal-perihelion-upper-edge-above")
+
+#: Every spec whose construction goes through the band search, which
+#: is what a broken search takes down at a geometry that has one.
+_ALL_BAND_SPECS = _BAND_SPECS + ("one-turn-beyond",)
+
+
+def _flaky_band(monkeypatch, radii: tuple[float, float]):
+    """Make the band search fail with a plain `ValueError` at one
+    geometry, the way a bracket or a bisection would."""
+
+    real = g3.equal_perihelion_band
+
+    def flaky(r1, r2, m, tol, steps=200):
+        if (r1, r2) == radii:
+            raise ValueError("bisection never landed in the band")
+        return real(r1, r2, m, tol, steps)
+
+    monkeypatch.setattr(g3, "equal_perihelion_band", flaky)
+
+
+def test_a_search_that_fails_is_not_an_omission(monkeypatch):
+    """The R2 defect. `equal_perihelion_band()` fails for two
+    unrelated reasons, and swallowing both as `unreachable` dropped
+    cases silently -- while the other geometries still covered all
+    four families and no row had run to fail, so G3a would PASS with a
+    hole in its table and fresh seeds would then be spent."""
+
+    import o4b_g3a as g3a
+
+    _flaky_band(monkeypatch, (13.0, 17.0))
+    preflight = g3a.run_preflight()
+
+    table = preflight["table"]
+    lost = {f["case"] for f in table["case_build_failures"]}
+    assert lost == {f"increasing-interior/{s}" for s in _ALL_BAND_SPECS}
+    # the hole would not have shown up in any other condition
+    assert table["covers_every_family"]
+    assert not table["failures"]
+    assert preflight["conditions"]["every_case_built"] is False
+    assert preflight["passed"] is False
+    assert "every_case_built" in preflight["failed_conditions"]
+
+
+def test_a_search_that_fails_AT_AN_EXPECTED_NAME_is_still_a_failure(
+        monkeypatch):
+    """The R4 defect, and the reason the list of names is not enough.
+
+    A frozen list separates the two reasons only by WHERE the failure
+    happened. A bracket that went wrong on `equal-radius` lands on
+    seven names already on the list, so the label check waves it
+    through as the expected absence -- the branch goes unverified and
+    G3a passes. Only the raiser knows which reason it had, so the
+    geometry raises `ExpectedUnreachable` and everything else is a
+    build failure regardless of where it happened."""
+
+    import o4b_g3a as g3a
+
+    def broken(r1, r2, m, tol):
+        raise ValueError("the solver's small-angle structure moved")
+
+    # equal radii do not reach the band SEARCH -- their band is known
+    # in closed form -- so the analogous failure is their structure
+    # check, which every band-dependent spec there goes through
+    monkeypatch.setattr(g3, "verify_equal_radius_structure", broken)
+    preflight = g3a.run_preflight()
+
+    table = preflight["table"]
+    failed = {f["case"] for f in table["case_build_failures"]}
+    assert failed == {f"equal-radius/{s}" for s in _ALL_BAND_SPECS}
+    listed = [f for f in table["case_build_failures"]
+              if f["on_the_expected_list"]]
+    assert len(listed) == len(_BAND_SPECS)
+    # the label check alone is satisfied -- nothing is missing from
+    # the list, and nothing on the list got built
+    assert preflight["conditions"]["only_expected_unreachable"] is True
+    assert preflight["conditions"]["every_case_built"] is False
+    assert preflight["passed"] is False
+
+
+def test_the_geometry_raises_its_own_exception_type():
+    """`ExpectedUnreachable` is what "this branch does not exist here"
+    is spelled as; a plain `ValueError` never means that."""
+
+    import s1_schwarzschild_cost as s1
+
+    with pytest.raises(g3.ExpectedUnreachable, match="zero arc"):
+        g3.equal_perihelion_band(15.0, 15.0, s1.M, s1.DEFAULT_TOL)
+    assert issubclass(g3.ExpectedUnreachable, Exception)
+    assert not issubclass(g3.ExpectedUnreachable, ValueError)
+
+
+def test_equal_radii_DO_have_a_band_it_is_simply_out_of_reach():
+    """A correction to what this module said twice.
+
+    "Equal radii are always one-turn" is false in `dpsi`: the solver
+    reports `equal-perihelion` for every `dpsi <= tol`. What is true
+    is that nothing lies BELOW the band, so no-turn never occurs and
+    there is no transition to bracket -- and that the band sits below
+    every angle the wrapper can hand over, so no case in theta space
+    could land in it either."""
+
+    import math
+
+    import s1_schwarzschild_cost as s1
+
+    assert g3.family_at(15.0, 15.0, 1e-9, s1.M,
+                        s1.DEFAULT_TOL) == "equal-perihelion"
+    assert not any(
+        g3.family_at(15.0, 15.0, x, s1.M, s1.DEFAULT_TOL) == "no-turn"
+        for x in (1e-13, 1e-11, 1e-9, 5e-9, 9e-9, 1.1e-8, 1e-7, 1e-3))
+
+    smallest = math.acos(math.nextafter(1.0, -math.inf))
+    assert smallest == 1.4901161193847656e-08
+    assert smallest > s1.DEFAULT_TOL          # the band is unreachable
+    reached = {g3.family_at(15.0, 15.0, g3.wrapper_dpsi(t), s1.M,
+                            s1.DEFAULT_TOL)
+               for t in (0.0, 1e-9, 1e-8, 1e-7, 1e-4, 1e-2, 0.5, 1.0)}
+    assert reached == {"radial", "one-turn"}
+
+
+def test_the_equal_radius_structure_is_checked_claim_by_claim(
+        monkeypatch):
+    """Four separate assertions, not one weak one (review R7).
+
+    "The low probe is not no-turn" passes on `radial` too, so a solver
+    whose small-angle behaviour had moved would go by as the expected
+    structure. Each claim is therefore falsified on its own."""
+
+    import s1_schwarzschild_cost as s1
+
+    ok = g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                          s1.DEFAULT_TOL)
+    assert ok["families_seen"] == ["equal-perihelion", "one-turn",
+                                   "radial"]
+    assert ok["band"] == (0.0, s1.DEFAULT_TOL)
+    assert ok["smallest_recoverable_dpsi"] > s1.DEFAULT_TOL
+
+    real = g3.family_at
+
+    def forced(want, at=None):
+        def fam(r1, r2, x, m, tol):
+            if at is None or x == at:
+                return want
+            return real(r1, r2, x, m, tol)
+        return fam
+
+    # the band is not there at all
+    monkeypatch.setattr(g3, "family_at", forced("radial"))
+    with pytest.raises(ValueError, match="should cover small positive"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                         s1.DEFAULT_TOL)
+    # above the band it is not one-turn
+    monkeypatch.setattr(g3, "family_at", forced("radial", at=3.0))
+    with pytest.raises(ValueError, match="should be one-turn"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                         s1.DEFAULT_TOL)
+    # a no-turn region appeared
+    monkeypatch.setattr(g3, "family_at", forced("no-turn", at=1e-6))
+    with pytest.raises(ValueError, match="no-turn should not occur"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                         s1.DEFAULT_TOL)
+    # the band is no longer out of the wrapper's reach
+    monkeypatch.setattr(g3, "family_at", real)
+    with pytest.raises(ValueError, match="no longer out of the wrapper"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M, 1.0)
+
+
+def test_one_turn_beyond_IS_constructible_at_equal_radii():
+    """The R7 defect: a case the preflight table was leaving out.
+
+    It asks for an angle above the band's upper edge. `1.5 * tol` is
+    1.5e-08, the wrapper recovers 1.4901e-08 from it, and that is
+    above `tol`, so the solver reports `one-turn` -- exactly what the
+    spec's name says. The earlier version reached the band SEARCH
+    first and gave up, which is a fact about the resolver, not about
+    representability."""
+
+    import o4b_g3a as g3a
+    import s1_schwarzschild_cost as s1
+
+    spec = next(s for s in g3.G3A_ANGLE_SPECS
+                if s[0] == "one-turn-beyond")
+    theta = g3.resolve_theta(spec, 15.0, 15.0, s1.M, s1.DEFAULT_TOL,
+                             sz.PSI_MAX)
+    assert theta == 1.5 * s1.DEFAULT_TOL
+    dpsi = g3.wrapper_dpsi(theta)
+    assert dpsi == 1.4901161193847656e-08 > s1.DEFAULT_TOL
+    assert g3.family_at(15.0, 15.0, dpsi, s1.M,
+                        s1.DEFAULT_TOL) == "one-turn"
+
+    assert ("equal-radius", "one-turn-beyond") not in (
+        g3.EXPECTED_UNREACHABLE)
+    table = g3a.run_g3a()
+    built = {c["case"]: c["family"] for c in table["detail"]}
+    assert built["equal-radius/one-turn-beyond"] == "one-turn"
+    assert table["cases"] == 71
+    assert len(table["unreachable"]) == 6
+
+
+def test_the_duplicate_recovered_angles_are_recorded_not_counted():
+    """The case is valid and it runs, but at equal radii it recovers
+    the SAME dpsi as `radial-reachable-edge-above`, so it adds no
+    solver state. Recorded so a reader cannot count the row as
+    independent coverage."""
+
+    import o4b_g3a as g3a
+
+    table = g3a.run_g3a()
+    dupes = table["duplicate_recovered_angles"]
+    incidental = [d for d in dupes if not d["by_construction"]]
+    assert len(incidental) == 1
+    assert incidental[0]["cases"] == ["equal-radius/one-turn-beyond",
+                                      "equal-radius/"
+                                      "radial-reachable-edge-above"]
+    assert incidental[0]["dpsi"] == 1.4901161193847656e-08
+    assert incidental[0]["family"] == "one-turn"
+
+    # the other seven are the reachability-edge pairs, where agreeing
+    # with theta = 0 is what the case is there to demonstrate
+    assert len(dupes) - len(incidental) == 7
+    assert all(set(d["cases"][0].split("/")) & {"radial"}
+               for d in dupes if d["by_construction"])
+
+    assert table["cases"] == 71
+    assert table["distinct_solver_states"] == 63
+    assert "must not be counted as independent" in (
+        table["why_duplicates_are_recorded"])
+
+
+def test_a_named_omission_that_turns_out_buildable_also_fails(
+        monkeypatch):
+    """The list is an equality, not a lower bound: if a case the freeze
+    recorded as impossible does resolve, the frozen table no longer
+    describes the solver and the preflight has to say so."""
+
+    import o4b_g3a as g3a
+
+    monkeypatch.setattr(
+        g3, "EXPECTED_UNREACHABLE_LABELS",
+        g3.EXPECTED_UNREACHABLE_LABELS | {"anchor-pair/no-turn-mid"})
+    preflight = g3a.run_preflight()
+
+    assert preflight["table"]["unexpectedly_reachable"] == [
+        "anchor-pair/no-turn-mid"]
+    assert preflight["conditions"]["only_expected_unreachable"] is False
+    assert preflight["passed"] is False
+
+
+def test_distance_and_work_are_separate_fields():
+    """`ulp_distance` is how far the nominal placement sat from a
+    satisfying one; it is not a count of anything performed."""
+
+    import o4b_g3a as g3a
+    placed = g3a.place_row(0.0026643057799644846,
+                           0.0026640756792607376, g3.ETA, above=False)
+    assert placed["ulp_distance"] == 8_042
+    assert placed["search_comparisons"] < 40
+    assert "nudges" not in placed
+    assert "거리가 실행 횟수로 오독된다" in _prose()

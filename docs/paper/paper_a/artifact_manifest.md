@@ -129,12 +129,12 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | --- | --- |
 | `docs/prereg/p14_s4_schwarzschild_c1.md` | `0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4` |
 | `docs/prereg/p14_s4_executed_freeze_manifest.json` | `9e604fbc3d4e1399d7cfdc410a2f97e4bc7645ff2d1ceab4638b4c3cd9661071` |
-| `docs/prereg/p14_s4_freeze_manifest.json` | `4d715ce554622f031eb185de29b3ad0bad181bbdc8759634d0652e34888e86a3` |
+| `docs/prereg/p14_s4_freeze_manifest.json` | `5aa015fe315662ef8fdb6d79c7e89a9c954dbb771afe01721096c02553816ce3` |
 | `docs/prereg/p14_s4_results.json` | `3c728bbeaab6ee1b02a700c972d7d77d542da0726098cb46a3ec08ec0fc5fd35` |
 | `docs/prereg/p14_s3_probe_results.json` | `1bd37acc1a01780c6078c895fd0fa77adb7a8acbd324b2c12a7d41d7afd7ebc8` |
 | `docs/prereg/p14_c2_feasibility_audit.json` | `ab133b2030a82d17f6a70629b1fedc58be52de1e5fe03bd8f5ad127548efa886` |
 | `experiments/positive_control/s4_schwarzschild_c1.py` | `71a13cbc052d1a71e59119d4dcf385b3d3fb830a2f142dd9253690c481823805` |
-| `experiments/positive_control/probe_seed_ledger.py` | `d38a3b2d00bd1e60d865096b6b9a77cd616410bd67420784508bf7b3fdf0bce4` |
+| `experiments/positive_control/probe_seed_ledger.py` | `87afc7572e8432b8a8cb1e438029a890e0d46a908a3b73f5ae5bf9a3381d6158` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
 | `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
 | `docs/theory/schwarzschild_volume_oracle_note.md` | `e4634637ab17a00cb4ba668d65011aedb9e1f06d5c4cecb9a5c33fc5f2b31f51` |
@@ -153,7 +153,7 @@ today. The seed ledger row above covers both stages.
 | --- | --- |
 | `docs/prereg/p14_s5_schwarzschild_c2.md` | `c9f8997336b543400b10aee9548be66a175ac5eee16d1ee906398b132273c340` |
 | `docs/prereg/p14_s5_executed_freeze_manifest.json` | `0b4d28976076ef0e59122326cb53dee976f87c23aeaff5bb517b672f3d1ded08` |
-| `docs/prereg/p14_s5_freeze_manifest.json` | `798d6e3b27046e0f6290db659c8c6ddc5edeabff722014302cfcf395479e7a50` |
+| `docs/prereg/p14_s5_freeze_manifest.json` | `5f04f74a5b470369ebb3e2615caccf84dcc1c1e7b5981b44a81000d66a7afd76` |
 | `docs/prereg/p14_s5_results.json` | `d5f339fb4b33d3cd048c93587f630b45314350e7919ec848d560fe7e8b8a9ad6` |
 | `experiments/positive_control/s5_schwarzschild_c2.py` | `4761e5f90e019b8823fd93c883ece1a2f55034799a45f65d40d2cbcb0f3adc19` |
 | `tests/test_s5_prereg.py` | `29525ef24558c6142eaccf44eb58e82f65a689c65d88bcc5c691505434798a4a` |
