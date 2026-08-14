@@ -196,9 +196,21 @@ def claim(payload: dict) -> str:
     Create-only semantics need care: pushing the freeze commit itself
     would be a no-op "everything up-to-date" against an existing
     reservation at the same SHA, i.e. a silent second claim. The
-    pushed object is therefore unique to this ATTEMPT -- a commit
-    carrying this run's payload -- so `--force-with-lease=<ref>:`
-    ("the ref must not exist") rejects every later attempt."""
+    pushed object is therefore unique to this ATTEMPT, so
+    `--force-with-lease=<ref>:` ("the ref must not exist") rejects
+    every later attempt.
+
+    UNIQUE BY A NONCE, NOT BY THE PAYLOAD (review R12). The payload is
+    the freeze rev, the manifest digest and the seeds -- identical
+    across attempts by construction. The identity is fixed on purpose.
+    Git's commit timestamp has one-second resolution. So two runs on
+    one host reaching this within the same second would build the same
+    empty tree, message, identity and timestamp, hence the SAME commit
+    SHA -- and then the second push is "everything up-to-date", the
+    `held() == obj` check passes for both, and two processes draw the
+    same campaign seeds while each believes it holds the claim. That
+    is the very no-op this comment set out to avoid, arrived at from
+    the other direction."""
 
     verify_o4_ref_retained()
     if (already := held()) is not None:
@@ -207,8 +219,9 @@ def claim(payload: dict) -> str:
             f"campaign has already opened these streams from some "
             f"checkout; the seeds are spent whether or not that run "
             f"published a result")
+    attempt = {**payload, "attempt_nonce": os.urandom(16).hex()}
     obj = _make_commit(
-        json.dumps(payload, ensure_ascii=False, sort_keys=True))
+        json.dumps(attempt, ensure_ascii=False, sort_keys=True))
     push = subprocess.run(
         ["git", "push", f"--force-with-lease={REF}:", REMOTE,
          f"{obj}:{REF}"],

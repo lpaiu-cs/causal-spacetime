@@ -44,17 +44,29 @@ def _draw(rng, k, r_lo, r_hi, psi):
 
 
 def _state(r, theta, tol, gap=6.0):
-    """A cluster with a comfortable window, so eligibility holds."""
+    """The PREDICATE's view: a cluster with a comfortable window, so
+    eligibility holds."""
 
     half = 0.5 * (sz.DT - gap)
     return {"t1": half, "err1": 1e-9, "t2": half, "err2": 1e-9,
+            "theta": theta, "dpsi": theta, "recovery_shift": 0.0,
             "family1": "one-turn", "family2": "one-turn"}
 
 
-def _campaign(tmp_path, cfg=None, state_of=_state, **kw):
+def _ell(r, theta, tol, gap=6.0):
+    """The ESTIMAND's view, at the drawn theta. Deliberately a
+    different function from `_state`: the runner must not substitute
+    one coordinate for the other."""
+
+    half = 0.5 * (sz.DT - gap)
+    ell = sz.DT - 2 * half
+    return (ell if ell > 0.0 else 0.0), half, half
+
+
+def _campaign(tmp_path, cfg=None, state_of=_state, ell=_ell, **kw):
     return run.Campaign(cfg or _cfg(), _SEEDS, "a" * 40, "b" * 64,
                         checkpoint_path=tmp_path / "ck.json",
-                        draw=_draw, state_of=state_of, **kw)
+                        draw=_draw, state_of=state_of, ell=ell, **kw)
 
 
 # ------------------------------------------------------ the ordering
@@ -121,7 +133,10 @@ def test_ineligible_points_are_accumulated_too(tmp_path, monkeypatch):
     def narrow(r, theta, tol):
         return _state(r, theta, tol, gap=-1.0)   # L < 0 -> Z = 0
 
-    campaign = _campaign(tmp_path, state_of=narrow)
+    def narrow_ell(r, theta, tol):
+        return _ell(r, theta, tol, gap=-1.0)
+
+    campaign = _campaign(tmp_path, state_of=narrow, ell=narrow_ell)
     campaign.run_g3a()
     with pytest.raises(stages.StageFailure) as caught:
         campaign.run_g3b()
@@ -302,3 +317,181 @@ def test_the_sampler_is_imported_rather_than_copied():
               / "o4b_volume_audit.py").read_text(encoding="utf-8")
     assert "o4._draw" in source
     assert "np.cbrt" not in source          # not reimplemented here
+
+
+# ------------------------------------------------- the two coordinates
+
+def test_the_predicate_state_is_built_at_the_recovered_dpsi():
+    """The abort's third non-adaptive margin: a probe placed from
+    `T(theta)` and judged at `t_min(acos(cos theta))` is placed in one
+    coordinate and read in another. The recovery error is not bounded
+    in ulps near zero -- it reaches 4.14e-13 at theta = 1e-5, the same
+    order as eta."""
+
+    import o4_g3_redesign as g3
+    import s1_schwarzschild_cost as s1
+
+    theta = 1e-5
+    state = run.solver_state(14.0, theta, s1.DEFAULT_TOL)
+    assert state["dpsi"] == g3.wrapper_dpsi(theta) != theta
+    assert abs(state["recovery_shift"]) > 0.0
+
+    # the shift is the same order as eta, which is why placing in one
+    # coordinate and reading in the other is not a rounding detail
+    assert abs(state["recovery_shift"]) == pytest.approx(4.137e-13,
+                                                         rel=1e-3)
+    assert abs(state["recovery_shift"]) > 0.4 * g3.ETA
+
+    # and the state IS the solver at the recovered angle
+    assert state["t1"] == s1.flight_time(
+        sz.R_IN, 14.0, state["dpsi"], s1.M, s1.DEFAULT_TOL)[0]
+    assert state["t2"] == s1.flight_time(
+        14.0, sz.R_OUT, state["dpsi"], s1.M, s1.DEFAULT_TOL)[0]
+
+
+def test_g1_uses_the_estimand_and_g3b_uses_the_predicate_state(
+        tmp_path, monkeypatch):
+    """Two coordinates, two functions. Fixing `solver_state` alone
+    would have moved the G1 sample off the frozen estimand instead."""
+
+    called = {"ell": 0, "state": 0}
+
+    def counting_ell(r, theta, tol):
+        called["ell"] += 1
+        return _ell(r, theta, tol)
+
+    def counting_state(r, theta, tol):
+        called["state"] += 1
+        return _state(r, theta, tol)
+
+    campaign = _campaign(tmp_path, ell=counting_ell,
+                         state_of=counting_state)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    campaign.run_g3a()
+    campaign.run_g3b()
+    # every drawn point costs an estimand evaluation; only candidates
+    # cost a predicate-coordinate one
+    assert called["ell"] == campaign.scanned
+    assert called["state"] == campaign.prefix.candidates + (
+        campaign.prefix.scan_candidates)
+    assert called["state"] <= called["ell"]
+
+
+# ------------------------------------------------ the probe contract
+
+def test_every_probe_checks_both_legs():
+    """The design fixes both legs of all three probes, and the cost
+    model froze six predicate calls per fully-testable cluster on that
+    basis. Checking only the starved leg spends four and lets a defect
+    on the other one through."""
+
+    assert set(run.Campaign.CONTRACT) == {"inside", "outside_above",
+                                          "outside_below"}
+    for wanted in run.Campaign.CONTRACT.values():
+        assert set(wanted) == {"p_to_x", "x_to_q"}
+    assert run.Campaign.CONTRACT["outside_above"] == {"p_to_x": True,
+                                                      "x_to_q": False}
+    assert run.Campaign.CONTRACT["outside_below"] == {"p_to_x": False,
+                                                      "x_to_q": True}
+    calls = 2 * len(run.Campaign.CONTRACT)
+    import o4b_sizing as sizing
+    assert calls == sizing.PROBE_CALLS_PER_CLUSTER == 6
+
+
+def test_a_defect_on_the_unstarved_leg_is_a_mismatch(tmp_path,
+                                                     monkeypatch):
+    """outside-above starves `x -> q`; a wrapper returning `None` on
+    the other leg used never to be looked at."""
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(
+        campaign, "_legs",
+        lambda r, th, t_x: {"p_to_x": None, "x_to_q": False})
+    campaign._check_contract(
+        13.0, 0.1, _state(13.0, 0.1, 1e-8),
+        {"probes": {"inside": {"reached": True, "t_x": 1.0},
+                    "outside_above": {"reached": True, "dt": 1.0},
+                    "outside_below": {"reached": True, "dt": 1.0}}})
+    legs = {(m["probe"], m["leg"]) for m in campaign.mismatches}
+    assert ("outside_above", "p_to_x") in legs
+    assert all(m["got"] == "None" or m["want"] is not False
+               for m in campaign.mismatches
+               if m["leg"] == "p_to_x")
+
+
+# ------------------------------------------------------- the cap path
+
+def test_a_fired_cap_becomes_an_inconclusive_incident(tmp_path,
+                                                      monkeypatch):
+    """Not a `CapReached` escaping the entry point. If it fires during
+    G3b -- before the first checkpoint exists -- the seeds are already
+    spent and the reservation forbids re-running them, so everything
+    accumulated would vanish with the process."""
+
+    import o4b_budget as bud
+
+    campaign = _campaign(tmp_path)
+    campaign.run_g3a()
+
+    def fires():
+        raise bud.CapReached("max-wall", 8_000_000, 7_999_999,
+                             86_401.0, 1)
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign._staged("g3b", fires)
+    failure = caught.value
+    assert failure.stage == "g3b"
+    assert failure.outcome == "INCONCLUSIVE"
+    assert failure.detail["cap"]["reason"] == "max-wall"
+    assert "g1_partial" in failure.preserved
+    # and the checkpoint was written BEFORE the incident is composed
+    assert ck.read(tmp_path / "ck.json")["stage"] == "g3b"
+    assert ck.read(tmp_path / "ck.json")["partial"] is True
+
+
+def test_a_cap_is_inconclusive_and_never_invalid():
+    """The instrument said nothing wrong; the run ran out. `INVALID`
+    would indict the wrapper for a budget decision."""
+
+    source = (_REPO / "experiments" / "oracle"
+              / "o4b_volume_audit.py").read_text(encoding="utf-8")
+    assert "a cap is not a contract failure" in source.lower()
+    assert "CapReached" in source
+
+
+# ------------------------------------------------ the reservation nonce
+
+def test_two_attempts_in_one_second_claim_different_objects(
+        monkeypatch):
+    """Git's commit timestamp is one-second resolution and the payload
+    and identity are fixed, so without a nonce two runs on one host
+    could build the SAME commit -- and then the second push is
+    `everything up-to-date` and both pass the `held() == obj` check."""
+
+    import o4b_reservation as res
+
+    messages = []
+    monkeypatch.setattr(res, "verify_o4_ref_retained", lambda: "c" * 40)
+    monkeypatch.setattr(res, "held", lambda: None)
+    monkeypatch.setattr(res, "_make_commit",
+                        lambda m: messages.append(m) or "obj")
+    monkeypatch.setattr(res.subprocess, "run",
+                        lambda *a, **k: type("R", (), {
+                            "returncode": 0, "stdout": "",
+                            "stderr": ""})())
+    # free before the push, taken after it
+    pushed = {"n": 0}
+
+    def held():
+        pushed["n"] += 1
+        return None if pushed["n"] % 2 == 1 else "obj"
+
+    monkeypatch.setattr(res, "held", held)
+
+    payload = {"campaign": "o4b", "freeze_rev": "a" * 40}
+    res.claim(dict(payload))
+    res.claim(dict(payload))
+    assert len(messages) == 2
+    assert messages[0] != messages[1]
+    assert all("attempt_nonce" in m for m in messages)

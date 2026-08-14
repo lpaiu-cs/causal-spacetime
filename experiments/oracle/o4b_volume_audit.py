@@ -300,18 +300,36 @@ def publish_write_once(path: Path, payload: dict) -> None:
 # ------------------------------------------------------- the G3 state
 
 def solver_state(r: float, theta: float, tol: float) -> dict:
-    """The predicate's own view of one cluster.
+    """The PREDICATE's view of one cluster, in the predicate's own
+    angle.
+
+    THIS IS NOT THE G1 ESTIMAND'S VIEW, and merging the two was the
+    third of the abort's four non-adaptive margins (review R9). G1
+    integrates `L_S1 = [dt - T1(theta) - T2(theta)]_+` at the drawn
+    `theta`; `causal_relation` never sees `theta`, it recovers
+    `dpsi = acos(cos theta)` from the coordinates and calls the solver
+    with THAT. The two agree to within an ulp of angle, and the abort
+    happened because an ulp of angle is not an ulp of time -- the
+    recovery error is unbounded in ulps near zero and reaches 4.14e-13
+    at theta = 1e-5, which is the same order as eta.
+
+    So a probe placed from `T(theta)` and judged at `t_min(dpsi)` is
+    placed in one coordinate and read in another. The window is built
+    here, in the coordinate that reads it.
 
     `err` is kept, unlike in `_ell`, because the probes are PLACED
     with it. It still never enters the inference: it is a
     Gauss-Legendre stopping heuristic, not a certified enclosure, and
     an interval built from it would not be conservative."""
 
+    dpsi = g3.wrapper_dpsi(theta)
     d1: dict = {}
     d2: dict = {}
-    t1, err1 = s1.flight_time(sz.R_IN, r, theta, s1.M, tol, d1)
-    t2, err2 = s1.flight_time(r, sz.R_OUT, theta, s1.M, tol, d2)
+    t1, err1 = s1.flight_time(sz.R_IN, r, dpsi, s1.M, tol, d1)
+    t2, err2 = s1.flight_time(r, sz.R_OUT, dpsi, s1.M, tol, d2)
     return {"t1": t1, "err1": err1, "t2": t2, "err2": err2,
+            "theta": theta, "dpsi": dpsi,
+            "recovery_shift": dpsi - theta,
             "family1": d1.get("family"), "family2": d2.get("family")}
 
 
@@ -354,6 +372,17 @@ def judge_cluster(state: dict, eta: float) -> dict:
 # ----------------------------------------------------------- the run
 
 def _statistics(acc) -> dict:
+    """The running accumulator, safe at zero samples.
+
+    A cap can fire before the first point is accumulated -- during
+    G3a, or on the first G3b chunk -- and the accumulator raises on an
+    empty mean. Letting that propagate would take out the incident
+    that the cap path exists to write, which is the failure mode in
+    miniature: an error while recording an error, and nothing kept."""
+
+    if acc.n == 0:
+        return {"n": 0, "mean_z": None, "var_z": None,
+                "why_no_moments": "no samples accumulated yet"}
     return {"n": acc.n, "mean_z": acc.mean, "var_z": acc.var}
 
 
@@ -363,7 +392,7 @@ class Campaign:
 
     def __init__(self, cfg: dict, seeds: dict, freeze_sha: str,
                  digest: str, checkpoint_path: Path = _CHECKPOINT,
-                 draw=None, state_of=None) -> None:
+                 draw=None, state_of=None, ell=None) -> None:
         self.cfg = cfg
         self.seeds = seeds
         self.freeze_sha = freeze_sha
@@ -372,6 +401,10 @@ class Campaign:
         self.budget = o4b_budget.Budget(cfg["max_calls"],
                                         cfg["max_wall_s"])
         self.draw = draw if draw is not None else o4._draw
+        # `ell` is G1's estimand at the drawn theta; `state_of` is the
+        # predicate's view at the recovered dpsi. Two coordinates, two
+        # functions, and the runner never substitutes one for the other.
+        self.ell = ell if ell is not None else o4._ell
         self.state_of = (state_of if state_of is not None
                          else solver_state)
         self.g1 = eb.Accumulator()
@@ -466,11 +499,22 @@ class Campaign:
         return report
 
     def _one(self, r: float, theta: float) -> None:
-        state = self.state_of(r, theta, self.cfg["tol"])
-        ell = sz.DT - state["t1"] - state["t2"]
-        z = (ell if ell > 0.0 else 0.0) / sz.DT
+        """One drawn point, in BOTH coordinates and in that order.
+
+        `z` comes from the inherited `_ell`, at the drawn `theta`:
+        that is the frozen estimand, and it goes into G1 whatever
+        happens next. Only a candidate gets a second, separate state
+        computed in the predicate's recovered `dpsi`, which is what
+        G3b places its probes from. Computing one state and using it
+        for both would put the estimand in the predicate's coordinate
+        or the probes in the estimand's; the design separates them
+        deliberately."""
+
+        ell, _, _ = self.ell(r, theta, self.cfg["tol"])
+        z = ell / sz.DT
 
         def judge() -> dict:
+            state = self.state_of(r, theta, self.cfg["tol"])
             verdict = judge_cluster(state, self.cfg["eta"])
             if verdict.get("fully_testable"):
                 self._check_contract(r, theta, state, verdict)
@@ -478,53 +522,66 @@ class Campaign:
 
         self.prefix.observe(z, judge)
 
+    #: What each probe must produce, LEG BY LEG. The design fixes
+    #: both legs of all three probes, and the cost model froze six
+    #: predicate calls per fully-testable cluster on exactly that
+    #: basis (review R10). Checking only the starved leg would let a
+    #: wrapper defect on the other one -- `None`, or a wrong `False`
+    #: -- pass silently and a verdict be published over it, and it
+    #: would spend four calls where the budget charged six.
+    CONTRACT = {
+        "inside": {"p_to_x": True, "x_to_q": True},
+        "outside_above": {"p_to_x": True, "x_to_q": False},
+        "outside_below": {"p_to_x": False, "x_to_q": True},
+    }
+
     def _check_contract(self, r, theta, state, verdict) -> None:
-        """The three probes must answer as the window says. One
-        disagreement anywhere is a contract failure."""
+        """Six answers per cluster, and every one of them decided.
 
-        want = {"inside": True, "outside_above": False,
-                "outside_below": False}
-        for name, expected in want.items():
-            probe = verdict["probes"][name]
-            got = self._ask(r, theta, state, name, probe)
-            if got is not expected:
-                self.mismatches.append({
-                    "r": r, "theta": theta, "probe": name,
-                    "want": expected, "got": repr(got),
-                    "t1": state["t1"], "err1": state["err1"],
-                    "t2": state["t2"], "err2": state["err2"]})
+        `None` never satisfies a row: an undecided answer at a probe
+        placed a realized margin outside the error band is the
+        contract failing, which is what the abort was."""
 
-    def _ask(self, r, theta, state, name, probe):
-        """One predicate answer, at the time the probe placed.
+        for name, wanted in self.CONTRACT.items():
+            t_x = self._probe_time(name, verdict["probes"][name])
+            if t_x is None:
+                continue                  # not constructible; tallied
+            got = self._legs(r, theta, t_x)
+            for leg, expected in wanted.items():
+                if got[leg] is not expected:
+                    self.mismatches.append({
+                        "r": r, "theta": theta, "dpsi": state["dpsi"],
+                        "probe": name, "leg": leg,
+                        "want": expected, "got": repr(got[leg]),
+                        "t_x": t_x,
+                        "t1": state["t1"], "err1": state["err1"],
+                        "t2": state["t2"], "err2": state["err2"]})
 
-        The inside probe asks about BOTH legs, because "the window is
-        open at this time" is the conjunction; the outside probes ask
-        about the single leg they starve."""
+    @staticmethod
+    def _probe_time(name: str, probe: dict) -> float | None:
+        """The intermediate event's TIME, from whichever placement the
+        probe produced. The outside probes place a leg's `dt`; the
+        time is where that puts `x`."""
 
+        if not probe.get("reached"):
+            return None
         if name == "inside":
-            return self._pair(r, theta, probe["t_x"])
-        return self._leg(r, theta, name, probe["dt"])
+            return probe["t_x"]
+        if name == "outside_above":
+            return sz.DT - probe["dt"]     # starves x -> q
+        return probe["dt"]                 # starves p -> x
 
-    def _pair(self, r, theta, t_x):
-        """Both legs of the inside probe: connected means BOTH."""
+    def _legs(self, r, theta, t_x) -> dict:
+        """Both legs at one intermediate event. Two predicate calls,
+        which is what the budget charged."""
 
         p = np.array([0.0, sz.R_IN, 0.0, 0.0])
         x = np.array([t_x, r, theta, 0.0])
         q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
-        first = s1.causal_relation(p, x, s1.M, self.cfg["tol"])
-        second = s1.causal_relation(x, q, s1.M, self.cfg["tol"])
-        if first is None or second is None:
-            return None
-        return bool(first and second)
-
-    def _leg(self, r, theta, name, dt):
-        if name == "outside_above":
-            x = np.array([sz.DT - dt, r, theta, 0.0])
-            q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
-            return s1.causal_relation(x, q, s1.M, self.cfg["tol"])
-        p = np.array([0.0, sz.R_IN, 0.0, 0.0])
-        x = np.array([dt, r, theta, 0.0])
-        return s1.causal_relation(p, x, s1.M, self.cfg["tol"])
+        return {
+            "p_to_x": s1.causal_relation(p, x, s1.M, self.cfg["tol"]),
+            "x_to_q": s1.causal_relation(x, q, s1.M, self.cfg["tol"]),
+        }
 
     def run_g1(self) -> dict:
         """The rest of the frozen sample, continuing the SAME stream.
@@ -540,9 +597,11 @@ class Campaign:
                 rs, ths = self.draw(self.rng, k, sz.R_LO, sz.R_HI,
                                     sz.PSI_MAX)
                 for r, th in zip(rs, ths, strict=True):
-                    state = self.state_of(r, th, self.cfg["tol"])
-                    ell = sz.DT - state["t1"] - state["t2"]
-                    self.g1.add((ell if ell > 0.0 else 0.0) / sz.DT)
+                    # the estimand, at the drawn theta -- the
+                    # predicate's coordinate has no business here
+                    ell, _, _ = self.ell(float(r), float(th),
+                                         self.cfg["tol"])
+                    self.g1.add(ell / sz.DT)
                 self.scanned += k
                 self.checkpoint("g1_chunk")
         interval = eb.interval(self.g1, self.cfg["delta_g1_per_side"])
@@ -577,10 +636,9 @@ class Campaign:
                         break
                     if (sz.R_LO <= r <= sz.R_HI) and th <= sz.PSI_MAX:
                         continue
-                    state = self.state_of(float(r), float(th),
-                                          self.cfg["tol"])
-                    ell = sz.DT - state["t1"] - state["t2"]
-                    acc.add((ell if ell > 0.0 else 0.0) / sz.DT)
+                    ell, _, _ = self.ell(float(r), float(th),
+                                         self.cfg["tol"])
+                    acc.add(ell / sz.DT)
                     if ell > 0.0:
                         leaks += 1
         alpha = self.cfg["alpha_g2_per_end"]
@@ -599,14 +657,58 @@ class Campaign:
         self.checkpoint("g2_complete", {"g2": result})
         return result
 
+    def _staged(self, stage: str, work):
+        """Run one stage, turning a fired cap into that stage's
+        `INCONCLUSIVE` failure.
+
+        Without this the cap escapes as `CapReached` and the entry
+        point, which catches `StageFailure`, lets it out (review R11).
+        The cap can fire DURING the G3b scan, before the first `g3b`
+        checkpoint exists -- and by then the seeds are reserved and
+        spent, and the reservation forbids re-running them. Everything
+        accumulated would vanish with the process, which is precisely
+        the loss O4 suffered and this design exists to prevent.
+
+        A cap is not a contract failure: the instrument said nothing
+        wrong, the run simply ran out. Hence `INCONCLUSIVE`, and the
+        preserved sample goes with it."""
+
+        try:
+            return work()
+        except o4b_budget.CapReached as cap:
+            # a checkpoint FIRST, so the incident and the recoverable
+            # state agree even if publishing then fails
+            self.checkpoint_on_cap(stage, cap)
+            raise stages.StageFailure(
+                stage, "INCONCLUSIVE",
+                f"completion budget exhausted ({cap.reason}) during "
+                f"{stage}: {cap.reserved:,} calls reserved, "
+                f"{cap.wall_s:.1f}s elapsed",
+                preserved=self.preserved(),
+                detail={"cap": {"reason": cap.reason,
+                                "reserved": cap.reserved,
+                                "completed": cap.completed,
+                                "wall_s": cap.wall_s,
+                                "refused_call_count": cap.wanted}},
+            ) from None
+
+    def checkpoint_on_cap(self, stage: str, cap) -> None:
+        """The last safe checkpoint. G1's own chunk checkpoints cover
+        it there; before the first `g3b` one exists there is nothing
+        on disk at all, which is the case worth writing for."""
+
+        point = "g1_chunk" if stage in ("g1", "g2") else "g3b"
+        self.checkpoint(point, {"cap": cap.reason,
+                                "availability": self.prefix.report()})
+
     def run(self) -> dict:
         """The frozen order. Each stage's failure is raised, never
         swallowed, and the caller turns it into an incident."""
 
-        g3a_result = self.run_g3a()
-        availability = self.run_g3b()
-        g1 = self.run_g1()
-        g2 = self.run_g2()
+        g3a_result = self._staged("g3a", self.run_g3a)
+        availability = self._staged("g3b", self.run_g3b)
+        g1 = self._staged("g1", self.run_g1)
+        g2 = self._staged("g2", self.run_g2)
         return {
             "kind": "results", "run_kind": "campaign",
             "freeze_sha": self.freeze_sha,
