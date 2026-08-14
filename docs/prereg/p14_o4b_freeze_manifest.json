@@ -1,0 +1,38 @@
+{
+ "stage": "O4b freeze manifest (content-addressed protocol surface)",
+ "note": "raw sha256; all paths are .gitattributes eol=lf pinned. s1_schwarzschild_cost.py is the INSTRUMENT UNDER AUDIT and is pinned so the audited artefact cannot drift. o4_sizing.py and o4_volume_audit.py are INHERITED from the O4 freeze -- O4b reads the estimand, the oracle, tau and the sampler from them rather than re-freezing them, so any edit to either is a different campaign. p14_o4_replay_diagnostic.json is the committed census the cost projection reads. This manifest cannot certify itself: a commit that edits a protocol file and re-pins the manifest in the same commit passes every digest check, which is why the runner also demands the exact approved freeze SHA.",
+ "files": {
+  "experiments/oracle/certified_interval.py": "65f339a0cddbede8a832a7efcaf1d5f92e6be9b8c4d493afae5475aaff72ac3f",
+  "experiments/oracle/certified_flight_time.py": "6d62bc9b0ca16d5d88cb3f365ad659bc2e27842ec2a183d86fb1bb769738a226",
+  "experiments/oracle/empirical_bernstein.py": "7a7d865988ad03ad3a8d44b200ec99c4fc45ce8e2dc20a1dcd4f3850b7076500",
+  "experiments/oracle/exact_binomial.py": "f133421749a2a2b2f22ac69e46687593cac0b8fea272a303b4ca5bf93256ed85",
+  "experiments/oracle/o4_sizing.py": "424dfcf74743aeb1071951ed543643b8ba2876089477716e624506719836603a",
+  "experiments/oracle/o4_volume_audit.py": "f10cd50a7f02a2873a6983e86a498709a5412c8493fa68f024264b0515d08904",
+  "experiments/oracle/o4_g3_redesign.py": "653680d0faa798d24c35d8d544916975978f4671e8fce2e360366097aad0a298",
+  "experiments/oracle/o4b_sizing.py": "cc59abdbb5d12c9a2370d54a9e7de5e90d19248103560d393ef811cb7aaabd0f",
+  "experiments/oracle/o4b_budget.py": "961e2f7ab1667f9dc2c739cf2bd8ba152a42ffaeb145dc34ad0ff149c279af95",
+  "experiments/oracle/o4b_meter.py": "c5a7e6718ae48a57077aa40678b67cce63d03588e009e3e11dcd4da023c0b3e8",
+  "experiments/oracle/o4b_g3a.py": "d6bc2fd70bf6727a5f7d31cf9fe6eab69a559d58dde6add9941271fd9e9b9bf9",
+  "experiments/oracle/o4b_g3b.py": "c6dc61158000ebcd0006bf7e5f6faa84f33401c854308fbdace64df5a467b0f2",
+  "experiments/oracle/o4b_checkpoint.py": "6a54f77d21d972700b917c63ee810fafe017b5aa877d3bd9a6441fec111b891f",
+  "experiments/oracle/o4b_stages.py": "072e839977ff0b944dba6942f5bf995470f4173f2535796eb599099766d7dc08",
+  "experiments/oracle/o4b_reservation.py": "ad83b8d5f96a99a255cb51ba4248d466dd462cdc3b559083c22139b556c9d2b8",
+  "experiments/oracle/o4b_volume_audit.py": "12dd36da18c4459dc1b4f2f93ff6d45c7bd94fd72ca2b82062125a803cebacf6",
+  "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
+  "experiments/positive_control/probe_seed_ledger.py": "87afc7572e8432b8a8cb1e438029a890e0d46a908a3b73f5ae5bf9a3381d6158",
+  "docs/prereg/p14_o4_volume_audit.md": "cfaf4f1d57239fe181f54b20c010d1d25e7257820fb7a646f52a29fec04ae93d",
+  "docs/prereg/p14_o4_g3_redesign.md": "2eea2d10878ecbe65cae10efe7093ae15871bedc712454785f4f4201335cfe37",
+  "docs/prereg/p14_o4_g3_prereg_reopen.md": "6561923740947c4d88faf9dc95b94c191b71e2f70c20c820bb72bfaef8f3d283",
+  "docs/prereg/p14_o4b_sizing.json": "a42230b9f367145ecb4185dcedf94a99d340bfa75f381f6a6555dcae36a4a5fc",
+  "docs/prereg/p14_o3_volume.json": "aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f",
+  "docs/prereg/p14_o4_replay_diagnostic.json": "22df58ecb5c35d021b85a61d40f9aea49d1bc61b5d5bd2bd30abfa8f9022ebec",
+  "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
+ },
+ "environment": {
+  "python": "3.11",
+  "gmpy2": "2.3.1",
+  "mpfr": "MPFR 4.2.2",
+  "gmp": "GMP 6.3.0",
+  "numpy": "2.4.6"
+ }
+}

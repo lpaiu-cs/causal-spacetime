@@ -51,20 +51,112 @@
   "items": {
    "g1": 52400000,
    "g2": 2145392,
-   "g3a": 6448,
+   "g3a": 6537,
    "g3b_state_census_projected": 200000,
    "g3b_probes": 600000,
    "g3b_state_worst": 52400000
   },
   "g3a_detail": {
-   "cases_resolved": 70,
-   "cases_unreachable": 7,
+   "cases_resolved": 71,
+   "cases_unreachable": 6,
    "cases_unreachable_are_the_named_ones": true,
-   "calls": 6448,
-   "completed": 6448,
+   "distinct_solver_states": 63,
+   "duplicate_recovered_angles": [
+    {
+     "r1": 13.0,
+     "r2": 17.0,
+     "dpsi": 0.0,
+     "cases": [
+      "increasing-interior/radial",
+      "increasing-interior/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    },
+    {
+     "r1": 17.0,
+     "r2": 13.0,
+     "dpsi": 0.0,
+     "cases": [
+      "decreasing-interior/radial",
+      "decreasing-interior/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    },
+    {
+     "r1": 15.0,
+     "r2": 15.0,
+     "dpsi": 0.0,
+     "cases": [
+      "equal-radius/radial",
+      "equal-radius/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    },
+    {
+     "r1": 15.0,
+     "r2": 15.0,
+     "dpsi": 1.4901161193847656e-08,
+     "cases": [
+      "equal-radius/one-turn-beyond",
+      "equal-radius/radial-reachable-edge-above"
+     ],
+     "family": "one-turn",
+     "by_construction": false
+    },
+    {
+     "r1": 12.0,
+     "r2": 18.0,
+     "dpsi": 0.0,
+     "cases": [
+      "anchor-pair/radial",
+      "anchor-pair/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    },
+    {
+     "r1": 11.353642200099546,
+     "r2": 17.0,
+     "dpsi": 0.0,
+     "cases": [
+      "shell-inner-edge/radial",
+      "shell-inner-edge/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    },
+    {
+     "r1": 13.0,
+     "r2": 18.694960053851013,
+     "dpsi": 0.0,
+     "cases": [
+      "shell-outer-edge/radial",
+      "shell-outer-edge/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    },
+    {
+     "r1": 11.353642200099546,
+     "r2": 18.694960053851013,
+     "dpsi": 0.0,
+     "cases": [
+      "shell-both-edges/radial",
+      "shell-both-edges/radial-reachable-edge-below"
+     ],
+     "family": "radial",
+     "by_construction": true
+    }
+   ],
+   "why_duplicates_are_recorded": "distinct thetas that the wrapper recovers to one dpsi. Each is a valid named row and each runs, but together they exercise a single solver state, so they must not be counted as independent family or state coverage. Those marked by_construction are the radial reachability-edge pairs, where agreeing is the demonstration; the rest are the coarse lattice merging two independent specs",
+   "calls": 6537,
+   "completed": 6537,
    "construction_unavailable_rows": 2,
-   "ulp_distance_total": 8120,
-   "search_comparisons_total": 244,
+   "ulp_distance_total": 16162,
+   "search_comparisons_total": 272,
    "distance_is_not_cost": "ulp_distance measures how far the nominal placement sat from a satisfying one; search_comparisons is the work actually done",
    "host_dependent": [
     "ulp_distance_total",
@@ -98,18 +190,18 @@
    "row_d_costs_nothing": "row D proves the predicate never consults the solver, so it spends no calls by construction"
   },
   "worst_case_is_an_upper_bound_because": "the state calls are charged only on positive candidates, but nothing committed bounds that fraction and no rate is a guarantee about a new stream, so the bound charges every G1 point",
-  "total_census_projected": 55351840,
+  "total_census_projected": 55351929,
   "census_projected_assumes": "fully-testable rate = 1, so the scan stops at K_G3B. The census measured ELIGIBILITY and the lower probe's reach, not the realized-margin and nudge conditions that fully-testable also requires, so this is a census-informed OPTIMISTIC projection and not a measured rate. If fully-testable falls short of eligible, the scan runs longer and the total rises toward the hard bound",
-  "total_hard_worst": 107551840,
+  "total_hard_worst": 107551929,
   "o4_total_for_comparison": 54945392,
-  "hours_census_projected": 11.808392533333333,
-  "hours_hard_worst": 22.944392533333335,
+  "hours_census_projected": 11.80841152,
+  "hours_hard_worst": 22.944411520000003,
   "caps": {
    "calls": 80000000,
    "wall_s": 86400.0
   },
-  "cap_ratio_census_projected": 1.4452997407132264,
-  "cap_ratio_hard_worst": 0.7438273487464278
+  "cap_ratio_census_projected": 1.4452974168253467,
+  "cap_ratio_hard_worst": 0.7438267332239108
  },
  "cap_contract": {
   "kind": "completion budget, not a power statement",

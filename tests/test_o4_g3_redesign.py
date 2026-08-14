@@ -344,12 +344,19 @@ def test_the_only_accepted_omissions_are_the_seven_named_ones():
     assert all(u["expected"] for u in table["unreachable"])
 
 
+#: The band-dependent specs that an equal-radius pair cannot host.
+#: `one-turn-beyond` is deliberately NOT here -- it needs the band's
+#: upper edge, which is known in closed form, and the angle above it
+#: is reachable.
 _BAND_SPECS = ("no-turn-mid", "equal-perihelion-inside",
                "equal-perihelion-lower-edge-below",
                "equal-perihelion-lower-edge-above",
                "equal-perihelion-upper-edge-below",
-               "equal-perihelion-upper-edge-above",
-               "one-turn-beyond")
+               "equal-perihelion-upper-edge-above")
+
+#: Every spec whose construction goes through the band search, which
+#: is what a broken search takes down at a geometry that has one.
+_ALL_BAND_SPECS = _BAND_SPECS + ("one-turn-beyond",)
 
 
 def _flaky_band(monkeypatch, radii: tuple[float, float]):
@@ -380,7 +387,7 @@ def test_a_search_that_fails_is_not_an_omission(monkeypatch):
 
     table = preflight["table"]
     lost = {f["case"] for f in table["case_build_failures"]}
-    assert lost == {f"increasing-interior/{s}" for s in _BAND_SPECS}
+    assert lost == {f"increasing-interior/{s}" for s in _ALL_BAND_SPECS}
     # the hole would not have shown up in any other condition
     assert table["covers_every_family"]
     assert not table["failures"]
@@ -403,14 +410,21 @@ def test_a_search_that_fails_AT_AN_EXPECTED_NAME_is_still_a_failure(
 
     import o4b_g3a as g3a
 
-    _flaky_band(monkeypatch, (15.0, 15.0))       # the expected names
+    def broken(r1, r2, m, tol):
+        raise ValueError("the solver's small-angle structure moved")
+
+    # equal radii do not reach the band SEARCH -- their band is known
+    # in closed form -- so the analogous failure is their structure
+    # check, which every band-dependent spec there goes through
+    monkeypatch.setattr(g3, "verify_equal_radius_structure", broken)
     preflight = g3a.run_preflight()
 
     table = preflight["table"]
     failed = {f["case"] for f in table["case_build_failures"]}
-    assert failed == {f"equal-radius/{s}" for s in _BAND_SPECS}
-    assert all(f["on_the_expected_list"]
-               for f in table["case_build_failures"])
+    assert failed == {f"equal-radius/{s}" for s in _ALL_BAND_SPECS}
+    listed = [f for f in table["case_build_failures"]
+              if f["on_the_expected_list"]]
+    assert len(listed) == len(_BAND_SPECS)
     # the label check alone is satisfied -- nothing is missing from
     # the list, and nothing on the list got built
     assert preflight["conditions"]["only_expected_unreachable"] is True
@@ -459,16 +473,113 @@ def test_equal_radii_DO_have_a_band_it_is_simply_out_of_reach():
     assert reached == {"radial", "one-turn"}
 
 
-def test_a_surprise_at_equal_radii_is_a_defect_not_an_omission(
+def test_the_equal_radius_structure_is_checked_claim_by_claim(
         monkeypatch):
-    """The absence of a no-turn region is a claim about what the
-    solver reports, so it is confirmed rather than inferred from
-    `r1 == r2`."""
+    """Four separate assertions, not one weak one (review R7).
 
-    monkeypatch.setattr(g3, "family_at",
-                        lambda r1, r2, x, m, tol: "no-turn")
-    with pytest.raises(ValueError, match="below the equal-perihelion"):
-        g3.equal_perihelion_band(15.0, 15.0, 1.0, 1e-8)
+    "The low probe is not no-turn" passes on `radial` too, so a solver
+    whose small-angle behaviour had moved would go by as the expected
+    structure. Each claim is therefore falsified on its own."""
+
+    import s1_schwarzschild_cost as s1
+
+    ok = g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                          s1.DEFAULT_TOL)
+    assert ok["families_seen"] == ["equal-perihelion", "one-turn",
+                                   "radial"]
+    assert ok["band"] == (0.0, s1.DEFAULT_TOL)
+    assert ok["smallest_recoverable_dpsi"] > s1.DEFAULT_TOL
+
+    real = g3.family_at
+
+    def forced(want, at=None):
+        def fam(r1, r2, x, m, tol):
+            if at is None or x == at:
+                return want
+            return real(r1, r2, x, m, tol)
+        return fam
+
+    # the band is not there at all
+    monkeypatch.setattr(g3, "family_at", forced("radial"))
+    with pytest.raises(ValueError, match="should cover small positive"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                         s1.DEFAULT_TOL)
+    # above the band it is not one-turn
+    monkeypatch.setattr(g3, "family_at", forced("radial", at=3.0))
+    with pytest.raises(ValueError, match="should be one-turn"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                         s1.DEFAULT_TOL)
+    # a no-turn region appeared
+    monkeypatch.setattr(g3, "family_at", forced("no-turn", at=1e-6))
+    with pytest.raises(ValueError, match="no-turn should not occur"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M,
+                                         s1.DEFAULT_TOL)
+    # the band is no longer out of the wrapper's reach
+    monkeypatch.setattr(g3, "family_at", real)
+    with pytest.raises(ValueError, match="no longer out of the wrapper"):
+        g3.verify_equal_radius_structure(15.0, 15.0, s1.M, 1.0)
+
+
+def test_one_turn_beyond_IS_constructible_at_equal_radii():
+    """The R7 defect: a case the preflight table was leaving out.
+
+    It asks for an angle above the band's upper edge. `1.5 * tol` is
+    1.5e-08, the wrapper recovers 1.4901e-08 from it, and that is
+    above `tol`, so the solver reports `one-turn` -- exactly what the
+    spec's name says. The earlier version reached the band SEARCH
+    first and gave up, which is a fact about the resolver, not about
+    representability."""
+
+    import o4b_g3a as g3a
+    import s1_schwarzschild_cost as s1
+
+    spec = next(s for s in g3.G3A_ANGLE_SPECS
+                if s[0] == "one-turn-beyond")
+    theta = g3.resolve_theta(spec, 15.0, 15.0, s1.M, s1.DEFAULT_TOL,
+                             sz.PSI_MAX)
+    assert theta == 1.5 * s1.DEFAULT_TOL
+    dpsi = g3.wrapper_dpsi(theta)
+    assert dpsi == 1.4901161193847656e-08 > s1.DEFAULT_TOL
+    assert g3.family_at(15.0, 15.0, dpsi, s1.M,
+                        s1.DEFAULT_TOL) == "one-turn"
+
+    assert ("equal-radius", "one-turn-beyond") not in (
+        g3.EXPECTED_UNREACHABLE)
+    table = g3a.run_g3a()
+    built = {c["case"]: c["family"] for c in table["detail"]}
+    assert built["equal-radius/one-turn-beyond"] == "one-turn"
+    assert table["cases"] == 71
+    assert len(table["unreachable"]) == 6
+
+
+def test_the_duplicate_recovered_angles_are_recorded_not_counted():
+    """The case is valid and it runs, but at equal radii it recovers
+    the SAME dpsi as `radial-reachable-edge-above`, so it adds no
+    solver state. Recorded so a reader cannot count the row as
+    independent coverage."""
+
+    import o4b_g3a as g3a
+
+    table = g3a.run_g3a()
+    dupes = table["duplicate_recovered_angles"]
+    incidental = [d for d in dupes if not d["by_construction"]]
+    assert len(incidental) == 1
+    assert incidental[0]["cases"] == ["equal-radius/one-turn-beyond",
+                                      "equal-radius/"
+                                      "radial-reachable-edge-above"]
+    assert incidental[0]["dpsi"] == 1.4901161193847656e-08
+    assert incidental[0]["family"] == "one-turn"
+
+    # the other seven are the reachability-edge pairs, where agreeing
+    # with theta = 0 is what the case is there to demonstrate
+    assert len(dupes) - len(incidental) == 7
+    assert all(set(d["cases"][0].split("/")) & {"radial"}
+               for d in dupes if d["by_construction"])
+
+    assert table["cases"] == 71
+    assert table["distinct_solver_states"] == 63
+    assert "must not be counted as independent" in (
+        table["why_duplicates_are_recorded"])
 
 
 def test_a_named_omission_that_turns_out_buildable_also_fails(

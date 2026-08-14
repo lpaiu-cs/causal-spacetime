@@ -132,6 +132,11 @@ def g3a_calls(tol: float = s1.DEFAULT_TOL) -> dict:
         "cases_unreachable_are_the_named_ones": (
             not result["unexpected_unreachable"]
             and not result["unexpectedly_reachable"]),
+        "distinct_solver_states": result["distinct_solver_states"],
+        "duplicate_recovered_angles":
+            result["duplicate_recovered_angles"],
+        "why_duplicates_are_recorded":
+            result["why_duplicates_are_recorded"],
         "calls": probe.reserved,
         "completed": probe.completed,
         "construction_unavailable_rows":

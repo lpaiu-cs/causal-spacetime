@@ -367,6 +367,29 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
         if r["outcome"] == "pass" and "margin_reaches_eta" in r
         and not r["margin_reaches_eta"]]
     families = sorted({c["family"] for c in cases})
+    # Two cases in one geometry can name different thetas that the
+    # wrapper recovers to the SAME dpsi -- the recovery lattice is
+    # coarse near zero. Both are legitimately named rows and both run,
+    # but they exercise one solver state, so they are recorded here
+    # rather than counted as independent coverage (review R8).
+    by_angle: dict[tuple, list] = {}
+    for c in cases:
+        by_angle.setdefault((c["r1"], c["r2"], c["dpsi"]),
+                            []).append(c["case"])
+    # The `radial` / `radial-reachable-edge-below` pairs collapse BY
+    # CONSTRUCTION: the case below the reachability edge is defined as
+    # the theta whose recovery is still exactly 0, so agreeing with
+    # `theta = 0` is what it is there to demonstrate. The rest are
+    # incidental -- two independently specified angles that the coarse
+    # lattice happens to merge.
+    deliberate = {"radial", "radial-reachable-edge-below"}
+    duplicates = [
+        {"r1": r1, "r2": r2, "dpsi": dpsi, "cases": sorted(names),
+         "family": next(c["family"] for c in cases
+                        if c["case"] == names[0]),
+         "by_construction": {n.split("/", 1)[1]
+                             for n in names} == deliberate}
+        for (r1, r2, dpsi), names in by_angle.items() if len(names) > 1]
     # Every (geometry, spec) pair lands in exactly one of `cases` or
     # `unreachable`, so these two lists together say whether the table
     # that ran is the table that was frozen.
@@ -381,6 +404,16 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
         "unexpected_unreachable": unexpected_unreachable,
         "unexpectedly_reachable": unexpectedly_reachable,
         "case_build_failures": build_failures,
+        "duplicate_recovered_angles": duplicates,
+        "why_duplicates_are_recorded": (
+            "distinct thetas that the wrapper recovers to one dpsi. "
+            "Each is a valid named row and each runs, but together "
+            "they exercise a single solver state, so they must not be "
+            "counted as independent family or state coverage. Those "
+            "marked by_construction are the radial reachability-edge "
+            "pairs, where agreeing is the demonstration; the rest are "
+            "the coarse lattice merging two independent specs"),
+        "distinct_solver_states": len(by_angle),
         "families_covered": families,
         "covers_every_family": set(families) == set(g3.FAMILIES),
         "construction_unavailable": sum(

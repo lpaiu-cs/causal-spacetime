@@ -73,8 +73,8 @@ def test_the_new_g3_costs_more_than_the_old_one():
 
 def test_the_totals_and_cap_ratios():
     b = sizing.budget()
-    assert b["total_census_projected"] == 55_351_840
-    assert b["total_hard_worst"] == 107_551_840
+    assert b["total_census_projected"] == 55_351_929
+    assert b["total_hard_worst"] == 107_551_929
     assert b["cap_ratio_census_projected"] == pytest.approx(1.445,
                                                             abs=5e-4)
     assert b["cap_ratio_hard_worst"] == pytest.approx(0.744, abs=5e-4)
@@ -126,9 +126,9 @@ def test_the_g3a_cost_is_now_measured_end_to_end():
     assert set(detail["host_dependent"]) == {"ulp_distance_total",
                                              "search_comparisons_total"}
     assert "never be pinned as constants" in detail["why_host_dependent"]
-    assert detail["calls"] == detail["completed"] == 6_448
-    assert detail["cases_resolved"] == 70
-    assert detail["cases_unreachable"] == 7
+    assert detail["calls"] == detail["completed"] == 6_537
+    assert detail["cases_resolved"] == 71
+    assert detail["cases_unreachable"] == 6
     assert detail["construction_unavailable_rows"] == 2
     assert set(detail["families_covered"]) == set(g3.FAMILIES)
     assert "no calls by construction" in detail["row_d_costs_nothing"]
