@@ -350,6 +350,35 @@ def publish_write_once(path: Path, payload: dict,
     return True
 
 
+def artifact_names_this_run(claim_object: str | None) -> bool:
+    """Was the published artifact written by THIS run?
+
+    Read from the file, not from a flag (review R29). A flag set after
+    `os.link` returns is still a separate statement, and an interrupt
+    delivered between them leaves it unset over a result that IS
+    published -- the window moves from the call boundary to the two
+    lines, it does not close.
+
+    The artifact answers the question itself. Its `reservation.object`
+    is this attempt's claim commit, made unique by a 16-byte nonce, so
+    a file carrying it can only have been written by this run: not by
+    an earlier attempt, and not by whatever else might create the path
+    while the campaign runs. That is the distinction R28 was about,
+    and unlike a flag it survives any interrupt, because it is
+    recomputed from what is on disk."""
+
+    if claim_object is None or not _ARTIFACT.exists():
+        return False
+    try:
+        published = json.loads(_ARTIFACT.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        # unreadable or not JSON: it is not evidence that this run
+        # published, and the safe reading is that it did not
+        return False
+    return published.get("reservation", {}).get(
+        "object") == claim_object
+
+
 # ------------------------------------------------------- the G3 state
 
 def solver_state(r: float, theta: float, tol: float) -> dict:
@@ -1076,15 +1105,18 @@ def main() -> None:
             f"{failure.reason}; incident written to "
             f"{_INCIDENT.name}, no verdict published") from None
     except BaseException as exc:
-        # THIS CALL's commit, not the file's existence (review R28).
-        # `os.link` is the commit and the receipt is stamped the
-        # instant it returns, so an interrupt after it still reports a
-        # published result -- which is R27. But a file that appeared
-        # from somewhere else during the run is NOT this run's result:
-        # `os.link` would have failed, and reading `exists()` there
-        # would credit another file to this campaign and file no
-        # incident for seeds that are already spent.
-        if receipt.get("committed"):
+        # THIS CALL's commit, decided two ways (reviews R27-R29).
+        # The receipt is stamped the instant `os.link` returns, and
+        # the artifact is asked whether it names this run's claim
+        # object. The second is what actually closes the window: a
+        # flag and the commit are separate statements, so an interrupt
+        # between them leaves the flag unset over a published result,
+        # while the file on disk still carries the nonce only this
+        # attempt could have written. Neither alone is enough -- the
+        # receipt covers the case where the artifact cannot be read
+        # back, the artifact covers every interrupt.
+        if (receipt.get("committed")
+                or artifact_names_this_run(claimed["object"])):
             raise SystemExit(
                 f"{_ARTIFACT.name} was published; the failure came "
                 f"after the commit ({type(exc).__name__}: {exc}) and "

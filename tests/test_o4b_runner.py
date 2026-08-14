@@ -1265,8 +1265,8 @@ def test_no_incident_is_filed_over_a_published_result(monkeypatch,
     import inspect
     src = inspect.getsource(run.main)
     tail = src.split("except BaseException as exc:", 1)[1]
-    assert 'if receipt.get("committed"):' in tail
-    guard = tail.index('if receipt.get("committed"):')
+    assert 'receipt.get("committed")' in tail
+    guard = tail.index('receipt.get("committed")')
     filed = tail.index("file_incident(")
     assert guard < filed, "the incident is filed before the check"
     assert "no incident is filed over a published result" in tail
@@ -1312,3 +1312,66 @@ def test_the_receipt_is_stamped_at_the_commit_not_after_the_call():
     cleanup = body.index("tmp.unlink")
     assert stamp < cleanup
     assert "the commit, recorded here" in body
+
+
+# ------------- the window between the commit and any record of it
+
+def test_the_artifact_itself_says_which_run_published_it(tmp_path,
+                                                         monkeypatch):
+    """A flag set after `os.link` is a separate statement, so an
+    interrupt between them leaves it unset over a published result --
+    the window moves, it does not close. The file answers instead:
+    its `reservation.object` is this attempt's claim commit, unique by
+    a 16-byte nonce."""
+
+    artifact = tmp_path / "results.json"
+    monkeypatch.setattr(run, "_ARTIFACT", artifact)
+
+    assert run.artifact_names_this_run("c" * 40) is False   # absent
+    run.publish_write_once(artifact, {
+        "kind": "results", "reservation": {"object": "c" * 40}})
+    assert run.artifact_names_this_run("c" * 40) is True
+    # ...and somebody else's result does not count as ours
+    assert run.artifact_names_this_run("d" * 40) is False
+    assert run.artifact_names_this_run(None) is False
+
+
+def test_an_unreadable_artifact_is_not_evidence_that_we_published(
+        tmp_path, monkeypatch):
+    artifact = tmp_path / "results.json"
+    artifact.write_text("{not json", encoding="utf-8")
+    monkeypatch.setattr(run, "_ARTIFACT", artifact)
+    assert run.artifact_names_this_run("c" * 40) is False
+
+
+def test_an_interrupt_between_the_commit_and_the_receipt_is_covered(
+        tmp_path, monkeypatch):
+    """The concrete R29 sequence: `os.link` succeeds, the stamp never
+    runs, and the run must still be judged to have published."""
+
+    artifact = tmp_path / "results.json"
+    monkeypatch.setattr(run, "_ARTIFACT", artifact)
+    receipt: dict = {}
+    real_link = run.os.link
+
+    def link_then_die(src, dst):
+        real_link(src, dst)
+        raise KeyboardInterrupt("delivered after the commit")
+
+    monkeypatch.setattr(run.os, "link", link_then_die)
+    with pytest.raises(KeyboardInterrupt):
+        run.publish_write_once(artifact, {
+            "kind": "results",
+            "reservation": {"object": "c" * 40}}, receipt=receipt)
+
+    assert receipt == {}                      # the stamp never ran
+    assert run.artifact_names_this_run("c" * 40) is True
+
+
+def test_both_signals_are_consulted_and_neither_alone_is_relied_on():
+    import inspect
+    tail = inspect.getsource(run.main).split(
+        "except BaseException as exc:", 1)[1]
+    assert 'receipt.get("committed")' in tail
+    assert "artifact_names_this_run" in tail
+    assert "or" in tail.split("artifact_names_this_run")[0][-40:]
