@@ -1,0 +1,145 @@
+{
+ "stage": "O4b sizing: the O4 gate re-costed for the G3 redesign, with the oracle and tau unchanged",
+ "not_a_precision_change": "This re-run uses the existing O3 certified interval and tau = 3.0% unchanged, with no O3' re-freeze. Its purpose is to re-run the same O4 gate with a repaired G3 instrumentation contract, not to improve precision.",
+ "inherited": {
+  "tau": 0.03,
+  "n_g1": 26200000,
+  "delta_g1_per_side": 0.02,
+  "alpha_g2_per_end": 0.005,
+  "leak_budget_frac": 0.0025,
+  "n_g2": 1072696,
+  "oracle": {
+   "v_lo": 56.21273686780051,
+   "v_hi": 57.348018526434714,
+   "v_ref": 56.780377697117615
+  },
+  "tau_floor_full_width": 0.01999426042373503,
+  "power_lower_bound": 0.9033375935130843
+ },
+ "g3": {
+  "eta": 1e-12,
+  "max_nudges": 64,
+  "n_avail": 100000,
+  "k_g3b": 100000,
+  "alpha_g3b": 0.05,
+  "cp_upper_zero_mismatch": 2.995687401941005e-05,
+  "cp_is": "characterisation only, never an accuracy gate",
+  "scan_cap_reference": "o4_g3_redesign.scan_cap()",
+  "scan_cap_realized": 26200000,
+  "cost_model": "2 * scanned_positive_candidates + 6 * fully_testable_clusters",
+  "state_calls_per_candidate": 2,
+  "probe_calls_per_cluster": 6
+ },
+ "census_design_input": {
+  "source": "docs/prereg/p14_o4_replay_diagnostic.json",
+  "eta": 1e-12,
+  "eligible_clusters": 100000,
+  "clusters_probed": 100000,
+  "lower_probe_unreachable_among_eligible": 0,
+  "measured_here": [
+   "eligibility at the frozen eta",
+   "the lower probe's reach among eligible"
+  ],
+  "not_measured_here": [
+   "the realized-margin check",
+   "the nudge search",
+   "therefore the fully-testable rate itself"
+  ],
+  "is": "a design input from a fixed stress set on a retired stream; NOT a probabilistic expectation about the new campaign's stream and NOT a passing condition"
+ },
+ "budget": {
+  "items": {
+   "g1": 52400000,
+   "g2": 2145392,
+   "g3a": 6454,
+   "g3b_state_census_projected": 200000,
+   "g3b_probes": 600000,
+   "g3b_state_worst": 52400000
+  },
+  "g3a_detail": {
+   "cases_resolved": 70,
+   "cases_unreachable": 7,
+   "calls": 6454,
+   "completed": 6454,
+   "construction_unavailable_rows": 3,
+   "nudges_used": 142,
+   "preflight_conditions": {
+    "tri_state_rows": true,
+    "recovered_dpsi_bit_identical": true,
+    "families_covered": true,
+    "ab_realized_margin": true,
+    "row_d_no_solver_call": true,
+    "solver_determinism": true
+   },
+   "measures": "run_preflight, the single authority; the stage and this measurement read the same verdict",
+   "families_covered": [
+    "equal-perihelion",
+    "no-turn",
+    "one-turn",
+    "radial"
+   ],
+   "basis": "end-to-end measurement of run_preflight under the meter",
+   "includes": [
+    "the table's branch-edge bisections",
+    "one family probe per case",
+    "rows A/B/C where constructible",
+    "the solver determinism probe"
+   ],
+   "row_d_costs_nothing": "row D proves the predicate never consults the solver, so it spends no calls by construction"
+  },
+  "worst_case_is_an_upper_bound_because": "the state calls are charged only on positive candidates, but nothing committed bounds that fraction and no rate is a guarantee about a new stream, so the bound charges every G1 point",
+  "total_census_projected": 55351846,
+  "census_projected_assumes": "fully-testable rate = 1, so the scan stops at K_G3B. The census measured ELIGIBILITY and the lower probe's reach, not the realized-margin and nudge conditions that fully-testable also requires, so this is a census-informed OPTIMISTIC projection and not a measured rate. If fully-testable falls short of eligible, the scan runs longer and the total rises toward the hard bound",
+  "total_hard_worst": 107551846,
+  "o4_total_for_comparison": 54945392,
+  "hours_census_projected": 11.808393813333334,
+  "hours_hard_worst": 22.944393813333335,
+  "caps": {
+   "calls": 80000000,
+   "wall_s": 86400.0
+  },
+  "cap_ratio_census_projected": 1.445299584046393,
+  "cap_ratio_hard_worst": 0.7438273072504957
+ },
+ "cap_contract": {
+  "kind": "completion budget, not a power statement",
+  "may_fire_before_the_scan_ends": true,
+  "on_firing": "write-once incident, then INCONCLUSIVE",
+  "not_invalid": "a cap is a resource limit, not an instrument violation. INVALID belongs to contract failures wherever they occur -- G3a's cases AND a G3b probe that comes back undecided or boolean-mismatched",
+  "auto_raise": "forbidden, during or after the run",
+  "charged_before_spending": "the counter and the clock start before G3a and every call or bounded batch is reserved first; a cap checked after the calls were made is not a cap",
+  "why_not_resized": "covering the hard worst case would reserve for 26.2M rejected candidates, wildly out of proportion to what the census saw; the honest move is to state that the cap can bind and to end INCONCLUSIVE when it does",
+  "outcomes": [
+   {
+    "condition": "G3a case fails (wrong tri-state, or the recovery or determinism check fails)",
+    "outcome": "INVALID",
+    "when": "before any fresh seed is touched"
+   },
+   {
+    "condition": "a fully-testable G3b probe returns None, or bool(a and b) != want",
+    "outcome": "INVALID",
+    "when": "the redesign calls this a contract failure and requires mismatch 0"
+   },
+   {
+    "condition": "a single candidate is construction-unavailable",
+    "outcome": "no stage outcome",
+    "when": "tallied by reason and the scan CONTINUES; one candidate that cannot be probed says nothing about the stage"
+   },
+   {
+    "condition": "fewer than K_G3B fully-testable clusters by the end of the scan",
+    "outcome": "INCONCLUSIVE",
+    "when": "the sample was short, not the instrument wrong"
+   },
+   {
+    "condition": "the call or wall cap binds before K_G3B is reached",
+    "outcome": "INCONCLUSIVE",
+    "when": "a resource limit, not an instrument violation"
+   },
+   {
+    "condition": "provenance failure, or a solver exception",
+    "outcome": "no scientific verdict",
+    "when": "write-once incident only"
+   }
+  ]
+ }
+}

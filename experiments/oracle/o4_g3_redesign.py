@@ -41,13 +41,23 @@ ETA_GRID = (0.0, 1e-15, 1e-14, 1e-13, 1e-12, 1e-11, 1e-10, 1e-9,
 #: probe or an unavailable one, so choosing it later would let the
 #: census pick which clusters count.
 #:
-#: The bound comes from rounding alone. A candidate is placed at a
-#: nominal margin of exactly `ETA`, and the arithmetic that forms it
-#: (`t_x` in two or three operations, then `dt`, then the difference)
-#: rounds by at most `0.5 * ulp(8.5) = 8.9e-16` each, so the realized
-#: margin can fall short by at most about `3.6e-15`. One step moves
-#: `dt` by one ulp of the probe time, worst case `ulp(1.0) = 2.2e-16`,
-#: so about 17 steps suffice. 64 leaves a factor of ~3.7.
+#: It is a SEARCH BUDGET, not a guarantee. An earlier draft argued
+#: that ~17 steps suffice because a step gains at least `ulp(1.0)`;
+#: that argument is RETRACTED. The gain per step is not `ulp(1.0)` and
+#: is not even `ulp(dt)`: the margin is `|dt - t_min| - err`, and that
+#: difference is formed at the magnitude of `err`, so a one-ulp move of
+#: `dt` can move the margin by far less. One case in the G3a table --
+#: `t_min = 0.0026643057799644846`, `err = 0.0026640756792607376`,
+#: `dt = 2.3e-7` -- needs 8,042 steps, counted by running the loop, not
+#: estimated. No finite budget closes every shortfall.
+#:
+#: The VALUE 64 and the 1-ulp outward method were both fixed before the
+#: census and have not been re-selected since; what changed during
+#: implementation is that the sufficiency argument was withdrawn, so 64
+#: now stands as a computation budget and nothing more. Failing to
+#: reach the margin inside it is an AVAILABILITY outcome --
+#: `construction-unavailable` -- never a mismatch or an instrument
+#: failure.
 MAX_NUDGES = 64
 
 

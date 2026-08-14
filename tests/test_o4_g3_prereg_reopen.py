@@ -112,7 +112,10 @@ def test_eta_and_max_nudges_are_untouched_by_the_reopening():
     assert g3.ETA == 1e-12
     assert g3.MAX_NUDGES == 64
     plain = _prose()
-    assert "census 결과가 바꾸지 않으며, 이 재개방도 바꾸지 않는다" in plain
+    assert "census 도 이 재개방도 바꾸지 않는다" in plain
+    # the value was not re-selected; only its justification changed
+    assert "충분성 논증은 구현 중 철회" in plain
+    assert "값이 재선택된 것이 아니라" in plain
 
 
 def test_every_abort_path_leaves_a_write_once_incident():

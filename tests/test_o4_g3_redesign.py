@@ -149,7 +149,7 @@ def test_max_nudges_is_frozen_now_not_after_the_census():
     assert g3.MAX_NUDGES == 64
     assert "`MAX_NUDGES = 64` (frozen)" in plain
     assert "census 가 어떤 cluster 를 셀지 고르게 된다" in plain
-    assert "실제로 쓴 걸음 수도 함께 기록한다" in plain
+    assert "사전 동결 계산 예산" in plain
 
 
 def test_lower_probe_coverage_is_specified_as_a_joint():
@@ -164,13 +164,47 @@ def test_the_post_census_list_excludes_both_frozen_constants():
     assert "η 와 `MAX_NUDGES` 는 여기 없다" in plain
 
 
-def test_the_nudge_bound_follows_from_the_rounding_argument():
-    """17 steps suffice at the worst step size; 64 is the frozen cap."""
+def test_the_nudge_bound_is_a_budget_and_says_it_is_not_a_guarantee():
+    """The original derivation assumed a step gains `ulp(1.0)`. It is
+    worse than that: the margin is formed at the magnitude of `err`, so
+    a one-ulp move of `dt` moves the margin by less again. The
+    retraction has to survive in both the constant and the document."""
 
-    worst_shortfall = 4 * 0.5 * math.ulp(8.5)
-    smallest_step = math.ulp(1.0)
-    assert math.ceil(worst_shortfall / smallest_step) <= g3.MAX_NUDGES
-    assert "약 17 걸음이면 충분하고" in _prose()
+    plain = _prose()
+    assert "철회한다" in plain
+    assert "유한한 예산으로 모든 부족분이 닫힌다는 보장은 없다" in plain
+    assert "사전 동결 계산 예산" in plain
+    # the phrase survives ONLY inside the retraction that quotes it
+    assert ("약 17 걸음이면 충분하고 64 는 3.7 배 여유\" 라고 "
+            "적었다. 이 논증은 철회한다") in plain
+
+    source = (_REPO / "experiments" / "oracle"
+              / "o4_g3_redesign.py").read_text(encoding="utf-8")
+    assert "RETRACTED" in source
+    assert "No finite budget closes every shortfall" in source
+
+
+def test_the_quoted_step_count_is_recomputed_not_transcribed():
+    """8,042 is asserted in three places. Run the loop and check it --
+    an earlier draft quoted 151 from a linear estimate that ignored
+    where the margin is formed, and it was wrong by 53x."""
+
+    t_min = 0.0026643057799644846
+    err = 0.0026640756792607376
+    dt = t_min - err - g3.ETA
+    steps = 0
+    while abs(dt - t_min) - err < g3.ETA:
+        dt = math.nextafter(dt, -math.inf)
+        steps += 1
+        if steps > 10 ** 6:
+            break
+    assert steps == 8_042
+    assert steps > g3.MAX_NUDGES
+    assert "8,042 걸음" in _prose()
+    source = (_REPO / "experiments" / "oracle"
+              / "o4_g3_redesign.py").read_text(encoding="utf-8")
+    assert "8,042 steps" in source
+    assert "151" not in source
 
 
 def test_the_redesign_arithmetic_has_one_home():
