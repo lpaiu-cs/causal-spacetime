@@ -183,6 +183,41 @@ class ClaimUncertain(Exception):
         }
 
 
+def verify_still_held(obj: str) -> str:
+    """The ref still holds THIS attempt's object.
+
+    Called immediately before a result is published (review R25). The
+    claim is made eleven hours earlier, and nothing between the two
+    would notice the ref being deleted or replaced -- so without this
+    the unique attempt object is never actually tied to the result,
+    and a run could publish over a claim that is no longer its own.
+
+    A read failure here is NOT treated as uncertain-and-continue: this
+    is the last check before publication, so being unable to perform
+    it is a reason not to publish."""
+
+    try:
+        got = _ls_remote(REF)
+    except BaseException as exc:
+        raise ClaimUncertain(
+            f"{REF} could not be re-read before publication",
+            pushed=True, obj=obj,
+            detail=f"{type(exc).__name__}: {exc}") from exc
+    if got is None:
+        raise ClaimUncertain(
+            f"{REF} is GONE -- the claim this run drew under no "
+            f"longer exists, so nothing here can say the streams were "
+            f"opened by this attempt",
+            pushed=True, obj=obj, detail="ref absent at exit")
+    if got != obj:
+        raise ClaimUncertain(
+            f"{REF} holds {got}, not this run's {obj} -- the claim "
+            f"was replaced while the campaign ran, and a result "
+            f"published over someone else's claim has no provenance",
+            pushed=True, obj=obj, detail=f"held={got}")
+    return got
+
+
 def _make_commit(message: str) -> str:
     """A commit object over the empty tree, carrying `message`."""
 

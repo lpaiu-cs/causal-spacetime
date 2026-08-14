@@ -434,6 +434,9 @@ class Campaign:
         self.g1 = eb.Accumulator()
         self.prefix = stages.Prefix(self.g1, cfg["n_avail"])
         self.rng = None
+        self.reservation_object: str | None = None
+        self.g1_result: dict | None = None
+        self.g2_result: dict | None = None
         self.mismatches: list[dict] = []
         self.scanned = 0
         # The draw is BATCHED: one `draw` call consumes the generator
@@ -491,11 +494,24 @@ class Campaign:
         it is paid for and is valid independently of anything G3b
         found."""
 
+        finished = {}
+        if self.g1_result is not None:
+            finished["g1"] = self.g1_result
+        if self.g2_result is not None:
+            finished["g2"] = self.g2_result
         return {
             "g1_partial": _statistics(self.g1),
             "availability": self.prefix.report(),
             "scanned_points": self.scanned,
             "budget": self.budget.state(),
+            # gates that DID complete before the failure. Kept because
+            # the sample is paid for and valid, and marked because a
+            # completed gate in an incident is still not a verdict --
+            # the run that would have carried it did not finish.
+            "completed_gates": finished,
+            "completed_gates_are_not_a_verdict": (
+                "these gates ran to their frozen sample size, but the "
+                "run did not publish, so no sentence rests on them"),
             "is_not_a_verdict": (
                 "a preserved partial sample: the stopping rule did "
                 "not fire, so no gate has a status"),
@@ -879,7 +895,7 @@ class Campaign:
             self.checkpoint("g1_chunk",
                             {"availability": self.prefix.report()})
 
-    def run(self, on_g3a_passed=None) -> dict:
+    def run(self, on_g3a_passed=None, on_before_publish=None) -> dict:
         """The frozen order. Each stage's failure is raised, never
         swallowed, and the caller turns it into an incident.
 
@@ -905,15 +921,37 @@ class Campaign:
             # created by a push whose reply is then lost, spending the
             # seeds while the call never returns. Attributed to `g3b`,
             # the stage it was entering.
-            self._staged("g3b", on_g3a_passed)
+            self.reservation_object = self._staged("g3b",
+                                                   on_g3a_passed)
         availability = self._staged("g3b", self.run_g3b)
-        g1 = self._staged("g1", self.run_g1)
-        g2 = self._staged("g2", self.run_g2)
+        g1 = self.g1_result = self._staged("g1", self.run_g1)
+        g2 = self.g2_result = self._staged("g2", self.run_g2)
+        # THE CLAIM IS RE-READ BEFORE ANYTHING IS PUBLISHED (review
+        # R25). Eleven hours separate the claim from this point, and
+        # nothing so far would notice the ref being deleted or
+        # replaced in between -- so the unique attempt object the
+        # nonce exists to create was never actually tied to the
+        # result. A result published over someone else's claim is a
+        # result whose provenance says nothing.
+        if on_before_publish is not None:
+            self._staged("g2", lambda: on_before_publish(
+                self.reservation_object))
         return {
             "kind": "results", "run_kind": "campaign",
             "freeze_sha": self.freeze_sha,
             "manifest_digest": self.digest,
             "seeds": self.seeds,
+            "reservation": {
+                "ref": reservation.REF,
+                "authority": reservation.CANONICAL_AUTHORITY,
+                "object": self.reservation_object,
+                "seeds_spent": True,
+                "verified_at_exit": on_before_publish is not None,
+                "why": ("the streams were opened by this attempt and "
+                        "are retired; the object is the one the ref "
+                        "held both when the claim was made and when "
+                        "this result was published"),
+            },
             "order": list(stages.STAGES),
             "g3a": {"passed": g3a_result["passed"],
                     "conditions": g3a_result["conditions"]},
@@ -964,8 +1002,14 @@ def main() -> None:
             claimed["uncertain"] = uncertain.as_record()
             raise
 
+    def verify_before_publish(obj: str | None) -> None:
+        if obj is None:                          # pragma: no cover
+            raise SystemExit("internal: no claim object to verify")
+        reservation.verify_still_held(obj)
+
     try:
-        results = campaign.run(on_g3a_passed=claim)
+        results = campaign.run(on_g3a_passed=claim,
+                               on_before_publish=verify_before_publish)
     except stages.StageFailure as failure:
         publish_write_once(_INCIDENT, stages.incident(failure, {
             "freeze_sha": args.freeze_rev,

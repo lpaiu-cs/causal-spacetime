@@ -1082,3 +1082,107 @@ def test_the_push_report_has_three_states_not_two():
     states = {res.ClaimUncertain("x", pushed=p, obj=None).as_record()[
         "push_reported"] for p in (True, False, None)}
     assert states == {"success", "error", "did not report"}
+
+
+# ------------- the claim is re-read before anything is published
+
+def test_the_result_records_the_reservation_it_drew_under(tmp_path,
+                                                          monkeypatch):
+    """The nonce makes the attempt unique; without this the unique
+    object was never tied to the result it produced."""
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    results = campaign.run(on_g3a_passed=lambda: "c" * 40,
+                           on_before_publish=lambda obj: None)
+    res = results["reservation"]
+    assert res["object"] == "c" * 40
+    assert res["ref"] == "refs/o4b/reservation"
+    assert res["authority"] == "github.com/lpaiu-cs/causal-spacetime"
+    assert res["seeds_spent"] is True
+    assert res["verified_at_exit"] is True
+
+
+@pytest.mark.parametrize("held,expect", [
+    (None, "is GONE"),
+    ("d" * 40, "not this run's"),
+])
+def test_a_ref_deleted_or_replaced_during_the_run_blocks_publication(
+        monkeypatch, held, expect):
+    """Eleven hours separate the claim from the result. A result
+    published over a claim that is no longer its own has no
+    provenance."""
+
+    import o4b_reservation as res
+
+    monkeypatch.setattr(res, "_ls_remote", lambda ref: held)
+    with pytest.raises(res.ClaimUncertain, match=expect):
+        res.verify_still_held("c" * 40)
+
+
+def test_an_unreadable_ref_at_exit_also_blocks_publication(
+        monkeypatch):
+    """This is the LAST check before publishing, so being unable to
+    perform it is a reason not to publish -- unlike the claim, where
+    uncertainty means record-and-stop."""
+
+    import o4b_reservation as res
+
+    def unreachable(ref):
+        raise OSError("network unreachable")
+
+    monkeypatch.setattr(res, "_ls_remote", unreachable)
+    with pytest.raises(res.ClaimUncertain, match="could not be re-read"):
+        res.verify_still_held("c" * 40)
+
+
+def test_a_failed_exit_check_becomes_an_incident_keeping_g1_and_g2(
+        tmp_path, monkeypatch):
+    """The gates ran to their frozen sample size and are paid for, so
+    they are preserved -- and marked, because a completed gate in an
+    incident is still not a verdict."""
+
+    import o4b_reservation as res
+
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+
+    def gone(obj):
+        raise res.ClaimUncertain("the ref is GONE", pushed=True,
+                                 obj=obj, detail="ref absent at exit")
+
+    with pytest.raises(stages.StageFailure) as caught:
+        campaign.run(on_g3a_passed=lambda: "c" * 40,
+                     on_before_publish=gone)
+    failure = caught.value
+    assert failure.outcome == "ABORT"
+    assert failure.stage == "g2"
+    kept = failure.preserved["completed_gates"]
+    assert kept["g1"]["n"] == campaign.cfg["n_g1"]
+    assert kept["g2"]["n"] == campaign.cfg["n_g2"]
+    assert "no sentence rests on them" in (
+        failure.preserved["completed_gates_are_not_a_verdict"])
+
+    record = stages.incident(failure, {"freeze_sha": "a" * 40})
+    assert record["verdict"] is None
+    assert record["preserved"]["completed_gates"]["g1"]["status"]
+
+
+def test_the_exit_check_runs_after_g2_and_before_the_result(
+        tmp_path, monkeypatch):
+    order = []
+    campaign = _campaign(tmp_path)
+    monkeypatch.setattr(campaign, "_check_contract",
+                        lambda *a, **k: None)
+    real_g2 = campaign.run_g2
+
+    def g2():
+        order.append("g2")
+        return real_g2()
+
+    monkeypatch.setattr(campaign, "run_g2", g2)
+    campaign.run(on_g3a_passed=lambda: "c" * 40,
+                 on_before_publish=lambda obj: order.append("verify"))
+    assert order == ["g2", "verify"]
