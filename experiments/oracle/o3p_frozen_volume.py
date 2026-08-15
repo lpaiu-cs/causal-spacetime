@@ -233,6 +233,32 @@ def intersect_with_o3(v_lo: float, v_hi: float) -> dict:
     return out
 
 
+def v_ref_prime(intersection: dict, v_lo: float, v_hi: float) -> dict:
+    """The V_ref' recommendation, gated on the consistency check
+    (review PR #81 R1). A downstream consumer that reads this artifact
+    directly (the o4_sizing pattern) must not be able to lift a
+    midpoint out of a failed record: on a certification inconsistency
+    the value is null and the status says BLOCKED, so the blocking
+    invariant lives in the producer, not in every reader's care."""
+
+    if intersection["certification_inconsistency"]:
+        return {
+            "value": None,
+            "status": (
+                "BLOCKED: certification inconsistency -- the O3 and "
+                "O3' intervals are disjoint, so neither midpoint is a "
+                "usable reference until the inconsistency is resolved; "
+                "no downstream stage may size against this record"),
+        }
+    return {
+        "value": 0.5 * (v_lo + v_hi),
+        "definition": "midpoint of the STANDALONE O3' interval",
+        "status": ("recommendation only -- adopted, and all O5 "
+                   "sizing re-derived from the actual endpoints, "
+                   "at the O5 freeze"),
+    }
+
+
 def _serialize_result(res: dict) -> dict:
     """Outward binary64 endpoints (lo_float/hi_float, never plain
     float()), exactly as O3: a nearest-rounding conversion could move
@@ -329,6 +355,9 @@ def main() -> None:
             "to write a result with broken lineage")
 
     result = _serialize_result(res)
+    # the consistency check comes FIRST, and the V_ref' block is
+    # derived from it -- a failed record carries no usable midpoint
+    intersection = intersect_with_o3(result["v_lo"], result["v_hi"])
     art = {
         "stage": ("O3': re-certified diamond volume of the frozen "
                   "anchors (12, 18, 8.5)M at target ratio 0.005"),
@@ -338,15 +367,9 @@ def main() -> None:
                  "system": platform.system()},
         "code": {"start": start, "end": end},
         "result": result,
-        "intersection_with_o3": intersect_with_o3(
-            result["v_lo"], result["v_hi"]),
-        "v_ref_prime_recommendation": {
-            "value": 0.5 * (result["v_lo"] + result["v_hi"]),
-            "definition": "midpoint of the STANDALONE O3' interval",
-            "status": ("recommendation only -- adopted, and all O5 "
-                       "sizing re-derived from the actual endpoints, "
-                       "at the O5 freeze"),
-        },
+        "intersection_with_o3": intersection,
+        "v_ref_prime_recommendation": v_ref_prime(
+            intersection, result["v_lo"], result["v_hi"]),
         "curve": res["curve"],
         "total_wall_s": time.perf_counter() - t0,
     }

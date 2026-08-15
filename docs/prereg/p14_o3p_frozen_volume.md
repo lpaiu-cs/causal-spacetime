@@ -81,10 +81,14 @@ Write-once artifact `docs/prereg/p14_o3p_volume.json` (atomic no-clobber
    interval until it is resolved**. On consistency, downstream consumes
    the **standalone O3′ interval** — the intersection is the
    consistency check, not the estimator;
-3. a `v_ref_prime_recommendation`: **V_ref′ = the midpoint of the
-   standalone O3′ interval** — a recommendation adopted, with every O5
-   number (A, acceptance range, powers) re-derived from the actual O3′
-   endpoints, at the O5 freeze;
+3. a `v_ref_prime_recommendation`, **gated on the consistency check**:
+   on consistency, **V_ref′ = the midpoint of the standalone O3′
+   interval** — a recommendation adopted, with every O5 number (A,
+   acceptance range, powers) re-derived from the actual O3′ endpoints,
+   at the O5 freeze. On a certification inconsistency the value is
+   `null` and the status reads BLOCKED, so a downstream consumer that
+   reads the artifact directly cannot lift a midpoint out of a failed
+   record — the blocking invariant lives in the producer;
 4. **`target-not-met` is published as-is**: the certified interval
    reached at the moment a cap fired, the exact termination reason, and
    the same provenance (config, environment, git state, curve). A cap

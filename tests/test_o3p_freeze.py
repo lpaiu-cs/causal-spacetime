@@ -159,6 +159,28 @@ def test_an_empty_intersection_is_a_certification_inconsistency():
     assert "does not adjudicate" in x["note"]
 
 
+def test_v_ref_prime_is_blocked_on_inconsistency():
+    """Review PR #81 R1: a failed record must carry no usable
+    midpoint -- a direct-reading consumer (the o4_sizing pattern)
+    would otherwise size against a certification inconsistency."""
+
+    bad = o3p.intersect_with_o3(58.0, 59.0)
+    rec = o3p.v_ref_prime(bad, 58.0, 59.0)
+    assert rec["value"] is None
+    assert rec["status"].startswith("BLOCKED")
+    assert "no downstream stage may size" in rec["status"]
+    assert "definition" not in rec
+
+
+def test_v_ref_prime_is_the_standalone_midpoint_on_consistency():
+    good = o3p.intersect_with_o3(56.5, 57.0)
+    rec = o3p.v_ref_prime(good, 56.5, 57.0)
+    assert rec["value"] == 0.5 * (56.5 + 57.0)
+    assert rec["definition"] == (
+        "midpoint of the STANDALONE O3' interval")
+    assert "recommendation only" in rec["status"]
+
+
 # ------------------------------------------ serialization/publish
 
 def test_result_serialization_is_outward():
