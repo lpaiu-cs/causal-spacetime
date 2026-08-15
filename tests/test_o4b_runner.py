@@ -296,8 +296,16 @@ def test_the_manifest_pins_the_inherited_o4_modules_and_the_instrument():
     # every O4b module the run actually executes
     for rel in run.PROTOCOL_SURFACE:
         assert (_REPO / rel).exists(), rel
+    # Every o4b_ module the campaign EXECUTES must be pinned, so a
+    # protocol file cannot quietly stop being frozen. o4b_recover.py is
+    # excluded on purpose: it is post-hoc analysis tooling that reads the
+    # preserved statistics after the run, not part of the frozen
+    # apparatus the campaign verified against -- freezing it would be
+    # meaningless (the run it would belong to already finished).
+    _NOT_PROTOCOL = {"o4b_recover.py"}
     o4b_modules = {p.name for p in (_REPO / "experiments"
-                                    / "oracle").glob("o4b_*.py")}
+                                    / "oracle").glob("o4b_*.py")
+                   } - _NOT_PROTOCOL
     assert o4b_modules == {Path(r).name for r in pinned
                            if Path(r).name.startswith("o4b_")}
 

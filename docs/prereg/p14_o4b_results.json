@@ -1,0 +1,106 @@
+{
+ "kind": "results",
+ "run_kind": "recovered_completed_campaign",
+ "freeze_sha": "715865abc684224785e71a3130e17c50db35f947",
+ "manifest_digest": "cec650b9391af0fc11e4b6bb94455cdbc1a037c18ecec83149d0d4693e7d7be2",
+ "seeds": {
+  "o4b_g1_audit": 40000401,
+  "o4b_g2_leakage": 40000411
+ },
+ "recovery": {
+  "source": [
+   "p14_o4b_incident.json",
+   "p14_o4b_checkpoint.json"
+  ],
+  "method": "the frozen decision functions (empirical Bernstein, Clopper-Pearson, o4_sizing constants) re-applied to the preserved sufficient statistics",
+  "reproduced_preserved_verdicts_bit_exact": true,
+  "no_new_seed": true,
+  "no_solver_call": true,
+  "no_resampling": true,
+  "no_gate_change": true,
+  "seeds_status": "OBSERVED -- the two streams were drawn and are retired (PR #76); a recovery is a reproduction of that observed run, never a new observation",
+  "why": "the campaign completed both gates; only the exit provenance wiring failed, so the verdict the run computed is recovered from its own preserved statistics rather than re-run"
+ },
+ "reservation": {
+  "ref": "refs/o4b/reservation",
+  "authority": "github.com/lpaiu-cs/causal-spacetime",
+  "object": "46acee340bc247511546964b2925953721d5bb59",
+  "seeds_spent": true,
+  "verified_at_recovery": true,
+  "why": "the streams were opened by this attempt and are retired; the object is the one the ref held when the claim was made and when this recovery published"
+ },
+ "order": [
+  "g3a",
+  "g3b",
+  "g1",
+  "g2"
+ ],
+ "g1": {
+  "status": "concordant",
+  "n": 26200000,
+  "v_s1_lo": 56.448806185841875,
+  "v_s1_hi": 56.9822829864225,
+  "identified_discrepancy": [
+   -0.8992123405928396,
+   0.7695461186219887
+  ],
+  "band_abs": 1.7034113309135284
+ },
+ "g2": {
+  "status": "concordant",
+  "n": 1072696,
+  "leaking_points": 0,
+  "leak_upper_abs": 0.14195058753928652,
+  "budget_abs": 0.14195094424279403,
+  "leak_lower_abs": 0.0,
+  "leak_lower_abs_provenance": "carried from the preserved record, NOT independently recomputed: the g2_complete checkpoint serialised the G1 stream's statistics, not G2's (incident defect 5c). It does not enter the concordant verdict, which rests on leak_upper_abs <= budget_abs."
+ },
+ "availability": {
+  "n_avail_target": 100000,
+  "candidates": 100000,
+  "complete": true,
+  "eligible": 100000,
+  "fully_testable": 100000,
+  "zero_window_points": 4073746,
+  "accumulated_points": 26200000,
+  "accumulates_every_drawn_point": true,
+  "not_fully_testable_by_reason": {},
+  "beyond_the_prefix": {
+   "candidates": 0,
+   "fully_testable": 0,
+   "zero_window_points": 0,
+   "excluded_from_the_rates_because": "the scan's stopping time depends on what it finds, so these points would put a results-chosen numerator over a fixed denominator"
+  },
+  "total_fully_testable_for_k_g3b": 100000,
+  "eligible_rate": 1.0,
+  "fully_testable_rate": 1.0,
+  "rate_denominator": "the fixed prefix, not the scan"
+ },
+ "budget": {
+  "reserved": 55351929,
+  "completed": 55351929,
+  "unfinished": 0,
+  "wall_s": 43531.618581,
+  "wall_overrun_s": 0.0,
+  "max_calls": 80000000,
+  "max_wall_s": 86400.0,
+  "max_batch_calls": 8192,
+  "reserved_by_stage": {
+   "g3a": 55351929
+  },
+  "stage": "g3a",
+  "clock_started_at": "before G3a",
+  "cap_is_charged_against": "reserved, which never under-charges",
+  "call_cap_overshoot": "none: a batch that does not fit is refused, so max_calls is never crossed",
+  "wall_cap_is": "a start rule: no batch begins at or after max_wall_s, so the run can finish one batch late -- at most 8,192 calls, but NO rigorous bound in seconds, because the 768 us/pair cost is a host-dependent average and not a per-call maximum",
+  "nominal_overrun_s": 6.291456,
+  "nominal_overrun_is": "a projection from the measured average; the recorded wall_overrun_s is the fact"
+ },
+ "environment": {
+  "python": "3.11",
+  "gmpy2": "2.3.1",
+  "mpfr": "MPFR 4.2.2",
+  "gmp": "GMP 6.3.0",
+  "numpy": "2.4.6"
+ }
+}
