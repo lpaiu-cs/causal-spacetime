@@ -137,7 +137,7 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | `experiments/positive_control/probe_seed_ledger.py` | `440709b83dd25a0bb4f839306b893ddad3b71710f4735c7577370f3591327e76` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
 | `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
-| `docs/theory/schwarzschild_volume_oracle_note.md` | `e4634637ab17a00cb4ba668d65011aedb9e1f06d5c4cecb9a5c33fc5f2b31f51` |
+| `docs/theory/schwarzschild_volume_oracle_note.md` | `e7c10656cd1fb86b9978096374950a1c438cd7e49bbff647a1350027c62c5ad1` |
 
 ### Section 6.7 second-stage bundle (S5 C2-unpaired discrimination)
 
@@ -158,6 +158,39 @@ today. The seed ledger row above covers both stages.
 | `experiments/positive_control/s5_schwarzschild_c2.py` | `4761e5f90e019b8823fd93c883ece1a2f55034799a45f65d40d2cbcb0f3adc19` |
 | `tests/test_s5_prereg.py` | `29525ef24558c6142eaccf44eb58e82f65a689c65d88bcc5c691505434798a4a` |
 
+### Auxiliary O4b instrument-audit bundle (oracle arc)
+
+Same digest convention. This bundle carries the auxiliary audit of
+manuscript Sections 9-10 and Appendix B — an instrument statement that
+upgrades nothing in Sections 6-6.7. Roles:
+`p14_o3_volume.json` is the certified volume the audit consumed (write-once,
+O3 execution from freeze `785148e`); `p14_o4b_executed_freeze_manifest.json`
+is the immutable snapshot of the 25-file surface that governed the executed
+O4b campaign (byte-identical to the freeze blob at `715865a`, digest equal to
+the `manifest_digest` recorded inside the incident, checkpoint, and result;
+verified by `tests/test_o4b_incident.py`); `p14_o4b_freeze_manifest.json` is
+the CURRENT manifest, re-pinned by protocol maintenance (PR #78);
+`p14_o4b_incident.json` and `p14_o4b_checkpoint.json` are the campaign run's
+preserved records, verbatim as emitted (their SHA-256 is additionally pinned
+inside `o4b_recover.py`, which refuses recovery on any byte change);
+`p14_o4b_results.json` is the recovered verdict
+(`run_kind = recovered_completed_campaign`: no new seed, no solver call, no
+resampling, no gate change — stage verdict CONCORDANT per the frozen table).
+No campaign rerun stands behind any row of this table.
+
+| File | SHA-256 |
+| --- | --- |
+| `docs/prereg/p14_o3_volume.json` | `aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f` |
+| `docs/prereg/p14_o3_executed_freeze_manifest.json` | `350cc1786a858f099bbe7e094a8682ae25915287fd091503297500f60fd00907` |
+| `docs/prereg/p14_o4b_freeze_manifest.json` | `e5a45ae28b0c97a3bf22081da13a2f571b49b20c8509dad457e5cf7f55686640` |
+| `docs/prereg/p14_o4b_executed_freeze_manifest.json` | `cec650b9391af0fc11e4b6bb94455cdbc1a037c18ecec83149d0d4693e7d7be2` |
+| `docs/prereg/p14_o4b_incident.json` | `8106b16f0d03efe1acc81941f7ca3149cb8ddee0fbaaf00cfccb5c8376d4cc75` |
+| `docs/prereg/p14_o4b_checkpoint.json` | `5dd6de7eea25c8384329b26ebf9f61c9dae51ee451c6d5c5717dbd463dc6679a` |
+| `docs/prereg/p14_o4b_results.json` | `fe47e43b9f5c6618bbf30dd201a5a8b8d9ae69a712dbd12ea959c1b122d681d8` |
+| `experiments/oracle/o4b_recover.py` | `d11c288771cd6401e558563b3bac3a683e8cff9ae033dabb4a0dab74b1ff70cb` |
+| `tests/test_o4b_recover.py` | `9312270e7dd2665c1f00e177f32c680e1a5ad879929f78d8f8cce16c344f4263` |
+| `tests/test_o4b_wiring_fixes.py` | `cbb88a9f0ba76ac37afb730f4cf279f3a6339948326e509c7161d5d63b37aa5f` |
+
 ### Citation-to-artifact inventory (manuscript Section 6 / Appendix B)
 
 | Manuscript location | Cited content | Evidence file |
@@ -177,10 +210,16 @@ today. The seed ledger row above covers both stages.
 | 6.7 | result table, verdict, frozen sentences, ambiguity/escalation | `docs/prereg/p14_s4_results.json` |
 | 6.7 | exploration block (comparison arm of the replication gate) | `docs/prereg/p14_s3_probe_results.json` |
 | 6.7 | C2 feasibility audit (exploratory, stored-data) | `docs/prereg/p14_c2_feasibility_audit.json`; `experiments/positive_control/c2_feasibility_audit.py` |
-| 9 | oracle analytic reductions and open items | `docs/theory/schwarzschild_volume_oracle_note.md` |
+| 9 | oracle analytic reductions, certification closure, audit relation | `docs/theory/schwarzschild_volume_oracle_note.md`; `docs/theory/schwarzschild_volume_oracle_certification.md` |
 | App. B | executed-freeze snapshot vs current replay manifest; seed ledger | `docs/prereg/p14_s4_executed_freeze_manifest.json`; `docs/prereg/p14_s4_freeze_manifest.json`; `experiments/positive_control/probe_seed_ledger.py`; contract tests in `tests/test_s4_prereg.py` |
 | §10 | S4 runner gates and replay ownership | `experiments/positive_control/s4_schwarzschild_c1.py` |
 | 6.7 | S5 frozen rule, margins, four-way gate, certification | `docs/prereg/p14_s5_schwarzschild_c2.md` |
 | 6.7 | S5 result table, DETECTED outcome, BA verdict, frozen sentences | `docs/prereg/p14_s5_results.json` |
 | App. B | S5 executed-freeze snapshot vs current replay manifest | `docs/prereg/p14_s5_executed_freeze_manifest.json`; `docs/prereg/p14_s5_freeze_manifest.json`; contract tests in `tests/test_s5_prereg.py` |
 | §10 | S5 runner gates, fail-closed CLI, replay ownership | `experiments/positive_control/s5_schwarzschild_c2.py` |
+| 9 | certified volume V = [56.212737, 57.348019], target-met | `docs/prereg/p14_o3_volume.json` |
+| 9 | O4b audit verdict CONCORDANT, G1/G2 numbers, recovery flags | `docs/prereg/p14_o4b_results.json` |
+| §10 | O4b recovery gates: input authentication, bit-exact reproduction, tamper refusals | `experiments/oracle/o4b_recover.py`; contract tests in `tests/test_o4b_recover.py` |
+| §10 | O4b real-`main()` end-to-end regression (the wiring the abort exposed) | `tests/test_o4b_wiring_fixes.py` |
+| App. B | O4b executed-freeze snapshot vs current manifest; preserved run records | `docs/prereg/p14_o4b_executed_freeze_manifest.json`; `docs/prereg/p14_o4b_freeze_manifest.json`; `docs/prereg/p14_o4b_incident.json`; `docs/prereg/p14_o4b_checkpoint.json`; contract tests in `tests/test_o4b_incident.py` |
+| App. B | O4b incident narrative and recovery link (historical record, not regraded) | `docs/prereg/p14_o4b_incident.md` |

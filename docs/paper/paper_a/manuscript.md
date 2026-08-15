@@ -474,7 +474,9 @@ sentence is bound to the frozen operating point); and, by itself, it does not
 open the Schwarzschild generalization. Both claim classes are carried there by
 the separate preregistered extensions of Section 6.7 — the C1 paired claim
 confirmed, C2 single-poset discrimination detected with incomplete
-separation; the diamond-volume oracle remains open there. A
+separation; the diamond-volume oracle is now certified, and its direct-MC
+instrument audit is complete as an auxiliary result (Section 9, Appendix B),
+while the prediction-anchored Poisson-count stage remains separately open. A
 separate cost measurement (S1) prices the causal-predicate component — about
 0.77 ms per pair on the tested solver, patch, and tolerance, roughly 360x the
 plane-wave predicate (`docs/prereg/p14_s1_cost.json`).
@@ -634,7 +636,9 @@ Weyl-tensor recovery, or box- or density-independence of the separation. The
 Schwarzschild path carries its own preregistered verdicts (Section 6.7: C1
 confirmed and C2 detected with incomplete separation, in separate stages with
 no joint primary verdict) and its own non-claims; the diamond-volume oracle
-remains open there. Priority is claimed
+is certified and instrument-audited there as an auxiliary result (Section 9),
+but no Section 6.7 verdict uses it, and the prediction-anchored Poisson-count
+stage remains open. Priority is claimed
 only within this program; no literature-wide first is asserted before a
 priority search.
 
@@ -651,13 +655,36 @@ that makes the experiment clean also makes it unrepresentative of generic
 generalizing beyond type N is now partially opened rather than closed: the
 Schwarzschild C1-paired extension is confirmed and the single-poset (C2-class)
 Schwarzschild stage is preregistered and detected with incomplete separation
-(Section 6.7), and the diamond-volume oracle is a partially derived
-theoretical path — the static-spacetime reduction of the diamond volume to a
-closed-form-in-time integral, and to a 2D integral for radially aligned
-anchors via the optical metric, is derived in a public note
-(`docs/theory/schwarzschild_volume_oracle_note.md`), while the numerical
-flight-time error certification, anchor-diamond containment proof, and grid
-sizing remain open. The natural next question — whether
+(Section 6.7), and the diamond-volume oracle is now fully certified — the
+static-spacetime reductions derived in the public note
+(`docs/theory/schwarzschild_volume_oracle_note.md`) were completed by an
+MPFR directed-rounding flight-time certification, a uniform anchor-diamond
+containment proof, and a certified cell-refinement integrator, and the frozen
+configuration's volume was computed once from an exact freeze checkout:
+`V ∈ [56.212737, 57.348019]`, relative half-width 0.009997 ≤ 0.01,
+`target-met` (`docs/prereg/p14_o3_volume.json`).
+
+An auxiliary instrument audit (O4b) then consumed that certified volume: at
+the single frozen Schwarzschild configuration, the sampler, the S1 volume
+response, and the certified oracle were found CONCORDANT under a frozen
+composite error budget of 3.25% with simultaneous coverage ≥ 95% — G1
+volume interval `[56.448806185841875, 56.9822829864225]` against the
+certified `[56.212737, 57.348019]` (identified discrepancy
+`[-0.8992123405928396, 0.7695461186219887]`, band `1.7034113309135284`),
+G2 leak upper bound `0.14195058753928652` within budget
+`0.14195094424279403` with zero leaking points. The audit's campaign run
+completed both gates and stopped at a publication-wiring defect; the verdict
+was recovered by re-applying the frozen decision functions to the preserved
+sufficient statistics (`run_kind: recovered_completed_campaign` in
+`docs/prereg/p14_o4b_results.json` — no new seed, no solver call, no
+resampling, no gate change), with the recovery authenticated and
+bit-exactness enforced by contract tests (Appendix B). This audit upgrades
+nothing in Sections 6-6.7: it is a statement that the instrument stack
+agrees with the certified continuum volume at one frozen configuration — not
+a Poisson causal-set count verification, not mass- or domain-generality, not
+a C1/C2 joint verdict, and not complete separation or general volume
+accuracy. The prediction-anchored Poisson-count stage (sprinkle counts
+against `rho V`) remains a separate, open stage. The natural next question — whether
 observer-relative distance *order* can be validated as recovering latent
 geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this
@@ -707,6 +734,24 @@ from the stored per-reading arrays through the frozen gate functions; and the
 seed ledger separates fresh allocation from deterministic replay, with replay
 output owned by a separate path that can never replace a fresh-observation
 artifact.
+
+The auxiliary O4b instrument audit (Section 9) meets the same standard with
+one addition. Its campaign runner refuses to run except on the clean exact
+checkout of the approved freeze SHA against a 25-file content-addressed
+manifest with an environment lock; the executed surface is preserved
+byte-for-byte as `docs/prereg/p14_o4b_executed_freeze_manifest.json`. Because
+the run stopped at a publication-wiring defect after both gates completed,
+the published verdict is a *recovery*: `experiments/oracle/o4b_recover.py`
+re-applies the frozen decision functions (empirical-Bernstein interval,
+Clopper-Pearson bound, frozen sizing constants) to the preserved sufficient
+statistics, authenticates its inputs against the SHA-256 of the committed
+incident and checkpoint records with a two-file cross-check, and refuses to
+publish unless the recomputation reproduces the preserved verdict
+bit-for-bit; contract tests (`tests/test_o4b_recover.py`) pin the
+recomputation, the tamper refusals, and the published artifact, and
+regression tests (`tests/test_o4b_wiring_fixes.py`) drive the repaired
+`main()` path end to end. No new seed was drawn, no solver called, no point
+resampled, and no gate changed anywhere in the recovery.
 
 ## Appendix A: conventions and normalizations
 
@@ -790,6 +835,43 @@ executed run byte-for-byte as
 `docs/prereg/p14_s5_executed_freeze_manifest.json`, verified against the
 historical blobs at `86e3674` by a contract test; the CURRENT
 `p14_s5_freeze_manifest.json` hashes the post-result replay surface.
+
+**Auxiliary O4b instrument-audit provenance (oracle arc).** The certified
+oracle chain is O1 -> O2 -> O3 (PR #64-#68): flight-time certification,
+certified cell integrator, then the O3 freeze (`785148e`) and its one
+approved execution producing the certified volume
+(`docs/prereg/p14_o3_volume.json`, executed surface
+`p14_o3_executed_freeze_manifest.json`). The first audit stage, O4, aborted
+at its G3 with no verdict (PR #69-#70); its replay diagnostic and G3
+redesign reopened the preregistration (PR #71-#74), and O4b was frozen with
+new seeds (PR #75). The approved execution SHA is the freeze branch head
+`715865a` — not the merge commit. The campaign executed once from that clean
+exact checkout: G3a passed (71 wrapper-contract cases, 6,537 metered calls),
+`refs/o4b/reservation` was claimed (`46acee34`, retained permanently,
+spending seeds 40000401/40000411), G1 ran to 26,200,000 points and G2 to
+1,072,696 points, and the run stopped at the pre-publication provenance
+re-read on a wiring defect — the claim callback returned `None` — publishing
+nothing. The preservation commit (PR #76, merge `83e366c`) committed the
+incident and checkpoint verbatim (`p14_o4b_incident.json`,
+`p14_o4b_checkpoint.json`), retired both seeds in the ledger, and snapshotted
+the executed surface byte-for-byte
+(`p14_o4b_executed_freeze_manifest.json`, byte-identical to the freeze blob
+at `715865a`). The recovery commit (PR #77, merge `50586dd`) published
+`p14_o4b_results.json` with `run_kind = recovered_completed_campaign` by
+re-applying the frozen decision functions to the preserved statistics —
+bit-identical to the preserved verdicts, inputs authenticated by blob
+SHA-256 pins and an incident/checkpoint cross-check, the remote reservation
+re-verified immediately before publication; per the frozen stage-verdict
+table (G1 and G2 both concordant, G3a valid, frozen `n` reached) the stage
+verdict is CONCORDANT. The maintenance commit (PR #78, merge `a04e860`)
+fixed the wiring defects — the claim return value, the budget stage label,
+an explicit incident `failure_point`, a named checkpoint RNG stream — with
+end-to-end regression tests over the real `main()` path, leaving the result,
+incident, checkpoint, and executed snapshot untouched. No campaign rerun and
+no same-seed re-entry occurred anywhere in this chain; the historical
+no-verdict records of the O4 abort and the O4b incident retain their
+original verdicts, with the recovery linked rather than retroactively
+regraded.
 
 ## References
 

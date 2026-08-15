@@ -507,7 +507,12 @@ explicitly approved change.
 
 This document is PR-O1 of the oracle arc: L0-L5 are implemented and
 tested by `experiments/oracle/`; L6 is the frozen contract for the
-PR-O2 integrator; the note's Section 4 status tags flip in PR-O3 when
-the assembled bounded-error volume exists. Paper A is unchanged by
-this arc until a prediction-anchored stage uses the oracle, per the
-Section 6.7 claim boundary.
+PR-O2 integrator; the note's Section 4 status tags flipped in PR-O3
+when the assembled bounded-error volume landed
+(`docs/prereg/p14_o3_volume.json`). The certified volume has since
+been consumed once, by the auxiliary O4b direct-MC instrument audit
+(CONCORDANT at the single frozen configuration, verdict recovered
+from the completed run's preserved statistics —
+`docs/prereg/p14_o4b_results.json`); per the Section 6.7 claim
+boundary that audit upgrades nothing in Paper A, and the
+prediction-anchored Poisson-count stage remains separately open.
