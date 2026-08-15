@@ -77,7 +77,8 @@ class StageFailure(Exception):
 
     def __init__(self, stage: str, outcome: str, reason: str,
                  preserved: dict | None = None,
-                 detail: dict | None = None) -> None:
+                 detail: dict | None = None,
+                 failure_point: str | None = None) -> None:
         super().__init__(f"{stage}: {reason}")
         if stage not in STAGES:
             raise ValueError(f"{stage!r} is not a frozen stage")
@@ -90,6 +91,13 @@ class StageFailure(Exception):
         self.reason = reason
         self.preserved = preserved or {}
         self.detail = detail or {}
+        # The STEP that failed, when it is not the stage itself. The
+        # pre-publish re-verify and the reservation claim both run under
+        # a stage label (`g2`, `g3b`) that would otherwise read as a
+        # claim about that gate; `failure_point` records the actual step
+        # so a reader does not mistake a post-gate stop for an
+        # unfinished gate (incident defect 5b).
+        self.failure_point = failure_point or stage
 
 
 #: What an incident owns. A caller's run context may not supply these
@@ -99,8 +107,9 @@ class StageFailure(Exception):
 #: and break the invariant one line above it, that no path returns a
 #: verdict and an incident together. Same boundary as the checkpoint's.
 INCIDENT_KEYS = (
-    "kind", "run_kind", "stage", "termination_reason", "outcome",
-    "verdict", "why_no_verdict", "preserved", "unavailable", "detail",
+    "kind", "run_kind", "stage", "failure_point", "termination_reason",
+    "outcome", "verdict", "why_no_verdict", "preserved", "unavailable",
+    "detail",
 )
 
 
@@ -119,6 +128,7 @@ def incident(failure: StageFailure, context: dict) -> dict:
         "kind": "incident",
         "run_kind": "campaign",
         "stage": failure.stage,
+        "failure_point": failure.failure_point,
         "termination_reason": failure.reason,
         "outcome": failure.outcome,
         "verdict": None,
@@ -291,18 +301,25 @@ class Prefix:
 
 
 def checkpoint_payload(freeze_sha: str, digest: str,
-                       seed: int, rng, samples: int,
+                       seed: int, rng, rng_stream: str, samples: int,
                        statistics: dict, budget) -> dict:
     """Everything a checkpoint has to carry, assembled once.
 
     `rng_position` is the bit generator's own state, not a count of
     draws: resuming has to continue the same stream, and a count only
-    reproduces it if every consumer drew exactly as before."""
+    reproduces it if every consumer drew exactly as before.
+
+    `rng_stream` NAMES which stream `seed`/`rng_position` belong to. A
+    checkpoint stamped `g2_complete` still serialises the G1 stream --
+    G2 runs on its own generator, never stored here -- so without the
+    name a recovery could read the G1 seed as G2's and replay the wrong
+    sample (incident defect 5c)."""
 
     return {
         "freeze_sha": freeze_sha,
         "manifest_digest": digest,
         "seed": seed,
+        "rng_stream": rng_stream,
         "rng_position": (rng.bit_generator.state
                          if rng is not None else None),
         "samples": samples,

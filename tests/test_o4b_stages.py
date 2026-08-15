@@ -272,12 +272,13 @@ def test_a_checkpoint_carries_the_rng_position_not_a_draw_count(
     path = st.write_checkpoint(
         tmp_path / "ck.json", "g1_chunk",
         freeze_sha="a" * 40, digest="b" * 64, seed=40_000_401,
-        rng=rng, samples=1_000,
+        rng=rng, rng_stream="o4b_g1_audit", samples=1_000,
         statistics={"mean_z": 0.25}, budget=_B())
     record = ck.read(path)
     assert record["rng_position"]["bit_generator"] == "PCG64"
     assert record["rng_position"] != np.random.default_rng(
         40_000_401).bit_generator.state
+    assert record["rng_stream"] == "o4b_g1_audit"
     assert record["partial"] is True
     assert record["budget"]["calls"] == 2_000
 

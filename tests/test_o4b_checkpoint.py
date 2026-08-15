@@ -25,6 +25,7 @@ def _payload(**over) -> dict:
         "freeze_sha": "0" * 40,
         "manifest_digest": "a" * 64,
         "seed": 40_000_401,
+        "rng_stream": "o4b_g1_audit",
         "rng_position": 8_192,
         "samples": 8_192,
         "statistics": {"n": 8_192, "mean_z": 0.25, "var_z": 0.03},
