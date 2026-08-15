@@ -1,0 +1,168 @@
+"""O4b abort-record contract tests.
+
+Unlike the O4 abort, this one is a publication-wiring defect, not a
+scientific fail-closed stop: both gates completed WITH a status and the
+run stopped only at the exit provenance check. So the record here
+deliberately PRESERVES the gate statistics -- the recovery audit reads
+them -- and the tests pin the opposite of O4's negative contract: the
+estimates are present, they are flagged non-verdict, and the top-level
+verdict stays null, so nothing downstream can promote a preserved
+partial into a published result. The lineage must stay verifiable
+against the freeze commit and the reservation the run actually claimed.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+_REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
+
+_PREREG = _REPO / "docs" / "prereg"
+_INCIDENT = _PREREG / "p14_o4b_incident.json"
+_CHECKPOINT = _PREREG / "p14_o4b_checkpoint.json"
+_INCIDENT_MD = _PREREG / "p14_o4b_incident.md"
+_EXECUTED = _PREREG / "p14_o4b_executed_freeze_manifest.json"
+
+_FREEZE_REV = "715865abc684224785e71a3130e17c50db35f947"
+_RESERVATION_OBJ = "46acee340bc247511546964b2925953721d5bb59"
+_MANIFEST_DIGEST = (
+    "cec650b9391af0fc11e4b6bb94455cdbc1a037c18ecec83149d0d4693e7d7be2")
+
+
+def _incident() -> dict:
+    return json.loads(_INCIDENT.read_text(encoding="utf-8"))
+
+
+def _checkpoint() -> dict:
+    return json.loads(_CHECKPOINT.read_text(encoding="utf-8"))
+
+
+# --------------------------------------------- the negative contract
+
+def test_the_verdict_is_null_and_the_outcome_is_abort():
+    """The whole point: no scientific verdict is published, even though
+    the gates ran to completion."""
+
+    rec = _incident()
+    assert rec["kind"] == "incident"
+    assert rec["outcome"] == "ABORT"
+    assert rec["verdict"] is None
+    assert rec["stage"] == "g2"
+    assert not (_PREREG / "p14_o4b_results.json").exists()
+
+
+def test_the_preserved_gate_statistics_are_flagged_non_verdict():
+    """The distinction the recovery audit rests on: the numbers are
+    here, but they are not a status. If a later edit drops the
+    non-verdict flags while keeping the numbers, this fails."""
+
+    pres = _incident()["preserved"]
+    # the estimates ARE preserved -- this is the recovery material
+    assert pres["completed_gates"]["g1"]["status"] == "concordant"
+    assert pres["completed_gates"]["g2"]["status"] == "concordant"
+    assert pres["g1_partial"]["n"] == 26_200_000
+    # ...and every one of them is explicitly disclaimed
+    assert "not_a_verdict" in pres["completed_gates_are_not_a_verdict"] \
+        or "did not publish" in pres["completed_gates_are_not_a_verdict"]
+    assert "preserved partial" in pres["is_not_a_verdict"]
+    assert _incident()["verdict"] is None
+
+
+def test_the_stop_was_wiring_not_science_and_not_a_cap():
+    """Neither a fail-closed scientific stop nor a cap: the budget shows
+    both caps unbound, and the reason names the internal defect."""
+
+    rec = _incident()
+    assert "no claim object to verify" in rec["termination_reason"]
+    b = rec["preserved"]["budget"]
+    assert b["completed"] < b["max_calls"]           # call cap unbound
+    assert b["wall_s"] < b["max_wall_s"]             # wall cap unbound
+
+
+# ------------------------------------------------------- the lineage
+
+def test_the_reservation_was_claimed_and_the_seeds_are_spent():
+    rec = _incident()
+    assert rec["freeze_sha"] == _FREEZE_REV
+    assert rec["reservation_claimed"] is True
+    assert rec["reservation_object"] == _RESERVATION_OBJ
+    assert rec["reservation_uncertainty"] is None
+    assert rec["seeds_spent"] is True
+    assert rec["seeds"] == {"o4b_g1_audit": 40_000_401,
+                            "o4b_g2_leakage": 40_000_411}
+    probe = subprocess.run(["git", "cat-file", "-e", _FREEZE_REV],
+                           cwd=_REPO, capture_output=True)
+    assert probe.returncode == 0, "the freeze commit must be reachable"
+
+
+def test_the_executed_freeze_manifest_is_the_frozen_blob_verbatim():
+    """What the campaign actually verified against, preserved even as
+    the live manifest moves on with the ledger (the S4/S5/O4 split)."""
+
+    blob = subprocess.run(
+        ["git", "show", f"{_FREEZE_REV}:docs/prereg/"
+         f"p14_o4b_freeze_manifest.json"],
+        cwd=_REPO, capture_output=True, check=True).stdout
+    assert _EXECUTED.read_bytes() == blob
+    # and its digest is exactly the one the run recorded it ran against
+    assert hashlib.sha256(_EXECUTED.read_bytes()).hexdigest() \
+        == _MANIFEST_DIGEST
+    assert _incident()["manifest_digest"] == _MANIFEST_DIGEST
+
+
+def test_the_checkpoint_is_a_partial_non_verdict_at_g2_complete():
+    cp = _checkpoint()
+    assert cp["kind"] == "checkpoint"
+    assert cp["stage"] == "g2_complete"
+    assert cp["partial"] is True
+    assert cp["non_verdict"] is True
+    assert cp["freeze_sha"] == _FREEZE_REV
+
+
+# --------------------------------------------------------- the ledger
+
+def test_the_drawn_scalars_are_retired_under_their_functional_names():
+    """Spent, in OBSERVED, and refused as a fresh allocation -- but NOT
+    renamed `aborted`, because a recovery may yet make them a verdict's
+    provenance."""
+
+    import probe_seed_ledger as ledger
+
+    assert ledger.OBSERVED_PROBE_SCALARS["o4b_g1_audit"] == 40_000_401
+    assert ledger.OBSERVED_PROBE_SCALARS["o4b_g2_leakage"] == 40_000_411
+    assert 40_000_401 in ledger.spent_scalars()
+    assert 40_000_411 in ledger.spent_scalars()
+    assert ledger.FRESH_PROBE_SCALARS == {}
+    for name in ("o4b_g1_audit", "o4b_g2_leakage"):
+        with pytest.raises(KeyError):
+            ledger.assert_fresh_scalar(name)
+
+
+def test_the_never_drawn_scalar_stays_unspent():
+    import probe_seed_ledger as ledger
+
+    assert 40_000_301 not in ledger.spent_scalars()
+    assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
+
+
+# ------------------------------------------------ the human narrative
+
+def test_the_document_names_both_defects_and_refuses_to_grade():
+    doc = _INCIDENT_MD.read_text(encoding="utf-8")
+    # the return-value defect (§2)
+    assert "returns `None`" in doc or "returned `None`" in doc
+    assert "no claim object to verify" in doc
+    # the integration-test gap (§3)
+    assert "returning" in doc and "stub" in doc
+    # the second, independent budget stage-label defect (§5)
+    assert 'stage: "g3a"' in doc or "reserved_by_stage" in doc
+    # it grades nothing
+    assert "grades nothing" in doc.lower() or "no scientific" in doc
+    assert "reproduction" in doc                      # recovery framing

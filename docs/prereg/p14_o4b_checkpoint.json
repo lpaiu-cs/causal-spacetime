@@ -1,0 +1,67 @@
+{
+ "kind": "checkpoint",
+ "stage": "g2_complete",
+ "freeze_sha": "715865abc684224785e71a3130e17c50db35f947",
+ "manifest_digest": "cec650b9391af0fc11e4b6bb94455cdbc1a037c18ecec83149d0d4693e7d7be2",
+ "seed": 40000401,
+ "rng_position": {
+  "bit_generator": "PCG64",
+  "state": {
+   "state": 34848322175270449583178451391594824533,
+   "inc": 125623379067902159751004962039885043589
+  },
+  "has_uint32": 0,
+  "uinteger": 0
+ },
+ "samples": 26200000,
+ "statistics": {
+  "n": 26200000,
+  "mean_z": 0.0019867726191127857,
+  "var_z": 0.00022703997552227264,
+  "g2": {
+   "status": "concordant",
+   "n": 1072696,
+   "leaking_points": 0,
+   "leak_upper_abs": 0.14195058753928652,
+   "leak_lower_abs": 0.0,
+   "budget_abs": 0.14195094424279403
+  },
+  "chunk": {
+   "state_before_draw": {
+    "bit_generator": "PCG64",
+    "state": {
+     "state": 141688773297478678293334905885840623317,
+     "inc": 125623379067902159751004962039885043589
+    },
+    "has_uint32": 0,
+    "uinteger": 0
+   },
+   "size": 1984,
+   "consumed": 1984,
+   "why": "the draw is batched, so rng_position is the end of the chunk while the accumulator holds only the consumed prefix of it; resuming from rng_position alone would skip the unconsumed tail and change the frozen stream"
+  }
+ },
+ "budget": {
+  "reserved": 55351929,
+  "completed": 55351929,
+  "unfinished": 0,
+  "wall_s": 43531.599195799994,
+  "wall_overrun_s": 0.0,
+  "max_calls": 80000000,
+  "max_wall_s": 86400.0,
+  "max_batch_calls": 8192,
+  "reserved_by_stage": {
+   "g3a": 55351929
+  },
+  "stage": "g3a",
+  "clock_started_at": "before G3a",
+  "cap_is_charged_against": "reserved, which never under-charges",
+  "call_cap_overshoot": "none: a batch that does not fit is refused, so max_calls is never crossed",
+  "wall_cap_is": "a start rule: no batch begins at or after max_wall_s, so the run can finish one batch late -- at most 8,192 calls, but NO rigorous bound in seconds, because the 768 us/pair cost is a host-dependent average and not a per-call maximum",
+  "nominal_overrun_s": 6.291456,
+  "nominal_overrun_is": "a projection from the measured average; the recorded wall_overrun_s is the fact"
+ },
+ "partial": true,
+ "non_verdict": true,
+ "why": "progress record, not a result: the stopping rule has not fired, so no statistic here is a verdict"
+}

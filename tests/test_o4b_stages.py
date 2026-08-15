@@ -291,15 +291,30 @@ def test_the_document_freezes_the_counter_freeze():
     assert "availability 보고뿐" in doc
 
 
-def test_the_new_campaign_scalars_are_fresh_and_301_is_untouched():
-    """A retired stream is never re-entered, and `40,000,301` stays
-    withdrawn -- reusing it would make the withdrawal look like a
-    deferral."""
+def test_the_campaign_scalars_are_retired_and_301_is_untouched():
+    """After the 2026-08-15 run the O4b scalars are OBSERVED, not
+    fresh: the run drew both streams to their frozen sample sizes, so
+    they are spent whether or not a verdict was published. A retired
+    stream is never re-entered, and `40,000,301` stays withdrawn --
+    reusing it would make the withdrawal look like a deferral."""
 
     import probe_seed_ledger as ledger
+    import pytest
 
-    assert ledger.assert_fresh_scalar("o4b_g1_audit") == 40_000_401
-    assert ledger.assert_fresh_scalar("o4b_g2_leakage") == 40_000_411
+    # spent, and now in OBSERVED under their functional names
+    assert ledger.OBSERVED_PROBE_SCALARS["o4b_g1_audit"] == 40_000_401
+    assert ledger.OBSERVED_PROBE_SCALARS["o4b_g2_leakage"] == 40_000_411
+    assert 40_000_401 in ledger.spent_scalars()
+    assert 40_000_411 in ledger.spent_scalars()
+    assert ledger.FRESH_PROBE_SCALARS == {}
+
+    # a retired name cannot be re-entered as a fresh allocation
+    for retired in ("o4b_g1_audit", "o4b_g2_leakage"):
+        with pytest.raises(KeyError):
+            ledger.assert_fresh_scalar(retired)
+        # but a labelled reproduction can read the observed seed
+        assert ledger.replay_scalar(retired) in (40_000_401, 40_000_411)
+
     assert 40_000_301 not in ledger.spent_scalars()
     assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
     assert 40_000_281 in ledger.spent_scalars()      # O4, retired

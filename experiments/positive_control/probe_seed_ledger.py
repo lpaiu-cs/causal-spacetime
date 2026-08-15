@@ -74,6 +74,25 @@ from seed_windows import (
 #: the provenance of a verdict. They are spent all the same: the points
 #: were observed, and the streams are retired whether or not a verdict
 #: came of them.
+#: o4b_g1_audit / o4b_g2_leakage: the O4b campaign strata, drawn on
+#: 2026-08-15 from the clean checkout of freeze SHA `715865a` (the
+#: freeze branch head, merged in PR #75). The run passed G3a's 6,537
+#: metered wrapper-contract calls, claimed `refs/o4b/reservation`
+#: (`46acee34`), and ran G1 (26,200,000 points, concordant) and G2
+#: (1,072,696 points, 0 leaks, concordant) to their frozen sample
+#: sizes. It then stopped at the pre-publication provenance check --
+#: NOT on a scientific fail-closed path and NOT on a cap, but on a
+#: pure implementation defect: `main`'s claim callback stored the
+#: reservation object in an external dict yet returned `None`, so the
+#: exit re-read received `None` and raised before any result was
+#: published (docs/prereg/p14_o4b_incident.json). No verdict; the gate
+#: statistics are preserved there and in the checkpoint as non-verdict
+#: partials. The names stay FUNCTIONAL rather than `aborted` because
+#: the defect is in publication wiring, not the science -- both gates
+#: completed WITH a status, and whether the preserved statistics become
+#: the provenance of a verdict is decided by a separate recovery audit,
+#: not prejudged here. They are spent regardless: the points were
+#: observed, and `refs/o4b/reservation` is RETAINED, not deleted.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -88,6 +107,8 @@ OBSERVED_PROBE_SCALARS = {
     "o4_smoke_g3": 40_000_313,
     "o4_aborted_g1": 40_000_281,
     "o4_aborted_g2": 40_000_291,
+    "o4b_g1_audit": 40_000_401,
+    "o4b_g2_leakage": 40_000_411,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
@@ -116,13 +137,15 @@ OBSERVED_PROBE_SCALARS = {
 #: deliberately NOT reused here: reaching for it would make the
 #: withdrawal look like a deferral.
 #:
-#: Allocated, not yet observed. The first draw spends them, and the
-#: commit that records ANY outcome -- verdict, INVALID, INCONCLUSIVE
-#: or abort -- must move them to OBSERVED_PROBE_SCALARS.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "o4b_g1_audit": 40_000_401,
-    "o4b_g2_leakage": 40_000_411,
-}
+#: Empty: the O4b strata `o4b_g1_audit`/`o4b_g2_leakage` were drawn on
+#: 2026-08-15 and are now retired in OBSERVED under those same names.
+#: The run reached and completed both gates but stopped before
+#: publication on a wiring defect, so no verdict was published; the
+#: streams are spent regardless, because the points were observed. A
+#: recovery of the preserved statistics is a REPRODUCTION of that
+#: observed run, never a new draw -- and a re-run of O4b needs a NEW
+#: freeze with NEW scalars; the retired streams may not be re-entered.
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
