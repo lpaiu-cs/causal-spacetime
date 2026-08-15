@@ -91,11 +91,23 @@ freeze surface: `docs/prereg/p14_o3_executed_freeze_manifest.json`.
 ## 5. Relation to Paper A
 
 Section 6.7's Schwarzschild confirmation is operationally anchored and
-does not use this oracle. The note exists so that the manuscript's
-"partially derived theoretical path" phrasing has a public referent:
-Sections 1-2 are derived; Section 3 is a standard-result application
-with explicit constants; Section 4's former open boundary is now
-closed by the certification document and the executed campaign. Any
-prediction-anchored USE of the certified volume (sprinkle counts vs
-rho*V) is a separate, not-yet-designed stage; nothing in Paper A is
-upgraded by this note.
+does not use this oracle in its own verdicts. This note is the public
+referent for the oracle's derivation state: Sections 1-2 are derived;
+Section 3 is a standard-result application with explicit constants;
+Section 4's former open boundary is closed by the certification
+document and the executed O3 campaign. (The manuscript's earlier
+"partially derived theoretical path" phrasing described the
+pre-certification state and has been corrected there.)
+
+The first USE of the certified volume is also complete: the O4b
+direct-MC instrument audit (frozen at `715865a`, executed once,
+verdict recovered from the completed run's preserved statistics as
+`run_kind: recovered_completed_campaign` in
+`docs/prereg/p14_o4b_results.json`) found sampler + S1 volume
+response + certified oracle CONCORDANT under the frozen composite
+budget of 3.25% with simultaneous coverage >= 95%, at the single
+frozen configuration. That is an instrument statement, not a
+prediction-anchored promotion of anything in Paper A. The
+prediction-anchored Poisson-count stage proper — sprinkle counts
+against rho*V with `causal_relation` — remains a separate, open
+stage; nothing in Paper A is upgraded by this note or by the audit.

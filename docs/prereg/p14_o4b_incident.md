@@ -1,5 +1,13 @@
 # O4b incident — a publication-wiring defect, no scientific verdict
 
+> Historical record. The verdict described here as unpublished was
+> subsequently recovered in `p14_o4b_results.json`
+> (`run_kind: recovered_completed_campaign`, PR #77) by re-applying the
+> frozen decision functions to the statistics this record preserved;
+> the wiring defects in §2 and §5 were fixed in PR #78. Nothing below
+> is retroactively regraded: at the time of this record, no verdict
+> existed.
+
 **This record grades nothing.** The O4b campaign ran to the end of both
 gates and then stopped, one step before publication, on an
 implementation defect in the runner's own exit path. No result file was

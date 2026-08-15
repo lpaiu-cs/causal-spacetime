@@ -51,6 +51,19 @@ boundary is recorded separately in `artifact_manifest.md`.
   [0.9630, 0.9837] — outcome DETECTED, with incomplete separation; secondary
   out-of-sample BA 0.9033, CP-Bonferroni CI95 [0.8356, 0.9500]
   (`docs/prereg/p14_s5_results.json`).
+- **Auxiliary O4b instrument audit (frozen, recovered).** At the single
+  frozen Schwarzschild configuration, the sampler + S1 volume response +
+  certified oracle stack is CONCORDANT under the frozen composite error
+  budget of 3.25% with simultaneous coverage >= 95%: G1 interval
+  [56.448806185841875, 56.9822829864225] vs the certified
+  [56.212737, 57.348019] (identified discrepancy
+  [-0.8992123405928396, 0.7695461186219887], band 1.7034113309135284);
+  G2 leak upper 0.14195058753928652 within budget 0.14195094424279403,
+  zero leaking points. Published as `run_kind =
+  recovered_completed_campaign` — the frozen decision functions re-applied
+  to the completed run's preserved statistics: no new seed, no solver call,
+  no resampling, no gate change (`docs/prereg/p14_o4b_results.json`). An
+  instrument statement only; see the non-claims below.
 
 ## Negative results (bounding the ladder)
 
@@ -86,14 +99,27 @@ boundary is recorded separately in `artifact_manifest.md`.
   NOT complete separation (AUC ≈ 0.973, unlike the plane-wave C2, and no
   completeness gate was preregistered); the secondary BA verdict does not
   strengthen or combine with the primary; NOT mass-general (single frozen
-  M = 1); NOT prediction-anchored — no diamond-volume oracle is used, and the
-  oracle path is only partially derived
-  (`docs/theory/schwarzschild_volume_oracle_note.md`).
+  M = 1); NOT prediction-anchored — no diamond-volume oracle is used in the
+  S4/S5 verdicts themselves. The oracle is now fully certified and executed
+  (`docs/theory/schwarzschild_volume_oracle_note.md`,
+  `docs/prereg/p14_o3_volume.json`), and the auxiliary O4b audit above
+  consumed it — but that audit does not promote S4/S5 to
+  prediction-anchored, and the Poisson-count stage is separately open.
 - Capstone non-claims: NOT a general-Weyl discriminator (Petrov type N, exact
   volume form is unrepresentative); NOT Weyl-tensor recovery (no reconstructed
   quantity — a boundary experiment, not a ladder rung); NOT box- or
   density-independent (licensed at the frozen operating point only). The
   Schwarzschild path now carries its own preregistered verdicts and
-  non-claims (the Type-D blocks above); the diamond-volume oracle remains
-  open there. Priority is claimed only within this program — no
-  literature-wide first before a priority search.
+  non-claims (the Type-D blocks above); the diamond-volume oracle is
+  certified and instrument-audited there (auxiliary), while the
+  prediction-anchored Poisson-count stage remains open. Priority is claimed
+  only within this program — no literature-wide first before a priority
+  search.
+- Auxiliary O4b audit non-claims: the CONCORDANT verdict is a statement that
+  the instrument stack agrees with the certified continuum volume within the
+  frozen margin at ONE frozen configuration. It is NOT a prediction-anchored
+  promotion of S4/S5, NOT a C1/C2 joint verdict, NOT a Poisson causal-set
+  count verification (sprinkle counts vs rho*V is a separate, open stage),
+  NOT mass- or domain-generality (single frozen M = 1 and box), NOT a
+  confirmation of causal-set theory, and NOT complete separation or general
+  volume accuracy. Nothing in Sections 6-6.7 is upgraded by it.
