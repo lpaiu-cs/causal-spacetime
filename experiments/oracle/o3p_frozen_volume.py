@@ -57,11 +57,21 @@ libraries, so a different MPFR is a different instrument).
 checks a clean git tree and the ABSENCE of the O3' result artifact,
 and observes nothing.
 
-Run (after separate execution approval, from a clean exact
-checkout):
+Run (after separate execution approval, from a clean exact checkout
+of the approved SHA -- the freeze BRANCH HEAD, i.e. the second parent
+of the merge commit, never the merge commit itself):
 
-    python experiments/oracle/o3p_frozen_volume.py --preflight
-    python experiments/oracle/o3p_frozen_volume.py
+    python experiments/oracle/o3p_frozen_volume.py --preflight \
+        --freeze-rev <approved 40-hex SHA>
+    python experiments/oracle/o3p_frozen_volume.py \
+        --freeze-rev <approved 40-hex SHA>
+
+`--freeze-rev` is REQUIRED and must be the full 40-hex SHA: the
+manifest cannot certify itself (a later commit can edit a protocol
+file and re-pin the manifest in the same commit, passing every digest
+check), so both `--preflight` and the real execution refuse a missing,
+short, malformed, or merely-digest-matching-but-different rev before
+anything runs.
 """
 
 from __future__ import annotations
@@ -160,19 +170,50 @@ def _git_state() -> dict:
     return {"rev": rev, "dirty": bool(dirty)}
 
 
-def preflight() -> dict:
-    """Everything the execution approval requires re-checked at the
-    last moment: frozen digests, environment lock, clean tree, and
-    the ABSENCE of any O3' result -- observing nothing. The O3
-    artifact must EXIST (it is the intersection base), and stays
-    untouched."""
+def require_full_sha(freeze_rev: str) -> str:
+    """The approved execution SHA, exactly 40 hex characters.
 
+    THE MANIFEST CANNOT CERTIFY ITSELF (the O4b rule, applied here on
+    PI ruling): a commit after the approved freeze that edits a
+    protocol file and re-pins the manifest in the same commit passes
+    every digest check, so the campaign also demands the exact 40-hex
+    SHA named in the execution approval. A short SHA is refused --
+    prefix matching is a resolution step, and the approval names one
+    commit, not a prefix."""
+
+    want = (freeze_rev or "").strip().lower()
+    if len(want) != 40 or any(c not in "0123456789abcdef"
+                              for c in want):
+        raise SystemExit(
+            f"--freeze-rev must be the full 40-hex SHA named in the "
+            f"execution approval, got {freeze_rev!r} -- a short or "
+            f"malformed rev is refused before anything runs")
+    return want
+
+
+def preflight(expected_rev: str) -> dict:
+    """Everything the execution approval requires re-checked at the
+    last moment: frozen digests, environment lock, clean tree AT THE
+    EXACT APPROVED SHA, and the ABSENCE of any O3' result --
+    observing nothing. The O3 artifact must EXIST (it is the
+    intersection base), and stays untouched. `--preflight` and the
+    real execution pass through this same check, so neither can run
+    from a commit the approval did not name."""
+
+    want = require_full_sha(expected_rev)
     manifest = verify_freeze("preflight")
     state = _git_state()
     if state["dirty"]:
         raise SystemExit(
             "preflight: working tree is dirty -- the campaign runs "
             "from a clean exact checkout only")
+    if state["rev"] != want:
+        raise SystemExit(
+            f"preflight: HEAD is {state['rev']}, not the approved "
+            f"freeze SHA {want} -- a clean tree with matching digests "
+            f"is NOT enough, because a later commit can re-pin the "
+            f"manifest it edits; the campaign runs from the exact "
+            f"approved commit only")
     if _ARTIFACT.exists():
         raise SystemExit(
             f"preflight: {_ARTIFACT.name} already exists -- the "
@@ -316,14 +357,20 @@ def main() -> None:
     parser.add_argument(
         "--preflight", action="store_true",
         help="run every pre-execution check and observe nothing")
+    parser.add_argument(
+        "--freeze-rev", required=True,
+        help="the full 40-hex SHA named in the execution approval; "
+             "the run refuses any other checkout")
     args = parser.parse_args()
 
-    checks = preflight()
+    # both --preflight and the real execution pass through the SAME
+    # SHA check: format first, exact-HEAD match inside preflight
+    checks = preflight(args.freeze_rev)
     if args.preflight:
         print("preflight PASS: freeze digests, environment lock, "
-              f"clean tree at {checks['git']['rev'][:9]}, no O3' "
-              "result artifact, O3 base present. Nothing was "
-              "observed.")
+              f"clean tree at the approved "
+              f"{checks['git']['rev'][:9]}, no O3' result artifact, "
+              "O3 base present. Nothing was observed.")
         return
 
     start = _git_state()

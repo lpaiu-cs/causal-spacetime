@@ -85,6 +85,9 @@ def test_the_freeze_carries_no_result():
     assert not o3p._ARTIFACT.exists()
 
 
+_SHA = "a" * 40
+
+
 def test_preflight_refuses_when_a_result_exists(monkeypatch,
                                                 tmp_path):
     fake = tmp_path / "p14_o3p_volume.json"
@@ -93,18 +96,18 @@ def test_preflight_refuses_when_a_result_exists(monkeypatch,
     monkeypatch.setattr(o3p, "verify_freeze",
                         lambda stage: {"files": {}})
     monkeypatch.setattr(o3p, "_git_state",
-                        lambda: {"rev": "x", "dirty": False})
+                        lambda: {"rev": _SHA, "dirty": False})
     with pytest.raises(SystemExit, match="write-once"):
-        o3p.preflight()
+        o3p.preflight(_SHA)
 
 
 def test_preflight_refuses_a_dirty_tree(monkeypatch):
     monkeypatch.setattr(o3p, "verify_freeze",
                         lambda stage: {"files": {}})
     monkeypatch.setattr(o3p, "_git_state",
-                        lambda: {"rev": "x", "dirty": True})
+                        lambda: {"rev": _SHA, "dirty": True})
     with pytest.raises(SystemExit, match="clean exact checkout"):
-        o3p.preflight()
+        o3p.preflight(_SHA)
 
 
 def test_preflight_refuses_a_missing_o3_base(monkeypatch, tmp_path):
@@ -114,11 +117,62 @@ def test_preflight_refuses_a_missing_o3_base(monkeypatch, tmp_path):
     monkeypatch.setattr(o3p, "verify_freeze",
                         lambda stage: {"files": {}})
     monkeypatch.setattr(o3p, "_git_state",
-                        lambda: {"rev": "x", "dirty": False})
+                        lambda: {"rev": _SHA, "dirty": False})
     monkeypatch.setattr(o3p, "_ARTIFACT", tmp_path / "absent.json")
     monkeypatch.setattr(o3p, "_O3_ARTIFACT", tmp_path / "no_o3.json")
     with pytest.raises(SystemExit, match="intersection base"):
-        o3p.preflight()
+        o3p.preflight(_SHA)
+
+
+# ------------------------------ the approved-SHA gate (PR #81 R2)
+
+def test_a_missing_freeze_rev_is_refused_by_the_cli():
+    """--freeze-rev is REQUIRED: argparse exits 2 before any freeze
+    machinery runs."""
+
+    script = str(_REPO / "experiments" / "oracle"
+                 / "o3p_frozen_volume.py")
+    out = subprocess.run([sys.executable, script, "--preflight"],
+                         capture_output=True, text=True)
+    assert out.returncode == 2
+    assert "--freeze-rev" in out.stderr
+
+
+@pytest.mark.parametrize("bad", ["21cff16", "a" * 39, "a" * 41,
+                                 "g" * 40, "", "  "])
+def test_a_short_or_malformed_rev_is_refused(bad):
+    with pytest.raises(SystemExit, match="full 40-hex"):
+        o3p.require_full_sha(bad)
+
+
+def test_a_clean_matching_tree_at_another_sha_is_refused(monkeypatch):
+    """The manifest cannot certify itself: clean tree + every digest
+    matching is NOT enough, because a later commit can edit a protocol
+    file and re-pin the manifest in the same commit. Only the exact
+    approved full SHA runs."""
+
+    monkeypatch.setattr(o3p, "verify_freeze",
+                        lambda stage: {"files": {}})   # digests "match"
+    monkeypatch.setattr(o3p, "_git_state",
+                        lambda: {"rev": "b" * 40, "dirty": False})
+    with pytest.raises(SystemExit, match="exact\\s+approved commit"):
+        o3p.preflight(_SHA)
+
+
+def test_the_exact_approved_sha_passes(monkeypatch, tmp_path):
+    o3_base = tmp_path / "o3.json"
+    o3_base.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(o3p, "verify_freeze",
+                        lambda stage: {"files": {}})
+    monkeypatch.setattr(o3p, "_git_state",
+                        lambda: {"rev": _SHA, "dirty": False})
+    monkeypatch.setattr(o3p, "_ARTIFACT", tmp_path / "absent.json")
+    monkeypatch.setattr(o3p, "_O3_ARTIFACT", o3_base)
+    checks = o3p.preflight(_SHA)
+    assert checks["git"]["rev"] == _SHA
+    # case/whitespace normalization: the approval names one commit
+    assert o3p.preflight("  " + _SHA.upper() + "  ")["git"]["rev"] \
+        == _SHA
 
 
 # ------------------------------------------- the intersection rule

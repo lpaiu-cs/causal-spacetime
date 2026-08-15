@@ -39,6 +39,14 @@ protocol file plus the python/gmpy2/MPFR/GMP environment lock),
 verified at entry and exit; `--preflight` additionally requires a clean
 tree, the absence of the O3′ result, and the presence of the O3 base.
 
+**The manifest cannot certify itself**, so the runner demands a
+required `--freeze-rev <full 40-hex SHA>` — the exact commit named in
+the execution approval. A missing, short, or malformed rev is refused
+before anything runs; a clean tree with matching digests at a
+*different* full SHA is refused too (a later commit can edit a protocol
+file and re-pin the manifest in the same commit). `--preflight` and the
+real execution pass through the same check.
+
 ## 3. Cost projection — two curves, fitted separately
 
 Model `calls ~ C0 · (1/ratio)^p`, OLS on log-log points per window;
@@ -109,3 +117,6 @@ Write-once artifact `docs/prereg/p14_o3p_volume.json` (atomic no-clobber
   freeze PR is separately gated.
 - Execution approval is a separate PI ruling after this PR's review
   converges: approved SHA, exact clean checkout, `--preflight` PASS.
+  **The approved execution SHA is the freeze branch head — the second
+  parent of the merge commit — never the merge commit itself** (the
+  merge commit carries a different, unreviewed tree; the O4b rule).
