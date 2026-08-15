@@ -3,14 +3,18 @@
 Working title: **An operational reconstruction ladder for spacetime quantities
 from causal order.**
 
-Status: DRAFT v0.3 (2026-07-17). The scientific content is the verified M1-M10
-foundation layer on the `restart/m17-baseline` line, whose numerical
-correctness against known causal-set and special-relativistic results was
-independently checked. Every quantitative result is tied to a producing
-experiment and expected summary path; five figure-source summaries are
-committed, while 14 cited tables still require regeneration and archival before
-submission. Three figures are included (ladder schematic; grounded convergence
-panel; measure dependence).
+Status: DRAFT (evidence package complete). The scientific content is the
+verified M1-M10 foundation layer on the `restart/m17-baseline` line, whose
+numerical correctness against known causal-set and special-relativistic
+results was independently checked. Every quantitative result is tied to a
+producing experiment and expected summary path. The submission gate is met:
+all 19 cited legacy summary tables are committed and digest-locked, and the
+Section 6 capstone evidence bundle is finalized and provenance-locked —
+`artifact_manifest.md` is the authority for the archived state, and a
+contract test recomputes every digest. Three figures are included (ladder
+schematic; grounded convergence panel; measure dependence). Remaining before
+submission: the literature priority search and the final manuscript/bundle
+freeze.
 
 ## Scope and relation to Paper B
 
