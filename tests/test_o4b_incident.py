@@ -55,7 +55,17 @@ def test_the_verdict_is_null_and_the_outcome_is_abort():
     assert rec["outcome"] == "ABORT"
     assert rec["verdict"] is None
     assert rec["stage"] == "g2"
-    assert not (_PREREG / "p14_o4b_results.json").exists()
+    # The CAMPAIGN run published no verdict -- that is what the incident
+    # records. A result file may nonetheless exist, published by the
+    # separate RECOVERY (a reproduction of the completed run's preserved
+    # statistics), and the two coexist by run_kind: the campaign aborted,
+    # the recovery republished. What must never appear is a campaign-kind
+    # verdict beside this incident.
+    result = _PREREG / "p14_o4b_results.json"
+    if result.exists():
+        published = json.loads(result.read_text(encoding="utf-8"))
+        assert published["run_kind"] == "recovered_completed_campaign"
+        assert published["kind"] == "results"
 
 
 def test_stage_g2_is_the_pre_publish_label_not_an_incomplete_gate():
