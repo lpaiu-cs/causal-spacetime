@@ -1153,6 +1153,11 @@ def main() -> None:
             f"the campaign completed but the result could not be "
             f"published: {type(exc).__name__}: {exc}",
             preserved=campaign.preserved(),
+            # a post-gate failure: both gates finished and only the
+            # publication failed, so failure_point says so rather than
+            # letting it default to `g2` and read as a G2 failure (which
+            # would contradict `detail.at` -- review PR #78 R1).
+            failure_point="artifact_publication",
             detail={"exception": {"type": type(exc).__name__,
                                   "message": str(exc)},
                     "at": "artifact publication",

@@ -203,6 +203,53 @@ def test_a_pre_publish_failure_is_labelled_pre_publish_not_g2(
     assert record["stage"] == "g2"
 
 
+def test_a_publication_failure_is_labelled_artifact_publication(
+        tmp_path, monkeypatch):
+    """A post-gate failure -- both gates finished and only the publish
+    step failed -- is recorded as `artifact_publication`, not defaulted
+    to a `g2` gate failure that would contradict `detail.at` (review
+    PR #78 R1)."""
+
+    monkeypatch.setattr(run, "preflight", lambda rev: {
+        "seeds": _SEEDS, "git": {"rev": "a" * 40}, "manifest": {}})
+    monkeypatch.setattr(run, "_sha256", lambda p: "b" * 64)
+    monkeypatch.setattr(run.reservation, "claim", lambda payload: "d" * 40)
+    monkeypatch.setattr(run.reservation, "verify_still_held",
+                        lambda obj: obj)
+    monkeypatch.setattr(run.Campaign, "run_g3a",
+                        lambda self: {"passed": True, "conditions": {}})
+    monkeypatch.setattr(run.Campaign, "run_g3b",
+                        lambda self: {"availability": "complete"})
+    monkeypatch.setattr(run.Campaign, "run_g1",
+                        lambda self: {"status": "concordant", "n": 1})
+    monkeypatch.setattr(run.Campaign, "run_g2",
+                        lambda self: {"status": "concordant", "n": 1})
+    incident_path = tmp_path / "incident.json"
+    monkeypatch.setattr(run, "_ARTIFACT", tmp_path / "results.json")
+    monkeypatch.setattr(run, "_INCIDENT", incident_path)
+    monkeypatch.setattr(run, "_WRITE_ONCE",
+                        (tmp_path / "results.json", incident_path))
+
+    real_publish = run.publish_write_once
+
+    def boom_on_artifact(path, payload, receipt=None):
+        if path == run._ARTIFACT:               # publish fails, uncommitted
+            raise OSError("disk full")
+        return real_publish(path, payload, receipt)   # the incident write
+
+    monkeypatch.setattr(run, "publish_write_once", boom_on_artifact)
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", "a" * 40])
+
+    with pytest.raises(SystemExit):
+        run.main()
+
+    record = json.loads(incident_path.read_text("utf-8"))
+    assert record["failure_point"] == "artifact_publication"
+    assert record["detail"]["at"] == "artifact publication"
+    assert record["stage"] == "g2"              # the run-stage is still g2
+    assert record["verdict"] is None
+
+
 def test_a_reservation_claim_failure_is_labelled_as_such(
         tmp_path, monkeypatch):
     campaign = _campaign(tmp_path)
