@@ -3,10 +3,14 @@
 Working title: **An operational reconstruction ladder for spacetime quantities
 from causal order.**
 
-Status: DRAFT (evidence package complete). The scientific content is the
+Status: DRAFT (evidence package complete). The scientific base is the
 verified M1-M10 foundation layer on the `restart/m17-baseline` line, whose
 numerical correctness against known causal-set and special-relativistic
-results was independently checked. Every quantitative result is tied to a
+results was independently checked; on top of it the manuscript carries the
+preregistered Section 6 capstone (P14 type-N pure-Weyl, POSITIVE), the
+Section 6.7 Schwarzschild extensions (S4 C1-paired CONFIRMED, S5 C2-unpaired
+DETECTED), and the auxiliary O4b instrument audit (CONCORDANT, recovered).
+Every quantitative result is tied to a
 producing experiment and expected summary path. The submission gate is met:
 all 19 cited legacy summary tables are committed and digest-locked, and the
 Section 6 capstone evidence bundle is finalized and provenance-locked —
