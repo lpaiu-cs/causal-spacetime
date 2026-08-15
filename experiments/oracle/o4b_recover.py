@@ -65,6 +65,20 @@ FREEZE_SHA = "715865abc684224785e71a3130e17c50db35f947"
 EXECUTED_DIGEST = (
     "cec650b9391af0fc11e4b6bb94455cdbc1a037c18ecec83149d0d4693e7d7be2")
 
+#: The incident and checkpoint as committed in PR #76. Pinned so the
+#: recovery inputs are authenticated against the immutable record, not
+#: merely trusted (review PR #77 R1): without this, a self-consistent
+#: edit to one file's G2 block -- its `n` and the matching `status`,
+#: `leak_upper_abs`, `budget_abs` together -- would pass a recomputation
+#: that reads both sides from that same file, and publish a wrong verdict
+#: as a write-once result. With the blob pinned AND the two files
+#: cross-checked, a tamper must edit the file, its independent second
+#: copy, and this reviewed pin, all consistently and all in the diff.
+INCIDENT_SHA256 = (
+    "8106b16f0d03efe1acc81941f7ca3149cb8ddee0fbaaf00cfccb5c8376d4cc75")
+CHECKPOINT_SHA256 = (
+    "5dd6de7eea25c8384329b26ebf9f61c9dae51ee451c6d5c5717dbd463dc6679a")
+
 #: The one protocol-surface file that legitimately changed after the
 #: run: the ledger moved the two O4b seeds FRESH -> OBSERVED. Every
 #: OTHER file in the executed manifest must still match byte-for-byte.
@@ -107,16 +121,22 @@ def verify_frozen_surface() -> dict:
             f"frozen decision surface drifted on {drifted} -- refusing "
             f"to recover with functions that are not the frozen ones")
 
-    # the ledger's permitted change, made explicit: the seeds are spent
-    if ledger.FRESH_PROBE_SCALARS:
-        raise RecoveryError(
-            f"the ledger still lists fresh allocations "
-            f"{ledger.FRESH_PROBE_SCALARS}; the O4b seeds must be retired")
+    # the ledger's permitted change, made explicit: the TWO O4b seeds
+    # are retired. Checked per-seed, not by requiring the whole fresh
+    # pool empty (review PR #77 R2): FRESH_PROBE_SCALARS is the
+    # program-wide active ledger, so a later campaign freezing its own
+    # new scalar is a normal operating state that must not fail this
+    # recovery -- only the O4b seeds' own status is the recovery's
+    # business.
     for name, seed in (("o4b_g1_audit", 40_000_401),
                        ("o4b_g2_leakage", 40_000_411)):
+        if name in ledger.FRESH_PROBE_SCALARS:
+            raise RecoveryError(
+                f"{name} is still FRESH; the O4b seeds must be retired "
+                f"before their result is recovered")
         if ledger.OBSERVED_PROBE_SCALARS.get(name) != seed:
             raise RecoveryError(
-                f"{name} is not retired at {seed} in the ledger")
+                f"{name} is not retired at {seed} in OBSERVED")
 
     env, locked = run.environment(), manifest["environment"]
     drift = {k: (locked[k], env.get(k)) for k in locked
@@ -205,14 +225,32 @@ def _assert_reproduces(kind: str, got: dict, preserved: dict,
                 f"preserved statistics disagree; publishing nothing")
 
 
-def recover() -> dict:
-    """Rebuild the O4b result. Raises RecoveryError rather than publish
-    anything that does not reproduce the preserved verdict exactly."""
+def _authenticate() -> tuple[dict, dict]:
+    """The preserved inputs are the committed record, and the two files
+    agree (review PR #77 R1).
 
-    incident = _load(_INCIDENT)
-    checkpoint = _load(_CHECKPOINT)
+    Two independent defences against a tampered input:
 
-    # the preserved records agree on which run this is
+      * BLOB PIN. Each file's sha256 is pinned to what PR #76 committed,
+        so any edit to either changes a hash checked here.
+
+      * CROSS-CHECK. The incident and the checkpoint were written at
+        different points in the run and carry independent copies of the
+        same facts -- the G2 block, the G1 sufficient statistics, the
+        lineage. They must agree, so a single-file edit that keeps one
+        file self-consistent still diverges from the other and is caught
+        here, before any recomputation reads from it."""
+
+    for path, want in ((_INCIDENT, INCIDENT_SHA256),
+                       (_CHECKPOINT, CHECKPOINT_SHA256)):
+        got = run._sha256(path)
+        if got != want:
+            raise RecoveryError(
+                f"{path.name} sha256 {got} != committed {want} -- the "
+                f"preserved input is not the record PR #76 committed")
+
+    incident, checkpoint = _load(_INCIDENT), _load(_CHECKPOINT)
+
     for label, rec in (("incident", incident), ("checkpoint", checkpoint)):
         if rec["freeze_sha"] != FREEZE_SHA:
             raise RecoveryError(
@@ -220,6 +258,27 @@ def recover() -> dict:
         if rec["manifest_digest"] != EXECUTED_DIGEST:
             raise RecoveryError(
                 f"{label}.manifest_digest != executed manifest digest")
+
+    # the two independent copies of the same facts must agree
+    g1_partial = incident["preserved"]["g1_partial"]
+    stats = checkpoint["statistics"]
+    if (g1_partial["n"], g1_partial["mean_z"], g1_partial["var_z"]) != (
+            stats["n"], stats["mean_z"], stats["var_z"]):
+        raise RecoveryError(
+            "the incident's G1 sufficient statistics and the checkpoint's "
+            "disagree -- one of the preserved files was altered")
+    if incident["preserved"]["completed_gates"]["g2"] != stats.get("g2"):
+        raise RecoveryError(
+            "the incident's G2 block and the checkpoint's copy disagree "
+            "-- one of the preserved files was altered")
+    return incident, checkpoint
+
+
+def recover() -> dict:
+    """Rebuild the O4b result. Raises RecoveryError rather than publish
+    anything that does not reproduce the preserved verdict exactly."""
+
+    incident, checkpoint = _authenticate()
     obj = incident["reservation_object"]
     if obj is None or incident["reservation_claimed"] is not True:
         raise RecoveryError(
@@ -228,11 +287,18 @@ def recover() -> dict:
     verify_frozen_surface()
 
     preserved_gates = incident["preserved"]["completed_gates"]
+    # G1: recompute from the CHECKPOINT's statistics, compare against the
+    # INCIDENT's gate -- two independently-written files, so the input
+    # and the target cannot both be moved by editing one of them.
     g1 = recompute_g1(checkpoint["statistics"])
     _assert_reproduces("g1", g1, preserved_gates["g1"],
                        ("status", "n", "v_s1_lo", "v_s1_hi",
                         "identified_discrepancy", "band_abs"))
-    g2 = recompute_g2(preserved_gates["g2"])
+    # G2: recompute from the CHECKPOINT's g2 counts, compare against the
+    # INCIDENT's g2 gate. `_authenticate` has already asserted the two
+    # g2 blocks are identical, so this is a genuine cross-file check
+    # rather than a file agreeing with itself.
+    g2 = recompute_g2(checkpoint["statistics"]["g2"])
     _assert_reproduces("g2", g2, preserved_gates["g2"],
                        ("status", "n", "leaking_points",
                         "leak_upper_abs", "budget_abs"))

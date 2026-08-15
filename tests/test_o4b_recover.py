@@ -120,11 +120,22 @@ def test_a_drifted_decision_file_refuses_recovery(monkeypatch):
         rec.verify_frozen_surface()
 
 
-def test_recovery_refuses_if_the_seeds_are_not_retired(monkeypatch):
+def test_recovery_refuses_if_an_o4b_seed_is_still_fresh(monkeypatch):
     monkeypatch.setattr(rec.ledger, "FRESH_PROBE_SCALARS",
                         {"o4b_g1_audit": 40_000_401})
-    with pytest.raises(rec.RecoveryError, match="fresh"):
+    with pytest.raises(rec.RecoveryError, match="FRESH"):
         rec.verify_frozen_surface()
+
+
+def test_a_later_campaigns_fresh_seed_does_not_block_recovery(monkeypatch):
+    """FRESH_PROBE_SCALARS is the program-wide active ledger, so a future
+    campaign freezing its own scalar is a normal state. Only the O4b
+    seeds' own retirement is the recovery's business (review PR #77 R2)."""
+
+    monkeypatch.setattr(rec.ledger, "FRESH_PROBE_SCALARS",
+                        {"o9_future_audit": 40_000_999})
+    # the O4b seeds are still OBSERVED, so the surface check passes
+    assert rec.verify_frozen_surface()["files"]
 
 
 # ------------------------------------------------ provenance of the result
@@ -165,6 +176,53 @@ def test_recover_refuses_a_record_from_a_different_freeze(monkeypatch):
     monkeypatch.setattr(rec, "_load", wrong)
     with pytest.raises(rec.RecoveryError, match="freeze_sha"):
         rec.recover()
+
+
+# ----------------------------------- authenticating the preserved inputs
+
+def test_a_tampered_preserved_blob_is_caught(monkeypatch):
+    """The blob pin: any edit to the incident or checkpoint changes a
+    sha256 checked here, before a single value is read from it."""
+
+    real = rec.run._sha256
+
+    def altered(path):
+        if Path(path) == rec._INCIDENT:
+            return "f" * 64
+        return real(path)
+
+    monkeypatch.setattr(rec.run, "_sha256", altered)
+    with pytest.raises(rec.RecoveryError, match="sha256"):
+        rec._authenticate()
+
+
+def test_a_single_file_g2_edit_diverges_from_the_second_copy(monkeypatch):
+    """The cross-check: the incident and the checkpoint each carry the G2
+    block, so editing one alone -- even self-consistently -- disagrees
+    with the other and is caught before recomputation (review PR #77
+    R1)."""
+
+    real = rec._load
+
+    def tamper_incident_g2(path):
+        d = real(path)
+        if path == rec._INCIDENT:
+            d = json.loads(json.dumps(d))         # deep copy
+            g2 = d["preserved"]["completed_gates"]["g2"]
+            g2["n"] = g2["n"] + 1                 # self-consistent-looking
+        return d
+
+    monkeypatch.setattr(rec, "_load", tamper_incident_g2)
+    with pytest.raises(rec.RecoveryError, match="G2 block"):
+        rec._authenticate()
+
+
+def test_the_pinned_blob_hashes_match_the_committed_records():
+    """The pins are the committed record, so recovery reads exactly what
+    PR #76 preserved."""
+
+    assert rec.run._sha256(rec._INCIDENT) == rec.INCIDENT_SHA256
+    assert rec.run._sha256(rec._CHECKPOINT) == rec.CHECKPOINT_SHA256
 
 
 # ------------------------------------- the published artifact, once it exists
