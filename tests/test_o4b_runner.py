@@ -943,15 +943,25 @@ def test_a_leftover_checkpoint_stops_the_preflight(tmp_path,
                         lambda: {"rev": "a" * 40, "dirty": False,
                                  "dirt": []})
     monkeypatch.setattr(run, "_WRITE_ONCE", ())
-    with pytest.raises(SystemExit, match="partial from an earlier"):
-        run.preflight("a" * 40)
-
-    stale.unlink()
     monkeypatch.setattr(run.reservation, "verify_o4_ref_retained",
                         lambda: run.reservation.RETAINED_OBJECT)
     monkeypatch.setattr(run.reservation, "held", lambda: None)
     monkeypatch.setattr(run.reservation, "probe_namespace",
                         lambda: None)
+    with pytest.raises(SystemExit, match="partial from an earlier"):
+        run.preflight("a" * 40)
+
+    # With the leftover checkpoint gone, preflight clears that gate and
+    # advances -- and now stops one gate later, at the seed allocation:
+    # after the 2026-08-15 run the O4b streams are RETIRED, so no fresh
+    # allocation exists and a clean checkout can no longer start the
+    # campaign. To isolate the checkpoint gate from that (permanent)
+    # fact, a fresh allocation is stubbed in; the retirement itself is
+    # pinned in test_o4b_incident.py and test_o4b_stages.py.
+    stale.unlink()
+    monkeypatch.setattr(run, "assert_fresh_scalar",
+                        lambda name: {"o4b_g1_audit": 40_000_401,
+                                      "o4b_g2_leakage": 40_000_411}[name])
     assert run.preflight("a" * 40)["git"]["rev"] == "a" * 40
 
 
