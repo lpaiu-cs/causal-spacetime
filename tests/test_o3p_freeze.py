@@ -159,6 +159,72 @@ def test_a_clean_matching_tree_at_another_sha_is_refused(monkeypatch):
         o3p.preflight(_SHA)
 
 
+def _stub_res():
+    from certified_interval import Iv
+    return {"v": Iv(1) / Iv(3), "ratio": 0.004,
+            "status": "target-met", "termination_reason": "target-met",
+            "calls": 10, "cells": 3, "wall_s": 0.1,
+            "max_depth_reached": 2, "cells_at_max_depth": 0,
+            "uncosted_cells": 0, "modes": {}, "raw_width_by_mode": {},
+            "raw_total_before_intersection": 0.0,
+            "certified_total_after_intersection": 0.0,
+            "intersection_active": False, "curve": []}
+
+
+def test_a_mid_run_rebind_to_another_clean_commit_refuses(monkeypatch):
+    """Review PR #81 R3: the baseline is the preflight's VERIFIED
+    state and the exit rev is compared to the approved SHA directly.
+    A worktree switched to a different clean commit between the
+    approval check and the run -- even one whose re-pinned digests
+    all match -- must refuse before publishing anything."""
+
+    approved, other = "a" * 40, "b" * 40
+    monkeypatch.setattr(o3p, "preflight", lambda rev: {
+        "manifest": {}, "git": {"rev": approved, "dirty": False}})
+    monkeypatch.setattr(o3p, "_git_state",
+                        lambda: {"rev": other, "dirty": False})
+    monkeypatch.setattr(o3p, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o3p, "assemble",
+                        lambda cfg, progress=None: _stub_res())
+    published = []
+    monkeypatch.setattr(o3p, "_publish_write_once",
+                        lambda p, s: published.append(p))
+    monkeypatch.setattr(sys, "argv",
+                        ["prog", "--freeze-rev", approved])
+    with pytest.raises(SystemExit, match="approved freeze SHA"):
+        o3p.main()
+    assert not published
+
+
+def test_main_publishes_on_an_unmoved_approved_checkout(monkeypatch,
+                                                        tmp_path):
+    """The real main() wiring end to end (the O4b lesson): approved
+    SHA held from preflight through exit, artifact published with the
+    gated V_ref' block and the intersection."""
+
+    approved = "a" * 40
+    monkeypatch.setattr(o3p, "preflight", lambda rev: {
+        "manifest": {}, "git": {"rev": approved, "dirty": False}})
+    monkeypatch.setattr(o3p, "_git_state",
+                        lambda: {"rev": approved, "dirty": False})
+    monkeypatch.setattr(o3p, "verify_freeze", lambda stage: {})
+    monkeypatch.setattr(o3p, "assemble",
+                        lambda cfg, progress=None: _stub_res())
+    out = tmp_path / "p14_o3p_volume.json"
+    monkeypatch.setattr(o3p, "_ARTIFACT", out)
+    monkeypatch.setattr(sys, "argv",
+                        ["prog", "--freeze-rev", approved])
+    o3p.main()
+    art = json.loads(out.read_text(encoding="utf-8"))
+    assert art["code"] == {"start": {"rev": approved, "dirty": False},
+                           "end": {"rev": approved, "dirty": False}}
+    # the stub interval [1/3-ish] is disjoint from the O3 base, so
+    # the record must carry the inconsistency and a BLOCKED V_ref'
+    assert art["intersection_with_o3"][
+        "certification_inconsistency"] is True
+    assert art["v_ref_prime_recommendation"]["value"] is None
+
+
 def test_the_exact_approved_sha_passes(monkeypatch, tmp_path):
     o3_base = tmp_path / "o3.json"
     o3_base.write_text("{}", encoding="utf-8")

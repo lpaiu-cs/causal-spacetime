@@ -373,7 +373,17 @@ def main() -> None:
               "O3 base present. Nothing was observed.")
         return
 
-    start = _git_state()
+    # THE BASELINE IS THE PREFLIGHT'S VERIFIED STATE, NOT A RE-READ
+    # (review PR #81 R3). A second _git_state() here would rebind the
+    # baseline: if the worktree is switched to a different clean
+    # commit between the approval check and this line -- say a later
+    # commit that edits a protocol file and re-pins the manifest in
+    # the same commit -- a re-read would record that unapproved SHA
+    # as `start`, and an exit check of end == start would pass on an
+    # unapproved lineage. `checks["git"]` is the state preflight
+    # verified to BE the approved SHA, so it cannot be rebound.
+    start = checks["git"]
+    approved = start["rev"]
     cfg = OracleConfig(
         FROZEN["r_in"], FROZEN["r_out"], FROZEN["dt"], FROZEN["m"],
         target_ratio=FROZEN["target_ratio"], n_sub=FROZEN["n_sub"],
@@ -396,10 +406,15 @@ def main() -> None:
     res = assemble(cfg, progress=show)
     verify_freeze("exit")
     end = _git_state()
-    if end["rev"] != start["rev"] or end["dirty"]:
+    # the exit rev is compared to the APPROVED SHA directly -- not to
+    # a start value that could have been rebound -- so a checkout
+    # switched mid-run to any other commit, clean or not, refuses
+    if end["rev"] != approved or end["dirty"]:
         raise SystemExit(
-            "the tree changed underneath the campaign -- refusing "
-            "to write a result with broken lineage")
+            f"exit lineage check: HEAD is {end['rev']} "
+            f"(dirty={end['dirty']}), not the approved freeze SHA "
+            f"{approved} -- the tree changed underneath the campaign; "
+            f"refusing to write a result with broken lineage")
 
     result = _serialize_result(res)
     # the consistency check comes FIRST, and the V_ref' block is
