@@ -101,15 +101,49 @@ the O4 abort's retracted "G2 appears to have passed" — function
 completion is not gate passage. Whether the preserved statistics support
 a result is exactly what the separate recovery audit must decide.
 
-## 5. A second, independent wiring defect — budget stage labels
+## 5. Further runner-record provenance defects (recorded, not fixed)
 
-The preserved budget ledger reads `stage: "g3a"` and
-`reserved_by_stage: {"g3a": 55351929}`: the whole campaign's calls are
-attributed to G3a because the budget's stage label was never advanced
-past it. This does not affect the totals or the cap arithmetic — the cap
-is charged against `reserved`, which is stage-agnostic — but the
-per-stage provenance is wrong. It is recorded here as a distinct defect
-from §2, to be fixed with it.
+The runner's machine-readable records carry three provenance labels that
+are wrong or misleading. None of them changes a single computed number,
+and the *ground truth* is present in the same files — but a careless
+reader (especially an automated recovery audit) could misread them, so
+each is named here and each is left in the JSON exactly as the runner
+emitted it. **The JSON is preserved verbatim as the run produced it; the
+corrections live in this authored layer, not by hand-editing the runtime
+artifact.**
+
+**5a. The budget ledger attributes every call to G3a.** It reads
+`stage: "g3a"` and `reserved_by_stage: {"g3a": 55351929}` because the
+budget's stage label was never advanced past G3a. The totals and cap
+arithmetic are unaffected — the cap is charged against `reserved`, which
+is stage-agnostic — but the per-stage breakdown is wrong.
+
+**5b. The incident's `stage: "g2"` is the label of the pre-publish step,
+not a claim that G2 is incomplete.** The stop happened *after* `run_g2`
+returned and wrote the `g2_complete` checkpoint — at the pre-publication
+reservation re-read, which the runner wraps in `_staged("g2", …)`, so a
+failure there inherits the label `"g2"`. The same file's
+`completed_gates.g2.status` is `"concordant"` over n = 1,072,696, and
+`completed_gates_are_not_a_verdict` states the gates ran to their frozen
+sample size. **A recovery audit must read `completed_gates`, not `stage`,
+to decide what completed: G1 and G2 both did.** `stage` records only
+where the run stopped.
+
+**5c. The `g2_complete` checkpoint's `seed`/`rng_position` are the G1
+stream, not G2's.** `Campaign.checkpoint` always serialises
+`seed = o4b_g1_audit` (`40,000,401`) and `self.rng`, which is the G1
+estimator's generator; `run_g2` draws from a *separate* local generator
+seeded by `o4b_g2_leakage` (`40,000,411`) that is never stored on the
+campaign and never serialised. So the RNG state in the `g2_complete`
+record continues the **G1** stream. **A recovery audit must not read
+`40,000,401` as the G2 seed:** G2's stream is `40,000,411`, and this
+checkpoint does not carry its position. Both seeds are listed under the
+incident's `seeds` block, so which is which is recoverable.
+
+Defects 5a–5c are the runner's, distinct from §2's return-value bug but
+of the same character — a value the runner writes without following its
+meaning into the record. They are fixed with §2 in the recovery/fix
+phase, each with a regression test.
 
 ## 6. Seeds, lineage, and what comes next
 
@@ -129,8 +163,9 @@ Next, in order and each under its own approval:
 2. a recovery audit under a separate contract determines whether the
    preserved statistics can be published as an O4b result without any
    recomputation, and with what provenance;
-3. the two wiring defects (§2, §5) are fixed with regression tests that
-   run the real `main` path end-to-end.
+3. the return-value defect (§2) and the runner-record provenance defects
+   (§5a–5c) are fixed with regression tests that run the real `main` path
+   end-to-end.
 
 The retired streams may not be re-entered. Recovering the preserved
 statistics is a reproduction of an observed run; a fresh O4b campaign

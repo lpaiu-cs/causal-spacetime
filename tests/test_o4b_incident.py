@@ -58,6 +58,21 @@ def test_the_verdict_is_null_and_the_outcome_is_abort():
     assert not (_PREREG / "p14_o4b_results.json").exists()
 
 
+def test_stage_g2_is_the_pre_publish_label_not_an_incomplete_gate():
+    """Runner-record defect 5b, pinned. The stop happened AFTER run_g2
+    wrote g2_complete, at the pre-publish re-read that the runner wraps
+    in _staged("g2"). So `stage == "g2"` marks where the run stopped,
+    not what completed -- and the same record proves G2 completed. A
+    recovery audit keying on `stage` alone would wrongly discard the
+    G2 sample; this test and the incident doc forbid that reading."""
+
+    pres = _incident()["preserved"]
+    assert _incident()["stage"] == "g2"                 # where it stopped
+    assert pres["completed_gates"]["g2"]["status"] == "concordant"
+    assert pres["completed_gates"]["g2"]["n"] == 1_072_696   # G2 is done
+    assert pres["completed_gates"]["g1"]["status"] == "concordant"
+
+
 def test_the_preserved_gate_statistics_are_flagged_non_verdict():
     """The distinction the recovery audit rests on: the numbers are
     here, but they are not a status. If a later edit drops the
@@ -126,6 +141,22 @@ def test_the_checkpoint_is_a_partial_non_verdict_at_g2_complete():
     assert cp["freeze_sha"] == _FREEZE_REV
 
 
+def test_the_g2_complete_checkpoint_rng_is_the_g1_stream():
+    """Runner-record defect 5c, pinned. `Campaign.checkpoint` always
+    serialises the G1 audit seed and generator; run_g2 uses a separate,
+    unserialised generator. So this `g2_complete` record's seed/rng is
+    the G1 stream (40,000,401), NOT G2's (40,000,411). A recovery that
+    replays G2 from this seed would draw the wrong sample -- the
+    incident doc names this and the seeds block keeps both recoverable."""
+
+    cp = _checkpoint()
+    assert cp["seed"] == 40_000_401                      # the G1 seed
+    assert cp["rng_position"]["bit_generator"] == "PCG64"
+    # both seeds are recoverable from the incident, so which is which
+    # is never lost even though the checkpoint carries only one
+    assert _incident()["seeds"]["o4b_g2_leakage"] == 40_000_411
+
+
 # --------------------------------------------------------- the ledger
 
 def test_the_drawn_scalars_are_retired_under_their_functional_names():
@@ -154,15 +185,20 @@ def test_the_never_drawn_scalar_stays_unspent():
 
 # ------------------------------------------------ the human narrative
 
-def test_the_document_names_both_defects_and_refuses_to_grade():
+def test_the_document_names_all_defects_and_refuses_to_grade():
     doc = _INCIDENT_MD.read_text(encoding="utf-8")
     # the return-value defect (§2)
     assert "returns `None`" in doc or "returned `None`" in doc
     assert "no claim object to verify" in doc
     # the integration-test gap (§3)
     assert "returning" in doc and "stub" in doc
-    # the second, independent budget stage-label defect (§5)
-    assert 'stage: "g3a"' in doc or "reserved_by_stage" in doc
+    # the runner-record provenance defects (§5a-5c)
+    assert 'stage: "g3a"' in doc or "reserved_by_stage" in doc     # 5a
+    assert "read `completed_gates`, not `stage`" in doc            # 5b
+    assert "must not read\n`40,000,401` as the G2 seed" in doc \
+        or "must not read `40,000,401` as the G2 seed" in doc      # 5c
+    # the JSON is preserved verbatim; corrections live in the doc
+    assert "preserved verbatim" in doc
     # it grades nothing
     assert "grades nothing" in doc.lower() or "no scientific" in doc
     assert "reproduction" in doc                      # recovery framing
