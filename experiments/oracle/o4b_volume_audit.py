@@ -518,10 +518,15 @@ class Campaign:
     # -- checkpoints ---------------------------------------------
 
     def checkpoint(self, point: str, extra: dict | None = None) -> None:
+        # The serialised seed/rng are the G1 stream, ALWAYS -- G2 draws
+        # from its own generator, which is never stored on the campaign
+        # (incident defect 5c). Naming the stream keeps a `g2_complete`
+        # checkpoint from being read as carrying G2's position.
         stages.write_checkpoint(
             self.checkpoint_path, point,
             freeze_sha=self.freeze_sha, digest=self.digest,
             seed=self.seeds["o4b_g1_audit"], rng=self.rng,
+            rng_stream="o4b_g1_audit",
             samples=self.g1.n,
             statistics={**_statistics(self.g1), **(extra or {}),
                         "chunk": self._chunk_position()},
@@ -839,7 +844,7 @@ class Campaign:
         self.checkpoint("g2_complete", {"g2": result})
         return result
 
-    def _staged(self, stage: str, work):
+    def _staged(self, stage: str, work, failure_point: str | None = None):
         """Run one stage, turning a fired cap into that stage's
         `INCONCLUSIVE` failure.
 
@@ -853,8 +858,19 @@ class Campaign:
 
         A cap is not a contract failure: the instrument said nothing
         wrong, the run simply ran out. Hence `INCONCLUSIVE`, and the
-        preserved sample goes with it."""
+        preserved sample goes with it.
 
+        `self.budget.enter(stage)` moves the budget's stage label with
+        the run, so a per-stage breakdown attributes calls where they
+        were spent rather than leaving everything under `g3a` (incident
+        defect 5a). `failure_point` names the STEP within the stage when
+        it is not the stage itself: the reservation claim and the
+        pre-publish re-verify both run under a stage label (`g3b`, `g2`)
+        that would otherwise read as a claim about the gate, so the
+        incident records the actual step (incident defect 5b)."""
+
+        self.budget.enter(stage)
+        where = failure_point or stage
         try:
             return work()
         except stages.StageFailure:
@@ -866,9 +882,10 @@ class Campaign:
             raise stages.StageFailure(
                 stage, "INCONCLUSIVE",
                 f"completion budget exhausted ({cap.reason}) during "
-                f"{stage}: {cap.reserved:,} calls reserved, "
+                f"{where}: {cap.reserved:,} calls reserved, "
                 f"{cap.wall_s:.1f}s elapsed",
                 preserved=self.preserved(),
+                failure_point=where,
                 detail={"cap": {"reason": cap.reason,
                                 "reserved": cap.reserved,
                                 "completed": cap.completed,
@@ -896,8 +913,9 @@ class Campaign:
                 raise self._contract_failure(stage, exc) from exc
             raise stages.StageFailure(
                 stage, "ABORT",
-                f"unhandled {type(exc).__name__} during {stage}: {exc}",
+                f"unhandled {type(exc).__name__} during {where}: {exc}",
                 preserved=self.preserved(),
+                failure_point=where,
                 detail={"exception": {"type": type(exc).__name__,
                                       "message": str(exc)}},
             ) from exc
@@ -979,8 +997,8 @@ class Campaign:
             # created by a push whose reply is then lost, spending the
             # seeds while the call never returns. Attributed to `g3b`,
             # the stage it was entering.
-            self.reservation_object = self._staged("g3b",
-                                                   on_g3a_passed)
+            self.reservation_object = self._staged(
+                "g3b", on_g3a_passed, failure_point="reservation_claim")
         availability = self._staged("g3b", self.run_g3b)
         g1 = self.g1_result = self._staged("g1", self.run_g1)
         g2 = self.g2_result = self._staged("g2", self.run_g2)
@@ -993,7 +1011,8 @@ class Campaign:
         # result whose provenance says nothing.
         if on_before_publish is not None:
             self._staged("g2", lambda: on_before_publish(
-                self.reservation_object))
+                self.reservation_object),
+                failure_point="pre_publish_verify")
         return {
             "kind": "results", "run_kind": "campaign",
             "freeze_sha": self.freeze_sha,
@@ -1047,13 +1066,20 @@ def main() -> None:
     claimed: dict = {"object": None}
     receipt: dict = {}
 
-    def claim() -> None:
+    def claim() -> str:
         payload = {
             "campaign": "o4b", "freeze_rev": args.freeze_rev,
             "manifest_sha256": digest, "seeds": checks["seeds"],
         }
         try:
             claimed["object"] = reservation.claim(payload)
+            # RETURN the object, do not only stash it (the O4b abort).
+            # `Campaign.run` records the callback's return value and
+            # carries it to the pre-publish re-verify; a callback that
+            # stashed in `claimed` and returned `None` sent `None` to
+            # that check, which raised after eleven hours of completed
+            # gates. The dict is still written, for the incident path.
+            return claimed["object"]
         except reservation.ClaimUncertain as uncertain:
             # record before re-raising: `_staged` turns this into a
             # StageFailure and the incident must be able to say the
@@ -1127,6 +1153,11 @@ def main() -> None:
             f"the campaign completed but the result could not be "
             f"published: {type(exc).__name__}: {exc}",
             preserved=campaign.preserved(),
+            # a post-gate failure: both gates finished and only the
+            # publication failed, so failure_point says so rather than
+            # letting it default to `g2` and read as a G2 failure (which
+            # would contradict `detail.at` -- review PR #78 R1).
+            failure_point="artifact_publication",
             detail={"exception": {"type": type(exc).__name__,
                                   "message": str(exc)},
                     "at": "artifact publication",

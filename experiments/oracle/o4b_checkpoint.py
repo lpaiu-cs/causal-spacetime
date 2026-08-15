@@ -49,7 +49,8 @@ STAGES = ("g3b", "g1_chunk", "g1_complete", "g2_complete")
 REQUIRED = (
     "freeze_sha",        # which commit
     "manifest_digest",   # which frozen configuration
-    "seed",              # which stream
+    "seed",              # which stream, by value
+    "rng_stream",        # which stream, by name (incident defect 5c)
     "rng_position",      # how far into it
     "samples",           # how many points processed
     "statistics",        # the running accumulators

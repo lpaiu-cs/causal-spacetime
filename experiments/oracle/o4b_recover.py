@@ -79,11 +79,6 @@ INCIDENT_SHA256 = (
 CHECKPOINT_SHA256 = (
     "5dd6de7eea25c8384329b26ebf9f61c9dae51ee451c6d5c5717dbd463dc6679a")
 
-#: The one protocol-surface file that legitimately changed after the
-#: run: the ledger moved the two O4b seeds FRESH -> OBSERVED. Every
-#: OTHER file in the executed manifest must still match byte-for-byte.
-_LEDGER_REL = "experiments/positive_control/probe_seed_ledger.py"
-
 
 def _load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -94,14 +89,35 @@ class RecoveryError(Exception):
     frozen surface drifted. No result is published."""
 
 
+#: The files the recovery's correctness actually rests on, pinned
+#: against the EXECUTED manifest. The verdict is a function of the
+#: empirical-Bernstein interval, the Clopper-Pearson bound and the
+#: o4_sizing constants; the publish-time reservation re-verify is the
+#: reservation module. These are checked byte-for-byte -- NOT the whole
+#: protocol surface (as an earlier version did). The campaign runner,
+#: the stage machine and the checkpoint format do not enter the recovered
+#: number, so ordinary maintenance to them (a fixed claim return, a stage
+#: budget label, an explicit failure_point) must not break a recovery
+#: whose inputs and decision functions are unchanged. The incident and
+#: checkpoint DATA is authenticated separately, by blob pin and
+#: cross-check in `_authenticate`.
+_DECISION_FILES = (
+    "experiments/oracle/empirical_bernstein.py",
+    "experiments/oracle/exact_binomial.py",
+    "experiments/oracle/o4_sizing.py",
+    "experiments/oracle/o4b_reservation.py",
+)
+
+
 def verify_frozen_surface() -> dict:
     """The decision functions the recovery uses are the frozen ones.
 
     Verified against the EXECUTED manifest -- the surface the campaign
-    actually ran against -- not the live one, which re-pinned the ledger
-    when the seeds retired. Every file matches byte-for-byte except the
-    ledger, whose only permitted change is that the two O4b seeds are now
-    OBSERVED rather than FRESH."""
+    actually ran against -- not the live one, which re-pins as the
+    protocol surface is maintained. Only the files the recovered verdict
+    and its reservation re-verify depend on are pinned (`_DECISION_FILES`);
+    the ledger's one permitted change (the two O4b seeds now OBSERVED) is
+    checked below."""
 
     manifest = _load(_EXECUTED_MANIFEST)
     if run._sha256(_EXECUTED_MANIFEST) != EXECUTED_DIGEST:
@@ -109,13 +125,13 @@ def verify_frozen_surface() -> dict:
             f"executed manifest digest drifted from {EXECUTED_DIGEST}")
 
     drifted = []
-    for rel, want in manifest["files"].items():
-        got = run._sha256(_REPO / rel)
-        if got == want:
-            continue
-        if rel == _LEDGER_REL:
-            continue                        # the intended, verified delta
-        drifted.append(rel)
+    for rel in _DECISION_FILES:
+        want = manifest["files"].get(rel)
+        if want is None:
+            raise RecoveryError(
+                f"{rel} is not pinned in the executed manifest")
+        if run._sha256(_REPO / rel) != want:
+            drifted.append(rel)
     if drifted:
         raise RecoveryError(
             f"frozen decision surface drifted on {drifted} -- refusing "
