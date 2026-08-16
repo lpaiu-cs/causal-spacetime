@@ -132,6 +132,7 @@ _POINT_KEYS = frozenset({
 })
 
 
+@pytest.mark.slow
 def test_the_results_artifact_derived_fields_recompute_from_raw():
     """The PR #41 lesson applied to P2 from the start: every derived
     field in the committed artifact must recompute from the raw
@@ -220,6 +221,7 @@ def test_the_results_artifact_derived_fields_recompute_from_raw():
             [want_lo, want_hi], rel=1e-9)
 
 
+@pytest.mark.slow
 def test_the_frozen_n_have_executable_sizing_provenance():
     """The cases, PR #42 reviews R1 and R2. R1: minima quoted only in
     prose are not a frozen design -- `sizing_block` is executable

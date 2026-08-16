@@ -680,6 +680,7 @@ def test_g1_continues_from_the_tail_g3b_left(tmp_path, monkeypatch):
     assert tail[0] is not None
 
 
+@pytest.mark.slow
 def test_the_whole_frozen_prefix_is_the_same_points_either_way(
         tmp_path, monkeypatch):
     """The estimator's sample must not depend on where G3b happened to

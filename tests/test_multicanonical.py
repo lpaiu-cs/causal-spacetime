@@ -32,6 +32,12 @@ from causal_spacetime_lab.positive_control.two_orders import (
     perm_to_causal_matrix,
 )
 
+# Every test here drives real Wang-Landau / multicanonical MCMC (a ~10 s
+# shared walker build plus per-test reweighting), so the whole module is
+# slow: the fast tier relies on the cheap exact-enumeration contracts
+# elsewhere, and these production-scale sampler regressions run in full.
+pytestmark = pytest.mark.slow
+
 
 def _exact_states(n: int, eps: float) -> list[tuple[float, dict[str, float]]]:
     """Every permutation of n elements with its action and observables."""

@@ -54,6 +54,7 @@ def _flat_exact_bounds(dt: float, d: float) -> tuple:
     return val(_DN200), val(_UP200)
 
 
+@pytest.mark.slow
 def test_flat_control_contains_the_closed_form():
     """M = 0, anchors (12, 18, 8.5): the certified interval must
     contain pi tau^4 / 24 = pi 36.25^2 / 24, and be nontrivially
@@ -88,6 +89,7 @@ def test_cost_caps_bind_during_the_initial_grid_and_stay_sound():
 
 
 @pytest.mark.parametrize("max_calls,target", [(320, 0.45), (520, 0.38)])
+@pytest.mark.slow
 def test_a_crossing_before_the_cap_is_never_misfiled(max_calls,
                                                      target):
     """R1: target accounting happens on a 32-split cadence, so a
@@ -123,6 +125,7 @@ def test_empty_diamond_returns_exact_zero():
 # ---------------------------------------------------------------------
 
 
+@pytest.mark.slow
 def test_termination_reason_target_met():
     cfg = OracleConfig(12.0, 18.0, 8.0, m=1.0, target_ratio=0.9,
                        n_sub=16, max_calls=4000, max_wall_s=240.0,
@@ -193,6 +196,7 @@ def test_containment_violation_refuses_without_numbers():
         assemble(OracleConfig(12.0, 18.0, 12.0, m=1.0))
 
 
+@pytest.mark.slow
 def test_schwarzschild_assembly_is_sound_and_mc_is_not_a_gate():
     """Coarse neighbor-configuration run: certified positive
     interval, tangent cells firing, and the raw/certified width

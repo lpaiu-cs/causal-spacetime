@@ -279,6 +279,7 @@ def test_containment_gate_refuses_oversized_diamonds():
         containment_certificate(12.0, 18.0, 5.0)  # empty diamond
 
 
+@pytest.mark.slow
 def test_frozen_anchor_calls_stay_certifiable_across_the_box():
     """Representative T1/T2 calls the PR-O2 integrator will make:
     anchor to box points at the box extremes must certify without

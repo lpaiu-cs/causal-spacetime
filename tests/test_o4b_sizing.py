@@ -367,6 +367,7 @@ def test_no_deleted_lineage_is_quoted_anywhere():
         assert gone not in source
 
 
+@pytest.mark.slow
 def test_the_committed_artifact_matches_the_module():
     """A stale artifact is a freeze that says something the code does
     not."""

@@ -107,6 +107,7 @@ def test_calibration_arm_returns_one_half():
     assert not fit["candidates_inside_ci95"]["kpz_like_1/3"]
 
 
+@pytest.mark.slow
 def test_order_only_chain_counts_are_kpz_not_poisson():
     """A genuine longest chain, free to wander: Tracy-Widom counts."""
 
@@ -118,6 +119,7 @@ def test_order_only_chain_counts_are_kpz_not_poisson():
     assert fit["t_against"]["poisson_rate_1/2"] < -3.0, fit["t_against"]
 
 
+@pytest.mark.slow
 def test_tube_chain_counts_are_poisson_not_kpz():
     """The shipped tube is ~rho^-1/2 wide against a natural wandering of
     ~rho^-1/6, so it confines the chain far below the excursions KPZ
@@ -132,6 +134,7 @@ def test_tube_chain_counts_are_poisson_not_kpz():
     assert fit["t_against"]["kpz_like_1/3"] > 3.0, fit["t_against"]
 
 
+@pytest.mark.slow
 def test_the_two_harvest_protocols_land_in_different_classes():
     """The headline: there is no single count class to find. On the same
     densities, the two harvests come out on opposite sides of the gap --
@@ -148,6 +151,7 @@ def test_the_two_harvest_protocols_land_in_different_classes():
                                     tube["fit"]["theta"])
 
 
+@pytest.mark.slow
 def test_widening_the_tube_restores_kpz_counts():
     """The mechanism, not just the endpoints: a tube that keeps up with
     the chain's natural transverse wandering (~rho^-1/6) stops
