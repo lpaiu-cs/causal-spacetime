@@ -389,6 +389,7 @@ def test_bonett_bound_is_above_the_variance_and_kurtosis_adaptive():
             > gaussian["bound"] / gaussian["s2"])
 
 
+@pytest.mark.slow
 def test_power_selection_rule_branches():
     """v1.8: sizing from summed per-rung Bonett bounds; branch
     structure exercised with exact-sample-sigma Gaussian pilots."""
