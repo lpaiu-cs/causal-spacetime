@@ -530,18 +530,20 @@ def test_publish_time_claim_uncertainty_names_publish_with_the_record(
     assert inc["preserved"]["events_done"] == small["n_events"]
 
 
-@pytest.mark.parametrize("mod_name", ["o4b_reservation",
-                                      "o5_pilot_reservation"])
-def test_make_commit_refuses_cleanly_when_git_fails(monkeypatch,
-                                                    mod_name):
+def test_make_commit_refuses_cleanly_when_git_fails(monkeypatch):
     """Every _make_commit failure is pre-push by construction, so it
-    must be a clean SystemExit refusal in BOTH copies -- a raw
-    CalledProcessError/OSError would be filed as a spent-nothing
-    global incident (post-merge adversarial review)."""
+    must be a clean SystemExit refusal, never a raw
+    CalledProcessError/OSError that main()'s boundary would file as a
+    spent-nothing global incident (post-merge adversarial review).
 
-    import importlib
+    Fixed in the LIVE o5 copy only: the o4b copy has the same latent
+    defect, but it sits inside `o4b_recover._DECISION_FILES` -- the
+    frozen surface the published recovery must stay re-derivable
+    with -- and its campaign is closed, so the path is permanently
+    unreachable there and the file stays byte-identical to the
+    executed pin (test_o4b_recover enforces that)."""
 
-    mod = importlib.import_module(mod_name)
+    import o5_pilot_reservation as mod
 
     class _Fail:
         returncode = 1
