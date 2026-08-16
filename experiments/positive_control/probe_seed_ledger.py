@@ -137,15 +137,22 @@ OBSERVED_PROBE_SCALARS = {
 #: deliberately NOT reused here: reaching for it would make the
 #: withdrawal look like a deferral.
 #:
-#: Empty: the O4b strata `o4b_g1_audit`/`o4b_g2_leakage` were drawn on
-#: 2026-08-15 and are now retired in OBSERVED under those same names.
-#: The run reached and completed both gates but stopped before
-#: publication on a wiring defect, so no verdict was published; the
-#: streams are spent regardless, because the points were observed. A
-#: recovery of the preserved statistics is a REPRODUCTION of that
-#: observed run, never a new draw -- and a re-run of O4b needs a NEW
-#: freeze with NEW scalars; the retired streams may not be re-entered.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: The O4b strata `o4b_g1_audit`/`o4b_g2_leakage` were drawn on
+#: 2026-08-15 and are retired in OBSERVED under those same names; the
+#: recovered result is a REPRODUCTION of that observed run, and a
+#: re-run of O4b needs a NEW freeze with NEW scalars.
+#:
+#: o5_amb_pilot: the O5 ambiguity pilot's fixed-n indicator stream,
+#: allocated 2026-08-16 under the delegated pilot freeze
+#: (docs/prereg/p14_o5_amb_pilot.md). One stream, one run, never
+#: extended; the commit that records ANY outcome -- FEASIBLE,
+#: INCONCLUSIVE or an incident -- must move it to
+#: OBSERVED_PROBE_SCALARS. It is lineage-independent of every O5
+#: campaign scalar (none exists yet, and none may be allocated before
+#: this pilot's result is merged).
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "o5_amb_pilot": 40_000_441,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]

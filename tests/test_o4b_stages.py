@@ -307,7 +307,10 @@ def test_the_campaign_scalars_are_retired_and_301_is_untouched():
     assert ledger.OBSERVED_PROBE_SCALARS["o4b_g2_leakage"] == 40_000_411
     assert 40_000_401 in ledger.spent_scalars()
     assert 40_000_411 in ledger.spent_scalars()
-    assert ledger.FRESH_PROBE_SCALARS == {}
+    # per-seed, not global-empty (the PR #77 R2 lesson): a later
+    # campaign's own fresh allocation is a normal ledger state
+    assert "o4b_g1_audit" not in ledger.FRESH_PROBE_SCALARS
+    assert "o4b_g2_leakage" not in ledger.FRESH_PROBE_SCALARS
 
     # a retired name cannot be re-entered as a fresh allocation
     for retired in ("o4b_g1_audit", "o4b_g2_leakage"):
