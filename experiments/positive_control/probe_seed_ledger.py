@@ -154,15 +154,26 @@ OBSERVED_PROBE_SCALARS = {
 #: recovered result is a REPRODUCTION of that observed run, and a
 #: re-run of O4b needs a NEW freeze with NEW scalars.
 #:
-#: Empty again since 2026-08-17: `o5_amb_pilot` (allocated 2026-08-16
-#: under the delegated pilot freeze, docs/prereg/p14_o5_amb_pilot.md)
-#: was drawn and is retired in OBSERVED under the same name, in the
-#: same commit that added the observed FEASIBLE artifact -- the
-#: results-commit obligation above, honoured for an outcome as it
-#: would have been for an abort. The next allocation is the O5
-#: campaign scalar, which may only be drawn under the O5 freeze and
-#: is lineage-independent of the pilot stream.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: `o5_amb_pilot` (allocated 2026-08-16 under the delegated pilot
+#: freeze) was drawn and is retired in OBSERVED under the same name,
+#: in the same commit that added the observed FEASIBLE artifact --
+#: the results-commit obligation above, honoured for an outcome as it
+#: would have been for an abort.
+#:
+#: o5_campaign: the O5 Poisson-count campaign's sprinkling stream,
+#: allocated 2026-08-17 under the campaign freeze
+#: (docs/prereg/p14_o5_count.md). One stream, one run, never
+#: extended; the commit that records ANY outcome -- CONCORDANT,
+#: DISCORDANT, INCONCLUSIVE or an incident -- must move it to
+#: OBSERVED_PROBE_SCALARS. It is lineage-independent of the retired
+#: pilot stream (the pilot contributed one DESIGN number, the
+#: certified U ceiling; its data never enters the estimator). THE
+#: FREEZE DOES NOT AUTHORIZE THE DRAW: execution waits on the
+#: integrated PI approval, and `refs/o5/reservation` serialises the
+#: opening across checkouts.
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "o5_campaign": 40_000_451,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
