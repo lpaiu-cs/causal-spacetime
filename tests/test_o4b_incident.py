@@ -180,7 +180,11 @@ def test_the_drawn_scalars_are_retired_under_their_functional_names():
     assert ledger.OBSERVED_PROBE_SCALARS["o4b_g2_leakage"] == 40_000_411
     assert 40_000_401 in ledger.spent_scalars()
     assert 40_000_411 in ledger.spent_scalars()
-    assert ledger.FRESH_PROBE_SCALARS == {}
+    # per-seed, not global-empty: FRESH is the program-wide active
+    # ledger, and a later campaign's own allocation (e.g. the O5
+    # ambiguity pilot) is a normal state (the PR #77 R2 lesson)
+    assert "o4b_g1_audit" not in ledger.FRESH_PROBE_SCALARS
+    assert "o4b_g2_leakage" not in ledger.FRESH_PROBE_SCALARS
     for name in ("o4b_g1_audit", "o4b_g2_leakage"):
         with pytest.raises(KeyError):
             ledger.assert_fresh_scalar(name)
