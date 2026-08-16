@@ -467,13 +467,19 @@ def test_the_sprinkled_n_is_poisson_from_the_stream(monkeypatch,
     assert art["scan"]["n_total"] == want
 
 
-def test_a_scan_failure_files_an_incident_with_preserved_tallies(
+def test_a_mid_chunk_failure_preserves_the_last_observation_point(
         monkeypatch, tmp_path):
+    """The incident carries the ACTUAL last completed observation,
+    not the last successful chunk (review PR #87 R1): the stub dies
+    on point 21's first leg, so with chunk = 16 the incident must say
+    20 points -- four PAST the chunk boundary -- and n_total must be
+    the drawn N, never null."""
+
     small, calls = _tiny(monkeypatch, tmp_path)
 
     def dying_relation(a, b, m, tol):
         calls["n"] += 1
-        if calls["n"] > 40:
+        if calls["n"] > 40:                   # 2 calls per point
             raise RuntimeError("solver died mid-scan")
         return True
 
@@ -485,8 +491,41 @@ def test_a_scan_failure_files_an_incident_with_preserved_tallies(
     assert inc["failure_point"] == "scan"
     assert inc["verdict"] is None
     assert inc["seed_spent"] is True
-    assert inc["preserved"]["points_done"] > 0
+    pre = inc["preserved"]
+    assert pre["points_done"] == 20 > small["chunk"]
+    assert pre["k_certain"] == 20 and pre["calls"] == 40
+    rng = np.random.default_rng(40_000_451)
+    assert pre["n_total"] == int(
+        rng.poisson(small["a_intensity"] * sz.SCALE))
+    # the chunk-granular checkpoint holds the last COMPLETE chunk
+    ck = json.loads((tmp_path / "c.json").read_text(encoding="utf-8"))
+    assert ck["points_done"] == small["chunk"]
     assert not (tmp_path / "a.json").exists()
+
+
+def test_a_first_chunk_failure_still_preserves_the_drawn_n(
+        monkeypatch, tmp_path):
+    """Even before ANY chunk completes, the incident must carry the
+    drawn N and the in-flight tallies -- the first-chunk corner the
+    review named."""
+
+    small, calls = _tiny(monkeypatch, tmp_path)
+
+    def dying_relation(a, b, m, tol):
+        calls["n"] += 1
+        if calls["n"] > 6:                    # dies inside chunk 1
+            raise RuntimeError("solver died early")
+        return True
+
+    monkeypatch.setattr(camp.s1, "causal_relation", dying_relation)
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(SystemExit, match="incident written"):
+        camp.main()
+    inc = json.loads((tmp_path / "i.json").read_text(encoding="utf-8"))
+    pre = inc["preserved"]
+    assert pre["n_total"] is not None and pre["n_total"] > 0
+    assert pre["points_done"] == 3
+    assert not (tmp_path / "c.json").exists()   # no chunk completed
 
 
 def test_a_race_losing_clean_refusal_files_no_incident(monkeypatch,

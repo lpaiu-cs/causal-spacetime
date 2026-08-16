@@ -549,14 +549,27 @@ def artifact_names_this_run(claim_object: str | None) -> bool:
 
 # ------------------------------------------------ the run
 
-def run_scan(rng, budget, cfg: dict, on_chunk=None) -> dict:
+def run_scan(rng, budget, cfg: dict, on_chunk=None,
+             live: dict | None = None) -> dict:
     """The sprinkled scan: N ~ Poisson(A * SCALE) drawn ONCE from the
     stream, then N points in chunks. Every chunk commits an atomic
     checkpoint before the next begins; `on_chunk` receives the running
-    tallies (tests use it)."""
+    tallies (tests use it).
 
+    `live`, when given, is updated IN PLACE from the moment N is
+    drawn and after EVERY completed observation (review PR #87 R1):
+    a failed run spends the seed permanently with no rerun, so the
+    incident must preserve the actual last observation point -- not
+    the last successful chunk, and never `n_total: null` after N was
+    already drawn under a claimed reservation. Checkpoints stay
+    chunk-granular; the incident does not."""
+
+    if live is None:
+        live = {}
     n_total = int(rng.poisson(cfg["a_intensity"] * sz.SCALE))
     k_certain, u_amb, done, calls = 0, 0, 0, 0
+    live.update(n_total=n_total, points_done=0, k_certain=0,
+                u_ambiguous=0, calls=0)
     with meter.metered(budget):
         while done < n_total:
             size = min(cfg["chunk"], n_total - done)
@@ -573,6 +586,10 @@ def run_scan(rng, budget, cfg: dict, on_chunk=None) -> dict:
                     u_amb += 1
                 done += 1
                 consumed += 1
+                live["points_done"] = done
+                live["k_certain"] = k_certain
+                live["u_ambiguous"] = u_amb
+                live["calls"] = calls
             yield_state = {
                 "freeze_sha": cfg["_freeze_sha"],
                 "manifest_digest": cfg["_digest"],
@@ -714,14 +731,10 @@ def main() -> None:
         budget.enter("scan")
         rng = np.random.default_rng(checks["seed"])
 
-        def on_chunk(state: dict) -> None:
-            tallies.update(n_total=state["n_total"],
-                           points_done=state["points_done"],
-                           k_certain=state["k_certain"],
-                           u_ambiguous=state["u_ambiguous"],
-                           calls=state["calls"])
-
-        scan = run_scan(rng, budget, cfg, on_chunk)
+        # `tallies` IS the live run state (review PR #87 R1): run_scan
+        # updates it per observation, so the incident boundary reads
+        # the actual last observation point on any mid-chunk failure
+        scan = run_scan(rng, budget, cfg, live=tallies)
         tallies.update(scan)
 
         verdict = decide(scan["k_certain"], scan["u_ambiguous"],
