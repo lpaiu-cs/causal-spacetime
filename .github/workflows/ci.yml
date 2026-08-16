@@ -35,10 +35,25 @@ jobs:
         # tests/test_accelerated_two_orders.py importorskip numba, which lives
         # in the experiments extra -- without it they skip silently and this
         # workflow would not gate the coverage it claims to.
-        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev,experiments]"
+        #
+        # pytest-xdist is installed HERE, not declared in pyproject, on
+        # purpose: pyproject.toml is the frozen dependency-lock surface,
+        # pinned by every campaign freeze manifest, so adding a test-runner
+        # tool to it would force a re-pin of five live manifests for a change
+        # with no effect on any scientific result. A parallel runner is CI
+        # tooling, not part of the certified apparatus, so it stays out of the
+        # locked file and lives only where it runs.
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev,experiments]" "pytest-xdist>=3.5"
 
       - name: Lint changed files
         run: python -m ruff check .
 
       - name: Test
-        run: python -m pytest -q
+        # -n auto: run across the runner's cores. The suite is ~13 min serial
+        # and CPU-bound (provenance git subprocesses, exact-arithmetic
+        # cross-checks, production-scale regressions), so it scales with cores.
+        # Race-free by construction: every writing test redirects the module's
+        # fixed path to a per-test tmp_path via monkeypatch, and the git calls
+        # are read-only against an absolute repo cwd -- verified by a full
+        # `-n auto` run that is green to the same 1423 passed as serial.
+        run: python -m pytest -q -n auto
