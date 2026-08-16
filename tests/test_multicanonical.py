@@ -32,11 +32,13 @@ from causal_spacetime_lab.positive_control.two_orders import (
     perm_to_causal_matrix,
 )
 
-# Every test here drives real Wang-Landau / multicanonical MCMC (a ~10 s
-# shared walker build plus per-test reweighting), so the whole module is
-# slow: the fast tier relies on the cheap exact-enumeration contracts
-# elsewhere, and these production-scale sampler regressions run in full.
-pytestmark = pytest.mark.slow
+# slow is applied per-test below, only to the tests that run real
+# Wang-Landau / multicanonical MCMC (the ~10 s module-scoped `wl` build,
+# or a standalone run). Two regressions here are cheap and must stay in
+# the fast tier: test_action_range_brackets... (a bounded probe scan)
+# and test_wang_landau_rejects_a_window... (an immediate ValueError
+# before any sampling) -- both would otherwise catch a real regression
+# that -m "not slow" is meant to keep catching (PR #88 review).
 
 
 def _exact_states(n: int, eps: float) -> list[tuple[float, dict[str, float]]]:
@@ -110,6 +112,7 @@ def wl(window: tuple[float, float]):
     )
 
 
+@pytest.mark.slow
 def test_wang_landau_converges_and_crosses_the_barrier(wl):
     assert wl.converged, f"ln_f stalled at {wl.final_ln_f}"
     # A flat-in-S walker that never traverses the window has not sampled the
@@ -118,6 +121,7 @@ def test_wang_landau_converges_and_crosses_the_barrier(wl):
     assert 0.0 < wl.acceptance < 1.0
 
 
+@pytest.mark.slow
 def test_wang_landau_escapes_the_flatness_stall_via_one_over_t():
     """Regression: a flatness-only schedule stalls on a rugged density of states.
 
@@ -159,6 +163,7 @@ def test_wang_landau_escapes_the_flatness_stall_via_one_over_t():
     assert result.final_ln_f <= 1e-4
 
 
+@pytest.mark.slow
 def test_wang_landau_ln_g_matches_exact_enumeration(wl, window):
     exact, occupied = _exact_ln_g(N, EPS, wl.bin_edges)
 
@@ -174,6 +179,7 @@ def test_wang_landau_ln_g_matches_exact_enumeration(wl, window):
 
 
 @pytest.mark.parametrize("beta", [0.0, 0.4, 1.0, 2.0])
+@pytest.mark.slow
 def test_reweighted_canonical_means_match_exact_gibbs(wl, beta):
     """The payoff: one flat-S run reproduces every beta, checked against exact."""
 
@@ -201,6 +207,7 @@ def test_reweighted_canonical_means_match_exact_gibbs(wl, beta):
     assert effective_sample_size(production.samples, beta) > 10.0
 
 
+@pytest.mark.slow
 def test_ln_f_does_not_decay_before_the_walker_traverses_the_window():
     """Regression: ln_f reaching its target says nothing about ln_g being right.
 
@@ -239,6 +246,7 @@ def test_ln_f_does_not_decay_before_the_walker_traverses_the_window():
     assert not result.entered_one_over_t
 
 
+@pytest.mark.slow
 def test_reweighting_ess_decays_away_from_flat_support(wl):
     """ESS must fall as beta grows -- silence here would hide extrapolation."""
 
@@ -258,6 +266,7 @@ def test_reweighting_ess_decays_away_from_flat_support(wl):
     assert far < near
 
 
+@pytest.mark.slow
 def test_production_rejects_bins_the_wang_landau_run_never_visited(wl):
     """Regression: an unvisited bin has NO ln_g estimate, not a low one.
 
