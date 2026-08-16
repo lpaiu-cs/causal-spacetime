@@ -93,6 +93,17 @@ from seed_windows import (
 #: the provenance of a verdict is decided by a separate recovery audit,
 #: not prejudged here. They are spent regardless: the points were
 #: observed, and `refs/o4b/reservation` is RETAINED, not deleted.
+#: o5_amb_pilot: the O5 ambiguity pilot's fixed-n indicator stream,
+#: drawn 2026-08-17 from the clean exact checkout of freeze SHA
+#: `e9e7e15` (the freeze branch head, merged in PR #83). The run
+#: scanned all 10,736,965 events in one pass (21,473,930 predicate
+#: calls -- exactly 2n -- after G3a's 6,537 frozen wrapper-preflight
+#: calls; k_ambiguous = 0), published FEASIBLE under the frozen
+#: general-in-k rule (docs/prereg/p14_o5_amb_pilot.json), and
+#: re-verified `refs/o5pilot/reservation` (`f522363`) at exit; that
+#: ref is RETAINED, not deleted. One stream, one run, never extended:
+#: a re-run needs a NEW freeze with a NEW scalar, and replaying this
+#: one is a reproduction, never an observation (`replay_scalar`).
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -109,6 +120,7 @@ OBSERVED_PROBE_SCALARS = {
     "o4_aborted_g2": 40_000_291,
     "o4b_g1_audit": 40_000_401,
     "o4b_g2_leakage": 40_000_411,
+    "o5_amb_pilot": 40_000_441,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
@@ -142,17 +154,15 @@ OBSERVED_PROBE_SCALARS = {
 #: recovered result is a REPRODUCTION of that observed run, and a
 #: re-run of O4b needs a NEW freeze with NEW scalars.
 #:
-#: o5_amb_pilot: the O5 ambiguity pilot's fixed-n indicator stream,
-#: allocated 2026-08-16 under the delegated pilot freeze
-#: (docs/prereg/p14_o5_amb_pilot.md). One stream, one run, never
-#: extended; the commit that records ANY outcome -- FEASIBLE,
-#: INCONCLUSIVE or an incident -- must move it to
-#: OBSERVED_PROBE_SCALARS. It is lineage-independent of every O5
-#: campaign scalar (none exists yet, and none may be allocated before
-#: this pilot's result is merged).
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "o5_amb_pilot": 40_000_441,
-}
+#: Empty again since 2026-08-17: `o5_amb_pilot` (allocated 2026-08-16
+#: under the delegated pilot freeze, docs/prereg/p14_o5_amb_pilot.md)
+#: was drawn and is retired in OBSERVED under the same name, in the
+#: same commit that added the observed FEASIBLE artifact -- the
+#: results-commit obligation above, honoured for an outcome as it
+#: would have been for an abort. The next allocation is the O5
+#: campaign scalar, which may only be drawn under the O5 freeze and
+#: is lineage-independent of the pilot stream.
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
