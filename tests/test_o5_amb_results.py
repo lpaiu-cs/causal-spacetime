@@ -155,6 +155,25 @@ def test_executed_freeze_snapshot_matches_the_historical_blobs():
     hist = _blob("docs/prereg/p14_o5_amb_pilot_freeze_manifest.json")
     assert _SNAP.read_bytes().replace(b"\r\n", b"\n") == hist
     m = json.loads(hist.decode("utf-8"))
-    assert set(m["files"]) == set(pilot.PROTOCOL_SURFACE)
+    # the EXECUTED surface, pinned literally: the live
+    # PROTOCOL_SURFACE may grow (it has -- p14_o3_volume.json was
+    # added post-run), but what this run depended on is history
+    assert set(m["files"]) == {
+        "experiments/oracle/o5_amb_pilot.py",
+        "experiments/oracle/o5_pilot_reservation.py",
+        "experiments/oracle/o4b_reservation.py",
+        "experiments/oracle/o4b_budget.py",
+        "experiments/oracle/o4b_meter.py",
+        "experiments/oracle/o4b_g3a.py",
+        "experiments/oracle/o4_g3_redesign.py",
+        "experiments/oracle/o4_sizing.py",
+        "experiments/oracle/o4_volume_audit.py",
+        "experiments/positive_control/s1_schwarzschild_cost.py",
+        "experiments/positive_control/probe_seed_ledger.py",
+        "docs/prereg/p14_o5_amb_pilot.md",
+        "docs/prereg/p14_o3p_volume.json",
+        "pyproject.toml",
+    }
+    assert set(m["files"]) <= set(pilot.PROTOCOL_SURFACE)
     for rel, want in m["files"].items():
         assert hashlib.sha256(_blob(rel)).hexdigest() == want, rel
