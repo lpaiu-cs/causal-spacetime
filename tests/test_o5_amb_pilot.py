@@ -49,12 +49,35 @@ def test_frozen_configuration_is_the_ruled_one():
         2 * pilot.FROZEN["n_events"] + pilot.G3A_PREFLIGHT_CALLS)
 
 
-def test_the_seed_is_fresh_and_301_untouched():
+def test_the_seed_is_retired_and_301_untouched():
+    """The results commit moved `o5_amb_pilot` to OBSERVED in the same
+    change that added the observed artifact; the retired stream can
+    never be allocated again, only replayed as a reproduction."""
+
     import probe_seed_ledger as ledger
 
-    assert ledger.assert_fresh_scalar("o5_amb_pilot") == 40_000_441
+    assert "o5_amb_pilot" not in ledger.FRESH_PROBE_SCALARS
+    assert ledger.OBSERVED_PROBE_SCALARS["o5_amb_pilot"] == 40_000_441
+    assert 40_000_441 in ledger.spent_scalars()
+    assert ledger.replay_scalar("o5_amb_pilot") == 40_000_441
+    with pytest.raises(KeyError, match="no fresh allocation"):
+        ledger.assert_fresh_scalar("o5_amb_pilot")
     assert 40_000_301 not in ledger.spent_scalars()
     assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
+
+
+def test_the_freeze_commit_carried_the_pilot_scalar_as_fresh():
+    """A historical assertion (the O4 pattern): the executed freeze
+    `e9e7e15` is what must have held the stream as FRESH -- the live
+    ledger can no longer state this, only the frozen blob can."""
+
+    blob = subprocess.run(
+        ["git", "show",
+         "e9e7e1592319989233f11b479586c603e8bad958:experiments/"
+         "positive_control/probe_seed_ledger.py"],
+        cwd=_REPO, capture_output=True, text=True, check=True).stdout
+    frozen = blob.split("FRESH_PROBE_SCALARS")[1].split("}")[0]
+    assert '"o5_amb_pilot": 40_000_441' in frozen
 
 
 # ------------------------------------------------ measure identities
@@ -207,6 +230,11 @@ def test_missing_freeze_rev_is_refused_by_the_cli():
 
 
 def _pass_static(monkeypatch, tmp_path, rev=_SHA):
+    # the real stream is retired (results commit); the gate under test
+    # is never the ledger here, so stub the allocation -- the ledger's
+    # own refusal has its own test below
+    monkeypatch.setattr(pilot, "assert_fresh_scalar",
+                        lambda name: 40_000_441)
     monkeypatch.setattr(pilot, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(pilot, "_git_state",
                         lambda: {"rev": rev, "dirty": False,
@@ -243,6 +271,21 @@ def test_preflight_refuses_a_held_reservation(monkeypatch, tmp_path):
     _pass_static(monkeypatch, tmp_path)
     monkeypatch.setattr(pilot.reservation, "held", lambda: "x" * 40)
     with pytest.raises(SystemExit, match="already held"):
+        pilot.preflight(_SHA)
+
+
+def test_preflight_refuses_the_retired_stream_for_good(monkeypatch,
+                                                       tmp_path):
+    """With every other gate stubbed green, the REAL ledger is the one
+    that now refuses: the observed stream has no fresh allocation, so
+    no future checkout can preflight this pilot again."""
+
+    import probe_seed_ledger as ledger
+
+    _pass_static(monkeypatch, tmp_path)
+    monkeypatch.setattr(pilot, "assert_fresh_scalar",
+                        ledger.assert_fresh_scalar)
+    with pytest.raises(KeyError, match="no fresh allocation"):
         pilot.preflight(_SHA)
 
 
