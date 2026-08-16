@@ -567,6 +567,11 @@ def main() -> None:
                 else claimed["object"] is not None),
             "reservation_object": claimed["object"],
             "reservation_uncertainty": claimed.get("uncertain"),
+            # distinct from claim-time uncertainty (review PR #85 R1):
+            # a confirmed claim whose pre-publication ownership
+            # re-check could not complete stays a confirmed claim
+            "publish_reverify_uncertainty": claimed.get(
+                "reverify_uncertain"),
             "seed_spent": (claimed["object"] is not None
                            or bool(claimed.get("uncertain"))),
             "environment": _environment(),
@@ -632,8 +637,11 @@ def main() -> None:
             # the publish-time re-verify can be uncertain too (post-
             # merge adversarial review): the scan is complete and the
             # seed long spent, so the incident must carry the
-            # uncertainty record exactly as a claim-time one would
-            claimed["uncertain"] = uncertain.as_record()
+            # uncertainty record -- under its OWN key (review PR #85
+            # R1): the claim itself already succeeded, and writing
+            # this as claim-time uncertainty would make the incident
+            # deny a claim that is in fact confirmed
+            claimed["reverify_uncertain"] = uncertain.as_record()
             raise
         end = _git_state()
         if end["rev"] != approved or end["dirty"]:

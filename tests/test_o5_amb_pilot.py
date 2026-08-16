@@ -522,8 +522,12 @@ def test_publish_time_claim_uncertainty_names_publish_with_the_record(
     inc = json.loads((tmp_path / "i.json").read_text(encoding="utf-8"))
     assert inc["failure_point"] == "publish"
     assert inc["seed_spent"] is True
-    assert inc["reservation_claimed"] == "uncertain"
-    rec = inc["reservation_uncertainty"]
+    # the claim itself SUCCEEDED and must stay recorded that way
+    # (review PR #85 R1); only the publish-time re-verify is uncertain
+    assert inc["reservation_claimed"] is True
+    assert inc["reservation_object"] == "d" * 40
+    assert inc["reservation_uncertainty"] is None
+    rec = inc["publish_reverify_uncertainty"]
     assert rec["seeds_must_be_treated_as"] == "spent"
     assert rec["push_reported"] == "did not report"
     # the scan DID finish -- the label must not hide that

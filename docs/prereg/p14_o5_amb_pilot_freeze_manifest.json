@@ -2,7 +2,7 @@
  "stage": "O5 ambiguity-pilot freeze manifest (content-addressed protocol surface)",
  "note": "raw sha256; all paths .gitattributes eol=lf pinned. The pilot inherits the O4b instrument surface (predicate, wrapper preflight, budget/meter) and the campaign box measure from o4_sizing; the reservation machinery is o4b_reservation's, imported not copied. This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
  "files": {
-  "experiments/oracle/o5_amb_pilot.py": "a361f63e4c55216916df6cda18277a5297898e69b6ba0e9339115a7a17444167",
+  "experiments/oracle/o5_amb_pilot.py": "5ed71c6666349cf3feeec6dd121ab5710d7e84d9935561a1057f2ee8a7f3d28c",
   "experiments/oracle/o5_pilot_reservation.py": "b5492e712251628f170e8eae19d382dc9f511fc824ee76d62498624f4dcfa3a1",
   "experiments/oracle/o4b_reservation.py": "bf83c5e06d5a8ce2b0e0c70e68240487c8ec0ef634e747c28324e7962e7a6ed4",
   "experiments/oracle/o4b_budget.py": "961e2f7ab1667f9dc2c739cf2bd8ba152a42ffaeb145dc34ad0ff149c279af95",
