@@ -582,7 +582,15 @@ def main() -> None:
                 f"wrapper preflight spent {budget.reserved} metered "
                 f"calls, not the frozen {G3A_PREFLIGHT_CALLS}")
 
-        # the point of no return -- the claim RETURNS its object
+        # the point of no return -- the claim RETURNS its object.
+        # claim()'s exception contract (review PR #83 R2): every
+        # SystemExit it raises is PRE-PUSH by construction (retained
+        # refs, authority reads, an already-held ref, commit-tree) --
+        # this run attempted no write and spent nothing, so it may
+        # not file the pilot's GLOBAL incident: in the two-checkout
+        # race, the loser's incident would sit beside the winner's
+        # legitimate result and poison the write-once provenance.
+        # Everything AFTER the push is ClaimUncertain, which does file.
         budget.enter("reservation")
         try:
             claimed["object"] = reservation.claim({
@@ -593,6 +601,9 @@ def main() -> None:
             })
         except reservation.ClaimUncertain as uncertain:
             claimed["uncertain"] = uncertain.as_record()
+            raise
+        except SystemExit:
+            claimed["clean_refusal"] = True
             raise
 
         budget.enter("scan")
@@ -666,6 +677,11 @@ def main() -> None:
                 f"after the commit ({type(exc).__name__}: {exc}) and "
                 f"no incident is filed over a published result"
             ) from exc
+        if claimed.get("clean_refusal"):
+            # a pre-push claim refusal: nothing was written, nothing
+            # was spent by THIS run, and the winning checkout's record
+            # is the authoritative one -- propagate without an incident
+            raise
         # KeyboardInterrupt and SystemExit included: once the
         # reservation is claimed the seed is spent, and a stop with
         # neither a result nor a record is the one observability

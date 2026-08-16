@@ -367,6 +367,54 @@ def test_a_scan_failure_files_an_incident_with_preserved_tallies(
     assert inc["preserved"]["events_done"] == 16  # first chunk landed
 
 
+def test_a_race_losing_clean_claim_refusal_files_no_incident(
+        monkeypatch, tmp_path):
+    """Review PR #83 R2: two checkouts pass preflight on an empty ref;
+    A claims first; B's claim() sees A's object at held() and refuses
+    with a PRE-PUSH SystemExit. B wrote nothing and spent nothing, so
+    B may not file the pilot's global incident -- it would sit beside
+    A's legitimate result and poison the write-once provenance."""
+
+    _tiny(monkeypatch, tmp_path)
+
+    def lost_race(payload):
+        raise SystemExit(
+            "reservation: refs/o5pilot/reservation is already held "
+            "by " + "e" * 40)
+
+    monkeypatch.setattr(pilot.reservation, "claim", lost_race)
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(SystemExit, match="already held"):
+        pilot.main()
+    assert not (tmp_path / "i.json").exists()
+    assert not (tmp_path / "a.json").exists()
+
+
+def test_an_uncertain_push_still_files_a_fail_closed_incident(
+        monkeypatch, tmp_path):
+    """The other side of the R2 boundary: once the push was ATTEMPTED
+    the outcome is uncertain and the seed possibly spent, so the
+    incident must exist and must say so."""
+
+    _tiny(monkeypatch, tmp_path)
+
+    def uncertain(payload):
+        raise pilot.reservation.ClaimUncertain(
+            "the push did not return", pushed=None, obj="c" * 40,
+            detail="interrupted")
+
+    monkeypatch.setattr(pilot.reservation, "claim", uncertain)
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(SystemExit, match="incident written"):
+        pilot.main()
+    inc = json.loads((tmp_path / "i.json").read_text(encoding="utf-8"))
+    assert inc["failure_point"] == "reservation_claim"
+    assert inc["reservation_claimed"] == "uncertain"
+    assert inc["seed_spent"] is True
+    assert inc["reservation_uncertainty"][
+        "seeds_must_be_treated_as"] == "spent"
+
+
 # -------------------------------- the publication commit boundary
 
 def test_a_failure_after_the_link_files_no_incident(monkeypatch,
