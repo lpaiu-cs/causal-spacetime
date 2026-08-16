@@ -2,7 +2,7 @@
  "stage": "O5 ambiguity-pilot freeze manifest (content-addressed protocol surface)",
  "note": "raw sha256; all paths .gitattributes eol=lf pinned. The pilot inherits the O4b instrument surface (predicate, wrapper preflight, budget/meter) and the campaign box measure from o4_sizing; the reservation machinery is o4b_reservation's, imported not copied. This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
  "files": {
-  "experiments/oracle/o5_amb_pilot.py": "0019bbcf52cf425a193d9e45132fe4ad362fc6ecf0307c903604e869a063a319",
+  "experiments/oracle/o5_amb_pilot.py": "0502e0a08bb6f01b2b0e1e1af272cd1a33c156f366226bd9e3cf1760ef911c2c",
   "experiments/oracle/o5_pilot_reservation.py": "81f2b827ecbbcbabe2f69ce737a21e0e53d1e83913f8663c6a45d18cdf2a9a85",
   "experiments/oracle/o4b_reservation.py": "bf83c5e06d5a8ce2b0e0c70e68240487c8ec0ef634e747c28324e7962e7a6ed4",
   "experiments/oracle/o4b_budget.py": "961e2f7ab1667f9dc2c739cf2bd8ba152a42ffaeb145dc34ad0ff149c279af95",
@@ -13,7 +13,7 @@
   "experiments/oracle/o4_volume_audit.py": "f10cd50a7f02a2873a6983e86a498709a5412c8493fa68f024264b0515d08904",
   "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
   "experiments/positive_control/probe_seed_ledger.py": "da9c6355baffef6ea196a8fbcc6b96d4a0f3f88ef0c53383f896a95b16696818",
-  "docs/prereg/p14_o5_amb_pilot.md": "361c2520eec2245e87fd0fb9c931893ceea549e70ed3a691464093eaeb93a9be",
+  "docs/prereg/p14_o5_amb_pilot.md": "750d892e99f0b8e6c3a8edcdac2ef6e804d2f0e0a728b6a6da017f190a46e60a",
   "docs/prereg/p14_o3p_volume.json": "b1ce47ab8f6313edf2fc602199bbad4f5aa7c98871b968d6a539aa9dac0d00d2",
   "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
  },

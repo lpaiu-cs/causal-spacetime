@@ -122,53 +122,84 @@ _Q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
 
 
 # ------------------------------------------------ the frozen rule
+#
+# THE VERDICT PATH RUNS AT 96-BIT MPFR PRECISION (review PR #83 R1).
+# The k = 1 boundary sits ~7.7e-10 of tail below the budget, while a
+# double-precision binomial CDF at n ~ 1e7 carries an lgamma
+# cancellation floor near 1e-8 relative -- enough, in principle, for
+# the same frozen inputs to flip the verdict across hosts, because the
+# environment lock pins gmpy2/MPFR but not the platform libm behind
+# math.lgamma. gmpy2 at a fixed precision IS part of the locked
+# instrument, so the deciding arithmetic lives there; the
+# double-precision engine survives only in the contract tests, as one
+# of the independent cross-checks.
 
-def binom_cdf(k: int, n: int, p: float) -> float:
-    """P(Bin(n, p) <= k), exact log-space term sum (k small)."""
+_PREC = 96
 
-    if p <= 0.0:
-        return 1.0
-    if p >= 1.0:
-        return 0.0
-    lp, lq = math.log(p), math.log1p(-p)
-    s = 0.0
+
+def _ctx():
+    ctx = gmpy2.get_context()
+    ctx.precision = _PREC
+    return ctx
+
+
+def binom_cdf(k: int, n: int, p) -> gmpy2.mpfr:
+    """P(Bin(n, p) <= k) at 96-bit precision (k small)."""
+
+    _ctx()
+    p = gmpy2.mpfr(p)
+    if p <= 0:
+        return gmpy2.mpfr(1)
+    if p >= 1:
+        return gmpy2.mpfr(0)
+    lp, lq = gmpy2.log(p), gmpy2.log1p(-p)
+    lg_n1 = gmpy2.lgamma(gmpy2.mpfr(n + 1))[0]
+    s = gmpy2.mpfr(0)
     for i in range(k + 1):
-        s += math.exp(math.lgamma(n + 1) - math.lgamma(i + 1)
-                      - math.lgamma(n - i + 1) + i * lp
-                      + (n - i) * lq)
-    return min(1.0, s)
+        s += gmpy2.exp(lg_n1
+                       - gmpy2.lgamma(gmpy2.mpfr(i + 1))[0]
+                       - gmpy2.lgamma(gmpy2.mpfr(n - i + 1))[0]
+                       + i * lp + (n - i) * lq)
+    return min(gmpy2.mpfr(1), s)
 
 
 def cp_upper(k: int, n: int, alpha: float) -> float:
-    """Exact one-sided Clopper-Pearson upper bound: the p with
-    P(Bin(n, p) <= k) = alpha; closed form 1 - alpha**(1/n) at
-    k = 0."""
+    """Exact one-sided Clopper-Pearson upper bound at 96-bit: the p
+    with P(Bin(n, p) <= k) = alpha; closed form at k = 0."""
 
     if k < 0 or n <= 0 or not 0.0 < alpha < 1.0:
         raise ValueError(f"cp_upper({k}, {n}, {alpha})")
     if k >= n:
         return 1.0
+    _ctx()
+    a = gmpy2.mpfr(alpha)
     if k == 0:
-        return 1.0 - alpha ** (1.0 / n)
-    lo, hi = k / n, 1.0
-    for _ in range(200):
-        mid = 0.5 * (lo + hi)
-        if binom_cdf(k, n, mid) > alpha:
+        return float(1 - gmpy2.exp(gmpy2.log(a) / n))
+    lo, hi = gmpy2.mpfr(k) / n, gmpy2.mpfr(1)
+    for _ in range(300):
+        mid = (lo + hi) / 2
+        if binom_cdf(k, n, mid) > a:
             lo = mid
         else:
             hi = mid
-    return 0.5 * (lo + hi)
+        if hi - lo <= gmpy2.mpfr("1e-25") * hi:
+            break
+    return float((lo + hi) / 2)
 
 
 def pois_tail_gt(u_max: int, lam: float) -> float:
-    """Exact P(Poisson(lam) > u_max): 1 minus a finite pmf sum."""
+    """Exact P(Poisson(lam) > u_max) at 96-bit: 1 minus a finite pmf
+    sum."""
 
     if lam <= 0.0:
         return 0.0
-    s = 0.0
+    _ctx()
+    lam_m = gmpy2.mpfr(lam)
+    s = gmpy2.mpfr(0)
     for i in range(u_max + 1):
-        s += math.exp(i * math.log(lam) - lam - math.lgamma(i + 1))
-    return max(0.0, 1.0 - s)
+        s += gmpy2.exp(i * gmpy2.log(lam_m) - lam_m
+                       - gmpy2.lgamma(gmpy2.mpfr(i + 1))[0])
+    return float(max(gmpy2.mpfr(0), 1 - s))
 
 
 def decide(k: int, cfg: dict = FROZEN) -> dict:
@@ -372,8 +403,15 @@ def write_checkpoint(payload: dict) -> None:
         raise
 
 
-def publish_write_once(path: Path, payload: dict) -> None:
-    """Atomic no-clobber publication (fsynced temp + os.link)."""
+def publish_write_once(path: Path, payload: dict,
+                       receipt: dict | None = None) -> None:
+    """Atomic no-clobber publication (fsynced temp + os.link).
+
+    `receipt["committed"]` is stamped the instant os.link returns
+    (review PR #83 R1, the o4b R26-R29 pattern): whether THIS call
+    published is a fact the incident boundary must be able to read,
+    because an interrupt one line later must not file an incident
+    beside a published result. Cleanup cannot raise."""
 
     tmp = path.with_name(f"{path.name}.tmp.{os.getpid()}")
     try:
@@ -388,8 +426,30 @@ def publish_write_once(path: Path, payload: dict) -> None:
             raise SystemExit(
                 f"publish: {path.name} already exists -- write-once; "
                 f"the first observation stands") from None
+        if receipt is not None:
+            receipt["committed"] = True
     finally:
-        tmp.unlink(missing_ok=True)
+        try:
+            tmp.unlink(missing_ok=True)
+        except BaseException:                   # noqa: BLE001
+            pass
+
+
+def artifact_names_this_run(claim_object: str | None) -> bool:
+    """Was the published artifact written by THIS run? Read from the
+    file, not from a flag (the o4b R29 rule): the artifact's
+    reservation object is this attempt's nonce-unique claim commit,
+    so a file carrying it can only have been written by this run --
+    and unlike a flag, the answer survives any interrupt because it
+    is recomputed from what is on disk."""
+
+    if claim_object is None or not _ARTIFACT.exists():
+        return False
+    try:
+        rec = json.loads(_ARTIFACT.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return rec.get("reservation", {}).get("object") == claim_object
 
 
 # ------------------------------------------------ the run
@@ -489,6 +549,7 @@ def main() -> None:
                _seed=checks["seed"])
 
     claimed: dict = {"object": None}
+    receipt: dict = {}
     t0 = time.perf_counter()
 
     def context() -> dict:
@@ -582,15 +643,7 @@ def main() -> None:
             "environment": _environment(),
             "total_wall_s": time.perf_counter() - t0,
         }
-        publish_write_once(_ARTIFACT, result)
-        print(f"result: k={scan['k_ambiguous']} of "
-              f"{scan['events_done']:,} -> {verdict['verdict']} "
-              f"(p_upper={verdict['p_upper']:.4e}, "
-              f"lambda_U={verdict['lambda_u']:.2f}, "
-              f"tail={verdict['tail_p_u_gt_u_max']:.4e})")
-        print(f"artifact: {_ARTIFACT}")
-    except SystemExit:
-        raise
+        publish_write_once(_ARTIFACT, result, receipt=receipt)
     except o4b_budget.CapReached as cap:
         file_incident(
             "scan", f"completion budget exhausted ({cap.reason})",
@@ -599,9 +652,27 @@ def main() -> None:
             f"cap fired ({cap.reason}); incident written to "
             f"{_INCIDENT.name}, no verdict published") from None
     except BaseException as exc:
-        # KeyboardInterrupt included: once the reservation is claimed
-        # the seed is spent, and a stop without a record is the one
-        # observability failure this program has already outlawed
+        # THIS RUN's publication commit is decided two ways (review
+        # PR #83 R1, the o4b R26-R29 pattern): the receipt stamped the
+        # instant os.link returned, and the artifact asked whether it
+        # names this run's nonce-unique claim object. An interrupt one
+        # line after the link -- or a SystemExit out of a write-once
+        # refusal where the existing file turns out to be OURS -- must
+        # never file an incident beside a published result.
+        if (receipt.get("committed")
+                or artifact_names_this_run(claimed["object"])):
+            raise SystemExit(
+                f"{_ARTIFACT.name} was published; the failure came "
+                f"after the commit ({type(exc).__name__}: {exc}) and "
+                f"no incident is filed over a published result"
+            ) from exc
+        # KeyboardInterrupt and SystemExit included: once the
+        # reservation is claimed the seed is spent, and a stop with
+        # neither a result nor a record is the one observability
+        # failure this program has already outlawed. A write-once
+        # refusal against a FOREIGN artifact lands here too, so a
+        # fully scanned run that could not publish still leaves its
+        # incident.
         point = ("reservation_claim"
                  if isinstance(exc, reservation.ClaimUncertain)
                  else "publish" if budget.stage == "publish"
@@ -612,6 +683,15 @@ def main() -> None:
         raise SystemExit(
             f"{point}: {type(exc).__name__}; incident written to "
             f"{_INCIDENT.name}, no verdict published") from exc
+    # success logging OUTSIDE the incident boundary: a BrokenPipeError
+    # here must not be able to file an incident over the published
+    # result
+    print(f"result: k={scan['k_ambiguous']} of "
+          f"{scan['events_done']:,} -> {verdict['verdict']} "
+          f"(p_upper={verdict['p_upper']:.4e}, "
+          f"lambda_U={verdict['lambda_u']:.2f}, "
+          f"tail={verdict['tail_p_u_gt_u_max']:.4e})")
+    print(f"artifact: {_ARTIFACT}")
 
 
 # ------------------------------------------------ the manifest

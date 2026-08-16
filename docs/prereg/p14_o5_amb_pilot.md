@@ -46,9 +46,13 @@ tail     = exact P(Poisson(lambda_U) > u_max)     (finite pmf sum)
 verdict  = FEASIBLE  iff tail ≤ tail_budget, else INCONCLUSIVE
 ```
 
-No normal approximation. The deciding functions are cross-checked by
-contract tests against the frozen P14 P2 exact-Garwood engine and an
-independent 96-bit gmpy2 engine. Reference evaluations at the frozen n
+No normal approximation. **The deciding arithmetic runs at 96-bit
+MPFR precision** (gmpy2, which the environment lock pins — platform
+libm is not on the verdict path): the k=1 boundary sits 7.7125e-10 of
+tail below the budget, within the ~1e-8 lgamma-cancellation floor of
+a double-precision engine, so the high-precision engine IS the
+runtime path and the double engine survives only as a contract-test
+cross-check, alongside the frozen P14 P2 gamma engine. Reference evaluations at the frozen n
 (the RULE decides, this table only illustrates): k=0 → λ_U 11.5092,
 tail 1.475e-06, FEASIBLE; k=1 → λ_U 16.5905, tail 9.99999e-04,
 FEASIBLE; k=2 → λ_U 21.0081, tail 2.426e-02, INCONCLUSIVE.
@@ -87,6 +91,16 @@ publication. Every failure path — KeyboardInterrupt included — files a
 write-once incident naming its `failure_point` and preserving the
 partial tallies. FEASIBLE and INCONCLUSIVE are published identically,
 as computed.
+
+**The publication commit is decided from the record, not from control
+flow** (the O4b R26–R29 pattern): a receipt is stamped the instant
+`os.link` returns, and the artifact is asked whether it names this
+run's nonce-unique claim object. A failure after the commit — an
+interrupt, a broken pipe out of the success log (which lives OUTSIDE
+the incident boundary) — exits without filing an incident beside the
+published result; a write-once refusal against a foreign artifact
+still files one, because a spent seed with neither result nor record
+is the outlawed state.
 
 ## 6. Boundaries
 

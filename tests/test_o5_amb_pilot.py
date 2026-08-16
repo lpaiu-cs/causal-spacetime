@@ -131,61 +131,63 @@ def test_the_rule_is_general_in_k_and_matches_the_reference_table():
     assert far["lambda_u"] > 1_000
 
 
-def test_cp_upper_cross_checked_by_the_p2_engine_and_gmpy2():
-    """Two independent exact engines reproduce the rule's numbers:
-    the frozen P14 P2 gamma engine (Poisson tail via its gamma link)
-    and a 96-bit gmpy2 evaluation of both the CP bound and the tail."""
+def test_the_verdict_path_is_cross_checked_by_two_other_engines():
+    """The RUNTIME verdict path is 96-bit gmpy2 (review PR #83 R1:
+    the k=1 boundary sits 7.7e-10 of tail below the budget, and a
+    platform-libm double engine could flip it). The cross-checks are
+    an independent double-precision log-space engine -- agreement
+    above its ~1e-8 lgamma-cancellation floor -- and the frozen P14
+    P2 gamma engine for the Poisson tail."""
 
-    import gmpy2
+    import math as m
+
     import p14_probe_p2 as p2
 
-    gmpy2.get_context().precision = 96
     n, alpha = pilot.FROZEN["n_events"], pilot.FROZEN["alpha_pilot"]
-    for k in (0, 1, 2, 5):
-        pu = pilot.cp_upper(k, n, alpha)
-        # gmpy2 re-derivation of the CP bound
+
+    def cp_double(k):
         if k == 0:
-            pu3 = float(1 - gmpy2.exp(
-                gmpy2.log(gmpy2.mpfr(alpha)) / n))
-        else:
-            lo, hi = gmpy2.mpfr(k) / n, gmpy2.mpfr(1)
-            for _ in range(300):
-                mid = (lo + hi) / 2
-                lp, lq = gmpy2.log(mid), gmpy2.log1p(-mid)
-                s = gmpy2.mpfr(0)
-                for i in range(k + 1):
-                    s += gmpy2.exp(
-                        gmpy2.lgamma(gmpy2.mpfr(n + 1))[0]
-                        - gmpy2.lgamma(gmpy2.mpfr(i + 1))[0]
-                        - gmpy2.lgamma(gmpy2.mpfr(n - i + 1))[0]
-                        + i * lp + (n - i) * lq)
-                if s > alpha:
-                    lo = mid
-                else:
-                    hi = mid
-            pu3 = float((lo + hi) / 2)
-        # the double engine's floor is the lgamma cancellation at
-        # n ~ 1e7 (relative ~1e-8); the agreement check sits above
-        # that floor, and the VERDICT-level agreement below is exact
-        assert abs(pu - pu3) < 1e-7 * pu + 1e-300
-        # Poisson tail via the frozen P2 gamma link
+            return 1.0 - alpha ** (1.0 / n)
+        lo, hi = k / n, 1.0
+        for _ in range(200):
+            mid = 0.5 * (lo + hi)
+            s, lp, lq = 0.0, m.log(mid), m.log1p(-mid)
+            for i in range(k + 1):
+                s += m.exp(m.lgamma(n + 1) - m.lgamma(i + 1)
+                           - m.lgamma(n - i + 1) + i * lp
+                           + (n - i) * lq)
+            if s > alpha:
+                lo = mid
+            else:
+                hi = mid
+        return 0.5 * (lo + hi)
+
+    for k in (0, 1, 2, 5):
+        pu = pilot.cp_upper(k, n, alpha)          # the 96-bit path
+        pu_d = cp_double(k)
+        assert abs(pu - pu_d) < 1e-7 * pu + 1e-300
         lam = pilot.FROZEN["a_provisional"] * sz.SCALE * pu
         t1 = pilot.pois_tail_gt(pilot.FROZEN["u_max"], lam)
         t2 = 1.0 - p2._poisson_cdf(pilot.FROZEN["u_max"], lam)
-        assert abs(t1 - t2) < 1e-12
-        # and the VERDICT the engines imply is identical
-        lam3 = pilot.FROZEN["a_provisional"] * sz.SCALE * pu3
-        t3 = pilot.pois_tail_gt(pilot.FROZEN["u_max"], lam3)
+        assert abs(t1 - t2) < 1e-11
+        # verdict-level agreement between the engines is exact
+        lam_d = pilot.FROZEN["a_provisional"] * sz.SCALE * pu_d
+        t_d = pilot.pois_tail_gt(pilot.FROZEN["u_max"], lam_d)
         assert ((t1 <= pilot.FROZEN["tail_budget"])
-                == (t3 <= pilot.FROZEN["tail_budget"]))
+                == (t_d <= pilot.FROZEN["tail_budget"]))
 
 
-def test_the_verdict_boundary_is_where_the_rule_puts_it():
-    """k_max at the frozen n is DERIVED (k=1), not assumed: k=1 passes
-    by 8e-10 of tail budget and k=2 fails by 23x."""
+def test_the_k1_boundary_margin_is_the_mpfr_determined_value():
+    """The margin the review computed, reproduced by the runtime path:
+    k=1 sits 7.7125e-10 of tail BELOW the budget. Pinned tightly --
+    the 96-bit path is host-independent (gmpy2/MPFR are in the
+    environment lock; platform libm is not on this path)."""
 
-    assert pilot.decide(1)["tail_p_u_gt_u_max"] <= 0.001
-    assert pilot.decide(2)["tail_p_u_gt_u_max"] > 0.001
+    margin = (pilot.FROZEN["tail_budget"]
+              - pilot.decide(1)["tail_p_u_gt_u_max"])
+    assert abs(margin - 7.7125050e-10) < 1e-15
+    assert pilot.decide(1)["verdict"] == "FEASIBLE"
+    assert pilot.decide(2)["verdict"] == "INCONCLUSIVE"
 
 
 # ------------------------------------------------ gates and refusals
@@ -363,6 +365,69 @@ def test_a_scan_failure_files_an_incident_with_preserved_tallies(
     assert inc["verdict"] is None
     assert inc["seed_spent"] is True            # the claim succeeded
     assert inc["preserved"]["events_done"] == 16  # first chunk landed
+
+
+# -------------------------------- the publication commit boundary
+
+def test_a_failure_after_the_link_files_no_incident(monkeypatch,
+                                                    tmp_path):
+    """Review PR #83 R1: an interrupt one line after os.link -- here a
+    BrokenPipeError out of the success print -- must NOT file an
+    incident beside the published result."""
+
+    _tiny(monkeypatch, tmp_path)
+
+    def broken_print(*args, **kwargs):
+        raise BrokenPipeError("stdout gone")
+
+    monkeypatch.setattr("builtins.print", broken_print)
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(BrokenPipeError):
+        pilot.main()
+    assert (tmp_path / "a.json").exists()       # published
+    assert not (tmp_path / "i.json").exists()   # and no incident
+
+
+def test_a_write_once_refusal_on_our_own_artifact_files_no_incident(
+        monkeypatch, tmp_path):
+    """If the destination already carries THIS run's claim object, the
+    refusal is a post-commit fact, not a failure."""
+
+    _tiny(monkeypatch, tmp_path)
+    (tmp_path / "a.json").write_text(json.dumps(
+        {"reservation": {"object": "d" * 40}}), encoding="utf-8")
+    # preflight must not see it, or it refuses before the run
+    monkeypatch.setattr(
+        pilot, "preflight",
+        lambda rev: {"manifest": {}, "seed": 40_000_441,
+                     "git": {"rev": _SHA, "dirty": False,
+                             "dirt": []}})
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(SystemExit, match="was published"):
+        pilot.main()
+    assert not (tmp_path / "i.json").exists()
+
+
+def test_a_write_once_refusal_on_a_foreign_artifact_files_an_incident(
+        monkeypatch, tmp_path):
+    """A fully scanned run that finds a FOREIGN artifact on its path
+    still leaves a record: the seed is spent and neither result nor
+    silence may stand in for the incident."""
+
+    _tiny(monkeypatch, tmp_path)
+    (tmp_path / "a.json").write_text(json.dumps(
+        {"reservation": {"object": "f" * 40}}), encoding="utf-8")
+    monkeypatch.setattr(
+        pilot, "preflight",
+        lambda rev: {"manifest": {}, "seed": 40_000_441,
+                     "git": {"rev": _SHA, "dirty": False,
+                             "dirt": []}})
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(SystemExit, match="incident written"):
+        pilot.main()
+    inc = json.loads((tmp_path / "i.json").read_text(encoding="utf-8"))
+    assert inc["failure_point"] == "publish"
+    assert inc["seed_spent"] is True
 
 
 # ------------------------------------------------ manifest and doc
