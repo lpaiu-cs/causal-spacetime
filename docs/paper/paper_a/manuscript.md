@@ -1,11 +1,10 @@
 # An operational reconstruction ladder for spacetime quantities from causal order
 
 **Draft v0.4.** Causal Spacetime Lab. Every quantitative result is tied to a
-producing experiment and expected output path. Five figure-source summaries are
-committed; the remaining cited legacy tables require regeneration before
-submission, while the Section 6 capstone cites only committed,
-provenance-locked artifacts (Section 10 and `artifact_manifest.md`). No number
-is from memory.
+producing experiment and expected output path. The submission gate is met:
+all 19 cited legacy summary tables are committed and digest-locked, and the
+Section 6 capstone cites only committed, provenance-locked artifacts
+(Section 10 and `artifact_manifest.md`). No number is from memory.
 
 ## Abstract
 
