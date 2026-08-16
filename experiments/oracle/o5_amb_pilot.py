@@ -123,16 +123,22 @@ _Q = np.array([sz.DT, sz.R_OUT, 0.0, 0.0])
 
 # ------------------------------------------------ the frozen rule
 #
-# THE VERDICT PATH RUNS AT 96-BIT MPFR PRECISION (review PR #83 R1).
-# The k = 1 boundary sits ~7.7e-10 of tail below the budget, while a
-# double-precision binomial CDF at n ~ 1e7 carries an lgamma
-# cancellation floor near 1e-8 relative -- enough, in principle, for
-# the same frozen inputs to flip the verdict across hosts, because the
-# environment lock pins gmpy2/MPFR but not the platform libm behind
-# math.lgamma. gmpy2 at a fixed precision IS part of the locked
-# instrument, so the deciding arithmetic lives there; the
-# double-precision engine survives only in the contract tests, as one
-# of the independent cross-checks.
+# THE DECIDING TAIL ARITHMETIC RUNS AT 96-BIT MPFR PRECISION (review
+# PR #83 R1). The k = 1 boundary sits ~7.7e-10 of tail below the
+# budget, while a double-precision binomial CDF at n ~ 1e7 carries an
+# lgamma cancellation floor near 1e-8 relative -- enough, in
+# principle, for the same frozen inputs to flip the verdict across
+# hosts, because the environment lock pins gmpy2/MPFR but not the
+# platform libm behind math.lgamma. gmpy2 at a fixed precision IS
+# part of the locked instrument, so the deciding arithmetic lives
+# there; the double-precision engine survives only in the contract
+# tests, as one of the independent cross-checks. One step is NOT
+# MPFR (post-merge adversarial review): `decide()` forms lambda_U by
+# a double multiply of cp_upper's float return before re-promoting to
+# 96 bits -- verified bit-identical in `tail` against a never-
+# downcast 96-bit chain at the tightest frozen boundary (k = 1), and
+# left as-is because the executed pilot's published decision must
+# stay reproducible by this exact code path.
 
 _PREC = 96
 
@@ -620,7 +626,15 @@ def main() -> None:
         verdict = decide(scan["k_ambiguous"], FROZEN)
 
         budget.enter("publish")
-        reservation.verify_still_held(claimed["object"])
+        try:
+            reservation.verify_still_held(claimed["object"])
+        except reservation.ClaimUncertain as uncertain:
+            # the publish-time re-verify can be uncertain too (post-
+            # merge adversarial review): the scan is complete and the
+            # seed long spent, so the incident must carry the
+            # uncertainty record exactly as a claim-time one would
+            claimed["uncertain"] = uncertain.as_record()
+            raise
         end = _git_state()
         if end["rev"] != approved or end["dirty"]:
             raise RuntimeError(
@@ -689,9 +703,13 @@ def main() -> None:
         # refusal against a FOREIGN artifact lands here too, so a
         # fully scanned run that could not publish still leaves its
         # incident.
-        point = ("reservation_claim"
+        # the STAGE names the failure point (post-merge adversarial
+        # review): a ClaimUncertain out of the publish-time re-verify
+        # comes after the whole scan, and labelling it
+        # `reservation_claim` would read as if no event was processed
+        point = ("publish" if budget.stage == "publish"
+                 else "reservation_claim"
                  if isinstance(exc, reservation.ClaimUncertain)
-                 else "publish" if budget.stage == "publish"
                  else budget.stage)
         file_incident(
             point, f"unhandled {type(exc).__name__}: {exc}",
@@ -735,6 +753,12 @@ PROTOCOL_SURFACE = (
     "experiments/positive_control/probe_seed_ledger.py",
     "docs/prereg/p14_o5_amb_pilot.md",
     "docs/prereg/p14_o3p_volume.json",
+    # o4_sizing reads the O3 artifact at import time, so it is part
+    # of the surface a run actually depends on (post-merge adversarial
+    # review: the executed pilot manifest did not pin it -- harmless
+    # to the verdict, which uses only SCALE, but a gap in the
+    # "content-addressed protocol surface" claim)
+    "docs/prereg/p14_o3_volume.json",
     "pyproject.toml",
 )
 

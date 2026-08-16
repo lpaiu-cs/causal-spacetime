@@ -499,6 +499,67 @@ def test_a_write_once_refusal_on_our_own_artifact_files_no_incident(
     assert not (tmp_path / "i.json").exists()
 
 
+def test_publish_time_claim_uncertainty_names_publish_with_the_record(
+        monkeypatch, tmp_path):
+    """A ClaimUncertain out of the publish-time re-verify comes AFTER
+    the whole scan: the incident must say `publish`, not
+    `reservation_claim`, and must carry the uncertainty record exactly
+    as a claim-time one would (post-merge adversarial review)."""
+
+    small, _ = _tiny(monkeypatch, tmp_path)
+
+    def uncertain(obj):
+        raise pilot.reservation.ClaimUncertain(
+            "the ref could not be re-read before publication",
+            pushed=None, obj=obj, detail="network failed")
+
+    monkeypatch.setattr(pilot.reservation, "verify_still_held",
+                        uncertain)
+    monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
+    with pytest.raises(SystemExit, match="incident written"):
+        pilot.main()
+    assert not (tmp_path / "a.json").exists()
+    inc = json.loads((tmp_path / "i.json").read_text(encoding="utf-8"))
+    assert inc["failure_point"] == "publish"
+    assert inc["seed_spent"] is True
+    assert inc["reservation_claimed"] == "uncertain"
+    rec = inc["reservation_uncertainty"]
+    assert rec["seeds_must_be_treated_as"] == "spent"
+    assert rec["push_reported"] == "did not report"
+    # the scan DID finish -- the label must not hide that
+    assert inc["preserved"]["events_done"] == small["n_events"]
+
+
+@pytest.mark.parametrize("mod_name", ["o4b_reservation",
+                                      "o5_pilot_reservation"])
+def test_make_commit_refuses_cleanly_when_git_fails(monkeypatch,
+                                                    mod_name):
+    """Every _make_commit failure is pre-push by construction, so it
+    must be a clean SystemExit refusal in BOTH copies -- a raw
+    CalledProcessError/OSError would be filed as a spent-nothing
+    global incident (post-merge adversarial review)."""
+
+    import importlib
+
+    mod = importlib.import_module(mod_name)
+
+    class _Fail:
+        returncode = 1
+        stdout = ""
+        stderr = "boom"
+
+    monkeypatch.setattr(mod.subprocess, "run", lambda *a, **k: _Fail())
+    with pytest.raises(SystemExit, match="hash-object"):
+        mod._make_commit("x")
+
+    def no_git(*a, **k):
+        raise FileNotFoundError("git is not available")
+
+    monkeypatch.setattr(mod.subprocess, "run", no_git)
+    with pytest.raises(SystemExit, match="could not run"):
+        mod._make_commit("x")
+
+
 def test_a_write_once_refusal_on_a_foreign_artifact_files_an_incident(
         monkeypatch, tmp_path):
     """A fully scanned run that finds a FOREIGN artifact on its path

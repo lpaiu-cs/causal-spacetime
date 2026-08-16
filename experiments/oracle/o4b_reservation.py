@@ -225,13 +225,33 @@ def _make_commit(message: str) -> str:
     for role in ("AUTHOR", "COMMITTER"):
         env[f"GIT_{role}_NAME"] = _IDENTITY
         env[f"GIT_{role}_EMAIL"] = f"{_IDENTITY}@invalid"
-    empty_tree = subprocess.run(
-        ["git", "hash-object", "-t", "tree", "--stdin"], cwd=_REPO,
-        input="", capture_output=True, text=True, check=True
-    ).stdout.strip()
-    made = subprocess.run(
-        ["git", "commit-tree", empty_tree, "-m", message], cwd=_REPO,
-        input="", capture_output=True, text=True, env=env)
+    # every failure here is PRE-PUSH by construction, so it must
+    # surface as a clean SystemExit refusal, never as a raw
+    # CalledProcessError/OSError that the campaign's incident boundary
+    # would file as a spent-nothing global incident (post-merge
+    # adversarial review: check=True broke exactly that contract)
+    try:
+        hashed = subprocess.run(
+            ["git", "hash-object", "-t", "tree", "--stdin"],
+            cwd=_REPO, input="", capture_output=True, text=True)
+    except OSError as exc:
+        raise SystemExit(
+            f"reservation: `git hash-object` could not run ({exc}) "
+            f"-- nothing was pushed") from None
+    if hashed.returncode != 0:
+        raise SystemExit(
+            f"reservation: `git hash-object` failed: "
+            f"{hashed.stderr.strip()}")
+    empty_tree = hashed.stdout.strip()
+    try:
+        made = subprocess.run(
+            ["git", "commit-tree", empty_tree, "-m", message],
+            cwd=_REPO, input="", capture_output=True, text=True,
+            env=env)
+    except OSError as exc:
+        raise SystemExit(
+            f"reservation: `git commit-tree` could not run ({exc}) "
+            f"-- nothing was pushed") from None
     if made.returncode != 0:
         raise SystemExit(
             f"reservation: `git commit-tree` failed: "

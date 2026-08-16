@@ -2,9 +2,9 @@
  "stage": "O5 ambiguity-pilot freeze manifest (content-addressed protocol surface)",
  "note": "raw sha256; all paths .gitattributes eol=lf pinned. The pilot inherits the O4b instrument surface (predicate, wrapper preflight, budget/meter) and the campaign box measure from o4_sizing; the reservation machinery is o4b_reservation's, imported not copied. This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
  "files": {
-  "experiments/oracle/o5_amb_pilot.py": "71ee817f095f3237950d73856c95cca8ecc18efb8b8a3292062c606bfc428208",
-  "experiments/oracle/o5_pilot_reservation.py": "81f2b827ecbbcbabe2f69ce737a21e0e53d1e83913f8663c6a45d18cdf2a9a85",
-  "experiments/oracle/o4b_reservation.py": "bf83c5e06d5a8ce2b0e0c70e68240487c8ec0ef634e747c28324e7962e7a6ed4",
+  "experiments/oracle/o5_amb_pilot.py": "a361f63e4c55216916df6cda18277a5297898e69b6ba0e9339115a7a17444167",
+  "experiments/oracle/o5_pilot_reservation.py": "b5492e712251628f170e8eae19d382dc9f511fc824ee76d62498624f4dcfa3a1",
+  "experiments/oracle/o4b_reservation.py": "8fad3d9290396ab82d29fc863802dab764d33b3927b2b32f8ec9c3ea45a5acaa",
   "experiments/oracle/o4b_budget.py": "961e2f7ab1667f9dc2c739cf2bd8ba152a42ffaeb145dc34ad0ff149c279af95",
   "experiments/oracle/o4b_meter.py": "25a384b0520a8f46682cdd5057963777786d24818b7990738ad8ee8ddaaee532",
   "experiments/oracle/o4b_g3a.py": "145d83c3676d773dd949c65108643a6cbdbfde34d6399c95053ebbf20e943774",
@@ -15,6 +15,7 @@
   "experiments/positive_control/probe_seed_ledger.py": "f0d74b2a18b59a2c903a5c3a92291fba06dac09881a5def59c0284250b12479e",
   "docs/prereg/p14_o5_amb_pilot.md": "750d892e99f0b8e6c3a8edcdac2ef6e804d2f0e0a728b6a6da017f190a46e60a",
   "docs/prereg/p14_o3p_volume.json": "b1ce47ab8f6313edf2fc602199bbad4f5aa7c98871b968d6a539aa9dac0d00d2",
+  "docs/prereg/p14_o3_volume.json": "aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f",
   "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
  },
  "environment": {
