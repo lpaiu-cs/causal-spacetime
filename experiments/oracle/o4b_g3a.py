@@ -215,7 +215,8 @@ def place_row(t_min: float, err: float, eta: float,
 
 
 def check_case(name: str, r1: float, r2: float, theta: float,
-               tol: float, eta: float = g3.ETA) -> dict:
+               tol: float, eta: float = g3.ETA,
+               m: float = s1.M) -> dict:
     """One case of the table: rows A, B and C at one (geometry, angle).
 
     Every quantity the decision turns on is recorded, so a failure is
@@ -225,7 +226,7 @@ def check_case(name: str, r1: float, r2: float, theta: float,
     not the contract."""
 
     dpsi = g3.wrapper_dpsi(theta)
-    t_min, err = s1.flight_time(r1, r2, dpsi, s1.M, tol)
+    t_min, err = s1.flight_time(r1, r2, dpsi, m, tol)
     recovered = recovered_dpsi(*_events(r1, r2, theta, 0.0))
     rows = []
     for row, above, want in (("A", True, "true"),
@@ -238,7 +239,7 @@ def check_case(name: str, r1: float, r2: float, theta: float,
                          "want": want, **placed})
             continue
         p, q = _events(r1, r2, theta, dt)
-        got = s1.causal_relation(p, q, s1.M, tol)
+        got = s1.causal_relation(p, q, m, tol)
         label = ("undecided" if got is None
                  else ("true" if got else "false"))
         rows.append({
@@ -253,7 +254,7 @@ def check_case(name: str, r1: float, r2: float, theta: float,
 
     # row C wants the undecided answer, so it carries no margin at all
     p, q = _events(r1, r2, theta, t_min)
-    got = s1.causal_relation(p, q, s1.M, tol)
+    got = s1.causal_relation(p, q, m, tol)
     label = ("undecided" if got is None
              else ("true" if got else "false"))
     rows.append({
@@ -267,19 +268,20 @@ def check_case(name: str, r1: float, r2: float, theta: float,
         "case": name, "r1": r1, "r2": r2, "theta": theta,
         "dpsi": dpsi,
         "recovery_is_bit_identical": recovered == dpsi,
-        "family": _family_of(r1, r2, dpsi, tol),
+        "family": _family_of(r1, r2, dpsi, tol, m),
         "t_min": t_min, "err": err, "eta": eta,
         "rows": rows,
     }
 
 
-def _family_of(r1: float, r2: float, dpsi: float, tol: float) -> str:
+def _family_of(r1: float, r2: float, dpsi: float, tol: float,
+               m: float = s1.M) -> str:
     details: dict = {}
-    s1.flight_time(r1, r2, dpsi, s1.M, tol, details)
+    s1.flight_time(r1, r2, dpsi, m, tol, details)
     return details["family"]
 
 
-def check_row_d(tol: float) -> dict:
+def check_row_d(tol: float, m: float = s1.M) -> dict:
     """Row D: the predicate must answer without consulting the solver.
 
     Proved by making the solver fail. A returned `False` alone cannot
@@ -298,7 +300,7 @@ def check_row_d(tol: float) -> dict:
 
     s1.flight_time = forbidden
     try:
-        got = s1.causal_relation(p, q, s1.M, tol)
+        got = s1.causal_relation(p, q, m, tol)
     finally:
         s1.flight_time = original
     return {"case": "negative-dt-short-circuit", **case,
@@ -309,7 +311,7 @@ def check_row_d(tol: float) -> dict:
 
 
 def run_g3a(tol: float = s1.DEFAULT_TOL,
-            eta: float = g3.ETA) -> dict:
+            eta: float = g3.ETA, m: float = s1.M) -> dict:
     """The whole table. Returns the record; the caller decides what to
     do with a failure, because that decision is the freeze's, not the
     checker's."""
@@ -320,7 +322,7 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
         for spec in g3.G3A_ANGLE_SPECS:
             label = f"{name}/{spec[0]}"
             try:
-                theta = g3.resolve_theta(spec, r1, r2, s1.M, tol,
+                theta = g3.resolve_theta(spec, r1, r2, m, tol,
                                          base.PSI_MAX)
             except g3.ExpectedUnreachable as exc:
                 # the geometry says it has no such branch. Still
@@ -344,9 +346,10 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
                              "accepts a branch the geometry does not "
                              "have, not a search that failed")})
                 continue
-            cases.append(check_case(label, r1, r2, theta, tol, eta))
+            cases.append(check_case(label, r1, r2, theta, tol, eta,
+                                    m))
 
-    row_d = check_row_d(tol)
+    row_d = check_row_d(tol, m)
     failures = [
         {"case": c["case"], "row": r["row"], "want": r["want"],
          "got": r["got"], "family": c["family"], "r1": c["r1"],
@@ -443,11 +446,12 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
 
 
 def solver_determinism(tol: float = s1.DEFAULT_TOL,
-                       repeats: int = 3) -> dict:
+                       repeats: int = 3,
+                       m: float = s1.M) -> dict:
     """The premise the whole separation argument rests on: identical
     arguments give bit-identical results."""
 
-    args = (13.0, 17.0, g3.wrapper_dpsi(0.3), s1.M, tol)
+    args = (13.0, 17.0, g3.wrapper_dpsi(0.3), m, tol)
     first = s1.flight_time(*args)
     same = all(s1.flight_time(*args) == first for _ in range(repeats))
     return {"repeats": repeats, "bit_identical": same,
@@ -455,7 +459,7 @@ def solver_determinism(tol: float = s1.DEFAULT_TOL,
 
 
 def run_preflight(tol: float = s1.DEFAULT_TOL,
-                  eta: float = g3.ETA) -> dict:
+                  eta: float = g3.ETA, m: float = s1.M) -> dict:
     """THE G3a verdict. One place, composing every condition.
 
     An earlier draft ran the determinism probe beside the table and
@@ -468,8 +472,8 @@ def run_preflight(tol: float = s1.DEFAULT_TOL,
     measures this function, so the number and the verdict come from the
     same execution."""
 
-    table = run_g3a(tol, eta)
-    determinism = solver_determinism(tol)
+    table = run_g3a(tol, eta, m)
+    determinism = solver_determinism(tol, m=m)
     conditions = {
         "tri_state_rows": not table["failures"],
         "recovered_dpsi_bit_identical": not table["recovery_failures"],
