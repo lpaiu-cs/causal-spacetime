@@ -112,9 +112,13 @@ boundary is recorded separately in `artifact_manifest.md`.
   Schwarzschild path now carries its own preregistered verdicts and
   non-claims (the Type-D blocks above); the diamond-volume oracle is
   certified and instrument-audited there (auxiliary), while the
-  prediction-anchored Poisson-count stage remains open. Priority is claimed
-  only within this program — no literature-wide first before a priority
-  search.
+  prediction-anchored Poisson-count stage remains open. A literature
+  priority search (August 2026) identified partial overlap in four
+  clusters — see `literature_priority_oracle_arc.md` for the full
+  assessment. The directed-rounding volume enclosure and the
+  preregistered TOST gate against it have no direct prior; Poisson
+  sprinkle verification on Schwarzschild has prior art in Homšak–Veroni
+  (arXiv:2404.11670 §V.1).
 - Auxiliary O4b audit non-claims: the CONCORDANT verdict is a statement that
   the instrument stack agrees with the certified continuum volume within the
   frozen margin at ONE frozen configuration. It is NOT a prediction-anchored

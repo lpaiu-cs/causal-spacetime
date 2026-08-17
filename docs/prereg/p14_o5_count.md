@@ -20,7 +20,12 @@ tri-state predicate) realises the certified volume. `K ~ Poisson(A·V_true)`
 is assumed ONLY under the defect-free alternative, which is what every
 power number below conditions on — the verdict itself assumes nothing.
 
-This is the first *prediction-anchored* stage: O4b's recovered
+This is the program's first *preregistered equivalence gate* between a
+sprinkled count and a reproducible directed-rounding volume enclosure.
+Poisson-sprinkled count verification on Schwarzschild causal sets has
+prior art (Homšak–Veroni, arXiv:2404.11670 §V.1); the novelty here is
+the preregistered TOST verdict against a certified MPFR interval whose
+endpoints were frozen before any count data existed. O4b's recovered
 CONCORDANT was an audit of `sampler + S1 volume response + oracle`
 agreement; this campaign confronts a sprinkled COUNT with the
 certified prediction `ρ·V`.
@@ -162,6 +167,9 @@ seed with neither result nor record is the outlawed state.
   contributed one number, the certified U ceiling, to the DESIGN.
 - **Claim discipline.** A CONCORDANT outcome is a statement that the
   operational instrument realises the O3′ certified volume within
-  `tau` at the frozen coverage — the first prediction-anchored
-  sentence of the program. It does not retroactively upgrade S4/S5,
-  and nothing in Paper A changes with this freeze.
+  `tau` at the frozen coverage — the program's first preregistered
+  equivalence gate against a reproducible directed-rounding enclosure
+  (Poisson-sprinkle verification on Schwarzschild has prior art in
+  Homšak–Veroni 2404.11670 §V.1; see `literature_priority_oracle_arc.md`).
+  It does not retroactively upgrade S4/S5, and nothing in Paper A
+  changes with this freeze.

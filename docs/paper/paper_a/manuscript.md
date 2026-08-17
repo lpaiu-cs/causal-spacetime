@@ -637,9 +637,18 @@ confirmed and C2 detected with incomplete separation, in separate stages with
 no joint primary verdict) and its own non-claims; the diamond-volume oracle
 is certified and instrument-audited there as an auxiliary result (Section 9),
 but no Section 6.7 verdict uses it, and the prediction-anchored Poisson-count
-stage remains open. Priority is claimed
-only within this program; no literature-wide first is asserted before a
-priority search.
+stage remains open. A literature priority search (August 2026) found
+partial overlap in four areas: causal-order-and-number/volume
+reconstruction (Braun 2025 \cite{braun2025}; Myrheim 1978
+\cite{myrheim1978}), Schwarzschild sprinkle count verification
+(Homšak–Veroni \cite{homsakveroni2024} §V.1), analytic diamond-volume
+comparison theorems (Berthiere–Gibbons–Solodukhin
+\cite{berthiere2016}), and Schwarzschild causal-relation algorithms
+(He–Rideout \cite{herideout2009}). The directed-rounding volume
+enclosure and the preregistered TOST gate against it have no direct
+prior; the parallel Alfyorov–Shnyukov CJ estimator
+\cite{alfyorov2026weyl} measures Weyl curvature from Hasse diagrams
+and is orthogonal.
 
 ## 9. Limitations and future work
 
