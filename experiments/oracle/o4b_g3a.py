@@ -324,6 +324,20 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
     do with a failure, because that decision is the freeze's, not the
     checker's."""
 
+    # mass and geometry are ONE rung (review PR #90 R3): a
+    # non-default mass without its own geometry would silently test
+    # the frozen M = 1 edges, and a mismatched pair would test some
+    # other rung's -- both are refused before any case is built.
+    if geometry is None:
+        if m != s1.M:
+            raise ValueError(
+                f"run_g3a: m={m} requires its own rung geometry "
+                f"(s6_rungs.rung_geometry({m})); geometry=None means "
+                f"the frozen M = {s1.M} edges")
+    elif geometry.get("m", m) != m:
+        raise ValueError(
+            f"run_g3a: geometry is for m={geometry['m']}, not {m} "
+            f"-- mass and boundaries must come from the same rung")
     box = ((geometry["r_lo"], geometry["r_hi"])
            if geometry is not None else None)
     cap = (geometry["psi_max"] if geometry is not None

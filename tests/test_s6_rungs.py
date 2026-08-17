@@ -171,6 +171,19 @@ def test_the_full_wrapper_table_runs_on_the_rung_geometry(
     assert sz.R_LO not in seen["radii"]        # no M = 1 edge leaked
 
 
+def test_mass_and_geometry_are_one_rung():
+    """A non-default mass without its own geometry, or a mismatched
+    (mass, geometry) pair, is refused before any case is built
+    (review PR #90 R3) -- no silent M = 1 edge fallback."""
+
+    with pytest.raises(ValueError, match="requires its own rung"):
+        g3a.run_g3a(m=1.8)
+    with pytest.raises(ValueError, match="same rung"):
+        g3a.run_g3a(m=1.8, geometry=s6.rung_geometry(1.4))
+    with pytest.raises(ValueError, match="requires its own rung"):
+        g3a.run_preflight(m=1.4)
+
+
 def test_the_wrapper_contract_defaults_stay_the_frozen_m1(monkeypatch):
     """The default path is byte-compatible with the executed
     campaigns: no explicit m means s1.M, and ONLY s1.M."""
