@@ -128,6 +128,49 @@ def test_the_wrapper_contract_delivers_the_rung_mass(monkeypatch):
     assert case["rows"]                            # the case really ran
 
 
+def test_geometry_radii_accepts_a_rung_box():
+    """The shell-edge cases must resolve to the RUNG's own sampling
+    box, not the frozen M = 1 edges (review PR #90 R2); the anchors
+    stay absolute either way."""
+
+    g = s6.rung_geometry(1.8)
+    box = (g["r_lo"], g["r_hi"])
+    assert g3a.geometry_radii("x", "R_LO", "R_HI", box) == box
+    assert g3a.geometry_radii("x", "R_LO", "R_HI") == (
+        sz.R_LO, sz.R_HI)
+    assert g3a.geometry_radii("anchors", None, None, box) == (
+        sz.R_IN, sz.R_OUT)
+
+
+def test_the_full_wrapper_table_runs_on_the_rung_geometry(
+        monkeypatch):
+    """The REAL G3a table at M = 1.8 with that rung's own box and
+    psi_max: the angle resolver must receive the rung cap, the
+    shell-edge cases the rung edges, and the whole contract must
+    PASS at the deep rung's actual boundaries -- the case the review
+    named (a wrapper preflight passing on M = 1 geometry says nothing
+    about the rung's own edges)."""
+
+    g = s6.rung_geometry(1.8)
+    import o4_g3_redesign as g3
+
+    seen = {"caps": set(), "radii": set()}
+    real_resolve = g3.resolve_theta
+
+    def spy_resolve(spec, r1, r2, m, tol, cap):
+        seen["caps"].add(cap)
+        seen["radii"].update((r1, r2))
+        assert m == 1.8
+        return real_resolve(spec, r1, r2, m, tol, cap)
+
+    monkeypatch.setattr(g3a.g3, "resolve_theta", spy_resolve)
+    out = g3a.run_preflight(m=1.8, geometry=g)
+    assert out["passed"], out["failed_conditions"]
+    assert seen["caps"] == {g["psi_max"]}
+    assert g["r_lo"] in seen["radii"] and g["r_hi"] in seen["radii"]
+    assert sz.R_LO not in seen["radii"]        # no M = 1 edge leaked
+
+
 def test_the_wrapper_contract_defaults_stay_the_frozen_m1(monkeypatch):
     """The default path is byte-compatible with the executed
     campaigns: no explicit m means s1.M, and ONLY s1.M."""

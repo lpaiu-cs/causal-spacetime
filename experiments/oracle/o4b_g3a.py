@@ -53,13 +53,20 @@ import s1_schwarzschild_cost as s1  # noqa: E402
 ROW_D_CASE = {"dt": -1.0, "r1": 13.0, "r2": 17.0, "theta": 0.3}
 
 
-def geometry_radii(name: str, r1, r2) -> tuple[float, float]:
+def geometry_radii(name: str, r1, r2,
+                   box: tuple[float, float] | None = None,
+                   ) -> tuple[float, float]:
     """Resolve a table geometry's radii, filling the frozen anchors and
-    sampling-box edges from `o4_sizing` rather than transcribing them."""
+    sampling-box edges from `o4_sizing` rather than transcribing them.
+
+    `box` (review PR #90 R2): a rung's OWN sampling-box edges
+    (r_lo, r_hi); None keeps the frozen M = 1 edges. The anchors are
+    absolute and rung-independent either way."""
 
     if r1 is None:
         return base.R_IN, base.R_OUT
-    edges = {"R_LO": base.R_LO, "R_HI": base.R_HI}
+    lo, hi = box if box is not None else (base.R_LO, base.R_HI)
+    edges = {"R_LO": lo, "R_HI": hi}
     return edges.get(r1, r1), edges.get(r2, r2)
 
 
@@ -311,19 +318,24 @@ def check_row_d(tol: float, m: float = s1.M) -> dict:
 
 
 def run_g3a(tol: float = s1.DEFAULT_TOL,
-            eta: float = g3.ETA, m: float = s1.M) -> dict:
+            eta: float = g3.ETA, m: float = s1.M,
+            geometry: dict | None = None) -> dict:
     """The whole table. Returns the record; the caller decides what to
     do with a failure, because that decision is the freeze's, not the
     checker's."""
 
+    box = ((geometry["r_lo"], geometry["r_hi"])
+           if geometry is not None else None)
+    cap = (geometry["psi_max"] if geometry is not None
+           else base.PSI_MAX)
     cases, unreachable, build_failures = [], [], []
     for name, r1_spec, r2_spec in g3.G3A_GEOMETRIES:
-        r1, r2 = geometry_radii(name, r1_spec, r2_spec)
+        r1, r2 = geometry_radii(name, r1_spec, r2_spec, box)
         for spec in g3.G3A_ANGLE_SPECS:
             label = f"{name}/{spec[0]}"
             try:
                 theta = g3.resolve_theta(spec, r1, r2, m, tol,
-                                         base.PSI_MAX)
+                                         cap)
             except g3.ExpectedUnreachable as exc:
                 # the geometry says it has no such branch. Still
                 # checked against the frozen list: the raiser says
@@ -459,7 +471,8 @@ def solver_determinism(tol: float = s1.DEFAULT_TOL,
 
 
 def run_preflight(tol: float = s1.DEFAULT_TOL,
-                  eta: float = g3.ETA, m: float = s1.M) -> dict:
+                  eta: float = g3.ETA, m: float = s1.M,
+                  geometry: dict | None = None) -> dict:
     """THE G3a verdict. One place, composing every condition.
 
     An earlier draft ran the determinism probe beside the table and
@@ -472,7 +485,7 @@ def run_preflight(tol: float = s1.DEFAULT_TOL,
     measures this function, so the number and the verdict come from the
     same execution."""
 
-    table = run_g3a(tol, eta, m)
+    table = run_g3a(tol, eta, m, geometry)
     determinism = solver_determinism(tol, m=m)
     conditions = {
         "tri_state_rows": not table["failures"],
