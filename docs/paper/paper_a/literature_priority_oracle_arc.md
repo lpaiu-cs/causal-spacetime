@@ -36,8 +36,9 @@ a *specific* Poisson count — a measurement, not a reconstruction theorem.
 
 **Status: PARTIAL OVERLAP — prior art for Poisson-sprinkle counting**
 
-- **Homšak–Veroni 2024** (arXiv:2404.11670 §V.1): Poisson-sprinkled count
-  vs volume on Schwarzschild causal sets, with a Poissonity test.
+- **Homšak–Veroni 2024** (arXiv:2404.11670, "Boltzmannian state counting
+  for black hole entropy in Causal Set Theory", §V.1): Poisson-sprinkled
+  count vs volume on Schwarzschild causal sets, with a Poissonity test.
 
 Our novelty: the preregistered TOST equivalence gate against an MPFR
 directed-rounding volume enclosure whose endpoints were frozen before any
@@ -53,8 +54,10 @@ pipeline are new.
   comparison theorems for causal diamonds in curved spacetime. These are
   asymptotic/analytic results, not finite-anchor MPFR enclosures with
   directed rounding.
-- **Wang 2019** (arXiv:1904.01034): relates Alexandrov-diamond volume
-  deficit to Weyl curvature. Again analytic, not a numerical certification.
+- **Wang 2019** (arXiv:1904.01034, "Geometry of small causal diamonds",
+  Phys. Rev. D 100:064020): causal-diamond volume expansion including
+  Weyl curvature contribution. Again analytic, not a numerical
+  certification.
 
 We provide a reproducible directed-rounding enclosure (not "the first
 certified numerical enclosure"): MPFR flight-time certification, uniform
@@ -64,9 +67,10 @@ anchor-diamond containment proof, and certified cell-refinement integrator.
 
 **Status: PARTIAL OVERLAP — He–Rideout is prior art**
 
-- **He–Rideout 2009** (arXiv:0811.4235, CQG 26:125015): Schwarzschild
-  causal-relation algorithm for causal-set sprinkling. Subsequent
-  corrections to the inside-horizon branch exist in the literature.
+- **He–Rideout 2009** (Song He and David Rideout, arXiv:0811.4235,
+  CQG 26:125015): Schwarzschild causal-relation algorithm for causal-set
+  sprinkling. Subsequent corrections to the inside-horizon branch exist
+  in the literature.
 
 Our implementation uses a different reduction (static-spacetime radar
 coordinates) but He–Rideout is a mandatory citation for Schwarzschild
@@ -78,11 +82,11 @@ Flagged as a potential priority conflict due to concurrent causal-set work on
 curved spacetimes.
 
 - **Paper 7** ("Weyl curvature from the Hasse diagram", Zenodo v3.1,
-  2026-03-31, doi:10.5281/zenodo.19354508): CJ estimator = stratified
+  2026-03-31, doi:10.5281/zenodo.19364212): CJ estimator = stratified
   covariance of Hasse path-count observables. Bridge formula:
   ⟨CJ⟩ = C₀·N^{8/9}·E_{ij}E^{ij}·T⁴. Verified on pp-wave diamonds.
-  105 Lean 4 theorems. NOT on arXiv or INSPIRE; CQG submission inferred
-  from cover letter files.
+  105 Lean 4 theorems. Not on arXiv; indexed on INSPIRE (record 3142005).
+  CQG submission inferred from cover letter files.
 
   **Assessment: orthogonal.** Paper 7 measures *curvature* (Weyl tensor
   E_{ij}E^{ij}) from Hasse diagrams; our program verifies *volume*
