@@ -24,7 +24,6 @@ import o4_sizing as sz  # noqa: E402
 import o4b_g3a as g3a  # noqa: E402
 import s6_rungs as s6  # noqa: E402
 
-
 # ------------------------------------------------ the exact path
 
 def test_kappa_and_the_central_rung_reproduce_exactly():
