@@ -104,6 +104,19 @@ from seed_windows import (
 #: ref is RETAINED, not deleted. One stream, one run, never extended:
 #: a re-run needs a NEW freeze with a NEW scalar, and replaying this
 #: one is a reproduction, never an observation (`replay_scalar`).
+#: o5_campaign: the O5 Poisson-count campaign's sprinkling stream,
+#: drawn 2026-08-17 from the clean exact checkout of freeze SHA
+#: `c6eb85e` (the freeze branch head, merged in PR #87) under the
+#: integrated execution approval. The run drew N = 26,831,117
+#: proposals (Poisson at A*SCALE), scanned them all (29,335,028
+#: predicate calls after G3a's 6,537; K_certain = 53,285, zero
+#: ambiguous), published CONCORDANT under the frozen general rule
+#: (docs/prereg/p14_o5_count.json: D = [-0.855, +0.677] contained in
+#: [-1.4194, +1.4194]), and re-verified `refs/o5/reservation`
+#: (`b5d9d61`) at exit; that ref is RETAINED, not deleted. One
+#: stream, one run, never extended: a re-run needs a NEW freeze with
+#: a NEW scalar, and replaying this one is a reproduction, never an
+#: observation (`replay_scalar`).
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -121,6 +134,7 @@ OBSERVED_PROBE_SCALARS = {
     "o4b_g1_audit": 40_000_401,
     "o4b_g2_leakage": 40_000_411,
     "o5_amb_pilot": 40_000_441,
+    "o5_campaign": 40_000_451,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
@@ -160,20 +174,15 @@ OBSERVED_PROBE_SCALARS = {
 #: the results-commit obligation above, honoured for an outcome as it
 #: would have been for an abort.
 #:
-#: o5_campaign: the O5 Poisson-count campaign's sprinkling stream,
-#: allocated 2026-08-17 under the campaign freeze
-#: (docs/prereg/p14_o5_count.md). One stream, one run, never
-#: extended; the commit that records ANY outcome -- CONCORDANT,
-#: DISCORDANT, INCONCLUSIVE or an incident -- must move it to
-#: OBSERVED_PROBE_SCALARS. It is lineage-independent of the retired
-#: pilot stream (the pilot contributed one DESIGN number, the
-#: certified U ceiling; its data never enters the estimator). THE
-#: FREEZE DOES NOT AUTHORIZE THE DRAW: execution waits on the
-#: integrated PI approval, and `refs/o5/reservation` serialises the
-#: opening across checkouts.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "o5_campaign": 40_000_451,
-}
+#: Empty again since 2026-08-17: `o5_campaign` (allocated 2026-08-17
+#: under the campaign freeze, docs/prereg/p14_o5_count.md) was drawn
+#: under the integrated execution approval and is retired in OBSERVED
+#: under the same name, in the same commit that added the observed
+#: CONCORDANT artifact -- the results-commit obligation above. The
+#: next allocation belongs to whatever stage the PI rules next (S6
+#: mass ladder is the stated candidate); nothing here pre-allocates
+#: it.
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
