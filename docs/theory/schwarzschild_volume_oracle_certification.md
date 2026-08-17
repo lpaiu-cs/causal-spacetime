@@ -516,3 +516,63 @@ from the completed run's preserved statistics —
 `docs/prereg/p14_o4b_results.json`); per the Section 6.7 claim
 boundary that audit upgrades nothing in Paper A, and the
 prediction-anchored Poisson-count stage remains separately open.
+
+## S6 addendum: mass-general instantiation (the ladder rungs)
+
+The lemmas above were STATED for the frozen configuration M = 1; this
+addendum records which of them are mass-generic, under exactly what
+conditions, and how a new rung re-certifies them. Nothing here
+weakens the M = 1 statements, and nothing is inherited silently: a
+rung exists only after every row of its own certified table passes.
+
+**Ladder convention (PI ruling).** The shell [10, 20], the cap
+psi <= 2 and the anchors (12, 18) stay FIXED in absolute
+coordinates; only M changes, so a rung is never an isometric copy of
+another. The time window is not free either:
+
+    dt(M) = 8.5 * T_min(M) / T_min(1),     KAPPA = 8.5 / T_min(1)
+                                                 = 1.224782580680992,
+
+the central rung's dimensionless slack carried to every rung (the
+ratio form reproduces dt(1) = 8.5 exactly in binary64). The
+pre-frozen dimensionless curvature indicator is the compactness
+MU = 2M/r_c at the anchor midpoint r_c = 15.
+
+**Mass-generic lemma conditions.** For a rung at mass M on this
+shell (M = 0 is out of scope -- its angle-cost constant is the
+different formula 2 R_MIN / pi):
+
+| lemma | condition at mass M | why |
+|---|---|---|
+| exterior | 2M < R_MIN | horizon below the shell |
+| L3 (K < 0) | 1.5M < R_MIN | K = -(2M/r^3)(1 - 3M/2r) |
+| L1/L2c (w monotone) | 3M < R_MIN | photon sphere below the shell |
+| L2b (Q > 0) | perihelion floor > 3M | u_t <= 1/r_p < 1/(3M) |
+| L2a (patch orbits) | perihelion floor vs R_MIN cos(1) | certified per rung |
+| L4 (containment) | all four margins certainly positive | the entry gate, re-run per rung |
+| L5 cross-check | w_glob (2pi - psi_max) > dt + w(r_hi) psi_max | winding vs direct, re-verified per rung |
+
+`experiments/oracle/s6_rungs.py` evaluates every row as a certified
+interval comparison through the SAME parametric entry gate the
+runners use (`containment_certificate(12, 18, dt(M), m=M)`), derives
+the box and SCALE through `o4_sizing`'s exact path (o4_sizing itself
+is unchanged -- it is the O4b recovery's frozen decision surface and
+remains the M = 1 instance, reproduced bit-exactly by the parametric
+path), and pins the frozen per-rung constants as import-checked
+literals.
+
+**Certified ladder tables (frozen).** All rows PASS for every rung;
+margins are the certified lower bounds:
+
+| M | mu | dt | box r | psi_max | SCALE | binding margins |
+|---|---|---|---|---|---|---|
+| 1.0 | 0.1333 | 8.5 (exact) | [11.3536, 18.6950] | 0.817913 | 28546.5704734038 | nonempty +1.5600, polar cap +1.8923, winding +3.72 |
+| 1.4 | 0.1867 | 9.070565190742672 | [11.3672, 18.7053] | 0.623440 | 18141.08004658374 | nonempty +1.6647, polar cap +5.4787, winding +19.46 |
+| 1.8 | 0.2400 | 9.725248174609407 | [11.3825, 18.7174] | 0.519896 | 13679.093767152488 | nonempty +1.7849, polar cap +8.9809, winding +33.35 |
+
+The instrument paths are mass-parametric end to end: the wrapper
+contract (`o4b_g3a`) accepts the rung mass explicitly and the S6
+contract tests reject any path that silently falls back to M = 1.
+Per-rung wrapper-preflight call counts, oracle targets and
+count-stage sizings are frozen by each rung's own freeze, from that
+rung's certified oracle endpoints -- never copied from another rung.

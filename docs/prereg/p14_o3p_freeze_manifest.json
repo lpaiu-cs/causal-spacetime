@@ -7,7 +7,7 @@
   "experiments/oracle/volume_oracle.py": "382824570f9d16081b96b4e93d60074c360cfb560dc7c38f7e5bc6daaa58b072",
   "experiments/oracle/o3p_frozen_volume.py": "56b82d27cca1e956010034d9b0807a758895fb153db2192ef7862cf2cff504af",
   "experiments/oracle/o3p_projection.py": "18e00279e78c0d01a70f8a444acd030015a4bd8820a9a215a205d281f40e4ae5",
-  "docs/theory/schwarzschild_volume_oracle_certification.md": "d46e10d570058447842d933eb5f248e6533642fe1c93eef334ce70a3686e1c63",
+  "docs/theory/schwarzschild_volume_oracle_certification.md": "db871dd9e6cf65f3a38de17cdbc25e7d93f0dcf94c9f29f4ef2a31c970dbadbd",
   "docs/prereg/p14_oracle_price.json": "55380bf650a47ab19296bfd3722fa99022d5d9c4247098629f9bea5bd3a9a447",
   "docs/prereg/p14_oracle_mode_width.json": "05be9e73fb997c06f4d64b478ebbb44231808ffd6e4d54179e31c11ef856f790",
   "docs/prereg/p14_o3_volume.json": "aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f",

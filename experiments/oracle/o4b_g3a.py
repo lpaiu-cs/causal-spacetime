@@ -53,13 +53,20 @@ import s1_schwarzschild_cost as s1  # noqa: E402
 ROW_D_CASE = {"dt": -1.0, "r1": 13.0, "r2": 17.0, "theta": 0.3}
 
 
-def geometry_radii(name: str, r1, r2) -> tuple[float, float]:
+def geometry_radii(name: str, r1, r2,
+                   box: tuple[float, float] | None = None,
+                   ) -> tuple[float, float]:
     """Resolve a table geometry's radii, filling the frozen anchors and
-    sampling-box edges from `o4_sizing` rather than transcribing them."""
+    sampling-box edges from `o4_sizing` rather than transcribing them.
+
+    `box` (review PR #90 R2): a rung's OWN sampling-box edges
+    (r_lo, r_hi); None keeps the frozen M = 1 edges. The anchors are
+    absolute and rung-independent either way."""
 
     if r1 is None:
         return base.R_IN, base.R_OUT
-    edges = {"R_LO": base.R_LO, "R_HI": base.R_HI}
+    lo, hi = box if box is not None else (base.R_LO, base.R_HI)
+    edges = {"R_LO": lo, "R_HI": hi}
     return edges.get(r1, r1), edges.get(r2, r2)
 
 
@@ -215,7 +222,8 @@ def place_row(t_min: float, err: float, eta: float,
 
 
 def check_case(name: str, r1: float, r2: float, theta: float,
-               tol: float, eta: float = g3.ETA) -> dict:
+               tol: float, eta: float = g3.ETA,
+               m: float = s1.M) -> dict:
     """One case of the table: rows A, B and C at one (geometry, angle).
 
     Every quantity the decision turns on is recorded, so a failure is
@@ -225,7 +233,7 @@ def check_case(name: str, r1: float, r2: float, theta: float,
     not the contract."""
 
     dpsi = g3.wrapper_dpsi(theta)
-    t_min, err = s1.flight_time(r1, r2, dpsi, s1.M, tol)
+    t_min, err = s1.flight_time(r1, r2, dpsi, m, tol)
     recovered = recovered_dpsi(*_events(r1, r2, theta, 0.0))
     rows = []
     for row, above, want in (("A", True, "true"),
@@ -238,7 +246,7 @@ def check_case(name: str, r1: float, r2: float, theta: float,
                          "want": want, **placed})
             continue
         p, q = _events(r1, r2, theta, dt)
-        got = s1.causal_relation(p, q, s1.M, tol)
+        got = s1.causal_relation(p, q, m, tol)
         label = ("undecided" if got is None
                  else ("true" if got else "false"))
         rows.append({
@@ -253,7 +261,7 @@ def check_case(name: str, r1: float, r2: float, theta: float,
 
     # row C wants the undecided answer, so it carries no margin at all
     p, q = _events(r1, r2, theta, t_min)
-    got = s1.causal_relation(p, q, s1.M, tol)
+    got = s1.causal_relation(p, q, m, tol)
     label = ("undecided" if got is None
              else ("true" if got else "false"))
     rows.append({
@@ -267,19 +275,20 @@ def check_case(name: str, r1: float, r2: float, theta: float,
         "case": name, "r1": r1, "r2": r2, "theta": theta,
         "dpsi": dpsi,
         "recovery_is_bit_identical": recovered == dpsi,
-        "family": _family_of(r1, r2, dpsi, tol),
+        "family": _family_of(r1, r2, dpsi, tol, m),
         "t_min": t_min, "err": err, "eta": eta,
         "rows": rows,
     }
 
 
-def _family_of(r1: float, r2: float, dpsi: float, tol: float) -> str:
+def _family_of(r1: float, r2: float, dpsi: float, tol: float,
+               m: float = s1.M) -> str:
     details: dict = {}
-    s1.flight_time(r1, r2, dpsi, s1.M, tol, details)
+    s1.flight_time(r1, r2, dpsi, m, tol, details)
     return details["family"]
 
 
-def check_row_d(tol: float) -> dict:
+def check_row_d(tol: float, m: float = s1.M) -> dict:
     """Row D: the predicate must answer without consulting the solver.
 
     Proved by making the solver fail. A returned `False` alone cannot
@@ -298,7 +307,7 @@ def check_row_d(tol: float) -> dict:
 
     s1.flight_time = forbidden
     try:
-        got = s1.causal_relation(p, q, s1.M, tol)
+        got = s1.causal_relation(p, q, m, tol)
     finally:
         s1.flight_time = original
     return {"case": "negative-dt-short-circuit", **case,
@@ -309,19 +318,38 @@ def check_row_d(tol: float) -> dict:
 
 
 def run_g3a(tol: float = s1.DEFAULT_TOL,
-            eta: float = g3.ETA) -> dict:
+            eta: float = g3.ETA, m: float = s1.M,
+            geometry: dict | None = None) -> dict:
     """The whole table. Returns the record; the caller decides what to
     do with a failure, because that decision is the freeze's, not the
     checker's."""
 
+    # mass and geometry are ONE rung (review PR #90 R3): a
+    # non-default mass without its own geometry would silently test
+    # the frozen M = 1 edges, and a mismatched pair would test some
+    # other rung's -- both are refused before any case is built.
+    if geometry is None:
+        if m != s1.M:
+            raise ValueError(
+                f"run_g3a: m={m} requires its own rung geometry "
+                f"(s6_rungs.rung_geometry({m})); geometry=None means "
+                f"the frozen M = {s1.M} edges")
+    elif geometry.get("m", m) != m:
+        raise ValueError(
+            f"run_g3a: geometry is for m={geometry['m']}, not {m} "
+            f"-- mass and boundaries must come from the same rung")
+    box = ((geometry["r_lo"], geometry["r_hi"])
+           if geometry is not None else None)
+    cap = (geometry["psi_max"] if geometry is not None
+           else base.PSI_MAX)
     cases, unreachable, build_failures = [], [], []
     for name, r1_spec, r2_spec in g3.G3A_GEOMETRIES:
-        r1, r2 = geometry_radii(name, r1_spec, r2_spec)
+        r1, r2 = geometry_radii(name, r1_spec, r2_spec, box)
         for spec in g3.G3A_ANGLE_SPECS:
             label = f"{name}/{spec[0]}"
             try:
-                theta = g3.resolve_theta(spec, r1, r2, s1.M, tol,
-                                         base.PSI_MAX)
+                theta = g3.resolve_theta(spec, r1, r2, m, tol,
+                                         cap)
             except g3.ExpectedUnreachable as exc:
                 # the geometry says it has no such branch. Still
                 # checked against the frozen list: the raiser says
@@ -344,9 +372,10 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
                              "accepts a branch the geometry does not "
                              "have, not a search that failed")})
                 continue
-            cases.append(check_case(label, r1, r2, theta, tol, eta))
+            cases.append(check_case(label, r1, r2, theta, tol, eta,
+                                    m))
 
-    row_d = check_row_d(tol)
+    row_d = check_row_d(tol, m)
     failures = [
         {"case": c["case"], "row": r["row"], "want": r["want"],
          "got": r["got"], "family": c["family"], "r1": c["r1"],
@@ -443,11 +472,12 @@ def run_g3a(tol: float = s1.DEFAULT_TOL,
 
 
 def solver_determinism(tol: float = s1.DEFAULT_TOL,
-                       repeats: int = 3) -> dict:
+                       repeats: int = 3,
+                       m: float = s1.M) -> dict:
     """The premise the whole separation argument rests on: identical
     arguments give bit-identical results."""
 
-    args = (13.0, 17.0, g3.wrapper_dpsi(0.3), s1.M, tol)
+    args = (13.0, 17.0, g3.wrapper_dpsi(0.3), m, tol)
     first = s1.flight_time(*args)
     same = all(s1.flight_time(*args) == first for _ in range(repeats))
     return {"repeats": repeats, "bit_identical": same,
@@ -455,7 +485,8 @@ def solver_determinism(tol: float = s1.DEFAULT_TOL,
 
 
 def run_preflight(tol: float = s1.DEFAULT_TOL,
-                  eta: float = g3.ETA) -> dict:
+                  eta: float = g3.ETA, m: float = s1.M,
+                  geometry: dict | None = None) -> dict:
     """THE G3a verdict. One place, composing every condition.
 
     An earlier draft ran the determinism probe beside the table and
@@ -468,8 +499,8 @@ def run_preflight(tol: float = s1.DEFAULT_TOL,
     measures this function, so the number and the verdict come from the
     same execution."""
 
-    table = run_g3a(tol, eta)
-    determinism = solver_determinism(tol)
+    table = run_g3a(tol, eta, m, geometry)
+    determinism = solver_determinism(tol, m=m)
     conditions = {
         "tri_state_rows": not table["failures"],
         "recovered_dpsi_bit_identical": not table["recovery_failures"],
