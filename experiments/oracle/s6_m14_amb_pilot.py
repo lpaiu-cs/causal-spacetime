@@ -142,7 +142,7 @@ _Q = np.array([_RUNG["dt"], s6.R_OUT, 0.0, 0.0])
 # ------------------------------------------------ the frozen rule
 #
 # THE DECIDING TAIL ARITHMETIC RUNS AT 96-BIT MPFR PRECISION (review
-# PR #83 R1). The k = 1 boundary sits ~7.7e-10 of tail below the
+# PR #83 R1). The k = 1 boundary sits ~3.97e-9 of tail below the
 # budget, while a double-precision binomial CDF at n ~ 1e7 carries an
 # lgamma cancellation floor near 1e-8 relative -- enough, in
 # principle, for the same frozen inputs to flip the verdict across

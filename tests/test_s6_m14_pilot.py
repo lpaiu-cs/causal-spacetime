@@ -140,7 +140,7 @@ def test_the_rule_is_general_in_k_and_matches_the_reference_table():
 
 def test_the_verdict_path_is_cross_checked_by_two_other_engines():
     """The RUNTIME verdict path is 96-bit gmpy2 (review PR #83 R1:
-    the k=1 boundary sits 7.7e-10 of tail below the budget, and a
+    the k=1 boundary sits 3.97e-9 of tail below the budget, and a
     platform-libm double engine could flip it). The cross-checks are
     an independent double-precision log-space engine -- agreement
     above its ~1e-8 lgamma-cancellation floor -- and the frozen P14
@@ -186,7 +186,7 @@ def test_the_verdict_path_is_cross_checked_by_two_other_engines():
 
 def test_the_k1_boundary_margin_is_the_mpfr_determined_value():
     """The margin the review computed, reproduced by the runtime path:
-    k=1 sits 7.7125e-10 of tail BELOW the budget. Pinned tightly --
+    k=1 sits 3.9745e-09 of tail BELOW the budget. Pinned tightly --
     the 96-bit path is host-independent (gmpy2/MPFR are in the
     environment lock; platform libm is not on this path)."""
 
