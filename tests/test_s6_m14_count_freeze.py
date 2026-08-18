@@ -193,7 +193,7 @@ def test_the_power_sentence_numbers_reproduce():
     p48 = window_power(k_lo + 48, k_hi - 48, camp.FROZEN["v_hi"])
     p50 = window_power(k_lo + 50, k_hi - 50, camp.FROZEN["v_hi"])
     assert p48 >= 0.90 > p50
-    # exact Chernoff exponent on P(2N > 60M), N ~ Poisson(A*SCALE)
+    # exact Chernoff exponent on P(2N > 34M), N ~ Poisson(A*SCALE)
     lam_n = a * camp._RUNG["scale"]
     m = camp.FROZEN["scan_call_cap"] / 2.0
     u = (m - lam_n) / lam_n
@@ -698,3 +698,19 @@ def test_the_doc_freezes_the_discipline():
     assert "never twice" in flat
     assert "a fortiori narrower" in flat
     assert "V_op − V_true" in flat or "V_op - V_true" in flat
+
+
+def test_the_rung_literals_match_the_one_exact_path():
+    import s6_rungs as s6
+
+    assert camp._RUNG == {k: s6.rung_geometry(1.4)[k]
+                          for k in camp._RUNG}
+    assert camp._P[1] == s6.R_IN == 12.0
+    assert camp._Q[1] == s6.R_OUT == 18.0
+    assert camp._Q[0] == camp._RUNG["dt"]
+
+
+def test_the_published_rule_string_is_unprimed():
+    d = camp.decide(53_500, 5)
+    assert "V'" not in d["rule"] and "V_ref'" not in d["rule"]
+    assert "O5" not in d["rule"]

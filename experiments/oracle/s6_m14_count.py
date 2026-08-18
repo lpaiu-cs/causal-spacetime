@@ -26,9 +26,9 @@ end to end:
                K_certain + U_amb          (ONE outer interval: every
                ambiguous point may or may not be a member);
     C        = [L / A, U / A]             (volume units);
-    D        = [C_lo - V'_hi, C_hi - V'_lo]   (identified discrepancy
-               against the O3' certification, interval arithmetic);
-    B        = tau * V_ref'               (the equivalence band);
+    D        = [C_lo - V_hi, C_hi - V_lo]     (identified discrepancy
+               against the rung certification, interval arithmetic);
+    B        = tau * V_ref                (the equivalence band);
     verdict  = CONCORDANT     if D  is contained in [-B, B]
                DISCORDANT     if D  is disjoint from [-B, B]
                INCONCLUSIVE   otherwise (published as-is).
@@ -69,7 +69,7 @@ incident published as-is.
 ORDER. static preflight (digests, environment lock, clean tree at the
 exact approved SHA, artifact absence, fresh-seed assertion, retained
 refs x3, namespace probe) -> metered G3a wrapper preflight ->
-reservation claim on `refs/o5/reservation` (the claim RETURNS its
+reservation claim on `refs/s6m14/reservation` (the claim RETURNS its
 object; any uncertain push outcome is SEED POSSIBLY SPENT,
 fail-closed) -> RNG construction -> N ~ Poisson(A * SCALE) drawn once
 -> chunked scan with an atomic non-verdict checkpoint per chunk ->
@@ -127,11 +127,11 @@ _CHECKPOINT = (_REPO / "docs" / "prereg"
 #: time after the preflight completes.
 G3A_PREFLIGHT_CALLS = 6_517
 
-#: The frozen configuration. The oracle endpoints are the ACTUAL O3'
-#: artifact values (docs/prereg/p14_o3p_volume.json, target-met at
-#: ratio 0.0049995), adopted verbatim; V_ref' is that artifact's
-#: recommendation (the standalone midpoint), whose adoption the O3'
-#: results PR explicitly deferred to THIS freeze. Caps are part of
+#: The frozen configuration. The oracle endpoints are the ACTUAL
+#: rung artifact values (docs/prereg/p14_s6_m14_volume.json,
+#: target-met at ratio 0.0049996), adopted verbatim; v_ref is that
+#: artifact's recommendation (the standalone midpoint), whose
+#: adoption PR #94 explicitly deferred to THIS freeze. Caps are part of
 #: the freeze: no auto-raise, ever.
 FROZEN = {
     "a_intensity": 830.0,
@@ -331,8 +331,8 @@ def decide(k_certain: int, u_amb: int, cfg: dict = FROZEN) -> dict:
         "verdict": verdict,
         "rule": ("ONE outer Garwood interval at alpha/2 per side: "
                  "L(K_certain), U(K_certain + U_amb); C = counts / A; "
-                 "D = [C_lo - V'_hi, C_hi - V'_lo] against "
-                 "[-tau*V_ref', +tau*V_ref']; contained -> CONCORDANT,"
+                 "D = [C_lo - V_hi, C_hi - V_lo] against "
+                 "[-tau*V_ref, +tau*V_ref]; contained -> CONCORDANT,"
                  " disjoint -> DISCORDANT, else INCONCLUSIVE -- "
                  "general in (K_certain, U_amb), 96-bit end to end, "
                  "published as computed"),

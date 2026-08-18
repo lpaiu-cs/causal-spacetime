@@ -93,7 +93,7 @@ transfers to the campaign's U on the same measure.
 
 ## 4. The power sentence (design; conditions on the alternative)
 
-At the frozen `A`, `tau`, `alpha` and the actual O3′ endpoints, three
+At the frozen `A`, `tau`, `alpha` and the actual rung endpoints, three
 independent engines (NR-style double gamma, the frozen P14 P2 engine,
 96-bit gmpy2) agree exactly on the acceptance integers and to 6
 decimals on the powers; the contract tests re-derive them from the
