@@ -1,0 +1,59 @@
+{
+ "kind": "checkpoint",
+ "stage": "chunk",
+ "freeze_sha": "1575a8ee58f2f36443c039f304836cbb5568f4ef",
+ "manifest_digest": "3ac9988b5dda4db8cb3b7d0a17d20be300b2ac65c965d936ccd8a4de08fe2aca",
+ "seed": 40000471,
+ "rng_stream": "s6_m14_count",
+ "rng_position": {
+  "bit_generator": "PCG64",
+  "state": {
+   "state": 259174777184570224700916833809994123920,
+   "inc": 184382188682624809570970310758762804177
+  },
+  "has_uint32": 0,
+  "uinteger": 0
+ },
+ "n_total": 15057284,
+ "points_done": 15057284,
+ "k_certain": 53829,
+ "u_ambiguous": 1,
+ "calls": 17517439,
+ "chunk_provenance": {
+  "state_before_draw": {
+   "bit_generator": "PCG64",
+   "state": {
+    "state": 249215811613156924976203875612785458080,
+    "inc": 184382188682624809570970310758762804177
+   },
+   "has_uint32": 0,
+   "uinteger": 0
+  },
+  "size": 49540,
+  "consumed": 49540
+ },
+ "budget": {
+  "reserved": 17523956,
+  "completed": 17523956,
+  "unfinished": 0,
+  "wall_s": 18873.638639600016,
+  "wall_overrun_s": 0.0,
+  "max_calls": 34006517,
+  "max_wall_s": 86400.0,
+  "max_batch_calls": 8192,
+  "reserved_by_stage": {
+   "g3a_preflight": 6517,
+   "scan": 17517439
+  },
+  "stage": "scan",
+  "clock_started_at": "before G3a",
+  "cap_is_charged_against": "reserved, which never under-charges",
+  "call_cap_overshoot": "none: a batch that does not fit is refused, so max_calls is never crossed",
+  "wall_cap_is": "a start rule: no batch begins at or after max_wall_s, so the run can finish one batch late -- at most 8,192 calls, but NO rigorous bound in seconds, because the 768 us/pair cost is a host-dependent average and not a per-call maximum",
+  "nominal_overrun_s": 6.291456,
+  "nominal_overrun_is": "a projection from the measured average; the recorded wall_overrun_s is the fact"
+ },
+ "partial": true,
+ "non_verdict": true,
+ "why": "progress record, not a result: the sprinkled scan has not finished, so no count here is a verdict"
+}
