@@ -182,7 +182,15 @@ OBSERVED_PROBE_SCALARS = {
 #: next allocation belongs to whatever stage the PI rules next (S6
 #: mass ladder is the stated candidate); nothing here pre-allocates
 #: it.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: s6_m14_pilot: the S6 mass-ladder M = 1.4 rung's ambiguity-pilot
+#: stream, allocated 2026-08-18 under the rung pilot freeze
+#: (docs/prereg/p14_s6_m14_pilot.md). One stream, one run, never
+#: extended; the commit that records ANY outcome must move it to
+#: OBSERVED_PROBE_SCALARS. Lineage-independent of every other
+#: stream; `refs/s6m14pilot/reservation` serialises the opening.
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "s6_m14_pilot": 40_000_461,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
