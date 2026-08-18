@@ -1,15 +1,15 @@
-"""S6 M=1.4 ambiguity pilot -- the frozen runner.
+"""S6 M=1.8 ambiguity pilot -- the frozen runner.
 
 EXECUTION FOLLOWS THE QUOTA-DELEGATED S6 RULING: after this freeze
 merges and the exact-checkout preflight passes, the pilot executes
 ONCE from the freeze branch head under the frozen gates -- and NEVER
 twice. No rerun, no seed reuse, no sample extension, no cap raise.
 
-WHAT THE PILOT MEASURES. One fresh stream (`s6_m14_pilot`) draws
-n = 6,024,777 events from the SAME rung box measure the M = 1.4
+WHAT THE PILOT MEASURES. One fresh stream (`s6_m18_pilot`) draws
+n = 3,940,846 events from the SAME rung box measure the M = 1.8
 count campaign will sprinkle (r^2 dr on the rung box, cos(psi)
 uniform to the rung cap, phi, t in [0, dt_rung]). For each event the
-full tri-state `causal_relation` at m = 1.4 is asked about both legs
+full tri-state `causal_relation` at m = 1.8 is asked about both legs
 (p -> x, then x -> q, early exit); the event is AMBIGUOUS iff any
 asked leg returns None. The ambiguous count k out of the fixed n is
 the whole observation.
@@ -29,16 +29,16 @@ FIXED n; an INCONCLUSIVE pilot stops this RUNG for a PI ruling and
 indicts nothing (the other rungs proceed independently -- verdict
 separation).
 
-BUDGET. max_calls = 2*n + 6,517: the hard per-event bound (two legs)
+BUDGET. max_calls = 2*n + 6,461: the hard per-event bound (two legs)
 plus the rung-measured deterministic full-wrapper G3a preflight (at
-m = 1.4 and the rung geometry -- NOT M = 1's 6,537), which runs BEFORE
+m = 1.8 and the rung geometry -- NOT M = 1's 6,537), which runs BEFORE
 the reservation and is charged to the same budget. The caps are
 frozen: RAISING THEM DURING OR AFTER THE RUN IS FORBIDDEN.
 
 ORDER. static preflight (digests, environment lock, clean tree at the
 exact approved SHA, artifact absence, fresh-seed assertion, retained
 refs, namespace probe) -> metered G3a wrapper preflight -> reservation
-claim on `refs/s6m14pilot/reservation` (the claim RETURNS its object; the
+claim on `refs/s6m18pilot/reservation` (the claim RETURNS its object; the
 attempt is nonce-unique; any uncertain push outcome is SEED POSSIBLY
 SPENT, fail-closed) -> RNG construction -> fixed-n chunked scan with
 an atomic non-verdict checkpoint per chunk -> reservation re-read ->
@@ -48,9 +48,9 @@ that names its `failure_point` and preserves the partial tallies.
 Run (after the freeze merges, from a clean exact checkout of the
 freeze branch head):
 
-    python experiments/oracle/s6_m14_amb_pilot.py --preflight \
+    python experiments/oracle/s6_m18_amb_pilot.py --preflight \
         --freeze-rev <full 40-hex freeze branch head>
-    python experiments/oracle/s6_m14_amb_pilot.py \
+    python experiments/oracle/s6_m18_amb_pilot.py \
         --freeze-rev <full 40-hex freeze branch head>
 """
 
@@ -78,35 +78,35 @@ import o4b_budget  # noqa: E402
 import o4b_g3a as g3a  # noqa: E402
 import o4b_meter as meter  # noqa: E402
 import s1_schwarzschild_cost as s1  # noqa: E402
-import s6_m14_reservation as reservation  # noqa: E402
+import s6_m18_reservation as reservation  # noqa: E402
 import s6_rungs as s6  # noqa: E402
 from probe_seed_ledger import assert_fresh_scalar  # noqa: E402
 
 _REPO = Path(__file__).resolve().parents[2]
 _MANIFEST = (_REPO / "docs" / "prereg"
-             / "p14_s6_m14_pilot_freeze_manifest.json")
-_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s6_m14_pilot.json"
-_INCIDENT = _REPO / "docs" / "prereg" / "p14_s6_m14_pilot_incident.json"
+             / "p14_s6_m18_pilot_freeze_manifest.json")
+_ARTIFACT = _REPO / "docs" / "prereg" / "p14_s6_m18_pilot.json"
+_INCIDENT = _REPO / "docs" / "prereg" / "p14_s6_m18_pilot_incident.json"
 _CHECKPOINT = (_REPO / "docs" / "prereg"
-               / "p14_s6_m14_pilot_checkpoint.json")
+               / "p14_s6_m18_pilot_checkpoint.json")
 
 #: The deterministic full-wrapper preflight's exact metered call
 #: count, frozen by the O4b sizing artifact and re-asserted at run
 #: time after the preflight completes.
-G3A_PREFLIGHT_CALLS = 6_517
+G3A_PREFLIGHT_CALLS = 6_461
 
 #: The frozen configuration (delegation ruling). Caps are part of the
 #: freeze: no auto-raise, ever.
 FROZEN = {
-    "n_events": 6_024_777,
+    "n_events": 3_940_846,
     "u_max": 30,
     "alpha_pilot": 0.01,
     "tail_budget": 0.001,
-    "a_provisional": 830.0,
-    "seed_name": "s6_m14_pilot",
+    "a_provisional": 720.0,
+    "seed_name": "s6_m18_pilot",
     "tol": s1.DEFAULT_TOL,
     "chunk": 65_536,
-    "max_calls": 12_056_071,        # = 2*n_events + G3A_PREFLIGHT_CALLS
+    "max_calls": 7_888_153,         # = 2*n_events + G3A_PREFLIGHT_CALLS
     "max_wall_s": 86_400.0,
 }
 assert FROZEN["max_calls"] == 2 * FROZEN["n_events"] + G3A_PREFLIGHT_CALLS
@@ -114,13 +114,13 @@ assert FROZEN["max_calls"] == 2 * FROZEN["n_events"] + G3A_PREFLIGHT_CALLS
 #: The rung geometry, frozen as literals and re-derived at import
 #: through the one exact path -- a drift in either direction refuses
 #: the import (the ladder discipline).
-_M = 1.4
+_M = 1.8
 _RUNG = {
-    "dt": 9.070565190742672,
-    "r_lo": 11.367185829820095,
-    "r_hi": 18.7053462469963,
-    "psi_max": 0.623439673163968,
-    "scale": 18141.08004658374,
+    "dt": 9.725248174609407,
+    "r_lo": 11.38246192411518,
+    "r_hi": 18.717403954190363,
+    "psi_max": 0.519895801069135,
+    "scale": 13679.093767152488,
 }
 _g = s6.rung_geometry(_M)
 if (_g["dt"] != _RUNG["dt"] or _g["r_lo"] != _RUNG["r_lo"]
@@ -128,7 +128,7 @@ if (_g["dt"] != _RUNG["dt"] or _g["r_lo"] != _RUNG["r_lo"]
         or _g["psi_max"] != _RUNG["psi_max"]
         or _g["scale"] != _RUNG["scale"]):
     raise SystemExit(
-        f"s6_m14_pilot: frozen rung literals drifted from the one "
+        f"s6_m18_pilot: frozen rung literals drifted from the one "
         f"exact path: {_RUNG} != derived")
 _GEOMETRY = _g
 del _g
@@ -142,7 +142,7 @@ _Q = np.array([_RUNG["dt"], s6.R_OUT, 0.0, 0.0])
 # ------------------------------------------------ the frozen rule
 #
 # THE DECIDING TAIL ARITHMETIC RUNS AT 96-BIT MPFR PRECISION (review
-# PR #83 R1). The k = 1 boundary sits ~3.97e-9 of tail below the
+# PR #83 R1). The k = 1 boundary sits ~4.11e-9 of tail below the
 # budget, while a double-precision binomial CDF at n ~ 1e7 carries an
 # lgamma cancellation floor near 1e-8 relative -- enough, in
 # principle, for the same frozen inputs to flip the verdict across
@@ -524,7 +524,7 @@ def file_incident(failure_point: str, reason: str, preserved: dict,
                   context: dict) -> None:
     record = {
         "kind": "incident",
-        "run_kind": "s6_m14_pilot",
+        "run_kind": "s6_m18_pilot",
         "failure_point": failure_point,
         "termination_reason": reason,
         "verdict": None,
@@ -624,7 +624,7 @@ def main() -> None:
         budget.enter("reservation")
         try:
             claimed["object"] = reservation.claim({
-                "campaign": "s6_m14_pilot",
+                "campaign": "s6_m18_pilot",
                 "freeze_rev": approved,
                 "manifest_sha256": digest,
                 "seed": {FROZEN["seed_name"]: checks["seed"]},
@@ -670,8 +670,8 @@ def main() -> None:
                 f"{approved}")
         result = {
             "kind": "results",
-            "run_kind": "s6_m14_pilot",
-            "stage": ("S6 M=1.4 ambiguity pilot: fixed-n tri-state "
+            "run_kind": "s6_m18_pilot",
+            "stage": ("S6 M=1.8 ambiguity pilot: fixed-n tri-state "
                       "indicator scan on the rung box measure"),
             "frozen_config": {kk: v for kk, v in FROZEN.items()},
             "g3a_preflight": {
@@ -770,8 +770,8 @@ MANIFEST_NOTE = (
 )
 
 PROTOCOL_SURFACE = (
-    "experiments/oracle/s6_m14_amb_pilot.py",
-    "experiments/oracle/s6_m14_reservation.py",
+    "experiments/oracle/s6_m18_amb_pilot.py",
+    "experiments/oracle/s6_m18_reservation.py",
     "experiments/oracle/s6_rungs.py",
     "experiments/oracle/o4b_reservation.py",
     "experiments/oracle/o4b_budget.py",
@@ -783,8 +783,8 @@ PROTOCOL_SURFACE = (
     "experiments/oracle/certified_interval.py",
     "experiments/positive_control/s1_schwarzschild_cost.py",
     "experiments/positive_control/probe_seed_ledger.py",
-    "docs/prereg/p14_s6_m14_pilot.md",
-    "docs/prereg/p14_s6_m14_volume.json",
+    "docs/prereg/p14_s6_m18_pilot.md",
+    "docs/prereg/p14_s6_m18_volume.json",
     "docs/prereg/p14_o3_volume.json",
     "pyproject.toml",
 )
@@ -792,7 +792,7 @@ PROTOCOL_SURFACE = (
 
 def build_manifest() -> dict:
     return {
-        "stage": ("S6 M=1.4 ambiguity-pilot freeze manifest "
+        "stage": ("S6 M=1.8 ambiguity-pilot freeze manifest "
                   "(content-addressed protocol surface)"),
         "note": MANIFEST_NOTE,
         "files": {rel: _sha256(_REPO / rel)

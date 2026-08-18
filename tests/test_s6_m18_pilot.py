@@ -1,4 +1,4 @@
-"""S6 M=1.4 ambiguity-pilot freeze contract tests.
+"""S6 M=1.8 ambiguity-pilot freeze contract tests.
 
 The frozen ruled values, the general-k decision rule cross-checked by
 two independent exact engines plus the frozen P2 engine, the sampler's
@@ -23,7 +23,7 @@ _REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "experiments" / "oracle"))
 sys.path.insert(0, str(_REPO / "experiments" / "positive_control"))
 
-import s6_m14_amb_pilot as pilot  # noqa: E402
+import s6_m18_amb_pilot as pilot  # noqa: E402
 
 _SHA = "a" * 40
 
@@ -32,18 +32,18 @@ _SHA = "a" * 40
 
 def test_frozen_configuration_is_the_ruled_one():
     assert pilot.FROZEN == {
-        "n_events": 6_024_777,
+        "n_events": 3_940_846,
         "u_max": 30,
         "alpha_pilot": 0.01,
         "tail_budget": 0.001,
-        "a_provisional": 830.0,
-        "seed_name": "s6_m14_pilot",
+        "a_provisional": 720.0,
+        "seed_name": "s6_m18_pilot",
         "tol": 1e-08,
         "chunk": 65_536,
-        "max_calls": 12_056_071,
+        "max_calls": 7_888_153,
         "max_wall_s": 86_400.0,
     }
-    assert pilot.G3A_PREFLIGHT_CALLS == 6_517
+    assert pilot.G3A_PREFLIGHT_CALLS == 6_461
     assert pilot.FROZEN["max_calls"] == (
         2 * pilot.FROZEN["n_events"] + pilot.G3A_PREFLIGHT_CALLS)
 
@@ -51,9 +51,7 @@ def test_frozen_configuration_is_the_ruled_one():
 def test_the_seed_is_fresh_and_301_untouched():
     import probe_seed_ledger as ledger
 
-    assert "s6_m14_pilot" not in ledger.FRESH_PROBE_SCALARS
-    assert ledger.OBSERVED_PROBE_SCALARS["s6_m14_pilot"] == 40_000_461
-    assert ledger.replay_scalar("s6_m14_pilot") == 40_000_461
+    assert ledger.assert_fresh_scalar("s6_m18_pilot") == 40_000_481
     assert 40_000_301 not in ledger.spent_scalars()
     assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
 
@@ -70,7 +68,7 @@ def test_the_box_measure_identity_is_exact():
          * (1.0 - math.cos(g["psi_max"])))
     assert abs(b - g["scale"] / g["dt"]) <= 2e-13 * b
     import s6_rungs as s6
-    assert g == {k: s6.rung_geometry(1.4)[k] for k in g}
+    assert g == {k: s6.rung_geometry(1.8)[k] for k in g}
 
 
 class _FixedU:
@@ -121,10 +119,10 @@ def test_the_rule_is_general_in_k_and_matches_the_reference_table():
     computes them; nothing is hardcoded to k <= 1."""
 
     expect = {
-        0: (11.5092, 1.474928e-06, "FEASIBLE"),
-        1: (16.5905, 9.999960e-04, "FEASIBLE"),
-        2: (21.0081, 2.426053e-02, "INCONCLUSIVE"),
-        3: (25.1047, 1.414955e-01, "INCONCLUSIVE"),
+        0: (11.5092, 1.474929e-06, "FEASIBLE"),
+        1: (16.5905, 9.999959e-04, "FEASIBLE"),
+        2: (21.0081, 2.426052e-02, "INCONCLUSIVE"),
+        3: (25.1047, 1.414954e-01, "INCONCLUSIVE"),
     }
     for k, (lam, tail, verdict) in expect.items():
         d = pilot.decide(k)
@@ -140,7 +138,7 @@ def test_the_rule_is_general_in_k_and_matches_the_reference_table():
 
 def test_the_verdict_path_is_cross_checked_by_two_other_engines():
     """The RUNTIME verdict path is 96-bit gmpy2 (review PR #83 R1:
-    the k=1 boundary sits 3.97e-9 of tail below the budget, and a
+    the k=1 boundary sits 4.11e-9 of tail below the budget, and a
     platform-libm double engine could flip it). The cross-checks are
     an independent double-precision log-space engine -- agreement
     above its ~1e-8 lgamma-cancellation floor -- and the frozen P14
@@ -186,13 +184,13 @@ def test_the_verdict_path_is_cross_checked_by_two_other_engines():
 
 def test_the_k1_boundary_margin_is_the_mpfr_determined_value():
     """The margin the review computed, reproduced by the runtime path:
-    k=1 sits 3.9745e-09 of tail BELOW the budget. Pinned tightly --
+    k=1 sits 4.1062e-09 of tail BELOW the budget. Pinned tightly --
     the 96-bit path is host-independent (gmpy2/MPFR are in the
     environment lock; platform libm is not on this path)."""
 
     margin = (pilot.FROZEN["tail_budget"]
               - pilot.decide(1)["tail_p_u_gt_u_max"])
-    assert abs(margin - 3.9745393e-09) < 1e-15
+    assert abs(margin - 4.1061750e-09) < 1e-15
     assert pilot.decide(1)["verdict"] == "FEASIBLE"
     assert pilot.decide(2)["verdict"] == "INCONCLUSIVE"
 
@@ -206,7 +204,7 @@ def test_short_or_malformed_freeze_rev_is_refused(bad):
 
 
 def test_missing_freeze_rev_is_refused_by_the_cli():
-    script = str(_REPO / "experiments" / "oracle" / "s6_m14_amb_pilot.py")
+    script = str(_REPO / "experiments" / "oracle" / "s6_m18_amb_pilot.py")
     out = subprocess.run([sys.executable, script, "--preflight"],
                          capture_output=True, text=True)
     assert out.returncode != 0
@@ -217,7 +215,7 @@ def _pass_static(monkeypatch, tmp_path, rev=_SHA):
     # the real stream is retired (results commit); the gate under
     # test is never the ledger here
     monkeypatch.setattr(pilot, "assert_fresh_scalar",
-                        lambda name: 40_000_461)
+                        lambda name: 40_000_481)
     monkeypatch.setattr(pilot, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(pilot, "_git_state",
                         lambda: {"rev": rev, "dirty": False,
@@ -234,7 +232,7 @@ def _pass_static(monkeypatch, tmp_path, rev=_SHA):
 
 def test_preflight_passes_only_on_the_exact_sha(monkeypatch, tmp_path):
     _pass_static(monkeypatch, tmp_path)
-    assert pilot.preflight(_SHA)["seed"] == 40_000_461
+    assert pilot.preflight(_SHA)["seed"] == 40_000_481
     with pytest.raises(SystemExit, match="exact\\s+approved commit"):
         pilot.preflight("b" * 40)
 
@@ -330,7 +328,7 @@ def test_main_publishes_with_the_general_rule(monkeypatch, tmp_path):
     # every chunk left an atomic non-verdict checkpoint behind
     ck = json.loads((tmp_path / "c.json").read_text(encoding="utf-8"))
     assert ck["events_done"] == 64
-    assert ck["rng_stream"] == "s6_m14_pilot"
+    assert ck["rng_stream"] == "s6_m18_pilot"
     assert ck["non_verdict"] is True
 
 
@@ -458,7 +456,7 @@ def test_a_write_once_refusal_on_our_own_artifact_files_no_incident(
     # preflight must not see it, or it refuses before the run
     monkeypatch.setattr(
         pilot, "preflight",
-        lambda rev: {"manifest": {}, "seed": 40_000_461,
+        lambda rev: {"manifest": {}, "seed": 40_000_481,
                      "git": {"rev": _SHA, "dirty": False,
                              "dirt": []}})
     monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
@@ -478,7 +476,7 @@ def test_a_write_once_refusal_on_a_foreign_artifact_files_an_incident(
         {"reservation": {"object": "f" * 40}}), encoding="utf-8")
     monkeypatch.setattr(
         pilot, "preflight",
-        lambda rev: {"manifest": {}, "seed": 40_000_461,
+        lambda rev: {"manifest": {}, "seed": 40_000_481,
                      "git": {"rev": _SHA, "dirty": False,
                              "dirt": []}})
     monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
@@ -499,7 +497,7 @@ def test_the_committed_manifest_is_the_tree_it_describes():
 
 def test_the_doc_freezes_the_discipline():
     doc = (_REPO / "docs" / "prereg"
-           / "p14_s6_m14_pilot.md").read_text(encoding="utf-8")
+           / "p14_s6_m18_pilot.md").read_text(encoding="utf-8")
     flat = " ".join(doc.split())
     assert "no auto-raise, ever" in flat
     assert "general in k" in flat.lower()
@@ -555,7 +553,7 @@ def test_the_anchors_come_from_the_ladder_source_of_truth():
 def test_make_commit_refuses_cleanly_when_git_fails(monkeypatch):
     """The PR #85 pre-push contract holds in THIS reservation copy."""
 
-    import s6_m14_reservation as res
+    import s6_m18_reservation as res
 
     class _Fail:
         returncode = 1
