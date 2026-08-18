@@ -1,0 +1,91 @@
+{
+ "kind": "results",
+ "run_kind": "s6_m18_pilot",
+ "stage": "S6 M=1.8 ambiguity pilot: fixed-n tri-state indicator scan on the rung box measure",
+ "frozen_config": {
+  "n_events": 3940846,
+  "u_max": 30,
+  "alpha_pilot": 0.01,
+  "tail_budget": 0.001,
+  "a_provisional": 720.0,
+  "seed_name": "s6_m18_pilot",
+  "tol": 1e-08,
+  "chunk": 65536,
+  "max_calls": 7888153,
+  "max_wall_s": 86400.0
+ },
+ "g3a_preflight": {
+  "passed": true,
+  "metered_calls": 6461
+ },
+ "decision": {
+  "k_ambiguous": 0,
+  "n_events": 3940846,
+  "p_upper": 1.1685733203601613e-06,
+  "p_upper_confidence": 0.99,
+  "lambda_u": 11.509217296559546,
+  "u_max": 30,
+  "tail_p_u_gt_u_max": 1.474928913123999e-06,
+  "tail_budget": 0.001,
+  "verdict": "FEASIBLE",
+  "rule": "exact one-sided Clopper-Pearson upper at 1 - alpha_pilot from (k, n); lambda_U = A_provisional * SCALE * p_upper; exact Poisson tail P(U > U_max) <= tail_budget -- general in k, fixed n, no extension"
+ },
+ "scan": {
+  "k_ambiguous": 0,
+  "events_done": 3940846,
+  "calls": 7881692
+ },
+ "reservation": {
+  "ref": "refs/s6m18pilot/reservation",
+  "authority": "github.com/lpaiu-cs/causal-spacetime",
+  "object": "f695f96c03e5a0781428f4a2ddb77097ff16e94d",
+  "seed_spent": true,
+  "verified_at_exit": true
+ },
+ "seed": {
+  "s6_m18_pilot": 40000481
+ },
+ "freeze_sha": "994ec895ad8a6a93890da7b095c20d5aec094300",
+ "manifest_digest": "a408501cda319ae9520de5d0b92280cbfd15b9b8c361a3eb83908468abc491c8",
+ "code": {
+  "start": {
+   "rev": "994ec895ad8a6a93890da7b095c20d5aec094300",
+   "dirty": false,
+   "dirt": []
+  },
+  "end": {
+   "rev": "994ec895ad8a6a93890da7b095c20d5aec094300",
+   "dirty": false,
+   "dirt": []
+  }
+ },
+ "budget": {
+  "reserved": 7888153,
+  "completed": 7888153,
+  "unfinished": 0,
+  "wall_s": 8389.44684410002,
+  "wall_overrun_s": 0.0,
+  "max_calls": 7888153,
+  "max_wall_s": 86400.0,
+  "max_batch_calls": 8192,
+  "reserved_by_stage": {
+   "g3a_preflight": 6461,
+   "scan": 7881692
+  },
+  "stage": "publish",
+  "clock_started_at": "before G3a",
+  "cap_is_charged_against": "reserved, which never under-charges",
+  "call_cap_overshoot": "none: a batch that does not fit is refused, so max_calls is never crossed",
+  "wall_cap_is": "a start rule: no batch begins at or after max_wall_s, so the run can finish one batch late -- at most 8,192 calls, but NO rigorous bound in seconds, because the 768 us/pair cost is a host-dependent average and not a per-call maximum",
+  "nominal_overrun_s": 6.291456,
+  "nominal_overrun_is": "a projection from the measured average; the recorded wall_overrun_s is the fact"
+ },
+ "environment": {
+  "python": "3.11",
+  "gmpy2": "2.3.1",
+  "mpfr": "MPFR 4.2.2",
+  "gmp": "GMP 6.3.0",
+  "numpy": "2.4.6"
+ },
+ "total_wall_s": 8389.446866100014
+}
