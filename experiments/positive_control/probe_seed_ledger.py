@@ -117,6 +117,14 @@ from seed_windows import (
 #: stream, one run, never extended: a re-run needs a NEW freeze with
 #: a NEW scalar, and replaying this one is a reproduction, never an
 #: observation (`replay_scalar`).
+#: s6_m14_pilot: the S6 M = 1.4 rung's ambiguity-pilot stream, drawn
+#: 2026-08-18 from freeze head `69c79ec` (PR #95). Scanned all
+#: 6,024,777 events (12,049,553 calls -- 2n minus the ONE ambiguous
+#: event's leg-1 early exit) and published FEASIBLE at k = 1 under
+#: the frozen general-k rule: the pre-sized boundary case, tail
+#: 9.99996e-04 <= 1e-3 by the frozen +3.97e-9 margin
+#: (docs/prereg/p14_s6_m14_pilot.json). `refs/s6m14pilot/reservation`
+#: (`3fc1b28`) re-verified at exit and RETAINED.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -135,6 +143,7 @@ OBSERVED_PROBE_SCALARS = {
     "o4b_g2_leakage": 40_000_411,
     "o5_amb_pilot": 40_000_441,
     "o5_campaign": 40_000_451,
+    "s6_m14_pilot": 40_000_461,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
@@ -182,15 +191,15 @@ OBSERVED_PROBE_SCALARS = {
 #: next allocation belongs to whatever stage the PI rules next (S6
 #: mass ladder is the stated candidate); nothing here pre-allocates
 #: it.
-#: s6_m14_pilot: the S6 mass-ladder M = 1.4 rung's ambiguity-pilot
-#: stream, allocated 2026-08-18 under the rung pilot freeze
-#: (docs/prereg/p14_s6_m14_pilot.md). One stream, one run, never
-#: extended; the commit that records ANY outcome must move it to
-#: OBSERVED_PROBE_SCALARS. Lineage-independent of every other
-#: stream; `refs/s6m14pilot/reservation` serialises the opening.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "s6_m14_pilot": 40_000_461,
-}
+#: s6_m14_pilot (allocated 2026-08-18 under the rung pilot freeze)
+#: was drawn 2026-08-18 from freeze head `69c79ec` and is retired in
+#: OBSERVED in the same commit that added the observed artifact: the
+#: run scanned all 6,024,777 events (12,049,553 calls -- 2n minus
+#: the ONE ambiguous event's leg-1 early exit), published FEASIBLE
+#: at k = 1 under the frozen general-k rule (the pre-sized boundary:
+#: tail 9.99996e-04 <= 1e-3 by the +3.97e-9 margin), and re-verified
+#: `refs/s6m14pilot/reservation` (`3fc1b28`, RETAINED) at exit.
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
