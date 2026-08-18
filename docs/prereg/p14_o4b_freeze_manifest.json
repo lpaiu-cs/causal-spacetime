@@ -19,7 +19,7 @@
   "experiments/oracle/o4b_reservation.py": "bf83c5e06d5a8ce2b0e0c70e68240487c8ec0ef634e747c28324e7962e7a6ed4",
   "experiments/oracle/o4b_volume_audit.py": "ce3d80aed80cb310dd3969f04452b6ed0ff591cc45d3c38ed0efe37be915e647",
   "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
-  "experiments/positive_control/probe_seed_ledger.py": "16720b9cf6c8c53890539214d3442f05b6587d830444603e044cab8e0954dafc",
+  "experiments/positive_control/probe_seed_ledger.py": "5192da038ad831c3b99d3aa6ba3b18896cce89eae8c39b721a5d1b091244ac19",
   "docs/prereg/p14_o4_volume_audit.md": "cfaf4f1d57239fe181f54b20c010d1d25e7257820fb7a646f52a29fec04ae93d",
   "docs/prereg/p14_o4_g3_redesign.md": "166c10dc2328763a5210aaf07affcdef77e39adc8d64b3d9ebb1fa3ffb75ee6a",
   "docs/prereg/p14_o4_g3_prereg_reopen.md": "8d51913d56b10bd71c76b87bc02a1b0c9c74c2abe68f2a723aee58e267f97e72",
