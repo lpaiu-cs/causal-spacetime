@@ -29,15 +29,16 @@ FIXED n; an INCONCLUSIVE pilot stops this RUNG for a PI ruling and
 indicts nothing (the other rungs proceed independently -- verdict
 separation).
 
-BUDGET. max_calls = 2*n + 6,537: the hard per-event bound (two legs)
-plus the deterministic full-wrapper G3a preflight, which runs BEFORE
+BUDGET. max_calls = 2*n + 6,517: the hard per-event bound (two legs)
+plus the rung-measured deterministic full-wrapper G3a preflight (at
+m = 1.4 and the rung geometry -- NOT M = 1's 6,537), which runs BEFORE
 the reservation and is charged to the same budget. The caps are
 frozen: RAISING THEM DURING OR AFTER THE RUN IS FORBIDDEN.
 
 ORDER. static preflight (digests, environment lock, clean tree at the
 exact approved SHA, artifact absence, fresh-seed assertion, retained
 refs, namespace probe) -> metered G3a wrapper preflight -> reservation
-claim on `refs/o5pilot/reservation` (the claim RETURNS its object; the
+claim on `refs/s6m14pilot/reservation` (the claim RETURNS its object; the
 attempt is nonce-unique; any uncertain push outcome is SEED POSSIBLY
 SPENT, fail-closed) -> RNG construction -> fixed-n chunked scan with
 an atomic non-verdict checkpoint per chunk -> reservation re-read ->
@@ -132,9 +133,10 @@ if (_g["dt"] != _RUNG["dt"] or _g["r_lo"] != _RUNG["r_lo"]
 _GEOMETRY = _g
 del _g
 
-#: The anchors, exactly the rung's.
-_P = np.array([0.0, 12.0, 0.0, 0.0])
-_Q = np.array([_RUNG["dt"], 18.0, 0.0, 0.0])
+#: The anchors, from the ladder's single source of truth -- fixed in
+#: absolute coordinates across every rung.
+_P = np.array([0.0, s6.R_IN, 0.0, 0.0])
+_Q = np.array([_RUNG["dt"], s6.R_OUT, 0.0, 0.0])
 
 
 # ------------------------------------------------ the frozen rule
@@ -669,8 +671,8 @@ def main() -> None:
         result = {
             "kind": "results",
             "run_kind": "s6_m14_pilot",
-            "stage": ("O5 ambiguity pilot: fixed-n tri-state "
-                      "indicator scan on the campaign box measure"),
+            "stage": ("S6 M=1.4 ambiguity pilot: fixed-n tri-state "
+                      "indicator scan on the rung box measure"),
             "frozen_config": {kk: v for kk, v in FROZEN.items()},
             "g3a_preflight": {
                 "passed": True,
@@ -790,7 +792,7 @@ PROTOCOL_SURFACE = (
 
 def build_manifest() -> dict:
     return {
-        "stage": ("O5 ambiguity-pilot freeze manifest "
+        "stage": ("S6 M=1.4 ambiguity-pilot freeze manifest "
                   "(content-addressed protocol surface)"),
         "note": MANIFEST_NOTE,
         "files": {rel: _sha256(_REPO / rel)

@@ -521,10 +521,48 @@ def test_publish_time_reverify_uncertainty_names_publish(
     monkeypatch.setattr(sys, "argv", ["prog", "--freeze-rev", _SHA])
     with pytest.raises(SystemExit, match="incident written"):
         pilot.main()
+    assert not (tmp_path / "a.json").exists()
     inc = json.loads((tmp_path / "i.json").read_text(encoding="utf-8"))
     assert inc["failure_point"] == "publish"
     assert inc["reservation_claimed"] is True
+    assert inc["reservation_object"] == "d" * 40
     assert inc["reservation_uncertainty"] is None
+    assert inc["seed_spent"] is True
     rec = inc["publish_reverify_uncertainty"]
     assert rec["seeds_must_be_treated_as"] == "spent"
+    assert rec["push_reported"] == "did not report"
     assert inc["preserved"]["events_done"] == small["n_events"]
+
+
+def test_the_anchors_come_from_the_ladder_source_of_truth():
+    """_P/_Q reference s6_rungs' absolute anchors -- a ladder-anchor
+    change cannot silently desync this runner (review PR #95 R1)."""
+
+    import s6_rungs as s6
+
+    assert pilot._P[1] == s6.R_IN == 12.0
+    assert pilot._Q[1] == s6.R_OUT == 18.0
+    assert pilot._Q[0] == pilot._RUNG["dt"]
+    assert pilot._P[0] == 0.0
+
+
+def test_make_commit_refuses_cleanly_when_git_fails(monkeypatch):
+    """The PR #85 pre-push contract holds in THIS reservation copy."""
+
+    import s6_m14_reservation as res
+
+    class _Fail:
+        returncode = 1
+        stdout = ""
+        stderr = "boom"
+
+    monkeypatch.setattr(res.subprocess, "run", lambda *a, **k: _Fail())
+    with pytest.raises(SystemExit, match="hash-object"):
+        res._make_commit("x")
+
+    def no_git(*a, **k):
+        raise FileNotFoundError("git is not available")
+
+    monkeypatch.setattr(res.subprocess, "run", no_git)
+    with pytest.raises(SystemExit, match="could not run"):
+        res._make_commit("x")

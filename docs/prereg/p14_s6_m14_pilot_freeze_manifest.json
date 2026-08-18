@@ -1,8 +1,8 @@
 {
- "stage": "O5 ambiguity-pilot freeze manifest (content-addressed protocol surface)",
+ "stage": "S6 M=1.4 ambiguity-pilot freeze manifest (content-addressed protocol surface)",
  "note": "raw sha256; all paths .gitattributes eol=lf pinned. The rung pilot inherits the O5 pilot's instrument surface (predicate, wrapper preflight at the rung mass+geometry, budget/meter, reservation mechanics) with this rung's one-exact-path constants; the rung oracle artifact is pinned because n and A were sized from its actual endpoints, and p14_o3_volume.json because o4_sizing imports it (the O5 maintenance lesson). This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
  "files": {
-  "experiments/oracle/s6_m14_amb_pilot.py": "6f38855867ce7b33d324a7f3a3d00e0a6d9674b3fd6d380153b64f4790bca567",
+  "experiments/oracle/s6_m14_amb_pilot.py": "4cbaa28004cddc8707b73f6ea0ec7b85dad8b4a32c24cfcf91f79958a138aa3c",
   "experiments/oracle/s6_m14_reservation.py": "4a1704f7cf01eeec90ed24fc0ea447d50b26247581f6f2bd707e81188bf17fa8",
   "experiments/oracle/s6_rungs.py": "162f4b3294620eb99f0c3a02347af746dd8077f9c79eefdbfbd6410b0071155c",
   "experiments/oracle/o4b_reservation.py": "bf83c5e06d5a8ce2b0e0c70e68240487c8ec0ef634e747c28324e7962e7a6ed4",
@@ -15,7 +15,7 @@
   "experiments/oracle/certified_interval.py": "65f339a0cddbede8a832a7efcaf1d5f92e6be9b8c4d493afae5475aaff72ac3f",
   "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
   "experiments/positive_control/probe_seed_ledger.py": "c6caaefbdf574cd4d9abbffbe35acb4c5aa70d52840bc2c51ddfb556723e121d",
-  "docs/prereg/p14_s6_m14_pilot.md": "c3201464cae0ce1a2769eb1051bd958abdff3b558ed2c39c2426c08684501773",
+  "docs/prereg/p14_s6_m14_pilot.md": "dec14b1a094fc8b8ce098e6fb1ab24a1e0140805e9e11323d14a240cf5a381b6",
   "docs/prereg/p14_s6_m14_volume.json": "149d387e66ade69209209460665a3e11562d9c6e9f3c963d05610355f76217e8",
   "docs/prereg/p14_o3_volume.json": "aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f",
   "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"

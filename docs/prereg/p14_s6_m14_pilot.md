@@ -26,7 +26,7 @@ proceed independently (verdict separation).
 | rung | m = 1.4, μ = 0.18666666666666665, dt = 9.070565190742672 |
 | box | r ∈ [11.367185829820095, 18.7053462469963], ψ ≤ 0.623439673163968 (import-gated vs the one exact path) |
 | `SCALE_rung` | 18141.08004658374 |
-| `n_events` | **6,024,777** (fixed; never extended — the smallest n keeping the k = 1 boundary FEASIBLE with a positive margin at A_provisional·SCALE_rung, mirroring the central pilot's boundary choice; margin 3.98e-9 of tail) |
+| `n_events` | **6,024,777** (fixed; never extended — the smallest n keeping the k = 1 boundary FEASIBLE with a positive margin at A_provisional·SCALE_rung, mirroring the central pilot's boundary choice; margin 3.97e-9 of tail) |
 | `u_max` | 30 |
 | `alpha_pilot` | 0.01 (exact one-sided Clopper–Pearson) |
 | `tail_budget` | 0.001 |
