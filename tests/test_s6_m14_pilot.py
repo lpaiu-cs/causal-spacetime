@@ -51,7 +51,9 @@ def test_frozen_configuration_is_the_ruled_one():
 def test_the_seed_is_fresh_and_301_untouched():
     import probe_seed_ledger as ledger
 
-    assert ledger.assert_fresh_scalar("s6_m14_pilot") == 40_000_461
+    assert "s6_m14_pilot" not in ledger.FRESH_PROBE_SCALARS
+    assert ledger.OBSERVED_PROBE_SCALARS["s6_m14_pilot"] == 40_000_461
+    assert ledger.replay_scalar("s6_m14_pilot") == 40_000_461
     assert 40_000_301 not in ledger.spent_scalars()
     assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
 
@@ -212,6 +214,10 @@ def test_missing_freeze_rev_is_refused_by_the_cli():
 
 
 def _pass_static(monkeypatch, tmp_path, rev=_SHA):
+    # the real stream is retired (results commit); the gate under
+    # test is never the ledger here
+    monkeypatch.setattr(pilot, "assert_fresh_scalar",
+                        lambda name: 40_000_461)
     monkeypatch.setattr(pilot, "verify_freeze", lambda stage: {})
     monkeypatch.setattr(pilot, "_git_state",
                         lambda: {"rev": rev, "dirty": False,
