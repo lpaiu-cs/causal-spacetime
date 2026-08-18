@@ -216,7 +216,14 @@ OBSERVED_PROBE_SCALARS = {
 #: at k = 1 under the frozen general-k rule (the pre-sized boundary:
 #: tail 9.99996e-04 <= 1e-3 by the +3.97e-9 margin), and re-verified
 #: `refs/s6m14pilot/reservation` (`3fc1b28`, RETAINED) at exit.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: s6_m18_count: the S6 M = 1.8 rung's Poisson-count sprinkling
+#: stream, allocated 2026-08-18 under the rung count freeze
+#: (docs/prereg/p14_s6_m18_count.md); same discipline as
+#: s6_m14_count (now retired). `refs/s6m18/reservation` serialises
+#: the opening.
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "s6_m18_count": 40_000_491,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
