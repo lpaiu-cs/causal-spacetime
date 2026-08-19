@@ -140,6 +140,16 @@ from seed_windows import (
 #: (docs/prereg/p14_s6_m14_count.json: D = [-0.675, +1.069]
 #: contained in [-1.6165, +1.6165]). `refs/s6m14/reservation`
 #: (`a6c8fb7`) re-verified at exit and RETAINED.
+#: s6_m18_count: the S6 M = 1.8 rung's Poisson-count sprinkling
+#: stream, drawn 2026-08-18 from freeze head `c421dce` (PR #101).
+#: N = 9,847,124 proposals, all scanned (12,086,060 predicate calls
+#: after G3a's 6,461; K_certain = 53,513, zero ambiguous), published
+#: CONCORDANT under the frozen general rule
+#: (docs/prereg/p14_s6_m18_count.json: D = [-1.017, +0.987]
+#: contained in [-1.8585, +1.8585]). `refs/s6m18/reservation`
+#: (`ba9c0e7`) re-verified at exit and RETAINED. The ladder's third
+#: rung closes: mu 0.1333 / 0.1867 / 0.2400 all independently
+#: concordant, per-rung verdicts separate.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -161,6 +171,7 @@ OBSERVED_PROBE_SCALARS = {
     "s6_m14_pilot": 40_000_461,
     "s6_m18_pilot": 40_000_481,
     "s6_m14_count": 40_000_471,
+    "s6_m18_count": 40_000_491,
 }
 
 #: Active fresh allocations, not yet observed when allocated. A
@@ -216,14 +227,7 @@ OBSERVED_PROBE_SCALARS = {
 #: at k = 1 under the frozen general-k rule (the pre-sized boundary:
 #: tail 9.99996e-04 <= 1e-3 by the +3.97e-9 margin), and re-verified
 #: `refs/s6m14pilot/reservation` (`3fc1b28`, RETAINED) at exit.
-#: s6_m18_count: the S6 M = 1.8 rung's Poisson-count sprinkling
-#: stream, allocated 2026-08-18 under the rung count freeze
-#: (docs/prereg/p14_s6_m18_count.md); same discipline as
-#: s6_m14_count (now retired). `refs/s6m18/reservation` serialises
-#: the opening.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "s6_m18_count": 40_000_491,
-}
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
