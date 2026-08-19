@@ -41,11 +41,13 @@ def test_the_frozen_ladder_constants_are_the_derived_ones():
     """The PI's independent check values, at full precision, and the
     import-time drift gate that guards them."""
 
-    assert s6.LADDER == (1.0, 1.4, 1.8)
+    assert s6.LADDER == (1.0, 1.4, 1.8, 3.0)
     assert s6.RUNG_CONSTANTS[1.4]["dt"] == 9.070565190742672
     assert s6.RUNG_CONSTANTS[1.4]["scale"] == 18141.08004658374
     assert s6.RUNG_CONSTANTS[1.8]["dt"] == 9.725248174609407
     assert s6.RUNG_CONSTANTS[1.8]["scale"] == 13679.093767152488
+    assert s6.RUNG_CONSTANTS[3.0]["dt"] == 12.442423039673733
+    assert s6.RUNG_CONSTANTS[3.0]["scale"] == 10472.024224793164
     for m, want in s6.RUNG_CONSTANTS.items():
         g = s6.rung_geometry(m)
         assert g["dt"] == want["dt"] and g["scale"] == want["scale"]
@@ -55,9 +57,9 @@ def test_the_frozen_ladder_constants_are_the_derived_ones():
 def test_mu_is_the_pre_frozen_indicator_and_genuinely_varies():
     mus = [s6.mu(m) for m in s6.LADDER]
     assert mus == sorted(mus)
-    assert mus[-1] / mus[0] == pytest.approx(1.8, abs=1e-12)
+    assert mus[-1] / mus[0] == pytest.approx(3.0, abs=1e-12)
     # no two rungs are isometric copies: same shell, different mu
-    assert len({round(x, 12) for x in mus}) == 3
+    assert len({round(x, 12) for x in mus}) == 4
 
 
 def test_every_lemma_condition_certifies_on_every_rung():
@@ -220,3 +222,30 @@ def test_the_addendum_freezes_the_ladder_discipline():
     # the frozen table rows quote the exact constants
     assert "18141.08004658374" in flat
     assert "13679.093767152488" in flat
+
+
+def test_the_deep_end_is_bounded_by_the_photon_sphere_not_by_taste():
+    """M = 3.0 is the deepest rung BECAUSE `w_monotone` (photon sphere
+    3M below the shell floor R_MIN) fails at M = 10/3. This pins the
+    ceiling and the margin that made 3.0, not 3.2/3.3, the choice --
+    so a later rung cannot silently be parked on the cliff."""
+
+    r_min = 10.0
+    assert s6.LADDER[-1] == 3.0
+
+    # the binding condition is certified with a full tenth of R_MIN
+    deep = s6.lemma_table(3.0)
+    assert deep["all_pass"]
+    assert deep["rows"]["w_monotone"]["margin"] == pytest.approx(1.0, abs=1e-9)
+
+    # ... and it is genuinely binding: just past the photon-sphere
+    # crossing the same table refuses the rung
+    over = s6.lemma_table(r_min / 3.0 + 0.01)
+    assert not over["all_pass"]
+    assert not over["rows"]["w_monotone"]["certified"]
+
+    # every other lemma gets SAFER with depth, so w_monotone is the
+    # only thing standing between 3.0 and the horizon-ward direction
+    for name in ("l5_winding", "l4_nonempty", "l4_polar_cap"):
+        shallow = s6.lemma_table(1.8)["rows"][name]["margin"]
+        assert deep["rows"][name]["margin"] > shallow, name
