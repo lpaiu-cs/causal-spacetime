@@ -7,7 +7,7 @@
   "experiments/oracle/volume_oracle.py": "382824570f9d16081b96b4e93d60074c360cfb560dc7c38f7e5bc6daaa58b072",
   "experiments/oracle/certified_flight_time.py": "6d62bc9b0ca16d5d88cb3f365ad659bc2e27842ec2a183d86fb1bb769738a226",
   "experiments/oracle/certified_interval.py": "65f339a0cddbede8a832a7efcaf1d5f92e6be9b8c4d493afae5475aaff72ac3f",
-  "docs/theory/schwarzschild_volume_oracle_certification.md": "f2dc9dfd65b35140d7f550465e9633492a9b4eea54bdc7588c4b285003ad8197",
+  "docs/theory/schwarzschild_volume_oracle_certification.md": "0cf0e6807b4adabcfa46e1fe1f565cdaadca38e38ec4020f7f874b71027a61e7",
   "docs/prereg/p14_s6_m30_volume.md": "e789b1d4d2eebdbe3ccd9e728b8ed47362f9d050ace29bebb11a968ea85940c0",
   "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
  },

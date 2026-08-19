@@ -64,6 +64,23 @@ boundary is recorded separately in `artifact_manifest.md`.
   to the completed run's preserved statistics: no new seed, no solver call,
   no resampling, no gate change (`docs/prereg/p14_o4b_results.json`). An
   instrument statement only; see the non-claims below.
+- **Prediction-anchored Poisson count, per rung (preregistered, 3+1D).**
+  On each preregistered rung of the mass ladder independently — `mu = 2M/r_c`
+  in {0.1333, 0.1867, 0.2400} on the shell `[10, 20]` with anchors `(12, 18)`
+  fixed in ABSOLUTE coordinates, so no rung is an isometric copy — the
+  certified-membership count of a Poisson sprinkling realized that rung's
+  independently certified continuum volume within `tau = 2.5%`, under a rule
+  frozen before any count data existed. The gate is the identified
+  discrepancy of a conservative outer Garwood interval (lower limit at
+  `K_certain`, upper at `K_certain + U_amb`, each tail at level 0.025)
+  rescaled by the intensity, required to lie in `+- tau*V_ref`; three-way
+  verdict, 96-bit throughout. CONCORDANT at every rung:
+  `mu = 0.1333` K = 53,285, U = 0, D = [-0.854796, +0.676594] in +-1.419420
+  (`docs/prereg/p14_o5_count.json`);
+  `mu = 0.1867` K = 53,829, U = 1, D = [-0.675256, +1.069450] in +-1.616487
+  (`docs/prereg/p14_s6_m14_count.json`);
+  `mu = 0.2400` K = 53,513, U = 0, D = [-1.016709, +0.987400] in +-1.858507
+  (`docs/prereg/p14_s6_m18_count.json`).
 
 ## Negative results (bounding the ladder)
 
@@ -99,12 +116,16 @@ boundary is recorded separately in `artifact_manifest.md`.
   NOT complete separation (AUC ≈ 0.973, unlike the plane-wave C2, and no
   completeness gate was preregistered); the secondary BA verdict does not
   strengthen or combine with the primary; NOT mass-general (single frozen
-  M = 1); NOT prediction-anchored — no diamond-volume oracle is used in the
+  M = 1 for THESE stages — the mass ladder is the separate Section 6.8
+  stage); NOT prediction-anchored — no diamond-volume oracle is used in the
   S4/S5 verdicts themselves. The oracle is now fully certified and executed
   (`docs/theory/schwarzschild_volume_oracle_note.md`,
   `docs/prereg/p14_o3_volume.json`), and the auxiliary O4b audit above
   consumed it — but that audit does not promote S4/S5 to
-  prediction-anchored, and the Poisson-count stage is separately open.
+  prediction-anchored (the S4/S5 verdicts themselves use no oracle). The
+  Poisson-count stage is a SEPARATE preregistered stage, now executed
+  across the mass ladder (see the claimed block above); it does not
+  promote S4/S5.
 - Capstone non-claims: NOT a general-Weyl discriminator (Petrov type N, exact
   volume form is unrepresentative); NOT Weyl-tensor recovery (no reconstructed
   quantity — a boundary experiment, not a ladder rung); NOT box- or
@@ -123,7 +144,22 @@ boundary is recorded separately in `artifact_manifest.md`.
   the instrument stack agrees with the certified continuum volume within the
   frozen margin at ONE frozen configuration. It is NOT a prediction-anchored
   promotion of S4/S5, NOT a C1/C2 joint verdict, NOT a Poisson causal-set
-  count verification (sprinkle counts vs rho*V is a separate, open stage),
+  count verification (sprinkle counts vs rho*V is a separate stage, executed
+  separately across the mass ladder and not by this audit),
   NOT mass- or domain-generality (single frozen M = 1 and box), NOT a
   confirmation of causal-set theory, and NOT complete separation or general
   volume accuracy. Nothing in Sections 6-6.7 is upgraded by it.
+- Prediction-anchored Poisson-count non-claims: the three rung verdicts are
+  SEPARATE preregistered stages — there is NO joint or composite cross-rung
+  verdict and no pooled statistic. NOT a statement at any compactness between
+  or beyond the tested rungs: no interpolation, no extrapolation, no fitted
+  trend in `mu` is claimed (the monotone growth of the certified volume with
+  `mu` is geometry, not a result). NOT a confirmation of causal-set theory
+  and NOT evidence that spacetime is discrete — a count agreeing with a
+  volume says the instrument reproduces the continuum measure it was pointed
+  at. NOT a promotion of the Section 6-6.7 verdicts or of the auxiliary O4b
+  audit, none of which use it. NOT density- or domain-generality: one fixed
+  diamond and one fixed intensity per rung, on a Schwarzschild exterior
+  shell. The tolerance `tau = 2.5%` was chosen to be FEASIBLE at the frozen
+  sizing, not to be sharp, so CONCORDANT means "inside that band", not
+  "agreement to 2.5% is the instrument's accuracy".

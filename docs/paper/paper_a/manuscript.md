@@ -37,7 +37,12 @@ classifier confirm against frozen margins. Separate preregistered stages
 extend both claim classes to a frozen Schwarzschild exterior patch (type D,
 whose coordinate volume element is likewise mass-independent): the C1 paired
 effect is confirmed, while C2 single-poset discrimination is detected with
-incomplete separation. The
+incomplete separation. A further preregistered stage anchors a measurement to
+a certified prediction rather than to an operational margin: on each rung of a
+mass ladder whose diamond is fixed in absolute coordinates so that no rung is
+an isometric copy, the certified-membership count of a Poisson sprinkling is
+required to realize that rung's independently certified continuum 4-volume
+within a frozen 2.5% band, and does so at all three tested compactnesses. The
 contribution is not any
 single reconstruction — most are standard — but the explicit accounting of what
 each rung requires and the negative results that bound it. We make no claim
@@ -475,7 +480,8 @@ the separate preregistered extensions of Section 6.7 — the C1 paired claim
 confirmed, C2 single-poset discrimination detected with incomplete
 separation; the diamond-volume oracle is now certified, and its direct-MC
 instrument audit is complete as an auxiliary result (Section 9, Appendix B),
-while the prediction-anchored Poisson-count stage remains separately open. A
+and the prediction-anchored Poisson-count stage is executed across a
+three-rung mass ladder, CONCORDANT at every rung (Section 6.8). A
 separate cost measurement (S1) prices the causal-predicate component — about
 0.77 ms per pair on the tested solver, patch, and tolerance, roughly 360x the
 plane-wave predicate (`docs/prereg/p14_s1_cost.json`).
@@ -575,11 +581,105 @@ complete, while the Schwarzschild discrimination is strong but imperfect
 verdict neither strengthens nor combines with the primary. The extension
 establishes no mass-generality (a single frozen `M`) and uses no
 diamond-volume oracle (margins operationally anchored or independently
-declared). Execution provenance for both stages, including the
+declared) — the mass ladder and the certified-volume anchor belong to the
+separate stage of Section 6.8, which does not promote these two verdicts.
+Execution provenance for both stages, including the
 executed-freeze manifest snapshots, is in Appendix B.
 
 The full execution provenance — the preregistration's freeze ordering, its
 mechanical gates, and the commit-ancestry contract — is in Appendix B.
+
+### 6.8 Prediction-anchored Poisson count, and its mass generalization
+
+Every verdict so far is anchored operationally: a margin taken from an
+exploration block, or a threshold declared before sizing. This stage is
+different. The diamond-volume oracle certifies an interval for the continuum
+4-volume `V` of a fixed causal diamond, by directed-rounding arithmetic and
+before any count data exists; a Poisson sprinkling then supplies a count of
+elements certified to lie inside that same diamond. The question is whether
+the operational instrument realizes the certified prediction. Nothing in
+Sections 6-6.7 is used to answer it, and the answer cannot be tuned after the
+fact: the endpoints, the intensity, the tolerance and the decision rule are
+all frozen in the rung's preregistration before its seed is drawn.
+
+**The instrument.** Points are sprinkled at a frozen intensity `A` into the
+certified box, and each point's membership is decided by the certified causal
+predicate on both legs. A point the predicate cannot decide at the frozen
+tolerance is *not guessed*: it is counted as ambiguous (`U_amb`) and enters
+the decision only through the conservative end of the interval. Each rung
+first runs a fixed-`n` ambiguity pilot (exact Clopper-Pearson plus an exact
+Poisson tail bound at `alpha = 0.01`, tail budget `1e-3`) that must certify
+`U_max <= 30` before the count campaign is sized; the campaign's membership
+test short-circuits on a decided first leg, so a point the campaign calls
+ambiguous is necessarily one the pilot's test would also call ambiguous, and
+the pilot's bound transfers a fortiori.
+
+**The frozen rule.** From the realized `(K_certain, U_amb)` the rule builds a
+deliberately conservative *outer* count interval — the exact Garwood lower
+limit at `K_certain`, the upper limit at `K_certain + U_amb`, each tail at
+level 0.025, so the ambiguous points can only widen the interval outward and
+never move it toward agreement. Rescaled by the intensity this is a volume
+interval `C = [L/A, U/A]`, and the quantity gated is the *identified
+discrepancy* against the certified enclosure,
+
+    D = [C_lo - V_hi, C_hi - V_lo],   required to lie in [-B, +B],
+    B = tau * V_ref,   tau = 2.5%,
+
+with three ways out and no fourth: contained gives CONCORDANT, disjoint
+gives DISCORDANT, and anything else gives INCONCLUSIVE, published as it
+falls. The arithmetic is 96-bit end to end, and contract tests prove at the
+integer boundaries that the frozen acceptance window is exactly the set of
+counts the decision function calls CONCORDANT, so "the sizing" and "the
+verdict" cannot drift apart.
+
+**The ladder.** One rung would establish the gate at one geometry. To ask
+whether the agreement is a property of the instrument rather than of a lucky
+configuration, the same gate is carried across a preregistered mass ladder.
+The certified shell `[10, 20]` and the anchors `(12, 18)` stay fixed in
+*absolute* coordinates and only the mass changes, so no rung is an isometric
+copy of another: the pre-frozen dimensionless indicator is the compactness
+`mu = 2M/r_c` at the anchor midpoint `r_c = 15`. The patch-level lemmas are
+mass-generic only under stated conditions (horizon below the shell, `K < 0`,
+`w` monotone, `Q > 0`, the L2a patch bound, four L4 margins, an L5 winding
+cross-check), and each is re-certified per rung as an interval comparison —
+nothing is inherited silently from `M = 1`.
+
+Three rungs were executed, each from its own exact freeze checkout, with its
+own seed, once:
+
+| `mu` | `M` | certified `V` | pilot | `N` | `K_certain` | `U_amb` | `C` | `D` | `B` | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0.1333 | 1.0 | [56.492959, 57.060667] | k=0 | 26,831,117 | 53,285 | 0 | [56.205871, 57.169553] | [-0.854796, +0.676594] | 1.419420 | **CONCORDANT** |
+| 0.1867 | 1.4 | [64.336198, 64.982744] | k=1 | 15,057,284 | 53,829 | 1 | [64.307488, 65.405648] | [-0.675256, +1.069450] | 1.616487 | **CONCORDANT** |
+| 0.2400 | 1.8 | [73.968637, 74.711920] | k=0 | 9,847,124 | 53,513 | 0 | [73.695211, 74.956037] | [-1.016709, +0.987400] | 1.858507 | **CONCORDANT** |
+
+The certified volume grows monotonically with the compactness (57 to 65 to
+74) as the geometry requires, and the realized discrepancy stays well inside
+the band at every rung. The `M = 1.4` pilot returned the program's first
+non-zero ambiguous count (`k = 1`); it was absorbed exactly as the sizing
+had provisioned, and it is visible in that rung's asymmetric `D`, which is
+the conservative widening working as designed rather than a defect.
+
+**What this establishes.** On each preregistered rung independently, an
+operational finite-density instrument realized that rung's independently
+certified continuum volume to within `tau = 2.5%`, under a rule fixed before
+the data existed. This is the first place in the program where a measurement
+is confronted with a certified *prediction* rather than with an operational
+anchor, and the confrontation is repeated at three genuinely different
+curvatures rather than one.
+
+**What it does not establish.** The rungs are separate preregistered stages:
+each verdict stands alone, there is no joint primary verdict, and no
+interpolation, extrapolation, or composite cross-rung statistic is claimed —
+in particular nothing is claimed at compactness between or beyond the three
+tested values. Agreement of a count with a volume is not a test of causal-set
+theory, and it is not evidence that spacetime is discrete; it is a statement
+that this instrument, at these operating points, reproduces the continuum
+measure it was pointed at. It upgrades neither the C1/C2 verdicts of Sections
+6-6.7 nor the auxiliary O4b instrument audit, none of which use it. And the
+result is bounded by its construction exactly as the capstone is: one fixed
+diamond, one fixed density per rung, a Schwarzschild exterior shell, and a
+tolerance chosen to be feasible rather than to be sharp.
 
 ## 7. Discussion
 
@@ -636,8 +736,20 @@ Schwarzschild path carries its own preregistered verdicts (Section 6.7: C1
 confirmed and C2 detected with incomplete separation, in separate stages with
 no joint primary verdict) and its own non-claims; the diamond-volume oracle
 is certified and instrument-audited there as an auxiliary result (Section 9),
-but no Section 6.7 verdict uses it, and the prediction-anchored Poisson-count
-stage remains open. A literature priority search (August 2026) found
+but no Section 6.7 verdict uses it. We claim, as a separate preregistered
+stage per rung (Section 6.8): on each of the three preregistered rungs
+`mu` in {0.1333, 0.1867, 0.2400} independently, the certified-membership
+count of a Poisson sprinkling realized that rung's independently certified
+continuum volume within `tau = 2.5%`, under a rule frozen before the data
+existed (CONCORDANT at every rung). For that Poisson-count stage we do not
+claim: any joint or composite cross-rung verdict, any statement at
+compactness between or beyond the tested rungs (no interpolation, no
+extrapolation), any promotion of the Section 6-6.7 verdicts or of the
+auxiliary O4b audit, and nothing about causal-set theory or the
+discreteness of spacetime — a count agreeing with a volume says the
+instrument reproduces the measure it was pointed at, at one fixed diamond
+and one fixed density per rung. A literature priority search (August 2026)
+found
 partial overlap in four areas: causal-order-and-number/volume
 reconstruction (Braun 2025 \cite{braun2025}; Myrheim 1978
 \cite{myrheim1978}), Schwarzschild sprinkle count verification
@@ -703,7 +815,14 @@ agrees with the certified continuum volume at one frozen configuration — not
 a Poisson causal-set count verification, not mass- or domain-generality, not
 a C1/C2 joint verdict, and not complete separation or general volume
 accuracy. The prediction-anchored Poisson-count stage (sprinkle counts
-against `rho V`) remains a separate, open stage. The natural next question — whether
+against `rho V`) is a separate stage, and it has since been executed across
+the three-rung mass ladder of Section 6.8 — CONCORDANT at
+`mu` in {0.1333, 0.1867, 0.2400} — which is what carries the
+prediction-anchored claim; the O4b audit itself remains only the instrument
+statement described above. That ladder has its own bounds: three rungs are
+three points, the tolerance was chosen to be feasible rather than sharp, and
+a deeper fourth rung at `mu = 0.4` is preregistered and executing, its
+outcome no part of the claims made here. The natural next question — whether
 observer-relative distance *order* can be validated as recovering latent
 geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this
