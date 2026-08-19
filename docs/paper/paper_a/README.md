@@ -9,16 +9,20 @@ numerical correctness against known causal-set and special-relativistic
 results was independently checked; on top of it the manuscript carries the
 preregistered Section 6 capstone (P14 type-N pure-Weyl, POSITIVE), the
 Section 6.7 Schwarzschild extensions (S4 C1-paired CONFIRMED, S5 C2-unpaired
-DETECTED), and the auxiliary O4b instrument audit (CONCORDANT, recovered).
+DETECTED), the auxiliary O4b instrument audit (CONCORDANT, recovered), and
+the Section 6.8 prediction-anchored Poisson-count stage — CONCORDANT on
+each of three preregistered mass-ladder rungs (`mu` = 0.1333 / 0.1867 /
+0.2400), per rung and with no joint verdict.
 Every quantitative result is tied to a
 producing experiment and expected summary path. The submission gate is met:
 all 19 cited legacy summary tables are committed and digest-locked, and the
 Section 6 capstone evidence bundle is finalized and provenance-locked —
 `artifact_manifest.md` is the authority for the archived state, and a
 contract test recomputes every digest. Three figures are included (ladder
-schematic; grounded convergence panel; measure dependence). Remaining before
-submission: the literature priority search and the final manuscript/bundle
-freeze.
+schematic; grounded convergence panel; measure dependence). The literature priority search is
+complete (`literature_priority_oracle_arc.md` for the oracle arc,
+`literature_priority_s6_ladder.md` for the mass ladder). Remaining before
+submission: the final manuscript/bundle freeze.
 
 ## Scope and relation to Paper B
 

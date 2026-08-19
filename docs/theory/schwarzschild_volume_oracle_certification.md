@@ -514,8 +514,10 @@ been consumed once, by the auxiliary O4b direct-MC instrument audit
 (CONCORDANT at the single frozen configuration, verdict recovered
 from the completed run's preserved statistics —
 `docs/prereg/p14_o4b_results.json`); per the Section 6.7 claim
-boundary that audit upgrades nothing in Paper A, and the
-prediction-anchored Poisson-count stage remains separately open.
+boundary that audit upgrades nothing in Paper A. The
+prediction-anchored Poisson-count stage is separate from that audit and
+has since been executed across the S6 mass ladder — CONCORDANT on each
+of the three preregistered rungs, per rung and with no joint verdict.
 
 ## S6 addendum: mass-general instantiation (the ladder rungs)
 

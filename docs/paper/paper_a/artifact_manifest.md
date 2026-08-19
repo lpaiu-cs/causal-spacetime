@@ -137,7 +137,7 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | `experiments/positive_control/probe_seed_ledger.py` | `3c3a07f1bf0f1194a3b6a66951a056fcf441691b4328087557a7b72dd60a62de` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
 | `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
-| `docs/theory/schwarzschild_volume_oracle_note.md` | `e7c10656cd1fb86b9978096374950a1c438cd7e49bbff647a1350027c62c5ad1` |
+| `docs/theory/schwarzschild_volume_oracle_note.md` | `56f7cb9ae851674bfb3c725f529be059418d7af52ab6f1580a23b0aa5ddeaa36` |
 
 ### Section 6.7 second-stage bundle (S5 C2-unpaired discrimination)
 
@@ -190,6 +190,38 @@ No campaign rerun stands behind any row of this table.
 | `experiments/oracle/o4b_recover.py` | `d11c288771cd6401e558563b3bac3a683e8cff9ae033dabb4a0dab74b1ff70cb` |
 | `tests/test_o4b_recover.py` | `9312270e7dd2665c1f00e177f32c680e1a5ad879929f78d8f8cce16c344f4263` |
 | `tests/test_o4b_wiring_fixes.py` | `cbb88a9f0ba76ac37afb730f4cf279f3a6339948326e509c7161d5d63b37aa5f` |
+
+### Section 6.8 prediction-anchored count bundle (the mass ladder)
+
+Same digest convention. This bundle carries the three per-rung count
+verdicts CLAIMED in manuscript Section 6.8 and the claim boundary. Roles,
+per rung: the `*_volume.json` is the certified continuum interval, produced
+and frozen BEFORE any count data for that rung existed (this is what makes
+the stage prediction-anchored); the `*_pilot.json` is the fixed-n ambiguity
+pilot that certified `U_max <= 30` before the campaign was sized; the
+`*_count.json` is the campaign verdict computed by the frozen three-way
+rule; and the `*_count_executed_freeze_manifest.json` is the immutable
+snapshot of the surface that governed that rung's executed campaign,
+byte-identical to the freeze blob at its execution SHA. Each rung ran ONCE,
+from its own exact clean checkout, on its own retired seed, and each verdict
+stands alone -- there is no joint verdict and no pooled statistic across
+rungs. The central rung (`mu = 0.1333`) takes its certified interval from
+the O3' projection artifact, which the O5 campaign consumed unchanged.
+
+| File | SHA-256 |
+| --- | --- |
+| `docs/prereg/p14_o3p_volume.json` | `b1ce47ab8f6313edf2fc602199bbad4f5aa7c98871b968d6a539aa9dac0d00d2` |
+| `docs/prereg/p14_o5_amb_pilot.json` | `6c1fa96e490e86a1965be065379534fdf2e3f1506dcd3e37eb6ed7a5384182f1` |
+| `docs/prereg/p14_o5_count.json` | `e889e4ce903386ef629b8da20b991e43dec6edab79c76aeb6a525da6bd77db75` |
+| `docs/prereg/p14_o5_count_executed_freeze_manifest.json` | `7cdc7da915ac513eed1afd0f1bbe5e0eff874c9407e26f232ff7ea739d9cdec2` |
+| `docs/prereg/p14_s6_m14_volume.json` | `149d387e66ade69209209460665a3e11562d9c6e9f3c963d05610355f76217e8` |
+| `docs/prereg/p14_s6_m14_pilot.json` | `751de3f745d2537e6c2f912a1b2f2efb328f603c1ed92a5a1e7c77a6317382e6` |
+| `docs/prereg/p14_s6_m14_count.json` | `a03424d6d1a493993f1fa4cca287af5c01ff34c5182a16120da29e1c2c33bff1` |
+| `docs/prereg/p14_s6_m14_count_executed_freeze_manifest.json` | `3ac9988b5dda4db8cb3b7d0a17d20be300b2ac65c965d936ccd8a4de08fe2aca` |
+| `docs/prereg/p14_s6_m18_volume.json` | `faec26926e9450123cca8f0fa46a4e27a100b6f47bd9fdbcd577a5c22013907d` |
+| `docs/prereg/p14_s6_m18_pilot.json` | `8cfbd71eb0f5e0a0eb07f23ceb506f810920ac006c846bfc3e558889d18a72fe` |
+| `docs/prereg/p14_s6_m18_count.json` | `ebef2859f888744b318e8566362c4f3e9af1bb2577b52d5f182e13478e211299` |
+| `docs/prereg/p14_s6_m18_count_executed_freeze_manifest.json` | `8a786a0d5db82751c32d880dfb3335d3ab9e7491af7619d80adea04363cad4b3` |
 
 ### Citation-to-artifact inventory (manuscript Section 6 / Appendix B)
 

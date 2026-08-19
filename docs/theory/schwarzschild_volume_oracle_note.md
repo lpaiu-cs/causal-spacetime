@@ -109,5 +109,5 @@ budget of 3.25% with simultaneous coverage >= 95%, at the single
 frozen configuration. That is an instrument statement, not a
 prediction-anchored promotion of anything in Paper A. The
 prediction-anchored Poisson-count stage proper — sprinkle counts
-against rho*V with `causal_relation` — remains a separate, open
+against rho*V with `causal_relation` — is a separate, since-executed
 stage; nothing in Paper A is upgraded by this note or by the audit.

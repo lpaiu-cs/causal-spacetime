@@ -147,16 +147,27 @@ def test_the_pre_certification_phrasings_do_not_return():
     assert "Paper A is unchanged by this arc until" not in cert
 
 
-def test_the_poisson_count_stage_stays_stated_as_open():
-    """The correction must not overshoot: the direct-MC audit is done,
-    the prediction-anchored Poisson-count stage is NOT."""
+def test_the_poisson_count_stage_is_stated_as_executed_per_rung():
+    """The count stage is no longer open -- it ran across the mass
+    ladder and is claimed per rung. This guard therefore flips
+    direction: it now holds the promotion DOWN, so that "executed"
+    never grows into a joint verdict, an interpolated statement, or a
+    claim about causal-set theory."""
 
     for path, needle in (
             (MANUSCRIPT, "Poisson-count stage"),
-            (CLAIM_BOUNDARY, "Poisson-count stage is separately open"),
-            (ORACLE_NOTE, "remains a separate, open stage"),
-            (ORACLE_CERT, "Poisson-count stage remains separately open")):
+            (CLAIM_BOUNDARY, "Prediction-anchored Poisson count, per rung"),
+            (ORACLE_NOTE, "a separate, since-executed"),
+            (ORACLE_CERT, "executed across the S6 mass ladder")):
         assert needle in " ".join(_read(path).split()), path.name
+
+    flat = " ".join(_read(CLAIM_BOUNDARY).split())
+    assert "NO joint or composite cross-rung verdict" in flat
+    assert "no interpolation, no extrapolation" in flat
+    assert "NOT a confirmation of causal-set theory" in flat
+    assert "one fixed intensity per rung" in flat
+    # and the auxiliary audit is still only an instrument statement
+    assert "NOT a Poisson causal-set count verification" in flat
 
 
 def test_s4_s5_verdicts_do_not_use_the_oracle():
