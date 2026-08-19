@@ -654,11 +654,12 @@ procedure \cite{schuirmann1987,lakens2017} on exact Poisson (Garwood)
 \cite{garwood1936} and binomial (Clopper–Pearson) \cite{clopperpearson1934}
 intervals, and equivalence-testing-based model validation
 \cite{robinsonfroese2004} — with the frozen rule requiring the identified
-discrepancy of the 95% two-sided Garwood interval (rescaled to a volume)
-against the certified enclosure to fall within the band (each one-sided
-test at level 0.025, more conservative than the conventional 0.05). Its
-statistical novelty is thus the preregistered application against a
-certified enclosure, not the apparatus.
+discrepancy, against the certified enclosure, of a conservative outer
+Garwood count interval (its lower limit from the certain count, its upper
+limit from the count including its ambiguous members, rescaled to a volume)
+to fall within the band (each Garwood tail at level 0.025, more conservative
+than the conventional 0.05). Its statistical novelty is thus the
+preregistered application against a certified enclosure, not the apparatus.
 
 ## 9. Limitations and future work
 
