@@ -65,9 +65,18 @@ R_SHELL = (cft.R_MIN, cft.R_MAX)          # (10, 20), absolute
 R_C = 0.5 * (R_IN + R_OUT)                # 15.0, the MU anchor point
 
 #: The frozen ladder (PI ruling): central rung executed (O3'/O5),
-#: two deeper rungs to freeze. MU = 2M/r_c is THE pre-frozen
-#: dimensionless curvature indicator.
-LADDER = (1.0, 1.4, 1.8)
+#: two deeper rungs, and the strong-curvature rung M = 3.0 added by a
+#: later ruling. MU = 2M/r_c is THE pre-frozen dimensionless curvature
+#: indicator; the ladder spans MU 0.1333 -> 0.4000, a factor of three.
+#:
+#: WHY 3.0 IS THE DEEP END. The certification window is M in
+#: [0.92, 3.33]: below it L5 winding fails, above it `w_monotone`
+#: fails because the photon sphere 3M reaches the shell floor R_MIN
+#: = 10 at M = 10/3. M = 3.0 keeps a margin of 1.0 (a tenth of R_MIN)
+#: on that binding condition, where M = 3.2 / 3.3 would leave 0.4 /
+#: 0.1. Every other lemma margin GROWS with M, so 3.0 is the deepest
+#: rung that is not sitting on the cliff.
+LADDER = (1.0, 1.4, 1.8, 3.0)
 
 
 def t_min(m: float) -> float:
@@ -198,6 +207,8 @@ RUNG_CONSTANTS = {
           "mu": 0.18666666666666665},
     1.8: {"dt": 9.725248174609407, "scale": 13679.093767152488,
           "mu": 0.24000000000000002},
+    3.0: {"dt": 12.442423039673733, "scale": 10472.024224793164,
+          "mu": 0.4},
 }
 
 for _m, _want in RUNG_CONSTANTS.items():

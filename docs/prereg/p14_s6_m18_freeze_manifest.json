@@ -3,11 +3,11 @@
  "note": "raw sha256; all paths .gitattributes eol=lf pinned. The rung inherits the certified integrator and flight-time contract unchanged; its identity (dt, mu, lemma table) comes from s6_rungs' one exact path and is re-derived at import. This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
  "files": {
   "experiments/oracle/s6_m18_frozen_volume.py": "9fafd37f9bf54baf7b63696355867df320facb08e1ca8101d0dd44c19a6d1932",
-  "experiments/oracle/s6_rungs.py": "162f4b3294620eb99f0c3a02347af746dd8077f9c79eefdbfbd6410b0071155c",
+  "experiments/oracle/s6_rungs.py": "9d7a73a77025abb6a11bedcb389564213c2d8bb219a0877ed5c220a5b5814c20",
   "experiments/oracle/volume_oracle.py": "382824570f9d16081b96b4e93d60074c360cfb560dc7c38f7e5bc6daaa58b072",
   "experiments/oracle/certified_flight_time.py": "6d62bc9b0ca16d5d88cb3f365ad659bc2e27842ec2a183d86fb1bb769738a226",
   "experiments/oracle/certified_interval.py": "65f339a0cddbede8a832a7efcaf1d5f92e6be9b8c4d493afae5475aaff72ac3f",
-  "docs/theory/schwarzschild_volume_oracle_certification.md": "db871dd9e6cf65f3a38de17cdbc25e7d93f0dcf94c9f29f4ef2a31c970dbadbd",
+  "docs/theory/schwarzschild_volume_oracle_certification.md": "f2dc9dfd65b35140d7f550465e9633492a9b4eea54bdc7588c4b285003ad8197",
   "docs/prereg/p14_s6_m18_volume.md": "a857c48884c51433b7664c35b51f5dc35988edccc9aa2a357e746eb84c2cd226",
   "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
  },

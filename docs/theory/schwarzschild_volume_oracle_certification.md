@@ -569,6 +569,25 @@ margins are the certified lower bounds:
 | 1.0 | 0.1333 | 8.5 (exact) | [11.3536, 18.6950] | 0.817913 | 28546.5704734038 | nonempty +1.5600, polar cap +1.8923, winding +3.72 |
 | 1.4 | 0.1867 | 9.070565190742672 | [11.3672, 18.7053] | 0.623440 | 18141.08004658374 | nonempty +1.6647, polar cap +5.4787, winding +19.46 |
 | 1.8 | 0.2400 | 9.725248174609407 | [11.3825, 18.7174] | 0.519896 | 13679.093767152488 | nonempty +1.7849, polar cap +8.9809, winding +33.35 |
+| 3.0 | 0.4000 | 12.442423039673733 | [11.4429, 18.7691] | 0.399091 | 10472.024224793164 | nonempty +2.2835, polar cap +18.7345, winding +70.20 |
+
+**Where the ladder stops, and why (the deep end).** The rungs are not
+bounded by taste but by the table above. Sweeping M through the same
+certified entry gate, every row passes exactly on
+
+    M in [0.92, 3.33],   i.e.   MU in [0.1227, 0.4440],
+
+bounded BELOW by the L5 winding cross-check and ABOVE by L1/L2c: the
+photon sphere 3M reaches the shell floor R_MIN = 10 at M = 10/3, and
+`w_monotone` refuses every rung past it. Inside that window the
+binding margin shrinks monotonically -- w_monotone clears by 4.6 at
+M = 1.8, 1.0 at M = 3.0, 0.4 at M = 3.2 and 0.1 at M = 3.3 -- while
+every OTHER margin (L4 containment, L5 winding) GROWS with depth. The
+strong-curvature rung is therefore set at M = 3.0: it keeps a full
+tenth of R_MIN on the one condition that binds, where 3.2 or 3.3 would
+buy at most 10% more MU in exchange for standing on the cliff. A
+contract test pins both the ceiling and that margin, so no later rung
+can be parked past the photon sphere by editing a literal.
 
 The instrument paths are mass-parametric end to end: the wrapper
 contract (`o4b_g3a`) accepts the rung mass explicitly and the S6
