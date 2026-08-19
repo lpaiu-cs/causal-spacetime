@@ -648,7 +648,14 @@ comparison theorems (Berthiere–Gibbons–Solodukhin
 enclosure and the preregistered TOST gate against it have no direct
 prior; the parallel Alfyorov–Shnyukov CJ estimator
 \cite{alfyorov2026weyl} measures Weyl curvature from Hasse diagrams
-and is orthogonal.
+and is orthogonal. The equivalence-testing framework the gate applies
+is itself a transfer of established methodology — the two one-sided
+tests procedure \cite{schuirmann1987,lakens2017}, exact Poisson
+(Garwood) \cite{garwood1936} and binomial (Clopper–Pearson)
+\cite{clopperpearson1934} intervals, and equivalence-testing-based
+model validation \cite{robinsonfroese2004} — so its statistical
+novelty is the preregistered application against a certified
+enclosure, not the apparatus.
 
 ## 9. Limitations and future work
 
