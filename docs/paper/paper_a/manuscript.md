@@ -649,15 +649,16 @@ enclosure and the preregistered TOST gate against it have no direct
 prior; the parallel Alfyorov–Shnyukov CJ estimator
 \cite{alfyorov2026weyl} measures Weyl curvature from Hasse diagrams
 and is orthogonal. The equivalence gate applies established
-methodology — a confidence-interval-containment form of the two
-one-sided tests procedure \cite{schuirmann1987,lakens2017} on exact
-Poisson (Garwood) \cite{garwood1936} and binomial (Clopper–Pearson)
-\cite{clopperpearson1934} intervals, and equivalence-testing-based
-model validation \cite{robinsonfroese2004} — with the frozen rule
-requiring the 95% two-sided Garwood interval to fall within the band
-(each one-sided test at level 0.025, more conservative than the
-conventional 0.05). Its statistical novelty is thus the preregistered
-application against a certified enclosure, not the apparatus.
+methodology — a confidence-interval form of the two one-sided tests
+procedure \cite{schuirmann1987,lakens2017} on exact Poisson (Garwood)
+\cite{garwood1936} and binomial (Clopper–Pearson) \cite{clopperpearson1934}
+intervals, and equivalence-testing-based model validation
+\cite{robinsonfroese2004} — with the frozen rule requiring the identified
+discrepancy of the 95% two-sided Garwood interval (rescaled to a volume)
+against the certified enclosure to fall within the band (each one-sided
+test at level 0.025, more conservative than the conventional 0.05). Its
+statistical novelty is thus the preregistered application against a
+certified enclosure, not the apparatus.
 
 ## 9. Limitations and future work
 
