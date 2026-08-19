@@ -5,6 +5,10 @@ Scope: claims in the oracle arc (S3 volume certification → O3/O3′ endpoints
 → O4b instrument audit → O5 Poisson-count campaign) that could overlap
 existing causal-set or mathematical-relativity literature.
 
+Companion: `literature_priority_s6_ladder.md` assesses the S6 mass-ladder
+generalization — the same equivalence gate carried across a preregistered
+curvature ladder — and the count-stage statistical-methodology references.
+
 ## Method
 
 Searched arXiv (gr-qc, math-ph, hep-th), INSPIRE-HEP, Zenodo, and Google
