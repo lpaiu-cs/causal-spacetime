@@ -1,0 +1,20 @@
+{
+ "stage": "S6 rung M = 3.0 oracle freeze manifest (content-addressed protocol surface)",
+ "note": "raw sha256; all paths .gitattributes eol=lf pinned. The rung inherits the certified integrator and flight-time contract unchanged; its identity (dt, mu, lemma table) comes from s6_rungs' one exact path and is re-derived at import. This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
+ "files": {
+  "experiments/oracle/s6_m30_frozen_volume.py": "8dbc2316d1c35b1899ddfa80ea2f679ac35a6145a3f9faada67de814d8145d68",
+  "experiments/oracle/s6_rungs.py": "9d7a73a77025abb6a11bedcb389564213c2d8bb219a0877ed5c220a5b5814c20",
+  "experiments/oracle/volume_oracle.py": "382824570f9d16081b96b4e93d60074c360cfb560dc7c38f7e5bc6daaa58b072",
+  "experiments/oracle/certified_flight_time.py": "6d62bc9b0ca16d5d88cb3f365ad659bc2e27842ec2a183d86fb1bb769738a226",
+  "experiments/oracle/certified_interval.py": "65f339a0cddbede8a832a7efcaf1d5f92e6be9b8c4d493afae5475aaff72ac3f",
+  "docs/theory/schwarzschild_volume_oracle_certification.md": "f2dc9dfd65b35140d7f550465e9633492a9b4eea54bdc7588c4b285003ad8197",
+  "docs/prereg/p14_s6_m30_volume.md": "e789b1d4d2eebdbe3ccd9e728b8ed47362f9d050ace29bebb11a968ea85940c0",
+  "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
+ },
+ "environment": {
+  "python": "3.11",
+  "gmpy2": "2.3.1",
+  "mpfr": "MPFR 4.2.2",
+  "gmp": "GMP 6.3.0"
+ }
+}
