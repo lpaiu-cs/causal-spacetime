@@ -169,7 +169,7 @@ frozen equivalence gate (TOST-family, each Garwood tail at level 0.025) that
 requires the identified discrepancy of the conservative outer Garwood interval
 (lower at `K_certain`, upper at `K_certain + U_amb`) against a directed-rounding
 certified enclosure to lie within `±B`, with a tri-state (concordant /
-discordant / ambiguous) verdict, executed across a curvature ladder.
+discordant / inconclusive) verdict, executed across a curvature ladder.
 
 ## Alfyorov–Shnyukov corpus — version-history due diligence
 
