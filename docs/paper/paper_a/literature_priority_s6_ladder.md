@@ -11,9 +11,11 @@ The arc under review verifies, at three preregistered Schwarzschild masses
 `M ∈ {1.0, 1.4, 1.8}` — a dimensionless curvature ladder `μ = 2M/r_c`,
 `r_c = 15`, i.e. `μ ∈ {0.1333, 0.1867, 0.2400}` — that a Poisson sprinkling's
 certified-membership count inside a diamond fixed in **absolute** coordinates
-(shell `[10, 20]`, anchors `(12, 18)`) is consistent, within a preregistered
-`τ = 2.5%` two-one-sided (TOST) equivalence band, with an independently
-certified continuum 4-volume `V(M)` from an MPFR directed-rounding enclosure
+(shell `[10, 20]`, anchors `(12, 18)`) is consistent, under a preregistered
+equivalence gate — the 95% two-sided Garwood confidence interval on the count
+required to fall inside a frozen `τ = 2.5%` band (`B = τ·V_ref`) — with an
+independently certified continuum 4-volume `V(M)` from an MPFR directed-rounding
+enclosure
 whose endpoints were frozen before any count data existed. Because the diamond
 is held in absolute coordinates while only `M` varies, no rung is an isometric
 copy of another. Each rung was decided independently (all three CONCORDANT;
@@ -59,7 +61,7 @@ The nearest works each miss the generalization on a different axis:
 
 None of these varies curvature across a preregistered ladder of non-isometric
 rungs, uses a directed-rounding certified volume as the reference, or applies a
-frozen TOST band with a tri-state verdict. The mass generalization —
+frozen equivalence band with a tri-state verdict. The mass generalization —
 novelty (a) — has no direct prior. Its novelty is *not* that a sprinkled count
 can track a curved-spacetime volume (that is old; see cluster 3) but that the
 tracking is gated, rung by rung, against a certified enclosure across a
@@ -128,7 +130,11 @@ be cited as such, so that the abstract statistical machinery is not presented
 as a from-scratch invention:
 
 - **Schuirmann 1987** (J. Pharmacokinet. Biopharm. 15:657): the two one-sided
-  tests (TOST) procedure — the origin of the equivalence gate.
+  tests (TOST) procedure. The S6 gate is its confidence-interval-containment
+  form — the 95% two-sided Garwood interval required to lie within `±B` — which
+  is TOST at one-sided level 0.025, *more conservative* than the conventional
+  0.05 TOST (a 90% interval). This is a description of the frozen rule, not a
+  change to it.
 - **Lakens 2017** (Soc. Psychol. Personal. Sci. 8:355) and
   **Lakens–Scheel–Isager 2018** (Adv. Methods Pract. Psychol. Sci. 1:259):
   the modern primer/tutorial, including the "smallest effect size of interest"
@@ -151,9 +157,10 @@ as a from-scratch invention:
 
 The framework is therefore a domain transfer, not a new statistical
 apparatus. Its novelty in this program is the *preregistered application*: a
-frozen TOST band applied against a directed-rounding certified enclosure, with
-an identified discrepancy and a tri-state (concordant / discordant / ambiguous)
-verdict, executed across a curvature ladder.
+frozen 95%-confidence-interval-containment equivalence gate (TOST-family, each
+one-sided test at level 0.025) applied against a directed-rounding certified
+enclosure, with an identified discrepancy and a tri-state (concordant /
+discordant / ambiguous) verdict, executed across a curvature ladder.
 
 ## Alfyorov–Shnyukov corpus — version-history due diligence
 
