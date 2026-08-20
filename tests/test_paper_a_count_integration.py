@@ -217,26 +217,28 @@ def test_the_displayed_figure_was_built_from_these_artifacts():
 
 
 def test_no_hardcoded_rung_count_outside_the_contract():
-    """Rung counts written as words go stale silently. The contract
-    covers the sentences that state a count; the figure caption and the
-    generator's titles are OUTSIDE it, so they must not state one at all
-    -- promote a fifth rung and 'all four' would survive every other
-    check while the plot drew five intervals."""
+    """Rung counts written as words go stale silently. The contract covers
+    the sentences that state a count; the figure caption and the
+    generator's titles are OUTSIDE it, so they must not state one AT ALL --
+    not merely avoid one phrasing. "All four" was fixed once and "so the
+    four are comparable" survived in the same caption because the guard
+    matched a pattern instead of the words."""
 
-    words = ("two", "three", "four", "five", "six")
+    words = ("two", "three", "four", "five", "six", "seven")
+    pat = re.compile(r"\b(" + "|".join(words) + r")\b", re.I)
+
     gen = (REPO / "docs" / "paper" / "paper_a" / "figures"
            / "make_ladder_figure.py").read_text(encoding="utf-8")
-    for w in words:
-        assert f"all {w}" not in gen.lower(), f"generator states a count: {w}"
-        assert f"{w} rungs" not in gen.lower(), w
+    hits = pat.findall(gen)
+    assert not hits, f"generator states a rung count: {hits}"
     # the span in the panel title is computed, not typed
-    assert "span" not in gen or "{span:" in gen
+    assert "{span:" in gen
 
     ms = MANUSCRIPT.read_text(encoding="utf-8")
     cap = ms[ms.index("**Figure 4.**"):]
     cap = cap[:cap.index("\n\n")]
-    for w in words:
-        assert f"All {w}" not in cap and f"all {w}" not in cap, (w, cap[:80])
+    hits = pat.findall(cap)
+    assert not hits, f"the Figure 4 caption states a rung count: {hits}"
 
 
 def test_the_ladder_figure_covers_exactly_the_claimed_rungs():

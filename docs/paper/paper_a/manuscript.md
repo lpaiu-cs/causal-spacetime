@@ -669,10 +669,10 @@ own seed, once:
 
 **Figure 4.** The executed ladder. *Left:* at each preregistered
 compactness, the certified continuum volume (blue) and the volume implied by
-the sprinkled count (orange). The two overlap at plot scale across a
+the sprinkled count (orange). The intervals overlap at plot scale across a
 threefold span in `mu` -- that overlap is the result. *Right:* the residual
 made visible, each rung's identified discrepancy `D` divided by that rung's
-own band `B = tau*V_ref`, so the four are comparable despite different
+own band `B = tau*V_ref`, so the rungs are comparable despite different
 bands; the shaded region is the gate. Every rung is contained, with roughly
 half the band to spare, and the `mu = 0.1867` rung's asymmetry is its single
 ambiguous point widening the interval outward as the rule provides. Both

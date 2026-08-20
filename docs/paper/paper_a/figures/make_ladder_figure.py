@@ -1,6 +1,6 @@
 """Regenerate the Section 6.8 mass-ladder figure from the committed artifacts.
 
-Reads the four per-rung count artifacts directly -- the same
+Reads the per-rung count artifacts directly -- the same
 `docs/prereg/p14_*_count.json` files whose figures
 `tests/test_paper_a_count_integration.py` re-derives against the manuscript
 table -- so the figure cannot disagree with the text. Nothing is typed in
@@ -69,6 +69,12 @@ def plotted_digest(rows: list[dict]) -> str:
           r["d_lo"], r["d_hi"], r["band"], r["k"], r["u"], r["verdict"]]
          for r in rows],
         separators=(",", ":"), sort_keys=False)
+    # Bind the GENERATOR too: the data digest alone cannot see a change to
+    # a title, an axis or the normalization, so a rendering edit without a
+    # regenerate would stamp identically. LF-normalized because CI checks
+    # out LF while this file may sit on disk with CRLF.
+    src = Path(__file__).read_bytes().replace(b"\r\n", b"\n")
+    payload += "|" + hashlib.sha256(src).hexdigest()
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -80,8 +86,9 @@ def main() -> None:
         1, 2, figsize=(9.4, 3.9), gridspec_kw={"width_ratios": [1.05, 1]})
 
     # ---- panel A: certified volume vs the count-derived volume interval.
-    # At this scale the two are indistinguishable -- which IS the result;
-    # panel B resolves the residual. The trend line carries the geometry.
+    # At this scale the intervals are indistinguishable -- which IS the
+    # result; panel B resolves the residual. The trend line carries the
+    # geometry.
     ax1.plot([r["mu"] for r in rows],
              [(r["v_lo"] + r["v_hi"]) / 2 for r in rows],
              color=LIGHT, lw=1.2, zorder=0)
@@ -97,7 +104,7 @@ def main() -> None:
                      textcoords="offset points", xytext=(0, 7),
                      ha="center", fontsize=8, color=GREY)
     ax1.text(0.135, 112,
-             "the two overlap at this scale:\nthe residual is panel B",
+             "the intervals overlap at this scale:\nthe residual is panel B",
              fontsize=8, color=GREY, style="italic", va="top")
     ax1.set_xlabel(r"compactness  $\mu = 2M/r_c$")
     ax1.set_ylabel(r"4-volume of the fixed diamond")
