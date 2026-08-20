@@ -34,7 +34,7 @@ boundary is recorded separately in `artifact_manifest.md`.
   (`docs/prereg/p14_prereg_results.json`).
 - **Capstone C2 (preregistered replication, 3+1D).** A frozen single-poset
   classifier separates curved from flat ensembles under three frozen interval
-  rules (s = 11.199 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0];
+  rules (s = 11.198 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0];
   BA = 1.0 [0.986, 1.014]), independently replicating the probe chain's
   confirmation (same file).
 - **Type-D extension C1 (preregistered, paired).** On the frozen

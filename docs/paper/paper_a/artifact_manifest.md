@@ -45,11 +45,20 @@ against the committed files, so manifest and evidence cannot drift silently.
   figure-source copies, `discrete_radar_reconstruction_summary.csv` and
   `oriented_radar_lorentz_summary.csv` reproduced byte-for-byte; the other
   three differed only at relative magnitude <= 1.5e-13 (last-ulp reduction
-  noise across numpy versions — same seeds, same sample streams). Every
+  noise across numpy versions — same seeds, same sample streams). The prior
+  5 copies are superseded by the regenerated versions so the whole package
+  carries one recorded environment.
+- **Correction to this record (2026-08-20).** It originally closed "every
   manuscript-cited value was re-checked against the regenerated tables and
   is unchanged at its quoted precision, so no manuscript number required
-  correction. The prior 5 copies are superseded by the regenerated versions
-  so the whole package carries one recorded environment.
+  correction." Regeneration moved no value, and that much stands. The
+  re-check was by reading, though, and it passed one figure that was never
+  the table's: Section 4.3's radar-distance RMSE at 16 ticks was printed
+  0.072 where the row reads 0.07149726690596013. The contract test
+  `tests/test_paper_a_results_integration.py` now re-derives every
+  Sections 4-6.7 figure from its artifact, which is what caught it --
+  together with Section 6.4's `s = 11.199`, a preregistered-artifact
+  figure outside this table package. Both are corrected.
 
 ## Committed evidence hashes (all 19 tables)
 
