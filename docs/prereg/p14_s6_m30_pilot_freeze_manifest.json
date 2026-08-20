@@ -1,9 +1,9 @@
 {
- "stage": "S6 M=1.8 Poisson-count campaign freeze manifest (content-addressed protocol surface)",
- "note": "raw sha256; all paths .gitattributes eol=lf pinned. The campaign inherits the O4b instrument surface (predicate, wrapper preflight, budget/meter) and the box measure from o4_sizing; the reservation follows the corrected s6-pilot copy; the rung oracle artifact, the O3 artifact o4_sizing imports, and the rung pilot's FEASIBLE result are pinned because the frozen endpoints, the import surface and the U ceiling quote them. This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
+ "stage": "S6 M=3.0 ambiguity-pilot freeze manifest (content-addressed protocol surface)",
+ "note": "raw sha256; all paths .gitattributes eol=lf pinned. The rung pilot inherits the O5 pilot's instrument surface (predicate, wrapper preflight at the rung mass+geometry, budget/meter, reservation mechanics) with this rung's one-exact-path constants; the rung oracle artifact is pinned because n and A were sized from its actual endpoints, and p14_o3_volume.json because o4_sizing imports it (the O5 maintenance lesson). This manifest cannot certify itself: the run also demands the exact freeze branch head via --freeze-rev.",
  "files": {
-  "experiments/oracle/s6_m18_count.py": "f686586bd97d7dcb9b9b945893e889e729a32a793e194c4f2b87614f464cb939",
-  "experiments/oracle/s6_m18_count_reservation.py": "12cb90510c872fc01e415391e33ba712efdb999d5ddb293c4b6ad76daf169b4d",
+  "experiments/oracle/s6_m30_amb_pilot.py": "52c01274a5dabeaca9b94d29789b62d3cddcc6c6444b4d72c17456bf566f0605",
+  "experiments/oracle/s6_m30_reservation.py": "914da4e6cd985bd11e6a4eb58aedb5343c700cf79e48de2e5385fb9a3d507c48",
   "experiments/oracle/s6_rungs.py": "9d7a73a77025abb6a11bedcb389564213c2d8bb219a0877ed5c220a5b5814c20",
   "experiments/oracle/o4b_reservation.py": "bf83c5e06d5a8ce2b0e0c70e68240487c8ec0ef634e747c28324e7962e7a6ed4",
   "experiments/oracle/o4b_budget.py": "961e2f7ab1667f9dc2c739cf2bd8ba152a42ffaeb145dc34ad0ff149c279af95",
@@ -15,9 +15,8 @@
   "experiments/oracle/certified_interval.py": "65f339a0cddbede8a832a7efcaf1d5f92e6be9b8c4d493afae5475aaff72ac3f",
   "experiments/positive_control/s1_schwarzschild_cost.py": "c200eb6a6dc32e5ac9992fefafeaa844214d3b17e28ef96da58aafa8c3a019fb",
   "experiments/positive_control/probe_seed_ledger.py": "8ee1780f40d37de9b24bce6557bb27fc9858ccfaf96641106db69c8475091e49",
-  "docs/prereg/p14_s6_m18_count.md": "312d1bb1472c0d2b20a0ce608551f34d752587808480fd74afc93f149463e011",
-  "docs/prereg/p14_s6_m18_volume.json": "faec26926e9450123cca8f0fa46a4e27a100b6f47bd9fdbcd577a5c22013907d",
-  "docs/prereg/p14_s6_m18_pilot.json": "8cfbd71eb0f5e0a0eb07f23ceb506f810920ac006c846bfc3e558889d18a72fe",
+  "docs/prereg/p14_s6_m30_pilot.md": "5c4b652bb2f3f00a8c35f31434f19361fed0c88db9b3d6ace5e9798766266246",
+  "docs/prereg/p14_s6_m30_volume.json": "535e479d715f9802f82f190484b41e2578416c51cc7768de9458d68d7dc8a4c1",
   "docs/prereg/p14_o3_volume.json": "aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f",
   "pyproject.toml": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
  },
