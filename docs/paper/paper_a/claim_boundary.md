@@ -152,7 +152,7 @@ boundary is recorded separately in `artifact_manifest.md`.
   NOT mass- or domain-generality (single frozen M = 1 and box), NOT a
   confirmation of causal-set theory, and NOT complete separation or general
   volume accuracy. Nothing in Sections 6-6.7 is upgraded by it.
-- Prediction-anchored Poisson-count non-claims: the three rung verdicts are
+- Prediction-anchored Poisson-count non-claims: the four rung verdicts are
   SEPARATE preregistered stages — there is NO joint or composite cross-rung
   verdict and no pooled statistic. NOT a statement at any compactness between
   or beyond the tested rungs: no interpolation, no extrapolation, no fitted

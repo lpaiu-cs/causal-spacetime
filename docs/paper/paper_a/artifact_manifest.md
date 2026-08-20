@@ -193,7 +193,7 @@ No campaign rerun stands behind any row of this table.
 
 ### Section 6.8 prediction-anchored count bundle (the mass ladder)
 
-Same digest convention. This bundle carries the three per-rung count
+Same digest convention. This bundle carries the four per-rung count
 verdicts CLAIMED in manuscript Section 6.8 and the claim boundary. Roles,
 per rung: the `*_volume.json` is the certified continuum interval, produced
 and frozen BEFORE any count data for that rung existed (this is what makes
