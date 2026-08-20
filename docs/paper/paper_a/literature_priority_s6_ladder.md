@@ -228,3 +228,15 @@ independently, an operational count realized the rung's certified volume within
 is claimed, and nothing here promotes the ladder into Paper A's claim set — the
 manuscript continues to state the prediction-anchored count stage as its own
 boundary until the program integrates it.
+
+## Addendum (2026-08-20): the strong-curvature rung
+
+A later ruling extended the ladder by one rung at `mu = 0.4000`
+(`M = 3.0`, inner anchor `r = 4M`, between the photon sphere and the ISCO),
+executed under the identical three-stage frozen gate and CONCORDANT
+(`docs/prereg/p14_s6_m30_count.json`). This changes no assessment above:
+the claim structure is the same (a per-rung certified-volume equivalence
+gate, no joint verdict), the compactness range remains far from any prior
+art surveyed, and no new claim type is introduced. The search itself was
+not re-run; the 2026-08-19 findings carry over to the four-rung ladder
+unchanged.

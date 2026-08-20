@@ -206,7 +206,9 @@ byte-identical to the freeze blob at its execution SHA. Each rung ran ONCE,
 from its own exact clean checkout, on its own retired seed, and each verdict
 stands alone -- there is no joint verdict and no pooled statistic across
 rungs. The central rung (`mu = 0.1333`) takes its certified interval from
-the O3' projection artifact, which the O5 campaign consumed unchanged.
+the O3' projection artifact, which the O5 campaign consumed unchanged. The
+strong-curvature rung (`mu = 0.4000`, added by a later ruling) follows the
+same four-file convention.
 
 | File | SHA-256 |
 | --- | --- |
@@ -222,6 +224,10 @@ the O3' projection artifact, which the O5 campaign consumed unchanged.
 | `docs/prereg/p14_s6_m18_pilot.json` | `8cfbd71eb0f5e0a0eb07f23ceb506f810920ac006c846bfc3e558889d18a72fe` |
 | `docs/prereg/p14_s6_m18_count.json` | `ebef2859f888744b318e8566362c4f3e9af1bb2577b52d5f182e13478e211299` |
 | `docs/prereg/p14_s6_m18_count_executed_freeze_manifest.json` | `8a786a0d5db82751c32d880dfb3335d3ab9e7491af7619d80adea04363cad4b3` |
+| `docs/prereg/p14_s6_m30_volume.json` | `535e479d715f9802f82f190484b41e2578416c51cc7768de9458d68d7dc8a4c1` |
+| `docs/prereg/p14_s6_m30_pilot.json` | `16a17f35b6c03fc8c8a591118e573b3e40fd6ca0cf25698df594d530ab0189fe` |
+| `docs/prereg/p14_s6_m30_count.json` | `609e5e6a640ead4261b9e26aeb5e8abb2953cbb23cb14750ae16e77eaef1a5de` |
+| `docs/prereg/p14_s6_m30_count_executed_freeze_manifest.json` | `495f1699123bd9117821fe54c1b82460de0141a3ce2bd60f550723e728d4af07` |
 
 ### Citation-to-artifact inventory (manuscript Section 6 / Appendix B)
 

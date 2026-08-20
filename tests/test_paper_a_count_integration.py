@@ -31,6 +31,7 @@ RUNGS = (
     ("0.1333", "p14_o5_count.json"),
     ("0.1867", "p14_s6_m14_count.json"),
     ("0.2400", "p14_s6_m18_count.json"),
+    ("0.4000", "p14_s6_m30_count.json"),
 )
 
 
@@ -137,7 +138,7 @@ def test_the_ladder_is_the_three_executed_rungs_in_order():
     and genuinely distinct -- no rung is an isometric copy."""
 
     mus = [float(mu) for mu, _ in RUNGS]
-    assert mus == sorted(mus) and len(set(mus)) == 3
+    assert mus == sorted(mus) and len(set(mus)) == 4
     flat = _flat(MANUSCRIPT)
     assert "no rung is an isometric" in flat
     assert "mu = 2M/r_c" in flat
