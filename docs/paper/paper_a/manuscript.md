@@ -232,7 +232,7 @@ excluded (exp08;
 Given an observer chain with clock labels, radar time and unsigned radar
 distance are reconstructed from causal accessibility; at N = 300 the error
 falls roughly by half per doubling of tick resolution — radar-time RMSE from
-0.027 at 16 ticks to 0.0033 at 128 ticks, radar-distance RMSE from 0.072 to 0.0085, with
+0.027 at 16 ticks to 0.0033 at 128 ticks, radar-distance RMSE from 0.071 to 0.0085, with
 the accessible fraction 1.0 throughout (exp11;
 `outputs/data/discrete_radar_reconstruction_summary.csv`). A single observer
 determines only unsigned distance (the reflection degeneracy of Section 5).
@@ -447,7 +447,7 @@ confirmed; the stage is POSITIVE.
 | Claim | Verdict | Result (95% CI) |
 | --- | --- | --- |
 | C1 paired ensemble mean, n = 3000 | confirmed | mean 0.0502929 [0.0501046, 0.0504812]; lower end 140x the margin 3.579e-4 |
-| C2 classifier replication, n = 4800/arm | confirmed | separation s = 11.199 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0]; balanced accuracy = 1.0 [0.986, 1.014] |
+| C2 classifier replication, n = 4800/arm | confirmed | separation s = 11.198 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0]; balanced accuracy = 1.0 [0.986, 1.014] |
 
 The two arms' relation-fraction samples are completely separated (the minimum
 curved-arm value exceeds the maximum flat-arm value in 4800 draws per arm);
