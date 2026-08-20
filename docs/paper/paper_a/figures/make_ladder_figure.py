@@ -13,6 +13,7 @@ Usage: python docs/paper/paper_a/figures/make_ladder_figure.py
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -52,6 +53,23 @@ def load() -> list[dict]:
             "verdict": d["verdict"],
         })
     return rows
+
+
+def plotted_digest(rows: list[dict]) -> str:
+    """A canonical digest of exactly the values the figure draws.
+
+    Stamped into the PNG and re-derived by the contract test, so a stale
+    PNG -- one generated before a rung was added or an artifact changed --
+    is detectable from the displayed asset itself, not merely from the
+    generator source.
+    """
+
+    payload = json.dumps(
+        [[r["mu"], r["v_lo"], r["v_hi"], r["c_lo"], r["c_hi"],
+          r["d_lo"], r["d_hi"], r["band"], r["k"], r["u"], r["verdict"]]
+         for r in rows],
+        separators=(",", ":"), sort_keys=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def main() -> None:
@@ -123,8 +141,10 @@ def main() -> None:
 
     fig.tight_layout()
     dest = OUT / "fig4_ladder_count.png"
-    fig.savefig(dest, dpi=220)
+    stamp = plotted_digest(rows)
+    fig.savefig(dest, dpi=220, metadata={"LadderDigest": stamp})
     print(f"wrote {dest}")
+    print(f"  LadderDigest {stamp}")
     for r in rows:
         print(f'  mu={r["mu"]:.4f}  V=[{r["v_lo"]:.4f}, {r["v_hi"]:.4f}]  '
               f'D/B=[{r["d_lo"]/r["band"]:+.3f}, {r["d_hi"]/r["band"]:+.3f}]  '
