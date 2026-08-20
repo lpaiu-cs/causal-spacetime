@@ -256,6 +256,55 @@ def test_preflight_refuses_a_held_reservation(monkeypatch, tmp_path):
         pilot.preflight(_SHA)
 
 
+def test_preflight_refuses_a_dirty_tree(monkeypatch, tmp_path):
+    """Dirty at the EXACT approved SHA is still refused -- the clean
+    tree is its own gate, not a corollary of the SHA gate (the
+    sibling freeze suite's refusal, held by the pilot too)."""
+
+    _pass_static(monkeypatch, tmp_path)
+    monkeypatch.setattr(pilot, "_git_state",
+                        lambda: {"rev": _SHA, "dirty": True,
+                                 "dirt": [" M pyproject.toml"]})
+    with pytest.raises(SystemExit, match="working tree is dirty"):
+        pilot.preflight(_SHA)
+
+
+def test_verify_freeze_refuses_a_digest_mismatch(monkeypatch,
+                                                 tmp_path):
+    """The REAL verifier -- a no-op stub everywhere else in this
+    suite -- must refuse a tampered COPY of the committed manifest
+    and name the drifted file. The frozen manifest is never touched;
+    the real hasher walks the real protocol surface."""
+
+    tampered = json.loads(pilot._MANIFEST.read_text(encoding="utf-8"))
+    tampered["files"]["pyproject.toml"] = "0" * 64
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(tampered), encoding="utf-8")
+    monkeypatch.setattr(pilot, "_MANIFEST", path)
+    with pytest.raises(SystemExit, match="digest mismatch") as err:
+        pilot.verify_freeze("test")
+    assert "pyproject.toml" in str(err.value)
+
+
+def test_verify_freeze_refuses_environment_drift(monkeypatch,
+                                                 tmp_path):
+    """The mechanism, not the CI host (the o3 freeze suite's rule):
+    a lock built from the LIVE probe passes, and the same lock with
+    one flipped pin refuses -- the empty files map keeps the digest
+    gate out of this test's way."""
+
+    lock = {"files": {}, "environment": pilot._environment()}
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(lock), encoding="utf-8")
+    monkeypatch.setattr(pilot, "_MANIFEST", path)
+    assert pilot.verify_freeze("test") == lock
+    lock["environment"]["mpfr"] = "MPFR 0.0.0"
+    path.write_text(json.dumps(lock), encoding="utf-8")
+    with pytest.raises(SystemExit, match="environment drift") as err:
+        pilot.verify_freeze("test")
+    assert "mpfr" in str(err.value)
+
+
 # ------------------------------------------------ checkpoints
 
 def test_checkpoints_enforce_their_required_keys(monkeypatch,
