@@ -77,7 +77,9 @@ def test_the_frozen_endpoints_are_the_o3p_artifact_verbatim():
 def test_the_seed_is_fresh_and_the_pilot_stream_stays_retired():
     import probe_seed_ledger as ledger
 
-    assert ledger.assert_fresh_scalar("s6_m30_count") == 40_000_511
+    assert "s6_m30_count" not in ledger.FRESH_PROBE_SCALARS
+    assert ledger.OBSERVED_PROBE_SCALARS["s6_m30_count"] == 40_000_511
+    assert ledger.replay_scalar("s6_m30_count") == 40_000_511
     assert ledger.OBSERVED_PROBE_SCALARS["s6_m30_pilot"] == 40_000_501
     assert 40_000_301 not in ledger.spent_scalars()
     assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()

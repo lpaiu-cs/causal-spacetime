@@ -157,6 +157,15 @@ from seed_windows import (
 #: general-k rule (docs/prereg/p14_s6_m30_pilot.json, tail
 #: 1.4749e-06 <= 1e-3). `refs/s6m30pilot/reservation` (`b1b10cd`)
 #: re-verified at exit and RETAINED.
+#: s6_m30_count: the S6 M = 3.0 strong-curvature rung's Poisson-count
+#: sprinkling stream, drawn 2026-08-20 from freeze head `ed353d3`
+#: (PR #112). Scanned all 4,605,671 points (6,083,193 predicate calls,
+#: early exits included) and published CONCORDANT: K_certain = 53,606
+#: inside the frozen acceptance [52,986, 54,220], U_amb = 0,
+#: D = [-1.6406, +1.6426] inside +-3.0459
+#: (docs/prereg/p14_s6_m30_count.json). `refs/s6m30/reservation`
+#: (`05ad010`) re-verified at exit and RETAINED. The ladder's fourth
+#: rung closes: mu 0.1333/0.1867/0.2400/0.4000 all CONCORDANT.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -178,6 +187,7 @@ OBSERVED_PROBE_SCALARS = {
     "s6_m14_pilot": 40_000_461,
     "s6_m18_pilot": 40_000_481,
     "s6_m30_pilot": 40_000_501,
+    "s6_m30_count": 40_000_511,
     "s6_m14_count": 40_000_471,
     "s6_m18_count": 40_000_491,
 }
@@ -248,9 +258,7 @@ OBSERVED_PROBE_SCALARS = {
 #: OBSERVED_PROBE_SCALARS. `refs/s6m30/reservation` serialises the
 #: opening; the pilot stream (retired) contributed only the U
 #: ceiling.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "s6_m30_count": 40_000_511,
-}
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
