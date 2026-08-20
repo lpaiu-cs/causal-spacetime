@@ -1048,11 +1048,12 @@ Sections 4-5 name their producing experiment (`exp03`-`exp23`) and its
 committed summary table, audited in `producer_audit.md`. The preregistered
 results of Sections 6-6.7 instead name their own frozen artifacts --
 `p14_prereg_results.json` for the capstone, `p14_s4_results.json` and
-`p14_s5_results.json` for the Schwarzschild extensions,
-`p14_o4b_results.json` for the auxiliary audit -- each with its executed
-freeze manifest. Both routes are digest-locked at the artifact, but in
-neither case is the manuscript's transcription re-derived by a contract; it
-was checked by reading. The preregistered stages ran
+`p14_s5_results.json` for the Schwarzschild extensions -- each with its
+executed freeze manifest; the auxiliary audit's `p14_o4b_results.json`
+belongs to this route too, but its printed figures are the verbatim-pinned
+exception named above. Both routes are digest-locked at the artifact, and
+outside those two machine-checked exceptions the manuscript's transcription
+is not re-derived by a contract; it was checked by reading. The preregistered stages ran
 once each from an exact clean checkout of a merged freeze commit, under
 frozen decision rules, with their verdicts computed by the frozen code
 rather than asserted in prose. Every bibliographic entry was checked
