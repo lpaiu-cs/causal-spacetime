@@ -101,8 +101,10 @@ def main() -> None:
              fontsize=8, color=GREY, style="italic", va="top")
     ax1.set_xlabel(r"compactness  $\mu = 2M/r_c$")
     ax1.set_ylabel(r"4-volume of the fixed diamond")
-    ax1.set_title("A. the count tracks the certified volume over a 3x span in $\mu$",
-                  fontsize=10, loc="left")
+    span = rows[-1]["mu"] / rows[0]["mu"]
+    ax1.set_title(
+        f"A. the count tracks the certified volume over a {span:.0f}x "
+        r"span in $\mu$", fontsize=10, loc="left")
     ax1.set_xticks([r["mu"] for r in rows])
     ax1.set_xticklabels([f'{r["mu"]:.4f}' for r in rows])
     ax1.set_xlim(0.10, 0.44)
@@ -126,7 +128,7 @@ def main() -> None:
          for r in rows], fontsize=8)
     ax2.set_xlabel(r"identified discrepancy $D$, in units of the "
                    r"band $B=\tau V_{\rm ref}$")
-    ax2.set_title(r"B. equivalence gate ($\tau$ = 2.5%): all four contained",
+    ax2.set_title(r"B. equivalence gate ($\tau$ = 2.5%): all contained",
                   fontsize=10, loc="left")
     ax2.set_xlim(-1.35, 1.35)
     ax2.set_ylim(-0.6, len(rows) - 0.4)

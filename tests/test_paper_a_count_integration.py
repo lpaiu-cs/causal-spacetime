@@ -216,6 +216,29 @@ def test_the_displayed_figure_was_built_from_these_artifacts():
         "docs/paper/paper_a/figures/make_ladder_figure.py")
 
 
+def test_no_hardcoded_rung_count_outside_the_contract():
+    """Rung counts written as words go stale silently. The contract
+    covers the sentences that state a count; the figure caption and the
+    generator's titles are OUTSIDE it, so they must not state one at all
+    -- promote a fifth rung and 'all four' would survive every other
+    check while the plot drew five intervals."""
+
+    words = ("two", "three", "four", "five", "six")
+    gen = (REPO / "docs" / "paper" / "paper_a" / "figures"
+           / "make_ladder_figure.py").read_text(encoding="utf-8")
+    for w in words:
+        assert f"all {w}" not in gen.lower(), f"generator states a count: {w}"
+        assert f"{w} rungs" not in gen.lower(), w
+    # the span in the panel title is computed, not typed
+    assert "span" not in gen or "{span:" in gen
+
+    ms = MANUSCRIPT.read_text(encoding="utf-8")
+    cap = ms[ms.index("**Figure 4.**"):]
+    cap = cap[:cap.index("\n\n")]
+    for w in words:
+        assert f"All {w}" not in cap and f"all {w}" not in cap, (w, cap[:80])
+
+
 def test_the_ladder_figure_covers_exactly_the_claimed_rungs():
     """The figure is generated from the artifacts, but from its OWN rung
     list. Pin that the two lists agree, so a promoted rung cannot appear

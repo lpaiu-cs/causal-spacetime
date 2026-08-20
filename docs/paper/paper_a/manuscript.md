@@ -673,7 +673,7 @@ the sprinkled count (orange). The two overlap at plot scale across a
 threefold span in `mu` -- that overlap is the result. *Right:* the residual
 made visible, each rung's identified discrepancy `D` divided by that rung's
 own band `B = tau*V_ref`, so the four are comparable despite different
-bands; the shaded region is the gate. All four are contained, with roughly
+bands; the shaded region is the gate. Every rung is contained, with roughly
 half the band to spare, and the `mu = 0.1867` rung's asymmetry is its single
 ambiguous point widening the interval outward as the rule provides. Both
 panels are generated from the same artifacts the contract tests re-derive
