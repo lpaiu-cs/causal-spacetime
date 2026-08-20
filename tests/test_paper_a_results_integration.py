@@ -30,6 +30,7 @@ be out-run by a sentence added later.
 from __future__ import annotations
 
 import csv
+import functools
 import importlib.util
 import json
 import math
@@ -93,17 +94,23 @@ def _num(value: float) -> str:
     return str(int(value)) if float(value).is_integer() else repr(float(value))
 
 
+@functools.cache
 def _volume_ratio(wT: float) -> float:
     """`p14_checks/p14_interval_volume_constant_a.py` is a committed
     design check rather than an importable package module; it is
     digest-locked in the artifact manifest like every other artifact
     read here, and it is pure numpy quadrature (no RNG, ~50 ms)."""
 
+    return _interval_volume_check().volume_ratio(wT)
+
+
+@functools.cache
+def _interval_volume_check():
     path = _PREREG / "p14_checks" / "p14_interval_volume_constant_a.py"
     spec = importlib.util.spec_from_file_location("_p14_interval_volume", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.volume_ratio(wT)
+    return module
 
 
 # ------------------------------------------------- manuscript sections
@@ -296,18 +303,26 @@ def _noise_ratios() -> tuple[str, ...]:
 
 
 def _range_top(value: float, places: int = 2) -> str:
-    """The printed top of a stated RANGE. Section 4.2 rounds one of its
-    two range tops to nearest and the other outward (1.06492 is printed
-    1.07, which is the honest bound for a range), so both readings are
-    accepted -- for an upper bound only. The value still cannot move by
-    a display step in either direction without failing, because only
-    these two candidates are ever offered."""
+    """The printed top of a stated RANGE, where Section 4.2 is not
+    self-consistent: it rounds one of its two range tops to nearest
+    (1.14031 -> 1.14) and the other outward (1.06492 -> 1.07, the
+    honest bound for a range). Rather than pick a rule and edit prose
+    that is defensible either way, EXACTLY these two candidates are
+    accepted and exactly one of them must be printed.
+
+    Stated precisely, because this file exists to stop verification
+    claims from outrunning what is enforced: this is the one figure
+    per range whose last digit may sit either side, so 1.07 -> 1.06
+    would pass here. Nothing else does -- 1.08 and 1.05 both fail, as
+    does any change to a lower bound, which uses no such tolerance."""
 
     step = 10.0 ** -places
     nearest = f"{value:.{places}f}"
     outward = f"{math.ceil(value / step) * step:.{places}f}"
     section = _section("4.2")
-    return outward if outward in section and nearest not in section else nearest
+    printed = [c for c in dict.fromkeys((nearest, outward)) if c in section]
+    assert len(printed) == 1, (value, nearest, outward, printed)
+    return printed[0]
 
 
 # =================== 4.3 R2 -- order + observer: radar time / distance
@@ -907,12 +922,15 @@ def test_the_manuscript_sentence_is_the_artifact_value(claim_: Claim):
 
 def test_each_claim_is_pinned_to_a_single_section():
     """A sentence that also occurs elsewhere would let a value drift
-    into the wrong section and still pass the check above."""
+    into the wrong section and still pass the check above. Every
+    section is searched, including the unnumbered-subsection ones (4,
+    5, 6): an earlier draft skipped those, which silently exempted
+    Section 5's claims from this guard entirely."""
 
     for claim_ in CLAIMS:
         expected = claim_.context.format(*claim_.derive())
-        hits = [s for s in SECTIONS if "." in s and expected in SECTIONS[s]]
-        assert len(hits) <= 1, (claim_.section, hits)
+        hits = [s for s in SECTIONS if expected in SECTIONS[s]]
+        assert hits == [claim_.section], (claim_.section, hits)
 
 
 # ------------------------------------------- claims that are not numbers
