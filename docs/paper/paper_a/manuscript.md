@@ -1,5 +1,8 @@
 # An operational reconstruction ladder for spacetime quantities from causal order
 
+**Juneyoung Kim**
+Independent researcher · lpaiu.cs@gmail.com
+
 **Draft v0.4.** Causal Spacetime Lab. Every quantitative result is tied to a
 producing experiment and expected output path. The submission gate is met:
 all 19 cited legacy summary tables are committed and digest-locked, and the
@@ -1022,6 +1025,41 @@ no same-seed re-entry occurred anywhere in this chain; the historical
 no-verdict records of the O4 abort and the O4b incident retain their
 original verdicts, with the recovery linked rather than retroactively
 regraded.
+
+## Acknowledgements and disclosure
+
+This work was carried out with substantial assistance from AI language
+models (Anthropic Claude), used for literature search, code and manuscript
+drafting, numerical analysis, and adversarial review of the author's own
+claims. The AI systems are not authors and bear no responsibility: the
+author takes full responsibility for every claim, number, and citation
+here.
+
+How the output was verified, and how far that verification reaches. Every
+quantitative result in Sections 4-6.8 is produced by a committed experiment
+script whose output file is pinned by a content-addressed manifest that a
+contract test recomputes, so the *artifacts* cannot drift unnoticed. The
+manuscript's own transcription of those artifacts is machine-checked in two
+places: Section 6.8's per-rung figures are re-derived from the published
+artifacts, and the auxiliary audit's figures are pinned verbatim, so a
+hand-typed value in either fails the build. Elsewhere the link is weaker
+and is stated as such, by two distinct routes. The legacy results of
+Sections 4-5 name their producing experiment (`exp03`-`exp23`) and its
+committed summary table, audited in `producer_audit.md`. The preregistered
+results of Sections 6-6.7 instead name their own frozen artifacts --
+`p14_prereg_results.json` for the capstone, `p14_s4_results.json` and
+`p14_s5_results.json` for the Schwarzschild extensions -- each with its
+executed freeze manifest; the auxiliary audit's `p14_o4b_results.json`
+belongs to this route too, but its printed figures are the verbatim-pinned
+exception named above. Both routes are digest-locked at the artifact, and
+outside those two machine-checked exceptions the manuscript's transcription
+is not re-derived by a contract; it was checked by reading. The preregistered stages ran
+once each from an exact clean checkout of a merged freeze commit, under
+frozen decision rules, with their verdicts computed by the frozen code
+rather than asserted in prose. Every bibliographic entry was checked
+against an authoritative record (arXiv, Crossref, or the publisher) and
+then re-checked independently; the priority assessments in the companion
+records name the sources that were fetched.
 
 ## References
 
