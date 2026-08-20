@@ -1043,9 +1043,16 @@ manuscript's own transcription of those artifacts is machine-checked in two
 places: Section 6.8's per-rung figures are re-derived from the published
 artifacts, and the auxiliary audit's figures are pinned verbatim, so a
 hand-typed value in either fails the build. Elsewhere the link is weaker
-and is stated as such: each number names its producing experiment and its
-committed summary table (`producer_audit.md`), but the transcription itself
-was checked by reading, not by a contract. The preregistered stages ran
+and is stated as such, by two distinct routes. The legacy results of
+Sections 4-5 name their producing experiment (`exp03`-`exp23`) and its
+committed summary table, audited in `producer_audit.md`. The preregistered
+results of Sections 6-6.7 instead name their own frozen artifacts --
+`p14_prereg_results.json` for the capstone, `p14_s4_results.json` and
+`p14_s5_results.json` for the Schwarzschild extensions,
+`p14_o4b_results.json` for the auxiliary audit -- each with its executed
+freeze manifest. Both routes are digest-locked at the artifact, but in
+neither case is the manuscript's transcription re-derived by a contract; it
+was checked by reading. The preregistered stages ran
 once each from an exact clean checkout of a merged freeze commit, under
 frozen decision rules, with their verdicts computed by the frozen code
 rather than asserted in prose. Every bibliographic entry was checked
