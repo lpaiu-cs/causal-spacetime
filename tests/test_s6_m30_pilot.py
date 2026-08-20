@@ -138,8 +138,9 @@ def test_the_rule_is_general_in_k_and_matches_the_reference_table():
 
 def test_the_verdict_path_is_cross_checked_by_two_other_engines():
     """The RUNTIME verdict path is 96-bit gmpy2 (review PR #83 R1:
-    the k=1 boundary sits 4.11e-9 of tail below the budget, and a
-    platform-libm double engine could flip it). The cross-checks are
+    the k=1 boundary sits 1.65e-8 of tail below the budget -- on the
+    order of a platform-libm double engine's lgamma floor, which could
+    flip it). The cross-checks are
     an independent double-precision log-space engine -- agreement
     above its ~1e-8 lgamma-cancellation floor -- and the frozen P14
     P2 gamma engine for the Poisson tail."""
@@ -212,7 +213,7 @@ def test_missing_freeze_rev_is_refused_by_the_cli():
 
 
 def _pass_static(monkeypatch, tmp_path, rev=_SHA):
-    # the real stream is retired (results commit); the gate under
+    # the real stream is FRESH at this freeze; the gate under
     # test is never the ledger here
     monkeypatch.setattr(pilot, "assert_fresh_scalar",
                         lambda name: 40_000_501)
@@ -388,7 +389,7 @@ def test_a_race_losing_clean_claim_refusal_files_no_incident(
 
     def lost_race(payload):
         raise SystemExit(
-            "reservation: refs/o5pilot/reservation is already held "
+            "reservation: refs/s6m30pilot/reservation is already held "
             "by " + "e" * 40)
 
     monkeypatch.setattr(pilot.reservation, "claim", lost_race)
