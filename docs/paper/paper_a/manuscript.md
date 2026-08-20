@@ -42,7 +42,9 @@ a certified prediction rather than to an operational margin: on each rung of a
 mass ladder whose diamond is fixed in absolute coordinates so that no rung is
 an isometric copy, the certified-membership count of a Poisson sprinkling is
 required to realize that rung's independently certified continuum 4-volume
-within a frozen 2.5% band, and does so at all three tested compactnesses. The
+within a frozen 2.5% band, and does so at all four tested compactnesses —
+spanning a factor of three in `2M/r`, the deepest rung anchored at `r = 4M`
+between the photon sphere and the ISCO. The
 contribution is not any
 single reconstruction — most are standard — but the explicit accounting of what
 each rung requires and the negative results that bound it. We make no claim
@@ -481,7 +483,7 @@ confirmed, C2 single-poset discrimination detected with incomplete
 separation; the diamond-volume oracle is now certified, and its direct-MC
 instrument audit is complete as an auxiliary result (Section 9, Appendix B),
 and the prediction-anchored Poisson-count stage is executed across a
-three-rung mass ladder, CONCORDANT at every rung (Section 6.8). A
+four-rung mass ladder, CONCORDANT at every rung (Section 6.8). A
 separate cost measurement (S1) prices the causal-predicate component — about
 0.77 ms per pair on the tested solver, patch, and tolerance, roughly 360x the
 plane-wave predicate (`docs/prereg/p14_s1_cost.json`).
@@ -638,13 +640,19 @@ configuration, the same gate is carried across a preregistered mass ladder.
 The certified shell `[10, 20]` and the anchors `(12, 18)` stay fixed in
 *absolute* coordinates and only the mass changes, so no rung is an isometric
 copy of another: the pre-frozen dimensionless indicator is the compactness
-`mu = 2M/r_c` at the anchor midpoint `r_c = 15`. The patch-level lemmas are
+`mu = 2M/r_c` at the anchor midpoint `r_c = 15`, and the executed ladder
+spans a factor of three in it. The deep end is not a free choice either:
+every mass-generic lemma certifies exactly on `M` in [0.92, 3.33] — bounded
+above by the photon sphere `3M` reaching the shell floor at `M = 10/3` —
+and the deepest rung `M = 3.0` keeps a certified margin of a tenth of the
+shell floor on that binding condition, its inner anchor at `r = 4M` between
+the photon sphere and the ISCO. The patch-level lemmas are
 mass-generic only under stated conditions (horizon below the shell, `K < 0`,
 `w` monotone, `Q > 0`, the L2a patch bound, four L4 margins, an L5 winding
 cross-check), and each is re-certified per rung as an interval comparison —
 nothing is inherited silently from `M = 1`.
 
-Three rungs were executed, each from its own exact freeze checkout, with its
+Four rungs were executed, each from its own exact freeze checkout, with its
 own seed, once:
 
 | `mu` | `M` | certified `V` | pilot | `N` | `K_certain` | `U_amb` | `C` | `D` | `B` | verdict |
@@ -652,9 +660,10 @@ own seed, once:
 | 0.1333 | 1.0 | [56.492959, 57.060667] | k=0 | 26,831,117 | 53,285 | 0 | [56.205871, 57.169553] | [-0.854796, +0.676594] | 1.419420 | **CONCORDANT** |
 | 0.1867 | 1.4 | [64.336198, 64.982744] | k=1 | 15,057,284 | 53,829 | 1 | [64.307488, 65.405648] | [-0.675256, +1.069450] | 1.616487 | **CONCORDANT** |
 | 0.2400 | 1.8 | [73.968637, 74.711920] | k=0 | 9,847,124 | 53,513 | 0 | [73.695211, 74.956037] | [-1.016709, +0.987400] | 1.858507 | **CONCORDANT** |
+| 0.4000 | 3.0 | [121.225021, 122.443280] | k=0 | 4,605,671 | 53,606 | 0 | [120.802632, 122.867592] | [-1.640649, +1.642571] | 3.045854 | **CONCORDANT** |
 
 The certified volume grows monotonically with the compactness (57 to 65 to
-74) as the geometry requires, and the realized discrepancy stays well inside
+74 to 122) as the geometry requires, and the realized discrepancy stays well inside
 the band at every rung. The `M = 1.4` pilot returned the program's first
 non-zero ambiguous count (`k = 1`); it was absorbed exactly as the sizing
 had provisioned, and it is visible in that rung's asymmetric `D`, which is
@@ -665,13 +674,14 @@ operational finite-density instrument realized that rung's independently
 certified continuum volume to within `tau = 2.5%`, under a rule fixed before
 the data existed. This is the first place in the program where a measurement
 is confronted with a certified *prediction* rather than with an operational
-anchor, and the confrontation is repeated at three genuinely different
-curvatures rather than one.
+anchor, and the confrontation is repeated at four genuinely different
+curvatures rather than one — the deepest with its inner anchor between the
+photon sphere and the ISCO.
 
 **What it does not establish.** The rungs are separate preregistered stages:
 each verdict stands alone, there is no joint primary verdict, and no
 interpolation, extrapolation, or composite cross-rung statistic is claimed —
-in particular nothing is claimed at compactness between or beyond the three
+in particular nothing is claimed at compactness between or beyond the four
 tested values. Agreement of a count with a volume is not a test of causal-set
 theory, and it is not evidence that spacetime is discrete; it is a statement
 that this instrument, at these operating points, reproduces the continuum
@@ -737,8 +747,9 @@ confirmed and C2 detected with incomplete separation, in separate stages with
 no joint primary verdict) and its own non-claims; the diamond-volume oracle
 is certified and instrument-audited there as an auxiliary result (Section 9),
 but no Section 6.7 verdict uses it. We claim, as a separate preregistered
-stage per rung (Section 6.8): on each of the three preregistered rungs
-`mu` in {0.1333, 0.1867, 0.2400} independently, the certified-membership
+stage per rung (Section 6.8): on each of the four preregistered rungs
+`mu` in {0.1333, 0.1867, 0.2400, 0.4000} independently, the
+certified-membership
 count of a Poisson sprinkling realized that rung's independently certified
 continuum volume within `tau = 2.5%`, under a rule frozen before the data
 existed (CONCORDANT at every rung). For that Poisson-count stage we do not
@@ -816,13 +827,14 @@ a Poisson causal-set count verification, not mass- or domain-generality, not
 a C1/C2 joint verdict, and not complete separation or general volume
 accuracy. The prediction-anchored Poisson-count stage (sprinkle counts
 against `rho V`) is a separate stage, and it has since been executed across
-the three-rung mass ladder of Section 6.8 — CONCORDANT at
-`mu` in {0.1333, 0.1867, 0.2400} — which is what carries the
+the four-rung mass ladder of Section 6.8 — CONCORDANT at
+`mu` in {0.1333, 0.1867, 0.2400, 0.4000} — which is what carries the
 prediction-anchored claim; the O4b audit itself remains only the instrument
-statement described above. That ladder has its own bounds: three rungs are
-three points, the tolerance was chosen to be feasible rather than sharp, and
-a deeper fourth rung at `mu = 0.4` is preregistered and executing, its
-outcome no part of the claims made here. The natural next question — whether
+statement described above. That ladder has its own bounds: four rungs are
+four points, the tolerance was chosen to be feasible rather than sharp, and
+the certification window itself closes at `M = 10/3`, where the photon
+sphere reaches the shell floor — the executed ladder stops one tenth of the
+shell floor short of that cliff, by certification rather than by taste. The natural next question — whether
 observer-relative distance *order* can be validated as recovering latent
 geometry, as opposed to being reconstructed from a supplied one — is the
 subject of a companion study that builds a preregistered discriminator on this

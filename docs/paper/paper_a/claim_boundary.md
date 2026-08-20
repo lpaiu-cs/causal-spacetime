@@ -66,8 +66,9 @@ boundary is recorded separately in `artifact_manifest.md`.
   instrument statement only; see the non-claims below.
 - **Prediction-anchored Poisson count, per rung (preregistered, 3+1D).**
   On each preregistered rung of the mass ladder independently — `mu = 2M/r_c`
-  in {0.1333, 0.1867, 0.2400} on the shell `[10, 20]` with anchors `(12, 18)`
-  fixed in ABSOLUTE coordinates, so no rung is an isometric copy — the
+  in {0.1333, 0.1867, 0.2400, 0.4000} on the shell `[10, 20]` with anchors
+  `(12, 18)` fixed in ABSOLUTE coordinates, so no rung is an isometric copy,
+  the deepest anchored at `r = 4M` between the photon sphere and the ISCO — the
   certified-membership count of a Poisson sprinkling realized that rung's
   independently certified continuum volume within `tau = 2.5%`, under a rule
   frozen before any count data existed. The gate is the identified
@@ -80,7 +81,9 @@ boundary is recorded separately in `artifact_manifest.md`.
   `mu = 0.1867` K = 53,829, U = 1, D = [-0.675256, +1.069450] in +-1.616487
   (`docs/prereg/p14_s6_m14_count.json`);
   `mu = 0.2400` K = 53,513, U = 0, D = [-1.016709, +0.987400] in +-1.858507
-  (`docs/prereg/p14_s6_m18_count.json`).
+  (`docs/prereg/p14_s6_m18_count.json`);
+  `mu = 0.4000` K = 53,606, U = 0, D = [-1.640649, +1.642571] in +-3.045854
+  (`docs/prereg/p14_s6_m30_count.json`).
 
 ## Negative results (bounding the ladder)
 
@@ -149,7 +152,7 @@ boundary is recorded separately in `artifact_manifest.md`.
   NOT mass- or domain-generality (single frozen M = 1 and box), NOT a
   confirmation of causal-set theory, and NOT complete separation or general
   volume accuracy. Nothing in Sections 6-6.7 is upgraded by it.
-- Prediction-anchored Poisson-count non-claims: the three rung verdicts are
+- Prediction-anchored Poisson-count non-claims: the four rung verdicts are
   SEPARATE preregistered stages — there is NO joint or composite cross-rung
   verdict and no pooled statistic. NOT a statement at any compactness between
   or beyond the tested rungs: no interpolation, no extrapolation, no fitted

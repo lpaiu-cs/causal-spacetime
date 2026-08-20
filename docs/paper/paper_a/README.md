@@ -11,8 +11,9 @@ preregistered Section 6 capstone (P14 type-N pure-Weyl, POSITIVE), the
 Section 6.7 Schwarzschild extensions (S4 C1-paired CONFIRMED, S5 C2-unpaired
 DETECTED), the auxiliary O4b instrument audit (CONCORDANT, recovered), and
 the Section 6.8 prediction-anchored Poisson-count stage — CONCORDANT on
-each of three preregistered mass-ladder rungs (`mu` = 0.1333 / 0.1867 /
-0.2400), per rung and with no joint verdict.
+each of four preregistered mass-ladder rungs (`mu` = 0.1333 / 0.1867 /
+0.2400 / 0.4000, a factor of three in compactness, the deepest anchored at
+`r = 4M`), per rung and with no joint verdict.
 Every quantitative result is tied to a
 producing experiment and expected summary path. The submission gate is met:
 all 19 cited legacy summary tables are committed and digest-locked, and the

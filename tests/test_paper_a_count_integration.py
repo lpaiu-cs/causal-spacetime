@@ -31,6 +31,7 @@ RUNGS = (
     ("0.1333", "p14_o5_count.json"),
     ("0.1867", "p14_s6_m14_count.json"),
     ("0.2400", "p14_s6_m18_count.json"),
+    ("0.4000", "p14_s6_m30_count.json"),
 )
 
 
@@ -137,10 +138,45 @@ def test_the_ladder_is_the_three_executed_rungs_in_order():
     and genuinely distinct -- no rung is an isometric copy."""
 
     mus = [float(mu) for mu, _ in RUNGS]
-    assert mus == sorted(mus) and len(set(mus)) == 3
+    assert mus == sorted(mus) and len(set(mus)) == 4
     flat = _flat(MANUSCRIPT)
     assert "no rung is an isometric" in flat
     assert "mu = 2M/r_c" in flat
+
+
+def test_the_stated_rung_COUNT_tracks_the_executed_ladder():
+    """Prose that COUNTS rungs must move when the ladder does. Promoting
+    a rung used to update the claim row while leaving "the three rung
+    verdicts" and "carries the three per-rung count verdicts" behind, so
+    the claim boundary and the archived-state authority disagreed about
+    whether the new artifact is inside the claim."""
+
+    word = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six"}[len(RUNGS)]
+    stale = {w for n, w in
+             {2: "two", 3: "three", 4: "four", 5: "five", 6: "six"}.items()
+             if n != len(RUNGS)}
+
+    cb = _flat(CLAIM_BOUNDARY)
+    assert f"the {word} rung verdicts are" in cb
+    # the claim boundary states the range bound without a numeral
+    # ("between or beyond the tested rungs"), which is count-agnostic
+    # by construction -- pin that it stays that way
+    assert "between or beyond the tested rungs" in cb
+    for w in stale:
+        assert f"the {w} rung verdicts" not in cb, w
+
+    man = _flat(_PAPER / "artifact_manifest.md")
+    assert f"carries the {word} per-rung count" in man
+    for w in stale:
+        assert f"carries the {w} per-rung count" not in man, w
+
+    ms = _flat(MANUSCRIPT)
+    assert f"{word.capitalize()} rungs were executed" in ms
+    assert f"on each of the {word} preregistered rungs" in ms
+    assert f"beyond the {word} tested values" in ms
+    for w in stale:
+        assert f"{w.capitalize()} rungs were executed" not in ms, w
+        assert f"beyond the {w} tested values" not in ms, w
 
 
 def test_the_promotion_is_bounded_in_both_documents():
