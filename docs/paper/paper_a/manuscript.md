@@ -1039,24 +1039,37 @@ How the output was verified, and how far that verification reaches. Every
 quantitative result in Sections 4-6.8 is produced by a committed experiment
 script whose output file is pinned by a content-addressed manifest that a
 contract test recomputes, so the *artifacts* cannot drift unnoticed. The
-manuscript's own transcription of those artifacts is machine-checked in two
-places: Section 6.8's per-rung figures are re-derived from the published
-artifacts, and the auxiliary audit's figures are pinned verbatim, so a
-hand-typed value in either fails the build. Elsewhere the link is weaker
-and is stated as such, by two distinct routes. The legacy results of
-Sections 4-5 name their producing experiment (`exp03`-`exp23`) and its
-committed summary table, audited in `producer_audit.md`. The preregistered
-results of Sections 6-6.7 instead name their own frozen artifacts --
-`p14_prereg_results.json` for the capstone, `p14_s4_results.json` and
-`p14_s5_results.json` for the Schwarzschild extensions -- each with its
-executed freeze manifest; the auxiliary audit's `p14_o4b_results.json`
-belongs to this route too, but its printed figures are the verbatim-pinned
-exception named above. Both routes are digest-locked at the artifact, and
-outside those two machine-checked exceptions the manuscript's transcription
-is not re-derived by a contract; it was checked by reading. The preregistered stages ran
-once each from an exact clean checkout of a merged freeze commit, under
-frozen decision rules, with their verdicts computed by the frozen code
-rather than asserted in prose. Every bibliographic entry was checked
+manuscript's own transcription of those artifacts is machine-checked across
+the whole results arc: every figure printed in Sections 4 through 6.7 is
+re-derived from its artifact and matched against the sentence that prints
+it, Section 6.8's per-rung table is re-derived the same way, and the
+auxiliary audit's figures are pinned verbatim -- so a hand-typed value
+fails the build, and so does one that silently moves to a neighbouring
+claim. The claim list is itself guarded: every numeral in Sections 4-6.7
+must be one the contract derives or one it names as an accepted exclusion
+with a reason, the exclusions being row selectors, rung labels and
+construction settings rather than results, so a figure added later cannot
+slip past unchecked. Provenance runs by two routes, both digest-locked at
+the artifact. The legacy results of Sections 4-5 name their producing
+experiment (`exp03`-`exp23`) and its committed summary table, audited in
+`producer_audit.md`. The preregistered results of Sections 6-6.8 name
+their own frozen artifacts -- `p14_prereg_results.json` for the capstone,
+`p14_s4_results.json` and `p14_s5_results.json` for the Schwarzschild
+extensions, the per-rung count records for Section 6.8, and
+`p14_o4b_results.json` for the auxiliary audit -- each with its executed
+freeze manifest. What the contract does not do is stated too: it holds the
+printed characters to the committed artifact, not the artifact to nature,
+it re-runs no experiment, and it reaches Sections 4-6.8 and the auxiliary
+audit's figures only; numbers quoted elsewhere in the paper are still
+checked by reading. Writing it corrected two transcriptions that reading
+had passed (Section 4.3's radar-distance RMSE and Section 6.4's C2
+separation statistic), which is why the reach is now stated as a contract
+rather than as care; the claim boundary's copies of the same figures are
+held to the same artifacts, because that is where one of the two had been
+copied as well. The preregistered stages ran once each from an exact clean
+checkout of a merged freeze commit, under frozen decision rules, with
+their verdicts computed by the frozen code rather than asserted in prose.
+Every bibliographic entry was checked
 against an authoritative record (arXiv, Crossref, or the publisher) and
 then re-checked independently; the priority assessments in the companion
 records name the sources that were fetched.
