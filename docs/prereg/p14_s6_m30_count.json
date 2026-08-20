@@ -1,0 +1,104 @@
+{
+ "kind": "results",
+ "run_kind": "s6_m30_count",
+ "stage": "S6 M=3.0 Poisson-count campaign: sprinkled tri-state membership count against the rung's certified volume",
+ "frozen_config": {
+  "a_intensity": 440.0,
+  "tau": 0.025,
+  "alpha": 0.05,
+  "v_lo": 121.22502058308072,
+  "v_hi": 122.44328048247328,
+  "v_ref": 121.834150532777,
+  "u_power_ceiling": 30,
+  "seed_name": "s6_m30_count",
+  "tol": 1e-08,
+  "chunk": 65536,
+  "scan_call_cap": 11000000,
+  "max_calls": 11006466,
+  "max_wall_s": 86400.0
+ },
+ "g3a_preflight": {
+  "passed": true,
+  "metered_calls": 6466
+ },
+ "decision": {
+  "k_certain": 53606,
+  "u_ambiguous": 0,
+  "alpha": 0.05,
+  "garwood_low_counts": 53153.15802942572,
+  "garwood_up_counts": 54061.7405065418,
+  "c_lo_volume": 120.80263188505846,
+  "c_hi_volume": 122.86759206032227,
+  "d_lo": -1.6406485974148204,
+  "d_hi": 1.6425714772415503,
+  "band": 3.045853763319425,
+  "oracle": {
+   "v_lo": 121.22502058308072,
+   "v_hi": 122.44328048247328,
+   "v_ref": 121.834150532777,
+   "tau": 0.025
+  },
+  "verdict": "CONCORDANT",
+  "rule": "ONE outer Garwood interval at alpha/2 per side: L(K_certain), U(K_certain + U_amb); C = counts / A; D = [C_lo - V_hi, C_hi - V_lo] against [-tau*V_ref, +tau*V_ref]; contained -> CONCORDANT, disjoint -> DISCORDANT, else INCONCLUSIVE -- general in (K_certain, U_amb), 96-bit end to end, published as computed"
+ },
+ "scan": {
+  "n_total": 4605671,
+  "points_done": 4605671,
+  "k_certain": 53606,
+  "u_ambiguous": 0,
+  "calls": 6083193
+ },
+ "reservation": {
+  "ref": "refs/s6m30/reservation",
+  "authority": "github.com/lpaiu-cs/causal-spacetime",
+  "object": "05ad01058677c96d57433c15c543c3010900c48c",
+  "seed_spent": true,
+  "verified_at_exit": true
+ },
+ "seed": {
+  "s6_m30_count": 40000511
+ },
+ "freeze_sha": "ed353d3fd18c8f6cfd12989b14bf55ef9f7186fd",
+ "manifest_digest": "495f1699123bd9117821fe54c1b82460de0141a3ce2bd60f550723e728d4af07",
+ "code": {
+  "start": {
+   "rev": "ed353d3fd18c8f6cfd12989b14bf55ef9f7186fd",
+   "dirty": false,
+   "dirt": []
+  },
+  "end": {
+   "rev": "ed353d3fd18c8f6cfd12989b14bf55ef9f7186fd",
+   "dirty": false,
+   "dirt": []
+  }
+ },
+ "budget": {
+  "reserved": 6089659,
+  "completed": 6089659,
+  "unfinished": 0,
+  "wall_s": 2474.242076499999,
+  "wall_overrun_s": 0.0,
+  "max_calls": 11006466,
+  "max_wall_s": 86400.0,
+  "max_batch_calls": 8192,
+  "reserved_by_stage": {
+   "g3a_preflight": 6466,
+   "scan": 6083193
+  },
+  "stage": "publish",
+  "clock_started_at": "before G3a",
+  "cap_is_charged_against": "reserved, which never under-charges",
+  "call_cap_overshoot": "none: a batch that does not fit is refused, so max_calls is never crossed",
+  "wall_cap_is": "a start rule: no batch begins at or after max_wall_s, so the run can finish one batch late -- at most 8,192 calls, but NO rigorous bound in seconds, because the 768 us/pair cost is a host-dependent average and not a per-call maximum",
+  "nominal_overrun_s": 6.291456,
+  "nominal_overrun_is": "a projection from the measured average; the recorded wall_overrun_s is the fact"
+ },
+ "environment": {
+  "python": "3.11",
+  "gmpy2": "2.3.1",
+  "mpfr": "MPFR 4.2.2",
+  "gmp": "GMP 6.3.0",
+  "numpy": "2.4.6"
+ },
+ "total_wall_s": 2474.2420961000025
+}
