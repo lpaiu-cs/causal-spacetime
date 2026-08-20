@@ -241,7 +241,16 @@ OBSERVED_PROBE_SCALARS = {
 #: s6_m18_pilot. One stream, one run, never extended; the commit that
 #: records ANY outcome must move it to OBSERVED_PROBE_SCALARS.
 #: `refs/s6m30pilot/reservation` serialises the opening.
-FRESH_PROBE_SCALARS: dict[str, int] = {}
+#: s6_m30_count: the S6 M = 3.0 strong-curvature rung's Poisson-count
+#: sprinkling stream, allocated 2026-08-20 under the rung count freeze
+#: (docs/prereg/p14_s6_m30_count.md). One stream, one run, never
+#: extended; the commit that records ANY outcome must move it to
+#: OBSERVED_PROBE_SCALARS. `refs/s6m30/reservation` serialises the
+#: opening; the pilot stream (retired) contributed only the U
+#: ceiling.
+FRESH_PROBE_SCALARS: dict[str, int] = {
+    "s6_m30_count": 40_000_511,
+}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]
