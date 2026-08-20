@@ -129,12 +129,12 @@ enforces today. The C2 feasibility audit is exploratory (stored-data only).
 | --- | --- |
 | `docs/prereg/p14_s4_schwarzschild_c1.md` | `0820043dcde99c64cb73d49d519d12fb25723588b2a62413e0dd2f1e008371f4` |
 | `docs/prereg/p14_s4_executed_freeze_manifest.json` | `9e604fbc3d4e1399d7cfdc410a2f97e4bc7645ff2d1ceab4638b4c3cd9661071` |
-| `docs/prereg/p14_s4_freeze_manifest.json` | `56f542d0ff1c6dc93e0ac879c4e6bbc4a9a8365b45ae9cfa8c8eb0a6116c30ca` |
+| `docs/prereg/p14_s4_freeze_manifest.json` | `b21b738d67c1b5df42d63f56a532020217ef52e349e6aaacfaf63a4bc8d434f7` |
 | `docs/prereg/p14_s4_results.json` | `3c728bbeaab6ee1b02a700c972d7d77d542da0726098cb46a3ec08ec0fc5fd35` |
 | `docs/prereg/p14_s3_probe_results.json` | `1bd37acc1a01780c6078c895fd0fa77adb7a8acbd324b2c12a7d41d7afd7ebc8` |
 | `docs/prereg/p14_c2_feasibility_audit.json` | `ab133b2030a82d17f6a70629b1fedc58be52de1e5fe03bd8f5ad127548efa886` |
 | `experiments/positive_control/s4_schwarzschild_c1.py` | `71a13cbc052d1a71e59119d4dcf385b3d3fb830a2f142dd9253690c481823805` |
-| `experiments/positive_control/probe_seed_ledger.py` | `8ee1780f40d37de9b24bce6557bb27fc9858ccfaf96641106db69c8475091e49` |
+| `experiments/positive_control/probe_seed_ledger.py` | `f6e86e00241040a29c41e2c1b606a61ebc4b3d2c32832ed75db1ae8df3e3391d` |
 | `experiments/positive_control/c2_feasibility_audit.py` | `21810f35d94ea854611195875c0ac61b4a144c862184e4baa50edb4b00781715` |
 | `tests/test_s4_prereg.py` | `06642c6b0f491fd63fe63d8c4a76a83f274ab4a820e26f788c314cdf2af8fdaa` |
 | `docs/theory/schwarzschild_volume_oracle_note.md` | `56f7cb9ae851674bfb3c725f529be059418d7af52ab6f1580a23b0aa5ddeaa36` |
@@ -153,7 +153,7 @@ today. The seed ledger row above covers both stages.
 | --- | --- |
 | `docs/prereg/p14_s5_schwarzschild_c2.md` | `c9f8997336b543400b10aee9548be66a175ac5eee16d1ee906398b132273c340` |
 | `docs/prereg/p14_s5_executed_freeze_manifest.json` | `0b4d28976076ef0e59122326cb53dee976f87c23aeaff5bb517b672f3d1ded08` |
-| `docs/prereg/p14_s5_freeze_manifest.json` | `74ca891d8cc2cd3e51ead87ee18ed4f8e26aed190ec9c033260c256b76c61713` |
+| `docs/prereg/p14_s5_freeze_manifest.json` | `b3b5d55b1aa760a0132acf7760889b3cf9feb223ca1b0203f094c7e638f5ad12` |
 | `docs/prereg/p14_s5_results.json` | `d5f339fb4b33d3cd048c93587f630b45314350e7919ec848d560fe7e8b8a9ad6` |
 | `experiments/positive_control/s5_schwarzschild_c2.py` | `4761e5f90e019b8823fd93c883ece1a2f55034799a45f65d40d2cbcb0f3adc19` |
 | `tests/test_s5_prereg.py` | `29525ef24558c6142eaccf44eb58e82f65a689c65d88bcc5c691505434798a4a` |
@@ -182,7 +182,7 @@ No campaign rerun stands behind any row of this table.
 | --- | --- |
 | `docs/prereg/p14_o3_volume.json` | `aed2ce111901a53fc59b343af77ec3499afcfa48a54fcb68bf76134d25a44a5f` |
 | `docs/prereg/p14_o3_executed_freeze_manifest.json` | `350cc1786a858f099bbe7e094a8682ae25915287fd091503297500f60fd00907` |
-| `docs/prereg/p14_o4b_freeze_manifest.json` | `b3a27ce9f28f2e55ea3f61dbcb85af926032a7fb18a7c2ebbc82aa19619d6889` |
+| `docs/prereg/p14_o4b_freeze_manifest.json` | `608f2cff54e82a2f8fbf33beb383fec2669c9eab168ad44c9e41248f5cb69e22` |
 | `docs/prereg/p14_o4b_executed_freeze_manifest.json` | `cec650b9391af0fc11e4b6bb94455cdbc1a037c18ecec83149d0d4693e7d7be2` |
 | `docs/prereg/p14_o4b_incident.json` | `8106b16f0d03efe1acc81941f7ca3149cb8ddee0fbaaf00cfccb5c8376d4cc75` |
 | `docs/prereg/p14_o4b_checkpoint.json` | `5dd6de7eea25c8384329b26ebf9f61c9dae51ee451c6d5c5717dbd463dc6679a` |
