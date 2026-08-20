@@ -19,14 +19,15 @@ the check sensitive to a value that silently moves: a whole-document
 substring search would still pass if 4.2's two RMSE figures swapped.
 
 Numbers that no artifact can produce (a mathematical constant, a row
-selector, a construction setting) are NOT skipped: they are listed in
-`ACCEPTED_EXCLUSIONS` keyed by the section they occur in AND the
-number of times they may occur there, each with a one-line reason.
+selector, a construction setting) are NOT skipped: each is listed in
+`ACCEPTED_EXCLUSIONS` bound to the exact PHRASE that justifies it, in
+the section it occurs in, with a one-line reason.
 `test_every_number_is_derived_or_explicitly_excluded` strikes out
-every sentence a claim matched and then holds the leftover numerals to
-that table, so a figure added later changes a count and fails rather
-than borrowing an excuse written for somewhere else. That guard is the
-actual promise -- the claim list alone could always be out-run by a
+every sentence a claim matched and every excused phrase, then requires
+nothing numeric to be left. An excuse therefore covers the sentence it
+was written about and nothing else -- not the same literal elsewhere,
+and not a rewrite of its own sentence into a new result. That guard is
+the actual promise; the claim list alone could always be out-run by a
 sentence added later.
 """
 
@@ -39,7 +40,6 @@ import json
 import math
 import re
 import statistics
-from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 from typing import NamedTuple
@@ -1025,65 +1025,72 @@ def test_the_preregistered_verdicts_are_the_artifacts_verdicts():
 
 # ----------------------------------------------- the completeness guard
 
-#: Numeral OCCURRENCES in Sections 4-6.7 that no artifact produces as a
-#: result, keyed by (section, literal) and carrying the exact number of
-#: times that literal may appear in the section's residue -- the text
-#: left after every claim's matched sentence is removed.
+class Exclusion(NamedTuple):
+    """One numeral occurrence no artifact produces as a result, bound
+    to the WORDING that justifies it rather than to the bare literal.
+
+    `phrase` is the text as printed, quoted from the section residue;
+    `count` is how many times that wording occurs there. The reason has
+    to hold for the phrase, so if the phrase goes the excuse goes.
+    """
+
+    section: str
+    phrase: str
+    count: int
+    reason: str
+
+
+#: The honest edge of this contract, arrived at over two review rounds.
 #:
-#: Keying by literal alone was wrong, and PR #117 R1 was right to call
-#: it out: one justified `300` licensed every other `300` anywhere in
-#: Sections 4-6.7, so a new sentence reading "runtime 300 ms" would
-#: have passed the guard this file advertises as catching exactly that.
-#: Scoping to (section, literal) AND pinning the count closes it -- a
-#: second `300` in 4.3 is a count of 2 against an allowance of 1.
-ACCEPTED_EXCLUSIONS: dict[tuple[str, str], tuple[int, str]] = {
-    ("4.1", "2"):
-        (1, "the sqrt(2 rho) Brightwell-Gregory scaling law, a formula constant"),
-    ("4.1", "2400"):
-        (1, "N selector of the endpoint-RMSE comparison, asserted as an inequality"),
-    ("4.1", "300"):
-        (1, "N selector of the endpoint-RMSE comparison, asserted as an inequality"),
-    ("4.1", "3"):
-        (1, "dimension label in the non-monotonicity sentence, asserted qualitatively"),
-    ("4.1", "4"):
-        (1, "dimension label in the non-monotonicity sentence, asserted qualitatively"),
-    ("4.2", "2"):
-        (1, "the exponent in tau_est = sqrt(2K/rho), a formula constant"),
-    ("4.3", "300"):
-        (1, "N selector naming which exp11 rows the tick series is read from"),
-    ("4.4", "2"):
-        (1, "Figure 2 caption: the D = 2, 3, 4 panel labels"),
-    ("4.4", "3"):
-        (1, "Figure 2 caption: the D = 2, 3, 4 panel labels"),
-    ("4.4", "4"):
-        (1, "Figure 2 caption: the D = 2, 3, 4 panel labels"),
-    ("4.4", "2400"):
-        (1, "Figure 2 caption restating 4.1's endpoint-RMSE inequality"),
-    ("4.4", "300"):
-        (1, "Figure 2 caption restating 4.1's endpoint-RMSE inequality"),
-    ("4.6", "1.5"):
-        (1, "Figure 3 caption: the constant-1.5 profile label"),
-    ("6.2", "2"):
-        (2, "the exponents of the profile A(u)(x^2 - y^2), a construction setting"),
-    ("6.2", "-1"):
-        (2, "det g = -1, an exact property of the Brinkmann construction"),
-    ("6.2", "0"):
-        (1, "the A = 0 control reading, a construction setting"),
-    ("6.3", "95"):
-        (1, "the confidence level of the Student-t interval, a frozen convention"),
-    ("6.4", "95"):
-        (1, "the confidence level in the result-table header, a frozen convention"),
-    ("6.7", "2"):
-        (1, "the exponent in sqrt(-g) = r^2 sin(theta), the measure identity"),
-    ("6.7", "-1"):
-        (1, "det g = -1, quoted back as the plane wave's analogous identity"),
-    ("6.7", "0.60"):
-        (2, "inside the non-frozen English gloss of a frozen Korean sentence, "
-            "whose original is pinned verbatim against the artifact"),
-    ("6.7", "95"):
-        (1, "inside the non-frozen English gloss of a frozen Korean sentence, "
-            "whose original is pinned verbatim against the artifact"),
-}
+#: R1 killed the first form, a global `set[str]`: one justified `300`
+#: licensed every other `300` in Sections 4-6.7. R2 killed the second,
+#: `(section, literal) -> count`: the count survives a change of
+#: MEANING inside one section, so 4.3's `at N = 300 ...` row selector
+#: could become `the run took 300 ms` -- an unverified new result
+#: wearing a permitted occurrence's clothes -- and still pass.
+#:
+#: Binding to the phrase closes both. An excuse now covers exactly the
+#: sentence it was written about; rewrite that sentence and the excuse
+#: stops applying, whatever the literal or the count.
+ACCEPTED_EXCLUSIONS: tuple[Exclusion, ...] = (
+    Exclusion("4.1", "Endpoint RMSE is lower at N = 2400 than at N = 300", 1,
+              "N selectors of a comparison asserted as an inequality, not printed"),
+    Exclusion("4.1", "fluctuations for dimensions 3 and 4", 1,
+              "dimension labels of a claim asserted qualitatively, not printed"),
+    Exclusion("4.1", "scaling L ~ sqrt(2 rho) tau", 1,
+              "the Brightwell-Gregory scaling law, a formula constant"),
+    Exclusion("4.2", "tau_est = sqrt(2K/rho)", 1,
+              "the estimator's defining formula, a constant in it"),
+    Exclusion("4.3", "at N = 300 the error falls roughly by half per doubling", 1,
+              "N selector naming which exp11 rows the tick series is read from"),
+    Exclusion("4.4", "dimension estimates lie near D = 2, 3, 4", 1,
+              "Figure 2 caption: the panel's dimension labels"),
+    Exclusion("4.4", "endpoint RMSE is lower at N = 2400 than N = 300", 1,
+              "Figure 2 caption restating 4.1's endpoint-RMSE inequality"),
+    Exclusion("4.6", "(constant-1.5 conformal profile)", 1,
+              "Figure 3 caption: the exp19 profile label"),
+    Exclusion("6.2", "profile `A(u)(x^2 - y^2)`", 1,
+              "the construction's profile, its exponents a setting not a result"),
+    Exclusion("6.2", "`det g = -1`", 2,
+              "an exact property of the Brinkmann construction"),
+    Exclusion("6.2", "read with `A = 0`", 1,
+              "the control reading of the paired design, a construction setting"),
+    Exclusion("6.3", "the 95% Student-t interval", 1,
+              "the confidence level of every stated interval, a frozen convention"),
+    Exclusion("6.4", "Result (95% CI)", 1,
+              "the confidence level in the result-table header, same convention"),
+    Exclusion("6.7", "`sqrt(-g) = r^2 sin(theta)`", 1,
+              "the measure identity the extension rests on, an exact formula"),
+    Exclusion("6.7", "exactly as `det g = -1` served the plane wave", 1,
+              "6.2's construction identity, quoted back as the analogy"),
+    Exclusion("6.7", "AUC CI95 lower bound above 0.60", 1,
+              "non-frozen English gloss of a frozen Korean sentence, whose "
+              "original is pinned verbatim against the artifact"),
+    Exclusion("6.7", "the joint 95% lower bound of out-of-sample balanced "
+                     "accuracy exceeds 0.60", 1,
+              "non-frozen English gloss of a frozen Korean sentence, whose "
+              "original is pinned verbatim against the artifact"),
+)
 
 
 _CROSS_REFERENCE = re.compile(
@@ -1118,8 +1125,7 @@ def _residue(number: str) -> str:
     """What a section still says once everything already accounted for
     is struck out: the frozen quotes, each claim's matched sentence
     (removed ONCE, so a duplicated sentence survives), and pointers
-    like "Section 4.6" that reference rather than measure. Whatever
-    numerals remain are the ones nothing has explained."""
+    like "Section 4.6" that reference rather than measure."""
 
     body = SECTIONS.get(number, "")
     for sentence in _frozen_sentences():
@@ -1133,51 +1139,60 @@ def _residue(number: str) -> str:
     return _CROSS_REFERENCE.sub(" ", body)
 
 
-def _residual_counts() -> dict[tuple[str, str], int]:
-    return {(number, literal): count
-            for number in _SCANNED
-            for literal, count in Counter(
-                _NUMBER.findall(_residue(number))).items()}
+def _unexplained(number: str) -> list[str]:
+    """Numerals left in a section once its claims AND its exclusions'
+    exact wordings are struck out. Anything here is a figure nothing
+    in this file has accounted for."""
+
+    body = _residue(number)
+    for excluded in ACCEPTED_EXCLUSIONS:
+        if excluded.section != number:
+            continue
+        found = body.count(excluded.phrase)
+        assert found == excluded.count, (
+            number, excluded.phrase, found, excluded.count)
+        body = body.replace(excluded.phrase, " ")
+    return _NUMBER.findall(body)
 
 
 def test_every_number_is_derived_or_explicitly_excluded():
-    """The guard the [P2] review asked for. Every numeral printed in
-    Sections 4-6.7 is either inside a sentence some claim re-derived
-    from an artifact, or it is one of a NAMED number of occurrences in
-    a NAMED section, with its reason. Adding a figure anywhere in the
-    range changes a count and lands here rather than in a silent gap."""
+    """The guard the [P2] review asked for, in the form two rounds of
+    review drove it to. Every numeral printed in Sections 4-6.7 sits
+    either inside a sentence some claim re-derived from an artifact, or
+    inside a specific quoted phrase carrying its reason. A figure added
+    anywhere in the range lands here, not in a silent gap."""
 
-    mismatched = {
-        f"{section}:{literal}": (count, ACCEPTED_EXCLUSIONS.get(
-            (section, literal), (0, ""))[0])
-        for (section, literal), count in sorted(_residual_counts().items())
-        if ACCEPTED_EXCLUSIONS.get((section, literal), (0, ""))[0] != count
-    }
-    assert not mismatched, mismatched  # "section:literal": (found, allowed)
+    leftover = {number: found for number in _SCANNED
+                if (found := _unexplained(number))}
+    assert not leftover, leftover
 
 
-def test_no_exclusion_is_stale():
-    """An exclusion matching nothing is a standing licence for a number
-    that is no longer there; drop it instead."""
+def test_no_exclusion_is_stale_or_unreasoned():
+    """`_unexplained` already fails when a phrase stops occurring the
+    stated number of times, which is staleness. What is left to check
+    is that an exclusion is the kind of thing it claims to be: it must
+    excuse an actual numeral, and it must say why."""
 
-    present = _residual_counts()
-    assert not (set(ACCEPTED_EXCLUSIONS) - set(present)), \
-        sorted(set(ACCEPTED_EXCLUSIONS) - set(present))
-    assert all(reason.strip() for _, reason in ACCEPTED_EXCLUSIONS.values())
+    for excluded in ACCEPTED_EXCLUSIONS:
+        assert _NUMBER.search(excluded.phrase), excluded.phrase
+        assert excluded.reason.strip(), excluded.phrase
+        assert excluded.section in _SCANNED, excluded.section
+    for number in _SCANNED:
+        _unexplained(number)
 
 
-def test_the_guard_binds_a_number_to_where_it_occurs():
-    """Guard the guard, at the level R1 showed matters. The literal
-    `300` is excused in 4.1, 4.3 and 4.4, each once. A FOURTH `300`
-    -- a new sentence in any of them -- must still fail, which is
-    exactly what the literal-keyed version let through."""
+def test_the_guard_binds_a_number_to_its_wording():
+    """Guard the guard, against the hole R2 named. 4.3's `300` is
+    excused as a row selector. Repoint that same occurrence at a new
+    unverified result -- same section, same literal, same count -- and
+    the excuse must stop covering it."""
 
-    borrowed = [k for k in ACCEPTED_EXCLUSIONS if k[1] == "300"]
-    assert len(borrowed) > 1, borrowed
-    counts = dict(_residual_counts())
-    for key in borrowed:
-        assert counts[key] == ACCEPTED_EXCLUSIONS[key][0]
-        assert counts[key] + 1 != ACCEPTED_EXCLUSIONS[key][0]
+    selector = next(e for e in ACCEPTED_EXCLUSIONS if e.section == "4.3")
+    body = _residue("4.3").replace(selector.phrase, "the run took 300 ms", 1)
+    for excluded in ACCEPTED_EXCLUSIONS:
+        if excluded.section == "4.3":
+            body = body.replace(excluded.phrase, " ")
+    assert _NUMBER.findall(body) == ["300"]
 
 
 def test_the_claim_table_covers_every_section_and_legacy_table():
