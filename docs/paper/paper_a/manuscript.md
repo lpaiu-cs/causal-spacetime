@@ -665,6 +665,20 @@ own seed, once:
 | 0.2400 | 1.8 | [73.968637, 74.711920] | k=0 | 9,847,124 | 53,513 | 0 | [73.695211, 74.956037] | [-1.016709, +0.987400] | 1.858507 | **CONCORDANT** |
 | 0.4000 | 3.0 | [121.225021, 122.443280] | k=0 | 4,605,671 | 53,606 | 0 | [120.802632, 122.867592] | [-1.640649, +1.642571] | 3.045854 | **CONCORDANT** |
 
+![Figure 4](figures/fig4_ladder_count.png)
+
+**Figure 4.** The executed ladder. *Left:* at each preregistered
+compactness, the certified continuum volume (blue) and the volume implied by
+the sprinkled count (orange). The two overlap at plot scale across a
+threefold span in `mu` -- that overlap is the result. *Right:* the residual
+made visible, each rung's identified discrepancy `D` divided by that rung's
+own band `B = tau*V_ref`, so the four are comparable despite different
+bands; the shaded region is the gate. All four are contained, with roughly
+half the band to spare, and the `mu = 0.1867` rung's asymmetry is its single
+ambiguous point widening the interval outward as the rule provides. Both
+panels are generated from the same artifacts the contract tests re-derive
+(`figures/make_ladder_figure.py`); no value is typed in.
+
 The certified volume grows monotonically with the compactness (57 to 65 to
 74 to 122) as the geometry requires, and the realized discrepancy stays well inside
 the band at every rung. The `M = 1.4` pilot returned the program's first

@@ -179,6 +179,24 @@ def test_the_stated_rung_COUNT_tracks_the_executed_ladder():
         assert f"beyond the {w} tested values" not in ms, w
 
 
+def test_the_ladder_figure_covers_exactly_the_claimed_rungs():
+    """The Section 6.8 figure is generated from the artifacts, but from its
+    OWN rung list. Pin that the two lists agree, so a promoted rung cannot
+    appear in the table while the figure still shows the old ladder."""
+
+    src = (REPO / "docs" / "paper" / "paper_a" / "figures"
+           / "make_ladder_figure.py").read_text(encoding="utf-8")
+    for mu, name in RUNGS:
+        assert f'("{mu}", "{name}")' in src, (mu, name)
+    # and nothing beyond them
+    assert src.count('p14_') >= len(RUNGS)
+    listed = re.findall(r'\("(\d\.\d{4})", "(p14_[a-z0-9_]+\.json)"\)', src)
+    assert listed == list(RUNGS), listed
+    # the manuscript actually shows it
+    assert "figures/fig4_ladder_count.png" in MANUSCRIPT.read_text(
+        encoding="utf-8")
+
+
 def test_the_promotion_is_bounded_in_both_documents():
     """Executed must not grow into more than was run."""
 
