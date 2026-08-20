@@ -150,6 +150,13 @@ from seed_windows import (
 #: (`ba9c0e7`) re-verified at exit and RETAINED. The ladder's third
 #: rung closes: mu 0.1333 / 0.1867 / 0.2400 all independently
 #: concordant, per-rung verdicts separate.
+#: s6_m30_pilot: the S6 M = 3.0 strong-curvature rung's ambiguity-pilot
+#: stream, drawn 2026-08-20 from freeze head `d1b04b8` (PR #109).
+#: Scanned all 1,843,669 events (3,687,338 calls -- exactly 2n, zero
+#: ambiguous) and published FEASIBLE at k = 0 under the frozen
+#: general-k rule (docs/prereg/p14_s6_m30_pilot.json, tail
+#: 1.4749e-06 <= 1e-3). `refs/s6m30pilot/reservation` (`b1b10cd`)
+#: re-verified at exit and RETAINED.
 OBSERVED_PROBE_SCALARS = {
     "s3_pilot": 40_000_201,
     "w1_exploration": 40_000_211,
@@ -170,6 +177,7 @@ OBSERVED_PROBE_SCALARS = {
     "o5_campaign": 40_000_451,
     "s6_m14_pilot": 40_000_461,
     "s6_m18_pilot": 40_000_481,
+    "s6_m30_pilot": 40_000_501,
     "s6_m14_count": 40_000_471,
     "s6_m18_count": 40_000_491,
 }
@@ -233,9 +241,7 @@ OBSERVED_PROBE_SCALARS = {
 #: s6_m18_pilot. One stream, one run, never extended; the commit that
 #: records ANY outcome must move it to OBSERVED_PROBE_SCALARS.
 #: `refs/s6m30pilot/reservation` serialises the opening.
-FRESH_PROBE_SCALARS: dict[str, int] = {
-    "s6_m30_pilot": 40_000_501,
-}
+FRESH_PROBE_SCALARS: dict[str, int] = {}
 
 S3_PILOT_SEED = OBSERVED_PROBE_SCALARS["s3_pilot"]
 W1_SEED = OBSERVED_PROBE_SCALARS["w1_exploration"]

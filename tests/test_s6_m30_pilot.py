@@ -51,7 +51,9 @@ def test_frozen_configuration_is_the_ruled_one():
 def test_the_seed_is_fresh_and_301_untouched():
     import probe_seed_ledger as ledger
 
-    assert ledger.assert_fresh_scalar("s6_m30_pilot") == 40_000_501
+    assert "s6_m30_pilot" not in ledger.FRESH_PROBE_SCALARS
+    assert ledger.OBSERVED_PROBE_SCALARS["s6_m30_pilot"] == 40_000_501
+    assert ledger.replay_scalar("s6_m30_pilot") == 40_000_501
     assert 40_000_301 not in ledger.spent_scalars()
     assert 40_000_301 not in ledger.FRESH_PROBE_SCALARS.values()
 
