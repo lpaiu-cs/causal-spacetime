@@ -179,6 +179,81 @@ def test_the_stated_rung_COUNT_tracks_the_executed_ladder():
         assert f"beyond the {w} tested values" not in ms, w
 
 
+def _png_text(path: Path) -> dict:
+    """PNG tEXt chunks, parsed without a decoder dependency."""
+
+    b, out, i = path.read_bytes(), {}, 8
+    while i < len(b):
+        ln = int.from_bytes(b[i:i + 4], "big")
+        typ = b[i + 4:i + 8]
+        if typ == b"tEXt":
+            k, _, v = b[i + 8:i + 8 + ln].partition(bytes([0]))
+            out[k.decode("latin-1")] = v.decode("latin-1")
+        if typ == b"IEND":
+            break
+        i += 12 + ln
+    return out
+
+
+def test_the_displayed_figure_was_built_from_these_artifacts():
+    """The PNG that actually ships must carry a stamp of the values it
+    drew, and that stamp must equal the digest re-derived from today's
+    artifacts. Checking only the generator source would pass a stale
+    PNG -- add a rung, forget to re-run the generator, and the manuscript
+    would display the old ladder while every other test stayed green."""
+
+    fig = REPO / "docs" / "paper" / "paper_a" / "figures" / "fig4_ladder_count.png"
+    assert fig.exists(), fig
+
+    sys.path.insert(0, str(fig.parent))
+    import make_ladder_figure as gen
+
+    stamped = _png_text(fig).get("LadderDigest")
+    assert stamped, "the shipped PNG carries no LadderDigest stamp"
+    assert stamped == gen.plotted_digest(gen.load()), (
+        "fig4_ladder_count.png is stale: its stamp does not match the "
+        "digest of the current artifacts -- re-run "
+        "docs/paper/paper_a/figures/make_ladder_figure.py")
+
+
+def test_no_hardcoded_rung_count_outside_the_contract():
+    """Rung counts written as words go stale silently. The contract covers
+    the sentences that state a count; the figure caption and the
+    generator's titles are OUTSIDE it, so they must not state one AT ALL --
+    not merely avoid one phrasing. "All four" was fixed once and "so the
+    four are comparable" survived in the same caption because the guard
+    matched a pattern instead of the words."""
+
+    words = ("two", "three", "four", "five", "six", "seven")
+    pat = re.compile(r"\b(" + "|".join(words) + r")\b", re.I)
+
+    gen = (REPO / "docs" / "paper" / "paper_a" / "figures"
+           / "make_ladder_figure.py").read_text(encoding="utf-8")
+    hits = pat.findall(gen)
+    assert not hits, f"generator states a rung count: {hits}"
+    # the span in the panel title is computed, not typed
+    assert "{span:" in gen
+
+    ms = MANUSCRIPT.read_text(encoding="utf-8")
+    cap = ms[ms.index("**Figure 4.**"):]
+    cap = cap[:cap.index("\n\n")]
+    hits = pat.findall(cap)
+    assert not hits, f"the Figure 4 caption states a rung count: {hits}"
+
+
+def test_the_ladder_figure_covers_exactly_the_claimed_rungs():
+    """The figure is generated from the artifacts, but from its OWN rung
+    list. Pin that the two lists agree, so a promoted rung cannot appear
+    in the table while the figure still shows the old ladder."""
+
+    src = (REPO / "docs" / "paper" / "paper_a" / "figures"
+           / "make_ladder_figure.py").read_text(encoding="utf-8")
+    listed = re.findall(r'\("(\d\.\d{4})", "(p14_[a-z0-9_]+\.json)"\)', src)
+    assert listed == list(RUNGS), listed
+    assert "figures/fig4_ladder_count.png" in MANUSCRIPT.read_text(
+        encoding="utf-8")
+
+
 def test_the_promotion_is_bounded_in_both_documents():
     """Executed must not grow into more than was run."""
 
