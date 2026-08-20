@@ -20,11 +20,14 @@ substring search would still pass if 4.2's two RMSE figures swapped.
 
 Numbers that no artifact can produce (a mathematical constant, a row
 selector, a construction setting) are NOT skipped: they are listed in
-`ACCEPTED_EXCLUSIONS` with a one-line reason, and
-`test_every_number_is_derived_or_explicitly_excluded` fails if a
-number in Sections 4-6.7 is neither derived above nor listed there.
-That guard is the actual promise -- the claim list alone could always
-be out-run by a sentence added later.
+`ACCEPTED_EXCLUSIONS` keyed by the section they occur in AND the
+number of times they may occur there, each with a one-line reason.
+`test_every_number_is_derived_or_explicitly_excluded` strikes out
+every sentence a claim matched and then holds the leftover numerals to
+that table, so a figure added later changes a count and fails rather
+than borrowing an excuse written for somewhere else. That guard is the
+actual promise -- the claim list alone could always be out-run by a
+sentence added later.
 """
 
 from __future__ import annotations
@@ -36,6 +39,7 @@ import json
 import math
 import re
 import statistics
+from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 from typing import NamedTuple
@@ -555,8 +559,9 @@ def _accessibility() -> tuple[str, ...]:
 # ===================== 5. Negative results that bound the ladder
 
 @claim("5", "exp12 single_observer_reflection_degeneracy.csv",
-       "return the identical single-observer distance {}, while the two-chain "
-       "oriented protocol recovers the signed positions {} and {}")
+       "two targets at x = {} and x = {} return the identical single-observer "
+       "distance {}, while the two-chain oriented protocol recovers the "
+       "signed positions {} and {}")
 def _reflection() -> tuple[str, ...]:
     rows = [r for r in _csv("single_observer_reflection_degeneracy.csv")
             if abs(float(r["true_x"])) == 0.1]
@@ -564,7 +569,8 @@ def _reflection() -> tuple[str, ...]:
     pair = sorted(rows, key=lambda r: -float(r["true_x"]))
     distances = {f'{float(r["single_observer_radar_distance"]):.1f}' for r in pair}
     assert len(distances) == 1, distances
-    return (distances.pop(),
+    return (*(f'{float(r["true_x"]):+.1f}' for r in pair),
+            distances.pop(),
             *(f'{float(r["two_chain_signed_position"]):+.1f}' for r in pair))
 
 
@@ -1019,51 +1025,73 @@ def test_the_preregistered_verdicts_are_the_artifacts_verdicts():
 
 # ----------------------------------------------- the completeness guard
 
-#: Numbers printed in Sections 4-6.7 that no committed artifact
-#: produces as a RESULT. Each entry is the literal as printed, mapped
-#: to why it is not derived. This dict is the honest edge of the
-#: contract: everything not listed here is re-derived above, and the
-#: guard below fails if a number is neither.
-ACCEPTED_EXCLUSIONS: dict[str, str] = {
-    "0": "the A = 0 control reading and 'zero' counts, construction settings",
-    "1": "rung/claim labels (R1, C1, S1, M = 1) and unit-scale prose",
-    "2": "rung labels and the dimension-2 series label, not measurements",
-    "3": "rung labels and the dimension-3 series label, not measurements",
-    "4": "rung labels and the dimension-4 series label, not measurements",
-    "5": "rung label R5 and the t = 5 row selector of the exp05 claim",
-    "8": "the S4 manifest file count, derived inside its own claim",
-    "10": "the r-shell floor and 'about 10%', derived inside their claims",
-    "16": "exp11 tick-count selector, quoted inside the radar-RMSE claim",
-    "20": "the r-shell ceiling, derived inside the S4 domain claim",
-    "25": "the 25% retention selector of the exp23 uncorrected-RMSE claim",
-    "30": "the t = 30 row selector of the exp05 lattice-count claim",
-    "32": "tick-count selector, quoted inside the exp13/exp14 claims",
-    "40": "the coordinate-time extent, derived inside the S4 domain claim",
-    "95": "the confidence level of every stated interval, a frozen convention",
-    "128": "tick-count selector, quoted inside the exp13/exp14 claims",
-    "200": "exp03 N selector, quoted inside the chain-convergence claim",
-    "300": "N selector for exp10/exp11/exp13 and the P14 operating point",
-    "600": "exp10 N selector, quoted inside the dimension-track claim",
-    "1200": "exp10 N selector, quoted inside the dimension-track claim",
-    "2000": "exp03 N selector, quoted inside the chain-convergence claim",
-    "2400": "exp10/exp07 N selector, quoted inside the RMSE claims",
-    "0.1": "the +-0.1 exp12 target positions, derived inside their claim",
-    "0.3": "exp13 beta selector, quoted inside the Lorentz-map claim",
-    "0.6": "exp13 beta selector, quoted inside the Lorentz-map claim",
-    "1.0": "unit scale/weight/fraction labels and the wT = 1 selector",
-    "1.5": "the conformal scale label of the exp18/exp19 profiles",
-    "2.0": "the wT = 2 selector and the conformal scale label",
-    "0.25": "'about a quarter' prose beside the derived ~0.25 fraction",
-    "-1": "det g = -1, an exact property of the Brinkmann construction",
+#: Numeral OCCURRENCES in Sections 4-6.7 that no artifact produces as a
+#: result, keyed by (section, literal) and carrying the exact number of
+#: times that literal may appear in the section's residue -- the text
+#: left after every claim's matched sentence is removed.
+#:
+#: Keying by literal alone was wrong, and PR #117 R1 was right to call
+#: it out: one justified `300` licensed every other `300` anywhere in
+#: Sections 4-6.7, so a new sentence reading "runtime 300 ms" would
+#: have passed the guard this file advertises as catching exactly that.
+#: Scoping to (section, literal) AND pinning the count closes it -- a
+#: second `300` in 4.3 is a count of 2 against an allowance of 1.
+ACCEPTED_EXCLUSIONS: dict[tuple[str, str], tuple[int, str]] = {
+    ("4.1", "2"):
+        (1, "the sqrt(2 rho) Brightwell-Gregory scaling law, a formula constant"),
+    ("4.1", "2400"):
+        (1, "N selector of the endpoint-RMSE comparison, asserted as an inequality"),
+    ("4.1", "300"):
+        (1, "N selector of the endpoint-RMSE comparison, asserted as an inequality"),
+    ("4.1", "3"):
+        (1, "dimension label in the non-monotonicity sentence, asserted qualitatively"),
+    ("4.1", "4"):
+        (1, "dimension label in the non-monotonicity sentence, asserted qualitatively"),
+    ("4.2", "2"):
+        (1, "the exponent in tau_est = sqrt(2K/rho), a formula constant"),
+    ("4.3", "300"):
+        (1, "N selector naming which exp11 rows the tick series is read from"),
+    ("4.4", "2"):
+        (1, "Figure 2 caption: the D = 2, 3, 4 panel labels"),
+    ("4.4", "3"):
+        (1, "Figure 2 caption: the D = 2, 3, 4 panel labels"),
+    ("4.4", "4"):
+        (1, "Figure 2 caption: the D = 2, 3, 4 panel labels"),
+    ("4.4", "2400"):
+        (1, "Figure 2 caption restating 4.1's endpoint-RMSE inequality"),
+    ("4.4", "300"):
+        (1, "Figure 2 caption restating 4.1's endpoint-RMSE inequality"),
+    ("4.6", "1.5"):
+        (1, "Figure 3 caption: the constant-1.5 profile label"),
+    ("6.2", "2"):
+        (2, "the exponents of the profile A(u)(x^2 - y^2), a construction setting"),
+    ("6.2", "-1"):
+        (2, "det g = -1, an exact property of the Brinkmann construction"),
+    ("6.2", "0"):
+        (1, "the A = 0 control reading, a construction setting"),
+    ("6.3", "95"):
+        (1, "the confidence level of the Student-t interval, a frozen convention"),
+    ("6.4", "95"):
+        (1, "the confidence level in the result-table header, a frozen convention"),
+    ("6.7", "2"):
+        (1, "the exponent in sqrt(-g) = r^2 sin(theta), the measure identity"),
+    ("6.7", "-1"):
+        (1, "det g = -1, quoted back as the plane wave's analogous identity"),
+    ("6.7", "0.60"):
+        (2, "inside the non-frozen English gloss of a frozen Korean sentence, "
+            "whose original is pinned verbatim against the artifact"),
+    ("6.7", "95"):
+        (1, "inside the non-frozen English gloss of a frozen Korean sentence, "
+            "whose original is pinned verbatim against the artifact"),
 }
 
 
 _CROSS_REFERENCE = re.compile(
-    r"Sections? \d+(?:\.\d+)?(?:[-–]\d+(?:\.\d+)?)?"   # Section 4.6, Sections 4-6.8
-    r"|Figures? \d+|Appendix [A-Z]|Table \d+"               # figure/appendix pointers
-    r"|\bP\d+(?:[-–]P\d+)?\b|\bexp\d+\b"               # programme and producer ids
-    r"|\b\d\+\dD\b|\b\dD\b"                                 # 1+1D, 4D
-    r"|\([a-d]\)"                                           # figure panel letters
+    r"Sections? \d+(?:\.\d+)?(?:[-–]\d+(?:\.\d+)?)?"  # Section 4.6, Sections 4-6.8
+    r"|Figures? \d+|Appendix [A-Z]|Table \d+"              # figure/appendix pointers
+    r"|\bP\d+(?:[-–]P\d+)?\b|\bexp\d+\b"              # programme/producer ids
+    r"|\b\d\+\dD\b|\b\dD\b"                                # 1+1D, 4D
+    r"|\([a-d]\)"                                          # figure panel letters
 )
 
 _NUMBER = re.compile(r"(?<![\w.])[-+]?\d(?:[\d,]*\d)?(?:\.\d+)?(?:[eE][-+]?\d+)?")
@@ -1086,48 +1114,70 @@ def _frozen_sentences() -> tuple[str, ...]:
             *_json("p14_s5_results.json")["sentences"])
 
 
-def _scannable(number: str) -> str:
+def _residue(number: str) -> str:
+    """What a section still says once everything already accounted for
+    is struck out: the frozen quotes, each claim's matched sentence
+    (removed ONCE, so a duplicated sentence survives), and pointers
+    like "Section 4.6" that reference rather than measure. Whatever
+    numerals remain are the ones nothing has explained."""
+
     body = SECTIONS.get(number, "")
     for sentence in _frozen_sentences():
         body = body.replace(sentence, " ")
+    for claim_ in CLAIMS:
+        if claim_.section != number:
+            continue
+        matched = claim_.context.format(*claim_.derive())
+        assert matched in body, (number, matched)
+        body = body.replace(matched, " ", 1)
     return _CROSS_REFERENCE.sub(" ", body)
 
 
-def _claimed_literals() -> set[str]:
-    """Every number that a claim above actually derived and matched."""
-
-    found: set[str] = set()
-    for claim_ in CLAIMS:
-        found.update(_NUMBER.findall(claim_.context.format(*claim_.derive())))
-    return found
+def _residual_counts() -> dict[tuple[str, str], int]:
+    return {(number, literal): count
+            for number in _SCANNED
+            for literal, count in Counter(
+                _NUMBER.findall(_residue(number))).items()}
 
 
 def test_every_number_is_derived_or_explicitly_excluded():
     """The guard the [P2] review asked for. Every numeral printed in
-    Sections 4-6.7 must be one a claim above re-derived from an
-    artifact, or one named in ACCEPTED_EXCLUSIONS with its reason. A
-    number added to the manuscript later lands here rather than in a
-    silent gap."""
+    Sections 4-6.7 is either inside a sentence some claim re-derived
+    from an artifact, or it is one of a NAMED number of occurrences in
+    a NAMED section, with its reason. Adding a figure anywhere in the
+    range changes a count and lands here rather than in a silent gap."""
 
-    claimed = _claimed_literals()
-    uncovered: dict[str, str] = {}
-    for number in _SCANNED:
-        for token in _NUMBER.findall(_scannable(number)):
-            if token not in claimed and token not in ACCEPTED_EXCLUSIONS:
-                uncovered[token] = number
-    assert not uncovered, uncovered
+    mismatched = {
+        f"{section}:{literal}": (count, ACCEPTED_EXCLUSIONS.get(
+            (section, literal), (0, ""))[0])
+        for (section, literal), count in sorted(_residual_counts().items())
+        if ACCEPTED_EXCLUSIONS.get((section, literal), (0, ""))[0] != count
+    }
+    assert not mismatched, mismatched  # "section:literal": (found, allowed)
 
 
 def test_no_exclusion_is_stale():
-    """An exclusion matching nothing in Sections 4-6.7 is a standing
-    licence for a number that is no longer there; drop it instead."""
+    """An exclusion matching nothing is a standing licence for a number
+    that is no longer there; drop it instead."""
 
-    present: set[str] = set()
-    for number in _SCANNED:
-        present.update(_NUMBER.findall(_scannable(number)))
-    assert not (set(ACCEPTED_EXCLUSIONS) - present), \
-        sorted(set(ACCEPTED_EXCLUSIONS) - present)
-    assert all(reason.strip() for reason in ACCEPTED_EXCLUSIONS.values())
+    present = _residual_counts()
+    assert not (set(ACCEPTED_EXCLUSIONS) - set(present)), \
+        sorted(set(ACCEPTED_EXCLUSIONS) - set(present))
+    assert all(reason.strip() for _, reason in ACCEPTED_EXCLUSIONS.values())
+
+
+def test_the_guard_binds_a_number_to_where_it_occurs():
+    """Guard the guard, at the level R1 showed matters. The literal
+    `300` is excused in 4.1, 4.3 and 4.4, each once. A FOURTH `300`
+    -- a new sentence in any of them -- must still fail, which is
+    exactly what the literal-keyed version let through."""
+
+    borrowed = [k for k in ACCEPTED_EXCLUSIONS if k[1] == "300"]
+    assert len(borrowed) > 1, borrowed
+    counts = dict(_residual_counts())
+    for key in borrowed:
+        assert counts[key] == ACCEPTED_EXCLUSIONS[key][0]
+        assert counts[key] + 1 != ACCEPTED_EXCLUSIONS[key][0]
 
 
 def test_the_claim_table_covers_every_section_and_legacy_table():
