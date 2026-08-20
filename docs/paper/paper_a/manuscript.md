@@ -1035,18 +1035,23 @@ claims. The AI systems are not authors and bear no responsibility: the
 author takes full responsibility for every claim, number, and citation
 here.
 
-How the output was verified. Every quantitative result in Sections 4-6.8
-is produced by a committed experiment script and pinned by a
-content-addressed manifest whose digests a contract test recomputes, so no
-number in this manuscript is transcribed by hand or recalled from a model's
-memory; the preregistered stages additionally ran once each from an exact
-clean checkout of a merged freeze commit, under frozen decision rules, with
-their verdicts computed by the frozen code rather than asserted in prose.
-Every bibliographic entry was checked against an authoritative record
-(arXiv, Crossref, or the publisher) and then re-checked independently; the
-priority assessments in the companion records name the sources that were
-fetched. Section 6.8's per-rung figures are re-derived from the published
-artifacts by a contract test, so a hand-typed value fails the build.
+How the output was verified, and how far that verification reaches. Every
+quantitative result in Sections 4-6.8 is produced by a committed experiment
+script whose output file is pinned by a content-addressed manifest that a
+contract test recomputes, so the *artifacts* cannot drift unnoticed. The
+manuscript's own transcription of those artifacts is machine-checked in two
+places: Section 6.8's per-rung figures are re-derived from the published
+artifacts, and the auxiliary audit's figures are pinned verbatim, so a
+hand-typed value in either fails the build. Elsewhere the link is weaker
+and is stated as such: each number names its producing experiment and its
+committed summary table (`producer_audit.md`), but the transcription itself
+was checked by reading, not by a contract. The preregistered stages ran
+once each from an exact clean checkout of a merged freeze commit, under
+frozen decision rules, with their verdicts computed by the frozen code
+rather than asserted in prose. Every bibliographic entry was checked
+against an authoritative record (arXiv, Crossref, or the publisher) and
+then re-checked independently; the priority assessments in the companion
+records name the sources that were fetched.
 
 ## References
 
