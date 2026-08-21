@@ -1,0 +1,68 @@
+\section{The reconstruction ladder}\label{sec:ladder}
+
+We separate the \emph{primitive} from \emph{supplied ingredients} and index
+rungs by the minimal ingredient each requires.
+
+The primitive is:
+\begin{itemize}
+\item \textbf{Causal / accessibility order.} A strict partial order on
+  events (in the continuum models, Minkowski causal precedence;
+  null-inclusive).
+\end{itemize}
+
+The supplied ingredient symbols (these form branches, not one linear
+hierarchy) are:
+\begin{itemize}
+\item \textbf{M---global event-density calibration.} The conversion between
+  event count and physical volume in the declared sampling model.
+\item \textbf{O---observer chain with clock labels.} A timelike chain
+  carrying ordered tick labels (an operational clock), defining a radar
+  protocol.
+\item \textbf{R---oriented synchronized reference.} A second beacon chain
+  with calibrated separation, fixing a spatial side.
+\item \textbf{A---observer atlas.} Multiple overlapping observer charts.
+\item \textbf{W---local measure profile / weights.} The physical volume
+  element relative to the support sampling measure.
+\end{itemize}
+
+\Tref{tab:rungs} lists the rungs (minimal ingredient $\to$ what is
+reconstructed).
+
+\begin{table}[t]
+\caption{Rungs of the reconstruction ladder: the minimal ingredient set,
+what it reconstructs, and what bounds it.}
+\label{tab:rungs}
+\begin{tabularx}{\textwidth}{@{}llXX@{}}
+\toprule
+Rung & Ingredient & Reconstructed & Bounded by \\
+\midrule
+R0 & order only & flat-sprinkling dimension estimate; uncalibrated chain
+  statistics & manifold/model assumptions; no metric scale \\
+R1 & order + M & timelike proper time (interval cardinality $\to$ volume
+  $\to$ $\tau$) & needs a density \\
+R2 & order + O & radar time; unsigned radar distance & sign undetermined \\
+R3 & order + O + R & signed coordinates; Lorentz map between protocols &
+  supplied orientation \\
+R4 & order + O + R + A & atlas transition maps (Poincar\'e); invariant
+  agreement & oriented, calibrated charts \\
+R5 & order + M + W & volume under conformal ambiguity; coarse-graining
+  stability & global and local measure supplied \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Three negative results bound the ladder from below (\sref{sec:negative}):
+conformal scale is not fixed by order alone (motivating M and W); a single
+observer gives only unsigned distance (motivating R); and finite signal
+speed alone does not give Lorentzian structure. \Fref{fig:ladder}
+summarizes the ladder.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig1_ladder.pdf}
+\caption{The reconstruction dependency ledger. Each row names a minimal
+ingredient set and the quantity it unlocks; the observer and measure rows
+are branches rather than one cumulative linear chain. The ``bounded by''
+line records what that ingredient set still does not supply.}
+\label{fig:ladder}
+\end{figure}

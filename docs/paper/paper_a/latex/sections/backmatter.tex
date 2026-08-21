@@ -1,0 +1,68 @@
+% Back matter -- acknowledgements/disclosure (manuscript.md lines
+% 1043-1089) and a CQG-style data availability statement written for the
+% journal format, faithful to section 10. The manuscript's "References"
+% stub is superseded by the bibliography in main.tex.
+\section*{Acknowledgements and disclosure}
+
+This work was carried out with substantial assistance from AI language
+models (Anthropic Claude), used for literature search, code and
+manuscript drafting, numerical analysis, and adversarial review of the
+author's own claims. The AI systems are not authors and bear no
+responsibility: the author takes full responsibility for every claim,
+number, and citation here.
+
+How the output was verified, and how far that verification reaches.
+Every quantitative result in
+sections~\ref{sec:results}--\ref{sec:count} is produced by a committed
+experiment script whose output file is pinned by a content-addressed
+manifest that a contract test recomputes, so the \emph{artifacts} cannot
+drift unnoticed. The manuscript's own transcription of those artifacts is
+machine-checked across the whole results arc: every figure printed in
+sections~\ref{sec:results} through~\ref{sec:schwarzschild} is re-derived
+from its artifact and matched against the sentence that prints it,
+\sref{sec:count}'s per-rung table is re-derived the same way, and the
+auxiliary audit's figures are pinned verbatim---so a hand-typed value
+fails the build, and so does one that silently moves to a neighboring
+claim. The claim list is itself guarded: every numeral in
+sections~\ref{sec:results}--\ref{sec:schwarzschild} must be one the
+contract derives or one it names as an accepted exclusion with a reason,
+the exclusions being row selectors, rung labels and construction settings
+rather than results, so a figure added later cannot slip past unchecked.
+Provenance runs by two routes, both digest-locked at the artifact. The
+legacy results of sections~\ref{sec:results} and~\ref{sec:negative} name
+their producing experiment (\expid{exp03}--\expid{exp23}) and its
+committed summary table, audited in \artifact{producer\_\allowbreak{}audit.md}. The
+preregistered results of sections~\ref{sec:capstone}--\ref{sec:count}
+name their own frozen artifacts---\artifact{p14\_\allowbreak{}prereg\_\allowbreak{}results.json}
+for the capstone, \artifact{p14\_\allowbreak{}s4\_\allowbreak{}results.json} and
+\artifact{p14\_\allowbreak{}s5\_\allowbreak{}results.json} for the Schwarzschild extensions, the
+per-rung count records for \sref{sec:count}, and
+\artifact{p14\_\allowbreak{}o4b\_\allowbreak{}results.json} for the auxiliary audit---each with its
+executed freeze manifest. What the contract does not do is stated too: it
+holds the printed characters to the committed artifact, not the artifact
+to nature, it re-runs no experiment, and it reaches
+sections~\ref{sec:results}--\ref{sec:count} and the auxiliary audit's
+figures only; numbers quoted elsewhere in the paper are still checked by
+reading. Writing it corrected two transcriptions that reading had passed
+(\sref{sec:r2}'s radar-distance RMSE and \sref{sec:preregresult}'s C2
+separation statistic), which is why the reach is now stated as a contract
+rather than as care; the claim boundary's copies of the same figures are
+held to the same artifacts, because that is where one of the two had been
+copied as well. The preregistered stages ran once each from an exact
+clean checkout of a merged freeze commit, under frozen decision rules,
+with their verdicts computed by the frozen code rather than asserted in
+prose. Every bibliographic entry was checked against an authoritative
+record (arXiv, Crossref, or the publisher) and then re-checked
+independently; the priority assessments in the companion records name the
+sources that were fetched.
+
+\section*{Data availability statement}
+
+All data supporting the results of this study are version-controlled in
+the public repository at
+\url{https://github.com/lpaiu-cs/causal-spacetime}: the 19 digest-locked
+summary tables under \artifact{figures/\allowbreak{}data/}, and the preregistered
+evidence bundles and frozen artifacts of
+sections~\ref{sec:capstone}--\ref{sec:count} and the auxiliary audit.
+Every cited file is pinned by a content-addressed manifest whose digests
+the repository's contract tests recompute.

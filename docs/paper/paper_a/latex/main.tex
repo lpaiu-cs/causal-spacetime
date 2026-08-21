@@ -1,0 +1,43 @@
+% Paper A — journal-format draft (Classical and Quantum Gravity target).
+% Source of truth for content: ../manuscript.md (contract-tested against the
+% committed artifacts). This LaTeX rendition must not change any number,
+% verdict, or claim grade; check_numbers.py enforces the number side.
+% Build: ./build.sh  (XeLaTeX; Korean frozen sentences need it)
+\documentclass[12pt]{article}
+\usepackage{cqgmimic}
+
+\begin{document}
+
+\input{sections/front}
+
+\input{sections/s01_intro}
+\input{sections/s02_ladder}
+\input{sections/s03_methods}
+\input{sections/s04_results}
+\input{sections/s05_negative}
+\input{sections/s06_capstone}
+\input{sections/s067_schwarzschild}
+\input{sections/s068_count}
+\input{sections/s07_discussion}
+\input{sections/s08_claims}
+\input{sections/s09_limitations}
+\input{sections/s10_repro}
+
+\input{sections/backmatter}
+
+\appendix
+% iopart appendix conventions: headings "Appendix A. Title", tables/figures
+% renumbered A1, A2, ...
+\titleformat{\section}{\normalsize\bfseries}{Appendix \thesection.}{0.6em}{}
+\renewcommand{\thetable}{A\arabic{table}}\setcounter{table}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}\setcounter{figure}{0}
+\input{sections/appendix_a}
+\input{sections/appendix_b}
+
+% Hand-built IOP/CQG-format numeric bibliography (Vancouver, order of first
+% citation). Data source: ../citations/references.bib (verified); the entry
+% order is pinned to the \citation order in main.aux — re-check it if a
+% \cite is added or moved.
+\input{sections/references}
+
+\end{document}

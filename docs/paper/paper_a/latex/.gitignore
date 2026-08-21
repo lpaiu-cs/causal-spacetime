@@ -1,0 +1,9 @@
+# latexmk build intermediates (main.pdf is committed as the deliverable)
+main.aux
+main.log
+main.out
+main.xdv
+main.fls
+main.fdb_latexmk
+main.bbl
+main.blg
