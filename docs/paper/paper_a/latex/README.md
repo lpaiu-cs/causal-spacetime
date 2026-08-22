@@ -13,9 +13,8 @@ artifacts. This directory renders it; it must never disagree with it.
 ./build.sh          # latexmk -xelatex; needs XeLaTeX (Korean frozen sentences)
 ```
 
-Output: `main.pdf` (25 pp). TeX Live 2025 suffices; fonts are Latin Modern
-(the iopart preprint face) plus Nanum Myeongjo for the byte-exact Korean
-frozen verdict sentences.
+Output: `main.pdf` (25 pp). TeX Live 2025 suffices; the font is Latin
+Modern, the iopart preprint face.
 
 ## Layout
 
@@ -45,6 +44,7 @@ frozen verdict sentences.
 ## Deliberate deviations from the manuscript (all register-level)
 
 - Abstract compressed to journal length; body claims untouched.
+- British spelling with `-ize` endings, per IOP house style.
 - Three method citations added at first mention (`delong1988`,
   `garwood1936`, `clopperpearson1934`) — all from the verified
   bibliography, previously cited only in the claim-boundary section.

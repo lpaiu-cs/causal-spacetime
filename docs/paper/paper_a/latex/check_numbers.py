@@ -129,6 +129,18 @@ def main() -> int:
 
     defects = 0
 
+    # The frozen sentences are printed as English renderings only; their
+    # Korean originals live in the results artifacts, bound to those
+    # renderings by FROZEN_RENDERINGS in
+    # tests/test_paper_a_results_integration.py (which guards the same
+    # property on the manuscript side). Appendix B says so once.
+    hangul = re.findall(r"[가-힣]+", tex_text)
+    if hangul:
+        print("== Korean in the LaTeX rendition ==")
+        for run in dict.fromkeys(hangul[:8]):
+            print(f"  {run}")
+        defects += len(set(hangul))
+
     invented = {t: c for t, c in tex_tokens.items()
                 if t not in md_tokens and t not in TEX_WHITELIST}
     if invented:

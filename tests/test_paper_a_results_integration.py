@@ -236,7 +236,7 @@ def _chain_normalized() -> tuple[str, ...]:
 
 
 @claim("4.1", "exp09 longest_chain_calibration_summary.csv",
-       "(mean chain proper-time error {})")
+       "its mean error there is {};")
 def _chain_bias() -> tuple[str, ...]:
     return (f'{statistics.fmean(_col(_chain_rows(), "tau_chain_error")):.3f}',)
 
@@ -462,32 +462,94 @@ def _conformal() -> tuple[str, ...]:
             joined("proper_time_ratio"), joined("volume_ratio"))
 
 
-def _weighted(key: str, places: int = 3) -> tuple[str, str]:
+def _profile_rows(profile: str) -> list[dict[str, str]]:
+    """exp19's rows for one profile, N-sorted.
+
+    The R5 evidence was re-pointed from `constant_1.5` to
+    `sinusoidal_0.3` after a referee showed the constant profile's
+    weighted relative RMSE is the flat profile's identically (a constant
+    weight rescales estimate and truth alike), so that run demonstrates
+    the global density -- ingredient M -- and nothing local. The
+    sinusoidal profile is the package's only genuinely
+    position-dependent weight, and its story is scaling, not bias: the
+    profile is odd over the t-symmetric diamond, so its bias is forced
+    toward zero by symmetry while its per-pair error is not."""
+
     rows = sorted((r for r in _csv("weighted_conformal_volume_summary.csv")
-                   if r["profile"] == "constant_1.5"),
+                   if r["profile"] == profile),
                   key=lambda r: float(r["N"]))
-    assert len(rows) == 3, len(rows)
-    return (f"{float(rows[0][key]):.{places}f}",
-            f"{float(rows[-1][key]):.{places}f}")
+    assert len(rows) == 3, (profile, len(rows))
+    return rows
+
+
+def _track(profile: str, key: str, places: int = 3) -> str:
+    return " -> ".join(f"{float(r[key]):.{places}f}"
+                       for r in _profile_rows(profile))
+
+
+@claim("4.6", "exp18 conformal_order_ambiguity_summary.csv",
+       "the diamond volume moves by {}% (exp18's sinusoidal row)")
+def _sin_volume_effect() -> tuple[str, ...]:
+    row = [r for r in _csv("conformal_order_ambiguity_summary.csv")
+           if r["profile"] == "sinusoidal_0.3"]
+    assert len(row) == 1, len(row)
+    return (f'{(float(row[0]["volume_ratio"]) - 1) * 100:.1f}',)
 
 
 @claim("4.6", "exp19 weighted_conformal_volume_summary.csv",
-       "decreasing relative RMSE ({} -> {} across the tested N)")
-def _weighted_rmse() -> tuple[str, ...]:
-    return _weighted("weighted_relative_rmse")
+       "(unweighted volume bias {} to {})")
+def _sin_unweighted_bias() -> tuple[str, ...]:
+    rows = _profile_rows("sinusoidal_0.3")
+    return (f'{float(rows[0]["unweighted_volume_bias"]):.4f}',
+            f'{float(rows[-1]["unweighted_volume_bias"]):.4f}')
 
 
 @claim("4.6", "exp19 weighted_conformal_volume_summary.csv",
-       "no material RMSE improvement ({} -> {}, bias ~ {})")
-def _unweighted() -> tuple[str, ...]:
-    rows = [r for r in _csv("weighted_conformal_volume_summary.csv")
-            if r["profile"] == "constant_1.5"]
-    bias = statistics.fmean(_col(rows, "unweighted_volume_bias"))
-    return (*_weighted("unweighted_relative_rmse"), f"{bias:.2f}")
+       "its relative RMSE stalls at {} across the tested N")
+def _sin_unweighted_track() -> tuple[str, ...]:
+    return (_track("sinusoidal_0.3", "unweighted_relative_rmse"),)
+
+
+@claim("4.6", "exp19 weighted_conformal_volume_summary.csv",
+       "the weighted relative RMSE falls {}, tracking the flat-profile "
+       "sampling floor ({}) to within {}%")
+def _sin_weighted_track() -> tuple[str, ...]:
+    weighted = [float(r["weighted_relative_rmse"])
+                for r in _profile_rows("sinusoidal_0.3")]
+    flat = [float(r["weighted_relative_rmse"]) for r in _profile_rows("flat")]
+    worst = max(abs(a / b - 1) for a, b in zip(weighted, flat, strict=True))
+    return (_track("sinusoidal_0.3", "weighted_relative_rmse"),
+            _track("flat", "weighted_relative_rmse"),
+            f"{worst * 100:.1f}")
+
+
+@claim("4.6", "exp19 weighted_conformal_volume_summary.csv",
+       "volume-RMSE ratio grows {} with N")
+def _sin_ratio_track() -> tuple[str, ...]:
+    rows = _profile_rows("sinusoidal_0.3")
+    ratios = [float(r["unweighted_volume_rmse"])
+              / float(r["weighted_volume_rmse"]) for r in rows]
+    assert ratios == sorted(ratios), ratios          # "grows" is asserted
+    return (" -> ".join(f"{v:.1f}" for v in ratios),)
+
+
+@claim("4.6", "exp19 weighted_conformal_volume_summary.csv",
+       "its unweighted bias ({}) is exactly the missing global factor")
+def _const_identity() -> tuple[str, ...]:
+    """The constant profile IS the flat computation: pinned as an
+    identity, so the prose sentence stating it cannot outlive the data."""
+
+    const = _profile_rows("constant_1.5")
+    flat = _profile_rows("flat")
+    for c_row, f_row in zip(const, flat, strict=True):
+        assert abs(float(c_row["weighted_relative_rmse"])
+                   - float(f_row["weighted_relative_rmse"])) < 1e-15
+    bias = statistics.fmean(_col(const, "unweighted_volume_bias"))
+    return (f"~ {bias:.2f}",)
 
 
 @claim("4.6", "exp20 conformal_volume_exact_sanity.csv",
-       "the analytic volume/proper-time formulas are verified to ~{}")
+       "The analytic volume/proper-time formulas are verified to ~{}")
 def _exact_sanity() -> tuple[str, ...]:
     worst = max(abs(v) for v in
                 _col(_csv("conformal_volume_exact_sanity.csv"), "absolute_error"))
@@ -517,13 +579,188 @@ def _thinning_uncorrected() -> tuple[str, ...]:
 
 # ================== 4.7 Horizon analogue -- Rindler inaccessibility
 
+def _variance_structure() -> dict[str, float]:
+    """S4's paired arms and S5's unpaired arms, from the stored
+    per-reading arrays.
+
+    Section 6.7 attributed its C2 grade to type D versus type N until a
+    referee showed the difference is variance structure: C1 pairs on one
+    point set and sees only the relation change, C2 does not and so also
+    carries the between-reading event-count spread. Derived here rather
+    than stored, so the identity is pinned and not the digits."""
+
+    s4 = _json("p14_s4_results.json")
+    s5 = _json("p14_s5_results.json")
+    curved = s4["f_schwarzschild_lower"]["per_reading"]
+    flat = s4["f_flat"]["per_reading"]
+    paired = [c - f for c, f in zip(curved, flat, strict=True)]
+    paired_sd = statistics.pstdev(paired)
+    arm_c = s5["curved_f_lower"]["per_reading"]
+    arm_f = s5["flat_f"]["per_reading"]
+    pooled_sd = math.sqrt(
+        (statistics.pstdev(arm_c) ** 2 + statistics.pstdev(arm_f) ** 2) / 2)
+    unpaired_effect = abs(statistics.fmean(arm_c) - statistics.fmean(arm_f))
+    return {
+        "corr": statistics.correlation(curved, flat),
+        "paired_sd": paired_sd,
+        "pooled_sd": pooled_sd,
+        "variance_removed": 1.0 - (paired_sd / pooled_sd) ** 2,
+        "paired_sigma": abs(statistics.fmean(paired)) / paired_sd,
+        "unpaired_sigma": unpaired_effect / pooled_sd,
+    }
+
+
+@claim("6.4", "p14_prereg_results.json c1.raw",
+       "the relation fraction runs {} flat against {} curved, a factor of {}")
+def _capstone_fractions() -> tuple[str, ...]:
+    """The paper reported only the paired difference and its ratio to an
+    operational margin, which hides the effect size; a referee asked for
+    the two fractions themselves. Derived from the paired arrays."""
+
+    raw = _json("p14_prereg_results.json")["c1"]["raw"]
+    flat = statistics.fmean(raw["f_flat"])
+    curved = statistics.fmean(raw["f_curved"])
+    return (f"{flat:.6f}", f"{curved:.6f}", f"{curved / flat:.2f}")
+
+
+@claim("6.4", "p14_prereg_results.json c2.metrics",
+       "so at BA = {} it reaches {}, outside the range the quantity can take")
+def _ba_out_of_range() -> tuple[str, ...]:
+    """The frozen BA interval's upper end lies above 1. Derived, not
+    typed, so the sentence cannot outlive the artifact it describes."""
+
+    metrics = _json("p14_prereg_results.json")["c2"]["metrics"]
+    assert metrics["ci_ba"][1] > 1.0, metrics["ci_ba"]
+    return (f'{metrics["ba"]:.1f}', f'{metrics["ci_ba"][1]:.3f}')
+
+
+@claim("6.4", "p14_prereg_results.json c2.raw",
+       "combined across the two, gives [{}, 1.0] on the same test halves")
+def _ba_reference_interval() -> tuple[str, ...]:
+    """A NON-frozen companion to the frozen BA interval, which is an
+    unclipped Wald construction and reaches 1.014.
+
+    Referee C established the boundary this sits inside: a different
+    INTERVAL CONSTRUCTION on already-frozen data is descriptive and
+    carries no verdict, whereas a new STATISTIC chosen after seeing the
+    result would be a retrofitted gate. So this is derived here, from
+    the stored arrays, by the same split the frozen code uses -- train
+    on the first half of each arm, threshold at the midpoint of the
+    train means -- and the interval is the one S5 later uses for this
+    same quantity: exact Clopper-Pearson per arm at one-sided
+    alpha/2 = 0.0125, Bonferroni-combined."""
+
+    raw = _json("p14_prereg_results.json")["c2"]["raw"]
+    curved, flat = raw["f_curved"], raw["f_flat"]
+    half = len(curved) // 2
+    threshold = (statistics.fmean(curved[:half])
+                 + statistics.fmean(flat[:half])) / 2
+    hits = (sum(1 for x in curved[half:] if x > threshold)
+            + sum(1 for x in flat[half:] if x <= threshold))
+    assert hits == 2 * half, hits          # complete separation on the test halves
+    return (f"{0.0125 ** (1 / half):.6f}",)
+
+
+@claim("6.7", "p14_s4_results.json + p14_s5_results.json",
+       "the paired readings correlate at {} and pairing removes {}% of the "
+       "spread, leaving a paired SD of {}")
+def _s4_pairing() -> tuple[str, ...]:
+    v = _variance_structure()
+    return (f'{v["corr"]:.4f}', f'{100 * v["variance_removed"]:.1f}',
+            f'{v["paired_sd"]:.6f}')
+
+
+@claim("6.7", "p14_s4_results.json event_counts + per-reading arrays",
+       "that count correlates with the paired difference at {}")
+def _s4_count_is_not_the_nuisance() -> tuple[str, ...]:
+    """The first draft of this passage blamed the event count, following
+    one referee; a second referee recomputed and refuted it. The count
+    explains ~1% of the variance in f and essentially none of the
+    residual in delta, so the sentence had to name the shared point
+    configuration instead. Pinned here so the refuted mechanism cannot
+    creep back."""
+
+    s4 = _json("p14_s4_results.json")
+    delta = [c - f for c, f in zip(s4["f_schwarzschild_lower"]["per_reading"],
+                                   s4["f_flat"]["per_reading"], strict=True)]
+    r = statistics.correlation(delta, s4["event_counts"]["per_reading"])
+    assert abs(r) < 0.10, r
+    return (f"{r:.3f}",)
+
+
+@claim("6.7", "p14_prereg_results.json + p14_s4_results.json",
+       "the flat-arm relation fraction averages {} in the plane wave against "
+       "{} here")
+def _base_rates() -> tuple[str, ...]:
+    """Why the unpaired SDs differ by an order of magnitude: a relation
+    fraction near one half is near its most variable, and these two
+    constructions sit an order of magnitude apart in it."""
+
+    plane = _json("p14_prereg_results.json")["c1"]["raw"]["f_flat"]
+    schwarzschild = _json("p14_s4_results.json")["f_flat"]["per_reading"]
+    return (f"{statistics.fmean(plane):.4f}",
+            f"{statistics.fmean(schwarzschild):.4f}")
+
+
+@claim("6.7", "p14_s5_results.json + p14_s4_results.json",
+       "its pooled SD of {} is an order of magnitude larger, and against "
+       "that the same geometric effect is worth {} standard deviations "
+       "rather than {}")
+def _s5_pooled() -> tuple[str, ...]:
+    v = _variance_structure()
+    return (f'{v["pooled_sd"]:.6f}', f'{v["unpaired_sigma"]:.2f}',
+            f'{v["paired_sigma"]:.1f}')
+
+
+@claim("4.1", "exp09 longest_chain_calibration_summary.csv",
+       "the same chains scored under the inclusive convention give {}, the "
+       "two separated by the exact offset 2/sqrt(2 rho) = {}")
+def _chain_convention_offset() -> tuple[str, ...]:
+    """Section 3 declared the INCLUSIVE convention while the estimator
+    reads the exclusive length; a referee caught the mismatch. The two
+    residuals differ by a deterministic offset, so the inclusive figure
+    is derived from the committed exclusive one rather than stored --
+    pin the identity, not the digits."""
+
+    rows = _chain_rows()
+    exclusive = statistics.fmean(_col(rows, "tau_chain_error"))
+    rho = {r["rho"] for r in rows}
+    assert rho == {"300.0"}, rho
+    offset = 2.0 / math.sqrt(2 * 300.0)
+    return (f"{exclusive + offset:.3f}", f"{offset:.3f}")
+
+
+@claim("4.1", "exp09 longest_chain_calibration_summary.csv",
+       "the median chain carries {} elements including its endpoints")
+def _chain_median_length() -> tuple[str, ...]:
+    lengths = _col(_chain_rows(), "chain_length_including_endpoints")
+    return (f"{statistics.median(lengths):.1f}",)
+
+
 @claim("4.7", "exp16 rindler_horizon_reconstruction_summary.csv",
-       "precision = recall = {}, zero false positives and false negatives")
+       "zero false positives and zero false negatives, precision = recall = {}")
 def _rindler_exact() -> tuple[str, ...]:
     rows = _csv("rindler_horizon_reconstruction_summary.csv")
     values = set(_col(rows, "precision")) | set(_col(rows, "recall"))
     assert len(values) == 1, values
     return (f"{values.pop():.1f}",)
+
+
+@claim("4.7", "exp16 rindler_horizon_reconstruction_summary.csv",
+       "recovering a fraction {} to {} of it")
+def _rindler_wedge_recall() -> tuple[str, ...]:
+    """Recall against the IDEAL wedge, which is NOT what the table's
+    `recall` column scores. That column is scored against the events
+    finite clock coverage reaches, so it reads 1.0 while part of the
+    wedge is never reconstructed; the honest figure is the ratio of the
+    two accessible fractions. Section 4.7 said "the ideal-wedge
+    classification is exact" until a referee caught the mismatch."""
+
+    rows = _csv("rindler_horizon_reconstruction_summary.csv")
+    ratios = [c / w for c, w in
+              zip(_col(rows, "finite_coverage_accessible_fraction"),
+                  _col(rows, "wedge_accessible_fraction"), strict=True)]
+    return (f"{min(ratios):.2f}", f"{max(ratios):.2f}")
 
 
 @claim("4.7", "exp16 rindler_horizon_reconstruction_summary.csv",
@@ -534,7 +771,7 @@ def _rindler_fraction() -> tuple[str, ...]:
 
 
 @claim("4.7", "exp16 rindler_horizon_reconstruction_summary.csv",
-       "radar-time RMSE falling with tick resolution (e.g. {} -> {})")
+       "radar-time RMSE falls with tick resolution (e.g. {} -> {})")
 def _rindler_rmse() -> tuple[str, ...]:
     """The illustration is the table's first configuration: the lowest
     acceleration at the smallest N."""
@@ -845,7 +1082,7 @@ def _s5_secondary() -> tuple[str, ...]:
 
 
 @claim("6.7", "p14_s5_results.json",
-       "the Schwarzschild discrimination is strong but imperfect (AUC ≈ {};")
+       "does not (AUC ≈ {};")
 def _s5_prose_auc() -> tuple[str, ...]:
     return (f'{_json("p14_s5_results.json")["auc"]["auc_lower_series"][0]:.3f}',)
 
@@ -972,11 +1209,30 @@ def test_the_qualitative_claims_hold_in_the_artifacts():
     for row in _csv("conformal_order_ambiguity_summary.csv"):
         assert float(row["causal_matrix_changed"]) == 0.0
 
-    # 4.6: "negligible observed bias" against "a large low bias"
-    weighted = [r for r in _csv("weighted_conformal_volume_summary.csv")
-                if r["profile"] == "constant_1.5"]
-    assert max(abs(float(r["weighted_volume_bias"])) for r in weighted) < 0.01
-    assert all(float(r["unweighted_volume_bias"]) < -0.25 for r in weighted)
+    # 4.6: the R5 story is scaling, and the constant profile is M-only.
+    # (i) the sinusoidal unweighted error is a floor: its last two values
+    # agree within 1% and sit far above the weighted error; (ii) the
+    # weighted error recovers the flat sampling floor within 2%; (iii)
+    # the constant profile's weighted relative RMSE is the flat one
+    # identically, and its unweighted bias is the missing global factor.
+    def _p46(profile, key):
+        return [float(r[key])
+                for r in sorted((r for r in
+                                 _csv("weighted_conformal_volume_summary.csv")
+                                 if r["profile"] == profile),
+                                key=lambda r: float(r["N"]))]
+    u_sin = _p46("sinusoidal_0.3", "unweighted_relative_rmse")
+    w_sin = _p46("sinusoidal_0.3", "weighted_relative_rmse")
+    w_flat = _p46("flat", "weighted_relative_rmse")
+    assert abs(u_sin[1] - u_sin[2]) / u_sin[2] < 0.01, u_sin
+    assert u_sin[2] > 2 * w_sin[2], (u_sin[2], w_sin[2])
+    assert all(abs(a / b - 1) < 0.02
+               for a, b in zip(w_sin, w_flat, strict=True)), (w_sin, w_flat)
+    w_const = _p46("constant_1.5", "weighted_relative_rmse")
+    assert all(abs(a - b) < 1e-15
+               for a, b in zip(w_const, w_flat, strict=True))
+    assert all(b < -0.25
+               for b in _p46("constant_1.5", "unweighted_volume_bias"))
 
     # 4.7: exact wedge classification, and Rindler access a strict subset
     for row in _csv("rindler_horizon_reconstruction_summary.csv"):
@@ -1012,15 +1268,43 @@ def test_the_preregistered_verdicts_are_the_artifacts_verdicts():
     assert s5["ambiguity"] == {"ambiguous": 0, "escalated": 0}
     assert s5["auc"]["auc_lower_series"] == s5["auc"]["auc_upper_series"]
 
-    manuscript = MANUSCRIPT.read_text(encoding="utf-8")
-    for sentence in (*(plane[k]["sentence"] for k in ("c1", "c2")),
-                     *s4["sentences"], *s5["sentences"]):
-        assert sentence in manuscript, sentence[:40]
-
     section = _section("6.7")
     assert "Stage verdict: CONFIRMED." in section
     assert "zero ambiguous pairs and one escalated pair" in section
     assert "Zero ambiguous and zero escalated pairs" in section
+
+
+def test_each_frozen_sentence_reaches_the_paper_as_its_rendering():
+    """The guard that survived dropping the Korean quotes.
+
+    Both halves matter and neither implies the other. The first pins
+    every original against the artifact that holds it, so re-freezing a
+    sentence cannot slip past while its translation goes stale. The
+    second requires that translation to be printed, in the section that
+    carries the verdict -- not merely somewhere in the paper, which
+    would let a claim drift into a section whose evidence does not
+    support it."""
+
+    originals = _frozen_sentences()
+    assert len(originals) == len(FROZEN_RENDERINGS), (
+        len(originals), len(FROZEN_RENDERINGS))
+
+    for original, rendering in zip(originals, FROZEN_RENDERINGS, strict=True):
+        assert original == rendering.original, original[:40]
+        assert rendering.english in _section(rendering.section), (
+            rendering.section, rendering.english[:60])
+
+
+def test_the_manuscript_prints_no_korean():
+    """Appendix B says the paper prints none; this is what makes that
+    true tomorrow. The frozen originals belong in their artifacts and in
+    `FROZEN_RENDERINGS`, where they are checked -- not in a manuscript
+    whose readers cannot check them, and whose target journal sets its
+    body and references in roman characters."""
+
+    hangul = re.findall(r"[가-힣]+",
+                        MANUSCRIPT.read_text(encoding="utf-8"))
+    assert not hangul, hangul[:5]
 
 
 # ----------------------------------------------- the completeness guard
@@ -1067,7 +1351,14 @@ ACCEPTED_EXCLUSIONS: tuple[Exclusion, ...] = (
               "Figure 2 caption: the panel's dimension labels"),
     Exclusion("4.4", "endpoint RMSE is lower at N = 2400 than N = 300", 1,
               "Figure 2 caption restating 4.1's endpoint-RMSE inequality"),
-    Exclusion("4.6", "(constant-1.5 conformal profile)", 1,
+    Exclusion("4.6", "The constant-1.5 profile in the same table", 1,
+              "the profile's label, a row selector"),
+    Exclusion("4.6", "`Omega(t) = 1 + 0.3 sin(pi t/T)`", 1,
+              "the tested profile's definition, a construction setting"),
+    Exclusion("4.6", "by a factor of 3.45 across the diamond (0.49 to 1.69)", 1,
+              "arithmetic of the declared amplitude: (1 +- 0.3)^2 = 0.49 "
+              "and 1.69, ratio 3.45"),
+    Exclusion("4.6", "(constant-1.5 conformal profile)", 0,
               "Figure 3 caption: the exp19 profile label"),
     Exclusion("6.2", "profile `A(u)(x^2 - y^2)`", 1,
               "the construction's profile, its exponents a setting not a result"),
@@ -1075,6 +1366,12 @@ ACCEPTED_EXCLUSIONS: tuple[Exclusion, ...] = (
               "an exact property of the Brinkmann construction"),
     Exclusion("6.2", "read with `A = 0`", 1,
               "the control reading of the paired design, a construction setting"),
+    Exclusion("6.2", "`V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)`", 1,
+              "the analytic volume response of the construction, an exact "
+              "closed form and not a measurement"),
+    Exclusion("6.2", "`1/pi = 0.318` of the way to the first conjugate point", 1,
+              "where the frozen slab sits inside its own validity window, a "
+              "construction setting"),
     Exclusion("6.3", "the 95% Student-t interval", 1,
               "the confidence level of every stated interval, a frozen convention"),
     Exclusion("6.4", "Result (95% CI)", 1,
@@ -1084,12 +1381,12 @@ ACCEPTED_EXCLUSIONS: tuple[Exclusion, ...] = (
     Exclusion("6.7", "exactly as `det g = -1` served the plane wave", 1,
               "6.2's construction identity, quoted back as the analogy"),
     Exclusion("6.7", "AUC CI95 lower bound above 0.60", 1,
-              "non-frozen English gloss of a frozen Korean sentence, whose "
-              "original is pinned verbatim against the artifact"),
+              "English rendering of a frozen Korean sentence; the original "
+              "is bound to this wording by FROZEN_RENDERINGS"),
     Exclusion("6.7", "the joint 95% lower bound of out-of-sample balanced "
                      "accuracy exceeds 0.60", 1,
-              "non-frozen English gloss of a frozen Korean sentence, whose "
-              "original is pinned verbatim against the artifact"),
+              "English rendering of a frozen Korean sentence; the original "
+              "is bound to this wording by FROZEN_RENDERINGS"),
 )
 
 
@@ -1107,13 +1404,73 @@ _SCANNED = ("4", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", "5",
             "6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.7")
 
 
+class Rendering(NamedTuple):
+    """One frozen sentence, and what the manuscript prints for it."""
+
+    section: str      # where the rendering must appear
+    original: str     # the frozen sentence, as its artifact holds it
+    english: str      # the rendering printed in its place
+
+
+#: The manuscript used to quote each frozen sentence in Korean, byte for
+#: byte, and let an English gloss follow it. It no longer does: the bytes
+#: were unverifiable to the paper's readers, the gloss the reader
+#: actually relied on was the half the paper marked NON-frozen, and IOP
+#: house style is roman-only. Appendix B now records the originals'
+#: language and location once, and this table carries what removing them
+#: would otherwise have cost -- each original, pinned here against what
+#: `_frozen_sentences()` reads from the artifact, bound to the rendering
+#: the manuscript prints in its place. A re-freeze fails the first half;
+#: a translation that softens, strengthens or outruns its original fails
+#: the second. Order matches `_frozen_sentences()`.
+FROZEN_RENDERINGS = (
+    Rendering(
+        "6.4", "paired ensemble 평균 이동이 ε_Δ를 넘는다",
+        "the paired ensemble mean shift exceeds epsilon_Delta"),
+    Rendering(
+        "6.4", "P3-C 분리를 독립적으로 재현했다.",
+        "the probe chain's separation is independently reproduced"),
+    Rendering(
+        "6.7",
+        "동결된 Schwarzschild 좌표·도메인(M=1, r∈[10,20], 극관각 캡 1.0, T=40)의 "
+        "공통 측도 위에서, paired 앙상블 평균 이동의 identified CI95가 동결 방향으로 "
+        "검출문턱 ε_det = 0.0036을 초과했다 — 유한밀도 인과 census가 type D 진공 "
+        "곡률의 빛원뿔 변형을 C1-급으로 검출했다(프로그램 내부 진술).",
+        "on the frozen Schwarzschild coordinates and domain, the paired "
+        "ensemble mean shift exceeds the frozen detection threshold in the "
+        "frozen direction — a finite-density causal census detects the "
+        "light-cone deformation of type-D vacuum curvature at C1 grade; "
+        "a program-internal statement"),
+    Rendering(
+        "6.7",
+        "S4 블록과 S3 탐색 블록의 독립 두-표본 차이의 identified Welch CI95가 "
+        "±ε_rep = ±0.0012 안에 들어, 탐색 효과가 정량적으로 재현됐다.",
+        "the independent two-sample difference between the S4 and S3 blocks "
+        "lies inside the replication band: the exploration effect is "
+        "quantitatively reproduced"),
+    Rendering(
+        "6.7",
+        "동결된 Schwarzschild 도메인·밀도에서, 단일 causal set의 global relation "
+        "fraction은 flat/Schwarzschild 앙상블을 우연 수준보다 판별하는 정보를 "
+        "운반한다 (AUC CI95 하한 > 0.60, 프로그램 내부 진술).",
+        "on the frozen Schwarzschild domain and density, the global relation "
+        "fraction of a single causal set carries information that "
+        "discriminates flat from Schwarzschild ensembles above chance — AUC "
+        "CI95 lower bound above 0.60; a program-internal statement"),
+    Rendering(
+        "6.7",
+        "out-of-sample balanced accuracy의 결합 95% 하한이 0.60을 넘어, "
+        "학습-외 판별이 확인됐다 (secondary).",
+        "the joint 95% lower bound of out-of-sample balanced accuracy "
+        "exceeds 0.60: out-of-training discrimination holds; a secondary "
+        "verdict"),
+)
+
+
 def _frozen_sentences() -> tuple[str, ...]:
-    """The frozen verdict sentences, quoted in Korean byte-for-byte.
-    Their numerals are the RULE's, not the paper's, and the quotes are
-    already pinned against their artifacts verbatim by
-    `test_the_preregistered_verdicts_are_the_artifacts_verdicts` --
-    a stricter check than a numeral scan. Read from the artifacts, so
-    a re-frozen sentence cannot leave a stale hole here."""
+    """The frozen verdict sentences as the artifacts hold them, in the
+    order `FROZEN_RENDERINGS` pairs them. Read from the artifacts, never
+    copied, so a re-frozen sentence cannot leave a stale entry there."""
 
     plane = _json("p14_prereg_results.json")
     return (*(plane[k]["sentence"] for k in ("c1", "c2")),
@@ -1123,13 +1480,18 @@ def _frozen_sentences() -> tuple[str, ...]:
 
 def _residue(number: str) -> str:
     """What a section still says once everything already accounted for
-    is struck out: the frozen quotes, each claim's matched sentence
-    (removed ONCE, so a duplicated sentence survives), and pointers
-    like "Section 4.6" that reference rather than measure."""
+    is struck out: each claim's matched sentence (removed ONCE, so a
+    duplicated sentence survives), and pointers like "Section 4.6" that
+    reference rather than measure.
+
+    The frozen sentences used to be struck here too, because the
+    manuscript quoted them in Korean and their numerals are the RULE's,
+    not the paper's. It no longer does (`FROZEN_RENDERINGS`), so the
+    numerals now reaching this scan are the ones the ENGLISH renderings
+    print -- and those are the paper's own responsibility, accounted for
+    by `ACCEPTED_EXCLUSIONS` like any other figure."""
 
     body = SECTIONS.get(number, "")
-    for sentence in _frozen_sentences():
-        body = body.replace(sentence, " ")
     for claim_ in CLAIMS:
         if claim_.section != number:
             continue

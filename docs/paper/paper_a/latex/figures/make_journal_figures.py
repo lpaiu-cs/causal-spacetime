@@ -341,25 +341,57 @@ def figure_convergence() -> None:
 # Figure 3: measure dependence (R5)
 # --------------------------------------------------------------------------
 def figure_measure() -> None:
-    rows = [r for r in _rows("weighted_conformal_volume_summary.csv")
-            if r["profile"] == "constant_1.5"]
-    rows.sort(key=lambda r: _f(r, "N"))
-    ns = [_f(r, "N") for r in rows]
-    fig, ax = plt.subplots(figsize=(3.6, 2.7))
-    _style(ax)
-    ax.plot(ns, [_f(r, "unweighted_relative_rmse") for r in rows], marker="s",
-            ms=4, color=VERM, lw=1.5, label="unweighted coordinate support")
-    ax.plot(ns, [_f(r, "weighted_relative_rmse") for r in rows], marker="o",
-            ms=4, color=BLUE, lw=1.5, label="local-measure weighted")
-    ax.set_xscale("log")
-    ax.set_xticks([600, 1200, 2400])
-    ax.set_xticklabels(["600", "1200", "2400"])
-    ax.minorticks_off()
-    ax.set_xlabel("$N$ (events)")
-    ax.set_ylabel("volume relative RMSE")
-    ax.set_ylim(0, None)
-    ax.legend(frameon=False, loc="center right")
-    fig.tight_layout(pad=0.4)
+    """R5 re-pointed to the position-dependent profile; the constant
+    arm is not plotted (its weighted relative RMSE is the flat
+    profile's identically, so it demonstrates M, not W)."""
+
+    def profile(name):
+        rows = [r for r in _rows("weighted_conformal_volume_summary.csv")
+                if r["profile"] == name]
+        rows.sort(key=lambda r: _f(r, "N"))
+        return rows
+
+    sin, flat = profile("sinusoidal_0.3"), profile("flat")
+    ns = [_f(r, "N") for r in sin]
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.1, 2.6))
+
+    _style(ax1)
+    ax1.plot(ns, [_f(r, "unweighted_relative_rmse") for r in sin], marker="s",
+             ms=3.5, color=VERM, lw=1.4, label="unweighted (density only)")
+    ax1.plot(ns, [_f(r, "weighted_relative_rmse") for r in sin], marker="o",
+             ms=3.5, color=BLUE, lw=1.4, label="local-measure weighted")
+    ax1.plot(ns, [_f(r, "weighted_relative_rmse") for r in flat], ls=":",
+             color=MUTED, lw=1.3, label="flat-profile baseline")
+    ax1.set_xscale("log")
+    ax1.set_xticks([600, 1200, 2400])
+    ax1.set_xticklabels(["600", "1200", "2400"])
+    ax1.minorticks_off()
+    ax1.set_xlabel("$N$ (events)")
+    ax1.set_ylabel("volume relative RMSE")
+    ax1.set_ylim(0, None)
+    ax1.legend(frameon=False, loc="center right", fontsize=7)
+    _panel(ax1, "(a) floor vs recovered scaling")
+
+    _style(ax2)
+    ax2.plot(ns, [_f(r, "unweighted_volume_rmse") for r in sin], marker="s",
+             ms=3.5, color=VERM, lw=1.4, label="unweighted (density only)")
+    ax2.plot(ns, [_f(r, "weighted_volume_rmse") for r in sin], marker="o",
+             ms=3.5, color=BLUE, lw=1.4, label="local-measure weighted")
+    ax2.plot(ns, [_f(r, "weighted_volume_rmse") for r in flat], ls=":",
+             color=MUTED, lw=1.3, label="flat-profile baseline")
+    ax2.set_xscale("log")
+    ax2.set_yscale("log")
+    ax2.set_yticks([0.015, 0.02, 0.03, 0.04, 0.06])
+    ax2.set_yticklabels(["0.015", "0.02", "0.03", "0.04", "0.06"])
+    ax2.set_xticks([600, 1200, 2400])
+    ax2.set_xticklabels(["600", "1200", "2400"])
+    ax2.minorticks_off()
+    ax2.set_xlabel("$N$ (events)")
+    ax2.set_ylabel("volume RMSE")
+    ax2.legend(frameon=False, loc="lower left", fontsize=7)
+    _panel(ax2, "(b) logarithmic axes")
+
+    fig.tight_layout(pad=0.5)
     fig.savefig(OUT / "fig3_measure.pdf")
     plt.close(fig)
 
@@ -524,7 +556,7 @@ def figure_count() -> None:
              fontsize=7.5, color=GREY, style="italic", va="bottom",
              ha="right")
     ax1.set_xlabel("compactness $\\mu = 2M/r_c$")
-    ax1.set_ylabel("4-volume of the fixed diamond")
+    ax1.set_ylabel("certified 4-volume of the rung's diamond")
     _panel(ax1, "(a) certified volume vs count")
     ax1.set_xticks([r["mu"] for r in rows])
     ax1.set_xticklabels([f'{r["mu"]:.4f}' for r in rows], fontsize=7)
@@ -547,8 +579,9 @@ def figure_count() -> None:
     ax2.set_yticklabels(
         [f'$\\mu$ = {r["mu"]:.4f}\nK = {r["k"]:,}, U = {r["u"]}'
          for r in rows], fontsize=7)
-    ax2.set_xlabel(
-        "identified discrepancy $D$ in units of $B = \\tau V_{\\mathrm{ref}}$")
+    # The band's definition lives in the caption; spelling it out here
+    # ran the label past the figure edge and clipped the subscript.
+    ax2.set_xlabel("identified discrepancy $D$, in units of the band $B$")
     _panel(ax2, "(b) equivalence gate ($\\tau$ = 2.5%)")
     ax2.set_xlim(-1.35, 1.35)
     ax2.set_ylim(-0.6, len(rows) - 0.4)

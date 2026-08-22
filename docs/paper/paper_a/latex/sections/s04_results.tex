@@ -20,8 +20,14 @@ dimensions 3 and 4 (\expid{exp10};
 follows the Brightwell--Gregory scaling $L \sim \sqrt{2\rho}\,\tau$, approached
 from below at finite density: at $\rho = 300$ the normalized length
 $L/(\sqrt{\rho}\,\tau)$ is 1.325 with endpoints included and 1.085 with
-endpoints removed, versus the asymptotic $\sqrt{2} \approx 1.414$, giving a
-finite-size low bias (mean chain proper-time error $-0.127$) (\expid{exp09};
+endpoints removed, versus the asymptotic $\sqrt{2} \approx 1.414$. The
+proper-time estimator reads the endpoint-exclusive length, and its mean error
+there is $-0.127$; the same chains scored under the inclusive convention give
+$-0.046$, the two separated by the exact offset $2/\sqrt{2\rho} = 0.082$. At
+this density the median chain carries 12.5 elements including its endpoints,
+so the two-element difference between the two conventions accounts for most of
+that residual: at these chain lengths it is a convention effect before it is a
+finite-size one (\expid{exp09};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}longest\_\allowbreak{}chain\_\allowbreak{}calibration\_\allowbreak{}summary.csv}). The approach
 toward the asymptotic value with $N$ is shown by the chain estimator's error
 falling with $N$ in \sref{sec:r1}. Raw longest-chain length is order-theoretic.
@@ -37,7 +43,10 @@ $\tau_{\mathrm{est}} = \sqrt{2K/\rho}$. The volume-estimator relative RMSE
 falls from 0.273 at $N = 300$ to 0.105 at $N = 2400$. Its separately
 aggregated RMSE is below the chain estimator's ($0.382 \to 0.231$) at every
 $N$, but the volume statistic uses 500 pairs per $N$ whereas the chain
-statistic uses 125, so this is not a paired comparison (\expid{exp07};
+statistic uses 125, so this is not a paired comparison, and the chain
+estimator additionally carries the endpoint-convention offset of
+\sref{sec:r0}, so the comparison is not convention-free either
+(\expid{exp07};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}timelike\_\allowbreak{}pair\_\allowbreak{}reconstruction\_\allowbreak{}summary.csv}). In a
 fixed-interval sanity check, the interval-cardinality formula returns
 $\tau = 2.0$ exactly because the full sampling diamond uses $K = N$ and
@@ -73,7 +82,7 @@ $N$ as in \fref{fig:convergence}, it falls from 0.00495 at 32 ticks to
 $\beta = 0.6$ (\expid{exp13};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}oriented\_\allowbreak{}radar\_\allowbreak{}lorentz\_\allowbreak{}summary.csv}).
 
-\Fref{fig:convergence} collects the convergence behavior of the first four
+\Fref{fig:convergence} collects the convergence behaviour of the first four
 rungs: dimension recovery (a), timelike proper time (b), observer radar (c),
 and Lorentz-map recovery (d).
 
@@ -116,45 +125,74 @@ clock scale: under constant (1.0/1.5/2.0) and sinusoidal rescalings the causal
 matrix is unchanged and the reconstructed dimension is identical (2.020),
 while the proper-time ratio tracks 1.0/1.5/2.0 and the volume ratio
 1.0/2.25/4.0 (\expid{exp18};
-\artifact{outputs/\allowbreak{}data/\allowbreak{}conformal\_\allowbreak{}order\_\allowbreak{}ambiguity\_\allowbreak{}summary.csv}). With
-supplied measure weights, weighted volume reconstruction has negligible
-observed bias and decreasing relative RMSE ($0.234 \to 0.118$ across the
-tested $N$), whereas, for \expid{exp19}'s coordinate-volume support sampling,
-the unweighted estimate retains a large low bias with no material RMSE
-improvement ($0.569 \to 0.557$, bias ${\sim}{-0.29}$); the analytic
-volume/proper-time formulas are verified to ${\sim}1\times10^{-7}$
-(\expid{exp19}, \expid{exp20};
-\artifact{outputs/\allowbreak{}data/\allowbreak{}weighted\_\allowbreak{}conformal\_\allowbreak{}volume\_\allowbreak{}summary.csv},
+\artifact{outputs/\allowbreak{}data/\allowbreak{}conformal\_\allowbreak{}order\_\allowbreak{}ambiguity\_\allowbreak{}summary.csv}). Two
+different things must therefore be supplied, and they fail differently when
+withheld: a scale (M, one number) and a shape (W, a field). The profile
+\expid{exp19} tests is genuinely position-dependent---$\Omega(t) = 1 +
+0.3\sin(\pi t/T)$ moves the local volume element by a factor of 3.45 across
+the diamond (0.49 to 1.69) while leaving every global summary near flat: the
+diamond volume moves by 2.7\% (\expid{exp18}'s sinusoidal row). A
+reconstruction holding only the global density therefore has almost no bias
+to correct (unweighted volume bias $-0.0057$ to $-0.0028$), but it carries a
+position-dependent error that no single rescaling removes: its relative RMSE
+stalls at $0.373 \to 0.298 \to 0.300$ across the tested $N$. Supplying the
+local weights removes the floor: the weighted relative RMSE falls
+$0.235 \to 0.176 \to 0.119$, tracking the flat-profile sampling floor
+($0.234 \to 0.174 \to 0.118$) to within 1.3\%, and the
+unweighted-to-weighted volume-RMSE ratio grows $2.0 \to 2.8 \to 4.3$ with
+$N$---the signature of a removed systematic rather than of reduced noise.
+What R5 demonstrates is that replacement of a non-vanishing error floor by
+flat-case, noise-limited error scaling---a consistency statement, not a bias
+correction (\expid{exp19};
+\artifact{outputs/\allowbreak{}data/\allowbreak{}weighted\_\allowbreak{}conformal\_\allowbreak{}volume\_\allowbreak{}summary.csv}).
+
+The constant-1.5 profile in the same table is a control, not the result: a
+constant weight rescales estimate and truth alike, so its weighted relative
+RMSE equals the flat profile's at every tested $N$, and its unweighted bias
+(${\sim}{-0.29}$) is exactly the missing global factor---a normalization
+identity in the sense of \sref{sec:r1}, whose repair is R1's ingredient M,
+not W. The analytic volume/proper-time formulas are verified to
+${\sim}1\times10^{-7}$ (\expid{exp20};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}conformal\_\allowbreak{}volume\_\allowbreak{}exact\_\allowbreak{}sanity.csv}). Under random
 thinning, density-rescaled reconstruction is stable (volume RMSE
 $0.018 \to 0.009$, dimension steady ${\sim}2.0$) while the uncorrected
-estimate blows up to RMSE 0.270 (bias $-0.183$) at 25\% retention
-(\expid{exp23};
+estimate blows up to RMSE 0.270 (bias $-0.183$) at 25\% retention; the
+thinning is uniform, so its keep probability is one global scalar and this
+is a robustness statement about M---the number-volume correspondence
+survives uniform decimation once the density is re-declared---not a second
+W-level result (\expid{exp23};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}thinning\_\allowbreak{}coarse\_\allowbreak{}graining\_\allowbreak{}summary.csv}).
 \Fref{fig:measure} shows the measure dependence directly.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.6\textwidth]{figures/fig3_measure.pdf}
-\caption{R5: volume reconstruction requires supplied measure information. For
-the coordinate-volume support sampling used in \expid{exp19}, the weighted
-estimate has negligible observed bias and decreasing RMSE over the tested $N$,
-while omitting the supplied local weights gives the reported persistent bias
-(constant-1.5 conformal profile). Equivalent measure information can
+\includegraphics[width=0.95\textwidth]{figures/fig3_measure.pdf}
+\caption{R5: what the local measure buys. For the position-dependent
+profile, the unweighted estimate's relative error stalls at a floor that no
+global recalibration removes, while the weighted estimate falls with $N$
+onto the flat-profile sampling floor (left); on logarithmic axes the two
+carry visibly different slopes (right). The constant-profile arm is not
+plotted: a constant weight rescales estimate and truth alike, so its
+weighted curve is the flat curve exactly---that arm is a normalization
+identity, and its repair belongs to R1. Equivalent measure information can
 conceptually be encoded in the sampling law rather than as post-hoc weights;
 that alternative is not part of this figure's evidence package. Order alone
-fixes no absolute scale.}
+fixes no absolute scale, and no scale alone fixes a profile.}
 \label{fig:measure}
 \end{figure}
 
 \subsection{Horizon analogue --- Rindler reconstruction-inaccessibility}\label{sec:rindler}
 
 For an accelerated (Rindler) observer in flat spacetime, two-way radar
-reconstruction is confined to the Rindler wedge. The ideal-wedge
-classification is exact---precision $=$ recall $= 1.0$, zero false positives
-and false negatives in every configuration---with the wedge covering about a
-quarter of events (accessible fraction ${\sim}0.25$) and the in-wedge
-radar-time RMSE falling with tick resolution (e.g.\ $0.0098 \to 0.0023$)
+reconstruction is confined to the Rindler wedge, and nothing leaks out of it:
+in every configuration the classification records zero false positives and
+zero false negatives, precision $=$ recall $= 1.0$. That scoring is against
+the events finite clock coverage makes accessible, not against the ideal
+wedge; measured against the ideal wedge the same reconstruction is incomplete,
+recovering a fraction 0.74 to 0.84 of it, because part of the wedge lies
+beyond the observer's tick range. The wedge itself covers about a quarter of
+events (accessible fraction ${\sim}0.25$), and the in-wedge radar-time RMSE
+falls with tick resolution (e.g.\ $0.0098 \to 0.0023$)
 (\expid{exp16};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}rindler\_\allowbreak{}horizon\_\allowbreak{}reconstruction\_\allowbreak{}summary.csv}).
 Comparing observers directly, all events are accessible to the inertial

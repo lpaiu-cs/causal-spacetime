@@ -27,23 +27,25 @@ recover the Lorentz map between two inertial protocols; adding overlapping
 charts yields an observer atlas with approximately consistent Poincare
 transition maps; adding supplied measure information, implemented in exp19 as
 local weights, makes volume reconstruction possible under the conformal
-ambiguity, and density-rescaled reconstruction is stable in the tested
+ambiguity, and density-rescaled reconstruction is stable in the tested uniform
 random-thinning protocol. We also give a Rindler horizon analogue, in which an
 accelerated observer's two-way radar reconstruction is confined to the expected
 wedge, and a finite-speed lattice counterexample showing that finite signal
 speed alone does not produce Lorentzian structure. As a capstone we validate,
 in a preregistered two-claim design on a 3+1D vacuum plane wave whose
 coordinate volume form and sprinkling law are exactly flat, that the
-conformal-class information order carries is detectable at finite density:
-both the paired mean shift of the global relation fraction and a single-poset
-classifier confirm against frozen margins. Separate preregistered stages
+conformal-class information order carries reaches an order-only statistic at
+finite density: both the paired mean shift of the global relation fraction
+and a single-poset classifier confirm against frozen margins at one
+deliberately strong operating point, which establishes existence rather than
+sensitivity. Separate preregistered stages
 extend both claim classes to a frozen Schwarzschild exterior patch (type D,
 whose coordinate volume element is likewise mass-independent): the C1 paired
 effect is confirmed, while C2 single-poset discrimination is detected with
 incomplete separation. A further preregistered stage anchors a measurement to
 a certified prediction rather than to an operational margin: on each rung of a
-mass ladder whose diamond is fixed in absolute coordinates so that no rung is
-an isometric copy, the certified-membership count of a Poisson sprinkling is
+mass ladder whose shell and anchors are fixed in absolute coordinates so that
+no rung is an isometric copy, the certified-membership count of a Poisson sprinkling is
 required to realize that rung's independently certified continuum 4-volume
 within a frozen 2.5% band, and does so at all four tested compactnesses —
 spanning a factor of three in `2M/r`, the deepest rung anchored at `r = 4M`
@@ -79,7 +81,7 @@ does not fix conformal scale; a single observer yields only unsigned distance
 Lorentzian structure.
 
 Contributions: (1) a reconstruction ladder that indexes recoverable spacetime
-quantities by the minimal supplied ingredient set, with per-rung error behavior in
+quantities by the minimal supplied ingredient set, with per-rung error behaviour in
 controlled models; (2) grounded validations of dimension, proper time, radar
 decomposition, Lorentz-map and atlas consistency, and measure-dependent volume;
 (3) three bounding negative results (conformal scale, reflection degeneracy,
@@ -112,7 +114,10 @@ Supplied ingredient symbols (these form branches, not one linear hierarchy):
   separation, fixing a spatial side.
 - **A — observer atlas.** Multiple overlapping observer charts.
 - **W — local measure profile / weights.** The physical volume element relative
-  to the support sampling measure.
+  to the support sampling measure, normalized to unit mean over the declared
+  support, so that all scale information belongs to M and W carries only
+  position dependence; a constant profile is therefore W = 1 and supplies
+  nothing beyond M.
 
 Rungs (minimal ingredient -> what is reconstructed):
 
@@ -156,8 +161,9 @@ the conventions the results depend on.
   proper-time normalization uses the Brightwell-Gregory constant
   (L ~ sqrt(2 rho) tau, i.e. L ~ 2 sqrt(N) in a diamond of N events,
   consistent with Section 4.2 and Appendix A), with an
-  endpoint-inclusive counting convention and acknowledged finite-size
-  corrections.
+  endpoint-exclusive counting convention — the chain's interior elements,
+  two fewer than the count that includes both endpoints — and acknowledged
+  finite-size corrections.
 - **Interval cardinality.** The open Alexandrov interval count K between two
   events estimates volume V = K/rho; in 1+1D V = tau^2/2, so tau_est =
   sqrt(2K/rho).
@@ -176,8 +182,8 @@ the conventions the results depend on.
 - **Conformal / measure.** Positive conformal rescalings preserve causal order
   while changing volume and clock scale; volume reconstruction then requires
   supplied measure information (implemented in exp19 as local weights). In the
-  tested random-thinning protocol, reconstruction is stable after density
-  rescaling.
+  tested uniform random-thinning protocol, reconstruction is stable after
+  density rescaling.
 
 ## 4. Results
 
@@ -198,8 +204,14 @@ N = 300, with non-monotonic finite-sample fluctuations for dimensions 3 and 4
 Brightwell-Gregory scaling L ~ sqrt(2 rho) tau, approached from below at finite
 density: at rho = 300 the normalized length L/(sqrt(rho) tau) is 1.325 with
 endpoints included and 1.085 with endpoints removed, versus the asymptotic
-sqrt(2) ~ 1.414, giving a finite-size low bias (mean chain proper-time error
--0.127) (exp09; `outputs/data/longest_chain_calibration_summary.csv`). The
+sqrt(2) ~ 1.414. The proper-time estimator reads the endpoint-exclusive
+length, and its mean error there is -0.127; the same chains scored under the
+inclusive convention give -0.046, the two separated by the exact offset
+2/sqrt(2 rho) = 0.082. At this density the median chain carries 12.5 elements
+including its endpoints, so the two-element difference between the two
+conventions accounts for most of that residual: at these chain lengths it is
+a convention effect before it is a finite-size one (exp09;
+`outputs/data/longest_chain_calibration_summary.csv`). The
 approach toward the asymptotic value with N is shown by the chain estimator's
 error falling with N in Section 4.2. Raw longest-chain length is
 order-theoretic. Interpreting it as proper time, including the normalization
@@ -213,7 +225,9 @@ timelike proper time between internal pairs, tau_est = sqrt(2K/rho). The
 volume-estimator relative RMSE falls from 0.273 at N = 300 to 0.105 at
 N = 2400. Its separately aggregated RMSE is below the chain estimator's
 (0.382 -> 0.231) at every N, but the volume statistic uses 500 pairs per N
-whereas the chain statistic uses 125, so this is not a paired comparison
+whereas the chain statistic uses 125, so this is not a paired comparison,
+and the chain estimator additionally carries the endpoint-convention offset
+of Section 4.1, so the comparison is not convention-free either
 (exp07; `outputs/data/timelike_pair_reconstruction_summary.csv`). In a
 fixed-interval sanity check, the interval-cardinality formula returns
 tau = 2.0 exactly because the full sampling diamond uses K = N and rho = N/V;
@@ -247,7 +261,7 @@ falls from 0.00495 at 32 ticks to 0.000975 at 128 ticks for beta = 0.3, and
 from 0.01345 to 0.00431 for beta = 0.6 (exp13;
 `outputs/data/oriented_radar_lorentz_summary.csv`).
 
-Figure 2 collects the convergence behavior of the first four rungs: dimension
+Figure 2 collects the convergence behaviour of the first four rungs: dimension
 recovery (a), timelike proper time (b), observer radar (c), and Lorentz-map
 recovery (d).
 
@@ -284,38 +298,66 @@ Positive conformal rescalings preserve causal order while changing volume and
 clock scale: under constant (1.0/1.5/2.0) and sinusoidal rescalings the causal
 matrix is unchanged and the reconstructed dimension is identical (2.020), while
 the proper-time ratio tracks 1.0/1.5/2.0 and the volume ratio 1.0/2.25/4.0
-(exp18; `outputs/data/conformal_order_ambiguity_summary.csv`). With supplied
-measure weights, weighted volume reconstruction has negligible observed bias
-and decreasing relative RMSE (0.234 -> 0.118 across the tested N), whereas,
-for exp19's coordinate-volume support sampling, the unweighted estimate
-retains a large low bias with no material RMSE improvement
-(0.569 -> 0.557, bias ~ -0.29); the analytic
-volume/proper-time formulas are verified to ~1e-7 (exp19, exp20;
-`outputs/data/weighted_conformal_volume_summary.csv`,
-`outputs/data/conformal_volume_exact_sanity.csv`). Under random thinning, density-rescaled
-reconstruction is stable (volume RMSE 0.018 -> 0.009, dimension steady ~2.0)
-while the uncorrected estimate blows up to RMSE 0.270 (bias -0.183) at 25%
-retention (exp23; `outputs/data/thinning_coarse_graining_summary.csv`).
+(exp18; `outputs/data/conformal_order_ambiguity_summary.csv`). Two different
+things must therefore be supplied, and they fail differently when withheld: a
+scale (M, one number) and a shape (W, a field). The profile exp19 tests is
+genuinely position-dependent — `Omega(t) = 1 + 0.3 sin(pi t/T)` moves the
+local volume element by a factor of 3.45 across the diamond (0.49 to 1.69)
+while leaving every global summary near flat: the diamond volume moves by
+2.7% (exp18's sinusoidal row). A reconstruction holding only the global
+density therefore has almost no bias to correct (unweighted volume bias
+-0.0057 to -0.0028), but it carries a position-dependent error that no single
+rescaling removes: its relative RMSE stalls at 0.373 -> 0.298 -> 0.300 across
+the tested N. Supplying the local weights removes the floor: the weighted
+relative RMSE falls 0.235 -> 0.176 -> 0.119, tracking the flat-profile
+sampling floor (0.234 -> 0.174 -> 0.118) to within 1.3%, and the
+unweighted-to-weighted volume-RMSE ratio grows 2.0 -> 2.8 -> 4.3 with N — the
+signature of a removed systematic rather than of reduced noise. What R5
+demonstrates is that replacement of a non-vanishing error floor by flat-case,
+noise-limited error scaling — a consistency statement, not a bias correction
+(exp19; `outputs/data/weighted_conformal_volume_summary.csv`).
+
+The constant-1.5 profile in the same table is a control, not the result: a
+constant weight rescales estimate and truth alike, so its weighted relative
+RMSE equals the flat profile's at every tested N, and its unweighted bias
+(~ -0.29) is exactly the missing global factor — a normalization identity in
+the sense of Section 4.2, whose repair is R1's ingredient M, not W. The
+analytic volume/proper-time formulas are verified to ~1e-7 (exp20;
+`outputs/data/conformal_volume_exact_sanity.csv`). Under random thinning,
+density-rescaled reconstruction is stable (volume RMSE 0.018 -> 0.009,
+dimension steady ~2.0) while the uncorrected estimate blows up to RMSE 0.270
+(bias -0.183) at 25% retention; the thinning is uniform, so its keep
+probability is one global scalar and this is a robustness statement about M —
+the number-volume correspondence survives uniform decimation once the density
+is re-declared — not a second W-level result (exp23;
+`outputs/data/thinning_coarse_graining_summary.csv`).
 Figure 3 shows the measure dependence directly.
 
 ![Figure 3](figures/fig3_measure.png)
 
-*Figure 3. R5: volume reconstruction requires supplied measure information. For
-the coordinate-volume support sampling used in exp19, the weighted estimate
-has negligible observed bias and decreasing RMSE over the tested N, while
-omitting the supplied local weights gives the reported persistent bias
-(constant-1.5 conformal profile). Equivalent measure
-information can conceptually be encoded in the sampling law rather than as
-post-hoc weights; that alternative is not part of Figure 3's evidence package.
-Order alone fixes no absolute scale.*
+*Figure 3. R5: what the local measure buys. For the position-dependent
+profile, the unweighted estimate's relative error stalls at a floor that no
+global recalibration removes, while the weighted estimate falls with N onto
+the flat-profile sampling floor (left); on logarithmic axes the two carry
+visibly different slopes (right). The constant-profile arm is not plotted: a
+constant weight rescales estimate and truth alike, so its weighted curve is
+the flat curve exactly — that arm is a normalization identity, and its repair
+belongs to R1. Equivalent measure information can conceptually be encoded in
+the sampling law rather than as post-hoc weights; that alternative is not
+part of this figure's evidence package. Order alone fixes no absolute scale,
+and no scale alone fixes a profile.*
 
 ### 4.7 Horizon analogue — Rindler reconstruction-inaccessibility
 
 For an accelerated (Rindler) observer in flat spacetime, two-way radar
-reconstruction is confined to the Rindler wedge. The ideal-wedge classification
-is exact — precision = recall = 1.0, zero false positives and false negatives
-in every configuration — with the wedge covering about a quarter of events
-(accessible fraction ~0.25) and the in-wedge radar-time RMSE falling with tick
+reconstruction is confined to the Rindler wedge, and nothing leaks out of it:
+in every configuration the classification records zero false positives and zero
+false negatives, precision = recall = 1.0. That scoring is against the events
+finite clock coverage makes accessible, not against the ideal wedge; measured
+against the ideal wedge the same reconstruction is incomplete, recovering a
+fraction 0.74 to 0.84 of it, because part of the wedge lies beyond the
+observer's tick range. The wedge itself covers about a quarter of events
+(accessible fraction ~0.25), and the in-wedge radar-time RMSE falls with tick
 resolution (e.g. 0.0098 -> 0.0023) (exp16;
 `outputs/data/rindler_horizon_reconstruction_summary.csv`). Comparing observers
 directly, all events are accessible to the inertial observer while only ~0.25
@@ -400,7 +442,15 @@ counterfactual (Section 6.3). What is *not* identical between geometries is
 the causal-diamond volume: the light-cone boundary
 tilts, and at equal proper time the curved-arm diamond volume sits 0.4%
 (`wT = 1`) to 7.3% (`wT = 2`) above flat — a deterministic design check pins
-both numbers. "Same measure" here means the volume form and sprinkling law
+both numbers, against the closed form `V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)`.
+Those percentages describe a small diamond on the axis, and the frozen
+operating point is neither small nor on-axis: the probe chain selected
+`aniso-a1.0`, a slab spanning `1/pi = 0.318` of the way to the first
+conjugate point, on a box elongated three to one along the focusing
+transverse axis. The order statistic therefore reads mostly off-axis pairs
+in the direction where the cones open, which is why its response is a
+factor of three rather than a few percent. This is a deliberately strong
+operating point, not a weak-curvature probe. "Same measure" here means the volume form and sprinkling law
 only, never interval volumes; conflating the two was the first design draft's
 central error, caught in review, and the distinction is load-bearing.
 
@@ -449,33 +499,50 @@ confirmed; the stage is POSITIVE.
 | C1 paired ensemble mean, n = 3000 | confirmed | mean 0.0502929 [0.0501046, 0.0504812]; lower end 140x the margin 3.579e-4 |
 | C2 classifier replication, n = 4800/arm | confirmed | separation s = 11.198 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0]; balanced accuracy = 1.0 [0.986, 1.014] |
 
-The two arms' relation-fraction samples are completely separated (the minimum
+The size of the effect is worth stating in the statistic's own units, which
+the margin ratio hides: averaged over the paired readings the relation
+fraction runs 0.023830 flat against 0.074123 curved, a factor of 3.11. The
+two arms' relation-fraction samples are completely separated (the minimum
 curved-arm value exceeds the maximum flat-arm value in 4800 draws per arm);
 the AUC interval at complete separation is the frozen exact bound, not the
-degenerate Wald interval. Every relation census in both claims recorded zero
-ambiguous and zero escalated pairs. The frozen sentences are recorded in
-Korean in the artifact and are quoted here verbatim (unwrapped, so the byte
-sequence matches the artifact), each followed by an explicit, non-frozen
-English translation:
-C1 "paired ensemble 평균 이동이 ε_Δ를 넘는다"
-(*the paired ensemble mean shift exceeds epsilon_Delta*);
-C2 "P3-C 분리를 독립적으로 재현했다."
-(*the probe chain's separation is independently reproduced*)
-(`docs/prereg/p14_prereg_results.json`).
+degenerate Wald interval. The balanced-accuracy interval got no such
+treatment: its frozen construction is an unclipped Wald interval on a
+worst-case standard error, so at BA = 1.0 it reaches 1.014, outside the
+range the quantity can take. That is what the preregistration licenses and
+it is printed as it stands; no verdict depends on it, because the gate reads
+only the lower end. For the reader's orientation — not as a re-scored gate —
+the construction the later S5 stage uses for the same quantity, a
+Clopper-Pearson interval per arm combined across the two, gives
+[0.998176, 1.0] on the same test halves. Every relation census in both claims recorded zero
+ambiguous and zero escalated pairs. The two sentences the stage licenses were
+fixed in the preregistration before execution and are recorded in the
+artifact; in translation they are C1, *the paired ensemble mean shift exceeds
+epsilon_Delta*, and C2, *the probe chain's separation is independently
+reproduced* (`docs/prereg/p14_prereg_results.json`; Appendix B records the
+language of the frozen originals and what holds these renderings to them).
 
 ### 6.5 What this establishes
 
 At a fixed box, density, and profile, an order-only statistic separates flat
 from curved ensembles: the conformal-class information that order carries by
-theorem is *detectable at finite density*, in the one construction where the
-sprinkling measure is exactly frozen. Together with Section 4.6 this closes
+theorem is *present in the order at finite density*, in the one construction
+where the sprinkling measure is exactly frozen. The claim is existence, not
+sensitivity. No density or amplitude sweep was run, so nothing here locates
+the point at which the separation would fail, and the operating point was
+chosen to be strong (Section 6.2) rather than marginal. Together with Section 4.6 this closes
 the conformal story in both directions — within a class, order is blind to
 scale; across classes, at least at this operating point, order visibly moves.
 
 ### 6.6 What the plane-wave result alone does not establish
 
-It is not a general-Weyl discriminator (the plane wave is Petrov type N and
-its exact volume form is unrepresentative); it is not Weyl-tensor recovery
+It says nothing about sensitivity. The frozen operating point was chosen to
+be strong, and two things follow that the stage cannot answer: no density or
+amplitude sweep was run, so the density at which the separation fails is
+unmeasured; and the slab is elongated three to one along the focusing
+transverse axis, so whether the effect survives at an isotropic box is
+untested. Beyond that, it is not a general-Weyl discriminator (the plane wave
+is Petrov type N and its exact volume form is unrepresentative); it is not
+Weyl-tensor recovery
 (detection and recovery are different claims; no reconstructed quantity is
 produced, which is why this is a capstone boundary experiment and not a new
 ladder rung); it does not establish box- or density-independence (the licensed
@@ -528,19 +595,15 @@ can fail. The campaign ran once, from the exact freeze checkout, with an
 | B: replication (secondary) | Welch CI95 of S4-S3 inside +-0.0012 | [-0.000183, +0.000194] | REPLICATED |
 
 Stage verdict: CONFIRMED. The census recorded zero ambiguous pairs and one
-escalated pair, resolved at the tighter tolerance. The frozen sentences are
-recorded in Korean in the artifact (`docs/prereg/p14_s4_results.json`) and
-quoted verbatim (unwrapped, so the byte sequence matches the artifact), each
-followed by a non-frozen English translation:
-"동결된 Schwarzschild 좌표·도메인(M=1, r∈[10,20], 극관각 캡 1.0, T=40)의 공통 측도 위에서, paired 앙상블 평균 이동의 identified CI95가 동결 방향으로 검출문턱 ε_det = 0.0036을 초과했다 — 유한밀도 인과 census가 type D 진공 곡률의 빛원뿔 변형을 C1-급으로 검출했다(프로그램 내부 진술)."
-(*on the frozen Schwarzschild coordinates and domain, the paired ensemble
+escalated pair, resolved at the tighter tolerance. The two sentences the stage
+licenses, in translation (`docs/prereg/p14_s4_results.json`), are
+*on the frozen Schwarzschild coordinates and domain, the paired ensemble
 mean shift exceeds the frozen detection threshold in the frozen direction — a
 finite-density causal census detects the light-cone deformation of type-D
-vacuum curvature at C1 grade; a program-internal statement*);
-"S4 블록과 S3 탐색 블록의 독립 두-표본 차이의 identified Welch CI95가 ±ε_rep = ±0.0012 안에 들어, 탐색 효과가 정량적으로 재현됐다."
-(*the independent two-sample difference between the S4 and S3 blocks lies
+vacuum curvature at C1 grade; a program-internal statement*, and
+*the independent two-sample difference between the S4 and S3 blocks lies
 inside the replication band: the exploration effect is quantitatively
-reproduced*).
+reproduced*.
 
 A second, separate preregistered stage (S5) carries the single-poset claim
 class. Guided by a committed stored-data feasibility audit
@@ -564,26 +627,38 @@ threshold. The campaign ran once from its own exact freeze checkout:
 | Secondary: out-of-sample BA | joint CI95 lower > 0.60 | BA 0.9033, CI95 [0.8356, 0.9500] | pass |
 
 Zero ambiguous and zero escalated pairs; both identified bound series agree.
-The frozen sentences are recorded in Korean in the artifact
-(`docs/prereg/p14_s5_results.json`) and quoted verbatim (unwrapped), each
-followed by a non-frozen English translation:
-"동결된 Schwarzschild 도메인·밀도에서, 단일 causal set의 global relation fraction은 flat/Schwarzschild 앙상블을 우연 수준보다 판별하는 정보를 운반한다 (AUC CI95 하한 > 0.60, 프로그램 내부 진술)."
-(*on the frozen Schwarzschild domain and density, the global relation
+The two sentences this stage licenses, in translation
+(`docs/prereg/p14_s5_results.json`), are
+*on the frozen Schwarzschild domain and density, the global relation
 fraction of a single causal set carries information that discriminates flat
 from Schwarzschild ensembles above chance — AUC CI95 lower bound above 0.60;
-a program-internal statement*);
-"out-of-sample balanced accuracy의 결합 95% 하한이 0.60을 넘어, 학습-외 판별이 확인됐다 (secondary)."
-(*the joint 95% lower bound of out-of-sample balanced accuracy exceeds 0.60:
-out-of-training discrimination holds; a secondary verdict*).
+a program-internal statement*, and
+*the joint 95% lower bound of out-of-sample balanced accuracy exceeds 0.60:
+out-of-training discrimination holds; a secondary verdict*.
 
 What this extends, and at what grade: on the same frozen Schwarzschild domain,
 the two claim classes of the plane-wave capstone are now each supported by a
 SEPARATE preregistered stage — the C1 paired claim CONFIRMED (S4), C2
 single-poset discrimination DETECTED (S5). There was no joint primary
-verdict, and the grades differ from the plane wave: its C2 separation was
-complete, while the Schwarzschild discrimination is strong but imperfect
-(AUC ≈ 0.973; no completeness gate was preregistered); the secondary BA
-verdict neither strengthens nor combines with the primary. The extension
+verdict. The two stages also differ in what they can resolve, and the
+difference is one of design rather than of curvature type. C1 reads the same
+sprinkled points twice, so its estimator sees only the relation change: the
+paired readings correlate at 0.9965 and pairing removes 99.3% of the spread,
+leaving a paired SD of 0.001135 against a detection threshold an order of
+magnitude away. What pairing removes is the shared point configuration
+itself, not the event count — that count correlates with the paired
+difference at -0.018 and is not the nuisance that matters. C2 reads two
+independent arms and can remove none of it: its pooled SD of 0.013428 is an
+order of magnitude larger, and against that the same geometric effect is
+worth 2.73 standard deviations rather than 31.8. Much of the gap is simply
+where each construction sits — the flat-arm relation fraction averages
+0.0238 in the plane wave against 0.4491 here, and a fraction near one half
+is near its most variable. That, not type D versus type N, is why the plane
+wave's C2 separated completely and this one does not (AUC ≈ 0.973; no
+completeness gate was preregistered). A single-poset statistic that recovers
+what pairing sees is a natural next preregistration; recovering it after the
+fact would forfeit the freeze. The secondary BA verdict neither strengthens
+nor combines with the primary. The extension
 establishes no mass-generality (a single frozen `M`) and uses no
 diamond-volume oracle (margins operationally anchored or independently
 declared) — the mass ladder and the certified-volume anchor belong to the
@@ -641,10 +716,18 @@ verdict" cannot drift apart.
 whether the agreement is a property of the instrument rather than of a lucky
 configuration, the same gate is carried across a preregistered mass ladder.
 The certified shell `[10, 20]` and the anchors `(12, 18)` stay fixed in
-*absolute* coordinates and only the mass changes, so no rung is an isometric
-copy of another: the pre-frozen dimensionless indicator is the compactness
-`mu = 2M/r_c` at the anchor midpoint `r_c = 15`, and the executed ladder
-spans a factor of three in it. The deep end is not a free choice either:
+*absolute* coordinates, so no rung is an isometric copy of another: the
+pre-frozen dimensionless indicator is the compactness `mu = 2M/r_c` at the
+anchor midpoint `r_c = 15`, and the executed ladder spans a factor of three
+in it. The mass is not the only thing that moves. The diamond's
+coordinate-time window is retuned per rung by the frozen rule
+`dt(M) = 8.5 * T_min(M) / T_min(1)`, so that each rung opens the same
+multiple of its own minimal flight time; the whole diamond therefore scales
+with that flight time. The consequence is worth stating plainly, because it
+bounds what the ladder can show: the certified volumes track `(dt/dt_1)^2`
+to 0.007%, 0.021% and 0.144% at `M` = 1.4, 1.8 and 3.0, so their
+mass-specific content sits one to two orders of magnitude below the
+`tau = 2.5%` band the gate applies. The deep end is not a free choice either:
 every mass-generic lemma certifies exactly on `M` in [0.92, 3.33] — bounded
 above by the photon sphere `3M` reaching the shell floor at `M = 10/3` —
 and the deepest rung `M = 3.0` keeps a certified margin of a tenth of the
@@ -680,8 +763,9 @@ panels are generated from the same artifacts the contract tests re-derive
 (`figures/make_ladder_figure.py`); no value is typed in.
 
 The certified volume grows monotonically with the compactness (57 to 65 to
-74 to 122) as the geometry requires, and the realized discrepancy stays well inside
-the band at every rung. The `M = 1.4` pilot returned the program's first
+74 to 122), which at this resolution is the retuned time window growing
+rather than an independent geometric signal, and the realized discrepancy
+stays well inside the band at every rung. The `M = 1.4` pilot returned the program's first
 non-zero ambiguous count (`k = 1`); it was absorbed exactly as the sizing
 had provisioned, and it is visible in that rung's asymmetric `D`, which is
 the conservative widening working as designed rather than a defect.
@@ -691,9 +775,14 @@ operational finite-density instrument realized that rung's independently
 certified continuum volume to within `tau = 2.5%`, under a rule fixed before
 the data existed. This is the first place in the program where a measurement
 is confronted with a certified *prediction* rather than with an operational
-anchor, and the confrontation is repeated at four genuinely different
-curvatures rather than one — the deepest with its inner anchor between the
-photon sphere and the ISCO.
+anchor, and the confrontation is repeated at four masses rather than one —
+the deepest with its inner anchor between the photon sphere and the ISCO.
+What the repetition buys is not four independent curvature probes: as noted
+above, the certified volumes differ from a flight-time rescaling by far less
+than the band, so the volume comparison itself is near-degenerate across
+rungs. What it does buy is that every patch-level lemma is re-certified and
+the causal predicate re-run at each mass, none of it inherited from
+`M = 1`.
 
 **What it does not establish.** The rungs are separate preregistered stages:
 each verdict stands alone, there is no joint primary verdict, and no
@@ -721,7 +810,7 @@ conformal statement costs a volume element; Lorentzian structure is not bought
 by finite speed alone. Stating both directions together is the point: it turns
 "causal structure fixes the conformal class, and a volume element fixes the
 remaining conformal factor" from a slogan into a per-quantity operational
-ledger with measured error behavior.
+ledger with measured error behaviour.
 
 This framing also clarifies what the program does *not* show and sets up the
 open question. Everything here is reconstruction inside known models: the
@@ -731,8 +820,9 @@ that was not built from a geometry — the representability question — which
 requires a validated discriminator and is taken up separately. The Section 6
 capstone sharpens the boundary from the other side: the one piece of geometry
 that order itself carries — the conformal class — is not merely present by
-theorem but detectable at finite density, exactly where the measure channel is
-frozen and only the light cones move.
+theorem but legible to an order-only statistic at finite density, exactly
+where the measure channel is frozen and only the light cones move; how far
+that legibility extends before it fails is unmeasured.
 
 ## 8. Claim boundary
 
@@ -807,7 +897,7 @@ Results are controlled and mostly 1+1D (dimension is checked to 4D, and the
 Section 6 capstone is 3+1D). The
 constants are convention-dependent (chain endpoint convention, null-inclusive
 causal relation, Myrheim-Meyer normalization); we state each where it is used.
-The spacelike proxy is exploratory. The capstone is bounded by its
+The spacelike proxy is exploratory. R5's local-measure evidence is one profile family at one amplitude; the dose-response of the unweighted error floor to the profile amplitude is not measured. The capstone is bounded by its
 construction: Petrov type N with an exactly flat volume form — the property
 that makes the experiment clean also makes it unrepresentative of generic
 `Weyl != 0` spacetimes — and by its single frozen operating point;
@@ -821,7 +911,14 @@ MPFR directed-rounding flight-time certification, a uniform anchor-diamond
 containment proof, and a certified cell-refinement integrator, and the frozen
 configuration's volume was computed once from an exact freeze checkout:
 `V ∈ [56.212737, 57.348019]`, relative half-width 0.009997 ≤ 0.01,
-`target-met` (`docs/prereg/p14_o3_volume.json`).
+`target-met` (`docs/prereg/p14_o3_volume.json`). That certification (O3) is
+the one the O4b audit below consumes. The Section 6.8 count stage needed a
+narrower enclosure than its own tolerance could absorb, so the same
+configuration was re-certified at half the target width (O3'), giving
+`V ∈ [56.492959, 57.060667]` — strictly inside O3, and the interval the
+`mu = 0.1333` rung is gated against
+(`docs/prereg/p14_o3p_volume.json`). The two are distinct certifications of
+the same diamond at different target widths, never combined.
 
 An auxiliary instrument audit (O4b) then consumed that certified volume: at
 the single frozen Schwarzschild configuration, the sampler, the S1 volume
@@ -925,7 +1022,7 @@ resampled, and no gate changed anywhere in the recovery.
 | Quantity | Convention used |
 | --- | --- |
 | Causal relation | null-inclusive J+: i precedes j iff t_j - t_i > 0 and (dt)^2 - (dx)^2 >= -atol, atol = 1e-12; strict in time (irreflexive) |
-| Longest chain | endpoint-inclusive count; 1+1D normalization L ~ sqrt(2 rho) tau (asymptotic normalized value sqrt(2) ~ 1.414), finite-size corrected |
+| Longest chain | endpoint-exclusive count (interior elements, two fewer than the count including both endpoints); 1+1D normalization L ~ sqrt(2 rho) tau (asymptotic normalized value sqrt(2) ~ 1.414), finite-size corrected |
 | Interval volume (1+1D) | open Alexandrov count K; V = K/rho; V = tau^2/2, so tau_est = sqrt(2K/rho) |
 | Myrheim-Meyer | ordering fraction r = (related ordered pairs)/(N(N-1)) inverted against f(d) = Gamma(d+1)Gamma(d/2)/(4 Gamma(3d/2)); equals the standard unordered form up to a factor 2 on both sides |
 | Radar coordinates | tau_minus = latest preceding tick, tau_plus = earliest succeeding tick; radar time = (tau_plus + tau_minus)/2, radar distance = (tau_plus - tau_minus)/2 |
@@ -965,6 +1062,19 @@ violation blocks the stage rather than permitting a seed swap.
 **Artifacts.** The complete Section 6 evidence bundle, with digests, is
 enumerated in `artifact_manifest.md`; the per-sentence mapping from manuscript
 text to evidence file is recorded there as the citation-to-artifact inventory.
+
+**Frozen sentences.** Each preregistered stage fixes, before execution, the
+sentence its verdict would license, and the campaign records that sentence in
+its results artifact. Those originals are written in Korean, the working
+language of this program's records; every frozen sentence printed in
+Sections 6.4 and 6.7 is therefore a translation, and the artifact holds the
+authoritative text. What keeps the two from drifting apart is not editorial
+care: a contract test reads each original from its artifact, holds it against
+the rendering the manuscript prints in its place, and fails if either side
+moves — so a translation cannot quietly soften, strengthen, or outrun the
+sentence the campaign actually licensed. The manuscript prints no Korean, and
+a separate test enforces that, because a script the reader cannot check would
+put the paper's load-bearing wording beyond the reader's reach.
 
 **Section 6.7 (Schwarzschild extension) provenance.** Freeze commit
 `ceed85d` (PR #57, merge `5cffd90`) carries the frozen rule, the fresh seed

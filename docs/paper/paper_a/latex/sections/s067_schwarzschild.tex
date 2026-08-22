@@ -49,21 +49,17 @@ B: replication (secondary) & Welch CI95 of S4$-$S3 inside $\pm 0.0012$ & $[-0.00
 \end{table}
 
 Stage verdict: CONFIRMED. The census recorded zero ambiguous pairs and one
-escalated pair, resolved at the tighter tolerance. The frozen sentences are
-recorded in Korean in the artifact
-(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s4\_\allowbreak{}results.json}) and quoted verbatim
-(byte-exact with the artifact), each followed by a non-frozen English
-translation:
-``동결된 Schwarzschild 좌표·도메인(M=1, r∈[10,20], 극관각 캡 1.0, T=40)의 공통 측도 위에서, paired 앙상블 평균 이동의 identified CI95가 동결 방향으로 검출문턱 ε\_det = 0.0036을 초과했다 — 유한밀도 인과 census가 type D 진공 곡률의 빛원뿔 변형을 C1-급으로 검출했다(프로그램 내부 진술).''
-(\textit{on the frozen Schwarzschild coordinates and domain, the paired
+escalated pair, resolved at the tighter tolerance. The two sentences the
+stage licenses, in translation
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s4\_\allowbreak{}results.json}), are
+\textit{on the frozen Schwarzschild coordinates and domain, the paired
 ensemble mean shift exceeds the frozen detection threshold in the frozen
 direction---a finite-density causal census detects the light-cone
 deformation of type-D vacuum curvature at C1 grade; a program-internal
-statement});
-``S4 블록과 S3 탐색 블록의 독립 두-표본 차이의 identified Welch CI95가 ±ε\_rep = ±0.0012 안에 들어, 탐색 효과가 정량적으로 재현됐다.''
-(\textit{the independent two-sample difference between the S4 and S3 blocks
+statement}, and
+\textit{the independent two-sample difference between the S4 and S3 blocks
 lies inside the replication band: the exploration effect is quantitatively
-reproduced}).
+reproduced}.
 
 A second, separate preregistered stage (S5) carries the single-poset claim
 class. Guided by a committed stored-data feasibility audit
@@ -115,26 +111,38 @@ separation. Drawn from the committed artifacts
 \end{figure}
 
 Zero ambiguous and zero escalated pairs; both identified bound series agree.
-The frozen sentences are recorded in Korean in the artifact
-(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s5\_\allowbreak{}results.json}) and quoted verbatim
-(byte-exact), each followed by a non-frozen English translation:
-``동결된 Schwarzschild 도메인·밀도에서, 단일 causal set의 global relation fraction은 flat/Schwarzschild 앙상블을 우연 수준보다 판별하는 정보를 운반한다 (AUC CI95 하한 > 0.60, 프로그램 내부 진술).''
-(\textit{on the frozen Schwarzschild domain and density, the global relation
+The two sentences this stage licenses, in translation
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s5\_\allowbreak{}results.json}), are
+\textit{on the frozen Schwarzschild domain and density, the global relation
 fraction of a single causal set carries information that discriminates flat
 from Schwarzschild ensembles above chance---AUC CI95 lower bound above 0.60;
-a program-internal statement});
-``out-of-sample balanced accuracy의 결합 95\% 하한이 0.60을 넘어, 학습-외 판별이 확인됐다 (secondary).''
-(\textit{the joint 95\% lower bound of out-of-sample balanced accuracy
-exceeds 0.60: out-of-training discrimination holds; a secondary verdict}).
+a program-internal statement}, and
+\textit{the joint 95\% lower bound of out-of-sample balanced accuracy
+exceeds 0.60: out-of-training discrimination holds; a secondary verdict}.
 
 What this extends, and at what grade: on the same frozen Schwarzschild
 domain, the two claim classes of the plane-wave capstone are now each
 supported by a \emph{separate} preregistered stage
 (\fref{fig:schwarzschild})---the C1 paired claim CONFIRMED (S4), C2
 single-poset discrimination DETECTED (S5). There was no joint primary
-verdict, and the grades differ from the plane wave: its C2 separation was
-complete, while the Schwarzschild discrimination is strong but imperfect
-(AUC $\approx 0.973$; no completeness gate was preregistered); the secondary
+verdict. The two stages also differ in what they can resolve, and the
+difference is one of design rather than of curvature type. C1 reads the same
+sprinkled points twice, so its estimator sees only the relation change: the
+paired readings correlate at 0.9965 and pairing removes 99.3\% of the spread,
+leaving a paired SD of 0.001135 against a detection threshold an order of
+magnitude away. What pairing removes is the shared point configuration
+itself, not the event count---that count correlates with the paired
+difference at $-0.018$ and is not the nuisance that matters. C2 reads two
+independent arms and can remove none of it: its pooled SD of 0.013428 is an
+order of magnitude larger, and against that the same geometric effect is
+worth 2.73 standard deviations rather than 31.8. Much of the gap is simply
+where each construction sits---the flat-arm relation fraction averages
+0.0238 in the plane wave against 0.4491 here, and a fraction near one half
+is near its most variable. That, not type~D versus type~N, is why the plane
+wave's C2 separated completely and this one does not (AUC $\approx 0.973$; no
+completeness gate was preregistered). A single-poset statistic that recovers
+what pairing sees is a natural next preregistration; recovering it after the
+fact would forfeit the freeze. The secondary
 BA verdict neither strengthens nor combines with the primary. The extension
 establishes no mass-generality (a single frozen $M$) and uses no
 diamond-volume oracle (margins operationally anchored or independently

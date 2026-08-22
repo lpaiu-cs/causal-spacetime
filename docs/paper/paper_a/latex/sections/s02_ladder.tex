@@ -22,7 +22,10 @@ hierarchy) are:
   with calibrated separation, fixing a spatial side.
 \item \textbf{A---observer atlas.} Multiple overlapping observer charts.
 \item \textbf{W---local measure profile / weights.} The physical volume
-  element relative to the support sampling measure.
+  element relative to the support sampling measure, normalized to unit mean
+  over the declared support, so that all scale information belongs to M and
+  W carries only position dependence; a constant profile is therefore
+  $\mathrm{W} = 1$ and supplies nothing beyond M.
 \end{itemize}
 
 \Tref{tab:rungs} lists the rungs (minimal ingredient $\to$ what is

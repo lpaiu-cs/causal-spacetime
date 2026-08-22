@@ -17,11 +17,13 @@ faithful rendition of it. The LaTeX lives in
    vocabulary: CONFIRMED, DETECTED, CONCORDANT, POSITIVE, REPLICATED,
    confirmed, detected, "program-internal statement", "incomplete
    separation", "controlled validation". Keep each where it stands.
-3. **Korean frozen sentences are copied byte-exact** (the manuscript
-   quotes them unwrapped so the byte sequence matches the artifact).
-   In LaTeX, escape `_` as `\_` (renders the same character); wrap each
-   sentence in ``...'' quotes as the manuscript does. Keep the English
-   translations that follow them.
+3. **No Korean in the paper.** Frozen sentences appear as English
+   renderings only; their Korean originals live in the results artifacts
+   and are bound to those renderings by `FROZEN_RENDERINGS` in
+   `tests/test_paper_a_results_integration.py`. Appendix B states this
+   once. Two tests enforce it — every rendering must still match its
+   original and reach its section, and no Hangul may reach the
+   manuscript. Do not reintroduce quoted originals into either file.
 4. **Citations:** `[@key1; @key2]` -> `\cite{key1,key2}`; `\cite{key}`
    stays. Every key must exist in `../citations/references.bib`. Add no
    new citations.
@@ -102,7 +104,7 @@ spacing; put `\caption` before the tabular). Use booktabs
   `&` -> `\&`.
 - Petrov "type N"/"type D" as in source. "Poincare" -> `Poincar\'e`.
   "Alexandrov", "Rindler", "Schwarzschild", "Minkowski" unchanged.
-- ASCII source only, EXCEPT the Korean frozen sentences (byte-exact) and
+- ASCII source only, EXCEPT em/en dashes in copied prose and
   `Hom\v{s}ak` handled via macro. Unicode −, ≤, ± in copied English text
   must become math (`$-$`, `$\le$`, `$\pm$`).
 
@@ -113,8 +115,10 @@ spacing; put `\caption` before the tabular). Use booktabs
   narrative lists inside paragraphs become prose.
 - Smooth telegraphic openers into full sentences where needed
   ("Contributions: (1) ..." -> "The contributions are: (i) ...").
-- American spelling throughout (normalize "neighbouring" ->
-  "neighboring").
+- **British spelling with `-ize` endings** (IOP house style): behaviour,
+  neighbouring, colour; but normalize/organize/recognize keep `-ize`. An
+  earlier version of this brief said American spelling, which was wrong
+  and had to be undone.
 - Keep the author's voice: precise, spare, occasionally pointed. Do not
   flatten deliberate constructions ("three ways out and no fourth",
   "by certification rather than by taste") — they are intentional.

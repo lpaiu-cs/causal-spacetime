@@ -52,7 +52,16 @@ within-point-set counterfactual (\sref{sec:design}). What is \emph{not}
 identical between geometries is the causal-diamond volume: the light-cone
 boundary tilts, and at equal proper time the curved-arm diamond volume sits
 0.4\% ($wT = 1$) to 7.3\% ($wT = 2$) above flat---a deterministic design
-check pins both numbers. ``Same measure'' here means the volume form and
+check pins both numbers, against the closed form
+$V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)$. Those percentages describe a small
+diamond on the axis, and the frozen operating point is neither small nor
+on-axis: the probe chain selected \artifact{aniso-a1.0}, a slab spanning
+$1/\pi = 0.318$ of the way to the first conjugate point, on a box elongated
+three to one along the focusing transverse axis. The order statistic
+therefore reads mostly off-axis pairs in the direction where the cones open,
+which is why its response is a factor of three rather than a few percent.
+This is a deliberately strong operating point, not a weak-curvature probe.
+``Same measure'' here means the volume form and
 sprinkling law only, never interval volumes; conflating the two was the first
 design draft's central error, caught in review, and the distinction is
 load-bearing.
@@ -134,27 +143,42 @@ $[0.999232, 1.0]$). Both panels are drawn from the committed artifact
 \label{fig:capstone}
 \end{figure}
 
-The two arms' relation-fraction samples are completely separated (the minimum
+The size of the effect is worth stating in the statistic's own units, which
+the margin ratio hides: averaged over the paired readings the relation
+fraction runs 0.023830 flat against 0.074123 curved, a factor of 3.11. The
+two arms' relation-fraction samples are completely separated (the minimum
 curved-arm value exceeds the maximum flat-arm value in 4800 draws per arm);
 the AUC interval at complete separation is the frozen exact bound, not the
-degenerate Wald interval. Every relation census in both claims recorded zero
-ambiguous and zero escalated pairs. The frozen sentences are recorded in
-Korean in the artifact and are quoted here verbatim (unwrapped, so the byte
-sequence matches the artifact), each followed by an explicit, non-frozen
-English translation:
-C1 ``paired ensemble 평균 이동이 ε\_Δ를 넘는다''
-(\emph{the paired ensemble mean shift exceeds $\varepsilon_\Delta$});
-C2 ``P3-C 분리를 독립적으로 재현했다.''
-(\emph{the probe chain's separation is independently reproduced})
-(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}prereg\_\allowbreak{}results.json}).
+degenerate Wald interval. The balanced-accuracy interval got no such
+treatment: its frozen construction is an unclipped Wald interval on a
+worst-case standard error, so at BA $= 1.0$ it reaches 1.014, outside the
+range the quantity can take. That is what the preregistration licenses and it
+is printed as it stands; no verdict depends on it, because the gate reads only
+the lower end. For the reader's orientation---not as a re-scored gate---the
+construction the later S5 stage uses for the same quantity, a
+Clopper--Pearson interval per arm combined across the two, gives
+$[0.998176, 1.0]$ on the same test halves. Every relation census in both
+claims recorded zero
+ambiguous and zero escalated pairs. The two sentences the stage licenses were
+fixed in the preregistration before execution and are recorded in the
+artifact; in translation they are C1, \emph{the paired ensemble mean shift
+exceeds $\varepsilon_\Delta$}, and C2, \emph{the probe chain's separation is
+independently reproduced}
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}prereg\_\allowbreak{}results.json};
+appendix~\ref{app:provenance} records the language of the frozen originals
+and what holds these renderings to them).
 
 \subsection{What this establishes}
 \label{sec:establishes}
 
 At a fixed box, density, and profile, an order-only statistic separates flat
 from curved ensembles: the conformal-class information that order carries by
-theorem is \emph{detectable at finite density}, in the one construction where
-the sprinkling measure is exactly frozen. Together with \sref{sec:r5} this
+theorem is \emph{present in the order at finite density}, in the one
+construction where the sprinkling measure is exactly frozen. The claim is
+existence, not sensitivity. No density or amplitude sweep was run, so nothing
+here locates the point at which the separation would fail, and the operating
+point was chosen to be strong (\sref{sec:pureweyl}) rather than marginal.
+Together with \sref{sec:r5} this
 closes the conformal story in both directions---within a class, order is
 blind to scale; across classes, at least at this operating point, order
 visibly moves.
@@ -162,8 +186,14 @@ visibly moves.
 \subsection{What the plane-wave result alone does not establish}
 \label{sec:notestablish}
 
-It is not a general-Weyl discriminator (the plane wave is Petrov type~N and
-its exact volume form is unrepresentative); it is not Weyl-tensor recovery
+It says nothing about sensitivity. The frozen operating point was chosen to
+be strong, and two things follow that the stage cannot answer: no density or
+amplitude sweep was run, so the density at which the separation fails is
+unmeasured; and the slab is elongated three to one along the focusing
+transverse axis, so whether the effect survives at an isotropic box is
+untested. Beyond that, it is not a general-Weyl discriminator (the plane wave
+is Petrov type~N and its exact volume form is unrepresentative); it is not
+Weyl-tensor recovery
 (detection and recovery are different claims; no reconstructed quantity is
 produced, which is why this is a capstone boundary experiment and not a new
 ladder rung); it does not establish box- or density-independence (the
