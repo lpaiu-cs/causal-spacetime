@@ -1,57 +1,57 @@
 # Cover letter (Classical and Quantum Gravity)
 
-*Final text. Submission itself is performed by the author; the referee
-suggestions below were filled from the manuscript's cited literature and
-can be swapped on the submission form without touching the letter.*
+*Final text, rev. 2 — after an external review of the letter itself
+(compressed for desk assessment; priority claim softened; companion study
+moved to the form extras). Submission is performed by the author.*
 
 Dear Editors of *Classical and Quantum Gravity*,
 
 Please consider the enclosed manuscript, "Spacetime quantities from
 causal order: an operational ladder with preregistered validations at
-finite density," for publication in
-*Classical and Quantum Gravity* as a Paper.
+finite density," for publication in *Classical and Quantum Gravity* as a
+Paper.
 
-The starting point is the theorem every order-first programme leans on:
-causal structure fixes the conformal class, and a volume element fixes the
-rest. The manuscript treats that statement operationally. It organizes, as
-an explicit dependency ledger, which spacetime quantities a finite
-procedure can actually reconstruct from a causal order once each minimal
-extra ingredient — a global density, an observer clock, an orientation
-reference, an atlas, a local measure profile — is supplied, with measured
-error behaviour per rung, and bounds the ledger with negative results:
-order alone fixes neither scale nor profile, a single observer leaves a
-reflection degeneracy, and finite signal speed alone does not produce
-Lorentzian structure.
+The starting point is a standard rigidity result: causal structure fixes
+the conformal class, and a compatible volume element fixes the remaining
+conformal factor. The manuscript turns that continuum statement into a
+finite-density operational reconstruction programme: an explicit ladder
+of which spacetime quantities a finite procedure recovers from a causal
+order once each minimal extra ingredient — a global density, an observer
+clock, an orientation reference, an atlas, a local measure profile — is
+supplied, with measured error behaviour per rung. Negative results bound
+the hierarchy: order alone fixes neither scale nor profile, a single
+observer leaves a reflection degeneracy, and finite signal speed alone
+does not produce Lorentzian structure.
 
-Three preregistered stages then carry the ledger's conformal story to
-curved spacetime. On a (3+1)-dimensional vacuum plane wave whose volume
-form and sprinkling law are exactly flat — so only the light cones move —
-an order-only statistic separates flat from curved ensembles at finite
-sprinkling density, under decision rules frozen before execution. Separate
-preregistered stages extend both claim classes to a Schwarzschild exterior
-patch. And on a four-rung Schwarzschild mass ladder, the certified-
-membership count of a Poisson sprinkling realizes, within a frozen 2.5%
-band, continuum 4-volumes certified in advance by directed-rounding
-interval arithmetic — to our knowledge the first preregistered equivalence
-gate run against a certified volume enclosure; a literature priority
-search (August 2026) found partial overlap in four adjacent areas and no
-direct prior for that construction. A companion study (in preparation)
-builds a preregistered discriminator on this foundation; the present
-manuscript stands alone and does not depend on it.
+Preregistered stages then carry the programme to curved spacetime — one
+on a vacuum plane wave, two on a Schwarzschild exterior patch, and a
+four-rung Schwarzschild mass-ladder count, every decision rule frozen
+before execution. The plane-wave design isolates causal structure from
+volume: the coordinate volume form and the sprinkling law are exactly
+flat and only the light cones move, so the conformal-class information
+that order itself carries is shown to reach an order-only statistic at
+finite sprinkling density. The mass-ladder count anchors the volume
+channel from the other side: sprinkling counts agree, within a frozen
+2.5% band, with continuum 4-volumes certified in advance by interval
+arithmetic — to our knowledge a new kind of preregistered equivalence
+test, run against a certified bound rather than an operational margin.
 
-We believe the manuscript fits *Classical and Quantum Gravity*'s causal
-set readership directly: it re-derives the community's standard
-reconstructions as controlled validations, states exactly what each
-requires, and adds a provenance discipline — frozen decision rules,
-content-addressed evidence bundles, and contract tests that recompute
-every printed figure from its committed artifact — that we hope is of
-methodological interest beyond the specific results.
+We believe the manuscript suits *Classical and Quantum Gravity*: it
+addresses causal structure and discrete-spacetime reconstruction
+directly, and its treatment of operational identifiability — what must
+be supplied before each quantity becomes recoverable — and of
+finite-density validation is relevant more broadly to approaches that
+infer continuum geometry from discrete or operational data. The
+computational claims are fully auditable: decision rules were frozen
+before execution, the numerical evidence is version-controlled and
+content-addressed in a public repository, and automated checks
+regenerate every printed figure from the archived artifacts.
 
-The manuscript is original, has not been published previously, and is not
-under consideration elsewhere. There are no conflicts of interest. All
-supporting data are version-controlled in a public repository, cited in
-the Data Availability Statement. The use of AI assistance in this work is
-disclosed in the Acknowledgements, per IOP policy.
+The manuscript is original, has not been published previously, and is
+not under consideration elsewhere. There are no conflicts of interest.
+Supporting data are cited in the Data Availability Statement. The use of
+AI assistance in this work is disclosed in the Acknowledgements, per IOP
+policy.
 
 Thank you for your consideration.
 
@@ -67,10 +67,15 @@ lpaiu.cs@gmail.com
 
 **Article type:** Paper.
 
-**Suggested reviewers** (all active in causal set theory and familiar
-with the estimators and constructions the manuscript tests; contact
-details to be taken from their current institutional pages at submission
-time):
+**Related manuscripts:** none under consideration anywhere. A companion
+study building a discriminator on this foundation is in preparation and
+unsubmitted; the manuscript's Discussion names it once. Kept out of the
+letter so the submission is judged as what it is — self-contained.
+
+**Suggested reviewers.** Before entering them on the form: verify each
+person's current affiliation and e-mail from their institutional page,
+and check for recent co-authorship, shared institutions, or other
+conflicts. Final selection is editorial.
 
 1. Sumati Surya — author of the *Living Reviews in Relativity* survey of
    causal set theory and of the small-diamond discrete-geometry results
@@ -83,8 +88,9 @@ time):
    against, and of large-scale causal set numerics.
 4. Lisa Glaser — causal set numerics and discrete d'Alembertians;
    well placed to judge the estimator-side claims.
+5. (optional, if the form allows a fifth) Renate Loll — causal dynamical
+   triangulations; a neighbouring discrete Lorentzian programme, well
+   placed to judge the manuscript's broader spacetime-reconstruction
+   positioning rather than its causal-set internals.
 
 **Opposed reviewers:** none.
-
-**Companion paper:** named in the letter as in preparation; no manuscript
-exists to enclose, and this submission does not depend on it.
