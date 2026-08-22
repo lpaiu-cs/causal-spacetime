@@ -1,7 +1,7 @@
 # Paper A (draft)
 
-Working title: **An operational reconstruction ladder for spacetime quantities
-from causal order.**
+Title: **Spacetime quantities from causal order: an operational ladder
+with preregistered validations at finite density.**
 
 Status: DRAFT (evidence package complete). The scientific base is the
 verified M1-M10 foundation layer on the `restart/m17-baseline` line, whose

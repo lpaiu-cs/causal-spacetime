@@ -143,8 +143,8 @@ def bib_repl(m):
 refs = re.sub(r'\\bibitem\{([^}]*)\}', bib_repl, refs)
 assert n_bib == 31
 
-TITLE = ('An operational reconstruction ladder for spacetime quantities '
-         'from causal order')
+TITLE = ('Spacetime quantities from causal order: an operational ladder '
+         'with preregistered validations at finite density')
 article = f"""\\title{{{TITLE}}}
 \\author{{Juneyoung Kim \\\\ Independent researcher \\\\ lpaiu.cs@gmail.com}}
 \\date{{}}
@@ -177,7 +177,7 @@ si_body = si_body.replace(
     '\\section*{S2. Capstone execution provenance}', 1)
 si_labels = dict(LABELS)
 si_labels.update(LABELS_SI)
-si = f"""\\title{{Supplementary material for: {TITLE}}}
+si = f"""\\title{{Supplementary material for “{TITLE}”}}
 \\author{{Juneyoung Kim \\\\ Independent researcher \\\\ lpaiu.cs@gmail.com}}
 \\date{{}}
 \\maketitle

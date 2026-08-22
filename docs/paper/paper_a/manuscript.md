@@ -1,4 +1,4 @@
-# An operational reconstruction ladder for spacetime quantities from causal order
+# Spacetime quantities from causal order: an operational ladder with preregistered validations at finite density
 
 **Juneyoung Kim**
 Independent researcher · lpaiu.cs@gmail.com

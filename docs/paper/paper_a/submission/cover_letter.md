@@ -6,8 +6,9 @@ can be swapped on the submission form without touching the letter.*
 
 Dear Editors of *Classical and Quantum Gravity*,
 
-Please consider the enclosed manuscript, "An operational reconstruction
-ladder for spacetime quantities from causal order," for publication in
+Please consider the enclosed manuscript, "Spacetime quantities from
+causal order: an operational ladder with preregistered validations at
+finite density," for publication in
 *Classical and Quantum Gravity* as a Paper.
 
 The starting point is the theorem every order-first programme leans on:
