@@ -141,7 +141,7 @@ $0.235 \to 0.176 \to 0.119$, tracking the flat-profile sampling floor
 ($0.234 \to 0.174 \to 0.118$) to within 1.3\%, and the
 unweighted-to-weighted volume-RMSE ratio grows $2.0 \to 2.8 \to 4.3$ with
 $N$---the signature of a removed systematic rather than of reduced noise.
-What R5 demonstrates is that replacement of a non-vanishing error floor by
+What R5 demonstrates is the replacement of a non-vanishing error floor by
 flat-case, noise-limited error scaling---a consistency statement, not a bias
 correction (\expid{exp19};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}weighted\_\allowbreak{}conformal\_\allowbreak{}volume\_\allowbreak{}summary.csv}).
@@ -156,12 +156,12 @@ ${\sim}1\times10^{-7}$ (\expid{exp20};
 \artifact{outputs/\allowbreak{}data/\allowbreak{}conformal\_\allowbreak{}volume\_\allowbreak{}exact\_\allowbreak{}sanity.csv}). Under random
 thinning, density-rescaled reconstruction is stable (volume RMSE
 $0.018 \to 0.009$, dimension steady ${\sim}2.0$) while the uncorrected
-estimate blows up to RMSE 0.270 (bias $-0.183$) at 25\% retention; the
-thinning is uniform, so its keep probability is one global scalar and this
-is a robustness statement about M---the number-volume correspondence
-survives uniform decimation once the density is re-declared---not a second
-W-level result (\expid{exp23};
-\artifact{outputs/\allowbreak{}data/\allowbreak{}thinning\_\allowbreak{}coarse\_\allowbreak{}graining\_\allowbreak{}summary.csv}).
+estimate blows up to RMSE 0.270 (bias $-0.183$) at 25\% retention. The
+thinning is uniform, so its keep probability is a single global scalar: a
+robustness statement about M, not a second W-level result (\expid{exp23};
+\artifact{outputs/\allowbreak{}data/\allowbreak{}thinning\_\allowbreak{}coarse\_\allowbreak{}graining\_\allowbreak{}summary.csv}). The
+same measure information could be encoded in the sampling law instead of as
+post-hoc weights; that variant was not run.
 \Fref{fig:measure} shows the measure dependence directly.
 
 \begin{figure}[t]
@@ -170,14 +170,11 @@ W-level result (\expid{exp23};
 \caption{R5: what the local measure buys. For the position-dependent
 profile, the unweighted estimate's relative error stalls at a floor that no
 global recalibration removes, while the weighted estimate falls with $N$
-onto the flat-profile sampling floor (left); on logarithmic axes the two
-carry visibly different slopes (right). The constant-profile arm is not
-plotted: a constant weight rescales estimate and truth alike, so its
-weighted curve is the flat curve exactly---that arm is a normalization
-identity, and its repair belongs to R1. Equivalent measure information can
-conceptually be encoded in the sampling law rather than as post-hoc weights;
-that alternative is not part of this figure's evidence package. Order alone
-fixes no absolute scale, and no scale alone fixes a profile.}
+onto the flat-profile sampling floor (a); panel (b) shows the same
+comparison in absolute volume RMSE on logarithmic axes, where the two carry
+visibly different slopes. The constant-profile arm is not plotted---it is a
+normalization identity, R1's ingredient (\sref{sec:r5}). Order alone fixes
+no absolute scale, and no scale alone fixes a profile.}
 \label{fig:measure}
 \end{figure}
 

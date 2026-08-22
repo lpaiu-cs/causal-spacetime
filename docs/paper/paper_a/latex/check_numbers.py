@@ -134,7 +134,15 @@ def main() -> int:
     # renderings by FROZEN_RENDERINGS in
     # tests/test_paper_a_results_integration.py (which guards the same
     # property on the manuscript side). Appendix B says so once.
-    hangul = re.findall(r"[가-힣]+", tex_text)
+    # scanned for Hangul beyond the section files: the bibliography and
+    # the assembly file are excluded from the NUMBER comparison (their
+    # numbers answer to references.bib), but no rendition file may print
+    # Korean.
+    hangul_text = tex_text + "\n".join(
+        p.read_text(encoding="utf-8")
+        for p in [SECTIONS / "references.tex", HERE / "main.tex"]
+        if p.exists())
+    hangul = re.findall(r"[가-힣]+", hangul_text)
     if hangul:
         print("== Korean in the LaTeX rendition ==")
         for run in dict.fromkeys(hangul[:8]):

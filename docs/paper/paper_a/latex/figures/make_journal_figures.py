@@ -208,7 +208,7 @@ LADDER = [
     ("R2", "order + observer clock", "radar time; unsigned distance",
      "sign undetermined"),
     ("R3", "order + observer + orientation", "signed coords; Lorentz map",
-     "calibrated separation"),
+     "supplied orientation"),
     ("R4", "order + observer + oriented atlas", "Poincaré transition maps",
      "calibrated charts"),
     ("R5", "order + global/local measure", "volume; coarse-grain stability",

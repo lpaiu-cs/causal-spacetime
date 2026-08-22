@@ -62,9 +62,9 @@ therefore reads mostly off-axis pairs in the direction where the cones open,
 which is why its response is a factor of three rather than a few percent.
 This is a deliberately strong operating point, not a weak-curvature probe.
 ``Same measure'' here means the volume form and
-sprinkling law only, never interval volumes; conflating the two was the first
-design draft's central error, caught in review, and the distinction is
-load-bearing.
+sprinkling law only, never interval volumes; conflating the two was the
+central error of this stage's first design draft, caught in review before
+the freeze, and the distinction is load-bearing.
 
 \subsection{Finite-density detection design}
 \label{sec:design}
@@ -112,7 +112,8 @@ confirmed; the stage is POSITIVE (\tref{tab:capstone}).
 
 \begin{table}[t]
 \caption{Preregistered capstone verdicts. Both claims confirmed; the stage
-is POSITIVE.}
+is POSITIVE. The BA interval is the frozen unclipped Wald construction and
+exceeds the quantity's range; see the text below.}
 \label{tab:capstone}
 \centering
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{9.5pc}l>{\raggedright\arraybackslash}X@{}}
@@ -154,10 +155,11 @@ treatment: its frozen construction is an unclipped Wald interval on a
 worst-case standard error, so at BA $= 1.0$ it reaches 1.014, outside the
 range the quantity can take. That is what the preregistration licenses and it
 is printed as it stands; no verdict depends on it, because the gate reads only
-the lower end. For the reader's orientation---not as a re-scored gate---the
-construction the later S5 stage uses for the same quantity, a
-Clopper--Pearson interval per arm combined across the two, gives
-$[0.998176, 1.0]$ on the same test halves. Every relation census in both
+the lower end. For orientation only, not as a re-scored gate: the
+construction the later S5 stage uses for the same quantity---a
+Clopper--Pearson interval per arm, Bonferroni-combined---gives
+$[0.998176, 1.0]$ on the held-out halves the frozen classifier scores.
+Every relation census in both
 claims recorded zero
 ambiguous and zero escalated pairs. The two sentences the stage licenses were
 fixed in the preregistration before execution and are recorded in the
@@ -175,10 +177,8 @@ At a fixed box, density, and profile, an order-only statistic separates flat
 from curved ensembles: the conformal-class information that order carries by
 theorem is \emph{present in the order at finite density}, in the one
 construction where the sprinkling measure is exactly frozen. The claim is
-existence, not sensitivity. No density or amplitude sweep was run, so nothing
-here locates the point at which the separation would fail, and the operating
-point was chosen to be strong (\sref{sec:pureweyl}) rather than marginal.
-Together with \sref{sec:r5} this
+existence, not sensitivity (\sref{sec:notestablish}). Together with
+\sref{sec:r5} this
 closes the conformal story in both directions---within a class, order is
 blind to scale; across classes, at least at this operating point, order
 visibly moves.
@@ -203,9 +203,6 @@ carried there by the separate preregistered extensions of
 \sref{sec:schwarzschild}---the C1 paired claim confirmed, C2 single-poset
 discrimination detected with incomplete separation; the diamond-volume
 oracle is now certified, and its direct-MC instrument audit is complete as an
-auxiliary result (\sref{sec:limitations}, appendix~\ref{app:provenance}), and
+auxiliary result (\sref{sec:oracle}, appendix~\ref{app:provenance}), and
 the prediction-anchored Poisson-count stage is executed across a four-rung
-mass ladder, CONCORDANT at every rung (\sref{sec:count}). A separate cost
-measurement (S1) prices the causal-predicate component---about 0.77~ms per
-pair on the tested solver, patch, and tolerance, roughly $360\times$ the
-plane-wave predicate (\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s1\_\allowbreak{}cost.json}).
+mass ladder, CONCORDANT at every rung (\sref{sec:count}).

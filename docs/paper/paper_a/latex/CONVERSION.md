@@ -53,7 +53,8 @@ Fixed labels (use exactly these; cross-reference with `\sref{}` /
 | `sec:ceiling`, `sec:pureweyl`, `sec:design`, `sec:preregresult`, `sec:establishes`, `sec:notestablish` | §6.1-6.6 |
 | `sec:schwarzschild` | §6.7 |
 | `sec:count` | §6.8 |
-| `sec:discussion` §7, `sec:claims` §8, `sec:limitations` §9, `sec:repro` §10 |
+| `sec:oracle` | §6.9 |
+| `sec:discussion` §7, `sec:claims` §8, `sec:repro` §9 |
 | `app:conventions` App A, `app:provenance` App B |
 | `fig:ladder`, `fig:convergence`, `fig:measure`, `fig:capstone`, `fig:schwarzschild`, `fig:count` | figures 1-6 |
 | `tab:rungs` (§2), `tab:capstone` (§6.4), `tab:s4` and `tab:s5` (§6.7), `tab:count` (§6.8), `tab:conventions` (App A) | tables |

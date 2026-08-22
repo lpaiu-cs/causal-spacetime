@@ -7,7 +7,7 @@ Independent researcher · lpaiu.cs@gmail.com
 producing experiment and expected output path. The submission gate is met:
 all 19 cited legacy summary tables are committed and digest-locked, and the
 Section 6 capstone cites only committed, provenance-locked artifacts
-(Section 10 and `artifact_manifest.md`). No number is from memory.
+(Section 9 and `artifact_manifest.md`). No number is from memory.
 
 ## Abstract
 
@@ -25,10 +25,10 @@ labels yields radar time and unsigned radar distance; adding an orientation
 reference lifts the reflection degeneracy to signed coordinates and lets one
 recover the Lorentz map between two inertial protocols; adding overlapping
 charts yields an observer atlas with approximately consistent Poincare
-transition maps; adding supplied measure information, implemented in exp19 as
-local weights, makes volume reconstruction possible under the conformal
-ambiguity, and density-rescaled reconstruction is stable in the tested uniform
-random-thinning protocol. We also give a Rindler horizon analogue, in which an
+transition maps; supplying a global density and a local measure profile
+replaces the unweighted estimate's position-dependent error floor with
+flat-case, noise-limited error scaling (exp19), and density-rescaled
+reconstruction is stable in the tested uniform random-thinning protocol. We also give a Rindler horizon analogue, in which an
 accelerated observer's two-way radar reconstruction is confined to the expected
 wedge, and a finite-speed lattice counterexample showing that finite signal
 speed alone does not produce Lorentzian structure. As a capstone we validate,
@@ -91,8 +91,11 @@ deformation of the light cones — at identical coordinate volume form and
 sprinkling law — measurably moves the causal order at finite density
 (Section 6), together with its type-D (Schwarzschild) extension, where
 separate preregistered stages confirm the paired claim and detect single-poset
-discrimination (Section 6.7). All results are controlled validations, not
-evidence that geometry reduces to order.
+discrimination (Section 6.7); and (6) a certified diamond-volume enclosure
+and a preregistered, prediction-anchored Poisson-count validation across a
+four-rung Schwarzschild mass ladder (Section 6.8), with an auxiliary
+instrument audit of the oracle stack (Section 6.9). All results are
+controlled validations, not evidence that geometry reduces to order.
 
 ## 2. The reconstruction ladder
 
@@ -313,7 +316,7 @@ relative RMSE falls 0.235 -> 0.176 -> 0.119, tracking the flat-profile
 sampling floor (0.234 -> 0.174 -> 0.118) to within 1.3%, and the
 unweighted-to-weighted volume-RMSE ratio grows 2.0 -> 2.8 -> 4.3 with N — the
 signature of a removed systematic rather than of reduced noise. What R5
-demonstrates is that replacement of a non-vanishing error floor by flat-case,
+demonstrates is the replacement of a non-vanishing error floor by flat-case,
 noise-limited error scaling — a consistency statement, not a bias correction
 (exp19; `outputs/data/weighted_conformal_volume_summary.csv`).
 
@@ -326,11 +329,12 @@ analytic volume/proper-time formulas are verified to ~1e-7 (exp20;
 `outputs/data/conformal_volume_exact_sanity.csv`). Under random thinning,
 density-rescaled reconstruction is stable (volume RMSE 0.018 -> 0.009,
 dimension steady ~2.0) while the uncorrected estimate blows up to RMSE 0.270
-(bias -0.183) at 25% retention; the thinning is uniform, so its keep
-probability is one global scalar and this is a robustness statement about M —
-the number-volume correspondence survives uniform decimation once the density
-is re-declared — not a second W-level result (exp23;
-`outputs/data/thinning_coarse_graining_summary.csv`).
+(bias -0.183) at 25% retention. The thinning is uniform, so its keep
+probability is a single global scalar: a robustness statement about M, not a
+second W-level result (exp23;
+`outputs/data/thinning_coarse_graining_summary.csv`). The same measure
+information could be encoded in the sampling law instead of as post-hoc
+weights; that variant was not run.
 Figure 3 shows the measure dependence directly.
 
 ![Figure 3](figures/fig3_measure.png)
@@ -338,14 +342,11 @@ Figure 3 shows the measure dependence directly.
 *Figure 3. R5: what the local measure buys. For the position-dependent
 profile, the unweighted estimate's relative error stalls at a floor that no
 global recalibration removes, while the weighted estimate falls with N onto
-the flat-profile sampling floor (left); on logarithmic axes the two carry
-visibly different slopes (right). The constant-profile arm is not plotted: a
-constant weight rescales estimate and truth alike, so its weighted curve is
-the flat curve exactly — that arm is a normalization identity, and its repair
-belongs to R1. Equivalent measure information can conceptually be encoded in
-the sampling law rather than as post-hoc weights; that alternative is not
-part of this figure's evidence package. Order alone fixes no absolute scale,
-and no scale alone fixes a profile.*
+the flat-profile sampling floor (a); panel (b) shows the same comparison in
+absolute volume RMSE on logarithmic axes, where the two carry visibly
+different slopes. The constant-profile arm is not plotted — it is a
+normalization identity, R1's ingredient (Section 4.6). Order alone fixes no
+absolute scale, and no scale alone fixes a profile.*
 
 ### 4.7 Horizon analogue — Rindler reconstruction-inaccessibility
 
@@ -369,21 +370,23 @@ flat-spacetime horizon analogue, not a black-hole simulation.
 
 ## 5. Negative results that bound the ladder
 
-- **Conformal scale is not fixed by order alone.** Positive conformal
+- **Order fixes neither scale nor profile.** Positive conformal
   rescalings leave the causal order invariant while changing physical volume
-  and clock scale (Section 4.6). Absolute scale therefore requires a supplied
-  measure (rung M); R0 therefore supplies uncalibrated order statistics, not a
-  proper-time scale.
+  and clock scale (Section 4.6). Absolute scale requires a supplied measure
+  (ingredient M), and position dependence a supplied profile (ingredient W);
+  order alone supplies uncalibrated order statistics, not a proper-time
+  scale.
 - **A single observer gives only unsigned distance.** One chain's radar
   distance is |x|: two targets at x = +0.1 and x = -0.1 return the identical
   single-observer distance 0.1, while the two-chain oriented protocol recovers
   the signed positions +0.1 and -0.1. Signed coordinates therefore require an
-  orientation reference (rung R) (exp12;
+  orientation reference (ingredient R) (exp12;
   `outputs/data/single_observer_reflection_degeneracy.csv`).
 - **Finite signal speed alone does not give Lorentzian structure.** After
   calibrating density at the final time, a regular finite-speed lattice shares
-  the continuum model's leading quadratic count growth, while finite-t counts
-  differ (t = 5: 21 vs 14.75; t = 30: 496 vs 496). Yet its edges lie only along the
+  the continuum model's leading quadratic count growth: finite-t counts
+  differ before the calibration time (t = 5: 21 vs 14.75) and agree at it by
+  construction (t = 30: 496 vs 496). Yet its edges lie only along the
   two lightcone diagonals (465 each), so it has a discrete symmetry, not the
   continuous Lorentz symmetry of a sprinkled causal set (exp05;
   `outputs/data/finite_speed_lattice_growth.csv`). Finite speed is necessary
@@ -451,8 +454,9 @@ transverse axis. The order statistic therefore reads mostly off-axis pairs
 in the direction where the cones open, which is why its response is a
 factor of three rather than a few percent. This is a deliberately strong
 operating point, not a weak-curvature probe. "Same measure" here means the volume form and sprinkling law
-only, never interval volumes; conflating the two was the first design draft's
-central error, caught in review, and the distinction is load-bearing.
+only, never interval volumes; conflating the two was the central
+error of this stage's first design draft, caught in review before the
+freeze, and the distinction is load-bearing.
 
 ### 6.3 Finite-density detection design
 
@@ -499,6 +503,9 @@ confirmed; the stage is POSITIVE.
 | C1 paired ensemble mean, n = 3000 | confirmed | mean 0.0502929 [0.0501046, 0.0504812]; lower end 140x the margin 3.579e-4 |
 | C2 classifier replication, n = 4800/arm | confirmed | separation s = 11.198 [11.035, 11.362]; AUC = 1.0 [0.999232, 1.0]; balanced accuracy = 1.0 [0.986, 1.014] |
 
+*The BA interval is the frozen unclipped Wald construction and exceeds the
+quantity's range; see the text below.*
+
 The size of the effect is worth stating in the statistic's own units, which
 the margin ratio hides: averaged over the paired readings the relation
 fraction runs 0.023830 flat against 0.074123 curved, a factor of 3.11. The
@@ -510,10 +517,10 @@ treatment: its frozen construction is an unclipped Wald interval on a
 worst-case standard error, so at BA = 1.0 it reaches 1.014, outside the
 range the quantity can take. That is what the preregistration licenses and
 it is printed as it stands; no verdict depends on it, because the gate reads
-only the lower end. For the reader's orientation — not as a re-scored gate —
-the construction the later S5 stage uses for the same quantity, a
-Clopper-Pearson interval per arm combined across the two, gives
-[0.998176, 1.0] on the same test halves. Every relation census in both claims recorded zero
+only the lower end. For orientation only, not as a re-scored gate: the
+construction the later S5 stage uses for the same quantity — a
+Clopper-Pearson interval per arm, Bonferroni-combined — gives
+[0.998176, 1.0] on the held-out halves the frozen classifier scores. Every relation census in both claims recorded zero
 ambiguous and zero escalated pairs. The two sentences the stage licenses were
 fixed in the preregistration before execution and are recorded in the
 artifact; in translation they are C1, *the paired ensemble mean shift exceeds
@@ -527,9 +534,7 @@ At a fixed box, density, and profile, an order-only statistic separates flat
 from curved ensembles: the conformal-class information that order carries by
 theorem is *present in the order at finite density*, in the one construction
 where the sprinkling measure is exactly frozen. The claim is existence, not
-sensitivity. No density or amplitude sweep was run, so nothing here locates
-the point at which the separation would fail, and the operating point was
-chosen to be strong (Section 6.2) rather than marginal. Together with Section 4.6 this closes
+sensitivity (Section 6.6). Together with Section 4.6 this closes
 the conformal story in both directions — within a class, order is blind to
 scale; across classes, at least at this operating point, order visibly moves.
 
@@ -551,12 +556,9 @@ open the Schwarzschild generalization. Both claim classes are carried there by
 the separate preregistered extensions of Section 6.7 — the C1 paired claim
 confirmed, C2 single-poset discrimination detected with incomplete
 separation; the diamond-volume oracle is now certified, and its direct-MC
-instrument audit is complete as an auxiliary result (Section 9, Appendix B),
+instrument audit is complete as an auxiliary result (Section 6.9, Appendix B),
 and the prediction-anchored Poisson-count stage is executed across a
-four-rung mass ladder, CONCORDANT at every rung (Section 6.8). A
-separate cost measurement (S1) prices the causal-predicate component — about
-0.77 ms per pair on the tested solver, patch, and tolerance, roughly 360x the
-plane-wave predicate (`docs/prereg/p14_s1_cost.json`).
+four-rung mass ladder, CONCORDANT at every rung (Section 6.8).
 
 ### 6.7 Type-D extension: preregistered C1-paired confirmation and C2-unpaired detection in Schwarzschild
 
@@ -570,7 +572,10 @@ under the two causal structures, and that difference is part of the signal
 (the Section 6.2 distinction, unchanged). The frozen patch is the S1 solver
 domain (`M = 1`, exterior shell `r` in `[10, 20]`, polar cap, coordinate-time
 extent 40), with `N ~ Poisson(300)` events per reading and the S1 predicate
-at tolerance 1e-8 with escalation to 1e-10.
+at tolerance 1e-8 with escalation to 1e-10. A separate cost measurement
+(S1) prices that causal-predicate component — about 0.77 ms per pair on the
+tested solver, patch, and tolerance, roughly 360x the plane-wave predicate
+(`docs/prereg/p14_s1_cost.json`).
 
 An exploration stage (S3, seed-ledger disciplined, preserved with its raw
 per-reading arrays) measured the paired shift and sized a preregistered
@@ -639,8 +644,9 @@ out-of-training discrimination holds; a secondary verdict*.
 What this extends, and at what grade: on the same frozen Schwarzschild domain,
 the two claim classes of the plane-wave capstone are now each supported by a
 SEPARATE preregistered stage — the C1 paired claim CONFIRMED (S4), C2
-single-poset discrimination DETECTED (S5). There was no joint primary
-verdict. The two stages also differ in what they can resolve, and the
+single-poset discrimination DETECTED (S5). There was no joint primary verdict.
+
+The two stages also differ in what they can resolve, and the
 difference is one of design rather than of curvature type. C1 reads the same
 sprinkled points twice, so its estimator sees only the relation change: the
 paired readings correlate at 0.9965 and pairing removes 99.3% of the spread,
@@ -648,17 +654,19 @@ leaving a paired SD of 0.001135 against a detection threshold an order of
 magnitude away. What pairing removes is the shared point configuration
 itself, not the event count — that count correlates with the paired
 difference at -0.018 and is not the nuisance that matters. C2 reads two
-independent arms and can remove none of it: its pooled SD of 0.013428 is an
+independent arms and so removes none of that spread: its pooled SD of 0.013428 is an
 order of magnitude larger, and against that the same geometric effect is
-worth 2.73 standard deviations rather than 31.8. Much of the gap is simply
-where each construction sits — the flat-arm relation fraction averages
+worth 2.73 standard deviations rather than 31.8. Much of the gap is the base rate:
+the flat-arm relation fraction averages
 0.0238 in the plane wave against 0.4491 here, and a fraction near one half
-is near its most variable. That, not type D versus type N, is why the plane
+carries the largest sampling variance. That, not type D versus type N, is why the plane
 wave's C2 separated completely and this one does not (AUC ≈ 0.973; no
 completeness gate was preregistered). A single-poset statistic that recovers
 what pairing sees is a natural next preregistration; recovering it after the
 fact would forfeit the freeze. The secondary BA verdict neither strengthens
-nor combines with the primary. The extension
+nor combines with the primary.
+
+The extension
 establishes no mass-generality (a single frozen `M`) and uses no
 diamond-volume oracle (margins operationally anchored or independently
 declared) — the mass ladder and the certified-volume anchor belong to the
@@ -719,20 +727,22 @@ The certified shell `[10, 20]` and the anchors `(12, 18)` stay fixed in
 *absolute* coordinates, so no rung is an isometric copy of another: the
 pre-frozen dimensionless indicator is the compactness `mu = 2M/r_c` at the
 anchor midpoint `r_c = 15`, and the executed ladder spans a factor of three
-in it. The mass is not the only thing that moves. The diamond's
-coordinate-time window is retuned per rung by the frozen rule
+in it. The mass is not the only thing that moves, and the second motion
+narrows what the ladder can show. The diamond's coordinate-time window is
+retuned per rung by the frozen rule
 `dt(M) = 8.5 * T_min(M) / T_min(1)`, so that each rung opens the same
 multiple of its own minimal flight time; the whole diamond therefore scales
-with that flight time. The consequence is worth stating plainly, because it
-bounds what the ladder can show: the certified volumes track `(dt/dt_1)^2`
+with that flight time. The consequence is worth stating plainly: the
+certified volumes track `(dt/dt_1)^2`
 to 0.007%, 0.021% and 0.144% at `M` = 1.4, 1.8 and 3.0, so their
 mass-specific content sits one to two orders of magnitude below the
 `tau = 2.5%` band the gate applies. The deep end is not a free choice either:
 every mass-generic lemma certifies exactly on `M` in [0.92, 3.33] — bounded
 above by the photon sphere `3M` reaching the shell floor at `M = 10/3` —
 and the deepest rung `M = 3.0` keeps a certified margin of a tenth of the
-shell floor on that binding condition, its inner anchor at `r = 4M` between
-the photon sphere and the ISCO. The patch-level lemmas are
+shell floor on that binding condition — by certification rather than by
+taste — its inner anchor at `r = 4M` between the photon sphere and the
+ISCO. The patch-level lemmas are
 mass-generic only under stated conditions (horizon below the shell, `K < 0`,
 `w` monotone, `Q > 0`, the L2a patch bound, four L4 margins, an L5 winding
 cross-check), and each is re-certified per rung as an interval comparison —
@@ -753,7 +763,8 @@ own seed, once:
 **Figure 4.** The executed ladder. *Left:* at each preregistered
 compactness, the certified continuum volume (blue) and the volume implied by
 the sprinkled count (orange). The intervals overlap at plot scale across a
-threefold span in `mu` -- that overlap is the result. *Right:* the residual
+threefold span in `mu` -- that overlap, at each rung independently, is the
+result; the cross-rung span is not itself a curvature signal (Section 6.8). *Right:* the residual
 made visible, each rung's identified discrepancy `D` divided by that rung's
 own band `B = tau*V_ref`, so the rungs are comparable despite different
 bands; the shaded region is the gate. Every rung is contained, with roughly
@@ -763,9 +774,7 @@ panels are generated from the same artifacts the contract tests re-derive
 (`figures/make_ladder_figure.py`); no value is typed in.
 
 The certified volume grows monotonically with the compactness (57 to 65 to
-74 to 122), which at this resolution is the retuned time window growing
-rather than an independent geometric signal, and the realized discrepancy
-stays well inside the band at every rung. The `M = 1.4` pilot returned the program's first
+74 to 122), and the realized discrepancy stays well inside the band at every rung. The `M = 1.4` pilot returned the program's first
 non-zero ambiguous count (`k = 1`); it was absorbed exactly as the sizing
 had provisioned, and it is visible in that rung's asymmetric `D`, which is
 the conservative widening working as designed rather than a defect.
@@ -777,12 +786,10 @@ the data existed. This is the first place in the program where a measurement
 is confronted with a certified *prediction* rather than with an operational
 anchor, and the confrontation is repeated at four masses rather than one —
 the deepest with its inner anchor between the photon sphere and the ISCO.
-What the repetition buys is not four independent curvature probes: as noted
-above, the certified volumes differ from a flight-time rescaling by far less
-than the band, so the volume comparison itself is near-degenerate across
-rungs. What it does buy is that every patch-level lemma is re-certified and
-the causal predicate re-run at each mass, none of it inherited from
-`M = 1`.
+What the repetition buys is not four independent curvature probes — the
+volumes are near-degenerate across rungs, as stated above — but the
+re-certification of every patch-level lemma and a fresh run of the causal
+predicate at each mass, none of it inherited from `M = 1`.
 
 **What it does not establish.** The rungs are separate preregistered stages:
 each verdict stands alone, there is no joint primary verdict, and no
@@ -796,6 +803,45 @@ measure it was pointed at. It upgrades neither the C1/C2 verdicts of Sections
 result is bounded by its construction exactly as the capstone is: one fixed
 diamond, one fixed density per rung, a Schwarzschild exterior shell, and a
 tolerance chosen to be feasible rather than to be sharp.
+
+### 6.9 The certified volume oracle and its auxiliary instrument audit
+
+The diamond-volume oracle behind Section 6.8 is fully certified: the
+static-spacetime reductions derived in the public note
+(`docs/theory/schwarzschild_volume_oracle_note.md`) were completed by an
+MPFR directed-rounding flight-time certification, a uniform anchor-diamond
+containment proof, and a certified cell-refinement integrator, and the frozen
+configuration's volume was computed once from an exact freeze checkout:
+`V ∈ [56.212737, 57.348019]`, relative half-width 0.009997 ≤ 0.01,
+`target-met` (`docs/prereg/p14_o3_volume.json`). That certification (O3) is
+the one the O4b audit below consumes. O3's width would have consumed most of
+the Section 6.8 count stage's 2.5% band, so the same configuration was
+re-certified at half the target width (O3'), giving
+`V ∈ [56.492959, 57.060667]` — strictly inside O3, and the interval the
+`mu = 0.1333` rung is gated against
+(`docs/prereg/p14_o3p_volume.json`). The two are distinct certifications of
+the same diamond at different target widths, never combined.
+
+An auxiliary instrument audit (O4b) then consumed that certified volume: at
+the single frozen Schwarzschild configuration, the sampler, the S1 volume
+response, and the certified oracle were found CONCORDANT under a frozen
+composite error budget of 3.25% with simultaneous coverage ≥ 95% — G1
+volume interval `[56.448806185841875, 56.9822829864225]` against the
+certified `[56.212737, 57.348019]` (identified discrepancy
+`[-0.8992123405928396, 0.7695461186219887]`, band `1.7034113309135284`),
+G2 leak upper bound `0.14195058753928652` within budget
+`0.14195094424279403` with zero leaking points. The audit's campaign run
+completed both gates and stopped at a publication-wiring defect — a software
+defect in the result-publication step; no gate, seed, or datum was
+affected — and the verdict was recovered by re-applying the frozen decision
+functions to the preserved sufficient statistics
+(`run_kind: recovered_completed_campaign` in
+`docs/prereg/p14_o4b_results.json` — no new seed, no solver call, no
+resampling, no gate change), with the recovery authenticated and
+bit-exactness enforced by contract tests (Appendix B). This audit upgrades
+nothing in Sections 6-6.7; what it is and is not is bounded in Section 8.
+The prediction-anchored claim is carried by the Section 6.8 ladder, which
+does not use this audit and is not promoted by it.
 
 ## 7. Discussion
 
@@ -823,6 +869,45 @@ that order itself carries — the conformal class — is not merely present by
 theorem but legible to an order-only statistic at finite density, exactly
 where the measure channel is frozen and only the light cones move; how far
 that legibility extends before it fails is unmeasured.
+
+The Schwarzschild and mass-ladder stages add a second axis to that boundary.
+Every verdict in the flat ladder and the plane-wave capstone is anchored
+operationally — a margin taken from an exploration block, a threshold
+declared before sizing. The Section 6.8 stage is the first confrontation
+with a certified prediction instead, and what it buys is deliberately
+narrow: not new physics, but the demonstration that an operational
+finite-density instrument can be held to an interval-arithmetic enclosure
+fixed before any data existed, at four masses, with the near-degeneracy of
+the cross-rung volume comparison stated rather than hidden. The provenance
+discipline that makes the confrontation checkable — frozen decision rules,
+content-addressed evidence bundles, contract tests that recompute every
+printed figure from its committed artifact — is, we would argue, a
+contribution in its own right.
+
+The usual scope statements are gathered here rather than in a separate
+section. Results are controlled and mostly 1+1D (dimension is checked to 4D;
+the capstone and its extensions are 3+1D). The constants are
+convention-dependent (chain endpoint convention, null-inclusive causal
+relation, Myrheim-Meyer normalization); we state each where it is used. The
+spacelike proxy is exploratory. R5's local-measure evidence is one profile
+family at one amplitude; the dose-response of the unweighted error floor to
+the profile amplitude is not measured. Generalizing beyond type N is
+partially opened rather than closed: the Schwarzschild extensions carry both
+claim classes there (Section 6.7), and the certified oracle and count ladder
+anchor the volume side (Sections 6.8-6.9).
+
+The natural next question — whether observer-relative distance *order* can
+be validated as recovering latent geometry, as opposed to being
+reconstructed from a supplied one — is the subject of a companion paper (in
+preparation) that builds a preregistered discriminator on this foundation,
+measures its dose-response to geometry dilution and its dimension selection
+in 2+1D, and then carries it to orders produced by growth dynamics and by an
+action-weighted 2D-order ensemble. At N = 600, random-start post-burn-in
+configurations at beta = 2 and beta = 8 pass the frozen instrument, while
+the beta = 32 bipartite-start control is structurally blocked (it fails at
+chain extraction, before any geometry gate). These are not certified
+equilibrium draws, and the companion study did not establish an equilibrium
+transition or finite-size scaling.
 
 ## 8. Claim boundary
 
@@ -852,7 +937,7 @@ Weyl-tensor recovery, or box- or density-independence of the separation. The
 Schwarzschild path carries its own preregistered verdicts (Section 6.7: C1
 confirmed and C2 detected with incomplete separation, in separate stages with
 no joint primary verdict) and its own non-claims; the diamond-volume oracle
-is certified and instrument-audited there as an auxiliary result (Section 9),
+is certified and instrument-audited there as an auxiliary result (Section 6.9),
 but no Section 6.7 verdict uses it. We claim, as a separate preregistered
 stage per rung (Section 6.8): on each of the four preregistered rungs
 `mu` in {0.1333, 0.1867, 0.2400, 0.4000} independently, the
@@ -891,76 +976,7 @@ to fall within the band (each Garwood tail at level 0.025, more conservative
 than the conventional 0.05). Its statistical novelty is thus the
 preregistered application against a certified enclosure, not the apparatus.
 
-## 9. Limitations and future work
-
-Results are controlled and mostly 1+1D (dimension is checked to 4D, and the
-Section 6 capstone is 3+1D). The
-constants are convention-dependent (chain endpoint convention, null-inclusive
-causal relation, Myrheim-Meyer normalization); we state each where it is used.
-The spacelike proxy is exploratory. R5's local-measure evidence is one profile family at one amplitude; the dose-response of the unweighted error floor to the profile amplitude is not measured. The capstone is bounded by its
-construction: Petrov type N with an exactly flat volume form — the property
-that makes the experiment clean also makes it unrepresentative of generic
-`Weyl != 0` spacetimes — and by its single frozen operating point;
-generalizing beyond type N is now partially opened rather than closed: the
-Schwarzschild C1-paired extension is confirmed and the single-poset (C2-class)
-Schwarzschild stage is preregistered and detected with incomplete separation
-(Section 6.7), and the diamond-volume oracle is now fully certified — the
-static-spacetime reductions derived in the public note
-(`docs/theory/schwarzschild_volume_oracle_note.md`) were completed by an
-MPFR directed-rounding flight-time certification, a uniform anchor-diamond
-containment proof, and a certified cell-refinement integrator, and the frozen
-configuration's volume was computed once from an exact freeze checkout:
-`V ∈ [56.212737, 57.348019]`, relative half-width 0.009997 ≤ 0.01,
-`target-met` (`docs/prereg/p14_o3_volume.json`). That certification (O3) is
-the one the O4b audit below consumes. The Section 6.8 count stage needed a
-narrower enclosure than its own tolerance could absorb, so the same
-configuration was re-certified at half the target width (O3'), giving
-`V ∈ [56.492959, 57.060667]` — strictly inside O3, and the interval the
-`mu = 0.1333` rung is gated against
-(`docs/prereg/p14_o3p_volume.json`). The two are distinct certifications of
-the same diamond at different target widths, never combined.
-
-An auxiliary instrument audit (O4b) then consumed that certified volume: at
-the single frozen Schwarzschild configuration, the sampler, the S1 volume
-response, and the certified oracle were found CONCORDANT under a frozen
-composite error budget of 3.25% with simultaneous coverage ≥ 95% — G1
-volume interval `[56.448806185841875, 56.9822829864225]` against the
-certified `[56.212737, 57.348019]` (identified discrepancy
-`[-0.8992123405928396, 0.7695461186219887]`, band `1.7034113309135284`),
-G2 leak upper bound `0.14195058753928652` within budget
-`0.14195094424279403` with zero leaking points. The audit's campaign run
-completed both gates and stopped at a publication-wiring defect; the verdict
-was recovered by re-applying the frozen decision functions to the preserved
-sufficient statistics (`run_kind: recovered_completed_campaign` in
-`docs/prereg/p14_o4b_results.json` — no new seed, no solver call, no
-resampling, no gate change), with the recovery authenticated and
-bit-exactness enforced by contract tests (Appendix B). This audit upgrades
-nothing in Sections 6-6.7: it is a statement that the instrument stack
-agrees with the certified continuum volume at one frozen configuration — not
-a Poisson causal-set count verification, not mass- or domain-generality, not
-a C1/C2 joint verdict, and not complete separation or general volume
-accuracy. The prediction-anchored Poisson-count stage (sprinkle counts
-against `rho V`) is a separate stage, and it has since been executed across
-the four-rung mass ladder of Section 6.8 — CONCORDANT at
-`mu` in {0.1333, 0.1867, 0.2400, 0.4000} — which is what carries the
-prediction-anchored claim; the O4b audit itself remains only the instrument
-statement described above. That ladder has its own bounds: four rungs are
-four points, the tolerance was chosen to be feasible rather than sharp, and
-the certification window itself closes at `M = 10/3`, where the photon
-sphere reaches the shell floor — the executed ladder stops one tenth of the
-shell floor short of that cliff, by certification rather than by taste. The natural next question — whether
-observer-relative distance *order* can be validated as recovering latent
-geometry, as opposed to being reconstructed from a supplied one — is the
-subject of a companion study that builds a preregistered discriminator on this
-foundation, measures its dose-response to geometry dilution and its dimension
-selection in 2+1D, and then carries it to orders produced by growth dynamics
-and by an action-weighted 2D-order ensemble. At N = 600, random-start
-post-burn-in configurations at beta = 2 and beta = 8 pass the frozen
-instrument, while the beta = 32 bipartite-start control blocks structurally.
-These are not certified equilibrium draws, and the companion study did not
-establish an equilibrium transition or finite-size scaling.
-
-## 10. Reproducibility
+## 9. Reproducibility
 
 Foundation-layer baseline commit `325df55`. Every number in Sections 4-5 has a
 cited `experiments/exp*.py` producer and expected summary path. All 19 cited
@@ -999,7 +1015,17 @@ seed ledger separates fresh allocation from deterministic replay, with replay
 output owned by a separate path that can never replace a fresh-observation
 artifact.
 
-The auxiliary O4b instrument audit (Section 9) meets the same standard with
+Section 6.8's four rungs meet the same standard independently. Each rung's
+ambiguity pilot and count campaign run behind their own frozen,
+content-addressed manifests (`docs/prereg/p14_*_count_freeze_manifest.json`,
+with the executed surfaces preserved alongside), from a clean exact checkout
+recorded in the artifact at entry and exit; the per-rung runners are
+`experiments/oracle/o5_count_campaign.py` and
+`experiments/oracle/s6_m{14,18,30}_count.py`, and
+`tests/test_paper_a_count_integration.py` re-derives the printed per-rung
+table from the artifacts. The commit chain per rung is in Appendix B.
+
+The auxiliary O4b instrument audit (Section 6.9) meets the same standard with
 one addition. Its campaign runner refuses to run except on the clean exact
 checkout of the approved freeze SHA against a 25-file content-addressed
 manifest with an environment lock; the executed surface is preserved
@@ -1149,6 +1175,17 @@ no same-seed re-entry occurred anywhere in this chain; the historical
 no-verdict records of the O4 abort and the O4b incident retain their
 original verdicts, with the recovery linked rather than retroactively
 regraded.
+
+**Section 6.8 (mass ladder) provenance.** Each rung executed once from a
+clean exact checkout of its own freeze head, with the executing commit
+recorded in the artifact at entry and at exit (`code.start == code.end`,
+clean tree): `c6eb85e` for `mu = 0.1333`, `1575a8e` for `mu = 0.1867`,
+`c421dce` for `mu = 0.2400`, and `ed353d3` for `mu = 0.4000`. The results
+commits `6d3745c`, `cdfd6d9`, `6bcf4e6`, and `ce0030d` added each rung's
+artifact, and each freeze head is an ancestor of its results commit — the
+freeze-before-execution ordering is checked by
+`tests/test_paper_a_count_integration.py` with
+`git merge-base --is-ancestor`, per rung, exactly as for the capstone.
 
 ## Acknowledgements and disclosure
 

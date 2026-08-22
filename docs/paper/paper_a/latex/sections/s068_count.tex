@@ -58,18 +58,20 @@ fixed in \emph{absolute} coordinates, so no rung
 is an isometric copy of another: the pre-frozen dimensionless indicator is
 the compactness $\mu = 2M/r_c$ at the anchor midpoint $r_c = 15$, and the
 executed ladder spans a factor of three in it. The mass is not the only thing
-that moves. The diamond's coordinate-time window is retuned per rung by the
+that moves, and the second motion narrows what the ladder can show. The
+diamond's coordinate-time window is retuned per rung by the
 frozen rule $dt(M) = 8.5\,T_{\mathrm{min}}(M)/T_{\mathrm{min}}(1)$, so that
 each rung opens the same multiple of its own minimal flight time; the whole
 diamond therefore scales with that flight time. The consequence is worth
-stating plainly, because it bounds what the ladder can show: the certified
+stating plainly: the certified
 volumes track $(dt/dt_1)^2$ to 0.007\%, 0.021\% and 0.144\% at $M = 1.4$, 1.8
 and 3.0, so their mass-specific content sits one to two orders of magnitude
 below the $\tau = 2.5\%$ band the gate applies. The deep end is not a free
 choice either: every mass-generic lemma certifies exactly on
 $M \in [0.92, 3.33]$---bounded above by the photon sphere $3M$ reaching the
 shell floor at $M = 10/3$---and the deepest rung $M = 3.0$ keeps a certified
-margin of a tenth of the shell floor on that binding condition, its inner
+margin of a tenth of the shell floor on that binding condition---by
+certification rather than by taste---its inner
 anchor at $r = 4M$ between the photon sphere and the ISCO. The patch-level
 lemmas are mass-generic only under stated conditions (horizon below the
 shell, $K < 0$, $w$ monotone, $Q > 0$, the L2a patch bound, four L4 margins,
@@ -117,21 +119,22 @@ $0.4000$ & $3.0$ & $[121.225021,$ & $k=0$ & 4,605,671 & 53,606 & 0 & $[120.80263
 \caption{The executed ladder. (a)~At each preregistered compactness, the
 certified continuum volume (blue) and the volume implied by the sprinkled
 count (orange). The intervals overlap at plot scale across a threefold span
-in $\mu$---that overlap is the result. (b)~The residual made visible: each
+in $\mu$---that overlap, at each rung independently, is the result; the
+cross-rung span is not itself a curvature signal (\sref{sec:count}).
+(b)~The residual made visible: each
 rung's identified discrepancy $D$ divided by that rung's own band
 $B = \tau V_{\mathrm{ref}}$, so the rungs are comparable despite different
 bands; the shaded region is the gate. Every rung is contained, with roughly
 half the band to spare, and the $\mu = 0.1867$ rung's asymmetry is its
 single ambiguous point widening the interval outward as the rule provides.
 Both panels are generated from the same artifacts the contract tests
-re-derive (\artifact{figures/\allowbreak{}make\_\allowbreak{}ladder\_\allowbreak{}figure.py}); no value is typed
+re-derive (\artifact{latex/\allowbreak{}figures/\allowbreak{}make\_\allowbreak{}journal\_\allowbreak{}figures.py}, reading the same artifacts as the manuscript's \artifact{figures/\allowbreak{}make\_\allowbreak{}ladder\_\allowbreak{}figure.py}); no value is typed
 in.}
 \label{fig:count}
 \end{figure}
 
 The certified volume grows monotonically with the compactness (57 to 65 to
-74 to 122), which at this resolution is the retuned time window growing
-rather than an independent geometric signal, and the realized discrepancy
+74 to 122), and the realized discrepancy
 stays well inside the band at every rung (\fref{fig:count}). The $M = 1.4$
 pilot
 returned the program's first non-zero ambiguous count ($k = 1$); it was
@@ -147,11 +150,9 @@ measurement is confronted with a certified \emph{prediction} rather than
 with an operational anchor, and the confrontation is repeated at four masses
 rather than one---the deepest with its inner anchor between the photon sphere
 and the ISCO. What the repetition buys is not four independent curvature
-probes: as noted above, the certified volumes differ from a flight-time
-rescaling by far less than the band, so the volume comparison itself is
-near-degenerate across rungs. What it does buy is that every patch-level
-lemma is re-certified and the causal predicate re-run at each mass, none of
-it inherited from $M = 1$.
+probes---the volumes are near-degenerate across rungs, as stated
+above---but the re-certification of every patch-level lemma and a fresh run
+of the causal predicate at each mass, none of it inherited from $M = 1$.
 
 \textbf{What it does not establish.} The rungs are separate preregistered
 stages: each verdict stands alone, there is no joint primary verdict, and no

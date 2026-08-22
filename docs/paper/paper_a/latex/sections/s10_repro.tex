@@ -1,4 +1,4 @@
-% Section 10 -- Reproducibility. Source: manuscript.md lines 866-921.
+% Section 9 -- Reproducibility. Source: manuscript.md section 9.
 \section{Reproducibility}\label{sec:repro}
 
 Foundation-layer baseline commit \texttt{325df55}. Every number in
@@ -43,7 +43,19 @@ seed ledger separates fresh allocation from deterministic replay, with
 replay output owned by a separate path that can never replace a
 fresh-observation artifact.
 
-The auxiliary O4b instrument audit (\sref{sec:limitations}) meets the
+\Sref{sec:count}'s four rungs meet the same standard independently. Each
+rung's ambiguity pilot and count campaign run behind their own frozen,
+content-addressed manifests
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}*\_\allowbreak{}count\_\allowbreak{}freeze\_\allowbreak{}manifest.json},
+with the executed surfaces preserved alongside), from a clean exact
+checkout recorded in the artifact at entry and exit; the per-rung runners
+are \artifact{experiments/\allowbreak{}oracle/\allowbreak{}o5\_\allowbreak{}count\_\allowbreak{}campaign.py} and
+\artifact{experiments/\allowbreak{}oracle/\allowbreak{}s6\_\allowbreak{}m\{14,18,30\}\_\allowbreak{}count.py}, and
+\artifact{tests/\allowbreak{}test\_\allowbreak{}paper\_\allowbreak{}a\_\allowbreak{}count\_\allowbreak{}integration.py} re-derives
+the printed per-rung table from the artifacts. The commit chain per rung
+is in appendix~\ref{app:provenance}.
+
+The auxiliary O4b instrument audit (\sref{sec:oracle}) meets the
 same standard with one addition. Its campaign runner refuses to run
 except on the clean exact checkout of the approved freeze SHA against a
 25-file content-addressed manifest with an environment lock; the executed

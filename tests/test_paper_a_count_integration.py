@@ -264,3 +264,66 @@ def test_the_promotion_is_bounded_in_both_documents():
     ms = _flat(MANUSCRIPT)
     assert "no joint primary verdict" in ms
     assert "there is no joint primary verdict" in ms.lower()
+
+
+# ---------------------------------------------- the dt(M) rule and its cost
+
+#: (mu, count artifact, volume artifact or None for the base rung)
+_RUNG_VOLUMES = (
+    ("0.1333", "p14_o5_count.json", "p14_o3p_volume.json"),
+    ("0.1867", "p14_s6_m14_count.json", "p14_s6_m14_volume.json"),
+    ("0.2400", "p14_s6_m18_count.json", "p14_s6_m18_volume.json"),
+    ("0.4000", "p14_s6_m30_count.json", "p14_s6_m30_volume.json"),
+)
+
+
+def test_the_flight_time_rescaling_residuals_are_the_artifacts():
+    """Section 6.8 states that the certified volumes track (dt/dt_1)^2 to
+    0.007%, 0.021% and 0.144% -- the sentence a referee forced, because
+    it bounds what the ladder can show. Derived here from the frozen dt
+    in each rung's volume certification and the v_ref in its count
+    freeze, so the near-degeneracy statement cannot drift from the
+    artifacts that make it true."""
+
+    flat = _flat(MANUSCRIPT)
+    assert "`dt(M) = 8.5 * T_min(M) / T_min(1)`" in flat
+
+    dts, vrefs = [], []
+    for _, count_name, volume_name in _RUNG_VOLUMES:
+        vol = _art(volume_name)
+        dts.append(vol["frozen_config"]["dt"])
+        vrefs.append(_art(count_name)["frozen_config"]["v_ref"])
+    assert dts[0] == 8.5, dts[0]
+
+    residuals = [
+        f"{abs((vrefs[i] / vrefs[0]) / (dts[i] / dts[0]) ** 2 - 1) * 100:.3f}"
+        for i in (1, 2, 3)
+    ]
+    stmt = (f"the certified volumes track (dt/dt_1)^2 to {residuals[0]}%, "
+            f"{residuals[1]}% and {residuals[2]}% at M = 1.4, 1.8 and 3.0")
+    assert stmt in flat.replace("`", ""), (stmt,)
+
+
+def test_each_rung_froze_before_its_results_commit():
+    """Appendix B's mass-ladder block names four freeze heads and four
+    results commits; this holds the printed hashes to the artifacts and
+    the claimed ordering to the commit graph, exactly as the capstone's
+    P' < F < R test does."""
+
+    import subprocess
+
+    results_commits = ("6d3745c", "cdfd6d9", "6bcf4e6", "ce0030d")
+    flat = _flat(MANUSCRIPT)
+    for (_, count_name, _), results in zip(_RUNG_VOLUMES, results_commits,
+                                           strict=True):
+        code = _art(count_name)["code"]
+        assert code["start"]["rev"] == code["end"]["rev"], count_name
+        assert code["start"]["dirty"] is False, count_name
+        freeze = code["start"]["rev"][:7]
+        assert freeze in flat, (count_name, freeze)
+        assert results in flat, results
+        for ancestor, descendant in ((freeze, results), (results, "HEAD")):
+            proc = subprocess.run(
+                ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+                cwd=REPO, capture_output=True)
+            assert proc.returncode == 0, (ancestor, descendant)

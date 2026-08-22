@@ -65,7 +65,7 @@ LADDER = [
         "R3",
         "order + observer + orientation",
         "signed coords; Lorentz map",
-        "calibrated separation",
+        "supplied orientation",
     ),
     (
         "R4",

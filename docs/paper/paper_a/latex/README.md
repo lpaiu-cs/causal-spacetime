@@ -13,7 +13,7 @@ artifacts. This directory renders it; it must never disagree with it.
 ./build.sh          # latexmk -xelatex; needs XeLaTeX (Korean frozen sentences)
 ```
 
-Output: `main.pdf` (25 pp). TeX Live 2025 suffices; the font is Latin
+Output: `main.pdf` (27 pp). TeX Live 2025 suffices; the font is Latin
 Modern, the iopart preprint face.
 
 ## Layout

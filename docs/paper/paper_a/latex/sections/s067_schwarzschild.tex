@@ -12,7 +12,10 @@ under the two causal structures, and that difference is part of the signal
 solver domain ($M = 1$, exterior shell $r \in [10, 20]$, polar cap,
 coordinate-time extent 40), with $N \sim \mathrm{Poisson}(300)$ events per
 reading and the S1 predicate at tolerance $1\times10^{-8}$ with escalation
-to $1\times10^{-10}$.
+to $1\times10^{-10}$. A separate cost measurement (S1) prices that
+causal-predicate component---about 0.77~ms per pair on the tested solver,
+patch, and tolerance, roughly $360\times$ the plane-wave predicate
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s1\_\allowbreak{}cost.json}).
 
 An exploration stage (S3, seed-ledger disciplined, preserved with its raw
 per-reading arrays) measured the paired shift and sized a preregistered
@@ -125,7 +128,9 @@ domain, the two claim classes of the plane-wave capstone are now each
 supported by a \emph{separate} preregistered stage
 (\fref{fig:schwarzschild})---the C1 paired claim CONFIRMED (S4), C2
 single-poset discrimination DETECTED (S5). There was no joint primary
-verdict. The two stages also differ in what they can resolve, and the
+verdict.
+
+The two stages also differ in what they can resolve, and the
 difference is one of design rather than of curvature type. C1 reads the same
 sprinkled points twice, so its estimator sees only the relation change: the
 paired readings correlate at 0.9965 and pairing removes 99.3\% of the spread,
@@ -133,17 +138,20 @@ leaving a paired SD of 0.001135 against a detection threshold an order of
 magnitude away. What pairing removes is the shared point configuration
 itself, not the event count---that count correlates with the paired
 difference at $-0.018$ and is not the nuisance that matters. C2 reads two
-independent arms and can remove none of it: its pooled SD of 0.013428 is an
-order of magnitude larger, and against that the same geometric effect is
-worth 2.73 standard deviations rather than 31.8. Much of the gap is simply
-where each construction sits---the flat-arm relation fraction averages
+independent arms and so removes none of that spread: its pooled SD of
+0.013428 is an order of magnitude larger, and against that the same
+geometric effect is worth 2.73 standard deviations rather than 31.8. Much
+of the gap is the base rate: the flat-arm relation fraction averages
 0.0238 in the plane wave against 0.4491 here, and a fraction near one half
-is near its most variable. That, not type~D versus type~N, is why the plane
+carries the largest sampling variance. That, not type~D versus type~N, is
+why the plane
 wave's C2 separated completely and this one does not (AUC $\approx 0.973$; no
 completeness gate was preregistered). A single-poset statistic that recovers
 what pairing sees is a natural next preregistration; recovering it after the
 fact would forfeit the freeze. The secondary
-BA verdict neither strengthens nor combines with the primary. The extension
+BA verdict neither strengthens nor combines with the primary.
+
+The extension
 establishes no mass-generality (a single frozen $M$) and uses no
 diamond-volume oracle (margins operationally anchored or independently
 declared)---the mass ladder and the certified-volume anchor belong to the

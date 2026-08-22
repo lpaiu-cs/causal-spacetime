@@ -577,6 +577,30 @@ def _thinning_uncorrected() -> tuple[str, ...]:
             _thinning(0.25, "uncorrected_volume_bias", 3))
 
 
+# ============ 6.9 the certified oracle and the auxiliary audit
+
+@claim("6.9", "p14_o3_volume.json",
+       "`V \u2208 [{}, {}]`, relative half-width {}")
+def _o3_certified() -> tuple[str, ...]:
+    """The O3 certification the O4b audit consumes; Section 6.9 (formerly
+    Section 9) prints its enclosure and half-width from the artifact."""
+
+    r = _json("p14_o3_volume.json")["result"]
+    return (f'{r["v_lo"]:.6f}', f'{r["v_hi"]:.6f}', f'{r["ratio"]:.6f}')
+
+
+@claim("6.9", "p14_o3p_volume.json",
+       "giving `V \u2208 [{}, {}]` — strictly inside O3")
+def _o3p_recertified() -> tuple[str, ...]:
+    """The half-width re-certification (O3') the mu = 0.1333 rung is
+    gated against. "Strictly inside" is asserted, not assumed."""
+
+    o3 = _json("p14_o3_volume.json")["result"]
+    o3p = _json("p14_o3p_volume.json")["result"]
+    assert o3["v_lo"] < o3p["v_lo"] and o3p["v_hi"] < o3["v_hi"]
+    return (f'{o3p["v_lo"]:.6f}', f'{o3p["v_hi"]:.6f}')
+
+
 # ================== 4.7 Horizon analogue -- Rindler inaccessibility
 
 def _variance_structure() -> dict[str, float]:
@@ -635,7 +659,7 @@ def _ba_out_of_range() -> tuple[str, ...]:
 
 
 @claim("6.4", "p14_prereg_results.json c2.raw",
-       "combined across the two, gives [{}, 1.0] on the same test halves")
+       "Bonferroni-combined — gives [{}, 1.0] on the held-out halves")
 def _ba_reference_interval() -> tuple[str, ...]:
     """A NON-frozen companion to the frozen BA interval, which is an
     unclipped Wald construction and reaches 1.014.
@@ -812,7 +836,8 @@ def _reflection() -> tuple[str, ...]:
 
 
 @claim("5", "exp05 finite_speed_lattice_growth.csv",
-       "while finite-t counts differ (t = 5: {} vs {}; t = 30: {} vs {})")
+       "finite-t counts differ before the calibration time (t = 5: {} vs {}) "
+       "and agree at it by construction (t = 30: {} vs {})")
 def _lattice_counts() -> tuple[str, ...]:
     out: list[str] = []
     for time in (5.0, 30.0):
@@ -954,7 +979,7 @@ def _complete_separation() -> tuple[str, ...]:
 
 # ========== 6.6 What the plane-wave result alone does not establish
 
-@claim("6.6", "p14_s1_cost.json",
+@claim("6.7", "p14_s1_cost.json",
        "about {} ms per pair on the tested solver, patch, and tolerance, "
        "roughly {}x the plane-wave predicate")
 def _s1_price() -> tuple[str, ...]:
@@ -1295,6 +1320,28 @@ def test_each_frozen_sentence_reaches_the_paper_as_its_rendering():
             rendering.section, rendering.english[:60])
 
 
+def test_the_latex_rendition_prints_each_frozen_rendering():
+    """FROZEN_RENDERINGS holds the manuscript to the artifacts; this
+    holds the LaTeX rendition to the same six English renderings, so the
+    two renderings cannot drift apart on the paper's load-bearing
+    sentences. The LaTeX escapes nothing inside these sentences except
+    dashes, so an em-dash-normalized, whitespace-flattened containment
+    check is exact enough to bite."""
+
+    sections_dir = _PAPER / "latex" / "sections"
+    flat = " ".join(
+        " ".join(path.read_text(encoding="utf-8").split())
+        for path in sorted(sections_dir.glob("*.tex")))
+    flat = flat.replace("---", " — ").replace("--", "–")
+    # the two escapes the renderings carry in the LaTeX
+    flat = flat.replace("$\\varepsilon_\\Delta$", "epsilon_Delta")
+    flat = flat.replace("\\%", "%")
+    flat = " ".join(flat.split())
+    for rendering in FROZEN_RENDERINGS:
+        needle = " ".join(rendering.english.split())
+        assert needle in flat, (rendering.section, needle[:60])
+
+
 def test_the_manuscript_prints_no_korean():
     """Appendix B says the paper prints none; this is what makes that
     true tomorrow. The frozen originals belong in their artifacts and in
@@ -1564,7 +1611,7 @@ def test_the_claim_table_covers_every_section_and_legacy_table():
 
     covered = {c.section for c in CLAIMS}
     assert covered == {"4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7",
-                       "5", "6.2", "6.3", "6.4", "6.6", "6.7"}, sorted(covered)
+                       "5", "6.2", "6.3", "6.4", "6.7", "6.9"}, sorted(covered)
 
     read = " ".join(c.source for c in CLAIMS)
     unread = [p.name for p in sorted(_FIG_DATA.glob("*.csv"))
