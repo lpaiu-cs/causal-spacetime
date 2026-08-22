@@ -1,9 +1,10 @@
 # Cover letter (Classical and Quantum Gravity)
 
-*Final text, rev. 3 — two rounds of external review of the letter
+*Final text, rev. 4 — three rounds of external review of the letter
 itself: compressed for desk assessment, the priority claim replaced by
 the methodological contrast it rested on, the control-variable logic
-stated concretely. Submission is performed by the author.*
+stated concretely, style pass closed. Submission is performed by the
+author.*
 
 Dear Editors of *Classical and Quantum Gravity*,
 
@@ -16,8 +17,8 @@ The starting point is a standard rigidity result: causal structure fixes
 the conformal class, and a compatible volume element fixes the remaining
 conformal factor. The manuscript turns that continuum statement into a
 finite-density operational reconstruction programme: an explicit ladder
-of which spacetime quantities a finite procedure recovers from a causal
-order once each minimal extra ingredient — a global density, an observer
+specifying which spacetime quantities a finite procedure recovers from a
+causal order once each minimal extra ingredient — a global density, an observer
 clock, an orientation reference, an atlas, a local measure profile — is
 supplied, with measured error behaviour per rung. Negative results bound
 the hierarchy: order alone fixes neither scale nor profile, a single
@@ -30,10 +31,10 @@ four-rung Schwarzschild mass-ladder count, every decision rule frozen
 before execution. The plane-wave design isolates causal structure from
 volume: the coordinate volume form and the sprinkling law are exactly
 flat and only the light cones move, yet an order-only statistic
-separates the flat and curved ensembles at finite sprinkling density. The mass-ladder count anchors the volume
-channel from the other side: sprinkling counts agree, within a frozen
-2.5% band, with continuum 4-volumes certified in advance by interval
-arithmetic — a preregistered equivalence test run against a certified
+separates the flat and curved ensembles at finite sprinkling density. The mass-ladder count tests the rigidity result's
+other ingredient, the volume element: sprinkling counts agree, within a
+frozen 2.5% band, with continuum 4-volumes certified in advance by
+interval arithmetic — a preregistered equivalence test run against a certified
 bound rather than an operational margin.
 
 We believe the manuscript suits *Classical and Quantum Gravity*: it
@@ -67,10 +68,11 @@ lpaiu.cs@gmail.com
 
 **Article type:** Paper.
 
-**Related manuscripts:** none under consideration anywhere. A companion
-study building a discriminator on this foundation is in preparation and
-unsubmitted; the manuscript's Discussion names it once. Kept out of the
-letter so the submission is judged as what it is — self-contained.
+**Related manuscripts:** none under consideration anywhere. Form-ready
+sentence, if asked: "A companion study building a discriminator on this
+foundation is in preparation and unsubmitted; the present manuscript is
+self-contained and does not depend on it." (The manuscript's Discussion
+names it once.)
 
 **Suggested reviewers.** Before entering them on the form: verify each
 person's current affiliation and e-mail from their institutional page,
