@@ -1407,6 +1407,14 @@ ACCEPTED_EXCLUSIONS: tuple[Exclusion, ...] = (
               "and 1.69, ratio 3.45"),
     Exclusion("4.6", "(constant-1.5 conformal profile)", 0,
               "Figure 3 caption: the exp19 profile label"),
+    Exclusion("5", "ordering fraction approaches the sprinkled value 1/4", 1,
+              "the flat-2D expected ordering fraction, an analytic constant "
+              "of the Myrheim-Meyer estimator and the lattice's asymptotic "
+              "limit (exact combinatorial check: 0.292 at n = 10 falling to "
+              "0.256 at n = 80)"),
+    Exclusion("5", "the R0 dimension estimator reads d = 2 for it as well", 1,
+              "the dimension value the estimator returns at ordering "
+              "fraction 1/4, definitional and not a new measurement"),
     Exclusion("6.2", "profile `A(u)(x^2 - y^2)`", 1,
               "the construction's profile, its exponents a setting not a result"),
     Exclusion("6.2", "`det g = -1`", 2,

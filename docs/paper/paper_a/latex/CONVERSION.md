@@ -57,7 +57,7 @@ Fixed labels (use exactly these; cross-reference with `\sref{}` /
 | `sec:discussion` §7, `sec:claims` §8, `sec:repro` §9 |
 | `app:conventions` App A, `app:provenance` App B |
 | `fig:ladder`, `fig:convergence`, `fig:measure`, `fig:capstone`, `fig:schwarzschild`, `fig:count` | figures 1-6 |
-| `tab:rungs` (§2), `tab:capstone` (§6.4), `tab:s4` and `tab:s5` (§6.7), `tab:count` (§6.8), `tab:conventions` (App A) | tables |
+| `tab:rungs` (§2), `tab:capstone` (§6.4), `tab:s4` and `tab:s5` (§6.7), `tab:count` (§6.8), `tab:claims` (§8), `tab:conventions` (App A) | tables |
 
 Manuscript cross-references like "Section 4.6" become `\sref{sec:r5}`
 etc. "Sections 6--6.7" -> `sections~\ref{sec:capstone}.1--\ref{sec:schwarzschild}`

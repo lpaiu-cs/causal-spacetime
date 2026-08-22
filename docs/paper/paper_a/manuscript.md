@@ -11,50 +11,35 @@ Section 6 capstone cites only committed, provenance-locked artifacts
 
 ## Abstract
 
-We study, in controlled 1+1D (and, for dimension, higher-D) Minkowski models,
-which spacetime quantities can be operationally reconstructed from a causal
-(accessibility) order once a minimal, explicitly declared set of additional
-ingredients is supplied. We organize the reconstructions as a ladder. In flat
-Poisson-sprinkled Alexandrov intervals, order statistics estimate dimension,
-and raw longest-chain length is an uncalibrated timelike statistic; converting
-it to proper time requires density and dimension-dependent normalization.
-Adding a global event-density calibration turns Alexandrov interval cardinality
-into a timelike proper-time estimate whose error is consistent with
-finite-sampling noise at the tested settings. Adding an observer chain with clock
-labels yields radar time and unsigned radar distance; adding an orientation
-reference lifts the reflection degeneracy to signed coordinates and lets one
-recover the Lorentz map between two inertial protocols; adding overlapping
-charts yields an observer atlas with approximately consistent Poincare
-transition maps; supplying a global density and a local measure profile
-replaces the unweighted estimate's position-dependent error floor with
-flat-case, noise-limited error scaling (exp19), and density-rescaled
-reconstruction is stable in the tested uniform random-thinning protocol. We also give a Rindler horizon analogue, in which an
-accelerated observer's two-way radar reconstruction is confined to the expected
-wedge, and a finite-speed lattice counterexample showing that finite signal
-speed alone does not produce Lorentzian structure. As a capstone we validate,
-in a preregistered two-claim design on a 3+1D vacuum plane wave whose
-coordinate volume form and sprinkling law are exactly flat, that the
-conformal-class information order carries reaches an order-only statistic at
-finite density: both the paired mean shift of the global relation fraction
-and a single-poset classifier confirm against frozen margins at one
-deliberately strong operating point, which establishes existence rather than
-sensitivity. Separate preregistered stages
-extend both claim classes to a frozen Schwarzschild exterior patch (type D,
-whose coordinate volume element is likewise mass-independent): the C1 paired
-effect is confirmed, while C2 single-poset discrimination is detected with
-incomplete separation. A further preregistered stage anchors a measurement to
-a certified prediction rather than to an operational margin: on each rung of a
-mass ladder whose shell and anchors are fixed in absolute coordinates so that
-no rung is an isometric copy, the certified-membership count of a Poisson sprinkling is
-required to realize that rung's independently certified continuum 4-volume
-within a frozen 2.5% band, and does so at all four tested compactnesses —
-spanning a factor of three in `2M/r`, the deepest rung anchored at `r = 4M`
-between the photon sphere and the ISCO. The
-contribution is not any
-single reconstruction — most are standard — but the explicit accounting of what
-each rung requires and the negative results that bound it. We make no claim
-that spacetime is reducible to causal order; the reconstructions are controlled
-validations inside known models.
+We study, in controlled 1+1D (and, for dimension, higher-D) Minkowski
+models, which spacetime quantities can be operationally reconstructed from a
+causal (accessibility) order once a minimal, explicitly declared set of
+additional ingredients is supplied, organized as a ladder. Order statistics estimate dimension in flat Poisson-sprinkled
+Alexandrov intervals; supplying a global event density turns interval
+cardinality into a timelike proper-time estimate; an observer chain with
+clock labels yields radar time and unsigned radar distance; an orientation
+reference lifts the reflection degeneracy and recovers the Lorentz map
+between inertial protocols; overlapping charts yield an approximately
+consistent observer atlas; and supplying a global density plus a local
+measure profile replaces the residual position-dependent error floor with
+flat-case, noise-limited error scaling. Three negative results bound the
+ladder: causal order alone fixes no conformal scale, a single observer
+yields only unsigned distance, and finite signal speed alone does not
+produce Lorentzian structure; a Rindler horizon analogue confines radar
+reconstruction to the expected wedge. As a preregistered capstone we
+validate, on a 3+1D vacuum plane wave whose coordinate volume form and
+sprinkling law are exactly flat, that the conformal-class information order
+carries reaches an order-only statistic at finite density — an existence
+result at one deliberately strong operating point, not a sensitivity
+measurement. Separate preregistered stages extend both claim classes to a
+frozen Schwarzschild exterior patch (the paired claim confirmed;
+single-poset discrimination detected with incomplete separation), and a
+prediction-anchored stage finds the certified-membership count of a Poisson
+sprinkling concordant, within a frozen 2.5% band, with an independently
+certified continuum 4-volume on each rung of a four-rung mass ladder, the
+deepest anchored at `r = 4M`. The contribution is the explicit accounting
+of what each reconstruction requires and the negative results that bound
+it; we make no claim that spacetime is reducible to causal order.
 
 ## 1. Introduction
 
@@ -96,6 +81,21 @@ and a preregistered, prediction-anchored Poisson-count validation across a
 four-rung Schwarzschild mass ladder (Section 6.8), with an auxiliary
 instrument audit of the oracle stack (Section 6.9). All results are
 controlled validations, not evidence that geometry reduces to order.
+
+A literature priority search (August 2026) found partial overlap in four
+areas: causal-order-and-number/volume reconstruction (Braun 2025
+[@braun2025]; Myrheim 1978 [@myrheim1978]; the number-volume correspondence
+itself is Sorkin's [@sorkin1997forks]), Schwarzschild sprinkle-count
+verification (Homšak-Veroni [@homsakveroni2024] §V.1), analytic
+diamond-volume results (Berthiere-Gibbons-Solodukhin [@berthiere2016];
+Roy-Sinha-Surya [@roysinhasurya2013]), and Schwarzschild causal-relation
+algorithms (He-Rideout [@herideout2009]; for sprinkling-and-relations
+tooling more broadly, Cunningham-Krioukov [@cunninghamkrioukov2018]). The
+directed-rounding volume enclosure and the preregistered equivalence gate
+against it (Section 6.8) have no direct prior; the parallel
+Alfyorov-Shnyukov estimator [@alfyorov2026weyl] measures Weyl curvature
+from Hasse diagrams and is taken up alongside the capstone's scope in
+Section 6.6.
 
 ## 2. The reconstruction ladder
 
@@ -196,7 +196,8 @@ number and its producing script.
 ### 4.1 R0 — order alone
 
 **Dimension.** In the declared flat Poisson-sprinkling model, the
-Myrheim-Meyer order statistic estimates spacetime dimension: for true
+Myrheim-Meyer order statistic estimates spacetime dimension, as in earlier
+tests on flat and conformally flat spacetimes [@reid2003]: for true
 dimension 2 the estimate moves 1.95 -> 2.03 -> 2.01 -> 1.99 at N = 300, 600,
 1200, 2400; for dimension 3, 2.96 -> 2.95 -> 3.00 -> 3.00; for dimension 4,
 4.07 -> 3.97 -> 3.93 -> 3.97. Endpoint RMSE is lower at N = 2400 than at
@@ -391,7 +392,14 @@ flat-spacetime horizon analogue, not a black-hole simulation.
   continuous Lorentz symmetry of a sprinkled causal set (exp05;
   `outputs/data/finite_speed_lattice_growth.csv`). Finite speed is necessary
   but not sufficient; statistical Lorentz compatibility is the additional
-  structure.
+  structure. That it cannot suffice is a theorem — no Lorentz-invariant
+  regular discretization of Minkowski exists [@bhs2009], which is the
+  standard argument for random sprinkling [@dhs2004] — and the lattice also
+  shows why the diagnosis must be embedding-level: on a causal diamond the
+  light-cone lattice's ordering fraction approaches the sprinkled value 1/4,
+  so the R0 dimension estimator reads d = 2 for it as well, and what
+  separates the two is where the edges lie, not the order statistic used
+  here.
 
 An exploratory spacelike-distance proxy (common-past / common-future /
 enclosing-interval counts) is reported as boundary-dependent and *not* a
@@ -445,7 +453,10 @@ counterfactual (Section 6.3). What is *not* identical between geometries is
 the causal-diamond volume: the light-cone boundary
 tilts, and at equal proper time the curved-arm diamond volume sits 0.4%
 (`wT = 1`) to 7.3% (`wT = 2`) above flat — a deterministic design check pins
-both numbers, against the closed form `V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)`.
+both numbers, against the closed form `V_A/V_0 = 1 + (wT)^4/252 + O((wT)^8)` — the
+plane-wave instance of the small-causal-diamond volume expansion
+[@gibbonssolodukhin2007; @wang2019diamond], whose leading correction at
+Ricci-flatness is fourth order in the curvature scale.
 Those percentages describe a small diamond on the axis, and the frozen
 operating point is neither small nor on-axis: the probe chain selected
 `aniso-a1.0`, a slab spanning `1/pi = 0.318` of the way to the first
@@ -559,6 +570,17 @@ separation; the diamond-volume oracle is now certified, and its direct-MC
 instrument audit is complete as an auxiliary result (Section 6.9, Appendix B),
 and the prediction-anchored Poisson-count stage is executed across a
 four-rung mass ladder, CONCORDANT at every rung (Section 6.8).
+
+The detection/recovery line also places this stage among its neighbours.
+The field's canonical curvature estimator, the Benincasa-Dowker action
+[@benincasadowker2010], reads the Ricci scalar — identically zero in both
+of this paper's test spacetimes — so the conformal-class channel probed
+here is complementary to it rather than in competition; and the parallel
+Alfyorov-Shnyukov estimator [@alfyorov2026weyl], which recovers
+`E_ij E^ij` from Hasse-diagram covariances on pp-wave diamonds, works in
+this same channel and makes the stronger claim — recovery, where this
+stage establishes detection — so it is the natural sequel this stage does
+not attempt.
 
 ### 6.7 Type-D extension: preregistered C1-paired confirmation and C2-unpaired detection in Schwarzschild
 
@@ -688,7 +710,13 @@ elements certified to lie inside that same diamond. The question is whether
 the operational instrument realizes the certified prediction. Nothing in
 Sections 6-6.7 is used to answer it, and the answer cannot be tuned after the
 fact: the endpoints, the intensity, the tolerance and the decision rule are
-all frozen in the rung's preregistration before its seed is drawn.
+all frozen in the rung's preregistration before its seed is drawn. The stage
+also closes a loop the flat ladder left open: rung R1 consumed a supplied
+density to convert counts into volumes, validated there against targets the
+same machinery produced; here that same count-to-volume conversion — the
+number-volume correspondence at the root of the causal-set program
+[@sorkin1997forks] — is confronted, on a Schwarzschild diamond, with a
+volume certified independently of it.
 
 **The instrument.** Points are sprinkled at a frozen intensity `A` into the
 certified box, and each point's membership is decided by the certified causal
@@ -718,7 +746,11 @@ gives DISCORDANT, and anything else gives INCONCLUSIVE, published as it
 falls. The arithmetic is 96-bit end to end, and contract tests prove at the
 integer boundaries that the frozen acceptance window is exactly the set of
 counts the decision function calls CONCORDANT, so "the sizing" and "the
-verdict" cannot drift apart.
+verdict" cannot drift apart. The gate is a confidence-interval form of the
+two one-sided tests procedure [@schuirmann1987; @lakens2017] on exact
+intervals, in the model-validation sense of requiring a discrepancy to fall
+inside a pre-set band [@robinsonfroese2004]; its statistical novelty is the
+preregistered application against a certified enclosure, not the apparatus.
 
 **The ladder.** One rung would establish the gate at one geometry. To ask
 whether the agreement is a property of the instrument rather than of a lucky
@@ -911,70 +943,30 @@ transition or finite-size scaling.
 
 ## 8. Claim boundary
 
-We claim, as controlled validations in known 1+1D (and higher-D for dimension)
-models: dimension is estimated from order statistics in flat sprinklings;
-timelike proper time is
-recoverable from interval cardinality once a density is supplied, with
-finite-sampling-consistent error; radar time and unsigned distance are
-recoverable from an observer protocol, signed coordinates and the Lorentz map
-with an orientation reference, and atlas transition maps with overlapping
-oriented, calibrated charts; volume is recoverable with supplied global
-density and local measure information and is stable
-under density-rescaled coarse-graining; and a Rindler wedge is the
-reconstructible region for an accelerated observer. As the preregistered
-capstone (Section 6), at the frozen 3+1D operating point: the paired ensemble
-mean of the relation-fraction change under a pure-Weyl deformation exceeds its
-frozen margin (C1), and a frozen single-poset classifier separates curved from
-flat ensembles, independently replicating the probe chain's confirmation (C2).
+Every result in this paper is stated at full strength, with its non-claims,
+in the section that establishes it; this section is the index. The
+repository's `claim_boundary.md` carries the same boundary in long form,
+held to the frozen artifacts by the contract tests of Section 9.
 
-We do not claim: that spacetime is reducible to, or emerges from, causal order;
-that causal order alone yields absolute scale, the conformal factor, signed
-coordinates, or a unique atlas; that finite signal speed implies relativity; or
-that any of these finite validations establish a physical theory. Reconstructing
-a geometry that was put into the model is not deriving geometry from order.
-For the capstone we additionally do not claim: a general-Weyl discriminator,
-Weyl-tensor recovery, or box- or density-independence of the separation. The
-Schwarzschild path carries its own preregistered verdicts (Section 6.7: C1
-confirmed and C2 detected with incomplete separation, in separate stages with
-no joint primary verdict) and its own non-claims; the diamond-volume oracle
-is certified and instrument-audited there as an auxiliary result (Section 6.9),
-but no Section 6.7 verdict uses it. We claim, as a separate preregistered
-stage per rung (Section 6.8): on each of the four preregistered rungs
-`mu` in {0.1333, 0.1867, 0.2400, 0.4000} independently, the
-certified-membership
-count of a Poisson sprinkling realized that rung's independently certified
-continuum volume within `tau = 2.5%`, under a rule frozen before the data
-existed (CONCORDANT at every rung). For that Poisson-count stage we do not
-claim: any joint or composite cross-rung verdict, any statement at
-compactness between or beyond the tested rungs (no interpolation, no
-extrapolation), any promotion of the Section 6-6.7 verdicts or of the
-auxiliary O4b audit, and nothing about causal-set theory or the
-discreteness of spacetime — a count agreeing with a volume says the
-instrument reproduces the measure it was pointed at, at one fixed diamond
-and one fixed density per rung. A literature priority search (August 2026)
-found
-partial overlap in four areas: causal-order-and-number/volume
-reconstruction (Braun 2025 \cite{braun2025}; Myrheim 1978
-\cite{myrheim1978}), Schwarzschild sprinkle count verification
-(Homšak–Veroni \cite{homsakveroni2024} §V.1), analytic diamond-volume
-comparison theorems (Berthiere–Gibbons–Solodukhin
-\cite{berthiere2016}), and Schwarzschild causal-relation algorithms
-(He–Rideout \cite{herideout2009}). The directed-rounding volume
-enclosure and the preregistered TOST gate against it have no direct
-prior; the parallel Alfyorov–Shnyukov CJ estimator
-\cite{alfyorov2026weyl} measures Weyl curvature from Hasse diagrams
-and is orthogonal. The equivalence gate applies established
-methodology — a confidence-interval form of the two one-sided tests
-procedure \cite{schuirmann1987,lakens2017} on exact Poisson (Garwood)
-\cite{garwood1936} and binomial (Clopper–Pearson) \cite{clopperpearson1934}
-intervals, and equivalence-testing-based model validation
-\cite{robinsonfroese2004} — with the frozen rule requiring the identified
-discrepancy, against the certified enclosure, of a conservative outer
-Garwood count interval (its lower limit from the certain count, its upper
-limit from the count including its ambiguous members, rescaled to a volume)
-to fall within the band (each Garwood tail at level 0.025, more conservative
-than the conventional 0.05). Its statistical novelty is thus the
-preregistered application against a certified enclosure, not the apparatus.
+| Result | Grade | Established | Bounded |
+| --- | --- | --- | --- |
+| Flat-ladder reconstructions R0-R5 (dimension; proper time; radar time and unsigned distance; Lorentz map; atlas; volume and its coarse-graining stability) | controlled validations in declared models, each with its supplied ingredients named | Sections 4.1-4.6 | Section 5 |
+| Rindler wedge as the reconstructible region | controlled validation; scored against finite clock coverage | Section 4.7 | Section 4.7 |
+| No absolute scale, conformal factor, signed coordinates, or unique atlas from order alone; finite speed does not imply relativity | bounding constructions in the stated senses | Section 5 | Section 5 |
+| Plane-wave capstone: paired mean under a pure-Weyl deformation (C1) and frozen single-poset classifier (C2) | both claims confirmed; stage POSITIVE | Section 6.4 | Section 6.6: one frozen operating point; no general-Weyl discriminator, no Weyl-tensor recovery, no box- or density-independence |
+| Schwarzschild extension: S4 paired confirmation, S5 single-poset discrimination | CONFIRMED; DETECTED with incomplete separation | Section 6.7 | Section 6.7: separate stages, no joint primary verdict, no mass-generality; no verdict uses the volume oracle |
+| Mass-ladder Poisson count on each of the four preregistered rungs, `mu` in {0.1333, 0.1867, 0.2400, 0.4000} at `tau = 2.5%` | CONCORDANT at every rung, per rung | Section 6.8 | Section 6.8: no joint or cross-rung verdict, no interpolation, no extrapolation; promotes no earlier verdict |
+| O4b direct-MC instrument audit | CONCORDANT, auxiliary | Section 6.9 | Section 6.9: instrument statement only |
+
+Beyond the table we claim nothing: not that spacetime is reducible to, or
+emerges from, causal order; not that causal order alone yields absolute
+scale, the conformal factor, signed coordinates, or a unique atlas; not
+that finite signal speed implies relativity; not that any finite validation
+establishes a physical theory; and, for the count stage, nothing about
+causal-set theory or the discreteness of spacetime — a count agreeing with
+a volume says the instrument reproduces the measure it was pointed at.
+Reconstructing a geometry that was put into the model is not deriving
+geometry from order.
 
 ## 9. Reproducibility
 

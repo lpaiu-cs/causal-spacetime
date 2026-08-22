@@ -24,9 +24,9 @@ Modern, the iopart preprint face.
   equation indent, `Figure 1.`/`Table 1.` captions, running heads,
   appendix `A1` numbering). Swapping to the real `iopart.cls` later means
   changing `\documentclass` and deleting this file; sections stay.
-- `sections/front.tex` — title block; the abstract is a compressed
-  rendition of the manuscript's (CQG limit 300 words), claiming nothing
-  the manuscript does not.
+- `sections/front.tex` — title block; the abstract is the manuscript's
+  abstract verbatim (unified 2026-08-22, under the CQG 300-word limit),
+  rendered in LaTeX notation only.
 - `sections/references.tex` — hand-built IOP Vancouver bibliography,
   transcribed from `../citations/references.bib` (note fields omitted),
   entry order pinned to first-citation order. Re-derive the order from
@@ -43,11 +43,10 @@ Modern, the iopart preprint face.
 
 ## Deliberate deviations from the manuscript (all register-level)
 
-- Abstract compressed to journal length; body claims untouched.
 - British spelling with `-ize` endings, per IOP house style.
-- Three method citations added at first mention (`delong1988`,
-  `garwood1936`, `clopperpearson1934`) — all from the verified
-  bibliography, previously cited only in the claim-boundary section.
+- Three method citations the manuscript text does not carry inline
+  (`delong1988`, `garwood1936`, `clopperpearson1934`) are added at first
+  mention — all from the verified bibliography.
 - Two new result figures (plane-wave capstone; Schwarzschild S4/S5) and a
   genre-standard setup illustration, none previously in the manuscript.
 - The two adjacent "provenance is in Appendix B" sentences at the end of
