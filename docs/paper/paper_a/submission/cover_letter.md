@@ -1,8 +1,9 @@
 # Cover letter (Classical and Quantum Gravity)
 
-*Final text, rev. 2 — after an external review of the letter itself
-(compressed for desk assessment; priority claim softened; companion study
-moved to the form extras). Submission is performed by the author.*
+*Final text, rev. 3 — two rounds of external review of the letter
+itself: compressed for desk assessment, the priority claim replaced by
+the methodological contrast it rested on, the control-variable logic
+stated concretely. Submission is performed by the author.*
 
 Dear Editors of *Classical and Quantum Gravity*,
 
@@ -28,13 +29,12 @@ on a vacuum plane wave, two on a Schwarzschild exterior patch, and a
 four-rung Schwarzschild mass-ladder count, every decision rule frozen
 before execution. The plane-wave design isolates causal structure from
 volume: the coordinate volume form and the sprinkling law are exactly
-flat and only the light cones move, so the conformal-class information
-that order itself carries is shown to reach an order-only statistic at
-finite sprinkling density. The mass-ladder count anchors the volume
+flat and only the light cones move, yet an order-only statistic
+separates the flat and curved ensembles at finite sprinkling density. The mass-ladder count anchors the volume
 channel from the other side: sprinkling counts agree, within a frozen
 2.5% band, with continuum 4-volumes certified in advance by interval
-arithmetic — to our knowledge a new kind of preregistered equivalence
-test, run against a certified bound rather than an operational margin.
+arithmetic — a preregistered equivalence test run against a certified
+bound rather than an operational margin.
 
 We believe the manuscript suits *Classical and Quantum Gravity*: it
 addresses causal structure and discrete-spacetime reconstruction
@@ -45,7 +45,7 @@ infer continuum geometry from discrete or operational data. The
 computational claims are fully auditable: decision rules were frozen
 before execution, the numerical evidence is version-controlled and
 content-addressed in a public repository, and automated checks
-regenerate every printed figure from the archived artifacts.
+regenerate the reported figures from the archived artifacts.
 
 The manuscript is original, has not been published previously, and is
 not under consideration elsewhere. There are no conflicts of interest.
