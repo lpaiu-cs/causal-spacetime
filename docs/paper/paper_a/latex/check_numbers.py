@@ -140,7 +140,8 @@ def main() -> int:
     # Korean.
     hangul_text = tex_text + "\n".join(
         p.read_text(encoding="utf-8")
-        for p in [SECTIONS / "references.tex", HERE / "main.tex"]
+        for p in [SECTIONS / "references.tex", HERE / "main.tex",
+                  HERE / "si.tex"]
         if p.exists())
     hangul = re.findall(r"[가-힣]+", hangul_text)
     if hangul:

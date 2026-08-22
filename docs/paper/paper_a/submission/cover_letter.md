@@ -1,4 +1,8 @@
-# Cover letter — draft (user approval required before any submission)
+# Cover letter (Classical and Quantum Gravity)
+
+*Final text. Submission itself is performed by the author; the referee
+suggestions below were filled from the manuscript's cited literature and
+can be swapped on the submission form without touching the letter.*
 
 Dear Editors of *Classical and Quantum Gravity*,
 
@@ -30,7 +34,9 @@ band, continuum 4-volumes certified in advance by directed-rounding
 interval arithmetic — to our knowledge the first preregistered equivalence
 gate run against a certified volume enclosure; a literature priority
 search (August 2026) found partial overlap in four adjacent areas and no
-direct prior for that construction.
+direct prior for that construction. A companion study (in preparation)
+builds a preregistered discriminator on this foundation; the present
+manuscript stands alone and does not depend on it.
 
 We believe the manuscript fits *Classical and Quantum Gravity*'s causal
 set readership directly: it re-derives the community's standard
@@ -55,6 +61,29 @@ Independent researcher
 lpaiu.cs@gmail.com
 
 ---
-*[TODO before sending — user decisions: (1) suggested referees, if any;
-(2) opposed referees, if any; (3) whether to name the companion Paper B;
-(4) final article type (Paper assumed).]*
+
+## Submission-form extras (not part of the letter)
+
+**Article type:** Paper.
+
+**Suggested reviewers** (all active in causal set theory and familiar
+with the estimators and constructions the manuscript tests; contact
+details to be taken from their current institutional pages at submission
+time):
+
+1. Sumati Surya — author of the *Living Reviews in Relativity* survey of
+   causal set theory and of the small-diamond discrete-geometry results
+   the count stage is positioned against.
+2. Fay Dowker — co-author of the Lorentz-invariance/discreteness argument
+   and of the Benincasa-Dowker curvature estimator the manuscript names
+   as the complementary channel.
+3. David Rideout — co-author of the Schwarzschild causal-relation
+   algorithm (He-Rideout) the manuscript's exact predicate is checked
+   against, and of large-scale causal set numerics.
+4. Lisa Glaser — causal set numerics and discrete d'Alembertians;
+   well placed to judge the estimator-side claims.
+
+**Opposed reviewers:** none.
+
+**Companion paper:** named in the letter as in preparation; no manuscript
+exists to enclose, and this submission does not depend on it.

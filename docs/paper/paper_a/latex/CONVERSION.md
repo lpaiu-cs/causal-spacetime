@@ -55,7 +55,7 @@ Fixed labels (use exactly these; cross-reference with `\sref{}` /
 | `sec:count` | §6.8 |
 | `sec:oracle` | §6.9 |
 | `sec:discussion` §7, `sec:claims` §8, `sec:repro` §9 |
-| `app:conventions` App A, `app:provenance` App B |
+| `app:conventions` App A, `app:provenance` App B — packaged as SI sections S1/S2 by `si.tex` |
 | `fig:ladder`, `fig:convergence`, `fig:measure`, `fig:capstone`, `fig:schwarzschild`, `fig:count` | figures 1-6 |
 | `tab:rungs` (§2), `tab:capstone` (§6.4), `tab:s4` and `tab:s5` (§6.7), `tab:count` (§6.8), `tab:claims` (§8), `tab:conventions` (App A) | tables |
 
@@ -64,8 +64,10 @@ etc. "Sections 6--6.7" -> `sections~\ref{sec:capstone}.1--\ref{sec:schwarzschild
 is wrong — write it as `sections~\ref{sec:capstone} and~\ref{sec:schwarzschild}`
 or keep the range in prose ("the capstone and its extensions,
 sections~\ref{sec:capstone}--\ref{sec:count}") matching the meaning.
-"Appendix A/B" -> `\ref{app:conventions}` / `\ref{app:provenance}` via
-`appendix~\ref{...}`.
+"Appendix A/B" -> "the supplementary material (section~S1/S2)" as
+literal text — the appendices are a separate document (`si.tex`), so the
+article cannot `\ref` into them; the SI's own references back into the
+article stay `\sref{...}` and resolve via `xr-hyper`.
 
 Figure numbering intent (order of appearance): 1 ladder schematic (§2),
 2 convergence panel (§4.4), 3 measure dependence (§4.6),

@@ -39,20 +39,38 @@ what it reconstructs, and what bounds it.}
 \toprule
 Rung & Ingredient & Reconstructed & Bounded by \\
 \midrule
+\multicolumn{4}{@{}l}{\emph{Measure branch: order, ${+}$\,global density, ${+}$\,local measure}} \\
 R0 & order only & flat-sprinkling dimension estimate; uncalibrated chain
   statistics & manifold/model assumptions; no metric scale \\
 R1 & order + M & timelike proper time (interval cardinality $\to$ volume
   $\to$ $\tau$) & needs a density \\
+R5 & order + M + W & volume under conformal ambiguity; coarse-graining
+  stability & global and local measure supplied \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{Observer branch: order, ${+}$\,clocked chain, ${+}$\,orientation, ${+}$\,charts}} \\
 R2 & order + O & radar time; unsigned radar distance & sign undetermined \\
 R3 & order + O + R & signed coordinates; Lorentz map between protocols &
   supplied orientation \\
 R4 & order + O + R + A & atlas transition maps (Poincar\'e); invariant
   agreement & oriented, calibrated charts \\
-R5 & order + M + W & volume under conformal ambiguity; coarse-graining
-  stability & global and local measure supplied \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+The two branches are not of the same kind, and \tref{tab:rungs} groups
+them rather than presenting six co-equal rungs. The measure branch---order,
+plus a global density, plus a local measure---is the operational form of
+the causal-order rigidity theorems plus a volume
+element~\cite{malament1977,hkm1976}; it is where the first negative result
+bites and where the whole of \sref{sec:capstone} operates. The observer
+branch is protocol arithmetic: once a timelike chain with ordered tick
+labels, an oriented calibrated beacon and overlapping charts have been
+supplied, a coordinate system's worth of structure has been supplied, and
+radar coordinates follow close to definitionally---those rungs validate
+bookkeeping, and their bounding result, the reflection degeneracy, is the
+protocol's own symmetry made explicit rather than a discovered obstruction.
+The ledger's value is the explicit per-rung accounting; the theorem content
+lives on the measure branch.
 
 Three negative results bound the ladder from below (\sref{sec:negative}):
 conformal scale is not fixed by order alone (motivating M and W); a single

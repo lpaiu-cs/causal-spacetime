@@ -10,15 +10,20 @@ artifacts. This directory renders it; it must never disagree with it.
 ## Build
 
 ```sh
-./build.sh          # latexmk -xelatex; needs XeLaTeX (Korean frozen sentences)
+./build.sh          # latexmk -xelatex twice: main.tex, then si.tex
 ```
 
-Output: `main.pdf` (27 pp). TeX Live 2025 suffices; the font is Latin
-Modern, the iopart preprint face.
+Output: `main.pdf` (the article) and `si.pdf` (the supplementary-material
+document). TeX Live 2025 suffices; the font is Latin Modern, the iopart
+preprint face.
 
 ## Layout
 
-- `main.tex` — assembly only; all content in `sections/*.tex`.
+- `main.tex` — article assembly only; all content in `sections/*.tex`.
+- `si.tex` — supplementary-material assembly (sections S1-S2 = the
+  manuscript's appendices A-B, same files under `sections/`); its
+  references into the article resolve from `main.aux` via `xr-hyper`, so
+  it must build second.
 - `cqgmimic.sty` — every journal-specific typesetting decision (iopart
   look-alike: title block, run-in Abstract, `1.`/`1.1.` headings, 5-pica
   equation indent, `Figure 1.`/`Table 1.` captions, running heads,
@@ -53,3 +58,9 @@ Modern, the iopart preprint face.
   section 6.7 are merged into one.
 - A CQG-required Data availability statement is added (repository is
   public; no DOI claimed).
+- The manuscript's appendices A-B are packaged as a separate
+  supplementary-material document (`si.pdf`, sections S1-S2) per the
+  submission plan; the manuscript keeps them as appendices, and body
+  references render as "the supplementary material (section S1/S2)".
+  Note CQG's own default is in-article appendices — reverting is two
+  `\input` lines plus the appendix preamble (see git history).

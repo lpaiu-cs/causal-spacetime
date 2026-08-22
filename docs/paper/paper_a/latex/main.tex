@@ -25,14 +25,11 @@
 
 \input{sections/backmatter}
 
-\appendix
-% iopart appendix conventions: headings "Appendix A. Title", tables/figures
-% renumbered A1, A2, ...
-\titleformat{\section}{\normalsize\bfseries}{Appendix \thesection.}{0.6em}{}
-\renewcommand{\thetable}{A\arabic{table}}\setcounter{table}{0}
-\renewcommand{\thefigure}{A\arabic{figure}}\setcounter{figure}{0}
-\input{sections/appendix_a}
-\input{sections/appendix_b}
+% The former appendices (conventions; capstone execution provenance) are
+% packaged as a separate supplementary-material document (si.tex, sections
+% S1 and S2) per the submission plan; body references say "supplementary
+% material". Re-inserting them as in-article appendices is two \input
+% lines plus the appendix preamble -- see git history.
 
 % Hand-built IOP/CQG-format numeric bibliography (Vancouver, order of first
 % citation). Data source: ../citations/references.bib (verified); the entry

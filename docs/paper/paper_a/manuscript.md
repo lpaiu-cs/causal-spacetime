@@ -126,12 +126,29 @@ Rungs (minimal ingredient -> what is reconstructed):
 
 | Rung | Ingredient | Reconstructed | Bounded by |
 | --- | --- | --- | --- |
+| *Measure branch: order, + global density, + local measure* | | | |
 | R0 | order only | flat-sprinkling dimension estimate; uncalibrated chain statistics | manifold/model assumptions; no metric scale |
 | R1 | order + M | timelike proper time (interval cardinality -> volume -> tau) | needs a density |
+| R5 | order + M + W | volume under conformal ambiguity; coarse-graining stability | global and local measure supplied |
+| *Observer branch: order, + clocked chain, + orientation, + charts* | | | |
 | R2 | order + O | radar time; unsigned radar distance | sign undetermined |
 | R3 | order + O + R | signed coordinates; Lorentz map between protocols | supplied orientation |
 | R4 | order + O + R + A | atlas transition maps (Poincare); invariant agreement | oriented, calibrated charts |
-| R5 | order + M + W | volume under conformal ambiguity; coarse-graining stability | global and local measure supplied |
+
+The two branches are not of the same kind, and the table groups them
+rather than presenting six co-equal rungs. The measure branch — order, plus
+a global density, plus a local measure — is the operational form of the
+causal-order rigidity theorems plus a volume element [@malament1977;
+@hkm1976]; it is where the first negative result bites and where the whole
+of Section 6 operates. The observer branch is protocol arithmetic: once a
+timelike chain with ordered tick labels, an oriented calibrated beacon and
+overlapping charts have been supplied, a coordinate system's worth of
+structure has been supplied, and radar coordinates follow close to
+definitionally — those rungs validate bookkeeping, and their bounding
+result, the reflection degeneracy, is the protocol's own symmetry made
+explicit rather than a discovered obstruction. The ledger's value is the
+explicit per-rung accounting; the theorem content lives on the measure
+branch.
 
 Three negative results bound the ladder from below (Section 5): conformal scale
 is not fixed by order alone (motivating M and W); a single observer gives only
@@ -877,8 +894,10 @@ does not use this audit and is not promoted by it.
 
 ## 7. Discussion
 
-The ladder is a branched accounting device, not a single cumulative chain.
-Across its dependency rows it recovers a substantial fraction of operational
+The ladder is a branched accounting device, not a single cumulative chain
+— and its two branches carry different kinds of content (Section 2): the
+measure branch the theorem content, the observer branch protocol
+arithmetic. Across its dependency rows it recovers a substantial fraction of operational
 Lorentzian geometry — dimension, timelike duration, radar decomposition,
 Lorentz and Poincare consistency, volume — from a causal order plus short,
 explicit ingredient sets. It is equally a list of what each reconstruction
