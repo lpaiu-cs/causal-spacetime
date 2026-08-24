@@ -143,9 +143,7 @@ executing commit recorded in the artifact at entry and at exit
 $\mu = 0.1333$, \texttt{1575a8e} for $\mu = 0.1867$, \texttt{c421dce} for
 $\mu = 0.2400$, and \texttt{ed353d3} for $\mu = 0.4000$. The results
 commits \texttt{6d3745c}, \texttt{cdfd6d9}, \texttt{6bcf4e6}, and
-\texttt{ce0030d} added each rung's artifact, and each freeze head is an
-ancestor of its results commit---the freeze-before-execution ordering is
-checked by
-\artifact{tests/\allowbreak{}test\_\allowbreak{}paper\_\allowbreak{}a\_\allowbreak{}count\_\allowbreak{}integration.py} with
-\texttt{git merge-base -{}-is-ancestor}, per rung, exactly as for the
-capstone.
+\texttt{ce0030d} added each rung's artifact.
+\artifact{tests/\allowbreak{}test\_\allowbreak{}paper\_\allowbreak{}a\_\allowbreak{}count\_\allowbreak{}integration.py}
+verifies each freeze head as an ancestor of its result commit with
+\texttt{git merge-base -{}-is-ancestor}, per rung.

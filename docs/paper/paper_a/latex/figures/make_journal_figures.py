@@ -4,8 +4,9 @@ Companion to `docs/paper/paper_a/figures/make_figures.py` /
 `make_ladder_figure.py`, which own the manuscript.md PNG figures and stay
 untouched. This script reads the SAME committed inputs -- the 19 summary
 CSVs under `docs/paper/paper_a/figures/data/` and the preregistered
-artifacts under `docs/prereg/` -- and emits the six PDFs the LaTeX draft
-includes. Nothing is typed in: every plotted number is parsed from a
+artifacts under `docs/prereg/` -- and emits the seven vector PDFs the LaTeX
+draft includes plus matching 300 dpi PNGs for the editable Word rendition.
+Nothing is typed in: every plotted number is parsed from a
 committed file, and the two new result figures (fig4, fig5) draw the raw
 per-reading arrays stored inside the frozen artifacts.
 
@@ -36,6 +37,7 @@ from matplotlib import font_manager  # noqa: E402
 DATA = Path("docs/paper/paper_a/figures/data")
 PREREG = Path("docs/prereg")
 OUT = Path("docs/paper/paper_a/latex/figures")
+PNG = OUT / "png300"
 
 BLUE = "#0072B2"
 VERM = "#D55E00"
@@ -95,6 +97,11 @@ def _style(ax) -> None:
 
 def _panel(ax, tag: str) -> None:
     ax.set_title(tag, loc="left", fontsize=9, color=INK, pad=6)
+
+
+def _save(fig, stem: str) -> None:
+    fig.savefig(OUT / f"{stem}.pdf")
+    fig.savefig(PNG / f"{stem}.png", dpi=300)
 
 
 # --------------------------------------------------------------------------
@@ -190,7 +197,7 @@ def figure_setup() -> None:
         ax.grid(False)
 
     fig.tight_layout(pad=0.5)
-    fig.savefig(OUT / "fig0_setup.pdf")
+    _save(fig, "fig0_setup")
     plt.close(fig)
     print(f"  fig0: sprinkle N={len(ev)} (seed 7), longest chain "
           f"length {len(chain)} (illustration only)")
@@ -241,7 +248,7 @@ def figure_ladder() -> None:
     ax.set_xlim(-0.1, 9.8)
     ax.set_ylim(0, n + 0.42)
     fig.tight_layout(pad=0.4)
-    fig.savefig(OUT / "fig1_ladder.pdf")
+    _save(fig, "fig1_ladder")
     plt.close(fig)
 
 
@@ -333,7 +340,7 @@ def figure_convergence() -> None:
     ax.legend(frameon=False)
 
     fig.tight_layout(pad=0.5)
-    fig.savefig(OUT / "fig2_convergence.pdf")
+    _save(fig, "fig2_convergence")
     plt.close(fig)
 
 
@@ -353,7 +360,7 @@ def figure_measure() -> None:
 
     sin, flat = profile("sinusoidal_0.3"), profile("flat")
     ns = [_f(r, "N") for r in sin]
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.1, 2.6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.1, 2.8))
 
     _style(ax1)
     ax1.plot(ns, [_f(r, "unweighted_relative_rmse") for r in sin], marker="s",
@@ -369,7 +376,6 @@ def figure_measure() -> None:
     ax1.set_xlabel("$N$ (events)")
     ax1.set_ylabel("volume relative RMSE")
     ax1.set_ylim(0, None)
-    ax1.legend(frameon=False, loc="center right", fontsize=7)
     _panel(ax1, "(a) floor vs recovered scaling")
 
     _style(ax2)
@@ -388,11 +394,14 @@ def figure_measure() -> None:
     ax2.minorticks_off()
     ax2.set_xlabel("$N$ (events)")
     ax2.set_ylabel("volume RMSE")
-    ax2.legend(frameon=False, loc="lower left", fontsize=7)
     _panel(ax2, "(b) logarithmic axes")
 
-    fig.tight_layout(pad=0.5)
-    fig.savefig(OUT / "fig3_measure.pdf")
+    handles, labels = ax1.get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, loc="upper center",
+               bbox_to_anchor=(0.5, 0.995), ncol=3, fontsize=7.3,
+               columnspacing=1.3, handlelength=2.2)
+    fig.tight_layout(rect=(0, 0, 1, 0.86), pad=0.5)
+    _save(fig, "fig3_measure")
     plt.close(fig)
 
 
@@ -441,7 +450,7 @@ def figure_capstone() -> None:
     ax2.legend(frameon=False)
 
     fig.tight_layout(pad=0.5)
-    fig.savefig(OUT / "fig4_capstone.pdf")
+    _save(fig, "fig4_capstone")
     plt.close(fig)
     print(f"  fig4: C1 mean {mean:.7f} vs eps_delta {eps:.7g}; "
           f"C2 separation min(curved)={min(f_c):.6f} > max(flat)={max(f_f):.6f}: "
@@ -498,7 +507,7 @@ def figure_schwarzschild() -> None:
     ax2.legend(frameon=False, loc="upper right")
 
     fig.tight_layout(pad=0.5)
-    fig.savefig(OUT / "fig5_schwarzschild.pdf")
+    _save(fig, "fig5_schwarzschild")
     plt.close(fig)
     print(f"  fig5: S4 CI95 [{ci[0]:.6f}, {ci[1]:.6f}] vs gate {eps_det}; "
           f"S5 AUC {auc:.4f}, overlap exists: {min(f_c) <= max(f_f)}")
@@ -595,7 +604,7 @@ def figure_count() -> None:
             ax.spines[side].set_visible(False)
 
     fig.tight_layout(pad=0.5)
-    fig.savefig(OUT / "fig6_ladder_count.pdf")
+    _save(fig, "fig6_ladder_count")
     plt.close(fig)
     for r in rows:
         print(f'  fig6: mu={r["mu"]:.4f} V=[{r["v_lo"]:.4f}, {r["v_hi"]:.4f}] '
@@ -606,6 +615,7 @@ def figure_count() -> None:
 if __name__ == "__main__":
     _setup_fonts()
     OUT.mkdir(parents=True, exist_ok=True)
+    PNG.mkdir(parents=True, exist_ok=True)
     figure_setup()
     figure_ladder()
     figure_convergence()
