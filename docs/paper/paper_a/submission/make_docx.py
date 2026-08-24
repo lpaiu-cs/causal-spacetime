@@ -194,7 +194,8 @@ membership counts, and verdict.}}
 \\small
 \\begin{{tabular}}{{@{{}}cccccc@{{}}}}
 \\toprule
-$\\mu$ & $M$ & pilot & $N$ & $K_{{\\mathrm{{certain}}}} / U_{{\\mathrm{{amb}}}}$ & verdict \\\\
+$\\mu$ & $M$ & pilot & $N$ &
+$K_{{\\mathrm{{certain}}}} / U_{{\\mathrm{{amb}}}}$ & verdict \\\\
 \\midrule
 {design_rows}
 \\bottomrule
