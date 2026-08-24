@@ -21,12 +21,19 @@ boundary is recorded separately in `artifact_manifest.md`.
   orientation reference (exp13).
 - **Atlas transition maps** (Poincare) are approximately consistent across
   overlapping oriented, calibrated charts (exp14, exp15).
-- **Volume under the conformal ambiguity** is recoverable with supplied measure
-  information, implemented in exp19 as local weights; in the tested
-  random-thinning protocol, reconstruction is stable after density rescaling
+- **Volume under the conformal ambiguity** is recoverable with supplied
+  measure information: for the position-dependent profile exp19 tests,
+  supplying the local weights replaces a non-vanishing unweighted error floor
+  with flat-case, noise-limited error scaling (the constant-profile arm is a
+  normalization identity — its repair is the global density, R1's
+  ingredient); in the tested uniform random-thinning protocol,
+  density-rescaled reconstruction is stable, an M-level robustness statement
   (exp18-20, exp23).
-- **Rindler wedge** is the reconstructible region for an accelerated observer; a
-  horizon appears as a reconstruction-inaccessibility boundary (exp16, exp17).
+- **Rindler wedge** bounds the reconstructible region for an accelerated
+  observer: nothing is reconstructed outside it, while finite clock coverage
+  leaves part of it unreached (recall 0.74 to 0.84 measured against the ideal
+  wedge); a horizon appears as a reconstruction-inaccessibility boundary
+  (exp16, exp17).
 - **Capstone C1 (preregistered, 3+1D).** At the frozen operating point of the
   pure-Weyl plane-wave construction, the paired ensemble mean of the global
   relation-fraction change exceeds its frozen margin: 0.0502929
@@ -116,8 +123,10 @@ boundary is recorded separately in `artifact_manifest.md`.
 - Type-D extension non-claims: the C1 and C2 results arise from SEPARATE
   preregistered stages on the same frozen domain — there is no joint primary
   verdict, and "confirmed" applies to C1 only (the C2 outcome is DETECTED);
-  NOT complete separation (AUC ≈ 0.973, unlike the plane-wave C2, and no
-  completeness gate was preregistered); the secondary BA verdict does not
+  NOT complete separation (AUC ≈ 0.973; no completeness gate was
+  preregistered, and the difference from the plane-wave C2's complete
+  separation is one of unpaired-design variance and base rate, not of
+  curvature type); the secondary BA verdict does not
   strengthen or combine with the primary; NOT mass-general (single frozen
   M = 1 for THESE stages — the mass ladder is the separate Section 6.8
   stage); NOT prediction-anchored — no diamond-volume oracle is used in the

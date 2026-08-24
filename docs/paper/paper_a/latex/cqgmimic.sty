@@ -1,0 +1,148 @@
+% cqgmimic.sty — IOP/CQG (iopart, 12pt preprint form) look-alike on top of
+% the standard article class, compiled with XeLaTeX.
+%
+% Why a mimic and not iopart.cls itself: the class is not distributed with
+% TeX Live and this draft must build from a clean checkout without fetching
+% anything. Every journal-specific decision lives HERE, so swapping to the
+% real class later means changing \documentclass in main.tex and deleting
+% this file; the section files should not need to change.
+%
+% The typographic targets follow the iopart 12pt preprint (refereeing) form,
+% verified against the IOP guidelines and recent published CQG papers:
+% Computer Modern fonts, A4, single column, title bold flush-left ragged
+% right in sentence case, run-in bold "Abstract." block indented both
+% sides, sections "1." bold / subsections "1.1." italic / subsubsections
+% run-in italic, displayed equations indented to a 5-pica secondary margin
+% with right-edge numbers, "Figure 1."/"Table 1." bold caption labels
+% (table captions above, horizontal rules only), running heads from page 2,
+% numeric Vancouver references.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cqgmimic}[2026/08/21 CQG/iopart look-alike helpers]
+
+% ---------------------------------------------------------------- fonts
+% iopart's preprint form is Computer Modern; under XeLaTeX that is Latin
+% Modern, which is fontspec's default — nothing to set for Latin text.
+\RequirePackage{fontspec}
+% Korean spans (the frozen verdict sentences are quoted byte-exact in
+% Korean): xetexko typesets inline Hangul once a hangul font is declared.
+\RequirePackage{kotex}
+% Nanum Myeongjo ships no italic face; CJK convention keeps Hangul upright
+% inside italic Latin context, so map the italic shape to the upright face
+% (this also silences the font-substitution warning).
+\setmainhangulfont{Nanum Myeongjo}[ItalicFont={Nanum Myeongjo}]
+% Keep every ASCII mark (parentheses, punctuation, hyphens, ...) in the
+% Latin font and out of xetexko's takeover: the body is Latin-first, and
+% the takeover was blocking line breaks around inline artifact paths.
+\latinmarks
+
+% --------------------------------------------------------------- layout
+\RequirePackage[a4paper,textwidth=37pc,textheight=56pc,centering]{geometry}
+% Paragraphs carrying long typewriter artifact paths need slack: prefer a
+% loose line over a protruding one.
+\tolerance=1600
+\emergencystretch=3em
+% Displayed equations sit on iopart's ~5-pica secondary margin, numbers at
+% the right edge.
+\RequirePackage[fleqn]{amsmath}
+\setlength{\mathindent}{5pc}
+
+% ------------------------------------------------------- running heads
+% Page 1 headerless; from page 2 a short title in italic at the left and
+% the arabic page number at the right.
+\RequirePackage{fancyhdr}
+\newcommand{\shorttitle}[1]{\def\cqg@shorttitle{#1}}
+\def\cqg@shorttitle{}
+\fancypagestyle{cqg}{%
+  \fancyhf{}%
+  \fancyhead[L]{\itshape\cqg@shorttitle}%
+  \fancyhead[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}}
+\AtBeginDocument{\pagestyle{cqg}\thispagestyle{empty}}
+
+% ------------------------------------------------------------- headings
+% iopart: \section bold "1. Heading", \subsection italic "1.1. Heading",
+% \subsubsection italic run-in "1.1.1. Heading." with text following.
+\RequirePackage{titlesec}
+\titleformat{\section}{\normalsize\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalsize\itshape}{\thesubsection.}{0.6em}{}
+\titleformat{\subsubsection}[runin]{\normalsize\itshape}{\thesubsubsection.}{0.6em}{}[.]
+\titlespacing*{\section}{0pt}{1.8ex plus .4ex minus .2ex}{0.9ex}
+\titlespacing*{\subsection}{0pt}{1.4ex plus .3ex minus .2ex}{0.7ex}
+\titlespacing*{\subsubsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.6em}
+
+% ------------------------------------------------------------- captions
+% "Figure 1." / "Table 1." bold labels with a period; captions smaller
+% than body text; table captions above the table.
+\RequirePackage[font=small,labelfont=bf,labelsep=period,figurename=Figure,tablename=Table]{caption}
+\captionsetup[table]{position=above,skip=4pt}
+
+% --------------------------------------------------------------- tables
+% IOP tables carry horizontal rules only; booktabs' rules approximate the
+% \br/\mr/\br pattern. Table bodies are set in smaller type — use \small
+% inside the table environment.
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{makecell}
+
+% ------------------------------------------------------------- graphics
+\RequirePackage{graphicx}
+
+% ------------------------------------------------------------ utilities
+% The frozen verdict sentences are quoted byte-exact and mix Hangul with
+% symbols the text font lacks; route those code points through math.
+\RequirePackage{newunicodechar}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{≺}{\ensuremath{\prec}}
+\newunicodechar{⊆}{\ensuremath{\subseteq}}
+\newunicodechar{≤}{\ensuremath{\le}}
+\newunicodechar{≥}{\ensuremath{\ge}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{−}{\ensuremath{-}}
+\RequirePackage[hyphens]{url}
+\RequirePackage{xcolor}
+\RequirePackage[colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+
+% iopart-style cross-reference helpers, so the section files read like a
+% genuine IOP manuscript and survive a later class swap unchanged. IOP
+% writes "figure 1", "table 2", "section 3", "equation (4)" in full,
+% lower case mid-sentence.
+\providecommand{\sref}[1]{section~\ref{#1}}
+\providecommand{\Sref}[1]{Section~\ref{#1}}
+\providecommand{\fref}[1]{figure~\ref{#1}}
+\providecommand{\Fref}[1]{Figure~\ref{#1}}
+\providecommand{\tref}[1]{table~\ref{#1}}
+\providecommand{\Tref}[1]{Table~\ref{#1}}
+\providecommand{\eref}[1]{(\ref{#1})}
+
+% Inline identifiers (experiment scripts, artifact paths).
+\providecommand{\artifact}[1]{\texttt{#1}}
+\providecommand{\expid}[1]{\texttt{#1}}
+
+% ---------------------------------------------------------- title block
+% iopart preprint title block: bold flush-left ragged-right sentence-case
+% title; bold author line; address in roman; E-mail line; then the
+% abstract as a both-sides-indented block with a bold run-in label,
+% followed by the Keywords line.
+\newcommand{\papertitle}[1]{%
+  {\noindent\raggedright\LARGE\bfseries #1\par}\vspace{1.4em}}
+\newcommand{\paperauthor}[1]{%
+  {\noindent\large\bfseries #1\par}\vspace{0.5em}}
+\newcommand{\paperaddress}[1]{%
+  {\noindent #1\par}\vspace{0.2em}}
+\newcommand{\paperemail}[1]{%
+  {\noindent E-mail: \texttt{#1}\par}\vspace{1.1em}}
+\newenvironment{paperabstract}{%
+  \begin{list}{}{\leftmargin=2pc \rightmargin=2pc}\item\relax
+  \small\noindent\textbf{Abstract.}\ }{%
+  \end{list}\vspace{0.4em}}
+\newcommand{\paperkeywords}[1]{%
+  {\noindent\small Keywords: #1\par}\vspace{0.5em}}
+\newcommand{\papersubmitto}[1]{%
+  {\noindent\small Submitted to: \textit{#1}\par}\vspace{1.2em}}
+
+\endinput

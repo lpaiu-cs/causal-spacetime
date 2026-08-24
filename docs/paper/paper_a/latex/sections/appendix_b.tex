@@ -1,0 +1,151 @@
+% SI section S2 (formerly Appendix B) -- Capstone execution provenance.
+% Source: manuscript.md Appendix B. Included by si.tex with S-numbering;
+% cross-references into the article resolve via xr-hyper (main.aux).
+\section{Capstone execution provenance}\label{app:provenance}
+
+The \sref{sec:capstone} result is reproducible not merely in the sense
+that its code is committed, but in the sense that the \emph{order of
+operations}---freeze before execution, execution before recording---is
+provable from the repository's commit graph and enforced by mechanical
+gates.
+
+\textbf{Commit chain.} Design and probe chain: PR \#38--\#48.
+Preregistration: preparation commit (PR \#49), S1 cost measurement
+(PR \#50), then $P' = \texttt{51875a2}$ (a one-source seed-ledger fix)
+$\to$ preflight executed on a clean checkout of $P'$, its artifact
+recording \texttt{code\_version} $= P'$ and the SHA-256 digests of every
+execution-relevant source file $\to$ final-freeze commit
+$F = \texttt{b858b08}$ carrying the certification artifact and the freeze
+manifest (preflight digest, \texttt{preflight\_code\_version} $= P'$, the
+S1 price sentence, the frozen sizes and seeds; PR \#51) $\to$ the
+campaign executed on a checkout of exactly $F$ (not a descendant merge
+commit, so the recorded executing HEAD is $F$ itself) $\to$ results
+commit $R = \texttt{5126ddf}$, a direct child of $F$ (PR \#52). A test
+asserts $P' \prec F \prec R$ with
+\texttt{git merge-base -{}-is-ancestor}.
+
+\textbf{Gates.} Stochastic modes refuse a dirty worktree at entry. The
+campaign mode refuses to run unless (i) the freeze manifest exists,
+(ii) its recorded preflight digest matches the committed preflight
+artifact, and (iii) the source digests certified at preflight entry match
+the checked-out files---captured at entry and re-checked at exit, so a
+mid-run edit aborts the run with nothing recorded. Interrupted runs
+restart the same seed; an ambiguity violation blocks the stage rather
+than permitting a seed swap.
+
+\textbf{Artifacts.} The complete \sref{sec:capstone} evidence bundle,
+with digests, is enumerated in \artifact{artifact\_\allowbreak{}manifest.md}; the
+per-sentence mapping from manuscript text to evidence file is recorded
+there as the citation-to-artifact inventory.
+
+\textbf{Frozen sentences.} Each preregistered stage fixes, before
+execution, the sentence its verdict would license, and the campaign
+records that sentence in its results artifact. Those originals are
+written in Korean, the working language of this program's records; every
+frozen sentence printed in \sref{sec:preregresult} and
+\sref{sec:schwarzschild} is therefore a translation, and the artifact
+holds the authoritative text. What keeps the two from drifting apart is
+not editorial care: a contract test reads each original from its
+artifact, holds it against the rendering the manuscript prints in its
+place, and fails if either side moves---so a translation cannot quietly
+soften, strengthen, or outrun the sentence the campaign actually
+licensed. The paper prints no Korean, and a separate test enforces that,
+because a script the reader cannot check would put the load-bearing
+wording beyond the reader's reach.
+
+\textbf{Section~\ref{sec:schwarzschild} (Schwarzschild extension)
+provenance.} Freeze commit \texttt{ceed85d} (PR \#57, merge
+\texttt{5cffd90}) carries the frozen rule, the fresh seed registration,
+the runner, the contract tests, and the 8-file content-addressed freeze
+manifest---and no results. The campaign executed once on a clean checkout
+of exactly \texttt{ceed85d}; the runner captured the git state at entry,
+refused a dirty tree, verified every manifest digest at entry, and
+re-verified both at exit before writing, so the artifact's recorded
+lineage is \texttt{start == end == ceed85d}, clean,
+\texttt{run\_kind = fresh\_observation}. The results commit (PR \#58,
+merge \texttt{492e61f}) added the artifact, moved the campaign seed from
+fresh to observed in the ledger, and flipped the runner's campaign path
+to a deterministic replay whose output is owned by a separate file and
+can never replace the fresh observation. Because that flip legitimately
+changed two protocol-surface files, the \emph{current} tree's manifest
+hashes the post-result replay surface; the manifest that governed the
+executed run is preserved byte-for-byte as
+\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s4\_\allowbreak{}executed\_\allowbreak{}freeze\_\allowbreak{}manifest.json}, and a
+contract test verifies that snapshot against the historical blobs at
+\texttt{ceed85d} directly. Interrupted runs restart the same seed;
+undecided pairs are absorbed by identified intervals rather than a stop
+rule.
+
+\textbf{Section~\ref{sec:schwarzschild} second stage (S5) provenance.}
+Freeze commit \texttt{1c26224} (PR \#60, merge \texttt{3aeb8e5}) carried
+the rule, the fresh seed registrations, the runner, and the power
+certification; an execution review then caught an
+exact-versus-approximate chi-square mismatch in the certified resampling
+source, and the corrected freeze is \texttt{86e3674} (PR \#61, merge
+\texttt{f286508})---certification unchanged under the exact factor. The
+campaign executed once on a clean checkout of exactly \texttt{86e3674}
+(entry == exit git state, the 8-file content-addressed manifest verified
+at both ends, fail-closed CLI, \texttt{run\_kind = fresh\_observation},
+curved seed 40000251 / flat seed 40000261). The results commit (PR \#62,
+merge \texttt{d1e0d20}) added the artifact, moved both seeds to observed,
+flipped the campaign path to a replay whose output is owned by a separate
+file, and preserved the manifest that governed the executed run
+byte-for-byte as
+\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}s5\_\allowbreak{}executed\_\allowbreak{}freeze\_\allowbreak{}manifest.json}, verified
+against the historical blobs at \texttt{86e3674} by a contract test; the
+\emph{current} \artifact{p14\_\allowbreak{}s5\_\allowbreak{}freeze\_\allowbreak{}manifest.json} hashes the
+post-result replay surface.
+
+\textbf{Auxiliary O4b instrument-audit provenance (oracle arc).} The
+certified oracle chain is O1 $\to$ O2 $\to$ O3 (PR \#64--\#68):
+flight-time certification, certified cell integrator, then the O3 freeze
+(\texttt{785148e}) and its one approved execution producing the certified
+volume (\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}o3\_\allowbreak{}volume.json}, executed surface
+\artifact{p14\_\allowbreak{}o3\_\allowbreak{}executed\_\allowbreak{}freeze\_\allowbreak{}manifest.json}). The first audit
+stage, O4, aborted at its G3 with no verdict (PR \#69--\#70); its replay
+diagnostic and G3 redesign reopened the preregistration (PR \#71--\#74),
+and O4b was frozen with new seeds (PR \#75). The approved execution SHA
+is the freeze branch head \texttt{715865a}---not the merge commit. The
+campaign executed once from that clean exact checkout: G3a passed (71
+wrapper-contract cases, 6,537 metered calls),
+\artifact{refs/\allowbreak{}o4b/\allowbreak{}reservation} was claimed (\texttt{46acee34}, retained
+permanently, spending seeds 40000401/40000411), G1 ran to 26,200,000
+points and G2 to 1,072,696 points, and the run stopped at the
+pre-publication provenance re-read on a wiring defect---the claim
+callback returned \texttt{None}---publishing nothing. The preservation
+commit (PR \#76, merge \texttt{83e366c}) committed the incident and
+checkpoint verbatim (\artifact{p14\_\allowbreak{}o4b\_\allowbreak{}incident.json},
+\artifact{p14\_\allowbreak{}o4b\_\allowbreak{}checkpoint.json}), retired both seeds in the ledger,
+and snapshotted the executed surface byte-for-byte
+(\artifact{p14\_\allowbreak{}o4b\_\allowbreak{}executed\_\allowbreak{}freeze\_\allowbreak{}manifest.json}, byte-identical to
+the freeze blob at \texttt{715865a}). The recovery commit (PR \#77, merge
+\texttt{50586dd}) published \artifact{p14\_\allowbreak{}o4b\_\allowbreak{}results.json} with
+\texttt{run\_kind = recovered\_completed\_campaign} by re-applying the
+frozen decision functions to the preserved statistics---bit-identical to
+the preserved verdicts, inputs authenticated by blob SHA-256 pins and an
+incident/checkpoint cross-check, the remote reservation re-verified
+immediately before publication; per the frozen stage-verdict table (G1
+and G2 both concordant, G3a valid, frozen $n$ reached) the stage verdict
+is CONCORDANT. The maintenance commit (PR \#78, merge \texttt{a04e860})
+fixed the wiring defects---the claim return value, the budget stage
+label, an explicit incident \texttt{failure\_point}, a named checkpoint
+RNG stream---with end-to-end regression tests over the real
+\texttt{main()} path, leaving the result, incident, checkpoint, and
+executed snapshot untouched. No campaign rerun and no same-seed re-entry
+occurred anywhere in this chain; the historical no-verdict records of the
+O4 abort and the O4b incident retain their original verdicts, with the
+recovery linked rather than retroactively regraded.
+
+\textbf{Section~\ref{sec:count} (mass ladder) provenance.} Each rung
+executed once from a clean exact checkout of its own freeze head, with the
+executing commit recorded in the artifact at entry and at exit
+(\texttt{code.start == code.end}, clean tree): \texttt{c6eb85e} for
+$\mu = 0.1333$, \texttt{1575a8e} for $\mu = 0.1867$, \texttt{c421dce} for
+$\mu = 0.2400$, and \texttt{ed353d3} for $\mu = 0.4000$. The results
+commits \texttt{6d3745c}, \texttt{cdfd6d9}, \texttt{6bcf4e6}, and
+\texttt{ce0030d} added each rung's artifact, and each freeze head is an
+ancestor of its results commit---the freeze-before-execution ordering is
+checked by
+\artifact{tests/\allowbreak{}test\_\allowbreak{}paper\_\allowbreak{}a\_\allowbreak{}count\_\allowbreak{}integration.py} with
+\texttt{git merge-base -{}-is-ancestor}, per rung, exactly as for the
+capstone.

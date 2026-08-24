@@ -1,0 +1,40 @@
+% Paper A — journal-format draft (Classical and Quantum Gravity target).
+% Source of truth for content: ../manuscript.md (contract-tested against the
+% committed artifacts). This LaTeX rendition must not change any number,
+% verdict, or claim grade; check_numbers.py enforces the number side.
+% Build: ./build.sh  (XeLaTeX; Korean frozen sentences need it)
+\documentclass[12pt]{article}
+\usepackage{cqgmimic}
+
+\begin{document}
+
+\input{sections/front}
+
+\input{sections/s01_intro}
+\input{sections/s02_ladder}
+\input{sections/s03_methods}
+\input{sections/s04_results}
+\input{sections/s05_negative}
+\input{sections/s06_capstone}
+\input{sections/s067_schwarzschild}
+\input{sections/s068_count}
+\input{sections/s069_oracle}
+\input{sections/s07_discussion}
+\input{sections/s08_claims}
+\input{sections/s10_repro}
+
+\input{sections/backmatter}
+
+% The former appendices (conventions; capstone execution provenance) are
+% packaged as a separate supplementary-material document (si.tex, sections
+% S1 and S2) per the submission plan; body references say "supplementary
+% material". Re-inserting them as in-article appendices is two \input
+% lines plus the appendix preamble -- see git history.
+
+% Hand-built IOP/CQG-format numeric bibliography (Vancouver, order of first
+% citation). Data source: ../citations/references.bib (verified); the entry
+% order is pinned to the \citation order in main.aux — re-check it if a
+% \cite is added or moved.
+\input{sections/references}
+
+\end{document}

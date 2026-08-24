@@ -65,7 +65,7 @@ LADDER = [
         "R3",
         "order + observer + orientation",
         "signed coords; Lorentz map",
-        "calibrated separation",
+        "supplied orientation",
     ),
     (
         "R4",
@@ -223,30 +223,73 @@ def figure_convergence() -> None:
 # Figure 3: measure dependence (R5) -- weighted vs unweighted volume
 # --------------------------------------------------------------------------
 def figure_measure() -> None:
-    rows = [r for r in _rows("weighted_conformal_volume_summary.csv")
-            if r["profile"] == "constant_1.5"]
-    rows.sort(key=lambda r: _f(r, "N"))
-    ns = [_f(r, "N") for r in rows]
-    fig, ax = plt.subplots(figsize=(6.2, 4.2))
-    _style(ax)
-    ax.plot(ns, [_f(r, "unweighted_relative_rmse") for r in rows], marker="s", ms=5,
-            color=VERM, lw=2, label="unweighted coordinate support")
-    ax.plot(ns, [_f(r, "weighted_relative_rmse") for r in rows], marker="o", ms=5,
-            color=BLUE, lw=2, label="local-measure weighted")
-    ax.set_xscale("log")
-    ax.set_xticks([600, 1200, 2400])
-    ax.set_xticklabels(["600", "1200", "2400"], fontsize=9)
-    ax.minorticks_off()
-    ax.set_xlabel("N (events)", fontsize=10, color=INK)
-    ax.set_ylabel("volume relative RMSE", fontsize=10, color=INK)
-    ax.set_ylim(0, None)
-    ax.legend(fontsize=9, frameon=False, loc="center right")
-    ax.set_title(
-        "R5: local weights for coordinate-support sampling\n"
-        "(unweighted relative RMSE stays high; weighted RMSE falls over tested N)",
-        fontsize=10.5, color=INK, loc="left",
-    )
-    fig.tight_layout()
+    """R5 re-pointed to the position-dependent profile.
+
+    The constant_1.5 arm is deliberately NOT plotted: its weighted
+    relative RMSE is the flat profile's identically (a constant weight
+    rescales estimate and truth alike), so plotting it as "local-measure
+    weighted" showed an identity, not a recovery -- the referee finding
+    that forced this rewrite. The sinusoidal profile is the package's
+    genuinely local weight, and its story is scaling: the unweighted
+    error stalls at a floor while the weighted error rides the flat
+    sampling rate."""
+
+    def profile(name):
+        rows = [r for r in _rows("weighted_conformal_volume_summary.csv")
+                if r["profile"] == name]
+        rows.sort(key=lambda r: _f(r, "N"))
+        return rows
+
+    sin, flat = profile("sinusoidal_0.3"), profile("flat")
+    ns = [_f(r, "N") for r in sin]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.2, 3.8))
+
+    # (a) relative RMSE, linear y: the floor against the recovered rate
+    _style(ax1)
+    ax1.plot(ns, [_f(r, "unweighted_relative_rmse") for r in sin], marker="s",
+             ms=5, color=VERM, lw=2, label="unweighted (density only)")
+    ax1.plot(ns, [_f(r, "weighted_relative_rmse") for r in sin], marker="o",
+             ms=5, color=BLUE, lw=2, label="local-measure weighted")
+    ax1.plot(ns, [_f(r, "weighted_relative_rmse") for r in flat], ls=":",
+             color=MUTED, lw=1.8, label="flat-profile baseline")
+    ax1.set_xscale("log")
+    ax1.set_xticks([600, 1200, 2400])
+    ax1.set_xticklabels(["600", "1200", "2400"], fontsize=9)
+    ax1.minorticks_off()
+    ax1.set_xlabel("N (events)", fontsize=10, color=INK)
+    ax1.set_ylabel("volume relative RMSE", fontsize=10, color=INK)
+    ax1.set_ylim(0, None)
+    ax1.legend(fontsize=9, frameon=False, loc="center right")
+    ax1.set_title("(a) error floor vs recovered scaling", fontsize=10.5,
+                  color=INK, loc="left")
+
+    # (b) absolute volume RMSE, log-log: two visibly different slopes
+    _style(ax2)
+    ax2.plot(ns, [_f(r, "unweighted_volume_rmse") for r in sin], marker="s",
+             ms=5, color=VERM, lw=2, label="unweighted (density only)")
+    ax2.plot(ns, [_f(r, "weighted_volume_rmse") for r in sin], marker="o",
+             ms=5, color=BLUE, lw=2, label="local-measure weighted")
+    ax2.plot(ns, [_f(r, "weighted_volume_rmse") for r in flat], ls=":",
+             color=MUTED, lw=1.8, label="flat-profile baseline")
+    ax2.set_xscale("log")
+    ax2.set_yscale("log")
+    ax2.set_yticks([0.015, 0.02, 0.03, 0.04, 0.06])
+    ax2.set_yticklabels(["0.015", "0.02", "0.03", "0.04", "0.06"], fontsize=9)
+    ax2.set_xticks([600, 1200, 2400])
+    ax2.set_xticklabels(["600", "1200", "2400"], fontsize=9)
+    ax2.minorticks_off()
+    ax2.set_xlabel("N (events)", fontsize=10, color=INK)
+    ax2.set_ylabel("volume RMSE", fontsize=10, color=INK)
+    ax2.legend(fontsize=9, frameon=False, loc="lower left")
+    ax2.set_title("(b) the same data on logarithmic axes", fontsize=10.5,
+                  color=INK, loc="left")
+
+    fig.suptitle(
+        "R5: a position-dependent measure profile -- the unweighted error is "
+        "a floor, the weighted error rides the flat sampling rate",
+        fontsize=10.5, color=INK, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(OUT / "fig3_measure.png", dpi=200)
     plt.close(fig)
 

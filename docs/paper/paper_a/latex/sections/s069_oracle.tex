@@ -1,0 +1,47 @@
+% 6.9 -- The certified volume oracle and its auxiliary instrument audit.
+% Converted from manuscript.md section 6.9 (content moved there from the
+% former Section 9 in the interim-review pass). Long decimals in the
+% oracle/O4b passages are copied verbatim from source.
+\subsection{The certified volume oracle and its auxiliary instrument audit}\label{sec:oracle}
+
+The diamond-volume oracle behind \sref{sec:count} is fully certified: the
+static-spacetime reductions derived in the public note
+(\artifact{docs/\allowbreak{}theory/\allowbreak{}schwarzschild\_\allowbreak{}volume\_\allowbreak{}oracle\_\allowbreak{}note.md}) were
+completed by an MPFR directed-rounding flight-time certification, a uniform
+anchor-diamond containment proof, and a certified cell-refinement integrator,
+and the frozen configuration's volume was computed once from an exact freeze
+checkout: $V \in [56.212737, 57.348019]$, relative half-width
+$0.009997 \le 0.01$, \artifact{target-met}
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}o3\_\allowbreak{}volume.json}). That certification
+(O3) is the one the O4b audit below consumes. O3's width would have consumed
+most of the \sref{sec:count} count stage's 2.5\% band, so the same
+configuration was re-certified at half the target width (O3$'$), giving
+$V \in [56.492959, 57.060667]$---strictly inside O3, and the interval the
+$\mu = 0.1333$ rung is gated against
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}o3p\_\allowbreak{}volume.json}). The two are
+distinct certifications of the same diamond at different target widths, never
+combined.
+
+An auxiliary instrument audit (O4b) then consumed that certified volume: at
+the single frozen Schwarzschild configuration, the sampler, the S1 volume
+response, and the certified oracle were found CONCORDANT under a frozen
+composite error budget of 3.25\% with simultaneous coverage $\ge 95\%$---G1
+volume interval $[56.448806185841875,$ $56.9822829864225]$ against the
+certified $[56.212737, 57.348019]$ (identified discrepancy
+$[-0.8992123405928396,$ $0.7695461186219887]$, band $1.7034113309135284$), G2
+leak upper bound $0.14195058753928652$ within budget $0.14195094424279403$
+with zero leaking points. The audit's campaign run completed both gates and
+stopped at a publication-wiring defect---a software defect in the
+result-publication step; no gate, seed, or datum was affected---and the
+verdict was recovered by re-applying the frozen decision functions to the
+preserved sufficient statistics
+(\artifact{run\_\allowbreak{}kind: recovered\_\allowbreak{}completed\_\allowbreak{}campaign} in
+\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}o4b\_\allowbreak{}results.json}---no new seed, no solver call,
+no resampling, no gate change), with the recovery authenticated and
+bit-exactness enforced by contract tests (supplementary material,
+section~S2).
+This audit upgrades nothing in
+sections~\ref{sec:capstone}--\ref{sec:schwarzschild}; what it is and is not
+is bounded in \sref{sec:claims}. The prediction-anchored claim is carried by
+the \sref{sec:count} ladder, which does not use this audit and is not
+promoted by it.

@@ -1,0 +1,78 @@
+% Section 9 -- Reproducibility. Source: manuscript.md section 9.
+\section{Reproducibility}\label{sec:repro}
+
+Foundation-layer baseline commit \texttt{325df55}. Every number in
+sections~\ref{sec:results} and~\ref{sec:negative} has a cited
+\artifact{experiments/\allowbreak{}exp*.py} producer and expected summary path. All 19
+cited summary tables are committed under \artifact{figures/\allowbreak{}data/},
+regenerated in one recorded environment (CPython 3.11.9, numpy 2.4.6,
+matplotlib 3.11.1) from the unmodified baseline producers;
+\artifact{artifact\_\allowbreak{}manifest.md} records the regeneration, per-file row
+counts, and raw SHA-256 digests under the repository's LF storage-boundary
+rule, and a contract test recomputes every digest. The submission
+gate---the 19 legacy tables plus the finalized \sref{sec:capstone}
+evidence bundle, provenance-locked---is met. Conventions (sprinkling
+measure, causal relation, chain and interval normalizations,
+Myrheim--Meyer inversion) are fixed in the foundation modules and stated
+in \sref{sec:methods}.
+
+\Sref{sec:capstone} carries no regeneration debt: every number it cites
+lives in a committed artifact, and the repository's test suite recomputes
+the capstone's metrics, verdicts, and sentences from the stored raw
+samples, reproduces a prefix of every frozen seed stream, and asserts the
+commit-ancestry contract of section~S2 of the supplementary material.
+The stage
+runner (\artifact{experiments/\allowbreak{}positive\_\allowbreak{}control/\allowbreak{}p14\_\allowbreak{}prereg.py}) exposes
+three modes---\texttt{preflight}, \texttt{manifest},
+\texttt{campaign}---and the campaign mode refuses to run unless the
+freeze manifest exists, its recorded preflight digest matches the
+committed artifact, and the certified source digests match the
+checked-out files.
+
+\Sref{sec:schwarzschild} inherits the same standard for both of its
+stages: each runner
+(\artifact{experiments/\allowbreak{}positive\_\allowbreak{}control/\allowbreak{}s4\_\allowbreak{}schwarzschild\_\allowbreak{}c1.py},
+\artifact{experiments/\allowbreak{}positive\_\allowbreak{}control/\allowbreak{}s5\_\allowbreak{}schwarzschild\_\allowbreak{}c2.py})
+refuses to run unless an 8-file content-addressed freeze manifest matches
+the checked-out protocol surface byte-for-byte, verified at entry and
+re-verified at exit, behind a fail-closed CLI; contract tests recompute
+the CONFIRMED (S4) and DETECTED (S5) verdicts---including the DeLong
+interval, the balanced-accuracy threshold and
+Clopper--Pearson--Bonferroni interval, and the frozen sentences---from
+the stored per-reading arrays through the frozen gate functions; and the
+seed ledger separates fresh allocation from deterministic replay, with
+replay output owned by a separate path that can never replace a
+fresh-observation artifact.
+
+\Sref{sec:count}'s four rungs meet the same standard independently. Each
+rung's ambiguity pilot and count campaign run behind their own frozen,
+content-addressed manifests
+(\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}*\_\allowbreak{}count\_\allowbreak{}freeze\_\allowbreak{}manifest.json},
+with the executed surfaces preserved alongside), from a clean exact
+checkout recorded in the artifact at entry and exit; the per-rung runners
+are \artifact{experiments/\allowbreak{}oracle/\allowbreak{}o5\_\allowbreak{}count\_\allowbreak{}campaign.py} and
+\artifact{experiments/\allowbreak{}oracle/\allowbreak{}s6\_\allowbreak{}m\{14,18,30\}\_\allowbreak{}count.py}, and
+\artifact{tests/\allowbreak{}test\_\allowbreak{}paper\_\allowbreak{}a\_\allowbreak{}count\_\allowbreak{}integration.py} re-derives
+the printed per-rung table from the artifacts. The commit chain per rung
+is in section~S2 of the supplementary material.
+
+The auxiliary O4b instrument audit (\sref{sec:oracle}) meets the
+same standard with one addition. Its campaign runner refuses to run
+except on the clean exact checkout of the approved freeze SHA against a
+25-file content-addressed manifest with an environment lock; the executed
+surface is preserved byte-for-byte as
+\artifact{docs/\allowbreak{}prereg/\allowbreak{}p14\_\allowbreak{}o4b\_\allowbreak{}executed\_\allowbreak{}freeze\_\allowbreak{}manifest.json}. Because
+the run stopped at a publication-wiring defect after both gates
+completed, the published verdict is a \emph{recovery}:
+\artifact{experiments/\allowbreak{}oracle/\allowbreak{}o4b\_\allowbreak{}recover.py} re-applies the frozen
+decision functions (empirical-Bernstein interval, Clopper--Pearson bound,
+frozen sizing constants) to the preserved sufficient statistics,
+authenticates its inputs against the SHA-256 of the committed incident
+and checkpoint records with a two-file cross-check, and refuses to
+publish unless the recomputation reproduces the preserved verdict
+bit-for-bit; contract tests (\artifact{tests/\allowbreak{}test\_\allowbreak{}o4b\_\allowbreak{}recover.py}) pin
+the recomputation, the tamper refusals, and the published artifact, and
+regression tests (\artifact{tests/\allowbreak{}test\_\allowbreak{}o4b\_\allowbreak{}wiring\_\allowbreak{}fixes.py}) drive the
+repaired \texttt{main()} path end to end. No new seed was drawn, no
+solver called, no point resampled, and no gate changed anywhere in the
+recovery.

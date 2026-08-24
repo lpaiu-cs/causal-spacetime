@@ -1,0 +1,37 @@
+% SI section S1 (formerly Appendix A) -- Conventions and normalizations.
+% Source: manuscript.md Appendix A. Included by si.tex with S-numbering.
+\section{Conventions and normalizations}\label{app:conventions}
+
+\begin{table}[!htb]
+\caption{Conventions and normalizations fixed in the foundation modules.}
+\label{tab:conventions}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{7pc}>{\raggedright\arraybackslash}p{27pc}@{}}
+\toprule
+Quantity & Convention used \\
+\midrule
+Causal relation & null-inclusive $J^+$: $i$ precedes $j$ iff
+  $t_j - t_i > 0$ and $(dt)^2 - (dx)^2 \ge -\mathrm{atol}$,
+  $\mathrm{atol} = 1\times10^{-12}$; strict in time (irreflexive) \\
+Longest chain & endpoint-exclusive count (interior elements, two fewer
+  than the count including both endpoints); $(1{+}1)$D normalization
+  $L \sim \sqrt{2\rho}\,\tau$ (asymptotic normalized value
+  $\sqrt{2} \approx 1.414$), finite-size corrected \\
+Interval volume, $(1{+}1)$D & open Alexandrov count $K$; $V = K/\rho$;
+  $V = \tau^2/2$, so $\tau_{\mathrm{est}} = \sqrt{2K/\rho}$ \\
+Myrheim--Meyer & ordering fraction
+  $r = \mbox{(related ordered pairs)}/(N(N-1))$ inverted against
+  $f(d) = \Gamma(d+1)\Gamma(d/2)/(4\,\Gamma(3d/2))$; equals the standard
+  unordered form up to a factor 2 on both sides \\
+Radar coordinates & $\tau_- =$ latest preceding tick, $\tau_+ =$
+  earliest succeeding tick; radar time $= (\tau_+ + \tau_-)/2$, radar
+  distance $= (\tau_+ - \tau_-)/2$ \\
+Density (finite-$N$) & fixed-$N$ sprinkle with empirical density;
+  Poisson and fixed-$N$ binomial sampling models both reported \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The conventions in \tref{tab:conventions} are stated so the reported
+constants (e.g.\ the $\sqrt{2}$ chain normalization, the interval-volume
+factor) are unambiguous; each is fixed in the foundation modules.

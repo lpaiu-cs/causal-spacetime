@@ -1,0 +1,42 @@
+% Negative-results section. Source: manuscript.md (Negative results).
+% Every number is copied verbatim from the manuscript; do not edit digits here.
+\section{Negative results that bound the ladder}\label{sec:negative}
+
+\begin{itemize}
+\item \textbf{Order fixes neither scale nor profile.} Positive conformal
+  rescalings leave the causal order invariant while changing physical volume
+  and clock scale (\sref{sec:r5}). Absolute scale requires a supplied
+  measure (ingredient M), and position dependence a supplied profile
+  (ingredient W); order alone supplies uncalibrated order statistics, not a
+  proper-time scale.
+\item \textbf{A single observer gives only unsigned distance.} One chain's
+  radar distance is $|x|$: two targets at $x = +0.1$ and $x = -0.1$ return the
+  identical single-observer distance 0.1, while the two-chain oriented
+  protocol recovers the signed positions $+0.1$ and $-0.1$. Signed coordinates
+  therefore require an orientation reference (ingredient R) (\expid{exp12};
+  \artifact{outputs/\allowbreak{}data/\allowbreak{}single\_\allowbreak{}observer\_\allowbreak{}reflection\_\allowbreak{}degeneracy.csv}).
+\item \textbf{Finite signal speed alone does not give Lorentzian structure.}
+  After calibrating density at the final time, a regular finite-speed lattice
+  shares the continuum model's leading quadratic count growth: finite-$t$
+  counts differ before the calibration time ($t = 5$: 21 vs 14.75) and agree
+  at it by construction ($t = 30$: 496 vs 496). Yet
+  its edges lie only along the two lightcone diagonals (465 each), so it has a
+  discrete symmetry, not the continuous Lorentz symmetry of a sprinkled causal
+  set (\expid{exp05};
+  \artifact{outputs/\allowbreak{}data/\allowbreak{}finite\_\allowbreak{}speed\_\allowbreak{}lattice\_\allowbreak{}growth.csv}). Finite speed is
+  necessary but not sufficient; statistical Lorentz compatibility is the
+  additional structure. That it cannot suffice is a theorem---no
+  Lorentz-invariant regular discretization of Minkowski
+  exists~\cite{bhs2009}, which is the standard argument for random
+  sprinkling~\cite{dhs2004}---and the lattice also shows why the diagnosis
+  must be embedding-level: on a causal diamond the light-cone lattice's
+  ordering fraction approaches the sprinkled value $1/4$, so the R0
+  dimension estimator reads $d = 2$ for it as well, and what separates the
+  two is where the edges lie, not the order statistic used here.
+\end{itemize}
+
+An exploratory spacelike-distance proxy (common-past / common-future /
+enclosing-interval counts) is reported as boundary-dependent and \emph{not} a
+validated spacelike estimator: the counts vary strongly with the sampling
+region rather than tracking spacelike distance cleanly (\expid{exp06};
+\artifact{outputs/\allowbreak{}data/\allowbreak{}spacelike\_\allowbreak{}distance\_\allowbreak{}proxy\_\allowbreak{}summary.csv}).

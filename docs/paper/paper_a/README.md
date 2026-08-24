@@ -1,7 +1,7 @@
 # Paper A (draft)
 
-Working title: **An operational reconstruction ladder for spacetime quantities
-from causal order.**
+Title: **Spacetime quantities from causal order: an operational ladder
+with preregistered validations at finite density.**
 
 Status: DRAFT (evidence package complete). The scientific base is the
 verified M1-M10 foundation layer on the `restart/m17-baseline` line, whose
@@ -62,6 +62,14 @@ reconstruction layer is the measurement side of Paper B's instrument.
   exp scripts) that the figures read, so figures are reproducible.
 - `figures/*.png` — Fig 1 reconstruction dependency ledger, Fig 2 convergence panel
   (dimension / proper time / radar / Lorentz), Fig 3 measure dependence.
+- `latex/` — journal-format draft (Classical and Quantum Gravity target,
+  iopart-preprint conventions): XeLaTeX build, IOP-format bibliography,
+  vector figures regenerated from the same committed inputs plus three
+  figures the Markdown draft does not carry (setup illustration, plane-wave
+  capstone separation, Schwarzschild S4/S5), and `check_numbers.py`, a
+  fidelity gate holding the rendition's numbers to `manuscript.md`. The
+  Markdown manuscript remains the contract-tested source of truth; see
+  `latex/README.md` for the build and the deliberate deviations.
 
 ## Provenance
 

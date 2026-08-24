@@ -1,0 +1,38 @@
+% Supplementary material for the Paper A article (CQG target), packaged as
+% a separate document per the submission plan. Content: the article's former
+% appendices, unchanged (sections/appendix_a.tex, sections/appendix_b.tex);
+% both remain inside check_numbers.py's manuscript-fidelity gate and the
+% frozen-rendering contract's sections/*.tex scan.
+% Build: ./build.sh (builds main.tex first; xr-hyper reads main.aux so the
+% SI's references into the article print the article's section numbers).
+\documentclass[12pt]{article}
+\usepackage{xr-hyper}
+\usepackage{cqgmimic}
+\externaldocument{main}
+
+% SI numbering: sections S1, S2; tables S1, ...
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\begin{document}
+
+\shorttitle{Supplementary material: spacetime quantities from causal order}
+
+\papertitle{Supplementary material for ``Spacetime quantities from causal
+order: an operational ladder with preregistered validations at finite
+density''}
+
+\paperauthor{Juneyoung Kim}
+\paperaddress{Independent researcher}
+\paperemail{lpaiu.cs@gmail.com}
+
+\noindent This document carries the article's conventions table
+(section~S1) and the execution-provenance record of the preregistered
+stages (section~S2). Section numbers without an S prefix refer to the
+article.
+
+\input{sections/appendix_a}
+\input{sections/appendix_b}
+
+\end{document}

@@ -107,7 +107,7 @@ def main() -> None:
              "the intervals overlap at this scale:\nthe residual is panel B",
              fontsize=8, color=GREY, style="italic", va="top")
     ax1.set_xlabel(r"compactness  $\mu = 2M/r_c$")
-    ax1.set_ylabel(r"4-volume of the fixed diamond")
+    ax1.set_ylabel(r"certified 4-volume of the rung's diamond")
     span = rows[-1]["mu"] / rows[0]["mu"]
     ax1.set_title(
         f"A. the count tracks the certified volume over a {span:.0f}x "
