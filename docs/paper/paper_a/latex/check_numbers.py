@@ -9,6 +9,15 @@ promises:
    layout/markup.
 2. NO DROPPED RESULTS: every numeric token in manuscript.md's body
    appears somewhere in the LaTeX.
+3. COUNTS MATCH: each token occurs the same number of times on both
+   sides, up to the justified per-token differences in COUNT_DELTAS
+   (each bound to its reason; a stale entry is itself a defect). This
+   closes the review-found gap where deleting one occurrence of a
+   repeated number, or mis-transcribing a result into a number that
+   already exists elsewhere, still passed the membership checks.
+   (A compensating swap that keeps every count equal remains invisible
+   to any counter; position-level truth is held by the manuscript-side
+   claim contracts and the FROZEN_RENDERINGS LaTeX pins.)
 
 Numbers are compared as normalized strings (scientific notation unified,
 digit-group commas removed), never parsed as floats, so 0.10 and 0.1
@@ -34,6 +43,9 @@ LATEX_MARKUP_PATTERNS = [
     r"\\begin\{tabular\*?\}\{[^}]*\}",        # column specs
     r"\\begin\{tabularx\}\{[^}]*\}\{[^}]*\}",
     r"\\(?:hspace|vspace|rule)\*?\{[^}]*\}",
+    r"\\setlength\{[^}]*\}\{[^}]*\}",       # lengths (e.g. tabcolsep 2.5pt)
+    r"\\\\\[[0-9.]+(?:pt|em|ex|pc)\]",         # line-break spacing (\\[2pt])
+    r"\\multicolumn\{\d+\}",                # span counts are layout
     r"\\label\{[^}]*\}",
     r"\\ref\{[^}]*\}",
     r"\\cite\{[^}]*\}",
@@ -51,6 +63,43 @@ LATEX_MARKUP_PATTERNS = [
 # and are not manuscript numbers. Keep this list SHORT and justified.
 TEX_WHITELIST: dict[str, str] = {
     # (none yet)
+}
+
+# Per-token occurrence differences (LaTeX count minus manuscript count)
+# that are DELIBERATE, each bound to its reason. Anything not listed must
+# occur the same number of times on both sides; a listed token whose
+# actual difference deviates from the declared one is a defect either
+# way, so entries cannot go stale silently.
+CAPTION_RESTATED = ("restated once in the caption of a LaTeX-only figure "
+                    "(fig0 setup / fig4 capstone / fig5 Schwarzschild; "
+                    "deliberate deviations listed in README.md)")
+CONTRIB_ROMAN = ("the manuscript numbers its contribution list (1)-(6); "
+                 "the LaTeX renders the labels as roman (i)-(vi) per the "
+                 "conversion brief")
+COUNT_DELTAS: dict[str, tuple[int, str]] = {
+    "-0.036211": (+1, CAPTION_RESTATED),
+    "-0.035953": (+1, CAPTION_RESTATED),
+    "0.0036":    (+1, CAPTION_RESTATED),
+    "0.9734":    (+1, CAPTION_RESTATED),
+    "0.9630":    (+1, CAPTION_RESTATED),
+    "0.9837":    (+1, CAPTION_RESTATED),
+    "0.999232":  (+1, CAPTION_RESTATED),
+    "0.0501046": (+1, CAPTION_RESTATED),
+    "0.0502929": (+1, CAPTION_RESTATED),
+    "0.0504812": (+1, CAPTION_RESTATED),
+    "3.579e-4":  (+1, CAPTION_RESTATED),
+    "3000":      (+1, CAPTION_RESTATED),
+    "4800":      (+1, CAPTION_RESTATED),
+    "140":       (+1, CAPTION_RESTATED),
+    "95":        (+1, CAPTION_RESTATED),
+    "1.0":       (+1, CAPTION_RESTATED),
+    "1":         (+1, "the fig0 setup caption's two occurrences minus the "
+                      "manuscript's (1) contribution label"),
+    "2":         (-1, CONTRIB_ROMAN),
+    "3":         (-1, CONTRIB_ROMAN),
+    "4":         (-1, CONTRIB_ROMAN),
+    "5":         (-1, CONTRIB_ROMAN),
+    "6":         (-1, CONTRIB_ROMAN),
 }
 
 
@@ -76,7 +125,11 @@ NUM = re.compile(
     r"\d{1,3}(?:,\d{3})+"       # digit-grouped integers (26,831,117)
     r"|(?<![A-Za-z0-9_.])-?\d+\.\d+(?:e-?\d+)?"  # decimals / sci
     r"|(?<![A-Za-z0-9_.])\d+e-?\d+"              # bare sci (1e-12)
-    r"|(?<![A-Za-z0-9_.#])\d+(?![0-9.])"         # integers (not #38 refs? keep)
+    # integers: reject a digit or decimal continuation, but ACCEPT a
+    # sentence-final period ("c = 1." must count its 1 -- the earlier
+    # (?![0-9.]) lookahead silently skipped every integer that ended a
+    # sentence, asymmetrically between prose and math)
+    r"|(?<![A-Za-z0-9_.#])\d+(?!\d)(?!\.\d)"
 )
 
 
@@ -90,6 +143,11 @@ def _tokens(text: str) -> Counter:
 
 
 def _strip_latex(text: str) -> str:
+    # \texorpdfstring{tex}{pdf} prints only its first argument; counting
+    # both would double every numeral in it.
+    text = re.sub(
+        r"\\texorpdfstring\{((?:[^{}]|\{[^{}]*\})*)\}\{(?:[^{}]|\{[^{}]*\})*\}",
+        r"\1", text)
     for pat in LATEX_MARKUP_PATTERNS:
         text = re.sub(pat, " ", text, flags=re.MULTILINE)
     # en-dash markup between numbers (0.93--1.07) is a range, not a sign
@@ -164,6 +222,31 @@ def main() -> int:
                 print(f"      | {ln[:110]}")
         defects += len(invented)
 
+    miscounted = {
+        t: (tex_tokens[t], md_tokens[t])
+        for t in set(tex_tokens) | set(md_tokens)
+        if t in md_tokens and t in tex_tokens
+        and tex_tokens[t] - md_tokens[t] != COUNT_DELTAS.get(t, (0,))[0]
+    }
+    stale = {t: d for t, (d, _r) in COUNT_DELTAS.items()
+             if tex_tokens[t] - md_tokens[t] != d}
+    if miscounted:
+        print("== tokens whose occurrence counts disagree "
+              "(tex, manuscript; allowed delta from COUNT_DELTAS) ==")
+        for tok in sorted(miscounted):
+            tex_n, md_n = miscounted[tok]
+            allowed = COUNT_DELTAS.get(tok, (0, "not listed"))
+            print(f"  {tok}  tex x{tex_n}, md x{md_n}, "
+                  f"allowed delta {allowed[0]:+d} ({allowed[1][:60]})")
+        defects += len(miscounted)
+    if stale:
+        # every stale entry is already in miscounted unless the token
+        # vanished from both sides entirely; report those too
+        gone = {t for t in stale if t not in miscounted}
+        for tok in sorted(gone):
+            print(f"== COUNT_DELTAS entry stale: {tok} no longer occurs ==")
+            defects += 1
+
     dropped = {t: c for t, c in md_tokens.items() if t not in tex_tokens}
     if dropped:
         print("== numeric tokens in manuscript.md not found in LaTeX ==")
@@ -178,8 +261,9 @@ def main() -> int:
 
     if defects == 0:
         print(f"OK: {sum(tex_tokens.values())} numeric tokens in LaTeX, "
-              f"{sum(md_tokens.values())} in manuscript; "
-              f"no inventions, no droppages.")
+              f"{sum(md_tokens.values())} in manuscript; no inventions, "
+              f"no droppages, counts reconciled "
+              f"({len(COUNT_DELTAS)} justified deltas).")
         return 0
     print(f"\n{defects} distinct token defects.")
     return 1
