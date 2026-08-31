@@ -315,17 +315,32 @@ def polish_cover_letter(path):
     """Apply restrained journal-correspondence typography after pandoc."""
     doc = Document(path)
     for section in doc.sections:
-        section.top_margin = Inches(0.85)
-        section.bottom_margin = Inches(0.85)
-        section.left_margin = Inches(1.0)
-        section.right_margin = Inches(1.0)
+        section.top_margin = Inches(0.70)
+        section.bottom_margin = Inches(0.70)
+        section.left_margin = Inches(0.90)
+        section.right_margin = Inches(0.90)
     normal = doc.styles['Normal']
     normal.font.name = 'Times New Roman'
     normal.font.size = Pt(11)
-    normal.paragraph_format.space_after = Pt(7)
-    normal.paragraph_format.line_spacing = 1.05
+    normal.paragraph_format.space_after = Pt(5)
+    normal.paragraph_format.line_spacing = 1.0
     for paragraph in doc.paragraphs:
         paragraph.paragraph_format.widow_control = True
+        if paragraph.style.name == 'Captioned Figure':
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            paragraph.paragraph_format.space_before = Pt(1)
+            paragraph.paragraph_format.space_after = Pt(0)
+            paragraph.paragraph_format.keep_with_next = True
+        elif paragraph.style.name == 'Image Caption':
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            paragraph.paragraph_format.space_before = Pt(1)
+            paragraph.paragraph_format.space_after = Pt(4)
+            paragraph.paragraph_format.line_spacing = 1.0
+            paragraph.paragraph_format.keep_together = True
+            for run in paragraph.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(8.5)
+                run.font.italic = True
     doc.save(path)
 
 
@@ -411,13 +426,16 @@ def polish_article(path):
     doc.save(path)
 
 
-pandoc(['-f', 'latex', '-t', 'docx', '--number-sections',
-        str(BUILD / 'article_flat.tex'),
-        '-o', str(SUB / 'paper_a_article.docx')])
-polish_article(SUB / 'paper_a_article.docx')
-pandoc(['-f', 'latex', '-t', 'docx',
-        str(BUILD / 'si_flat.tex'),
-        '-o', str(SUB / 'paper_a_supplementary.docx')])
+options = set(sys.argv[1:])
+assert options <= {'--cover-only'}, options
+if '--cover-only' not in options:
+    pandoc(['-f', 'latex', '-t', 'docx', '--number-sections',
+            str(BUILD / 'article_flat.tex'),
+            '-o', str(SUB / 'paper_a_article.docx')])
+    polish_article(SUB / 'paper_a_article.docx')
+    pandoc(['-f', 'latex', '-t', 'docx',
+            str(BUILD / 'si_flat.tex'),
+            '-o', str(SUB / 'paper_a_supplementary.docx')])
 pandoc(['-f', 'markdown', '-t', 'docx',
         str(SUB / 'cover_letter.md'),
         '-o', str(SUB / 'cover_letter.docx')])
