@@ -10,6 +10,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Inches, Pt
+
 LATEX = Path(__file__).resolve().parents[1] / 'latex'
 SUB = LATEX.parent / 'submission'
 BUILD = SUB / 'build'
@@ -112,6 +120,104 @@ def transform(text, labels):
     return text
 
 
+def word_friendly_count_table(text):
+    """Split the 11-column PDF table into two readable Word tables.
+
+    Values are parsed from the LaTeX table itself and then rearranged, so the
+    editable rendition cannot acquire a separately typed numeric source.
+    """
+    pattern = re.compile(
+        r'\\begin\{table\}\[t\]\n'
+        r'\\caption\{The four executed mass-ladder rungs:.*?'
+        r'\\end\{table\}', re.DOTALL)
+    matches = list(pattern.finditer(text))
+    assert len(matches) == 1, len(matches)
+    block = matches[0].group(0)
+    lines = [line.strip() for line in block.splitlines()]
+    starts = [i for i, line in enumerate(lines) if line.startswith('$0.')]
+    assert len(starts) == 4, starts
+
+    def cells(line):
+        parts = [part.strip() for part in line.split('&')]
+        assert len(parts) == 11, (len(parts), line)
+        parts[-1] = parts[-1].removesuffix(r'\\').strip()
+        return parts
+
+    def unmath(value):
+        value = value.strip()
+        if value.startswith('$') and value.endswith('$'):
+            value = value[1:-1]
+        return value
+
+    def lower(value):
+        value = unmath(value)
+        assert value.startswith('[') and value.endswith(','), value
+        return value[1:-1]
+
+    def upper(value):
+        value = unmath(value).replace(r'\phantom{[}', '')
+        value = value.replace(r'{+}', '+')
+        assert value.endswith(']'), value
+        return value[:-1]
+
+    rows = []
+    for i in starts:
+        first, second = cells(lines[i]), cells(lines[i + 1])
+        verdict = re.fullmatch(r'\\textbf\{([A-Z]+)\}', first[10])
+        assert verdict, first[10]
+        pilot = unmath(first[3])
+        assert pilot.startswith('k='), pilot
+        rows.append({
+            'mu': unmath(first[0]), 'mass': unmath(first[1]),
+            'v_lo': lower(first[2]), 'v_hi': upper(second[2]),
+            'pilot': pilot, 'n': first[4], 'k': first[5], 'u': first[6],
+            'c_lo': lower(first[7]), 'c_hi': upper(second[7]),
+            'd_lo': lower(first[8]), 'd_hi': upper(second[8]),
+            'band': unmath(first[9]), 'verdict': verdict.group(1),
+        })
+
+    design_rows = '\n'.join(
+        f"${r['mu']}$ & ${r['mass']}$ & ${r['pilot']}$ & {r['n']} & "
+        f"{r['k']} / {r['u']} & \\textbf{{{r['verdict']}}} \\\\"
+        for r in rows)
+    interval_rows = '\n'.join(
+        f"${r['mu']}$ & certified $V$ & $[{r['v_lo']}, {r['v_hi']}]$ \\\\\n"
+        f"${r['mu']}$ & $C$ & $[{r['c_lo']}, {r['c_hi']}]$ \\\\\n"
+        f"${r['mu']}$ & $D$ & $[{r['d_lo']}, {r['d_hi']}]$ \\\\\n"
+        f"${r['mu']}$ & $B$ & ${r['band']}$ \\\\"
+        for r in rows)
+    replacement = f"""\\begin{{table}}[t]
+\\caption{{The four executed mass-ladder rungs. Part (a) gives the design,
+membership counts, and verdict.}}
+\\label{{tab:count}}
+\\centering
+\\small
+\\begin{{tabular}}{{@{{}}cccccc@{{}}}}
+\\toprule
+$\\mu$ & $M$ & pilot & $N$ &
+$K_{{\\mathrm{{certain}}}} / U_{{\\mathrm{{amb}}}}$ & verdict \\\\
+\\midrule
+{design_rows}
+\\bottomrule
+\\end{{tabular}}
+\\end{{table}}
+
+\\begin{{table}}[t]
+\\caption{{Table 5 (continued). Part (b) gives the certified-volume and
+interval comparison used by the gate.}}
+\\centering
+\\small
+\\begin{{tabular}}{{@{{}}ccc@{{}}}}
+\\toprule
+$\\mu$ & quantity & value or interval \\\\
+\\midrule
+{interval_rows}
+\\bottomrule
+\\end{{tabular}}
+\\end{{table}}"""
+    return text[:matches[0].start()] + replacement + text[matches[0].end():]
+
+
 # ---------------------------------------------------------------- article
 front = (LATEX / 'sections' / 'front.tex').read_text(encoding='utf-8')
 abstract = re.search(r'\\begin\{paperabstract\}\n(.*?)\\end\{paperabstract\}',
@@ -161,6 +267,7 @@ article = f"""\\title{{{TITLE}}}
 
 {refs}
 """
+article = word_friendly_count_table(article)
 article = transform(article, LABELS)
 (BUILD / 'article_flat.tex').write_text(article, encoding='utf-8')
 
@@ -204,13 +311,133 @@ def pandoc(args):
     assert r.returncode == 0, r.returncode
 
 
-pandoc(['-f', 'latex', '-t', 'docx', '--number-sections',
-        str(BUILD / 'article_flat.tex'),
-        '-o', str(SUB / 'paper_a_article.docx')])
-pandoc(['-f', 'latex', '-t', 'docx',
-        str(BUILD / 'si_flat.tex'),
-        '-o', str(SUB / 'paper_a_supplementary.docx')])
+def polish_cover_letter(path):
+    """Apply restrained journal-correspondence typography after pandoc."""
+    doc = Document(path)
+    for section in doc.sections:
+        section.top_margin = Inches(0.70)
+        section.bottom_margin = Inches(0.70)
+        section.left_margin = Inches(0.90)
+        section.right_margin = Inches(0.90)
+    normal = doc.styles['Normal']
+    normal.font.name = 'Times New Roman'
+    normal.font.size = Pt(11)
+    normal.paragraph_format.space_after = Pt(5)
+    normal.paragraph_format.line_spacing = 1.0
+    for paragraph in doc.paragraphs:
+        paragraph.paragraph_format.widow_control = True
+        if paragraph.style.name == 'Captioned Figure':
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            paragraph.paragraph_format.space_before = Pt(1)
+            paragraph.paragraph_format.space_after = Pt(0)
+            paragraph.paragraph_format.keep_with_next = True
+        elif paragraph.style.name == 'Image Caption':
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            paragraph.paragraph_format.space_before = Pt(1)
+            paragraph.paragraph_format.space_after = Pt(4)
+            paragraph.paragraph_format.line_spacing = 1.0
+            paragraph.paragraph_format.keep_together = True
+            for run in paragraph.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(8.5)
+                run.font.italic = True
+    doc.save(path)
+
+
+def polish_article(path):
+    """Keep the dense mass-ladder table legible in the portrait Word file."""
+    doc = Document(path)
+    assert len(doc.tables) == 7, len(doc.tables)
+    tables = doc.tables[4:6]
+    assert [len(table.columns) for table in tables] == [6, 3]
+    assert tables[0].cell(0, 5).text == 'verdict'
+
+    style_name = 'CQG Small Table'
+    if style_name in doc.styles:
+        small = doc.styles[style_name]
+    else:
+        small = doc.styles.add_style(style_name, WD_STYLE_TYPE.PARAGRAPH)
+    small.font.name = 'Times New Roman'
+    small.font.size = Pt(8.5)
+    small.paragraph_format.space_before = Pt(0)
+    small.paragraph_format.space_after = Pt(0)
+    small.paragraph_format.line_spacing = 1.0
+
+    widths_by_table = (
+        (0.65, 0.55, 0.75, 1.20, 1.25, 1.25),
+        (0.75, 1.15, 3.75),
+    )
+    for table, widths in zip(tables, widths_by_table, strict=True):
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        table.autofit = False
+        tbl_pr = table._tbl.tblPr
+        layout = tbl_pr.first_child_found_in('w:tblLayout')
+        if layout is None:
+            layout = OxmlElement('w:tblLayout')
+            tbl_pr.append(layout)
+        layout.set(qn('w:type'), 'fixed')
+        for grid_col, width in zip(table._tbl.tblGrid.gridCol_lst,
+                                   widths, strict=True):
+            grid_col.set(qn('w:w'), str(round(width * 1440)))
+
+        for row in table.rows:
+            for cell, width in zip(row.cells, widths, strict=True):
+                cell.width = Inches(width)
+                cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                tc_pr = cell._tc.get_or_add_tcPr()
+                tc_w = tc_pr.first_child_found_in('w:tcW')
+                if tc_w is None:
+                    tc_w = OxmlElement('w:tcW')
+                    tc_pr.append(tc_w)
+                tc_w.set(qn('w:type'), 'dxa')
+                tc_w.set(qn('w:w'), str(round(width * 1440)))
+                tc_mar = tc_pr.first_child_found_in('w:tcMar')
+                if tc_mar is None:
+                    tc_mar = OxmlElement('w:tcMar')
+                    tc_pr.append(tc_mar)
+                for edge in ('top', 'left', 'bottom', 'right'):
+                    margin = tc_mar.find(qn(f'w:{edge}'))
+                    if margin is None:
+                        margin = OxmlElement(f'w:{edge}')
+                        tc_mar.append(margin)
+                    margin.set(qn('w:w'), '45')
+                    margin.set(qn('w:type'), 'dxa')
+                for paragraph in cell.paragraphs:
+                    paragraph.style = small
+                    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    paragraph.paragraph_format.keep_together = True
+                    for run in paragraph.runs:
+                        run.font.name = 'Times New Roman'
+                        run.font.size = Pt(8.5)
+                # Office Math runs need an explicit size in LibreOffice.
+                for math_run in cell._tc.iter(qn('m:r')):
+                    run_pr = math_run.find(qn('w:rPr'))
+                    if run_pr is None:
+                        run_pr = OxmlElement('w:rPr')
+                        math_pr = math_run.find(qn('m:rPr'))
+                        math_run.insert(1 if math_pr is not None else 0,
+                                        run_pr)
+                    for tag in ('w:sz', 'w:szCs'):
+                        size = run_pr.find(qn(tag))
+                        if size is None:
+                            size = OxmlElement(tag)
+                            run_pr.append(size)
+                        size.set(qn('w:val'), '17')
+    doc.save(path)
+
+
+options = set(sys.argv[1:])
+assert options <= {'--cover-only'}, options
+if '--cover-only' not in options:
+    pandoc(['-f', 'latex', '-t', 'docx', '--number-sections',
+            str(BUILD / 'article_flat.tex'),
+            '-o', str(SUB / 'paper_a_article.docx')])
+    polish_article(SUB / 'paper_a_article.docx')
+    pandoc(['-f', 'latex', '-t', 'docx',
+            str(BUILD / 'si_flat.tex'),
+            '-o', str(SUB / 'paper_a_supplementary.docx')])
 pandoc(['-f', 'markdown', '-t', 'docx',
         str(SUB / 'cover_letter.md'),
         '-o', str(SUB / 'cover_letter.docx')])
+polish_cover_letter(SUB / 'cover_letter.docx')
 print('docx set written to', SUB)

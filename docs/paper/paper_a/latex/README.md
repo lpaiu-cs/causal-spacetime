@@ -36,7 +36,8 @@ preprint face.
   transcribed from `../citations/references.bib` (note fields omitted),
   entry order pinned to first-citation order. Re-derive the order from
   `main.aux` if a `\cite` is added or moved.
-- `figures/make_journal_figures.py` — regenerates all seven PDFs from the
+- `figures/make_journal_figures.py` — regenerates all seven vector PDFs and
+  matching 300 dpi PNGs from the
   same committed inputs the manuscript figures use (`../figures/data/*.csv`
   and `docs/prereg/*.json`); the two new result figures (capstone,
   Schwarzschild) draw the raw per-reading arrays stored inside the frozen

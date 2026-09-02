@@ -11,35 +11,32 @@ Section 6 capstone cites only committed, provenance-locked artifacts
 
 ## Abstract
 
-We study, in controlled 1+1D (and, for dimension, higher-D) Minkowski
-models, which spacetime quantities can be operationally reconstructed from a
-causal (accessibility) order once a minimal, explicitly declared set of
-additional ingredients is supplied, organized as a ladder. Order statistics estimate dimension in flat Poisson-sprinkled
-Alexandrov intervals; supplying a global event density turns interval
-cardinality into a timelike proper-time estimate; an observer chain with
-clock labels yields radar time and unsigned radar distance; an orientation
-reference lifts the reflection degeneracy and recovers the Lorentz map
-between inertial protocols; overlapping charts yield an approximately
-consistent observer atlas; and supplying a global density plus a local
-measure profile replaces the residual position-dependent error floor with
-flat-case, noise-limited error scaling. Three negative results bound the
-ladder: causal order alone fixes no conformal scale, a single observer
-yields only unsigned distance, and finite signal speed alone does not
-produce Lorentzian structure; a Rindler horizon analogue confines radar
-reconstruction to the expected wedge. As a preregistered capstone we
-validate, on a 3+1D vacuum plane wave whose coordinate volume form and
-sprinkling law are exactly flat, that the conformal-class information order
-carries reaches an order-only statistic at finite density — an existence
-result at one deliberately strong operating point, not a sensitivity
-measurement. Separate preregistered stages extend both claim classes to a
-frozen Schwarzschild exterior patch (the paired claim confirmed;
-single-poset discrimination detected with incomplete separation), and a
-prediction-anchored stage finds the certified-membership count of a Poisson
-sprinkling concordant, within a frozen 2.5% band, with an independently
-certified continuum 4-volume on each rung of a four-rung mass ladder, the
-deepest anchored at `r = 4M`. The contribution is the explicit accounting
-of what each reconstruction requires and the negative results that bound
-it; we make no claim that spacetime is reducible to causal order.
+Causal structure fixes conformal geometry, while volume information fixes
+scale under standard hypotheses. We ask what finite causal data can
+operationally reconstruct when each auxiliary ingredient is declared rather
+than left implicit. In controlled 1+1D (and, for dimension, higher-D)
+Minkowski models, we organize the procedures as a branched ladder. Order
+statistics estimate dimension; global event density calibrates proper time
+from interval cardinality; clock labels yield radar time and unsigned
+distance; orientation and overlapping charts recover oriented Lorentz maps
+and an observer atlas; and a local measure profile removes a
+position-dependent volume-error floor. Three counterexamples delimit these
+claims: causal order alone fixes no scale, one observer cannot distinguish a
+spatial reflection, and finite signal speed alone does not imply Lorentzian
+structure; a Rindler analogue confines radar reconstruction to the expected
+wedge. Beyond these flat benchmarks, preregistered 3+1D tests probe the two
+parts of the causal-structure-plus-volume statement. In a vacuum plane wave
+with exactly flat coordinate volume form and sprinkling law, an order-only
+statistic detects a deliberately strong pure-Weyl deformation at finite
+density---an existence result, not a sensitivity measurement. On a frozen
+Schwarzschild exterior patch, separate stages confirm the paired relation
+shift and detect single-poset discrimination with incomplete separation. A
+prediction-anchored stage then finds Poisson counts concordant, within a
+frozen 2.5% band, with independently certified continuum 4-volume at every
+rung of a four-rung mass ladder, the deepest anchored at `r = 4M`. The
+contribution is an auditable dependency ledger that states both what each
+reconstruction requires and where it fails; these controlled validations are
+not evidence that spacetime is discrete or reducible to causal order.
 
 ## 1. Introduction
 
@@ -92,7 +89,8 @@ Roy-Sinha-Surya [@roysinhasurya2013]), and Schwarzschild causal-relation
 algorithms (He-Rideout [@herideout2009]; for sprinkling-and-relations
 tooling more broadly, Cunningham-Krioukov [@cunninghamkrioukov2018]). The
 directed-rounding volume enclosure and the preregistered equivalence gate
-against it (Section 6.8) have no direct prior; the parallel
+against it (Section 6.8) appear to have no direct precedent in that search;
+the parallel
 Alfyorov-Shnyukov estimator [@alfyorov2026weyl] measures Weyl curvature
 from Hasse diagrams and is taken up alongside the capstone's scope in
 Section 6.6.
@@ -716,7 +714,7 @@ executed-freeze manifest snapshots, is in Appendix B.
 The full execution provenance — the preregistration's freeze ordering, its
 mechanical gates, and the commit-ancestry contract — is in Appendix B.
 
-### 6.8 Prediction-anchored Poisson count, and its mass generalization
+### 6.8 Prediction-anchored Poisson counts across a mass ladder
 
 Every verdict so far is anchored operationally: a margin taken from an
 exploration block, or a threshold declared before sizing. This stage is
@@ -1193,10 +1191,9 @@ recorded in the artifact at entry and at exit (`code.start == code.end`,
 clean tree): `c6eb85e` for `mu = 0.1333`, `1575a8e` for `mu = 0.1867`,
 `c421dce` for `mu = 0.2400`, and `ed353d3` for `mu = 0.4000`. The results
 commits `6d3745c`, `cdfd6d9`, `6bcf4e6`, and `ce0030d` added each rung's
-artifact, and each freeze head is an ancestor of its results commit — the
-freeze-before-execution ordering is checked by
-`tests/test_paper_a_count_integration.py` with
-`git merge-base --is-ancestor`, per rung, exactly as for the capstone.
+artifact. `tests/test_paper_a_count_integration.py` verifies each freeze head
+as an ancestor of its result commit with `git merge-base --is-ancestor`, per
+rung.
 
 ## Acknowledgements and disclosure
 
