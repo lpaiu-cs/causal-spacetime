@@ -55,7 +55,11 @@ def audit(frozen, result, raw):
         ],
         cwd=ROOT,
     )
-    assert hashlib.sha256(committed).hexdigest() == result["freeze_sha256"]
+    # Git stores LF; Python's Windows text writer stored CRLF. The recorded raw
+    # SHA above checks the actual input bytes; this separately binds its content
+    # to the pre-data commit without treating newline conversion as new content.
+    working = (DOCUMENTS / "window_response_confirmation_freeze.json").read_bytes()
+    assert committed.replace(b"\r\n", b"\n") == working.replace(b"\r\n", b"\n")
     verified = []
     for i, (design, saved) in enumerate(
         zip(frozen["cells"], result["cells"], strict=True)
