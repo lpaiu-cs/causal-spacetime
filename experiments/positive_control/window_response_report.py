@@ -88,8 +88,8 @@ def audit(frozen, result, raw):
             intervals[1].low - design["prediction"] - design["numeric_error"],
             intervals[1].high - design["prediction"] + design["numeric_error"],
         ]
-        g3 = intervals[0].high <= frozen["FPR_upper"]
-        g4 = min(difference) >= -0.1 and max(difference) <= 0.1
+        g3 = bool(intervals[0].high <= frozen["FPR_upper"])
+        g4 = bool(min(difference) >= -0.1 and max(difference) <= 0.1)
         assert g3 == saved["G3"] and g4 == saved["G4"]
         assert (g3 and intervals[1].low >= 0.8) == saved["detectable"]
         np.testing.assert_allclose(
