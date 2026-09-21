@@ -35,9 +35,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 11499,
-      "sha256": "dcc031cf46cffff48c8a71ff9623b2a8d46e65d5cc9f3e2fd11c7b914e101514",
-      "sha256_lf": "dcc031cf46cffff48c8a71ff9623b2a8d46e65d5cc9f3e2fd11c7b914e101514"
+      "bytes": 12767,
+      "sha256": "5daf349ba7e9784c7d79dcc1736da4a975c325dc71b4afba5443bf6d6fd63b87",
+      "sha256_lf": "5daf349ba7e9784c7d79dcc1736da4a975c325dc71b4afba5443bf6d6fd63b87"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -56,6 +56,12 @@
       "bytes": 18832,
       "sha256": "507406e95b37add313cae29dc1bba76fdbbb500a9f08f1b3ccdfef9e6e2041fd",
       "sha256_lf": "507406e95b37add313cae29dc1bba76fdbbb500a9f08f1b3ccdfef9e6e2041fd"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/check_vacuum_generalization.py",
+      "bytes": 16886,
+      "sha256": "07b471b3f9fdaf4e9ed2697145150aa5f7e78108319018ac2e6d2958dcda8121",
+      "sha256_lf": "07b471b3f9fdaf4e9ed2697145150aa5f7e78108319018ac2e6d2958dcda8121"
     },
     {
       "path": "docs/paper/paper_a/window_response/derive_exact.py",
@@ -98,10 +104,22 @@
       "sha256": "16e6167c88538a7931ffd4ee8a9f795105c6835d4afaf2aab49a3210b1516bdf"
     },
     {
+      "path": "docs/paper/paper_a/window_response/vacuum_generalization_audit.json",
+      "bytes": 5618,
+      "sha256": "addfdf17a0383ab5ef60e92dcc02c50b724d0ed7c9375ace7085599f0b1fabcc",
+      "sha256_lf": "addfdf17a0383ab5ef60e92dcc02c50b724d0ed7c9375ace7085599f0b1fabcc"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/vacuum_generalization_derivation.md",
+      "bytes": 19057,
+      "sha256": "c637abab1b4e4e12f869f048e6158b642f63981f0a3673721aa8c415c171dc13",
+      "sha256_lf": "c637abab1b4e4e12f869f048e6158b642f63981f0a3673721aa8c415c171dc13"
+    },
+    {
       "path": "docs/paper/paper_a/window_response/volume_discrepancy_derivation.md",
-      "bytes": 12959,
-      "sha256": "21540bcbc207a7b64bd71219a92c72dd4e98e3963c9b4a19de48e6e5bda6f709",
-      "sha256_lf": "21540bcbc207a7b64bd71219a92c72dd4e98e3963c9b4a19de48e6e5bda6f709"
+      "bytes": 13393,
+      "sha256": "9c4e42d31d85c1c4dfb8b5750b7eb01360218dbd86a7a6cf3304b0583c2ce7e5",
+      "sha256_lf": "9c4e42d31d85c1c4dfb8b5750b7eb01360218dbd86a7a6cf3304b0583c2ce7e5"
     },
     {
       "path": "docs/paper/paper_a/window_response_confirmation_freeze.json",
@@ -204,5 +222,5 @@
       "sha256_lf": "7cd4748832911bdc4181a0583a355ad01c182cc1b81134fbead3b4f425181731"
     }
   ],
-  "packaging_note": "Equation-level literature audit and manuscript revision; frozen campaign inputs and results unchanged. New post-study geometric audit binds its script hash. pyproject remains unchanged from legacy manifests."
+  "packaging_note": "Post-study literature audit, source-equation trace, and general local vacuum-volume derivation with independent Kasner and varying-plane-wave checks. Frozen campaign inputs and results unchanged. Both deterministic geometric audit outputs bind their source hashes. The manuscript PDF predates the two derivation addenda. pyproject remains unchanged from legacy manifests."
 }

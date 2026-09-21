@@ -374,3 +374,9 @@ python docs/paper/paper_a/window_response/check_diamond_geometry.py
 정정문 수용이 완료된 결과로 표현하지 않는다. 현재 원고 PDF와 기존 9월 22일
 bundle은 이 상세 추적 전의 버전이며, 이 문서와 검산 출력이 후속 검토 기록이다.
 기존 동결 예측, 확인실험 자료와 정식 판정은 바꾸지 않았다.
+
+후속 [일반화 유도](vacuum_generalization_derivation.md)는 이 문서가 입력으로
+삼은 경계를 Jacobi 방정식과 지오데식 작용에서 직접 다시 구하고, 곡률 미분항과
+두 null 경계의 접합부를 검토했다. 별도의 Kasner·비상수 평면파 계산 및
+우주상수 확장도 그 기록에 있다. 여기의 조건부 중간식 추적과 후속 일반 유도를
+구분해 읽어야 한다.

@@ -1,0 +1,276 @@
+{
+  "kind": "Post-study deterministic derivation audit; not peer review",
+  "date": "2026-09-22",
+  "python": "3.11.9",
+  "sympy": "1.14.0",
+  "source_sha256_lf": "07b471b3f9fdaf4e9ed2697145150aa5f7e78108319018ac2e6d2958dcda8121",
+  "scope": "Local small diamonds, fixed central timelike unit vector, smooth Ricci-flat neighborhood; Einstein extension stated separately",
+  "jacobi_and_action": {
+    "metric_series": "-K0*eps**2/3 - K1*eps**3/6 + eps**4*(2*K0**2/45 - K2/20) + 1",
+    "curvature_squared_action": "2*AA/45 + 2*AV/45 - VV/45",
+    "vacuum_measure_K_squared": "-1/180"
+  },
+  "algebraic_tensor_checks": [
+    {
+      "dimension": 4,
+      "channel_weights": [
+        1,
+        0,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "14",
+        "0",
+        "56"
+      ],
+      "relative_l4": "17/45",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 4,
+      "channel_weights": [
+        0,
+        1,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "0",
+        "20",
+        "0"
+      ],
+      "relative_l4": "1/21",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 4,
+      "channel_weights": [
+        1,
+        2,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "14",
+        "80",
+        "56"
+      ],
+      "relative_l4": "179/315",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 5,
+      "channel_weights": [
+        1,
+        0,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "14",
+        "0",
+        "28"
+      ],
+      "relative_l4": "175/432",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 5,
+      "channel_weights": [
+        0,
+        1,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "0",
+        "20",
+        "0"
+      ],
+      "relative_l4": "55/1296",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 5,
+      "channel_weights": [
+        1,
+        2,
+        3
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "14",
+        "80",
+        "1036"
+      ],
+      "relative_l4": "619/1296",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 5,
+      "channel_weights": [
+        0,
+        0,
+        1
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "0",
+        "0",
+        "112"
+      ],
+      "relative_l4": "-7/648",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 6,
+      "channel_weights": [
+        1,
+        0,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "14",
+        "0",
+        "56/3"
+      ],
+      "relative_l4": "286/675",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 6,
+      "channel_weights": [
+        0,
+        1,
+        0
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "0",
+        "20",
+        "0"
+      ],
+      "relative_l4": "4/105",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 6,
+      "channel_weights": [
+        1,
+        2,
+        3
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "14",
+        "80",
+        "3080/3"
+      ],
+      "relative_l4": "2344/4725",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 6,
+      "channel_weights": [
+        0,
+        0,
+        1
+      ],
+      "constant_sectional_curvature": "0",
+      "E2_H2_D2": [
+        "0",
+        "0",
+        "112"
+      ],
+      "relative_l4": "-2/225",
+      "relative_l2": "0"
+    },
+    {
+      "dimension": 4,
+      "channel_weights": [
+        1,
+        2,
+        0
+      ],
+      "constant_sectional_curvature": "kappa",
+      "E2_H2_D2": [
+        "14",
+        "80",
+        "56"
+      ],
+      "relative_l4": "(231*kappa**2 + 358)/630",
+      "relative_l2": "-2*kappa/3"
+    },
+    {
+      "dimension": 5,
+      "channel_weights": [
+        1,
+        2,
+        0
+      ],
+      "constant_sectional_curvature": "kappa",
+      "E2_H2_D2": [
+        "14",
+        "80",
+        "28"
+      ],
+      "relative_l4": "(864*kappa**2 + 745)/1296",
+      "relative_l2": "-20*kappa/21"
+    }
+  ],
+  "independent_Kasner": [
+    {
+      "Kasner_exponents": [
+        "1",
+        "0",
+        "0"
+      ],
+      "E2": "0",
+      "direct_relative_l2": "0",
+      "direct_relative_l4": "0",
+      "predicted_relative_l4": "0",
+      "method": "null eikonal and moving edge in original Kasner coordinates"
+    },
+    {
+      "Kasner_exponents": [
+        "-1/3",
+        "2/3",
+        "2/3"
+      ],
+      "E2": "8/27",
+      "direct_relative_l2": "0",
+      "direct_relative_l4": "68/8505",
+      "predicted_relative_l4": "68/8505",
+      "method": "null eikonal and moving edge in original Kasner coordinates"
+    },
+    {
+      "Kasner_exponents": [
+        "-2/7",
+        "3/7",
+        "6/7"
+      ],
+      "E2": "72/343",
+      "direct_relative_l2": "0",
+      "direct_relative_l4": "68/12005",
+      "predicted_relative_l4": "68/12005",
+      "method": "null eikonal and moving edge in original Kasner coordinates"
+    }
+  ],
+  "constant_curvature": {
+    "spatial_dimension": "m=d-1",
+    "kappa_l2": "-m*(m + 1)/(3*(m + 3))",
+    "kappa2_l4": "m*(m + 1)*(5*m + 7)/(90*(m + 5))",
+    "four_dimensional": {
+      "kappa_l2": "-2/3",
+      "kappa2_l4": "11/30"
+    }
+  },
+  "varying_profile_plane_wave": {
+    "profile": "A(u)=a0+a1*u+a2*u^2",
+    "relative_l4": "a0**2/63",
+    "linear_curvature_derivative_terms": "cancel in the propagator product"
+  },
+  "elapsed_seconds": 4.439
+}
