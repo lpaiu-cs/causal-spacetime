@@ -252,7 +252,7 @@ def quadrature_replicates(
     result = []
     for rep in range(reps):
         engine = qmc.Sobol(
-            9, scramble=True, bits=52, rng=np.random.default_rng([seed, rep])
+            9, scramble=True, bits=52, rng=np.random.default_rng([*seed, rep])
         )
         values = engine.random_base2(power)
         # Chunking retains every Sobol point and keeps memory bounded.
