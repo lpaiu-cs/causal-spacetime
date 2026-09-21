@@ -154,3 +154,25 @@ def test_propagated_probability_interval_contains_parameter_box():
         for z in np.linspace(0.0005, 0.0007, 7):
             value = predict({"p": p, "zeta": z}, 300, bounds)
             assert interval[0] <= value <= interval[1]
+
+
+def test_confirmation_scores_interval_not_point_and_includes_forecast_error():
+    from window_response_confirm import ALPHA, score_cell
+
+    cell = {
+        "region": "R+",
+        "N": 300,
+        "A": 0.125,
+        "prediction": 0.5,
+        "numeric_error": 0.0,
+        "threshold": [-0.1, 0.5],
+    }
+    frozen = {"per_interval_alpha": ALPHA, "FPR_upper": 0.05, "accuracy_tolerance": 0.1}
+    for m, expected in ((80, False), (3200, True)):
+        raw = np.zeros((2, m, 3))
+        raw[1, : m // 2, 0] = 1
+        result = score_cell(cell, raw, frozen)
+        assert result["curved"]["rate"] == cell["prediction"]
+        assert result["G4"] is expected
+    cell["numeric_error"] = 0.09
+    assert not score_cell(cell, raw, frozen)["G4"]

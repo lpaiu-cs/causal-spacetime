@@ -7,12 +7,13 @@ import concurrent.futures
 import hashlib
 import json
 import math
+import subprocess
 import time
 
 import numpy as np
 import window_response as wr
 from scipy.stats import beta, binom, norm, t
-from window_response_g1 import clean_stamp
+from window_response_g1 import ROOT, clean_stamp
 from window_response_run import DOCUMENTS, predict, summarize, threshold, variance
 
 ALPHA = 0.05 / 16
@@ -346,8 +347,144 @@ def freeze_forecasts():
     )
 
 
+def confirmation_worker(task):
+    cell_index, cell, arm, start, stop = task
+    ri, ni = cell_index // 2, cell_index % 2
+    amplitude = cell["A"] if arm else 0.0
+    started = time.process_time()
+    rows = []
+    for rep in range(start, stop):
+        rng = np.random.default_rng([20260921, 6401, ri, ni, arm, rep])
+        points = wr.sample_points(cell["region"], amplitude, cell["N"], rng)
+        values = wr.statistics(points, amplitude)
+        rows.append([values["f"], values["chain3"], values["escalations"]])
+    return cell_index, arm, start, np.array(rows), time.process_time() - started
+
+
+def score_cell(cell, raw, frozen):
+    result = {k: cell[k] for k in ("region", "N", "A", "prediction", "numeric_error")}
+    lo, hi = cell["threshold"]
+    for arm, label in enumerate(("flat", "curved")):
+        values = raw[arm, :, 0]
+        hits = int(((values < lo) | (values > hi)).sum())
+        interval = cp(hits, len(values), frozen["per_interval_alpha"])
+        result[label] = {
+            "hits": hits,
+            "m": len(values),
+            "rate": hits / len(values),
+            "CP_interval": interval,
+            "f_mean": float(values.mean()),
+            "f_SD": float(values.std(ddof=1)),
+            "chain3_mean": float(raw[arm, :, 1].mean()),
+            "escalations": int(raw[arm, :, 2].sum()),
+        }
+    result["G3"] = result["flat"]["CP_interval"][1] <= frozen["FPR_upper"]
+    observed = result["curved"]["CP_interval"]
+    error, forecast = cell["numeric_error"], cell["prediction"]
+    difference = [observed[0] - forecast - error, observed[1] - forecast + error]
+    result["difference_interval"] = difference
+    margin = frozen["accuracy_tolerance"]
+    result["G4"] = difference[0] >= -margin and difference[1] <= margin
+    result["detectable"] = result["G3"] and observed[0] >= 0.8
+    return result
+
+
+def run_confirmation():
+    stamp = clean_stamp()
+    frozen = json.loads(FREEZE.read_text(encoding="utf-8"))
+    if frozen["G2"] != "FEASIBLE":
+        raise RuntimeError("confirmation forbidden: G2 is not feasible")
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", frozen["code_version"], stamp],
+        cwd=ROOT,
+        check=True,
+    )
+    for stage in ("grid", "pilot"):
+        if read_stage(stage)[1] != frozen[stage + "_sha256"]:
+            raise RuntimeError(f"{stage} artifact changed after forecast freeze")
+    output = DOCUMENTS / "window_response_confirmation_results.json"
+    raw_path = DOCUMENTS / "window_response_confirmation_raw.npz"
+    if output.exists() or raw_path.exists():
+        raise FileExistsError("confirmation output already exists")
+    m = frozen["m_per_cell"]
+    if m is None or len(frozen["cells"]) != 8:
+        raise ValueError("incomplete confirmation design")
+    raw = np.full((8, 2, m, 3), np.nan)
+    tasks = [
+        (i, cell, arm, start, min(start + 200, m))
+        for i, cell in enumerate(frozen["cells"])
+        for arm in (0, 1)
+        for start in range(0, m, 200)
+    ]
+    began, cpu = time.perf_counter(), 0.0
+    with concurrent.futures.ProcessPoolExecutor(max_workers=8) as pool:
+        pending = [pool.submit(confirmation_worker, task) for task in tasks]
+        for finished, future in enumerate(concurrent.futures.as_completed(pending), 1):
+            i, arm, start, values, seconds = future.result()
+            raw[i, arm, start : start + len(values)] = values
+            cpu += seconds
+            if cpu > 48 * 3600:
+                raise RuntimeError("confirmation CPU cap exceeded; no verdict")
+            if finished % 16 == 0:
+                # Only completion/cost are exposed while the frozen run is in flight.
+                print(
+                    json.dumps(
+                        {
+                            "completed_blocks": finished,
+                            "total_blocks": len(tasks),
+                            "cpu_seconds": round(cpu, 2),
+                        }
+                    ),
+                    flush=True,
+                )
+    if not np.isfinite(raw).all():
+        raise ArithmeticError("missing/nonfinite raw data; no verdict")
+    np.savez_compressed(raw_path, values=raw)
+    results = [
+        score_cell(cell, raw[i], frozen) for i, cell in enumerate(frozen["cells"])
+    ]
+    result = {
+        "code_version": stamp,
+        "freeze_sha256": hashlib.sha256(FREEZE.read_bytes()).hexdigest(),
+        "raw_sha256": hashlib.sha256(raw_path.read_bytes()).hexdigest(),
+        "raw_axes": [
+            "curved_design_cell",
+            "arm:flat,curved",
+            "replicate",
+            "f,chain3,escalations",
+        ],
+        "m_per_arm_per_cell": m,
+        "total_posets": 16 * m,
+        "wall_seconds": time.perf_counter() - began,
+        "cpu_seconds": cpu,
+        "cells": results,
+        "G3_all": all(r["G3"] for r in results),
+        "G4_all": all(r["G4"] for r in results),
+    }
+    result["verdict"] = (
+        "PREDICTIONS_SUPPORTED"
+        if result["G3_all"] and result["G4_all"]
+        else "PRIMARY_GATE_NOT_MET"
+    )
+    output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    print(
+        json.dumps(
+            {
+                "verdict": result["verdict"],
+                "total_posets": 16 * m,
+                "cpu_seconds": cpu,
+                "wall_seconds": result["wall_seconds"],
+            }
+        ),
+        flush=True,
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("stage", choices=("freeze",))
-    parser.parse_args()
-    freeze_forecasts()
+    parser.add_argument("stage", choices=("freeze", "confirm"))
+    options = parser.parse_args()
+    if options.stage == "freeze":
+        freeze_forecasts()
+    else:
+        run_confirmation()
