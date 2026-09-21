@@ -143,6 +143,35 @@ def diamond_slice(u, amplitude: float):
     return np.where((u > 0) & (u < 1), math.pi / (2 * np.sqrt(bx * by)), 0)
 
 
+def diamond_moments(amplitude: float, order: int = 64):
+    """One/two-dimensional integrals from interval volumes; independent of QMC."""
+    if not 0 <= amplitude <= 2:
+        raise ValueError("study amplitude outside [0,2]")
+    nodes, weights = np.polynomial.legendre.leggauss(order)
+    u, weights = (nodes + 1) / 2, weights / 2
+    w = math.sqrt(amplitude)
+
+    def factor(z):
+        return np.sinc(z / math.pi) * np.where(
+            z == 0, 1.0, np.sinh(z) / np.where(z == 0, 1.0, z)
+        )
+
+    def j(s):
+        z = w * np.asarray(s)[..., None]
+        values = (
+            2 * u * (1 - u) * np.sqrt(factor(z * u) * factor(z * (1 - u)) / factor(z))
+        )
+        return np.asarray(s) ** 2 * np.sum(values * weights, axis=-1)
+
+    j1, ju, jv = float(j(1.0)), j(u), j(1 - u)
+    density = 2 / math.pi * diamond_slice(u, amplitude)
+    p = float(np.sum(weights * density * (ju + jv)) / (6 * j1 * j1))
+    both = float(
+        np.sum(weights * density * ((ju * ju + jv * jv) / 15 + ju * jv / 45)) / j1**3
+    )
+    return {"p": p, "zeta": both - p * p, "volume": math.pi * j1 / 2}
+
+
 @functools.lru_cache(maxsize=32)
 def diamond_cdf(amplitude: float, grid: int = 4097):
     u = np.linspace(0, 1, grid)

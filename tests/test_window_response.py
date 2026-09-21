@@ -90,3 +90,24 @@ def test_invalid_inputs_and_degenerate_small_poset():
     points = np.array([[0.2, 0.2, 0, 0], [0.2, 0.1, 1, 0], [0.2, 0, 0, 0]])
     matrix, count = wr.order_matrix(points, 1)
     assert count == 3 and matrix[0, 2] and not matrix[0, 1] and not matrix[1, 2]
+
+
+def test_diamond_conditional_degree_integrals():
+    import math
+
+    flat = wr.diamond_moments(0)
+    np.testing.assert_allclose(
+        [flat["p"], flat["zeta"], flat["volume"]],
+        [0.1, 0.01, math.pi / 6],
+        rtol=0,
+        atol=1e-14,
+    )
+    for amplitude in (0.015625, 0.25, 1, 2):
+        coarse = wr.diamond_moments(amplitude, 32)
+        fine = wr.diamond_moments(amplitude, 64)
+        np.testing.assert_allclose(
+            list(coarse.values()), list(fine.values()), rtol=0, atol=1e-13
+        )
+        assert abs(fine["volume"] - wr.diamond_cdf(amplitude)[1]) < 1e-11
+    small = wr.diamond_moments(1 / 64)
+    assert abs((small["p"] - 0.1) / (1 / 64) ** 2 + 23 / 75600) < 1e-8

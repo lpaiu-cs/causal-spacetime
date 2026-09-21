@@ -163,6 +163,62 @@ that discretization error is recorded separately from scramble uncertainty.
 This geometrically defined population is not discovered from an arbitrary
 unlabelled poset. No coordinate eligibility filter is silently added to f_N.
 
+### 4.1 Further analytic reduction, derived during G1/development
+
+This reduction was derived after the first grid integration but before any pilot
+or confirmation posets. It is an analytic calculation, not a fit to that grid.
+For a general interval with u-separation s set `l=-Delta v-C_A(p,q)` and
+`J(s)=integral_0^s 1/sqrt(Bx(t;s) By(t;s)) dt`. Completing the two transverse
+action quadratics about the classical path gives its exact volume
+`V(p,q)=pi*l²*J(s)/2`. The shifted ellipse has coefficients Bx,By independent
+of the endpoints, so no additional homogeneity assumption is needed.
+
+For a point X in the main diamond let L=v_high-v_low and z=(v-v_low)/L.
+Its conditional probability of relation to an independent point is therefore
+
+```text
+q(X) = L² [J(u)(1-z)² + J(1-u)z²] / J(1).
+```
+
+Conditional on u, z is uniform and L has density 2L on [0,1]. In particular
+`E[L²]=1/2`, `E[L^4]=1/3`, `E[z²]=1/3`, `E[z^4]=1/5`,
+`E[z²(1-z)²]=1/30`. Writing S(u)=1/sqrt(Bx(u;1)By(u;1)), we obtain
+
+```text
+p_D = integral S(u)[J(u)+J(1-u)] du / [6 J(1)²]
+E[q²] = integral S(u){[J(u)²+J(1-u)²]/15 + J(u)J(1-u)/45} du / J(1)³
+zeta_D = E[q²]-p_D².
+```
+
+These are one/two-dimensional smooth integrals for the full finite-A mean and
+variance coefficient. They are independent checks on the nine-dimensional QMC
+calculation. The flat values are `J(s)=s²/3`, p=1/10, E[q²]=1/50, zeta=1/100.
+
+Using `sin(z)sinh(z)/z²=1-z^4/90+O(z^8)` gives
+
+```text
+J(s) = s²/3 [1 + A²s^4/252 + O(A^4)]
+S(u) = 2u(1-u)[1 + A²(1-u^4-(1-u)^4)/180 + O(A^4)]
+p_D(A) = 1/10 - (23/75600) A² + O(A^4)
+zeta_D(A) = 1/100 - (211/4158000) A² + O(A^4).
+```
+
+Here analyticity in A² follows from the displayed sine/sinh functions and their
+positive denominator before the conjugate point; it is not inferred from parity
+alone. Thus the diamond coefficient is negative, about -0.000304232804233,
+whereas the equal-volume square box coefficient is positive, about 0.00572728722.
+The populations have different volumes and densities at fixed N; the sign
+contrast belongs to the declared observation protocols, not to a frame-free
+local scalar-curvature estimator. Higher-order chains or the full order may
+contain information that this one statistic fails to use.
+
+The new `diamond_moments` integrates these formulas and is checked at 32/64
+Gauss nodes, against the flat rational values and the independent slice volume.
+Finite-node agreement is numerical evidence, not an interval-arithmetic proof.
+For final forecasts, retain the prespecified QMC uncertainty analysis; these
+low-dimensional values serve as independent validation, not as an excuse to
+report zero numerical uncertainty at nonzero A.
+
 ## 5. G1 checks fixed before running them
 
 Development streams use namespace `[20260921, 6101, ...]`. Later quadrature,
