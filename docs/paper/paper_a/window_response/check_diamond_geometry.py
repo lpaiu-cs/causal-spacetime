@@ -2,7 +2,7 @@
 
 Requires SymPy (and its mpmath dependency). Recomputes the interval-volume
 coefficient in Brinkmann and Riemann normal coordinates, contracts curvature
-from the metric, and compares Wang arXiv:1904.01034v2, equation (79).
+from the metric, and traces Wang arXiv:1904.01034v2, equations (74)--(79).
 This is a deterministic mathematical check, not a new confirmatory campaign.
 """
 
@@ -126,20 +126,34 @@ def curvature_invariants():
     }
 
 
+def angular_average(expression, directions):
+    """Exact normalized polynomial average on the unit two-sphere."""
+    value = 0
+    for powers, coefficient in sp.Poly(sp.expand(expression), directions).terms():
+        if any(power % 2 for power in powers):
+            continue
+        moment = sp.prod(sp.factorial2(power - 1) for power in powers)
+        value += coefficient * moment / sp.factorial2(sum(powers) + 1)
+    return sp.simplify(value)
+
+
+def tidal_contraction(component, point):
+    """K_ab K^ab with the Lorentzian metric diag(-1,1,1,1)."""
+    signs = (-1, 1, 1, 1)
+    result = 0
+    for i, j in itertools.product(range(4), repeat=2):
+        tidal = sum(
+            component(i, k, j, m) * point[k] * point[m]
+            for k, m in itertools.product(range(4), repeat=2)
+        )
+        result += signs[i] * signs[j] * tidal**2
+    return sp.expand(result)
+
+
 def reintegrate_wang(component, amplitude):
     """Directly specialize Eqs. (74),(76), separately from final Eq. (79)."""
     t, radius = sp.symbols("t r", real=True)
     directions = sp.symbols("nx ny nz", real=True)
-
-    def angular_average(expression):
-        value = 0
-        for powers, coefficient in sp.Poly(sp.expand(expression), directions).terms():
-            if any(power % 2 for power in powers):
-                continue
-            moment = sp.prod(sp.factorial2(power - 1) for power in powers)
-            value += coefficient * moment / sp.factorial2(sum(powers) + 1)
-        return sp.simplify(value)
-
     electric = sp.Matrix(3, 3, lambda i, j: component(0, i + 1, 0, j + 1))
     n = sp.Matrix(directions)
     enn = (n.T * electric * n)[0]
@@ -154,26 +168,185 @@ def reintegrate_wang(component, amplitude):
     )
     b1 = enn / 6
     b2 = enn**2 / 24 - e2nn * t / 45 + (1 - t) ** 2 * (e2nn + hh - enn**2) / 90
-    boundary = (1 - t) ** 3 * angular_average(b2 + b1**2)
+    boundary = (1 - t) ** 3 * angular_average(b2 + b1**2, directions)
     point = (t, *(radius * direction for direction in directions))
-    signs = (-1, 1, 1, 1)
-    contraction = 0
-    for i, j in itertools.product(range(4), repeat=2):
-        tidal = sum(
-            component(i, k, j, m) * point[k] * point[m]
-            for k, m in itertools.product(range(4), repeat=2)
-        )
-        contraction += signs[i] * signs[j] * tidal**2
+    contraction = tidal_contraction(component, point)
     assert (
         sp.simplify(contraction - amplitude**2 * (t + radius * directions[2]) ** 4 / 2)
         == 0
     )
     measure = -sp.integrate(
-        radius**2 * angular_average(contraction) / 180, (radius, 0, 1 - t)
+        radius**2 * angular_average(contraction, directions) / 180,
+        (radius, 0, 1 - t),
     )
     result = sp.simplify(3 * sp.integrate(boundary + measure, (t, 0, 1)) / amplitude**2)
     assert result == sp.Rational(1, 252)
     return result
+
+
+def check_wang_tensor_expansion():
+    """Check Eq. (77) with electric and magnetic strengths varied independently.
+
+    This is an algebraic Weyl tensor at a point, not another spacetime solution.
+    The six-by-six representation enforces pair antisymmetry and pair exchange.
+    """
+    e, b, t, r = sp.symbols("e b t r", real=True)
+    directions = sp.symbols("nx ny nz", real=True)
+    n = sp.Matrix(directions)
+    electric = e * sp.diag(1, 2, -3)
+    magnetic = b * sp.Matrix([[0, 1, 0], [1, 0, 2], [0, 2, 0]])
+    blocks = electric.row_join(magnetic).col_join(magnetic.row_join(-electric))
+    pairs = [(0, 1), (0, 2), (0, 3), (2, 3), (3, 1), (1, 2)]
+    lookup = {}
+    for index, (i, j) in enumerate(pairs):
+        lookup[i, j] = (index, 1)
+        lookup[j, i] = (index, -1)
+
+    def component(i, j, k, m):
+        if i == j or k == m:
+            return sp.S.Zero
+        p, sign = lookup[i, j]
+        q, other_sign = lookup[k, m]
+        return sign * other_sign * blocks[p, q]
+
+    for i, j, k, m in itertools.product(range(4), repeat=4):
+        assert (
+            component(i, j, k, m) + component(i, k, m, j) + component(i, m, j, k) == 0
+        )
+    for i, j in itertools.product(range(4), repeat=2):
+        assert sum((-1 if k == 0 else 1) * component(k, i, k, j) for k in range(4)) == 0
+
+    def h(i, j, k):
+        return component(0, i + 1, j + 1, k + 1)
+
+    def d(i, j, k, m):
+        return component(i + 1, j + 1, k + 1, m + 1)
+
+    e2 = sum(entry**2 for entry in electric)
+    h2 = sum(h(*indices) ** 2 for indices in itertools.product(range(3), repeat=3))
+    d2 = sum(d(*indices) ** 2 for indices in itertools.product(range(3), repeat=4))
+    q76 = tidal_contraction(
+        component, (t, *(r * direction for direction in directions))
+    )
+    q77 = e2 * t**4
+    electric_square = electric * electric
+    # Literal transcription of the angular-even terms printed in Eq. (77).
+    for i, j in itertools.product(range(3), repeat=2):
+        coefficient = 2 * electric_square[i, j] + sum(
+            2 * electric[m, k] * d(m, i, k, j)
+            + 2 * h(m, i, k) * (h(m, j, k) + h(k, j, m))
+            for m, k in itertools.product(range(3), repeat=2)
+        )
+        q77 += coefficient * n[i] * n[j] * r**2 * t**2
+    for i, j, m, k in itertools.product(range(3), repeat=4):
+        coefficient = (
+            electric[i, j] * electric[m, k]
+            - 2 * sum(h(i, a, j) * h(m, a, k) for a in range(3))
+            + sum(
+                d(a, i, c, j) * d(a, m, c, k)
+                for a, c in itertools.product(range(3), repeat=2)
+            )
+        )
+        q77 += coefficient * n[i] * n[j] * n[m] * n[k] * r**4
+    even76 = (q76 + q76.subs({direction: -direction for direction in directions})) / 2
+    difference = 4 * t**2 * r**2 * (n.T * electric_square * n)[0]
+    assert sp.expand(q77 - even76 - difference) == 0
+    average = angular_average(q76, directions)
+    expected = (
+        e2 * t**4
+        + h2 * t**2 * r**2
+        + (3 * e2 - 3 * h2 + sp.Rational(3, 2) * d2) * r**4 / 15
+    )
+    assert sp.expand(average - expected) == 0
+    return {
+        "scope": "4D algebraic Weyl tensor; two independent symbolic strengths",
+        "E_squared": str(e2),
+        "H_squared": str(h2),
+        "D_squared": str(d2),
+        "Eq77_minus_even_Eq76": str(sp.factor(difference)),
+        "angular_average_Eq76": str(sp.expand(average)),
+    }
+
+
+def trace_wang_volume():
+    """Integrate the displayed boundary and measure, keeping E2/H2/D2 separate.
+
+    Dimension-polynomial identities are algebraic consequences of those inputs;
+    this does not independently prove all of the source's boundary omissions.
+    """
+    m, d = sp.symbols("m d", positive=True, integer=True)
+    e2, h2, d2 = sp.symbols("E2 H2 D2")
+
+    def time_integral(time_power, radial_power):
+        # Integral_0^1 t^a (1-t)^b dt, integer a >= 0 and symbolic b.
+        return sp.factorial(time_power) / sp.prod(
+            radial_power + j for j in range(1, time_power + 2)
+        )
+
+    boundary = (
+        e2 * time_integral(0, m) / (36 * m)
+        - e2 * time_integral(1, m) / (45 * m)
+        + (m * e2 + sp.Rational(3, 2) * h2)
+        * time_integral(0, m + 2)
+        / (90 * m * (m + 2))
+    )
+    measure = (
+        e2 * time_integral(4, m) / m
+        + 3 * h2 * time_integral(2, m + 2) / (m * (m + 2))
+        + (3 * e2 - 3 * h2 + sp.Rational(3, 2) * d2)
+        * time_integral(0, m + 4)
+        / (m * (m + 2) * (m + 4))
+    )
+    measure_excess77 = 4 * e2 * time_integral(2, m + 2) / (m * (m + 2))
+    denominator = 90 * (d - 1) * (d + 1) * (d + 2) * (d + 3) * (d + 4)
+    p76 = sp.cancel(denominator * (2 * boundary - measure / 90).subs(m, d - 1))
+    p77 = sp.cancel(p76 - denominator * (measure_excess77 / 90).subs(m, d - 1))
+    p79 = (
+        (7 * d**3 + 58 * d**2 + 146 * d + 108) * e2
+        + 6 * (d + 2) * (d + 6) * h2
+        - sp.Rational(3, 2) * (d + 2) * d2
+    )
+    assert (
+        sp.expand(
+            p76
+            - (
+                (7 * d**3 + 58 * d**2 + 146 * d + 116) * e2
+                + 3 * (d + 2) * (d + 6) * h2
+                - sp.Rational(3, 2) * (d + 2) * d2
+            )
+        )
+        == 0
+    )
+    assert sp.expand(p77 - p76 + 8 * e2) == 0
+    assert sp.expand(p79 - p77 - 3 * (d + 2) * (d + 6) * h2) == 0
+    # V0=Omega*l^4/6, delta V=Omega*l^8*P/denominator, l^4=1/4.
+    relative = [
+        sp.simplify(
+            (sp.Rational(3, 2) * p / denominator).subs(
+                {d: 4, e2: sp.Rational(1, 2), h2: 1, d2: 2}
+            )
+        )
+        for p in (p76, p77, p79)
+    ]
+    assert relative == [
+        sp.Rational(1, 252),
+        sp.Rational(299, 75600),
+        sp.Rational(43, 9450),
+    ]
+    return {
+        "denominator": str(denominator),
+        "reintegrated_74_76_numerator": str(sp.collect(sp.expand(p76), (e2, h2, d2))),
+        "reintegrated_74_77_minus_74_76": str(sp.expand(p77 - p76)),
+        "printed_79_minus_reintegrated_74_77": str(sp.factor(p79 - p77)),
+        "plane_wave_relative_A2": {
+            "74_76": str(relative[0]),
+            "74_77": str(relative[1]),
+            "79": str(relative[2]),
+            "electric_sign_effect": str(relative[1] - relative[0]),
+            "magnetic_factor_effect": str(relative[2] - relative[1]),
+            "total_difference": str(relative[2] - relative[0]),
+        },
+    }
 
 
 def independent_volume_expansions():
@@ -306,12 +479,16 @@ if __name__ == "__main__":
                     Path(__file__).read_bytes().replace(b"\r\n", b"\n")
                 ).hexdigest(),
                 "curvature": curvature_invariants(),
+                "tensor_expansion_76_to_77": check_wang_tensor_expansion(),
+                "volume_coefficient_trace": trace_wang_volume(),
                 "volume": independent_volume_expansions(),
                 "high_precision": high_precision_volume(),
                 "dimension": mean_inverted_dimension(),
                 "literature_status": (
-                    "Disagreement with arXiv:1904.01034v2 Eq. (79); "
-                    "no general correction derived"
+                    "Traced arXiv:1904.01034v2 Eq. (76) to (77) electric sign "
+                    "and (74),(77) to (79) magnetic factor; reintegrated "
+                    "dimension polynomial is conditional on displayed inputs, "
+                    "not an independently proved general vacuum-volume theorem"
                 ),
             },
             indent=2,

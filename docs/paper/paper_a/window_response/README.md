@@ -17,6 +17,16 @@ its final expression gives `43/9450` under the same conventions. See the
 or independent human adjudication is claimed. These additions are after the
 campaign; they did not change its data, forecasts or formal verdict.
 
+The subsequent [direct volume derivation](volume_discrepancy_derivation.md)
+traces the discrepancy to an electric-term sign in Eq. (76) to (77) and a
+magnetic-term factor of two between the displayed intermediate formulas and
+Eq. (79). It includes the angular averages, boundary and measure integrals,
+and a dimension-polynomial reintegration conditional on those inputs.
+The check script and its JSON output now reproduce this trace and check a
+Weyl tensor with independently varied electric and magnetic strengths.
+The manuscript PDF predates this detailed trace; the addendum does not claim
+an independently established general vacuum-volume theorem.
+
 ## Result and population
 
 The primary result is `PREDICTIONS_SUPPORTED`: all eight false-positive gates
@@ -50,6 +60,7 @@ review commits. Nothing in the frozen history was amended, rebased or squashed.
 | `window_response/analysis.json` | `498e78e`; independent recomputation, descriptive secondary comparisons and timing |
 | `window_response/derive_exact.py` | Post-confirmation symbolic reconstruction of already frozen coefficients; reads no poset data |
 | `window_response/check_diamond_geometry.py`, `window_response/geometry_audit.json` | 22 September post-study metric, normal-coordinate, literature-coefficient and dimension-bias checks; output binds the script's LF hash |
+| `window_response/volume_discrepancy_derivation.md` | Subsequent 22 September direct derivation tracing the electric sign and magnetic coefficient in the displayed source equations |
 | `window_response/manifest.json` | Raw and LF-normalized hashes of the delivered study files; not a pre-data registration |
 
 NPZ axes are: curved design cell in freeze order; arm (flat,curved); replicate;
@@ -107,7 +118,8 @@ preserved. No previous oracle campaign ran under the temporary change.
 ## Exact rerun from the local Git bundle
 
 The revised bundle `outputs/window_response/window_response_2026-09-22.bundle`
-contains this branch and its reachable history. It can be cloned without a
+archives this branch at `e8ca375`, before the detailed volume-trace addendum,
+and its reachable history. It can be cloned without a
 remote account. It is a local handoff artifact, not a public archive deposit.
 
 ```powershell

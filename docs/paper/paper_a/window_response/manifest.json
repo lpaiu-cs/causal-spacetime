@@ -35,9 +35,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 10603,
-      "sha256": "c68048b4293c903fb53d90146faeeb54f16fffc0f7ff35a0faf1ddbf8e1d03cc",
-      "sha256_lf": "c68048b4293c903fb53d90146faeeb54f16fffc0f7ff35a0faf1ddbf8e1d03cc"
+      "bytes": 11499,
+      "sha256": "dcc031cf46cffff48c8a71ff9623b2a8d46e65d5cc9f3e2fd11c7b914e101514",
+      "sha256_lf": "dcc031cf46cffff48c8a71ff9623b2a8d46e65d5cc9f3e2fd11c7b914e101514"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -53,9 +53,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/check_diamond_geometry.py",
-      "bytes": 11861,
-      "sha256": "9a2c65dd34930c08696c9a40fa46d4eafee39654d13765452f1549e0652a631e",
-      "sha256_lf": "9a2c65dd34930c08696c9a40fa46d4eafee39654d13765452f1549e0652a631e"
+      "bytes": 18832,
+      "sha256": "507406e95b37add313cae29dc1bba76fdbbb500a9f08f1b3ccdfef9e6e2041fd",
+      "sha256_lf": "507406e95b37add313cae29dc1bba76fdbbb500a9f08f1b3ccdfef9e6e2041fd"
     },
     {
       "path": "docs/paper/paper_a/window_response/derive_exact.py",
@@ -65,9 +65,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/geometry_audit.json",
-      "bytes": 1252,
-      "sha256": "4ae2746aff4453181194c23827cb57893815372c9b308d0ce69c79569bf075f7",
-      "sha256_lf": "ab3173281067c90d8a5c742ba2c18a8793d1fb19854d78e2fef4f9ed2098afee"
+      "bytes": 2295,
+      "sha256": "2bd9f4e673902d67bd7be694abc7553cb857efaacb2c5cfccca9bd8d0e8f2924",
+      "sha256_lf": "2bd9f4e673902d67bd7be694abc7553cb857efaacb2c5cfccca9bd8d0e8f2924"
     },
     {
       "path": "docs/paper/paper_a/window_response/novelty_audit_2026-09-22.md",
@@ -96,6 +96,12 @@
       "path": "docs/paper/paper_a/window_response/response.png",
       "bytes": 92800,
       "sha256": "16e6167c88538a7931ffd4ee8a9f795105c6835d4afaf2aab49a3210b1516bdf"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/volume_discrepancy_derivation.md",
+      "bytes": 12959,
+      "sha256": "21540bcbc207a7b64bd71219a92c72dd4e98e3963c9b4a19de48e6e5bda6f709",
+      "sha256_lf": "21540bcbc207a7b64bd71219a92c72dd4e98e3963c9b4a19de48e6e5bda6f709"
     },
     {
       "path": "docs/paper/paper_a/window_response_confirmation_freeze.json",

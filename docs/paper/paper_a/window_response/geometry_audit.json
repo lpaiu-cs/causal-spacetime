@@ -4,13 +4,35 @@
   "python": "3.11.9",
   "sympy": "1.14.0",
   "mpmath": "1.3.0",
-  "source_sha256_lf": "9a2c65dd34930c08696c9a40fa46d4eafee39654d13765452f1549e0652a631e",
+  "source_sha256_lf": "507406e95b37add313cae29dc1bba76fdbbb500a9f08f1b3ccdfef9e6e2041fd",
   "curvature": {
     "E_squared": "A**2/2",
     "H_squared": "A**2",
     "D_squared": "2*A**2",
     "Wang_relative_A2": "43/9450",
     "Wang_74_76_reintegrated_relative_A2": "1/252"
+  },
+  "tensor_expansion_76_to_77": {
+    "scope": "4D algebraic Weyl tensor; two independent symbolic strengths",
+    "E_squared": "14*e**2",
+    "H_squared": "20*b**2",
+    "D_squared": "56*e**2",
+    "Eq77_minus_even_Eq76": "4*e**2*r**2*t**2*(nx**2 + 4*ny**2 + 9*nz**2)",
+    "angular_average_Eq76": "-4*b**2*r**4 + 20*b**2*r**2*t**2 + 42*e**2*r**4/5 + 14*e**2*t**4"
+  },
+  "volume_coefficient_trace": {
+    "denominator": "(d + 1)*(d + 2)*(d + 3)*(d + 4)*(90*d - 90)",
+    "reintegrated_74_76_numerator": "D2*(-3*d/2 - 3) + E2*(7*d**3 + 58*d**2 + 146*d + 116) + H2*(3*d**2 + 24*d + 36)",
+    "reintegrated_74_77_minus_74_76": "-8*E2",
+    "printed_79_minus_reintegrated_74_77": "3*H2*(d + 2)*(d + 6)",
+    "plane_wave_relative_A2": {
+      "74_76": "1/252",
+      "74_77": "299/75600",
+      "79": "43/9450",
+      "electric_sign_effect": "-1/75600",
+      "magnetic_factor_effect": "1/1680",
+      "total_difference": "11/18900"
+    }
   },
   "volume": {
     "Brinkmann_relative_A2": "1/252",
@@ -40,5 +62,5 @@
     "dimension_A2_coefficient": "23/6363",
     "scope": "inverse of population mean; not mean of the finite-N inverse"
   },
-  "literature_status": "Disagreement with arXiv:1904.01034v2 Eq. (79); no general correction derived"
+  "literature_status": "Traced arXiv:1904.01034v2 Eq. (76) to (77) electric sign and (74),(77) to (79) magnetic factor; reintegrated dimension polynomial is conditional on displayed inputs, not an independently proved general vacuum-volume theorem"
 }
