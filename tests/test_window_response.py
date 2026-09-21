@@ -111,3 +111,46 @@ def test_diamond_conditional_degree_integrals():
         assert abs(fine["volume"] - wr.diamond_cdf(amplitude)[1]) < 1e-11
     small = wr.diamond_moments(1 / 64)
     assert abs((small["p"] - 0.1) / (1 / 64) ** 2 + 23 / 75600) < 1e-8
+
+
+def test_u_statistic_variance_by_finite_population_enumeration():
+    import math
+
+    from window_response_run import variance
+
+    # iid Bernoulli points and kernel h(x,y)=xy have an exactly enumerable law.
+    n, probability = 3, 0.3
+    values = np.array([math.comb(k, 2) / math.comb(n, 2) for k in range(n + 1)])
+    mass = np.array(
+        [
+            math.comb(n, k) * probability**k * (1 - probability) ** (n - k)
+            for k in range(n + 1)
+        ]
+    )
+    mean = probability**2
+    moments = {"p": mean, "zeta": probability**3 * (1 - probability)}
+    assert abs(np.dot(mass, (values - mean) ** 2) - variance(moments, n)) < 1e-15
+
+
+def test_binomial_acceptance_matches_direct_CP_endpoints():
+    from window_response_confirm import acceptance, cp
+
+    for lower, upper in ((0, 0.05), (0.4, 0.6), (-0.08, 0.12), (0.9, 1.1)):
+        interval = acceptance(80, lower, upper)
+        brute = [
+            k for k in range(81) if cp(k, 80)[0] >= lower and cp(k, 80)[1] <= upper
+        ]
+        assert interval == ((min(brute), max(brute)) if brute else None)
+
+
+def test_propagated_probability_interval_contains_parameter_box():
+    from window_response_confirm import prediction_interval
+    from window_response_run import predict
+
+    moments = {"p_interval": [0.03, 0.035], "zeta_interval": [0.0005, 0.0007]}
+    bounds = [0.02, 0.032]
+    interval = prediction_interval(moments, 300, bounds)
+    for p in np.linspace(0.03, 0.035, 7):
+        for z in np.linspace(0.0005, 0.0007, 7):
+            value = predict({"p": p, "zeta": z}, 300, bounds)
+            assert interval[0] <= value <= interval[1]
