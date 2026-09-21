@@ -35,9 +35,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 12767,
-      "sha256": "5daf349ba7e9784c7d79dcc1736da4a975c325dc71b4afba5443bf6d6fd63b87",
-      "sha256_lf": "5daf349ba7e9784c7d79dcc1736da4a975c325dc71b4afba5443bf6d6fd63b87"
+      "bytes": 14006,
+      "sha256": "7c8c09a6b0239ed51bed072987153f8c4b5cf443a884f18d34fc3411473d4804",
+      "sha256_lf": "7c8c09a6b0239ed51bed072987153f8c4b5cf443a884f18d34fc3411473d4804"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -58,6 +58,12 @@
       "sha256_lf": "507406e95b37add313cae29dc1bba76fdbbb500a9f08f1b3ccdfef9e6e2041fd"
     },
     {
+      "path": "docs/paper/paper_a/window_response/check_global_diamonds.py",
+      "bytes": 16396,
+      "sha256": "c88955854f436fe64565cc1f3dc1fbc7a0c4a68a1f3e35d33c10a45a670f0017",
+      "sha256_lf": "c88955854f436fe64565cc1f3dc1fbc7a0c4a68a1f3e35d33c10a45a670f0017"
+    },
+    {
       "path": "docs/paper/paper_a/window_response/check_vacuum_generalization.py",
       "bytes": 16886,
       "sha256": "07b471b3f9fdaf4e9ed2697145150aa5f7e78108319018ac2e6d2958dcda8121",
@@ -74,6 +80,18 @@
       "bytes": 2295,
       "sha256": "2bd9f4e673902d67bd7be694abc7553cb857efaacb2c5cfccca9bd8d0e8f2924",
       "sha256_lf": "2bd9f4e673902d67bd7be694abc7553cb857efaacb2c5cfccca9bd8d0e8f2924"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/global_diamond_audit.json",
+      "bytes": 6403,
+      "sha256": "ee0dec3760fbb0fdf2eac57554d98215d9d271aa4e43dd3a386552a230321de1",
+      "sha256_lf": "ee0dec3760fbb0fdf2eac57554d98215d9d271aa4e43dd3a386552a230321de1"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/global_diamond_exact_cases.md",
+      "bytes": 23599,
+      "sha256": "a4155f0bda800f3abaabea04446624d4fff17fc4fc8e11433a8cc78efba07c34",
+      "sha256_lf": "a4155f0bda800f3abaabea04446624d4fff17fc4fc8e11433a8cc78efba07c34"
     },
     {
       "path": "docs/paper/paper_a/window_response/novelty_audit_2026-09-22.md",
@@ -111,9 +129,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/vacuum_generalization_derivation.md",
-      "bytes": 19057,
-      "sha256": "c637abab1b4e4e12f869f048e6158b642f63981f0a3673721aa8c415c171dc13",
-      "sha256_lf": "c637abab1b4e4e12f869f048e6158b642f63981f0a3673721aa8c415c171dc13"
+      "bytes": 19540,
+      "sha256": "dc8ad5610ebc92fda74f5b4200ddc7d65faf54f3c48bba54719fbe12d3490829",
+      "sha256_lf": "dc8ad5610ebc92fda74f5b4200ddc7d65faf54f3c48bba54719fbe12d3490829"
     },
     {
       "path": "docs/paper/paper_a/window_response/volume_discrepancy_derivation.md",
@@ -222,5 +240,5 @@
       "sha256_lf": "7cd4748832911bdc4181a0583a355ad01c182cc1b81134fbead3b4f425181731"
     }
   ],
-  "packaging_note": "Post-study literature audit, source-equation trace, and general local vacuum-volume derivation with independent Kasner and varying-plane-wave checks. Frozen campaign inputs and results unchanged. Both deterministic geometric audit outputs bind their source hashes. The manuscript PDF predates the two derivation addenda. pyproject remains unchanged from legacy manifests."
+  "packaging_note": "Post-study literature trace, local vacuum derivation, and global counterexamples with conditional exact formulas. The global audit includes rational Kasner lower certificates and separately labeled uncertified numerical diagnostics. All deterministic audit outputs bind their source hashes. Frozen campaign inputs and results, legacy pyproject, and manuscript PDF remain unchanged; the PDF and archived bundle predate the derivation addenda."
 }

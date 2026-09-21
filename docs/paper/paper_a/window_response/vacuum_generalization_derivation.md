@@ -444,3 +444,9 @@ Brewin arXiv:0903.2087v3의 (11.1),(11.3),(11.21),
 Gibbons–Solodukhin hep-th/0703098의 de Sitter 정확식이다.
 Wang 논문의 최종 계수 불일치의 상세 추적은
 [앞선 기록](volume_discrepancy_derivation.md)에 보존했다.
+
+후속 [전역 검토](global_diamond_exact_cases.md)는 큰 다이아몬드, 위상, 초점 및
+특이점 접근을 다룬다. 국소 곡률 jet가 모두 같아도 전역 부피가 달라지는
+평탄한 반례와, 실제 매끄러운 Kasner 다이아몬드의 유리수 하한 반례를 얻었다.
+따라서 이 문서의 국소 점근식을 임의 크기의 정확식으로 확대할 수 없다.
+후속 기록에는 조건부 정확 적분식과 부피 발산 경계도 있다.

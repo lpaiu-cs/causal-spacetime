@@ -26,7 +26,7 @@ The check script and its JSON output now reproduce this trace and check a
 Weyl tensor with independently varied electric and magnetic strengths.
 The manuscript PDF predates this detailed trace.
 
-The latest [general local derivation](vacuum_generalization_derivation.md)
+The [general local derivation](vacuum_generalization_derivation.md)
 starts from the Jacobi equation and geodesic action, retains curvature
 derivatives, and controls the junction of the two null boundaries. It derives
 the leading small-diamond volume correction in any smooth Ricci-flat
@@ -39,6 +39,19 @@ This is a derivation draft with reproducible checks by the same AI, not
 independent human adjudication. It establishes a local asymptotic coefficient,
 not a uniform finite-size error bound or a global diamond formula.
 The manuscript PDF and archived bundle do not yet include this follow-up.
+
+The subsequent [global-scope investigation](global_diamond_exact_cases.md)
+proves that local curvature data cannot determine arbitrary-size diamond
+volumes: a globally hyperbolic flat spatial cylinder already gives a different
+exact volume from Minkowski space. It derives exact optical-distance and
+plane-wave formulas with their global conditions, constant-curvature closed
+forms, and a nonlocal Kasner representation. First conjugate points in the
+specified complete plane-wave models produce infinite diamond volume. A
+rational lower certificate in a regular near-singularity Kasner diamond
+exceeds the quartic extrapolation. The [new check](check_global_diamonds.py)
+and [output](global_diamond_audit.json) distinguish these analytic statements
+from high-precision quadrature and uncertified refinement diagnostics.
+This global investigation preserves the earlier local asymptotic result.
 
 ## Result and population
 
@@ -75,6 +88,7 @@ review commits. Nothing in the frozen history was amended, rebased or squashed.
 | `window_response/check_diamond_geometry.py`, `window_response/geometry_audit.json` | 22 September post-study metric, normal-coordinate, literature-coefficient and dimension-bias checks; output binds the script's LF hash |
 | `window_response/volume_discrepancy_derivation.md` | Subsequent 22 September direct derivation tracing the electric sign and magnetic coefficient in the displayed source equations |
 | `window_response/vacuum_generalization_derivation.md`, `window_response/check_vacuum_generalization.py`, `window_response/vacuum_generalization_audit.json` | Later 22 September local general derivation, independent Kasner/plane-wave calculations and Einstein extension; output binds the new script's LF hash |
+| `window_response/global_diamond_exact_cases.md`, `window_response/check_global_diamonds.py`, `window_response/global_diamond_audit.json` | Global counterexamples, conditional exact formulas, caustic divergence and rational Kasner lower certificates; source-bound post-study audit |
 | `window_response/manifest.json` | Raw and LF-normalized hashes of the delivered study files; not a pre-data registration |
 
 NPZ axes are: curved design cell in freeze order; arm (flat,curved); replicate;
@@ -108,6 +122,7 @@ python experiments/positive_control/window_response_report.py --audit-only
 python docs/paper/paper_a/window_response/derive_exact.py
 python docs/paper/paper_a/window_response/check_diamond_geometry.py
 python docs/paper/paper_a/window_response/check_vacuum_generalization.py
+python docs/paper/paper_a/window_response/check_global_diamonds.py
 tectonic -X compile docs/paper/paper_a/window_response/article.tex --outdir output/pdf
 ```
 
