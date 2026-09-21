@@ -23,6 +23,9 @@ dev = [
   "ruff>=0.4",
 ]
 experiments = [
+  # Standard quadrature, scrambled Sobol and distribution functions for
+  # the observation-window response study.
+  "scipy>=1.15",
   "numba>=0.59",
   # MPFR-backed directed-rounding intervals for the volume-oracle
   # certification (experiments/oracle). The oracle contract tests
