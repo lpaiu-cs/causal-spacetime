@@ -176,3 +176,30 @@ def test_confirmation_scores_interval_not_point_and_includes_forecast_error():
         assert result["G4"] is expected
     cell["numeric_error"] = 0.09
     assert not score_cell(cell, raw, frozen)["G4"]
+
+
+def test_saved_confirmation_matches_independent_binomial_api():
+    from window_response_report import DOCUMENTS, audit, read
+
+    raw = np.load(
+        DOCUMENTS / "window_response_confirmation_raw.npz", allow_pickle=False
+    )["values"]
+    result = audit(read("confirmation_freeze"), read("confirmation_results"), raw)
+    assert result["hashes_and_predata_forecast_verified"]
+    assert len(result["independent_recomputed_cells"]) == 8
+
+
+def test_artifact_digest_allows_only_reversible_newline_conversion(tmp_path):
+    import hashlib
+
+    from window_response_report import verify_text_digest
+
+    path = tmp_path / "test.json"
+    original = b'{"value": 7}\r\n'
+    expected = hashlib.sha256(original).hexdigest()
+    for content in (original, original.replace(b"\r\n", b"\n")):
+        path.write_bytes(content)
+        verify_text_digest(path, expected)
+    path.write_bytes(b'{"value": 8}\n')
+    with pytest.raises(AssertionError):
+        verify_text_digest(path, expected)

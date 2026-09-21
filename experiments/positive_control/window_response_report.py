@@ -5,6 +5,7 @@ No posets are added to confirmation and no primary decision is fitted here.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import math
@@ -28,6 +29,16 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def verify_text_digest(path, expected):
+    """Accept only Git's reversible LF/CRLF conversion, no semantic changes."""
+    raw = path.read_bytes()
+    lf = raw.replace(b"\r\n", b"\n")
+    assert expected in {
+        hashlib.sha256(data).hexdigest()
+        for data in (raw, lf, lf.replace(b"\n", b"\r\n"))
+    }
+
+
 def read(name):
     return json.loads((DOCUMENTS / f"window_response_{name}.json").read_text())
 
@@ -38,10 +49,14 @@ def audit(frozen, result, raw):
         digest(DOCUMENTS / "window_response_confirmation_raw.npz")
         == result["raw_sha256"]
     )
-    assert (
-        digest(DOCUMENTS / "window_response_confirmation_freeze.json")
-        == result["freeze_sha256"]
+    verify_text_digest(
+        DOCUMENTS / "window_response_confirmation_freeze.json", result["freeze_sha256"]
     )
+    for stage in ("grid", "pilot"):
+        verify_text_digest(
+            DOCUMENTS / f"window_response_{stage}_results.json",
+            frozen[stage + "_sha256"],
+        )
     assert raw.shape == (8, 2, 3200, 3) and np.isfinite(raw).all()
     producer = result["code_version"]
     subprocess.run(
@@ -202,7 +217,7 @@ def figures(frozen, results, pilot, grid):
             "savefig.dpi": 180,
         }
     )
-    fig, axes = plt.subplots(2, 2, figsize=(8.2, 5.8), constrained_layout=True)
+    fig, axes = plt.subplots(2, 2, figsize=(6.4, 4.7), constrained_layout=True)
     for ax, region in zip(axes.flat, wr.REGIONS, strict=True):
         cells = [c for c in grid["cells"] if c["region"] == region]
         p0 = 0.1 if region == "D" else wr.box_coefficients(region)[0]
@@ -242,7 +257,7 @@ def figures(frozen, results, pilot, grid):
     fig.savefig(DEST / "response.png")
     plt.close(fig)
 
-    fig, ax = plt.subplots(figsize=(8.2, 4.4), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(6.4, 3.6), constrained_layout=True)
     positions = np.arange(8)
     obs = np.array([r["curved"]["rate"] for r in results["cells"]]) * 100
     limits = np.array([r["curved"]["CP_interval"] for r in results["cells"]]) * 100
@@ -275,8 +290,8 @@ def figures(frozen, results, pilot, grid):
     plt.close(fig)
 
 
-def main():
-    stamp = clean_stamp()
+def main(audit_only=False):
+    stamp = None if audit_only else clean_stamp()
     frozen, result, pilot, grid = [
         read(n)
         for n in (
@@ -290,6 +305,9 @@ def main():
         DOCUMENTS / "window_response_confirmation_raw.npz", allow_pickle=False
     )["values"]
     checks = audit(frozen, result, raw)
+    if audit_only:
+        print(json.dumps({"primary_audit": "PASS", "checks": checks}, indent=2))
+        return
     DEST.mkdir(exist_ok=True)
     output = {
         "code_version": stamp,
@@ -317,4 +335,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--audit-only", action="store_true")
+    main(parser.parse_args().audit_only)

@@ -206,7 +206,8 @@ zeta_D(A) = 1/100 - (211/4158000) A² + O(A^4).
 Here analyticity in A² follows from the displayed sine/sinh functions and their
 positive denominator before the conjugate point; it is not inferred from parity
 alone. Thus the diamond coefficient is negative, about -0.000304232804233,
-whereas the equal-volume square box coefficient is positive, about 0.00572728722.
+whereas the square box coefficient is positive, about 0.00572728722. Only the
+three boxes have equal volumes; the diamond is a separate population.
 The populations have different volumes and densities at fixed N; the sign
 contrast belongs to the declared observation protocols, not to a frame-free
 local scalar-curvature estimator. Higher-order chains or the full order may
