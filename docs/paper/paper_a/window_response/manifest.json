@@ -1,6 +1,6 @@
 {
   "kind": "Post-study delivery manifest, not preregistration",
-  "date": "2026-09-21",
+  "date": "2026-09-22",
   "text_policy": "Raw original bytes and LF-normalized text; binary hashes are exact.",
   "files": [
     {
@@ -35,9 +35,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 9457,
-      "sha256": "1c26895e35da1ad5787684e4d8c3fbfcf2643b0db46aa3c09fa07a46c5d74449",
-      "sha256_lf": "1c26895e35da1ad5787684e4d8c3fbfcf2643b0db46aa3c09fa07a46c5d74449"
+      "bytes": 10603,
+      "sha256": "c68048b4293c903fb53d90146faeeb54f16fffc0f7ff35a0faf1ddbf8e1d03cc",
+      "sha256_lf": "c68048b4293c903fb53d90146faeeb54f16fffc0f7ff35a0faf1ddbf8e1d03cc"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -47,15 +47,33 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/article.tex",
-      "bytes": 29928,
-      "sha256": "ff70e85c13d98788b2eccfe4cc6e4f2434c9ca97780103f51882a87671480e5b",
-      "sha256_lf": "ff70e85c13d98788b2eccfe4cc6e4f2434c9ca97780103f51882a87671480e5b"
+      "bytes": 37032,
+      "sha256": "a49124766fd4cc5fe94a86090e2a532ff9c62159f1d0164238b42b6e0374f648",
+      "sha256_lf": "a49124766fd4cc5fe94a86090e2a532ff9c62159f1d0164238b42b6e0374f648"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/check_diamond_geometry.py",
+      "bytes": 11861,
+      "sha256": "9a2c65dd34930c08696c9a40fa46d4eafee39654d13765452f1549e0652a631e",
+      "sha256_lf": "9a2c65dd34930c08696c9a40fa46d4eafee39654d13765452f1549e0652a631e"
     },
     {
       "path": "docs/paper/paper_a/window_response/derive_exact.py",
       "bytes": 3258,
       "sha256": "7551e8e1e0153875fd43c455512f410f2d690b0677cb51eca9e9e4a5f30a1c54",
       "sha256_lf": "7551e8e1e0153875fd43c455512f410f2d690b0677cb51eca9e9e4a5f30a1c54"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/geometry_audit.json",
+      "bytes": 1252,
+      "sha256": "4ae2746aff4453181194c23827cb57893815372c9b308d0ce69c79569bf075f7",
+      "sha256_lf": "ab3173281067c90d8a5c742ba2c18a8793d1fb19854d78e2fef4f9ed2098afee"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/novelty_audit_2026-09-22.md",
+      "bytes": 8131,
+      "sha256": "b3be92b93d32dd2f4cffde9a58da99794dd96aee56646c0f674ad474ab817448",
+      "sha256_lf": "b3be92b93d32dd2f4cffde9a58da99794dd96aee56646c0f674ad474ab817448"
     },
     {
       "path": "docs/paper/paper_a/window_response/prediction.png",
@@ -70,9 +88,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/research_report_ko.md",
-      "bytes": 10702,
-      "sha256": "cdd769d1eff0eca26de64139aad1800ff7e9a5c1be712dd1a116a9009cdc4688",
-      "sha256_lf": "cdd769d1eff0eca26de64139aad1800ff7e9a5c1be712dd1a116a9009cdc4688"
+      "bytes": 11628,
+      "sha256": "669bbb63a8c030c55bbfb37d988a3795491b2cb662d5ba38c7fdd5146e13e4af",
+      "sha256_lf": "669bbb63a8c030c55bbfb37d988a3795491b2cb662d5ba38c7fdd5146e13e4af"
     },
     {
       "path": "docs/paper/paper_a/window_response/response.png",
@@ -164,8 +182,8 @@
     },
     {
       "path": "output/pdf/article.pdf",
-      "bytes": 247754,
-      "sha256": "1e8d7a9871d73bcec8ac251bb794dc1cc5b1d11a5306ac397b7432e7fe779440"
+      "bytes": 264792,
+      "sha256": "d5cb69b0419d8f7f7fa62ebb96009aec0b7d784878dedb7ce3509df2563cf96f"
     },
     {
       "path": "pyproject.toml",
@@ -180,5 +198,5 @@
       "sha256_lf": "7cd4748832911bdc4181a0583a355ad01c182cc1b81134fbead3b4f425181731"
     }
   ],
-  "packaging_note": "pyproject restored to the 30 legacy manifests; study dependencies declared separately; no scientific results changed."
+  "packaging_note": "Equation-level literature audit and manuscript revision; frozen campaign inputs and results unchanged. New post-study geometric audit binds its script hash. pyproject remains unchanged from legacy manifests."
 }

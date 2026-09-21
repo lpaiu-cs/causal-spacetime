@@ -9,52 +9,55 @@
 \newcommand{\ind}{\mathbf 1}
 \newcommand{\dd}{\mathrm d}
 \newtheorem{proposition}{Proposition}
-\title{Observation-window response and finite-sample\newline curvature discrimination in a vacuum plane wave}
+\title{Relation statistics in a vacuum plane-wave diamond:\newline tidal response, dimension bias and window dependence}
 \author{Juneyoung Kim\\\small Independent researcher, Seoul, Republic of Korea\\\small\texttt{lpaiu.cs@gmail.com}}
-\date{21 September 2026\\\small Research manuscript for author review}
+\date{22 September 2026\\\small Research manuscript for author review}
 \begin{document}
 \maketitle
 \begin{abstract}
-The relation fraction of a finite causal order depends on the region in which
-events are sampled, as well as on the metric. We calculate this dependence in
-a four-dimensional constant vacuum plane wave. For three fixed coordinate
-boxes, explicit small-amplitude coefficients distinguish opposite linear
-responses in two anisotropic windows from a positive quadratic response in a
-square window. For an Alexandrov diamond with fixed axial tips, an interval-volume
-reduction gives both the mean relation fraction and its shared-event covariance:
-the leading mean correction is $-23A^2/75600$, opposite in sign to the square-box
-correction. These are protocol-dependent responses, not scalar curvature estimators.
-Exact two- and three-point integrals and the standard finite-sample U-statistic
-variance yield normal-approximation detection forecasts. In a prospectively
-frozen validation on 51,200 independent fixed-size orders, all eight flat
-false-positive bounds were below 5\%, and all eight forecast-error intervals,
-widened for numerical integration uncertainty, lay inside the prescribed
-$\pm10$ percentage points. Three box conditions at $N=1200$ met the separate
-80\% detection criterion. The diamond confirmation tested only a weak-amplitude
-boundary condition and does not establish a general obstruction to curvature
-detection. The result is a quantitative account of how a specified observation
-window controls the response and finite-sample performance of one order statistic.
+Ricci-flatness does not remove the finite-diamond curvature response of the
+relation fraction. For a four-dimensional constant vacuum plane wave, we
+evaluate its mean and shared-event covariance by explicit subinterval-volume
+integrals. With unit null-coordinate span and amplitude $A$, these are
+$p_D=1/10-23A^2/75600+O(A^4)$ and
+$\zeta_D=1/100-211A^2/4158000+O(A^4)$.
+The mean, interpreted through the flat Myrheim--Meyer relation, gives
+$d_{\rm pop}=4+23A^2/6363+O(A^4)$ although the manifold dimension is four.
+This supplies a vacuum benchmark for separating tidal curvature from apparent
+dimension change. A normal-coordinate volume calculation agrees with exact
+slicing; we also document a coefficient mismatch with a displayed literature
+formula. Fixed coordinate boxes provide controlled contrasts: anisotropy permits
+linear response, and a square box has the opposite quadratic sign to the diamond.
+The standard U-statistic variance connects the calculated moments to
+finite-sample detection forecasts. A previously frozen validation on 51,200
+independent fixed-size orders supported all eight forecasts at the prescribed
+$\pm10$ percentage-point interval resolution, with flat false-positive upper
+bounds below 5\%. The diamond confirmation concerns a weak-amplitude control,
+not a measured detection transition. Neither a general Weyl estimator nor
+an obstruction for the full causal order is established.
 \end{abstract}
 
 \section{Question and relation to previous work}
 Finite causal orders contain statistical information about the Lorentzian
 regions from which they are sampled. Bombelli's finite-$n$ distributions already
 provide a framework for comparing geometries in this way~\cite{bombelli}.
-Chain abundances and their overlapping-index fluctuations have been used to
-study small curved diamonds~\cite{roy}, with numerical reconstruction and
-stability studies in further geometries~\cite{kambor}. These results rule out
-treating either curvature sensitivity or finite-sample noise as a new general idea.
-The question here is narrower: can the response of a specified statistic in
-specified vacuum plane-wave windows be calculated, and can it predict detection
-probabilities at conditions not used to fit that statistic?
+Roy, Sinha and Surya~\cite{roy} express chain counts through nested interval
+volumes, calculate leading Ricci corrections, and identify shared-event
+fluctuations. Kambor and Nomaan~\cite{kambor} study the resulting estimators
+numerically. We use these established ingredients. Our question is the explicit
+next response in a tractable vacuum geometry: what remains in the mean and noise
+when the Ricci terms vanish, and what does that response imply for interpreting
+one finite order?
 
 Window choice matters because two operations must be distinguished. Keeping a
 coordinate box fixed changes the causal relation at fixed volume measure.
 Keeping the tips of an Alexandrov interval fixed also changes its boundary and
 normalization. Work on several definitions of small causal diamonds already
-demonstrates the importance of the region definition~\cite{wang}; its volume
-coefficients cannot simply be substituted for a two-point relation probability.
-We compute the latter explicitly.
+demonstrates the importance of the region definition~\cite{wang}.
+A volume expansion alone is not the normalized relation probability: the
+outer domain and the subinterval orientations must also be integrated.
+We evaluate those integrals exactly as low-dimensional representations in a
+constant-profile plane wave, including the shared-event covariance.
 
 Recent work proposes Weyl-sensitive Hasse-diagram observables~\cite{alfyorov}
 and investigates conditional sampling costs and bulk response channels~\cite{ghosh}.
@@ -66,13 +69,18 @@ tests through geodesic deviation~\cite{ahmed}; only its abstract was available
 for this comparison. We make no claim to the first Weyl detection, an exhaustive
 priority search, or reconstruction of an arbitrary curvature tensor.
 
-The additional calculation is the set of explicit window coefficients and a
-low-dimensional diamond covariance integral, connected to independent
-finite-$N$ forecasts. Symmetry, U-statistic theory, exact plane-wave geodesics,
-and prospective validation are tools supporting this calculation. An earlier
-repository programme already contained an exploratory amplitude sweep and
-single-operating-point confirmation. Those results motivate the present question;
-they are not recounted as new evidence here.
+The proposed contribution is the explicit vacuum-diamond mean and covariance,
+their tidal and dimension-calibration consequences, and a comparison with
+coordinate windows. The general nested-volume method and the variance identity
+are not contributions claimed here. A formula-level comparison also finds a
+specific volume-coefficient disagreement with Eq.~(79) of
+arXiv:1904.01034v2~\cite{wang}; Appendix~\ref{rnc} supplies two coordinate
+calculations and a check of that reference's intermediate expressions.
+This is a comparison in one spacetime, not a replacement general formula.
+The dimension consequence and this comparison were developed after confirmation;
+the independent numerical validation below retains its original forecasts and
+verdicts. An earlier exploratory repository programme motivates the work but is
+not presented as additional new evidence.
 
 \section{Geometry, populations and information available}
 With natural units $c=1$, consider
@@ -116,7 +124,7 @@ and zero otherwise. We study
 These are relations, not only links in the Hasse diagram. Null boundaries have
 zero sampling probability, but numerical near-boundary decisions are checked.
 
-\section{Explicit box response}
+\section{Exact causal relation}
 Sort a pair by $u$ and set $s=u_q-u_p$, $d_x=x_q-x_p$,
 $m_x=(x_p+x_q)/2$, and similarly for $y$. For $w=\sqrt A>0$, the classical
 transverse action is
@@ -130,6 +138,119 @@ endpoints. The transverse equations are $x''=Ax$, $y''=-Ay$; their action is
 minimizing in the stated pre-conjugate domain. Equation~\eqref{action} is a
 half-angle evaluation of that standard solution, not a new causal law.
 
+\section{Diamond boundary, mean and covariance}\label{diamond}
+For $0<t<s$, define
+\begin{equation}
+ B_x(t;s)={w\over2}[\coth(wt)+\coth(w(s-t))],\quad
+ B_y(t;s)={w\over2}[\cot(wt)+\cot(w(s-t))], \label{B}
+\end{equation}
+and $J(s)=\int_0^s[B_x(t;s)B_y(t;s)]^{-1/2}\dd t$.
+Both coefficients are positive in the specified domain. Completing the two
+action quadratics about the classical transverse path shows that any subinterval
+with $u$ separation $s$ and slack $\ell=-\Delta v-C_A(p,q)>0$ has volume
+\begin{equation}
+ V(p,q)={\pi\ell^2\over2}J(s). \label{intervalvol}
+\end{equation}
+Indeed the intermediate transverse ellipse has height
+$\ell-B_x\xi^2-B_y\eta^2$ in $v$; its integrated slice is
+$\pi\ell^2/(2\sqrt{B_xB_y})$. This argument also explains why fixed coordinate
+volume form does not imply fixed Alexandrov volume.
+
+In the main diamond write $S(u)=[B_x(u;1)B_y(u;1)]^{-1/2}$.
+The $u$ marginal is $S(u)/J(1)$ and $V(D_A)=\pi J(1)/2$.
+At fixed $u$, the squared elliptical radius has density $2(1-r^2)$;
+angle is uniform. For width $L=1-r^2$ and
+$z=(v-v_{\rm low})/L$, $L$ has density $2L$ and $z$ is independent uniform.
+The conditional probability that an independent point is related to $X$ is
+\begin{equation}
+ q(X)={L^2\over J(1)}[J(u)(1-z)^2+J(1-u)z^2]. \label{degree}
+\end{equation}
+The past and future subdiamonds lie inside the main diamond, so their normalized
+volumes can be added. This is the conditional-volume form of the known chain
+and overlap construction, rather than a new identity. Integrating $L,z$ gives
+explicit smooth low-dimensional expressions
+\begin{align}
+ p_D&={1\over6J(1)^2}\int_0^1 S(u)[J(u)+J(1-u)]\dd u,\label{pd}\\
+ \E q^2&={1\over J(1)^3}\int_0^1 S(u)
+ \left\{{J(u)^2+J(1-u)^2\over15}+{J(u)J(1-u)\over45}\right\}\dd u,\label{qd}\\
+ \zeta_D&=\E q^2-p_D^2.\nonumber
+\end{align}
+At $A=0$, $J(s)=s^2/3$, $p_D=1/10$ and $\zeta_D=1/100$.
+
+\begin{proposition}[Diamond response]
+For these fixed axial tips,
+\begin{equation}
+ p_D={1\over10}-{23\over75600}A^2+O(A^4),\qquad
+ \zeta_D={1\over100}-{211\over4158000}A^2+O(A^4). \label{diamondcoeff}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Use $\sin z\sinh z/z^2=1-z^4/90+O(z^8)$ in~\eqref{B}. This gives
+\begin{align}
+ J(s)&={s^2\over3}\left[1+{A^2s^4\over252}+O(A^4)\right],\nonumber\\
+ S(u)&=2u(1-u)\left[1+{A^2(1-u^4-(1-u)^4)\over180}+O(A^4)\right].
+\end{align}
+Substitution into~\eqref{pd}--\eqref{qd} leaves polynomial integrals on
+$[0,1]$ and yields~\eqref{diamondcoeff}. Analyticity in $A^2$ follows from
+the displayed sine/hyperbolic-sine product and its positive denominator;
+the remainder is therefore justified here independently of parity.
+\end{proof}
+\subsection{Tidal meaning and flat-calibration bias}\label{dimensionbias}
+Along the axial geodesic, choose the unit tangent
+$U=(\partial_u-\partial_v)/\sqrt2$ and its orthogonal spatial frame.
+The electric Weyl tensor $E_{ij}=C(U,e_i,U,e_j)$ has diagonal entries
+$(-A/2,A/2,0)$. For tip proper time $T=\sqrt2$, the dimensionless tidal
+strength is $\kappa=E_{ij}E^{ij}T^4=2A^2$. Thus
+\begin{equation}
+ p_D={1\over10}-{23\over151200}\kappa+O(\kappa^2),\qquad
+ \zeta_D={1\over100}-{211\over8316000}\kappa+O(\kappa^2).
+ \label{tidal}
+\end{equation}
+This expression retains the diamond's timelike orientation. A single plane-wave
+family cannot determine separate coefficients of all Weyl contractions in a
+general vacuum metric. Restoring an arbitrary null span $\Delta u$ replaces
+$A$ in~\eqref{diamondcoeff} by $A(\Delta u)^2$.
+
+The flat ordering probability in dimension $d$ is
+\begin{equation}
+ F(d)={\Gamma(d+1)\Gamma(d/2)\over2\Gamma(3d/2)},\quad
+ F(4)={1\over10},\quad F'(4)=-{101\over1200}.
+\end{equation}
+This normalization is twice $\langle C_2\rangle/\langle C_1\rangle^2$
+in the Poisson convention of Ref.~\cite{roy}. Let $d_{\rm pop}$ solve
+$F(d_{\rm pop})=p_D(A)$ near four. The inverse-function expansion gives
+\begin{equation}
+ d_{\rm pop}=4+{23\over6363}A^2+O(A^4)
+            =4+{23\over12726}\kappa+O(\kappa^2). \label{dimension}
+\end{equation}
+This is a curvature bias of the \emph{population calibration}; it is not
+$\E[F^{-1}(f_N)]$, which has additional nonlinear sampling bias. At the flat
+point, the leading standard error of that inverse is
+$240/(101\sqrt N)$. Equations~\eqref{tidal}--\eqref{dimension} give a quantitative
+vacuum benchmark: a positive apparent dimension shift can arise while the
+actual dimension remains four. Curvature bias in dimension estimation is
+already known; the result here is its explicit leading coefficient for this
+Ricci-flat family. No new Monte Carlo test of this corollary is claimed.
+
+\subsection{Volume consistency check}\label{volumecheck}
+The same slice calculation gives
+\begin{equation}
+ {V(D_A)\over V(D_0)}=1+{A^2\over252}+O(A^4). \label{volumeresult}
+\end{equation}
+For comparison, the conventions of Ref.~\cite{wang} give
+$d=4$, tip half-length $l=T/2=1/\sqrt2$,
+$E^2=A^2/2$, $H^2=A^2$ and $D^2=2A^2$.
+Substitution into Eq.~(79) of its arXiv v2 PDF yields instead
+$1+(43/9450)A^2$ at this order. The coefficient difference is $11/18900$.
+It cannot be attributed to a Ricci term or a curvature derivative:
+$R_{ab}=0$ and $\nabla R_{abcd}=0$ here. Appendix~\ref{rnc} independently
+recovers~\eqref{volumeresult} in normal coordinates. Specializing and
+reintegrating that reference's Eqs.~(74),(76) also gives $1/252$.
+We report this reproducible disagreement with the displayed final expression;
+we have not derived a corrected formula for general vacuum spacetimes or
+obtained an external adjudication of the discrepancy.
+
+\section{Coordinate-window contrasts}
 In a fixed box, $s$ has density $2(1-s)$ on $(0,1)$. Integrating both independent
 uniform $v$ coordinates gives $p_R(A)=\E G(C_A)$, where
 \begin{equation}
@@ -194,66 +315,10 @@ Evenness alone does not justify an $O(A^4)$ box remainder: $G''$ changes
 at zero, and higher differentiability of the integrated expression has not
 been established here. All finite-$A$ forecasts use the full integral,
 not a Taylor polynomial evaluated outside its controlled local limit.
-
-\section{Diamond boundary, mean and covariance}
-For $0<t<s$, define
-\begin{equation}
- B_x(t;s)={w\over2}[\coth(wt)+\coth(w(s-t))],\quad
- B_y(t;s)={w\over2}[\cot(wt)+\cot(w(s-t))], \label{B}
-\end{equation}
-and $J(s)=\int_0^s[B_x(t;s)B_y(t;s)]^{-1/2}\dd t$.
-Both coefficients are positive in the specified domain. Completing the two
-action quadratics about the classical transverse path shows that any subinterval
-with $u$ separation $s$ and slack $l=-\Delta v-C_A(p,q)>0$ has volume
-\begin{equation}
- V(p,q)={\pi l^2\over2}J(s). \label{intervalvol}
-\end{equation}
-Indeed the intermediate transverse ellipse has height
-$l-B_x\xi^2-B_y\eta^2$ in $v$; its integrated slice is
-$\pi l^2/(2\sqrt{B_xB_y})$. This argument also explains why fixed coordinate
-volume form does not imply fixed Alexandrov volume.
-
-In the main diamond write $S(u)=[B_x(u;1)B_y(u;1)]^{-1/2}$.
-The $u$ marginal is $S(u)/J(1)$ and $V(D_A)=\pi J(1)/2$.
-At fixed $u$, the squared elliptical radius has density $2(1-r^2)$;
-angle is uniform. For width $L=1-r^2$ and
-$z=(v-v_{\rm low})/L$, $L$ has density $2L$ and $z$ is independent uniform.
-The conditional probability that an independent point is related to $X$ is
-\begin{equation}
- q(X)={L^2\over J(1)}[J(u)(1-z)^2+J(1-u)z^2]. \label{degree}
-\end{equation}
-The past and future subdiamonds lie inside the main diamond, so their normalized
-volumes can be added. Integrating $L,z$ gives smooth low-dimensional expressions
-\begin{align}
- p_D&={1\over6J(1)^2}\int_0^1 S(u)[J(u)+J(1-u)]\dd u,\label{pd}\\
- \E q^2&={1\over J(1)^3}\int_0^1 S(u)
- \left\{{J(u)^2+J(1-u)^2\over15}+{J(u)J(1-u)\over45}\right\}\dd u,\label{qd}\\
- \zeta_D&=\E q^2-p_D^2.\nonumber
-\end{align}
-At $A=0$, $J(s)=s^2/3$, $p_D=1/10$ and $\zeta_D=1/100$.
-
-\begin{proposition}[Diamond response]
-For these fixed axial tips,
-\begin{equation}
- p_D={1\over10}-{23\over75600}A^2+O(A^4),\qquad
- \zeta_D={1\over100}-{211\over4158000}A^2+O(A^4). \label{diamondcoeff}
-\end{equation}
-\end{proposition}
-\begin{proof}
-Use $\sin z\sinh z/z^2=1-z^4/90+O(z^8)$ in~\eqref{B}. This gives
-\begin{align}
- J(s)&={s^2\over3}\left[1+{A^2s^4\over252}+O(A^4)\right],\nonumber\\
- S(u)&=2u(1-u)\left[1+{A^2(1-u^4-(1-u)^4)\over180}+O(A^4)\right].
-\end{align}
-Substitution into~\eqref{pd}--\eqref{qd} leaves polynomial integrals on
-$[0,1]$ and yields~\eqref{diamondcoeff}. Analyticity in $A^2$ follows from
-the displayed sine/hyperbolic-sine product and its positive denominator;
-the remainder is therefore justified here independently of parity.
-\end{proof}
 The diamond and square box have opposite leading quadratic responses.
 The box coefficient is about 18.8 times larger in magnitude, but their volumes
-and fixed-$N$ noise also differ. This is a statement about the declared
-protocols. It is not an invariant ranking of all ways of measuring curvature.
+and fixed-$N$ noise also differ. This compares the declared protocols,
+not all ways of measuring curvature.
 
 \section{Finite-sample forecast and numerical checks}
 For independent volume samples, define
@@ -301,8 +366,10 @@ agreed with the existing scalar predicate on 1,280 prescribed pairs across
 five amplitudes, plus boundary cases. Before confirmation, sixteen targeted tests covered permutation
 and axis-exchange invariance, conditional integration, chain counting, variance
 and interval gates. Two additional artifact-audit tests passed after confirmation.
-A symbolic reconstruction also reproduced every displayed coefficient exactly,
-without reading poset data. These computational checks are not external mathematical review.
+A symbolic reconstruction reproduced the response coefficients without reading
+poset data. A separate post-confirmation audit checked the metric curvature,
+normal-coordinate volume and dimension-calibration identities added in this
+revision. These computational checks are not external mathematical review.
 
 Diamond sampling uses rejection from the exact $u$ slice density, which is
 maximal at $u=1/2$, followed by the elliptical radial and uniform-$v$ draws
@@ -432,6 +499,13 @@ and 54.258 ms respectively. This small host-specific benchmark measures the
 incremental count, not a portable hardware performance bound.
 
 \section{Interpretation and limits}
+The diamond calculation identifies an explicit vacuum response beyond the
+leading Ricci correction used in small-diamond chain formulae. Its practical
+use is as a benchmark for mean, noise and flat-dimension calibration, with a
+known geometry and orientation. The volume comparison in Section~\ref{volumecheck}
+is also a testable consistency question for higher-order diamond expansions.
+Neither result establishes a universal curvature reconstruction procedure.
+
 The quantitative distinction is between the same order statistic under
 different acquisition protocols. In the anisotropic boxes, the two transverse
 tidal contributions are weighted differently and leave opposite nonzero linear
@@ -477,6 +551,65 @@ This draft is provided for the named author's review and responsibility before
 any new submission.
 
 \appendix
+\section{Normal-coordinate volume cross-check}\label{rnc}
+This derivation is independent of the conditional-degree calculation and was
+added after the frozen campaign. At the axial midpoint use normal coordinates
+$(t,z,X,Y)$, put $s=(t+z)/\sqrt2$, and set $w=\sqrt A$.
+The exponential map obtained from the geodesic equations is
+\begin{align}
+ u&=u_O+s,\qquad
+ x=X{\sinh(ws)\over ws},\qquad y=Y{\sin(ws)\over ws},\nonumber\\
+ v&={-t+z\over\sqrt2}
+ -{X^2\over2s}\left({\sinh(ws)\cosh(ws)\over ws}-1\right)\nonumber\\
+ &\hspace{12mm}
+ -{Y^2\over2s}\left({\sin(ws)\cos(ws)\over ws}-1\right). \label{expmap}
+\end{align}
+Continuous limits are understood at $s=0$. The absolute Jacobian is
+\begin{equation}
+ \sqrt{-g_{\rm RNC}}={\sinh(ws)\sin(ws)\over (ws)^2}
+ =1-{A^2(t+z)^4\over360}+O(A^4s^8). \label{rncjac}
+\end{equation}
+The tips have normal times $\pm l$. For the upper cone let $r_0=l-t$,
+$(X,Y,z)=r(n_x,n_y,n_z)$ and $d_n=n_x^2-n_y^2$.
+Substituting~\eqref{expmap} in the exact null condition and solving gives
+\begin{align}
+ r&=r_0(1+Ab_1+A^2b_2+O(A^3)),\nonumber\\
+ b_1&=-{l^2d_n\over12},\nonumber\\
+ b_2&={l^4d_n^2\over96}
+ +{l^2(1-n_z^2)\over360}
+       [(t+r_0n_z)^2-4l(t+r_0n_z)+l^2]. \label{rncboundary}
+\end{align}
+The lower cone gives the same integrated contribution. Its moving join with
+the upper cone does not change the $A^2$ coefficient: the first-order time
+shift is zero and the unperturbed densities agree at the join.
+Using normalized angular averages
+$\langle d_n^2\rangle=4/15$,
+$\langle1-n_z^2\rangle=2/3$ and
+$\langle(1-n_z^2)n_z^2\rangle=2/15$, one obtains
+\begin{align}
+ [A^2]V={}&8\pi\int_0^l\left[
+ r_0^3\langle b_2+b_1^2\rangle
+ -{1\over360}\left({t^4r_0^3\over3}
+                   +{2t^2r_0^5\over5}+{r_0^7\over35}\right)\right]\dd t
+ ={2\pi l^8\over189}. \label{rncvolume}
+\end{align}
+Here $[A^2]$ denotes the Taylor coefficient. Since $V_0=2\pi l^4/3$,
+the relative correction is $A^2l^4/63$, giving $A^2/252$ for $l=1/\sqrt2$.
+The overall volume is even and analytic in $A$, as is also manifest in the
+exact slice formula.
+
+The companion \path{check_diamond_geometry.py} differentiates the original
+metric to verify Ricci-flatness, covariantly constant curvature, the tetrad
+contractions, the exponential-map Jacobian and the null residual through
+$A^2$. It separately specializes Ref.~\cite{wang}, Eqs.~(74),(76), performs
+their angular and radial integrals, and obtains the same coefficient. This
+agreement localizes the comparison to the displayed final Eq.~(79), without
+proposing a general correction. A 60-digit evaluation of the exact slice at
+$A=0.1,0.05,0.025,0.0125$ gives $(V/V_0-1)/A^2$ respectively as
+$0.0039685733$, $0.0039683338$, $0.0039682739$ and $0.0039682590$,
+approaching $1/252=0.0039682540$.
+These are deterministic arithmetic checks, not additional statistical evidence.
+
 \section{Exact box coefficient evaluation}\label{exact}
 For nonnegative integers $i,j$ and the powers $k$ used here, set
 $h=(i+j+2)/2$, $t=k+h$. Integration over the full displacement disk gives
@@ -500,7 +633,7 @@ For $R_-$ only the sign of $c_1$ changes. For the square box,
  c_2={257\pi\over48600}+{73\over435456}-{137204\sqrt6\over30405375}.
 \end{align}
 These are exact coefficients in the stated local expansion; the finite-amplitude
-mean is evaluated with~\eqref{action}--\eqref{survival}. This distinction is
+mean is evaluated with~\eqref{action} and~\eqref{survival}. This distinction is
 essential in the square-box confirmation at $A=\sqrt2$.
 
 \begin{thebibliography}{99}
@@ -517,6 +650,10 @@ using Chains'' (2020).
 \bibitem{wang} J. Wang, ``Geometry of small causal diamonds,'' Phys. Rev. D
 \textbf{100}, 064020 (2019).
 \href{https://doi.org/10.1103/PhysRevD.100.064020}{doi:10.1103/PhysRevD.100.064020}.
+Equation comparison uses
+\href{https://arxiv.org/pdf/1904.01034v2}{arXiv:1904.01034v2}, p.~12,
+Eq.~(79), identified by its record as the published version; the publisher's
+typeset full text was not accessible in this audit.
 \bibitem{alfyorov} D. Alfyorov and I. Shnyukov, ``Weyl Curvature from the Hasse
 Diagram: A Parameter-Free Bridge Formula for Causal Sets,'' preprint (2026).
 \href{https://inspirehep.net/files/32388edfda552e0b4cfb6697bda66d7b}{INSPIRE-hosted version inspected 21 September 2026}.

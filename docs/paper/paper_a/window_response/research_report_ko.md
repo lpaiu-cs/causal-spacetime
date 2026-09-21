@@ -1,5 +1,17 @@
 # 관측 영역에 따른 곡률 응답 — 보완연구 결과
 
+**2026-09-22 원고 개정:** [식 단위 차별성 감사](novelty_audit_2026-09-22.md)를
+추가했다. 일반적인 부피 적분법·분산 구조는 선행연구의 것으로 명시하고,
+진공 diamond의 명시적 계수와 평탄 차원 보정 편향 `d_pop=4+23A²/6363+O(A⁴)`를
+원고의 중심으로 옮겼다. 이것은 모집단 평균을 역변환한 값이며 유한 표본 차원
+추정량의 기대값과 다르다.
+
+또한 Wang arXiv v2의 최종 부피식과 `A²` 계수가 달랐다. 직접 단면 적분,
+독립 정상좌표 계산, 해당 논문의 중간식 재적분은 모두 `1/252`였지만 최종식 대입은
+`43/9450`이었다. [계산 기록](geometry_audit.json)과 새 부록 A에 근거를 남겼다.
+일반 정정식이나 외부 전문가의 판정까지 확보하지는 않았다. 아래 기존 확인결과는
+유지하며 새 실험이나 사후 기준 변경은 없었다.
+
 2026-09-21. 이번에 승인한 계획의 유도·파일럿·동결 확인·원고 작성을 완료했다.
 **주 확인 판정은 `PREDICTIONS_SUPPORTED`다.** 이것은 정한 8개 조건에서
 관계 비율 판별기의 검출률 예측이 허용 오차 안에 들었다는 뜻이다.
@@ -141,7 +153,7 @@ N=300에서 중앙값 0.094ms, N=1200에서 1.319ms였다. 이 host와 작은 �
 
 ## 6. 전달물과 다음 투고의 경계
 
-- 영문 원고: [LaTeX 원본](article.tex), 저장소 `output/pdf/article.pdf`의 10쪽 PDF.
+- 영문 원고: [LaTeX 원본](article.tex), 저장소 `output/pdf/article.pdf`의 12쪽 개정 PDF.
 - 재현 안내와 provenance: [README](README.md).
 - 동결 예측: [freeze](../window_response_confirmation_freeze.json).
 - 주 결과: [confirmation](../window_response_confirmation_results.json).

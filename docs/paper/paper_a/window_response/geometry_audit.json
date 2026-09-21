@@ -1,0 +1,44 @@
+{
+  "kind": "Post-study deterministic audit; no new confirmation data",
+  "date": "2026-09-22",
+  "python": "3.11.9",
+  "sympy": "1.14.0",
+  "mpmath": "1.3.0",
+  "source_sha256_lf": "9a2c65dd34930c08696c9a40fa46d4eafee39654d13765452f1549e0652a631e",
+  "curvature": {
+    "E_squared": "A**2/2",
+    "H_squared": "A**2",
+    "D_squared": "2*A**2",
+    "Wang_relative_A2": "43/9450",
+    "Wang_74_76_reintegrated_relative_A2": "1/252"
+  },
+  "volume": {
+    "Brinkmann_relative_A2": "1/252",
+    "RNC_relative_A2": "1/252",
+    "Wang_minus_exact": "11/18900"
+  },
+  "high_precision": [
+    {
+      "A": "0.1",
+      "(V/V0-1)/A2": "0.00396857332709175818154492"
+    },
+    {
+      "A": "0.05",
+      "(V/V0-1)/A2": "0.00396833380272025215568592"
+    },
+    {
+      "A": "0.025",
+      "(V/V0-1)/A2": "0.00396827392654286943731402"
+    },
+    {
+      "A": "0.0125",
+      "(V/V0-1)/A2": "0.00396825895780571462419195"
+    }
+  ],
+  "dimension": {
+    "flat_p_prime_at_4": "-101/1200",
+    "dimension_A2_coefficient": "23/6363",
+    "scope": "inverse of population mean; not mean of the finite-N inverse"
+  },
+  "literature_status": "Disagreement with arXiv:1904.01034v2 Eq. (79); no general correction derived"
+}

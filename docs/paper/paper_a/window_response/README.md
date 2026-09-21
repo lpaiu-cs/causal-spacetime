@@ -1,10 +1,21 @@
 # Window-response study companion
 
 Study date: 2026-09-21. Local branch: `codex/observation-window-response`.
+Equation-level literature audit and manuscript revision: 2026-09-22.
 This is the new focused study, not a replacement for the earlier frozen Paper A
 submission. Start with [the Korean result report](research_report_ko.md) or
 [the English manuscript source](article.tex). The final PDF is
 `output/pdf/article.pdf` at the repository root.
+
+The revision leads with the explicit vacuum-diamond moments and the resulting
+flat-dimension calibration bias. It records a volume-coefficient mismatch with
+Wang arXiv:1904.01034v2 Eq. (79): exact slicing, an independent normal-coordinate
+calculation and reintegration of that paper's Eqs. (74),(76) give `1/252`, whereas
+its final expression gives `43/9450` under the same conventions. See the
+[equation audit](novelty_audit_2026-09-22.md), manuscript Appendix A and
+[deterministic check](check_diamond_geometry.py). No general corrected formula
+or independent human adjudication is claimed. These additions are after the
+campaign; they did not change its data, forecasts or formal verdict.
 
 ## Result and population
 
@@ -38,6 +49,7 @@ review commits. Nothing in the frozen history was amended, rebased or squashed.
 | `window_response_confirmation_results.json` | `f6fe4ac`; raw/freeze hashes, all 16 intervals, formal verdict and cost |
 | `window_response/analysis.json` | `498e78e`; independent recomputation, descriptive secondary comparisons and timing |
 | `window_response/derive_exact.py` | Post-confirmation symbolic reconstruction of already frozen coefficients; reads no poset data |
+| `window_response/check_diamond_geometry.py`, `window_response/geometry_audit.json` | 22 September post-study metric, normal-coordinate, literature-coefficient and dimension-bias checks; output binds the script's LF hash |
 | `window_response/manifest.json` | Raw and LF-normalized hashes of the delivered study files; not a pre-data registration |
 
 NPZ axes are: curved design cell in freeze order; arm (flat,curved); replicate;
@@ -50,7 +62,8 @@ between those populations. Record all software versions when regenerating.
 
 The baseline statistical identity is standard U-statistic theory, not a new
 result. The new calculations are the explicit window responses and the
-diamond conditional-degree integrals. The normal approximation is empirical
+evaluation of the diamond conditional-degree integrals, not the general
+nested-volume or overlapping-index method. The normal approximation is empirical
 at the confirmed conditions, not an exact finite-sample law.
 
 ## Software and inspection
@@ -68,12 +81,13 @@ python -m pip install -r docs/paper/paper_a/window_response/requirements.txt
 python -m pytest tests/test_window_response.py -q
 python experiments/positive_control/window_response_report.py --audit-only
 python docs/paper/paper_a/window_response/derive_exact.py
+python docs/paper/paper_a/window_response/check_diamond_geometry.py
 tectonic -X compile docs/paper/paper_a/window_response/article.tex --outdir output/pdf
 ```
 
 The test and audit commands passed: 18 tests and an independent artifact audit.
 `--audit-only` does not generate posets, overwrite analyses, or rerun timing.
-The symbolic command requires SymPy and verifies the exact expressions by
+The symbolic commands require SymPy (with mpmath) and verify the exact expressions by
 polynomial/beta integrals, independently of the sampled statistics.
 Full report regeneration without `--audit-only` refreshes plots and the
 host-dependent timing benchmark; preserve the original `analysis.json` first.
@@ -92,12 +106,12 @@ preserved. No previous oracle campaign ran under the temporary change.
 
 ## Exact rerun from the local Git bundle
 
-The companion bundle `outputs/window_response/window_response_2026-09-21.bundle`
+The revised bundle `outputs/window_response/window_response_2026-09-22.bundle`
 contains this branch and its reachable history. It can be cloned without a
 remote account. It is a local handoff artifact, not a public archive deposit.
 
 ```powershell
-git -c core.autocrlf=true clone -b codex/observation-window-response window_response_2026-09-21.bundle window-response-rerun
+git -c core.autocrlf=true clone -b codex/observation-window-response window_response_2026-09-22.bundle window-response-rerun
 Set-Location window-response-rerun
 python -m venv .venv
 .venv/Scripts/python.exe -m pip install numpy==2.5.3 scipy==1.18.1 matplotlib==3.11.2 pytest==9.1.1
@@ -149,7 +163,7 @@ commits. Neither changed simulation data, forecasts, thresholds, primary scores,
 or the experimental runner. All primary intervals were independently recomputed
 from saved raw statistics, and a regression check rejects a changed JSON value.
 
-All ten final PDF pages were rendered and visually inspected; the final build
+All twelve revised PDF pages were rendered and visually inspected; the final build
 has no missing references or overfull boxes. Eighteen targeted checks, exact
 symbolic reconstruction, and the artifact audit passed. This is automated
 verification, not independent human peer review.
