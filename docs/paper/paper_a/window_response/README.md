@@ -64,13 +64,14 @@ The manuscript uses ordinary LaTeX packages and was built with Tectonic 0.17.0.
 From the repository root, with the experiment dependencies installed:
 
 ```powershell
+python -m pip install -r docs/paper/paper_a/window_response/requirements.txt
 python -m pytest tests/test_window_response.py -q
 python experiments/positive_control/window_response_report.py --audit-only
 python docs/paper/paper_a/window_response/derive_exact.py
 tectonic -X compile docs/paper/paper_a/window_response/article.tex --outdir output/pdf
 ```
 
-The first two commands passed: 18 tests and an independent artifact audit.
+The test and audit commands passed: 18 tests and an independent artifact audit.
 `--audit-only` does not generate posets, overwrite analyses, or rerun timing.
 The symbolic command requires SymPy and verifies the exact expressions by
 polynomial/beta integrals, independently of the sampled statistics.
@@ -82,6 +83,12 @@ scalar near-boundary fallback. New implementation is limited to
 `window_response.py`, `window_response_g1.py`, `window_response_run.py`,
 `window_response_confirm.py`, and `window_response_report.py` in that directory.
 No earlier stage constants, outcomes or digest-locked inputs were changed.
+During development, SciPy was temporarily added to the experiment extra in
+`pyproject.toml`. Final packaging found that file was digest-locked by the older
+oracle campaigns. It was restored byte-for-byte to the parent revision;
+the new dependency is now declared in this study's requirements and CI install
+step. Original new-study producer commits and their installed versions remain
+preserved. No previous oracle campaign ran under the temporary change.
 
 ## Exact rerun from the local Git bundle
 

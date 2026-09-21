@@ -10,6 +10,12 @@
       "sha256_lf": "a94e7bf7df44888930e3b85db65935fee73017f9518261af98999373316adbb8"
     },
     {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 2721,
+      "sha256": "d433852086deecd7f3d7bd63a7025f2aba406aac5b1e5331a3ff8bdb9bb44314",
+      "sha256_lf": "d433852086deecd7f3d7bd63a7025f2aba406aac5b1e5331a3ff8bdb9bb44314"
+    },
+    {
       "path": "AGENTS.md",
       "bytes": 10943,
       "sha256": "958d031410c6d19fb8b21a2b5225ed3d05685fbf4ba393e17f0e201e003c730a",
@@ -26,6 +32,12 @@
       "bytes": 35201,
       "sha256": "dd671431497549ea2f7c209b0c59a273aa149595ad9ec1639d843d2f32b64dd9",
       "sha256_lf": "dd671431497549ea2f7c209b0c59a273aa149595ad9ec1639d843d2f32b64dd9"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/README.md",
+      "bytes": 9457,
+      "sha256": "1c26895e35da1ad5787684e4d8c3fbfcf2643b0db46aa3c09fa07a46c5d74449",
+      "sha256_lf": "1c26895e35da1ad5787684e4d8c3fbfcf2643b0db46aa3c09fa07a46c5d74449"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -51,10 +63,10 @@
       "sha256": "7397d6613cccde2bf8634ec6137203143eed1a46bd3538d8cf4b5795285ed830"
     },
     {
-      "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 8919,
-      "sha256": "d2d3ff53b00ba6e931122950329eb24643075ff796d0ce31362b1107a7ed1343",
-      "sha256_lf": "d2d3ff53b00ba6e931122950329eb24643075ff796d0ce31362b1107a7ed1343"
+      "path": "docs/paper/paper_a/window_response/requirements.txt",
+      "bytes": 182,
+      "sha256": "fd639a5f7f7424d561088a0d836ed8a8b4630a33986879b98784155e4474d2f3",
+      "sha256_lf": "fd639a5f7f7424d561088a0d836ed8a8b4630a33986879b98784155e4474d2f3"
     },
     {
       "path": "docs/paper/paper_a/window_response/research_report_ko.md",
@@ -110,9 +122,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response_theory.md",
-      "bytes": 11791,
-      "sha256": "7bed91deac43d1fc8cf58e94c8bd1cca7583f272d2ba252fb96f348216638ebb",
-      "sha256_lf": "7bed91deac43d1fc8cf58e94c8bd1cca7583f272d2ba252fb96f348216638ebb"
+      "bytes": 12101,
+      "sha256": "38ea22f0645ffa607a140e6f50621f5f8c766a00192ba460a41d5a7254bef9e3",
+      "sha256_lf": "38ea22f0645ffa607a140e6f50621f5f8c766a00192ba460a41d5a7254bef9e3"
     },
     {
       "path": "experiments/positive_control/p14_plane_wave.py",
@@ -157,9 +169,9 @@
     },
     {
       "path": "pyproject.toml",
-      "bytes": 1462,
-      "sha256": "32e23f5cf4d2fbb3599320502c87e26496cb906cb929e25be1be729769902bd2",
-      "sha256_lf": "32e23f5cf4d2fbb3599320502c87e26496cb906cb929e25be1be729769902bd2"
+      "bytes": 1330,
+      "sha256": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875",
+      "sha256_lf": "43689626b73bbe2426befb0d48d85ef409bdfc5332395647b2d7939e26971875"
     },
     {
       "path": "tests/test_window_response.py",
@@ -167,5 +179,6 @@
       "sha256": "7cd4748832911bdc4181a0583a355ad01c182cc1b81134fbead3b4f425181731",
       "sha256_lf": "7cd4748832911bdc4181a0583a355ad01c182cc1b81134fbead3b4f425181731"
     }
-  ]
+  ],
+  "packaging_note": "pyproject restored to the 30 legacy manifests; study dependencies declared separately; no scientific results changed."
 }

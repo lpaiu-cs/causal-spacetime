@@ -243,3 +243,8 @@ pilot and confirmation use distinct namespaces. G1 creates no holdout data.
 Use existing NumPy and add SciPy to the experiment extra for standard scrambled
 Sobol integration, ODE/quadrature and probability distributions. No ML model,
 GPU, external service, new orchestration framework, or paid computation is needed.
+
+Packaging correction after confirmation: the common pyproject is hash-pinned
+by older oracle campaigns. Its temporary SciPy addition was reverted; the new
+instrument's dependency is declared in `window_response/requirements.txt` and
+the CI install step instead. No numerical implementation or result changed.
