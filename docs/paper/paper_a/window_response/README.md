@@ -66,6 +66,17 @@ near-caustic limits. This is a derivation draft, not a priority claim or a
 validated finite-sample classifier. The manuscript PDF and archived bundle
 predate it; submission readiness has not been established.
 
+The [literature comparison and limits](plane_wave_chain_literature_and_limits.md)
+finds prior overlap for the general two-point/three-point discrimination idea
+and flat fixed-N factors. It retains the narrower unweighted plane-wave
+hierarchy as a contribution candidate, with explicit Van Vleck-weighted
+comparison and unresolved priority items. It also derives the contrast for
+every fixed chain length, the full three-point order law, and an upper bound
+on distinguishability of the entire finite sampled order. Its
+[check](check_chain_limits.py) and [results](chain_limits_audit.json) reuse the
+existing kernel implementation. Noninteger flat dimension remains an analytic
+calibration, not an ordinary Minkowski sampling model.
+
 ## Result and population
 
 The primary result is `PREDICTIONS_SUPPORTED`: all eight false-positive gates
@@ -103,6 +114,7 @@ review commits. Nothing in the frozen history was amended, rebased or squashed.
 | `window_response/vacuum_generalization_derivation.md`, `window_response/check_vacuum_generalization.py`, `window_response/vacuum_generalization_audit.json` | Later 22 September local general derivation, independent Kasner/plane-wave calculations and Einstein extension; output binds the new script's LF hash |
 | `window_response/global_diamond_exact_cases.md`, `window_response/check_global_diamonds.py`, `window_response/global_diamond_audit.json` | Global counterexamples, conditional exact formulas, caustic divergence and rational Kasner lower certificates; source-bound post-study audit |
 | `window_response/plane_wave_chain_hierarchy.md`, `window_response/check_plane_wave_chains.py`, `window_response/plane_wave_chain_audit.json` | Later post-study exact chain hierarchy, arbitrary-profile determinant checks and caustic dimension contrast; not a new sampling campaign |
+| `window_response/plane_wave_chain_literature_and_limits.md`, `window_response/check_chain_limits.py`, `window_response/chain_limits_audit.json` | Subsequent primary-source comparison, all-length ratio contrast, full three-point law and finite-N information bound; deterministic checks only |
 | `window_response/manifest.json` | Raw and LF-normalized hashes of the delivered study files; not a pre-data registration |
 
 NPZ axes are: curved design cell in freeze order; arm (flat,curved); replicate;
@@ -138,6 +150,7 @@ python docs/paper/paper_a/window_response/check_diamond_geometry.py
 python docs/paper/paper_a/window_response/check_vacuum_generalization.py
 python docs/paper/paper_a/window_response/check_global_diamonds.py
 python docs/paper/paper_a/window_response/check_plane_wave_chains.py
+python docs/paper/paper_a/window_response/check_chain_limits.py
 tectonic -X compile docs/paper/paper_a/window_response/article.tex --outdir output/pdf
 ```
 

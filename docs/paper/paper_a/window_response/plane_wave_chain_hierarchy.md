@@ -3,7 +3,10 @@
 2026-09-22. Post-study derivation draft, written after the local and global
 volume investigations at `3ecca2b` and `0159730`. The frozen campaign is unchanged.
 Proofs and numerical checks here were produced by the same AI; this is not an
-independent expert review or a claim of priority.
+independent expert review or a claim of priority. The subsequent
+[literature comparison and limits](plane_wave_chain_literature_and_limits.md)
+narrows the novelty claim, compares Van Vleck-weighted integrals explicitly,
+and extends the population contrast and finite-sample bounds.
 
 ## Research decision
 
@@ -321,7 +324,7 @@ Assume a regular zero
  \tag{25}
 \]
 
-and a positive limiting effective slack. Here `m` is the determinant zero's
+and a finite, positive limiting effective slack. Here `m` is the determinant zero's
 order; for the usual regular crossing it equals the conjugate multiplicity.
 The same argument applies to a smooth family of profiles on a fixed interval
 with this degeneration. Every proper subinterval remains strictly positive.
@@ -409,6 +412,11 @@ These decimals are reproducible numerical evaluations, not certified enclosures.
 The limiting positivity and contrast with (31) follow analytically without
 relying on their decimal values.
 
+Noninteger `d_pop` and the corresponding flat quantities in this table are
+analytic calibrations, not ordinary Minkowski sampling models. An actual
+geometry comparison takes integer flat dimensions and adjusts the wave
+parameter to match their pair probabilities; see the follow-up's section 4.
+
 An independent closed-form control is the isotropic **nonvacuum** profile
 `H=-omega^2 I_2`. Here `K(s,t)=sin(omega(t-s))/omega`, and Laplace transformation
 gives, with `j_l` the spherical Bessel function,
@@ -438,7 +446,8 @@ For seeing any three-chain with nonvanishing probability it is necessary that
 `N^3 delta^m` not tend to zero. This is only a necessary condition, not a power
 calculation or a sufficient condition for accurate estimation. At `delta=1e-6`
 and the earlier campaign's `N=1200`, the expected three-chain count is only
-about `1.63` (about `0.075` in the matching flat model). A new claim of practical
+about `1.63` (the analytically continued flat-chain benchmark is about `0.075`,
+not a sampled fractional-dimensional geometry). A new claim of practical
 classification would require a frozen estimator, valid uncertainty, and power
 sizing. No such campaign has been run here.
 
@@ -513,9 +522,11 @@ volume coefficients, because it calculates an infinite family of observables
 and supplies a testable failure mechanism for flat dimensional inference.
 It still does not justify promising acceptance or submitting immediately.
 
-The decisive next checks are (i) independent scrutiny of the noncommuting
-determinant proof and the caustic hypotheses, and (ii) an equation-level priority
-comparison with propagator/chain formulas. If those survive, a theorem-focused
-paper can stand on the exact hierarchy and asymptotic contrast; a practical
-classifier claim additionally needs new sampling work. Earlier weak-amplitude
-holdout results cannot be repurposed as validation of that stronger claim.
+The [follow-up](plane_wave_chain_literature_and_limits.md) now records that
+equation-level comparison. It finds direct prior overlap for the general
+two-point/three-point distinction and flat finite-N chain factors, while the
+exact arbitrary-profile unweighted hierarchy remains a qualified candidate.
+Independent scrutiny of the noncommuting determinant proof and the caustic
+hypotheses is still needed. A practical classifier claim additionally needs
+new sampling work. Earlier weak-amplitude holdout results cannot be repurposed
+as validation of that stronger claim.

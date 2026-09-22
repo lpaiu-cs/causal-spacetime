@@ -35,9 +35,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 15251,
-      "sha256": "18ca6fd336dd39914bde075dbc9d544487dae4566cb6d976b04e1e422bd04f64",
-      "sha256_lf": "18ca6fd336dd39914bde075dbc9d544487dae4566cb6d976b04e1e422bd04f64"
+      "bytes": 16341,
+      "sha256": "ff87c02e1ecd236df152aa26648c192417891538d45ac0f24ec2f4c050516c94",
+      "sha256_lf": "ff87c02e1ecd236df152aa26648c192417891538d45ac0f24ec2f4c050516c94"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -50,6 +50,18 @@
       "bytes": 37032,
       "sha256": "a49124766fd4cc5fe94a86090e2a532ff9c62159f1d0164238b42b6e0374f648",
       "sha256_lf": "a49124766fd4cc5fe94a86090e2a532ff9c62159f1d0164238b42b6e0374f648"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/chain_limits_audit.json",
+      "bytes": 9062,
+      "sha256": "2678a154871d98859956a3600fb97773daa824aee4c269d1d331b38d0157424a",
+      "sha256_lf": "76b89c977eacdffcd1b70be72a9689d3eb203d0eb7f86f22c814c81b4227e8d5"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/check_chain_limits.py",
+      "bytes": 8645,
+      "sha256": "ce3a2d6650995a7ecf91e903e93f04617694f21c4753dd53008154e93f0bd220",
+      "sha256_lf": "ce3a2d6650995a7ecf91e903e93f04617694f21c4753dd53008154e93f0bd220"
     },
     {
       "path": "docs/paper/paper_a/window_response/check_diamond_geometry.py",
@@ -113,9 +125,15 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/plane_wave_chain_hierarchy.md",
-      "bytes": 20250,
-      "sha256": "9232b8aef57f0c5daa8384226cc9ec0dcdbd6ec531172a3e9f4c4906350b5597",
-      "sha256_lf": "9232b8aef57f0c5daa8384226cc9ec0dcdbd6ec531172a3e9f4c4906350b5597"
+      "bytes": 20963,
+      "sha256": "50c5a2555ba2bd778a9ec96ce5200d4fc0f0d8428843bd9d35bf3048b6c3d2e8",
+      "sha256_lf": "50c5a2555ba2bd778a9ec96ce5200d4fc0f0d8428843bd9d35bf3048b6c3d2e8"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/plane_wave_chain_literature_and_limits.md",
+      "bytes": 18541,
+      "sha256": "387a0a1c0a9f3a8b3267526d9345cf3e9ec858078484b64ca55abe9d05ced895",
+      "sha256_lf": "387a0a1c0a9f3a8b3267526d9345cf3e9ec858078484b64ca55abe9d05ced895"
     },
     {
       "path": "docs/paper/paper_a/window_response/prediction.png",
