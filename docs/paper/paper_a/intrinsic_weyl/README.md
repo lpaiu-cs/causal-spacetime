@@ -28,6 +28,17 @@ an expanded evaluation checks all ten components and relative directions.
 On the four curved cases, relative full-tidal errors are 31--112% from finite
 orders versus 0.24--0.62% from continuum volumes on the same landmarks.
 These are development point errors, not confidence or accuracy verdicts.
+The subsequent [independent coverage protocol](coverage_protocol.md) fixes
+256 new orders, an internal frame modulo reflection, and a simultaneous
+ten-component confidence ball with an explicit bias assumption. Its run
+started from `e057d10`; no verdict is assigned before all cases are complete.
+
+The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
+an explicit oscillating vacuum family: midpoint tidal strength stays fixed
+while finite-order laws approach the flat law as frequency grows. Thus a
+uniform finite-sample guarantee for unrestricted smooth profiles is impossible.
+Positive reconstruction on a stated regularity class, including varying
+profiles and tested uncertainty, remains to be established.
 
 ## 1. What the input can determine
 
