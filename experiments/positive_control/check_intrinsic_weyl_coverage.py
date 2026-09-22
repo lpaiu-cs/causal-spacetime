@@ -160,6 +160,40 @@ def check(folder):
         )
     for key, value in manifest.items():
         assert summary[key] == value
+    if "continuation" in summary:
+        receipt = json.loads((folder / "continuation.json").read_text())
+        assert summary["continuation"] == receipt
+        assert receipt["source_code_version"] == stamp
+        assert receipt["original_status"] == "INCOMPLETE_AFTER_INTERRUPTION"
+        assert receipt["completed_cases_reused"] == list(range(226))
+        assert receipt["saved_inputs_reused"] == list(range(226, 230))
+        assert receipt["new_cases"] == list(range(230, 512))
+        original_directory = Path(receipt["original_directory"])
+        assert not (original_directory / "summary.json").exists()
+        preserved = receipt["preserved_sha256"]
+        assert len(preserved) == 913
+        assert set(preserved) == {p.name for p in original_directory.iterdir()}
+        for name, digest in preserved.items():
+            assert hashlib.sha256((folder / name).read_bytes()).hexdigest() == digest
+            assert (
+                hashlib.sha256((original_directory / name).read_bytes()).hexdigest()
+                == digest
+            )
+        coordinator_root = Path(__file__).resolve().parents[2]
+        coordinator_stamp = receipt["coordinator_code_version"]
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", coordinator_stamp, "HEAD"],
+            cwd=coordinator_root,
+            check=True,
+        )
+        historical = subprocess.check_output(
+            ["git", "show", f"{coordinator_stamp}:{receipt['coordinator_source']}"],
+            cwd=coordinator_root,
+        )
+        assert (
+            hashlib.sha256(historical.replace(b"\r\n", b"\n")).hexdigest()
+            == (receipt["coordinator_sha256_lf"])
+        )
     rows = summary["cases"]
     assert len(rows) == len(list(folder.glob("case_*_result.json"))) == n
     if nested:
