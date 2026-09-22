@@ -235,6 +235,13 @@ signed 4D Weyl reconstruction from multiple timelike interval counts, with
 finite-order uncertainty and cost demonstrated. The last two requirements
 are still missing; this is not yet a submission-ready claim.
 
+The subsequent [noise-cost decision record](noise_design.md) finds an
+unaffordable cost for the current ordinary least-squares geometry and a
+315--355-fold reduction in a separately validated, linearized covariance-
+weighting diagnostic. The remaining price is still about two billion events
+for one projection at scale 0.04 under optimistic assumptions. This is a
+design finding, not an actual curved recovery result.
+
 ## Reproduction
 
 From the repository root, without adding dependencies:
@@ -242,7 +249,13 @@ From the repository root, without adding dependencies:
 ```powershell
 rtk proxy .venv/Scripts/python.exe experiments/positive_control/intrinsic_weyl_development.py
 rtk proxy C:/Users/lpaiu/AppData/Local/Programs/Python/Python311/python.exe docs/paper/paper_a/intrinsic_weyl/check_identifiability.py
+rtk proxy .venv/Scripts/python.exe experiments/positive_control/intrinsic_weyl_noise.py
+rtk proxy .venv/Scripts/python.exe experiments/positive_control/intrinsic_weyl_weighting.py
 ```
 
 The second command uses the already installed SymPy environment. All new
 code is isolated from frozen experiments and requires no package changes.
+The noise diagnostics require a clean worktree and record their generating
+commit. To reproduce the saved outputs' source versions, use respectively
+`5dc22a9` and `a63e490` in a separate checkout. Historical source hashes are
+checked against those reachable commits, not against later edited documents.
