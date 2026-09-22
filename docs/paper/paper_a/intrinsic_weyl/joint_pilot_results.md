@@ -140,6 +140,12 @@ lever: include a third time band to constrain the magnetic deformation. The
 three-slice rank certificate alone does not guarantee a lower finite-sample
 error; that comparison still needs independent sampled orders.
 
+Update: the subsequent [three-band pilot](three_band_pilot_results.md) ran six
+new orders, but its connectivity filter retained only 0--7 central landmarks.
+It does not establish a successful three-band instrument or reliable magnetic
+recovery. The original pilot and the deterministic bias audit source versions
+are preserved together at `ab763fb`.
+
 1. Freeze and execute an independently powered accuracy study. Interval-based
    verdicts must use the selected coverage and sidedness consistently in
    sizing and evaluation. Validate uncertainty rather than relying on point

@@ -19,6 +19,9 @@ implements order-derived landmark selection and a joint geometry/Weyl fit.
 It produced quantitative tidal spectra from six saved finite orders, with a
 separately replayed estimator that receives no generator data. Independent
 accuracy confirmation and varying-profile validation are still outstanding.
+The [three-band follow-up](three_band_pilot_results.md) adds six further
+orders and exposes a selection failure: the central band was mostly removed.
+Reliable recovery of the magnetic components is not established.
 
 ## 1. What the input can determine
 
