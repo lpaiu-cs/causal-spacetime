@@ -35,9 +35,9 @@
     },
     {
       "path": "docs/paper/paper_a/window_response/README.md",
-      "bytes": 14006,
-      "sha256": "7c8c09a6b0239ed51bed072987153f8c4b5cf443a884f18d34fc3411473d4804",
-      "sha256_lf": "7c8c09a6b0239ed51bed072987153f8c4b5cf443a884f18d34fc3411473d4804"
+      "bytes": 15251,
+      "sha256": "18ca6fd336dd39914bde075dbc9d544487dae4566cb6d976b04e1e422bd04f64",
+      "sha256_lf": "18ca6fd336dd39914bde075dbc9d544487dae4566cb6d976b04e1e422bd04f64"
     },
     {
       "path": "docs/paper/paper_a/window_response/analysis.json",
@@ -62,6 +62,12 @@
       "bytes": 16396,
       "sha256": "c88955854f436fe64565cc1f3dc1fbc7a0c4a68a1f3e35d33c10a45a670f0017",
       "sha256_lf": "c88955854f436fe64565cc1f3dc1fbc7a0c4a68a1f3e35d33c10a45a670f0017"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/check_plane_wave_chains.py",
+      "bytes": 15801,
+      "sha256": "7298c61e50c6dd91e2f23180945b8d326410e51696b3c7f19b8bc45ce4589851",
+      "sha256_lf": "7298c61e50c6dd91e2f23180945b8d326410e51696b3c7f19b8bc45ce4589851"
     },
     {
       "path": "docs/paper/paper_a/window_response/check_vacuum_generalization.py",
@@ -98,6 +104,18 @@
       "bytes": 8131,
       "sha256": "b3be92b93d32dd2f4cffde9a58da99794dd96aee56646c0f674ad474ab817448",
       "sha256_lf": "b3be92b93d32dd2f4cffde9a58da99794dd96aee56646c0f674ad474ab817448"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/plane_wave_chain_audit.json",
+      "bytes": 20063,
+      "sha256": "e74c6a12882020088e005f992e3138b513c826a59ec29fb39c610f9bf13203f9",
+      "sha256_lf": "29f1297d2d789bbcbf9f496ff4d1ea4f7a6edc1c1c540f5d97075037b25b9a9d"
+    },
+    {
+      "path": "docs/paper/paper_a/window_response/plane_wave_chain_hierarchy.md",
+      "bytes": 20250,
+      "sha256": "9232b8aef57f0c5daa8384226cc9ec0dcdbd6ec531172a3e9f4c4906350b5597",
+      "sha256_lf": "9232b8aef57f0c5daa8384226cc9ec0dcdbd6ec531172a3e9f4c4906350b5597"
     },
     {
       "path": "docs/paper/paper_a/window_response/prediction.png",

@@ -53,6 +53,19 @@ and [output](global_diamond_audit.json) distinguish these analytic statements
 from high-precision quadrature and uncertified refinement diagnostics.
 This global investigation preserves the earlier local asymptotic result.
 
+The latest [exact chain hierarchy](plane_wave_chain_hierarchy.md) develops a
+stronger contribution candidate: every fixed-length chain abundance for an
+arbitrary smooth matrix-valued plane-wave profile reduces to scalar Volterra
+recurrences before the first conjugate point. It includes a closed weak-field
+coefficient for every chain length, exact conditional-degree moments, caustic
+scaling, and a three-chain ratio separating strong focusing from the
+high-dimensional flat population limit. Its [check](check_plane_wave_chains.py)
+and [source-bound results](plane_wave_chain_audit.json) cover noncommuting
+polarizations, flat normalization, the old constant-profile formulas and
+near-caustic limits. This is a derivation draft, not a priority claim or a
+validated finite-sample classifier. The manuscript PDF and archived bundle
+predate it; submission readiness has not been established.
+
 ## Result and population
 
 The primary result is `PREDICTIONS_SUPPORTED`: all eight false-positive gates
@@ -89,6 +102,7 @@ review commits. Nothing in the frozen history was amended, rebased or squashed.
 | `window_response/volume_discrepancy_derivation.md` | Subsequent 22 September direct derivation tracing the electric sign and magnetic coefficient in the displayed source equations |
 | `window_response/vacuum_generalization_derivation.md`, `window_response/check_vacuum_generalization.py`, `window_response/vacuum_generalization_audit.json` | Later 22 September local general derivation, independent Kasner/plane-wave calculations and Einstein extension; output binds the new script's LF hash |
 | `window_response/global_diamond_exact_cases.md`, `window_response/check_global_diamonds.py`, `window_response/global_diamond_audit.json` | Global counterexamples, conditional exact formulas, caustic divergence and rational Kasner lower certificates; source-bound post-study audit |
+| `window_response/plane_wave_chain_hierarchy.md`, `window_response/check_plane_wave_chains.py`, `window_response/plane_wave_chain_audit.json` | Later post-study exact chain hierarchy, arbitrary-profile determinant checks and caustic dimension contrast; not a new sampling campaign |
 | `window_response/manifest.json` | Raw and LF-normalized hashes of the delivered study files; not a pre-data registration |
 
 NPZ axes are: curved design cell in freeze order; arm (flat,curved); replicate;
@@ -123,6 +137,7 @@ python docs/paper/paper_a/window_response/derive_exact.py
 python docs/paper/paper_a/window_response/check_diamond_geometry.py
 python docs/paper/paper_a/window_response/check_vacuum_generalization.py
 python docs/paper/paper_a/window_response/check_global_diamonds.py
+python docs/paper/paper_a/window_response/check_plane_wave_chains.py
 tectonic -X compile docs/paper/paper_a/window_response/article.tex --outdir output/pdf
 ```
 
