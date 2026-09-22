@@ -68,6 +68,13 @@ and local-solution assumptions the physical-curvature bias becomes quadratic
 in window size. A four-scale continuum audit observes successive bias
 reductions approaching four when the window is halved. These conditions
 are not yet proved for the random selector and implemented optimizer.
+The [curvature-squared correction](square_correction.md) adds known distance
+and volume-clock terms without adding fitted components. On three selected
+coverage failures it reduces continuum bias to 1.25--1.32%, but actual finite
+errors remain 28--53% and do not improve consistently. The
+[fresh paired pilot](square_pilot_protocol.md) freezes eight independent
+orders before testing this correction. Neither selected-case diagnosis nor
+its protocol establishes coverage or accuracy.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
