@@ -19,7 +19,7 @@ BIVECTOR = np.array(
 )
 
 
-def select_landmarks(selection_counts, maximum=64, minimum_count=2):
+def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"):
     """Peel poorly connected candidates, using an independent count sample.
 
     The first and last events are the outer diamond tips. Candidate IDs carry
@@ -38,21 +38,33 @@ def select_landmarks(selection_counts, maximum=64, minimum_count=2):
     tau_p, tau_q = np.sqrt(counts[0] / total), np.sqrt(counts[-1] / total)
     times = (tau_p - tau_q) / 2
     radius2 = 0.25 + times**2 - (tau_p + tau_q) / 2
+    if design not in ("two", "three"):
+        raise ValueError("Unknown prospective selection design")
+    outer = (abs(times) >= 0.15) & (abs(times) <= 0.32)
+    eligible_time = outer if design == "two" else outer | (abs(times) <= 0.075)
     ids = np.flatnonzero(
-        (abs(times) >= 0.15)
-        & (abs(times) <= 0.32)
+        eligible_time
         & (radius2 >= 0.01)
         & (counts[0] >= minimum_count)
         & (counts[-1] >= minimum_count)
     )
     related = counts[ids[:, None], ids] >= minimum_count
     score = related.sum(axis=1) * np.minimum(radius2[ids], 0.04)
-    halves = []
-    for past in (True, False):
-        choices = np.flatnonzero((times[ids] < 0) == past)
+    if design == "two":
+        strata = [(times[ids] < 0, maximum // 2), (times[ids] >= 0, maximum // 2)]
+    else:
+        third = maximum // 3
+        strata = [
+            (times[ids] <= -0.15, third),
+            (abs(times[ids]) <= 0.075, maximum - 2 * third),
+            (times[ids] >= 0.15, third),
+        ]
+    selected = []
+    for condition, limit in strata:
+        choices = np.flatnonzero(condition)
         ranked = choices[np.argsort(-score[choices], kind="stable")]
-        halves.append(ids[ranked[: maximum // 2]])
-    ids = np.concatenate(halves)
+        selected.append(ids[ranked[:limit]])
+    ids = np.concatenate(selected)
     while len(ids):
         graph = counts[ids[:, None], ids] >= minimum_count
         degrees = graph.sum(axis=1)
@@ -262,7 +274,7 @@ def fit_joint(
     return result
 
 
-def selection(order):
+def selection(order, design="two"):
     """Order-only choice of landmarks and of informative pair clocks."""
     order = np.asarray(order, dtype=bool)
     if order.ndim != 2 or order.shape[0] != order.shape[1] or np.any(np.diag(order)):
@@ -271,7 +283,7 @@ def selection(order):
         raise ValueError("Selection events must be in the supplied outer interval")
     counts = order.astype(float) @ order.astype(float)
     counts += counts.T.copy()
-    ids = select_landmarks(counts)
+    ids = select_landmarks(counts, design=design)
     restricted = counts[ids[:, None], ids]
     clock_mask = restricted >= 2
     clock_mask[0, -1] = clock_mask[-1, 0] = False
@@ -288,12 +300,17 @@ def read_order_clocks(path):
             "before",
             "measurement_n",
         }
-        if set(source.files) != allowed:
+        if set(source.files) not in (allowed, allowed | {"selection_design"}):
             raise ValueError("Archive contains unexpected fields")
         order, ids = source["selection_order"], source["selected_ids"]
         after, before = source["after"], source["before"]
         n = int(source["measurement_n"])
-    expected, clock_mask = selection(order)
+        design = (
+            str(source["selection_design"].item())
+            if "selection_design" in source
+            else "two"
+        )
+    expected, clock_mask = selection(order, design=design)
     if not np.array_equal(ids, expected):
         raise ValueError("Saved landmarks differ from the order-only selection")
     if after.shape != (len(ids), n // 8) or before.shape != after.shape or n % 8:

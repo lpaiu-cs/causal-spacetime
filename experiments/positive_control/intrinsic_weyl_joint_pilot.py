@@ -59,7 +59,7 @@ def relation_queries(landmarks, points, amplitude):
     return related & (du > 0), related & (du < 0), int(near.sum())
 
 
-def generate_archive(path, amplitude, seed):
+def generate_archive(path, amplitude, seed, selection_design="two"):
     selection_rng = np.random.default_rng([seed, 0])
     points = np.vstack(
         (
@@ -76,7 +76,7 @@ def generate_archive(path, amplitude, seed):
         0, selection_rng.permutation(np.arange(1, len(points) - 1)), len(points) - 1
     ]
     ordered, order = ordered[permutation], order[permutation][:, permutation]
-    ids, _ = selection(order)
+    ids, _ = selection(order, design=selection_design)
     landmarks = ordered[ids]
     after = np.zeros((len(ids), MEASUREMENT_N // 8), dtype=np.uint8)
     before = np.zeros_like(after)
@@ -94,6 +94,7 @@ def generate_archive(path, amplitude, seed):
         after=after,
         before=before,
         measurement_n=MEASUREMENT_N,
+        **({"selection_design": selection_design} if selection_design != "two" else {}),
     )
     return {"escalations": escalations, "landmarks": len(ids) - 2}
 
@@ -130,6 +131,14 @@ def selfcheck():
     result = fit_joint(counts[ids[:, None], ids], starts=2)
     assert np.linalg.norm(result["coefficients"]) < 1e-7
     assert result["projected_curvature_rank"] == 10
+    x[1:-1, 0] = 0.27 * ((k % 3) - 1) + 0.015 * np.sin(k)
+    d = x[:, None] - x[None, :]
+    tau2 = -np.einsum("ija,ab,ijb->ij", d, ETA, d)
+    counts = 1e10 * np.maximum(tau2, 0) ** 2
+    ids = select_landmarks(counts, design="three")
+    result = fit_joint(counts[ids[:, None], ids], starts=2)
+    assert np.linalg.norm(result["coefficients"]) < 1e-7
+    assert result["projected_curvature_rank"] == 10
     # Compare a rectangular query to the previously validated complete predicate.
     points = np.array(
         [
@@ -148,11 +157,12 @@ def selfcheck():
     return {
         "derivatives": "passed",
         "flat_clock_recovery": "passed",
+        "three_band_flat_clock_recovery": "passed",
         "order_queries": "matched existing predicate",
     }
 
 
-def run(destination):
+def run(destination, selection_design="two"):
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
         raise RuntimeError("Commit protocol and code before stochastic data")
     if destination.exists():
@@ -166,7 +176,7 @@ def run(destination):
     for case, (amplitude, repeat) in enumerate(
         itertools.product((0.0, 0.25, 0.75), range(2))
     ):
-        seed = 2026092220 + case
+        seed = (2026092220 if selection_design == "two" else 2026092230) + case
         path = destination / f"case_{case}.npz"
         started = time.perf_counter()
         row = {
@@ -177,7 +187,9 @@ def run(destination):
             "expected_electric_eigenvalues": [-amplitude, 0, amplitude],
         }
         try:
-            row["generation"] = generate_archive(path, amplitude, seed)
+            row["generation"] = generate_archive(
+                path, amplitude, seed, selection_design
+            )
             # This function reloads the order-only archive and cannot read row.
             row["fit"] = fit_order_archive(path)
         except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
@@ -202,9 +214,14 @@ def run(destination):
         Path(__file__).with_name("p14_plane_wave.py"),
         ROOT / "docs/paper/paper_a/intrinsic_weyl/joint_pilot_protocol.md",
     ]
+    if selection_design == "three":
+        sources.append(
+            ROOT / "docs/paper/paper_a/intrinsic_weyl/three_band_pilot_protocol.md"
+        )
     result = {
         "kind": "Finite-order development pilot; no accuracy or coverage verdict",
         "code_version": stamp,
+        "selection_design": selection_design,
         "selfcheck": check,
         "cases": rows,
         "source_sha256_lf": {
@@ -222,6 +239,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--fit", type=Path)
+    parser.add_argument("--selection-design", choices=("two", "three"), default="two")
     parser.add_argument(
         "--output", type=Path, default=ROOT / "outputs/intrinsic_weyl_joint_pilot_v1"
     )
@@ -231,4 +249,4 @@ if __name__ == "__main__":
     elif args.fit:
         print(json.dumps(fit_order_archive(args.fit), indent=2))
     else:
-        run(args.output)
+        run(args.output, args.selection_design)
