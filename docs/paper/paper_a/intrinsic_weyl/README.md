@@ -62,6 +62,12 @@ The [independent fifth-degree coverage protocol](jet_coverage_protocol.md)
 now freezes 256 fresh cases from an iid constant/rotating-wave mixture,
 including selection, fit and bias failures in its confidence gate. Its
 protocol is not a result; no coverage or accuracy success is claimed here.
+The [local error derivation and fixed-scale check](local_consistency_scope.md)
+explain the possible rate benefit: under explicit regularity, conditioning
+and local-solution assumptions the physical-curvature bias becomes quadratic
+in window size. A four-scale continuum audit observes successive bias
+reductions approaching four when the window is halved. These conditions
+are not yet proved for the random selector and implemented optimizer.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed

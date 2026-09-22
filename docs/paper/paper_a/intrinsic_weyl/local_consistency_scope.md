@@ -123,3 +123,34 @@ coverage campaign remains unchanged and separate.
 ```powershell
 rtk proxy .venv/Scripts/python.exe experiments/positive_control/intrinsic_weyl_jet_scaling.py
 ```
+
+## Completed deterministic check
+
+The frozen four-scale diagnostic completed from
+`6924a08ce91e9694337878bcc6bbdeb684847eb0`, without changing the ladder.
+
+| Scale s | Quartic relative continuum bias | Fifth-degree relative continuum bias |
+|---:|---:|---:|
+| 1 | 3.60218% | 1.83314% |
+| .5 | 1.71023% | .46700% |
+| .25 | .87475% | .11693% |
+| .125 | .44735% | .02921% |
+
+Successive halving ratios are 2.1063, 1.9551, 1.9554 for the quartic model
+and 3.9254, 3.9937, 4.0037 for the fifth-degree model. The latter's local
+log2 slopes are 1.9728, 1.9977, 2.0013, consistent with the predicted
+quadratic bias in this fixed configuration. All eight fits completed with
+full coordinate/Weyl ranks; each fifth-degree nuisance rank was 277.
+
+Historical source and input hashes were checked. The scale-one fifth-degree
+fit was exactly equal to the previous pilot's complete continuum fit.
+[The saved summary](jet_scaling_summary.json) records all scales, ranks,
+ratios and hashes. The full raw output remains at
+`outputs/intrinsic_weyl_jet_scaling_v1.json`, SHA-256
+`42a18f38611424565a548eb8cd35c5d209548952c16db409957290487b8806bd`.
+The LF summary hash is
+`7957e827b0ee1f8a01d239dad85669b4222a17d1cb8cd4bbafec876eb36a7855`.
+
+This supports the order-of-bias mechanism on one deterministic shape. It
+does not validate the conditional density rate, the random selector,
+confidence coverage, a universal 2% allowance, or finite-sample accuracy.
