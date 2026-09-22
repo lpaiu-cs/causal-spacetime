@@ -298,19 +298,33 @@ a proof of novelty or an exhaustive priority audit.
 2. [Clough and Evans, *Embedding graphs in Lorentzian spacetime*](https://arxiv.org/html/1602.03103),
    section 2.2: indefinite Gram embedding is established.
 3. [Puetzfeld, Obukhov and Laemmerzahl, *Gravitational clock compass in General Relativity*](https://arxiv.org/html/1805.10673):
-   curvature from appropriately arranged clocks is established. The abstract
-   and framework were checked; no exhaustive equation-by-equation comparison
-   has yet been completed.
+   section IV.4, equations (141)--(142), relates curvature to proper-time
+   ratios and Fermi-frame positions, velocities and inertial terms. Section
+   IV.5, equations (188)--(202), and figure 6 give a complete vacuum Weyl
+   solution using the paper's 11-clock setup. Some kinematic quantities are
+   separately recoverable by clock comparisons. Full Weyl metrology is
+   therefore established; this is not an order-only finite-sampling inverse.
+   This is an input/estimand comparison, not a numerical reproduction of the
+   compass or an equation-by-equation validation of all its formulae.
 4. [Shuman, *Partial Derivatives on Causal Sets*](https://arxiv.org/html/2405.10574v1),
-   and [*The Geometry of Tangent Spaces on Causal Sets*](https://arxiv.org/html/2405.11805v1),
-   sections I.2 and II: already combine order-derived coordinates, proper
-   times, metric estimation and curvature. The reported numerical curvature
-   examples are flat 1+1D, where Weyl is identically zero. We must not claim
-   the first inverse-geometric or coordinate-reconstruction approach.
-5. [Ibrahim Ahmed and Bombelli, APS 2026 abstract](https://meetings-archive.aps.org/smt/2026/apr-r93/1/):
+   section I.1.2, equations (6)--(8), constructs coordinates from order-based
+   proper-time estimates; section III.2, equations (26)--(29), fits metric
+   components by a pseudoinverse. Thus absence of supplied coordinates is
+   not by itself a new feature. The sequel,
+   [*The Geometry of Tangent Spaces on Causal Sets*](https://arxiv.org/html/2405.11805v1),
+   sections I.2 and II, uses metric/connection derivatives for curvature.
+   Its section II.1.1 and figures 1--2 test connection and scalar curvature
+   on flat 1+1D sprinklings, not a calibrated ten-component 4D Weyl estimate.
+   These tests do not establish that the framework cannot work in 4D. Both
+   arXiv histories currently list only their May 2024 v1; the later date
+   displayed inside the experimental HTML is not a new arXiv version.
+5. [Sheikh Nauman Ibrahim Ahmed and Bombelli, APS 2026 abstract](https://meetings-archive.aps.org/smt/2026/apr-r93/1/):
    reports Weyl indications through discrete geodesic deviation in plane
    gravitational waves. It blocks a broad first-Weyl-detection claim; an
    abstract alone does not permit a full estimator or precision comparison.
+   The checked page labels a planned paper. Exact-title, author/Weyl and
+   arXiv/institutional-domain searches did not retrieve that full paper in
+   this bounded pass. This is non-retrieval, not evidence of nonexistence.
 6. For chain-volume reconstruction and the Alfyorov--Shnyukov observable,
    retain the estimand-level comparisons in
    [the existing literature audit](../window_response/plane_wave_chain_literature_and_limits.md).
@@ -319,6 +333,24 @@ The prospective contribution is therefore specific: an internally framed,
 signed 4D Weyl reconstruction from multiple timelike interval counts, with
 finite-order uncertainty and cost demonstrated. The last two requirements
 are still missing; this is not yet a submission-ready claim.
+
+The comparison fixes what later evidence may support:
+
+| Claim | Evidence still required here |
+|---|---|
+| Quantitative order-only Weyl recovery | Internally framed ten-component errors on independent curved 4D orders, with valid uncertainty and powered accuracy |
+| Useful finite-event price | Independent high-count calibration, failed cases retained, and measured CPU/memory as well as event and relation-query counts |
+| Better accuracy or efficiency than a prior estimator | A faithful comparison with the same observable input, physical scale convention and resource accounting; none has been run |
+
+Our six-field archive contains the selection order and measurement-to-landmark
+relations; it is not the full order among all measurement events. A baseline
+must not receive generator coordinates, true proper times, a profile, or an
+unaccounted full measurement-order matrix. Conversely, a method that needs
+more relations must be charged for and given those relations in an explicitly
+different comparison, rather than declared inaccurate on missing inputs.
+Prepared physical clocks and sampled causal-set events are not interchangeable
+cost units. These restrictions preserve the requested inference boundary;
+they do not establish novelty or superiority.
 
 The subsequent [noise-cost decision record](noise_design.md) finds an
 unaffordable cost for the current ordinary least-squares geometry and a
