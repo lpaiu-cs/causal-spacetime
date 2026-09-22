@@ -30,8 +30,13 @@ orders versus 0.24--0.62% from continuum volumes on the same landmarks.
 These are development point errors, not confidence or accuracy verdicts.
 The subsequent [independent coverage protocol](coverage_protocol.md) fixes
 256 new orders, an internal frame modulo reflection, and a simultaneous
-ten-component confidence ball with an explicit bias assumption. Its run
-started from `e057d10`; no verdict is assigned before all cases are complete.
+ten-component confidence ball with an explicit bias assumption. The
+[completed run](coverage_results.md), generated from `e057d10`, returned
+254 valid-and-covered cases out of 256; its exact 95% two-sided interval
+is [0.97207, 0.99905], meeting the frozen coverage gate. Median relative
+full-tidal errors remain 89.54% (weak) and 32.31% (strong), and the balls
+are too wide for 25% accuracy. Eight cases exceeded the provisional later
+variance envelope, so its old sample-price assumption is not validated.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
