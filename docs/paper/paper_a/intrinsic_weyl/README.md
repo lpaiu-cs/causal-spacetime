@@ -51,8 +51,13 @@ is not adopted. A separate [gradient diagnosis](gradient_model_diagnosis.md)
 reduced continuum bias through oracle subtraction of the missing fifth-degree
 term. An order-only local information audit retains rank ten when all 24
 vacuum gradient components are freed, at a nominal variance cost of
-13.5--48.4% in four checked configurations. The enlarged blind fit, fresh
-validation and powered accuracy remain unfinished.
+13.5--48.4% in four checked configurations.
+The subsequent [blind curvature-and-gradient pilot](jet_pilot_results.md)
+implements that enlarged inverse and tests eight fresh orders. On all four
+varying-profile cases its continuum bias is 1.19--1.83%, below the unchanged
+2% allowance; paired quartic biases are 2.14--4.31%. Actual finite-order
+errors and confidence widths remain large. The enlarged-model coverage,
+regularity scope and powered accuracy demonstration are still unfinished.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
