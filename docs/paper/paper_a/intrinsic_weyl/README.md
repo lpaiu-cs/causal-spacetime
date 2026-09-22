@@ -37,6 +37,13 @@ is [0.97207, 0.99905], meeting the frozen coverage gate. Median relative
 full-tidal errors remain 89.54% (weak) and 32.31% (strong), and the balls
 are too wide for 25% accuracy. Eight cases exceeded the provisional later
 variance envelope, so its old sample-price assumption is not validated.
+The [rotating-profile finite-order pilot](rotating_pilot_results.md) then
+completed eight independent orders using the unchanged estimator. All four
+nonconstant curved cases exceeded the old 2% continuum-bias allowance
+(observed 2.70--4.74%), despite broad nominal balls containing the truth.
+The next lever is the magnetic information in the landmark geometry,
+together with an explicit varying-profile bias budget; increasing event
+count alone does not address both limitations.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed

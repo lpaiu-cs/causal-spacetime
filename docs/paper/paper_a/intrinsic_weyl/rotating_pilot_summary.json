@@ -1,0 +1,380 @@
+{
+  "code_version": "8490f2de0ae8cff5b422d33ae0688ac7aa1a9555",
+  "selfcheck": {
+    "propagator_max_error": 2.220446049250313e-16,
+    "symplectic_identity": "passed",
+    "constant_action_volume_and_normal_map": "passed",
+    "volume_refinement": "passed",
+    "independent_brinkmann_geodesic_roundtrip_max_error": 1.1102230246251565e-15,
+    "independent_action_integral_max_error": 2.463307335887066e-16,
+    "physical_slice_density_and_rejection_bound": "passed"
+  },
+  "runtime": {
+    "python": "3.14.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1"
+  },
+  "cases_fixed_before_data": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      0.5
+    ],
+    [
+      0.25,
+      0
+    ],
+    [
+      0.75,
+      0
+    ],
+    [
+      0.25,
+      0.5
+    ],
+    [
+      0.75,
+      0.5
+    ],
+    [
+      0.25,
+      -0.5
+    ],
+    [
+      0.75,
+      -0.5
+    ]
+  ],
+  "selection_n": 4096,
+  "measurement_n": 262144,
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_rotating_pilot.py": "9a135a8208227bcdaa8012197a909ce3df8b986970736197c6278cae1442a247",
+    "experiments/positive_control/rotating_plane_wave.py": "b85ad0c2ea90ae438eae81073aad332f5bb6b60eac32066b823e7fe2b03125cc",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "5da5ac91d6e6b616d7280ea27cad83b1a29221621c768d83bc9d0f5a9e4b9496",
+    "experiments/positive_control/intrinsic_weyl.py": "9f6bd6cf1d5d557993c70e2053b02e5591e52dacd76a57e5d0931bc5f75f35e0",
+    "experiments/positive_control/intrinsic_weyl_joint_audit.py": "08266e1624b63825b2bca19b798bcdaae7b7bfcf7db427ec934d44129df62581",
+    "experiments/positive_control/intrinsic_weyl_joint_pilot.py": "4dd7be436b9279c5631e4c713564d6a2f6a5ede9cd612431b98314acaf23208e",
+    "experiments/positive_control/window_response.py": "cc7b00f8c5571856ea7c6084e797c2a904feb10ca15eac87b129cc9b406cd61e",
+    "experiments/positive_control/p14_plane_wave.py": "8fc0db68f7a0df5996ea7d4f5d0619c3a18ed6b355ad11bb6f69fc5d98f9228f",
+    "docs/paper/paper_a/intrinsic_weyl/rotating_pilot_protocol.md": "7de99de2597a1aabc0822f1e699bf25f12171d9a88d55009ffcbeeb59eba8818",
+    "docs/paper/paper_a/intrinsic_weyl/rotating_generator.md": "ddd91c169a62c9e0813615f2fc498e07fc0168aa7ad9b47db006bce74bf94271"
+  },
+  "cases": [
+    {
+      "case": 0,
+      "amplitude": 0,
+      "rotation_rate": 0,
+      "seed": 2026092600,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "truth_norm": 0.0,
+      "full_tidal_error_mod_reflection": 0.9647177694517537,
+      "relative_full_tidal_error": null,
+      "continuum_bias_mod_reflection": 0.0,
+      "relative_continuum_bias": null,
+      "bias_condition_met": true,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 1.315745576987467,
+      "largest_tidal_variance": 0.08812164160225114,
+      "quadrature_relative_change": 2.55351295663786e-15,
+      "seconds": 29.422842699976172,
+      "artifact_sha256": {
+        "case_0.npz": "dfafa095af57e4b0f19e91862791a3bcac89b659b2355c63a66f7c819ad1e1b8",
+        "truth_0.npz": "f06ba3df615059a788bc8e5f3c4f801d2fb6f3c2f64e78963ff39cabb2c942f1",
+        "case_0_full.json": "114e2db99089566f49e16bc7310f2d2903360889978625be378a657480e19262"
+      }
+    },
+    {
+      "case": 1,
+      "amplitude": 0,
+      "rotation_rate": 0.5,
+      "seed": 2026092601,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "truth_norm": 0.0,
+      "full_tidal_error_mod_reflection": 0.30604631924428194,
+      "relative_full_tidal_error": null,
+      "continuum_bias_mod_reflection": 0.0,
+      "relative_continuum_bias": null,
+      "bias_condition_met": true,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 0.9655459941168514,
+      "largest_tidal_variance": 0.048277313261438186,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 28.33070570003474,
+      "artifact_sha256": {
+        "case_1.npz": "d595de73d8a116571713e404f80b96d96c97eea0b6a03eac647b6408bd5ff717",
+        "truth_1.npz": "4bfcf9b96c2082c89b90aafcbac50745a9311b3f8f70b3a495863fa70f0316c5",
+        "case_1_full.json": "80f240a3f991d4ce48fbb89e7564730193f9d14fb5005d10cc5bb684121b84b7"
+      }
+    },
+    {
+      "case": 2,
+      "amplitude": 0.25,
+      "rotation_rate": 0,
+      "seed": 2026092602,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        0.10865639972077247,
+        -0.13133058572057418,
+        -0.045883965239296505,
+        -0.1289974871241869,
+        -0.0207476621805222,
+        -0.0559328827954666,
+        -0.039955877737464826,
+        -0.1651902543513005,
+        0.011644554102981715,
+        0.18051723493891772
+      ],
+      "truth_norm": 0.5,
+      "full_tidal_error_mod_reflection": 0.3624641142734888,
+      "relative_full_tidal_error": 0.7249282285469776,
+      "continuum_bias_mod_reflection": 0.0010321003821339792,
+      "relative_continuum_bias": 0.0020642007642679584,
+      "bias_condition_met": true,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 0.9104082365326851,
+      "largest_tidal_variance": 0.04214422714179372,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 31.024392799998168,
+      "artifact_sha256": {
+        "case_2.npz": "6015e8823fa8857b520235f0434de99854a7c273adbdb8e9efd30bf85d6f4827",
+        "truth_2.npz": "7d4f17cff4b753a714546e25463de0ff70b6e79a17170f7dc195126e6a0af8bd",
+        "case_2_full.json": "94590f3356e4ab3b8a40ee6958fb55bfae6d3a5d84846ca0c44fff4cecfc948c"
+      }
+    },
+    {
+      "case": 3,
+      "amplitude": 0.75,
+      "rotation_rate": 0,
+      "seed": 2026092603,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        -0.2566406484917617,
+        -0.30006094351086754,
+        -0.3346514705745534,
+        -0.6086499335042277,
+        0.03406603203137197,
+        -0.684554633755555,
+        -0.537445512490784,
+        0.011998477269940591,
+        0.2820492168357934,
+        0.3053725041642246
+      ],
+      "truth_norm": 1.5,
+      "full_tidal_error_mod_reflection": 0.4057429013619149,
+      "relative_full_tidal_error": 0.2704952675746099,
+      "continuum_bias_mod_reflection": 0.01866215597689677,
+      "relative_continuum_bias": 0.012441437317931181,
+      "bias_condition_met": true,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 0.9059462492548496,
+      "largest_tidal_variance": 0.04029792386157075,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 30.711043099989183,
+      "artifact_sha256": {
+        "case_3.npz": "799fb77bb0b1574cf85158af724acdddb006f80e50d86494c57599531496543c",
+        "truth_3.npz": "1dd95707732446fc971fafbff4eff51d8801d84aa59a9871071af589d820144c",
+        "case_3_full.json": "ef0afc2c226ec0f4d812479855237443aeac2759ae2b74e225ae5959b6c0fe9e"
+      }
+    },
+    {
+      "case": 4,
+      "amplitude": 0.25,
+      "rotation_rate": 0.5,
+      "seed": 2026092604,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        -0.026430251573962435,
+        0.22298993030725694,
+        0.006551961199200229,
+        -0.07743499066097902,
+        -0.012006117299061047,
+        -0.005270644908927016,
+        -0.014476366978743518,
+        -0.08175381607276919,
+        -0.005118401339138998,
+        -0.23585815740933846
+      ],
+      "truth_norm": 0.5,
+      "full_tidal_error_mod_reflection": 0.43217447954541227,
+      "relative_full_tidal_error": 0.8643489590908245,
+      "continuum_bias_mod_reflection": 0.013502931316968834,
+      "relative_continuum_bias": 0.027005862633937668,
+      "bias_condition_met": false,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 1.2325082710303097,
+      "largest_tidal_variance": 0.07768271635694024,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 27.661177100031637,
+      "artifact_sha256": {
+        "case_4.npz": "c9fbf82f023c2538cfb8235b9387f22dbf1f1424b5c43a0ee096faac8bc825ff",
+        "truth_4.npz": "ccc94ea53dd764e347c8c9ddee7c03206da9d11bb5fe021e15dce5c6ff81c108",
+        "case_4_full.json": "c3ea19b7a5c19aa56d08b72f1008c9153dd8d9da1afa6b061b7e804c44be72e0"
+      }
+    },
+    {
+      "case": 5,
+      "amplitude": 0.75,
+      "rotation_rate": 0.5,
+      "seed": 2026092605,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        -0.2773817436510253,
+        0.0029251550306670067,
+        -0.06496533590460435,
+        -0.43006566960657666,
+        -0.5436565571304702,
+        -0.22126695907273866,
+        -0.6406966409354516,
+        -0.41806511626007,
+        0.2058642711676592,
+        -0.1662985416884358
+      ],
+      "truth_norm": 1.5,
+      "full_tidal_error_mod_reflection": 0.37430978569834067,
+      "relative_full_tidal_error": 0.24953985713222712,
+      "continuum_bias_mod_reflection": 0.07103380298120342,
+      "relative_continuum_bias": 0.04735586865413561,
+      "bias_condition_met": false,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 1.0753839231403926,
+      "largest_tidal_variance": 0.05727747851548977,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 28.615640400035772,
+      "artifact_sha256": {
+        "case_5.npz": "611238d19ecdbe853673108491b860f1ce1690ba1e99ead9c48feb2aff281a20",
+        "truth_5.npz": "5eec07318e7fd58b712842c25c39ff94a5d7469ee79cf74e1bc30223c7af0d9a",
+        "case_5_full.json": "95eaf14a3af61e7697489bccf8719d67cccaa38bfb82e3844d3e91fd27f10c7c"
+      }
+    },
+    {
+      "case": 6,
+      "amplitude": 0.25,
+      "rotation_rate": -0.5,
+      "seed": 2026092606,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        -0.10396644240825177,
+        0.0034706189120203568,
+        -0.017449240466350983,
+        0.1453557088870521,
+        0.17287379112286433,
+        0.07631183470519329,
+        0.20407319001896976,
+        0.14568468852125402,
+        0.07207117773653184,
+        -0.06469585314401799
+      ],
+      "truth_norm": 0.5,
+      "full_tidal_error_mod_reflection": 0.6690497510526374,
+      "relative_full_tidal_error": 1.3380995021052748,
+      "continuum_bias_mod_reflection": 0.018678693506989676,
+      "relative_continuum_bias": 0.03735738701397935,
+      "bias_condition_met": false,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 0.9435536524785197,
+      "largest_tidal_variance": 0.04476121300670446,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 29.260604200011585,
+      "artifact_sha256": {
+        "case_6.npz": "9dcdbc1d41bdc0a8858f30c10a3db791de3eac30299b6061f6f657d3eb0bcd61",
+        "truth_6.npz": "dff94fc05c81e9dbfc2f07b40b3d221de55b0c468bafc5dc94b09a0432a57e98",
+        "case_6_full.json": "14d63e395b040346a06bec611f817916d54b87c283f1742162f02a36a23e5b82"
+      }
+    },
+    {
+      "case": 7,
+      "amplitude": 0.75,
+      "rotation_rate": -0.5,
+      "seed": 2026092607,
+      "generation": {
+        "landmarks": 64,
+        "selection_n": 4096,
+        "measurement_n": 262144
+      },
+      "truth_coefficients_xy_positive": [
+        0.482446227348936,
+        0.08337344913089344,
+        -0.28701324152340246,
+        0.45577480164155093,
+        0.2700193346223543,
+        0.5032515754864211,
+        0.374282807906883,
+        0.4582619574280411,
+        -0.24412182010021682,
+        0.296494788415534
+      ],
+      "truth_norm": 1.5,
+      "full_tidal_error_mod_reflection": 0.5667969578649705,
+      "relative_full_tidal_error": 0.37786463857664704,
+      "continuum_bias_mod_reflection": 0.04266206818833831,
+      "relative_continuum_bias": 0.02844137879222554,
+      "bias_condition_met": false,
+      "nominal_ball_contains_truth": true,
+      "confidence_radius": 1.006763866075659,
+      "largest_tidal_variance": 0.04991624508072809,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "seconds": 34.53907460003393,
+      "artifact_sha256": {
+        "case_7.npz": "01c49c3ea9c93335b690c5613476631776e938cfce326e0d5a8c1086e915c6f8",
+        "truth_7.npz": "d5ee4d7afbea8057f026f53861e94936870d270f0a77850f9c2787dcfda9687c",
+        "case_7_full.json": "d58b1faaa2520291880e53ef6b2cc9293de122fa9e9b57188dde8c3e4a751e3e"
+      }
+    }
+  ],
+  "scope": "Prospective varying-profile development pilot; no accuracy or coverage verdict"
+}
