@@ -941,5 +941,70 @@
         "all_fit_fields_exact": true
       }
     ]
+  },
+  "engineering_clock_reuse": {
+    "scope": "Post-pilot exact computational reuse; no scientific draws, no coverage or accuracy claim, no change to the running campaign",
+    "candidate": {
+      "scope": "Exact replay of old nested pilot cases 5 and 6; concurrent coverage jobs, timing not a controlled benchmark",
+      "code_version": "63e1b6b0428905cc6b7532b2786f0eb6bef5bb66",
+      "source_sha256_lf": "a54430e00da111be4c1943073468e71af425b7aa41a73fb7c2eafbdf4df023b9",
+      "replays": [
+        {
+          "case": 5,
+          "seconds": 179.08254289999604,
+          "all_saved_fit_fields_exact": true,
+          "covariance_entries_exact": true,
+          "order_archive_sha256": "5e024dec22f1fc6005c79140e3c17905facb508f82d79c9a8448f467297e8f5a"
+        },
+        {
+          "case": 6,
+          "seconds": 117.38772349996725,
+          "all_saved_fit_fields_exact": true,
+          "covariance_entries_exact": null,
+          "order_archive_sha256": "ea6818d1a3f7b51696744dd9c51426b92918b50539e03d3d78ad671a12a0606c"
+        }
+      ],
+      "generator_or_truth_modules_loaded": []
+    },
+    "prototype_covariance_check": {
+      "scope": "Old case 5, simultaneous coverage campaign; engineering timing only",
+      "n": 262144,
+      "distinct_signatures": 107961,
+      "grouped_seconds": 32.11924160004128,
+      "all_covariance_entries_exact": true,
+      "maximum_covariance_difference": 0.0,
+      "script_sha256": "5ec7145ca5cfab68b3d20c9a9d9676794afa392668d172396fdbabc72f2a3157",
+      "order_archive_sha256": "5e024dec22f1fc6005c79140e3c17905facb508f82d79c9a8448f467297e8f5a"
+    },
+    "baseline_profile": {
+      "code_version": "9f289a57fde98a72a54308e4eff8e8224047f5d7",
+      "total_seconds": 300.70643820000015,
+      "read_order_clocks_seconds": 96.43326730000001,
+      "source_sha256_lf": "f4ef278bb8b47a07d086e514e0ab6d1c5774fd886ffff57452473f8523a671e9"
+    },
+    "confidence_replays": [
+      {
+        "case": 5,
+        "all_inference_fields_exact": true,
+        "original_truth_inclusion": true,
+        "original_error": 0.2730057675790433,
+        "unchanged_radius": 0.5377045106955538
+      },
+      {
+        "case": 6,
+        "all_inference_fields_exact": true,
+        "original_truth_inclusion": false,
+        "original_error": 0.4417607516481066,
+        "unchanged_radius": 0.4132084962788216
+      }
+    ],
+    "timing_limit": "One old case under variable concurrent coverage load; no controlled speedup claim",
+    "artifact_sha256": {
+      "baseline_profile.pstats": "a063fc77847c39de1c36214a72a51fa67e62e93a0a3ab08d00d17429abec2f13",
+      "baseline_clocks.npz": "fde75585a4876ff879f9a7564c583a334c44dcede655a2cb7783405a052f1b98",
+      "baseline_fit.json": "e54438fdae9bca6db6fec6594f1c82558e5c3d1b3509032fefec33bd41535404",
+      "integrated_replay.json": "c82ecab9dd281d3337c3c06c78fd16d57740606f34ee452ff61b569abaaa3646",
+      "grouped_audit.json": "f98672a2aad4d2fe5667ebb8d4a4c147c9f0ba3dededf528381703d374e9980a"
+    }
   }
 }

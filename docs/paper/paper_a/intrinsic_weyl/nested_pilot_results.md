@@ -122,3 +122,49 @@ including case 6. Raw files are in `outputs/intrinsic_weyl_nested_pilot_v1`;
 the raw summary SHA256 is
 `981b88fee30c04ec5e3ca223ffbe5f60d182f60968c4f7ec196a4c36e480ecb7`.
 The pure-replay timing record is `pure_replay_audit.json` in that folder.
+
+## Exact reuse of repeated membership patterns
+
+A subsequent engineering check, committed at
+**63e1b6b0428905cc6b7532b2786f0eb6bef5bb66**, removes repeated arithmetic
+without changing the measured moments. If z_e is the vector of interval
+indicators for event e, and identical after/before landmark signatures have
+representative z_r and multiplicity w_r, then
+
+```text
+sum_e z_e z_e^T = sum_r w_r z_r z_r^T.
+```
+
+The denominator remains the original event count N, not the number of distinct
+signatures. The implementation multiplies by integer w_r, without square
+roots; products and partial sums remain exactly representable in float64 for
+N below 2^53. Interval counts, shared-membership covariance, selection, fitted
+model and confidence construction are unchanged. No coordinates or generator
+information are used. The existing inverse self-check now verifies this
+identity against direct event sums, including repeated/singleton patterns and
+landmark counts not divisible by a byte boundary.
+
+Old case 5 has **107,961** distinct signatures among 262,144 events. The
+prototype reproduces every covariance entry exactly. The integrated path then
+reproduces **every saved fit and confidence field exactly in old cases 5 and
+6**, without importing generator or truth modules. In particular, case 6
+still misses truth: error 0.44176075 exceeds the unchanged radius 0.41320850.
+Computational reuse does not repair this statistical failure.
+
+During the simultaneous coverage campaign, one profiled baseline replay of
+case 5 took 300.71 seconds, including 96.43 seconds for reading clocks and
+constructing covariance. The grouped-moment prototype took 32.12 seconds;
+integrated replays took 179.08 seconds for case 5 and 117.39 seconds for case
+6. These unequal workloads under variable concurrent load are descriptive
+timings, **not a controlled speedup estimate or a high-count feasibility
+result**. The grouping requires additional memory linear in N times the
+number of landmarks, plus sorting temporaries; its benefit depends on repeated
+signatures. It does not remove fitting or dense covariance factorization.
+
+The [recorded audit](nested_pilot_summary.json) includes source and artifact
+hashes under `engineering_clock_reuse`. Raw engineering files are retained at
+`outputs/weyl_clock_reuse` in the isolated `weyl-curvature-square` worktree.
+The active 512-case coverage run continues on its original **f001de6** code;
+this implementation is held in the isolated worktree until that run ends.
+No independent scientific cases or verdicts were added by the engineering
+check.
