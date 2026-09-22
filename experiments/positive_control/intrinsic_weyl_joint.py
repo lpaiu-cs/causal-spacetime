@@ -236,8 +236,19 @@ def gauge(points):
     return result
 
 
-def model(points, coefficients, pairs):
+def model(points, coefficients, pairs, *, square_correction=False):
     """Quartic or fifth-degree world function with analytic derivatives."""
+    if square_correction:
+        from intrinsic_weyl_square import correction
+
+        return tuple(
+            a + b
+            for a, b in zip(
+                model(points, coefficients, pairs),
+                correction(points, coefficients, pairs),
+                strict=True,
+            )
+        )
     left, right = points[pairs[:, 0]], points[pairs[:, 1]]
     delta = left - right
     flat = np.einsum("pa,ab,pb->p", delta, ETA, delta)
@@ -284,6 +295,7 @@ def fit_joint(
     clock_mask=None,
     clock_covariance=None,
     model_order=4,
+    square_correction=False,
 ):
     """Jointly infer positions and all ten Weyl components from counts.
 
@@ -293,6 +305,8 @@ def fit_joint(
     """
     if model_order not in (4, 5):
         raise ValueError("World-function order must be four or five")
+    if square_correction and model_order != 5:
+        raise ValueError("The curvature-square variant requires the fifth-degree fit")
     curvature_parameters = 10 if model_order == 4 else 34
     counts = np.asarray(counts, dtype=float)
     if (
@@ -352,11 +366,16 @@ def fit_joint(
         return points, c
 
     def residual(parameters):
-        value = model(*unpack(parameters), pairs)[0] - target
+        value = (
+            model(*unpack(parameters), pairs, square_correction=square_correction)[0]
+            - target
+        )
         return value if whiten is None else whiten @ value
 
     def jacobian(parameters):
-        _, dl, dr, dc = model(*unpack(parameters), pairs)
+        _, dl, dr, dc = model(
+            *unpack(parameters), pairs, square_correction=square_correction
+        )
         result = np.zeros((len(pairs), len(parameters)))
         for side, derivative in enumerate((dl, dr)):
             for component in range(4):
@@ -461,6 +480,12 @@ def fit_joint(
             else "Local linearized covariance under the fifth-degree model; "
         ) + "coverage and truncation bias not certified"
         result["retained_clock_covariance_rank"] = len(whiten)
+    if square_correction:
+        result["curvature_square_correction"] = True
+        result["model_scope"] = (
+            "Fifth-degree jet plus curvature-squared world-function and volume-clock "
+            "terms; second covariant curvature derivatives still omitted"
+        )
     return result
 
 
@@ -542,7 +567,9 @@ def read_order_clocks(path):
     return counts, clock_mask, clock_covariance, ids, n
 
 
-def fit_order_archive(path, *, with_clocks=False, model_order=4):
+def fit_order_archive(
+    path, *, with_clocks=False, model_order=4, square_correction=False
+):
     """Blind boundary: accept only saved order bits; infer all other inputs."""
     clocks = read_order_clocks(path)
     counts, clock_mask, clock_covariance, ids, n = clocks
@@ -551,6 +578,7 @@ def fit_order_archive(path, *, with_clocks=False, model_order=4):
         clock_mask=clock_mask,
         clock_covariance=clock_covariance,
         model_order=model_order,
+        square_correction=square_correction,
     )
     result["selected_ids"] = ids.tolist()
     result["measurement_n"] = n
