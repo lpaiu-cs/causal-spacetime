@@ -63,7 +63,8 @@ def linearized_fit():
         reference_probability = (reference_tau2 / OUTER_T**2) ** 2
         response *= -1 / (2 * math.sqrt(probability * reference_probability))
         derivatives.append([response[i, j] for i, j in residual_pairs])
-    jacobian = np.linalg.pinv(design) @ np.array(derivatives).T
+    response = np.array(derivatives).T
+    jacobian = np.linalg.pinv(design) @ response
     # The omitted derivative of the normalization multiplies the zero flat D.
     assert np.linalg.norm(jacobian @ probabilities) < 1e-8
     base = np.zeros((len(points), len(points)))
@@ -79,7 +80,25 @@ def linearized_fit():
     analytic = jacobian @ (probabilities * relative_direction)
     discrepancy = np.linalg.norm(numeric - analytic) / np.linalg.norm(analytic)
     assert discrepancy < 2e-6, discrepancy
-    return clocks, probabilities, jacobian, reference_tau2, discrepancy
+    return (
+        clocks,
+        probabilities,
+        jacobian,
+        reference_tau2,
+        discrepancy,
+        design,
+        response,
+    )
+
+
+def memberships(rng, clocks):
+    """Shared event membership, retaining correlations between interval counts."""
+    a, b = np.array(clocks).T
+    events = sprinkle_minkowski_causal_diamond(CHUNK, 4, OUTER_T, rng)
+    events[:, 0] += OUTER_T / 2
+    dt = events[:, None, 0] - TANGENTS[None, :, 0]
+    distance = np.linalg.norm(events[:, None, 1:] - TANGENTS[None, :, 1:], axis=2)
+    return (dt > distance)[:, a] & (-dt > distance)[:, b]
 
 
 def price(covariance, reference_tau2):
@@ -117,7 +136,9 @@ def run():
     stamp = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
-    clocks, probabilities, jacobian, reference_tau2, discrepancy = linearized_fit()
+    clocks, probabilities, jacobian, reference_tau2, discrepancy, _, _ = (
+        linearized_fit()
+    )
     a, b = np.array(clocks).T
     rows = []
     for seed in SEEDS:
@@ -127,15 +148,7 @@ def run():
         influence_sum = np.zeros(10)
         second = np.zeros((10, 10))
         for _ in range(PER_SEED // CHUNK):
-            events = sprinkle_minkowski_causal_diamond(CHUNK, 4, OUTER_T, rng)
-            events[:, 0] += OUTER_T / 2
-            dt = events[:, None, 0] - TANGENTS[None, :, 0]
-            distance = np.linalg.norm(
-                events[:, None, 1:] - TANGENTS[None, :, 1:], axis=2
-            )
-            after = dt > distance
-            before = -dt > distance
-            membership = after[:, a] & before[:, b]
+            membership = memberships(rng, clocks)
             count += membership.sum(axis=0)
             influence = (membership - probabilities) @ jacobian.T
             influence_sum += influence.sum(axis=0)
