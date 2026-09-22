@@ -24,7 +24,10 @@ orders and exposes a selection failure: the central band was mostly removed.
 Reliable recovery of the magnetic components is not established.
 The [connected selection pilot](connected_pilot_results.md) repaired central
 retention in six further independent orders. Both spectra remain noisy, and
-an expanded evaluation now checks all ten components rather than spectra alone.
+an expanded evaluation checks all ten components and relative directions.
+On the four curved cases, relative full-tidal errors are 31--112% from finite
+orders versus 0.24--0.62% from continuum volumes on the same landmarks.
+These are development point errors, not confidence or accuracy verdicts.
 
 ## 1. What the input can determine
 
@@ -33,7 +36,8 @@ respect to its physical volume. All intervals used below must lie in a regular
 convex normal neighborhood; their shape stays bounded as its scale shrinks.
 The estimator sees interval cardinalities or the order from which to count
 them. It does not see the embedding, the metric profile, or a flat sample.
-Landmark IDs are currently supplied by the caller.
+The original Schur construction below takes landmark IDs from the caller;
+the subsequent joint pipeline selects its own landmarks from a separate order.
 
 Absolute dimensional curvature is not identifiable without an extra scale:
 under `g -> lambda^2 g`, the causal order and normalized uniform sampling law

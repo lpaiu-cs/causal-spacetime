@@ -80,6 +80,51 @@ not merely two eigenvalue lists. It is a point-error diagnostic, not a
 confidence bound.
 
 The audit is invoked explicitly with input and NEW output paths; it refuses
-to overwrite earlier audit files. Independent accuracy/coverage validation,
+to overwrite earlier audit files.
+
+## Completed bias and full-tensor diagnostic
+
+The [complete audit](connected_pilot_bias_audit.json) ran from commit
+`112539d` using the six existing archives. Its source hashes, reachable audit
+and generation commits, and original summary hash were verified. All six
+continuum fits converged with projected Weyl rank ten. The 32/64-point volume
+quadrature comparison changed interval values by less than `3e-15` relative.
+
+| Case | A | Finite-order relative full-tidal error | Continuum relative full-tidal error |
+|---|---:|---:|---:|
+| 2 | 0.25 | 111.61% | 0.243% |
+| 3 | 0.25 | 69.10% | 0.242% |
+| 4 | 0.75 | 30.65% | 0.616% |
+| 5 | 0.75 | 31.20% | 0.472% |
+
+Flat cases have no nonzero denominator: their finite absolute full-tidal
+errors were 0.4455 and 0.6321, whereas the continuum errors were zero and
+`4.7e-14` or less. They are not assigned relative errors. In all curved
+cases, the maximum absolute continuum electric eigenvalue bias was 0.00473
+and the maximum magnetic bias was 0.00176.
+
+Thus the full signed tensor, including relative E/B directions, is recovered
+with small deterministic error on these selected continuum configurations.
+The finite-order estimates are much noisier. This distinguishes a usable
+local inverse signal from an adequately precise finite instrument: the
+former has evidence here; the latter is still unconfirmed. The comparison
+does not isolate pure variance from low-count nonlinear bias or optimization
+effects, and it is not a uniform truncation bound over other profiles or
+landmark shapes. There are only two repetitions per amplitude.
+
+The next lever is to price and validate the finite-sample estimator while
+holding this connected selection rule fixed. Before new accuracy data,
+define a specific estimand (including orientation/gauge treatment), control
+bias, fix 95% confidence coverage and a simultaneous construction where
+appropriate, and size its interval-containment gate to 90% power. The nominal
+component covariance alone does not certify that construction, especially
+when alignment depends on inferred coordinates. Do not replace this with
+a favorable point-error threshold after observing the pilot.
+
+```powershell
+rtk proxy .venv/Scripts/python.exe experiments/positive_control/intrinsic_weyl_joint_audit.py outputs/intrinsic_weyl_joint_pilot_v3 outputs/intrinsic_weyl_joint_pilot_v3/new_bias_audit.json
+```
+
+Independent accuracy/coverage validation,
 truncation control beyond these geometries, and varying-profile finite-order
 tests remain outstanding. The active goal is not complete.
