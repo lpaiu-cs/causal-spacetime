@@ -58,6 +58,10 @@ varying-profile cases its continuum bias is 1.19--1.83%, below the unchanged
 2% allowance; paired quartic biases are 2.14--4.31%. Actual finite-order
 errors and confidence widths remain large. The enlarged-model coverage,
 regularity scope and powered accuracy demonstration are still unfinished.
+The [independent fifth-degree coverage protocol](jet_coverage_protocol.md)
+now freezes 256 fresh cases from an iid constant/rotating-wave mixture,
+including selection, fit and bias failures in its confidence gate. Its
+protocol is not a result; no coverage or accuracy success is claimed here.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
