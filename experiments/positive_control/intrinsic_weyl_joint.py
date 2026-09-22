@@ -105,6 +105,35 @@ def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"
     tau_p, tau_q = np.sqrt(counts[0] / total), np.sqrt(counts[-1] / total)
     times = (tau_p - tau_q) / 2
     radius2 = 0.25 + times**2 - (tau_p + tau_q) / 2
+    if design == "wide":
+        # Keep the original outer landmarks, including the two frame vectors.
+        # Only central spatial spread changes in the prospective paired pilot.
+        base = select_landmarks(counts, maximum, minimum_count, "connected")[1:-1]
+        past, future = base[times[base] <= -0.24], base[times[base] >= 0.24]
+        middle = np.flatnonzero(
+            (abs(times) <= 0.075)
+            & (radius2 >= 0.075**2)
+            & (radius2 <= 0.3**2)
+            & (counts[0] >= minimum_count)
+            & (counts[-1] >= minimum_count)
+        )
+        degrees = np.column_stack(
+            [
+                (counts[middle[:, None], end] >= minimum_count).sum(axis=1)
+                for end in (past, future)
+            ]
+        )
+        keep = np.all(degrees >= 4, axis=1)
+        middle, degrees = middle[keep], degrees[keep]
+        score = degrees.min(axis=1) * radius2[middle]
+        ranked = np.argsort(-score, kind="stable")
+        middle = middle[ranked[: maximum - len(past) - len(future)]]
+        ids = np.r_[past, middle, future]
+        if len(middle) < 8 or np.any(
+            (counts[ids[:, None], ids] >= minimum_count).sum(axis=1) < 8
+        ):
+            raise ValueError("Wider centers require eight centers and degree eight")
+        return np.r_[0, ids, len(counts) - 1]
     if design not in ("two", "three", "connected"):
         raise ValueError("Unknown prospective selection design")
     outer_floor = 0.24 if design == "connected" else 0.15
