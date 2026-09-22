@@ -22,6 +22,9 @@ accuracy confirmation and varying-profile validation are still outstanding.
 The [three-band follow-up](three_band_pilot_results.md) adds six further
 orders and exposes a selection failure: the central band was mostly removed.
 Reliable recovery of the magnetic components is not established.
+The [connected selection pilot](connected_pilot_results.md) repaired central
+retention in six further independent orders. Both spectra remain noisy, and
+an expanded evaluation now checks all ten components rather than spectra alone.
 
 ## 1. What the input can determine
 

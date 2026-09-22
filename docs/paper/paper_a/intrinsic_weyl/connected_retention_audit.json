@@ -1,0 +1,176 @@
+[
+  {
+    "case": 0,
+    "amplitude": 0.0,
+    "retained_bands": [
+      21,
+      22,
+      21
+    ],
+    "minimum_central_clocks_each_side": [
+      8,
+      9
+    ],
+    "electric_eigenvalues": [
+      -0.11385426272089909,
+      -0.02905163262187445,
+      0.14290589534277348
+    ],
+    "magnetic_eigenvalues": [
+      -0.21115137565648387,
+      -0.11501728683742816,
+      0.3261686624939121
+    ],
+    "nominal_magnetic_eigen_se": [
+      0.18292745556813556,
+      0.19127766655116019,
+      0.17493938021269778
+    ],
+    "minimum_measurement_clock": 25
+  },
+  {
+    "case": 1,
+    "amplitude": 0.0,
+    "retained_bands": [
+      21,
+      22,
+      21
+    ],
+    "minimum_central_clocks_each_side": [
+      8,
+      7
+    ],
+    "electric_eigenvalues": [
+      -0.21264327181650655,
+      0.019213058424627862,
+      0.1934302133918788
+    ],
+    "magnetic_eigenvalues": [
+      -0.29324105323366983,
+      -0.15956911729974657,
+      0.4528101705334164
+    ],
+    "nominal_magnetic_eigen_se": [
+      0.1778116098765313,
+      0.17182903304155595,
+      0.1879506298545396
+    ],
+    "minimum_measurement_clock": 19
+  },
+  {
+    "case": 2,
+    "amplitude": 0.25,
+    "retained_bands": [
+      21,
+      22,
+      21
+    ],
+    "minimum_central_clocks_each_side": [
+      9,
+      7
+    ],
+    "electric_eigenvalues": [
+      -0.42061739867780457,
+      0.05655132790002832,
+      0.3640660707777763
+    ],
+    "magnetic_eigenvalues": [
+      -0.40732594710924563,
+      -0.2307612519797361,
+      0.6380871990889818
+    ],
+    "nominal_magnetic_eigen_se": [
+      0.18458917873185518,
+      0.17925200134319066,
+      0.16989414814851267
+    ],
+    "minimum_measurement_clock": 24
+  },
+  {
+    "case": 3,
+    "amplitude": 0.25,
+    "retained_bands": [
+      21,
+      22,
+      21
+    ],
+    "minimum_central_clocks_each_side": [
+      7,
+      6
+    ],
+    "electric_eigenvalues": [
+      -0.20011069532633985,
+      -0.05182172289464099,
+      0.2519324182209809
+    ],
+    "magnetic_eigenvalues": [
+      -0.26538827923120567,
+      -0.16258887994051394,
+      0.42797715917171975
+    ],
+    "nominal_magnetic_eigen_se": [
+      0.1601443425688268,
+      0.16704927218079338,
+      0.18162289527787814
+    ],
+    "minimum_measurement_clock": 8
+  },
+  {
+    "case": 4,
+    "amplitude": 0.75,
+    "retained_bands": [
+      21,
+      22,
+      21
+    ],
+    "minimum_central_clocks_each_side": [
+      7,
+      7
+    ],
+    "electric_eigenvalues": [
+      -0.6354269617963371,
+      0.03660884343173663,
+      0.5988181183646004
+    ],
+    "magnetic_eigenvalues": [
+      -0.6879405943422108,
+      -0.06260342084154975,
+      0.7505440151837606
+    ],
+    "nominal_magnetic_eigen_se": [
+      0.16415148236194393,
+      0.15611115515299326,
+      0.16486425005456398
+    ],
+    "minimum_measurement_clock": 9
+  },
+  {
+    "case": 5,
+    "amplitude": 0.75,
+    "retained_bands": [
+      21,
+      22,
+      21
+    ],
+    "minimum_central_clocks_each_side": [
+      8,
+      9
+    ],
+    "electric_eigenvalues": [
+      -0.8603785608454659,
+      0.013144590223371083,
+      0.8472339706220948
+    ],
+    "magnetic_eigenvalues": [
+      -0.6582512888551147,
+      0.1401936168214974,
+      0.518057672033617
+    ],
+    "nominal_magnetic_eigen_se": [
+      0.18009790892140265,
+      0.18931920570908659,
+      0.16859336427029462
+    ],
+    "minimum_measurement_clock": 20
+  }
+]
