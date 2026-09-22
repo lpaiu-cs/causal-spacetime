@@ -104,6 +104,13 @@ def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"
     total = counts[0, -1]
     if total <= 0:
         raise ValueError("The outer interval must contain events")
+    if design == "nested":
+        base = select_landmarks(counts, maximum, minimum_count, "connected")
+        expanded = select_landmarks(counts, 2 * maximum, minimum_count, "connected")
+        extra = expanded[~np.isin(expanded, base)]
+        # Preserve every old clock and the two vectors defining the frame.
+        # The union has at most 3*maximum interior landmarks, not exactly 2*maximum.
+        return np.r_[base[:-1], extra, base[-1]]
     tau_p, tau_q = np.sqrt(counts[0] / total), np.sqrt(counts[-1] / total)
     times = (tau_p - tau_q) / 2
     radius2 = 0.25 + times**2 - (tau_p + tau_q) / 2
