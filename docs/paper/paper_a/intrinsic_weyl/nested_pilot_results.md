@@ -51,6 +51,47 @@ needs explicit regularity/bias scope, independent high-count calibration and
 90% power sizing before its data. No unrestricted-frequency or global result
 follows, and the old fifth-degree failure remains unchanged.
 
+## Conditional price of a later accuracy test
+
+Using only these pilot covariances, reuse the sufficient Gaussian planning
+rule in [the earlier coverage protocol](coverage_protocol.md#price-of-the-later-accuracy-study-not-authorization-to-run-it-yet).
+For six nonzero cases, allocate confidence error .05/6 and power failure .1/6
+per case. With delta=.02 and V=N*lambda_max, the sufficient measurement count
+for 25% confidence containment and at least 90% joint power is
+
+```text
+N >= V * (sqrt(chi2_10(1-.05/6)) + sqrt(chi2_10(1-.1/6)))^2
+         / (.205 * ||true||_G)^2,
+.205 = (1-delta)*.25 - 2*delta.
+```
+
+This includes center error and interval radius; it is not the smaller
+break-even count. Applying it separately to each observed configuration gives:
+
+| Case | A | w | Pilot V | Conditional measurement count | Nested/baseline count |
+|---:|---:|---:|---:|---:|---:|
+| 2 | .25 | 0 | 4258.32 | 36,819,113 | .2635 |
+| 3 | .75 | 0 | 2510.81 | 2,412,159 | .1632 |
+| 4 | .25 | .5 | 4370.47 | 37,788,829 | .1885 |
+| 5 | .75 | .5 | 3537.42 | 3,398,436 | .2157 |
+| 6 | .25 | -.5 | 2160.95 | 18,684,391 | .1440 |
+| 7 | .75 | -.5 | 3213.10 | 3,086,856 | .2096 |
+
+The total is **102,189,784 measurement events**, excluding selection and any
+flat-case accuracy target. These are conditional extrapolations, not a frozen
+future budget or a verified power result. They assume valid Gaussian
+uncertainty, the 2% bias condition and stable V at higher counts; none is
+established for new high-count cases or new landmark configurations. In
+particular, case 6's observed noncoverage remains unresolved. The ten-component
+confidence ball would use the stricter .05/6 error allocation in that later
+study. No high-count accuracy run has been started from this calculation.
+
+The apparent saving concerns sampled events. It does not establish lower CPU
+cost: the nested estimator uses about four times as many interval clocks, and
+the pure-fit replay below is substantially slower. High-count calibration and
+measured computational feasibility are still necessary; weak cases cannot be
+dropped to turn the cheaper strong-case counts into the full result.
+
 ## Resource cost and audit
 
 The total sample is **2,129,920 events plus 16 supplied tips**; events were
