@@ -6,32 +6,13 @@ or a finite-sample accuracy claim. No generator, profile or truth is imported.
 
 import argparse
 import hashlib
-import itertools
 import json
 import subprocess
 from pathlib import Path
 
 import numpy as np
-from intrinsic_weyl_joint import TIDAL_GRAM, TIDAL_ROOT, WEYL, fit_order_archive, model
-from scipy.linalg import null_space
-
-
-def gradient_basis():
-    # q[a,k] are the four derivatives of ten independent Weyl components.
-    # The vacuum differential Bianchi identity imposes 16 constraints.
-    rows = []
-    for a, b, c in itertools.combinations(range(4), 3):
-        for d, e in itertools.combinations(range(4), 2):
-            row = np.zeros((4, 10))
-            row[a] += WEYL[:, b, c, d, e]
-            row[b] += WEYL[:, c, a, d, e]
-            row[c] += WEYL[:, a, b, d, e]
-            rows.append(row.ravel())
-    constraint = np.array(rows)
-    basis = null_space(constraint)
-    assert np.linalg.matrix_rank(constraint) == 16 and basis.shape == (40, 24)
-    assert np.max(abs(constraint @ basis)) < 1e-12
-    return basis
+from intrinsic_weyl import gradient_basis
+from intrinsic_weyl_joint import TIDAL_GRAM, TIDAL_ROOT, fit_order_archive, model
 
 
 def information(fit, mask, covariance):

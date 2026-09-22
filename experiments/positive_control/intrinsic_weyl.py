@@ -6,8 +6,10 @@ Finite-sample accuracy and automatic landmark selection are not established.
 """
 
 import itertools
+from functools import lru_cache
 
 import numpy as np
+from scipy.linalg import null_space
 
 ETA = np.diag([-1.0, 1.0, 1.0, 1.0])
 PAIRS = list(itertools.combinations(range(4), 2))
@@ -56,6 +58,25 @@ def weyl_basis():
 
 
 WEYL = weyl_basis()
+
+
+@lru_cache(maxsize=1)
+def gradient_basis():
+    """24 vacuum Weyl gradients, in derivative-major (4,10) component order."""
+    rows = []
+    for a, b, c in itertools.combinations(range(4), 3):
+        for d, e in itertools.combinations(range(4), 2):
+            row = np.zeros((4, 10))
+            row[a] += WEYL[:, b, c, d, e]
+            row[b] += WEYL[:, c, a, d, e]
+            row[c] += WEYL[:, a, b, d, e]
+            rows.append(row.ravel())
+    constraint = np.array(rows)
+    basis = null_space(constraint)
+    if basis.shape != (40, 24) or np.max(abs(constraint @ basis)) >= 1e-12:
+        raise ArithmeticError("Invalid differential Bianchi null space")
+    basis.setflags(write=False)
+    return basis
 
 
 def quartic(x, y):

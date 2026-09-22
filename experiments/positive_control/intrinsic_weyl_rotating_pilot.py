@@ -16,6 +16,7 @@ from intrinsic_weyl_joint import (
     fit_order_archive,
     gauge,
     selection,
+    selfcheck_jet,
     tidal_distance,
 )
 from intrinsic_weyl_joint_audit import aligned_tensor_error
@@ -83,8 +84,8 @@ def generate(path, truth_path, amplitude, rotation_rate, seed):
     }
 
 
-def evaluate(path, truth_path):
-    fit, clocks = fit_order_archive(path, with_clocks=True)
+def evaluate(path, truth_path, *, model_order=4):
+    fit, clocks = fit_order_archive(path, with_clocks=True, model_order=model_order)
     inference = confidence_ball(fit)
     # The estimator has returned before oracle inputs are read. The fit remains
     # a general ten-component quartic Weyl fit, with no profile or type-N prior.
@@ -108,6 +109,7 @@ def evaluate(path, truth_path):
         counts[0, -1] * volume / volume[0, -1],
         clock_mask=mask,
         clock_covariance=covariance,
+        model_order=model_order,
     )
     mean = confidence_ball(continuum)
     bias = tidal_distance(mean["coefficients_xy_positive"], expected)
@@ -132,12 +134,20 @@ def evaluate(path, truth_path):
     }
 
 
-def run(destination):
+def run(
+    destination,
+    *,
+    model_order=4,
+    data_seed=2026092600,
+    protocol="rotating_pilot_protocol.md",
+):
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
         raise RuntimeError("Commit protocol and code before new rotating orders")
     if destination.exists():
         raise FileExistsError("Preserve all previous pilot outputs")
     checked = selfcheck()
+    if model_order == 5:
+        checked["jet_inverse"] = selfcheck_jet()
     stamp = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
@@ -155,7 +165,7 @@ def run(destination):
                 "p14_plane_wave.py",
             )
         ],
-        ROOT / "docs/paper/paper_a/intrinsic_weyl/rotating_pilot_protocol.md",
+        ROOT / "docs/paper/paper_a/intrinsic_weyl" / protocol,
         ROOT / "docs/paper/paper_a/intrinsic_weyl/rotating_generator.md",
     ]
     manifest = {
@@ -169,6 +179,8 @@ def run(destination):
         "cases_fixed_before_data": CASES,
         "selection_n": SELECTION_N,
         "measurement_n": MEASUREMENT_N,
+        "model_order": model_order,
+        "data_seed": data_seed,
         "source_sha256_lf": {
             str(p.relative_to(ROOT)).replace("\\", "/"): hashlib.sha256(
                 p.read_bytes().replace(b"\r\n", b"\n")
@@ -181,17 +193,28 @@ def run(destination):
     rows = []
     for i, (a, w) in enumerate(CASES):
         started = time.perf_counter()
-        row = {"case": i, "amplitude": a, "rotation_rate": w, "seed": 2026092600 + i}
+        row = {"case": i, "amplitude": a, "rotation_rate": w, "seed": data_seed + i}
         path, truth = destination / f"case_{i}.npz", destination / f"truth_{i}.npz"
         try:
             row["generation"] = generate(path, truth, a, w, row["seed"])
-            result = evaluate(path, truth)
-            (destination / f"case_{i}_full.json").write_text(
-                json.dumps(result, indent=2) + "\n"
-            )
-            row.update(result["evaluation"])
         except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
             row["failure"] = f"{type(error).__name__}: {error}"
+        if "failure" not in row:
+            for order in [5, 4] if model_order == 5 else [4]:
+                reference = model_order == 5 and order == 4
+                label = "quartic_full" if reference else "full"
+                try:
+                    result = evaluate(path, truth, model_order=order)
+                    (destination / f"case_{i}_{label}.json").write_text(
+                        json.dumps(result, indent=2) + "\n"
+                    )
+                    if reference:
+                        row["quartic_reference"] = result["evaluation"]
+                    else:
+                        row.update(result["evaluation"])
+                except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
+                    key = "quartic_reference_failure" if reference else "failure"
+                    row[key] = f"{type(error).__name__}: {error}"
         row["seconds"] = time.perf_counter() - started
         row["artifact_sha256"] = {
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
@@ -201,6 +224,11 @@ def run(destination):
         if full.exists():
             row["artifact_sha256"][full.name] = hashlib.sha256(
                 full.read_bytes()
+            ).hexdigest()
+        baseline_path = destination / f"case_{i}_quartic_full.json"
+        if baseline_path.exists():
+            row["artifact_sha256"][baseline_path.name] = hashlib.sha256(
+                baseline_path.read_bytes()
             ).hexdigest()
         rows.append(row)
         (destination / f"case_{i}_result.json").write_text(
@@ -232,5 +260,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output", type=Path, default=ROOT / "outputs/intrinsic_weyl_rotating_pilot_v1"
     )
+    parser.add_argument("--model-order", type=int, choices=(4, 5), default=4)
+    parser.add_argument("--data-seed", type=int, default=2026092600)
+    parser.add_argument("--protocol", default="rotating_pilot_protocol.md")
     args = parser.parse_args()
-    run(args.output)
+    run(
+        args.output,
+        model_order=args.model_order,
+        data_seed=args.data_seed,
+        protocol=args.protocol,
+    )

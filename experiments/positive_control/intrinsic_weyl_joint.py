@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 
 import numpy as np
-from intrinsic_weyl import ETA, PAIRS, WEYL
+from intrinsic_weyl import ETA, PAIRS, WEYL, gradient_basis
 from scipy.optimize import least_squares
 from scipy.stats import chi2
 
@@ -44,6 +44,8 @@ def confidence_ball(fit, coverage=0.95, relative_bias=0.02):
         or fit["boundary_excess"] > 0
         or fit["coordinate_rank"] != fit["coordinate_parameters"]
         or fit["projected_curvature_rank"] != 10
+        or fit.get("nuisance_rank", fit["coordinate_rank"])
+        != fit.get("nuisance_parameters", fit["coordinate_parameters"])
     ):
         raise ValueError("Incomplete or rank-deficient fit")
     points = np.asarray(fit["coordinates_inferred_from_counts"])
@@ -235,7 +237,7 @@ def gauge(points):
 
 
 def model(points, coefficients, pairs):
-    """Quartic world function and analytic position/curvature derivatives."""
+    """Quartic or fifth-degree world function with analytic derivatives."""
     left, right = points[pairs[:, 0]], points[pairs[:, 1]]
     delta = left - right
     flat = np.einsum("pa,ab,pb->p", delta, ETA, delta)
@@ -243,8 +245,17 @@ def model(points, coefficients, pairs):
         [left[:, a] * right[:, b] - left[:, b] * right[:, a] for a, b in PAIRS]
     )
     basis = np.einsum("pi,kij,pj->pk", wedge, BIVECTOR, wedge, optimize=True)
-    curvature = np.einsum("k,kij->ij", coefficients, BIVECTOR)
-    cw = wedge @ curvature
+    gradient = None
+    if len(coefficients) == 34:
+        gradient = (gradient_basis() @ coefficients[10:]).reshape(4, 10)
+        effective = coefficients[:10] + (left + right) @ gradient / 4
+        curvature = np.einsum("pk,kij->pij", effective, BIVECTOR)
+        cw = np.einsum("pi,pij->pj", wedge, curvature)
+    elif len(coefficients) == 10:
+        curvature = np.einsum("k,kij->ij", coefficients, BIVECTOR)
+        cw = wedge @ curvature
+    else:
+        raise ValueError("Ten Weyl or ten Weyl plus 24 gradient coefficients required")
     dl = 2 * delta @ ETA
     dr = -dl.copy()
     for k, (a, b) in enumerate(PAIRS):
@@ -252,18 +263,37 @@ def model(points, coefficients, pairs):
         dl[:, b] += 2 * cw[:, k] * right[:, a] / 3
         dr[:, a] += 2 * cw[:, k] * left[:, b] / 3
         dr[:, b] -= 2 * cw[:, k] * left[:, a] / 3
-    return flat - basis @ coefficients / 3, dl, dr, -basis / 3
+    dc = -basis / 3
+    if gradient is None:
+        return flat - basis @ coefficients / 3, dl, dr, dc
+    slope = -basis @ gradient.T / 12
+    dl += slope
+    dr += slope
+    dg = (
+        np.einsum("pe,pk->pek", (left + right) / 4, dc).reshape(len(pairs), 40)
+        @ gradient_basis()
+    )
+    value = flat - np.einsum("pk,pk->p", basis, effective) / 3
+    return value, dl, dr, np.column_stack((dc, dg))
 
 
 def fit_joint(
-    counts, minimum_count=32, starts=4, clock_mask=None, clock_covariance=None
+    counts,
+    minimum_count=32,
+    starts=4,
+    clock_mask=None,
+    clock_covariance=None,
+    model_order=4,
 ):
     """Jointly infer positions and all ten Weyl components from counts.
 
     Input landmarks are selected separately. A returned point estimate is not
-    a confidence statement. The quartic truncation assumes a small vacuum
+    a confidence statement. The local truncation assumes a small vacuum
     diamond and the outer-tip observer; nonlocal and matter cases are excluded.
     """
+    if model_order not in (4, 5):
+        raise ValueError("World-function order must be four or five")
+    curvature_parameters = 10 if model_order == 4 else 34
     counts = np.asarray(counts, dtype=float)
     if (
         counts.ndim != 2
@@ -311,7 +341,7 @@ def fit_joint(
     parameter_index = np.full((n, 4), -1)
     parameter_index[mask] = np.arange(mask.sum())
     dimension = int(mask.sum())
-    if len(pairs) <= dimension + 10:
+    if len(pairs) <= dimension + curvature_parameters:
         raise ValueError("Not enough measured intervals for a curvature fit")
 
     def unpack(parameters):
@@ -368,7 +398,7 @@ def fit_joint(
     initial = min(candidates, key=lambda fit: fit.cost)
     curved = least_squares(
         residual,
-        np.r_[initial.x, np.zeros(10)],
+        np.r_[initial.x, np.zeros(curvature_parameters)],
         jac=jacobian,
         method="lm",
         max_nfev=600,
@@ -379,14 +409,19 @@ def fit_joint(
     points, c = unpack(curved.x)
     jac = jacobian(curved.x)
     geometry = jac[:, :dimension]
-    curvature = jac[:, dimension:]
+    curvature = jac[:, dimension : dimension + 10]
+    nuisance = (
+        np.column_stack((geometry, jac[:, dimension + 10 :]))
+        if model_order == 5
+        else geometry
+    )
     projected = (
-        curvature - geometry @ np.linalg.lstsq(geometry, curvature, rcond=None)[0]
+        curvature - nuisance @ np.linalg.lstsq(nuisance, curvature, rcond=None)[0]
     )
     singular = np.linalg.svd(projected, compute_uv=False)
-    tensor = np.einsum("k,kabcd->abcd", c, WEYL)
+    tensor = np.einsum("k,kabcd->abcd", c[:10], WEYL)
     result = {
-        "coefficients": c.tolist(),
+        "coefficients": c[:10].tolist(),
         "electric_eigenvalues": np.linalg.eigvalsh(tensor[0, 1:, 0, 1:]).tolist(),
         "electric_norm_squared": float(np.sum(tensor[0, 1:, 0, 1:] ** 2)),
         "coordinates_inferred_from_counts": points.tolist(),
@@ -403,14 +438,28 @@ def fit_joint(
         "function_evaluations": int(curved.nfev),
         "boundary_excess": float(max(0, np.max(abs(points[:, 0])) - 0.5)),
     }
+    if model_order == 5:
+        result.update(
+            {
+                "model_order": 5,
+                "gradient_coefficients": c[10:].tolist(),
+                "covariant_gradient_components": (gradient_basis() @ c[10:])
+                .reshape(4, 10)
+                .tolist(),
+                "nuisance_rank": int(np.linalg.matrix_rank(nuisance)),
+                "nuisance_parameters": nuisance.shape[1],
+            }
+        )
     if whiten is not None:
         inverse = np.linalg.pinv(jac)
-        component_covariance = inverse[-10:] @ inverse[-10:].T
+        influence = inverse[dimension : dimension + 10]
+        component_covariance = influence @ influence.T
         result["nominal_component_covariance"] = component_covariance.tolist()
         result["uncertainty_scope"] = (
             "Local linearized covariance under the quartic model; "
-            "coverage and truncation bias not certified"
-        )
+            if model_order == 4
+            else "Local linearized covariance under the fifth-degree model; "
+        ) + "coverage and truncation bias not certified"
         result["retained_clock_covariance_rank"] = len(whiten)
     return result
 
@@ -493,16 +542,77 @@ def read_order_clocks(path):
     return counts, clock_mask, clock_covariance, ids, n
 
 
-def fit_order_archive(path, *, with_clocks=False):
+def fit_order_archive(path, *, with_clocks=False, model_order=4):
     """Blind boundary: accept only saved order bits; infer all other inputs."""
     clocks = read_order_clocks(path)
     counts, clock_mask, clock_covariance, ids, n = clocks
-    result = fit_joint(counts, clock_mask=clock_mask, clock_covariance=clock_covariance)
+    result = fit_joint(
+        counts,
+        clock_mask=clock_mask,
+        clock_covariance=clock_covariance,
+        model_order=model_order,
+    )
     result["selected_ids"] = ids.tolist()
     result["measurement_n"] = n
     result["smallest_measurement_clock"] = int(counts[clock_mask].min())
     result["order_archive_sha256"] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
     return (result, clocks) if with_clocks else result
+
+
+def selfcheck_jet():
+    """One deterministic check of the full fifth-degree inverse path."""
+    points = 0.1 * np.sin(np.arange(32).reshape(8, 4))
+    coefficients = np.linspace(-0.2, 0.3, 34)
+    pairs = np.array(list(itertools.combinations(range(8), 2)))
+    value, dl, dr, dc = model(points, coefficients, pairs)
+    maximum = 0.0
+    for i in range(34):
+        step = np.zeros(34)
+        step[i] = 1e-6
+        numeric = (
+            model(points, coefficients + step, pairs)[0]
+            - model(points, coefficients - step, pairs)[0]
+        ) / 2e-6
+        maximum = max(maximum, float(np.max(abs(numeric - dc[:, i]))))
+    for i, a in ((1, 0), (1, 2), (4, 1), (6, 3)):
+        step = np.zeros_like(points)
+        step[i, a] = 1e-6
+        numeric = (
+            model(points + step, coefficients, pairs)[0]
+            - model(points - step, coefficients, pairs)[0]
+        ) / 2e-6
+        expected = (pairs[:, 0] == i) * dl[:, a] + (pairs[:, 1] == i) * dr[:, a]
+        maximum = max(maximum, float(np.max(abs(numeric - expected))))
+    assert maximum < 1e-9 and np.isfinite(value).all()
+    reduced = model(points, np.r_[coefficients[:10], np.zeros(24)], pairs)
+    original = model(points, coefficients[:10], pairs)
+    assert all(
+        np.max(abs(a - b)) < 1e-13
+        for a, b in zip(reduced[:3], original[:3], strict=True)
+    )
+    k = np.arange(48)
+    z = 1 - 2 * (k + 0.5) / len(k)
+    phi = k * np.pi * (3 - np.sqrt(5))
+    directions = np.column_stack(
+        (np.sqrt(1 - z * z) * np.cos(phi), np.sqrt(1 - z * z) * np.sin(phi), z)
+    )
+    points = np.zeros((50, 4))
+    points[0, 0], points[-1, 0] = -0.5, 0.5
+    points[1:-1, 0] = 0.27 * ((k % 3) - 1) + 0.015 * np.sin(k)
+    points[1:-1, 1:] = (0.12 + 0.08 * np.sin(k * 2.1) ** 2)[:, None] * directions
+    delta = points[:, None] - points[None]
+    tau2 = delta[..., 0] ** 2 - np.sum(delta[..., 1:] ** 2, axis=-1)
+    fitted = fit_joint(1e8 * np.maximum(tau2, 0) ** 2, starts=2, model_order=5)
+    assert fitted["projected_curvature_rank"] == 10
+    assert fitted["nuisance_rank"] == fitted["nuisance_parameters"]
+    assert np.linalg.norm(fitted["coefficients"]) < 1e-7
+    assert np.linalg.norm(fitted["gradient_coefficients"]) < 1e-6
+    return {
+        "maximum_jacobian_error": maximum,
+        "exact_flat_weyl_rank": 10,
+        "exact_flat_full_nuisance_rank": fitted["nuisance_rank"],
+        "exact_flat_coefficient_norm": float(np.linalg.norm(fitted["coefficients"])),
+    }
 
 
 if __name__ == "__main__":
