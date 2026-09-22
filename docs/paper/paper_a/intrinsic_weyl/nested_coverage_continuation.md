@@ -55,3 +55,25 @@ the original maximum of 136,314,880 distinct sampled events plus 1024 tips.
 
 The coordinator's `--check` command performs a read-only checkpoint, source,
 runtime and population audit. It is not a scientific coverage result.
+
+## Terminal evidence located after the continuation started
+
+At 2026-09-22 23:27:57 UTC, a bounded inspection of the local execution record
+found the original command's completion event at **14:31:54.833 UTC** that day.
+The execution item is `exec-b150d07c-6c93-4465-9a5c-16f177c6d4e9`, process handle
+`55336`. It records status `failed`, exit code **-1**, duration **18330.908958
+seconds**, and empty stderr. All 226 stdout JSON records match the preserved
+case-result files field-for-field; no traceback or case-failure record appears
+in that command output.
+
+This confirms terminal failure, beyond the later missing-handle observation.
+The generic exit code and empty stderr do **not** establish its cause. The
+original run remains incomplete; no scientific verdict or continuation rule
+changes on this evidence.
+
+The focused receipt is
+`outputs/intrinsic_weyl_nested_coverage_v1_interruption_evidence.json`, SHA-256
+`220a1ab6c904b172d2784c3eb9e10f4f990dd24a420a8186e7cf1b513a51d741`.
+It includes the command, event identity and stdout hash. The original UTF-8
+event record, including its newline, has SHA-256
+`d03ea1a7b8d5944b1a0bce27bd623586d85e0d5ca9dbf2f74ad11f48c1402aa2`.
