@@ -13,10 +13,77 @@ from pathlib import Path
 import numpy as np
 from intrinsic_weyl import ETA, PAIRS, WEYL
 from scipy.optimize import least_squares
+from scipy.stats import chi2
 
 BIVECTOR = np.array(
     [[[c[a, b, d, e] for d, e in PAIRS] for a, b in PAIRS] for c in WEYL]
 )
+_TIDAL_BASIS = WEYL[:5, 0, 1:, 0, 1:].reshape(5, -1)
+TIDAL_GRAM = np.kron(np.eye(2), _TIDAL_BASIS @ _TIDAL_BASIS.T)
+TIDAL_ROOT = np.linalg.cholesky(TIDAL_GRAM).T
+
+
+def axis_signs(signs):
+    """Coefficient transform under diagonal O(3), including magnetic parity."""
+    x, y, z = signs
+    electric = np.array([1, 1, x * y, x * z, y * z])
+    return np.r_[electric, x * y * z * electric]
+
+
+def confidence_ball(fit, coverage=0.95, relative_bias=0.02):
+    """Nominal Gaussian full-tidal ball modulo the remaining z reflection.
+
+    The first two landmark vectors fix x and the xy half-plane. No third
+    landmark is used to choose handedness. The bias allowance is an explicit
+    model assumption, not a bound inferred from an unknown wave profile.
+    """
+    if not 0 < coverage < 1 or not 0 <= relative_bias < 1:
+        raise ValueError("Invalid confidence or relative-bias level")
+    if (
+        not fit["optimizer_success"]
+        or fit["boundary_excess"] > 0
+        or fit["coordinate_rank"] != fit["coordinate_parameters"]
+        or fit["projected_curvature_rank"] != 10
+    ):
+        raise ValueError("Incomplete or rank-deficient fit")
+    points = np.asarray(fit["coordinates_inferred_from_counts"])
+    if min(abs(points[1, 1]), abs(points[2, 2])) <= 1e-12:
+        raise ValueError("Degenerate internal frame")
+    transform = axis_signs([np.sign(points[1, 1]), np.sign(points[2, 2]), 1])
+    coefficients = transform * np.asarray(fit["coefficients"])
+    covariance = (
+        transform[:, None] * np.asarray(fit["nominal_component_covariance"]) * transform
+    )
+    if not np.isfinite(covariance).all() or not np.isfinite(coefficients).all():
+        raise ValueError("Nonfinite tidal estimate or covariance")
+    eigenvalues = np.linalg.eigvalsh(TIDAL_ROOT @ covariance @ TIDAL_ROOT.T)
+    if eigenvalues[0] <= 0:
+        raise ValueError("Positive definite full-tidal covariance required")
+    norm = float(np.linalg.norm(TIDAL_ROOT @ coefficients))
+    statistical = float(np.sqrt(chi2.ppf(coverage, 10) * eigenvalues[-1]))
+    return {
+        "coefficients_xy_positive": coefficients.tolist(),
+        "nominal_covariance_xy_positive": covariance.tolist(),
+        "tidal_norm": norm,
+        "largest_tidal_variance": float(eigenvalues[-1]),
+        "nominal_coverage": coverage,
+        "assumed_relative_bias_bound": relative_bias,
+        "statistical_radius": statistical,
+        "radius": (statistical + relative_bias * norm) / (1 - relative_bias),
+        "scope": (
+            "Nominal Gaussian ball with assumed bias bound; z reflection quotiented"
+        ),
+    }
+
+
+def tidal_distance(left, right):
+    """Full-tidal distance modulo reflection, with x and y signs fixed."""
+    left, right = np.asarray(left), np.asarray(right)
+    reflection = axis_signs([1, 1, -1])
+    return min(
+        float(np.linalg.norm(TIDAL_ROOT @ (left - candidate)))
+        for candidate in (right, reflection * right)
+    )
 
 
 def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"):
@@ -397,15 +464,16 @@ def read_order_clocks(path):
     return counts, clock_mask, clock_covariance, ids, n
 
 
-def fit_order_archive(path):
+def fit_order_archive(path, *, with_clocks=False):
     """Blind boundary: accept only saved order bits; infer all other inputs."""
-    counts, clock_mask, clock_covariance, ids, n = read_order_clocks(path)
+    clocks = read_order_clocks(path)
+    counts, clock_mask, clock_covariance, ids, n = clocks
     result = fit_joint(counts, clock_mask=clock_mask, clock_covariance=clock_covariance)
     result["selected_ids"] = ids.tolist()
     result["measurement_n"] = n
     result["smallest_measurement_clock"] = int(counts[clock_mask].min())
     result["order_archive_sha256"] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
-    return result
+    return (result, clocks) if with_clocks else result
 
 
 if __name__ == "__main__":

@@ -59,7 +59,19 @@ def relation_queries(landmarks, points, amplitude):
     return related & (du > 0), related & (du < 0), int(near.sum())
 
 
-def generate_archive(path, amplitude, seed, selection_design="two"):
+def generate_archive(
+    path,
+    amplitude,
+    seed,
+    selection_design="two",
+    *,
+    measurement_n=MEASUREMENT_N,
+    truth_path=None,
+):
+    if measurement_n < CHUNK or measurement_n % CHUNK:
+        raise ValueError(
+            "Measurement count must be a positive multiple of the chunk size"
+        )
     selection_rng = np.random.default_rng([seed, 0])
     selection_n = 4096 if selection_design == "connected" else SELECTION_N
     points = np.vstack(
@@ -87,10 +99,12 @@ def generate_archive(path, amplitude, seed, selection_design="two"):
         )
         raise
     landmarks = ordered[ids]
-    after = np.zeros((len(ids), MEASUREMENT_N // 8), dtype=np.uint8)
+    if truth_path is not None:
+        np.savez_compressed(truth_path, points=landmarks, amplitude=amplitude)
+    after = np.zeros((len(ids), measurement_n // 8), dtype=np.uint8)
     before = np.zeros_like(after)
     measurement_rng = np.random.default_rng([seed, 1])
-    for start in range(0, MEASUREMENT_N, CHUNK):
+    for start in range(0, measurement_n, CHUNK):
         events = sample_points("D", amplitude, CHUNK, measurement_rng)
         future, past, near = relation_queries(landmarks, events, amplitude)
         after[:, start // 8 : (start + CHUNK) // 8] = np.packbits(future, axis=1)
@@ -102,7 +116,7 @@ def generate_archive(path, amplitude, seed, selection_design="two"):
         selected_ids=ids,
         after=after,
         before=before,
-        measurement_n=MEASUREMENT_N,
+        measurement_n=measurement_n,
         **({"selection_design": selection_design} if selection_design != "two" else {}),
     )
     times = (
@@ -117,9 +131,7 @@ def generate_archive(path, amplitude, seed, selection_design="two"):
         "selection_n": selection_n,
         "retained_bands": [int(x.sum()) for x in (past, middle, future)],
         "minimum_central_clocks_each_side": [
-            int(clock_mask[middle][:, side].sum(axis=1).min())
-            if middle.any()
-            else 0
+            int(clock_mask[middle][:, side].sum(axis=1).min()) if middle.any() else 0
             for side in (past, future)
         ],
     }
