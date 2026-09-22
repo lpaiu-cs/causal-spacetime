@@ -1,0 +1,228 @@
+{
+  "scope": "Local Jacobian information at order-only quartic fits; no truth inputs, no gradient recovery or accuracy claim",
+  "code_version": "8bd7e5427d5b8a5c815e6c8b0ffbe9e62f2bc254",
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_gradient_information.py": "b855fd1a5631cda1ad833df102e169f28192e7388470835e474680b52588e51c",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "14113b21c461987612e24b95e29ea237cc27a12cd2cc0671f8b66935d3b63920",
+    "experiments/positive_control/intrinsic_weyl.py": "9f6bd6cf1d5d557993c70e2053b02e5591e52dacd76a57e5d0931bc5f75f35e0"
+  },
+  "gradient_dimension": 24,
+  "cases": [
+    {
+      "case": 2,
+      "order_archive_sha256": "6015e8823fa8857b520235f0434de99854a7c273adbdb8e9efd30bf85d6f4827",
+      "information": {
+        "quartic": {
+          "nuisance_columns": 253,
+          "nuisance_rank": 253,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 3.197419913279898e-08,
+          "projected_curvature_singular_values": [
+            20.58576005825021,
+            17.068009509827153,
+            16.26719697521792,
+            15.903691161385865,
+            10.784693251886914,
+            8.880314689929037,
+            7.801684615872563,
+            7.445082990039611,
+            7.074787825957126,
+            5.429138021021431
+          ],
+          "largest_tidal_variance": 0.042144227141793236,
+          "electric_tidal_variance": 0.03879385606171031,
+          "magnetic_tidal_variance": 0.1809937374598059
+        },
+        "free_vacuum_gradient": {
+          "nuisance_columns": 277,
+          "nuisance_rank": 277,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 3.197419913279898e-08,
+          "projected_curvature_singular_values": [
+            17.853818688079052,
+            16.426125741332278,
+            15.111785544560528,
+            13.990547513916487,
+            9.850503850613409,
+            7.6198461354267115,
+            6.806042517048568,
+            6.593179875004403,
+            5.958164844038847,
+            4.929487548095517
+          ],
+          "largest_tidal_variance": 0.06254496609760571,
+          "electric_tidal_variance": 0.04697710894282464,
+          "magnetic_tidal_variance": 0.2401570535183055
+        },
+        "old_covariance_relative_replay_difference": 1.1546319456101628e-14,
+        "gradient_to_quartic_ratios": {
+          "largest_tidal_variance": 1.484069594802977,
+          "electric_tidal_variance": 1.2109419818462241,
+          "magnetic_tidal_variance": 1.3268804594503623
+        }
+      }
+    },
+    {
+      "case": 3,
+      "order_archive_sha256": "799fb77bb0b1574cf85158af724acdddb006f80e50d86494c57599531496543c",
+      "information": {
+        "quartic": {
+          "nuisance_columns": 253,
+          "nuisance_rank": 253,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 3.09773283394419e-08,
+          "projected_curvature_singular_values": [
+            20.995164470028925,
+            17.81957804866795,
+            15.880698566847835,
+            14.170838418090549,
+            10.227075414776747,
+            9.189487554869475,
+            7.635821411062544,
+            7.48003123971893,
+            7.100562497121171,
+            5.290072906775898
+          ],
+          "largest_tidal_variance": 0.04029792386157046,
+          "electric_tidal_variance": 0.04116318620107764,
+          "magnetic_tidal_variance": 0.18091076119779487
+        },
+        "free_vacuum_gradient": {
+          "nuisance_columns": 277,
+          "nuisance_rank": 277,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 3.09773283394419e-08,
+          "projected_curvature_singular_values": [
+            18.813817457567566,
+            16.397982821024524,
+            14.011480248884544,
+            11.190902800265219,
+            9.315381304583173,
+            8.106267254520231,
+            7.103432376662239,
+            6.589636876758996,
+            6.252936866582307,
+            4.808283859235392
+          ],
+          "largest_tidal_variance": 0.0527514606606531,
+          "electric_tidal_variance": 0.05488355878390325,
+          "magnetic_tidal_variance": 0.2256419740356046
+        },
+        "old_covariance_relative_replay_difference": 7.216449660063518e-15,
+        "gradient_to_quartic_ratios": {
+          "largest_tidal_variance": 1.3090366849136559,
+          "electric_tidal_variance": 1.3333165833131355,
+          "magnetic_tidal_variance": 1.2472556775597436
+        }
+      }
+    },
+    {
+      "case": 4,
+      "order_archive_sha256": "c9fbf82f023c2538cfb8235b9387f22dbf1f1424b5c43a0ee096faac8bc825ff",
+      "information": {
+        "quartic": {
+          "nuisance_columns": 253,
+          "nuisance_rank": 253,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 3.260582712216788e-08,
+          "projected_curvature_singular_values": [
+            22.464094243910182,
+            17.049133998933176,
+            14.702855657357047,
+            13.313523699571514,
+            9.463797461529472,
+            7.198917478994597,
+            6.538481095295118,
+            5.820689339799002,
+            5.482245437246379,
+            4.644554891206413
+          ],
+          "largest_tidal_variance": 0.077682716356936,
+          "electric_tidal_variance": 0.04532395113947408,
+          "magnetic_tidal_variance": 0.27955949175148537
+        },
+        "free_vacuum_gradient": {
+          "nuisance_columns": 277,
+          "nuisance_rank": 277,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 3.260582712216788e-08,
+          "projected_curvature_singular_values": [
+            21.964031126721054,
+            16.492350851139484,
+            14.257370785855162,
+            12.349960167683827,
+            8.985606684231414,
+            6.580660308270073,
+            6.185174614380111,
+            5.459667274006683,
+            5.229102118205859,
+            4.449813176441715
+          ],
+          "largest_tidal_variance": 0.08818689107089123,
+          "electric_tidal_variance": 0.049790763086332956,
+          "magnetic_tidal_variance": 0.3156176769736771
+        },
+        "old_covariance_relative_replay_difference": 5.46229728115577e-14,
+        "gradient_to_quartic_ratios": {
+          "largest_tidal_variance": 1.1352189419547423,
+          "electric_tidal_variance": 1.0985530130220396,
+          "magnetic_tidal_variance": 1.128982153302259
+        }
+      }
+    },
+    {
+      "case": 5,
+      "order_archive_sha256": "611238d19ecdbe853673108491b860f1ce1690ba1e99ead9c48feb2aff281a20",
+      "information": {
+        "quartic": {
+          "nuisance_columns": 253,
+          "nuisance_rank": 253,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 2.793270489206936e-08,
+          "projected_curvature_singular_values": [
+            19.158124614230562,
+            15.238501288318073,
+            13.725530540698829,
+            12.93918392860645,
+            10.359023171639869,
+            8.40844008187195,
+            7.0482963442811215,
+            6.599630230561539,
+            6.027923617674249,
+            4.668941413268285
+          ],
+          "largest_tidal_variance": 0.057277478515490685,
+          "electric_tidal_variance": 0.04932397261045192,
+          "magnetic_tidal_variance": 0.23094824756867552
+        },
+        "free_vacuum_gradient": {
+          "nuisance_columns": 277,
+          "nuisance_rank": 277,
+          "projected_curvature_rank": 10,
+          "rank_absolute_threshold": 2.793270489206936e-08,
+          "projected_curvature_singular_values": [
+            18.70842971344024,
+            14.438485565177094,
+            12.849120036637208,
+            11.72116892490359,
+            9.57916602211085,
+            7.242139201377896,
+            6.44685983909101,
+            6.157005593303949,
+            5.26965705658578,
+            4.032309255393329
+          ],
+          "largest_tidal_variance": 0.07331079702772941,
+          "electric_tidal_variance": 0.05688512856830753,
+          "magnetic_tidal_variance": 0.29357562425161116
+        },
+        "old_covariance_relative_replay_difference": 1.5987211554602254e-14,
+        "gradient_to_quartic_ratios": {
+          "largest_tidal_variance": 1.2799236092053619,
+          "electric_tidal_variance": 1.1532957618311015,
+          "magnetic_tidal_variance": 1.2711749378583725
+        }
+      }
+    }
+  ]
+}

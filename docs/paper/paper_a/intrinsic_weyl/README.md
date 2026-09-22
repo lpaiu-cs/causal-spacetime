@@ -44,6 +44,15 @@ nonconstant curved cases exceeded the old 2% continuum-bias allowance
 The next lever is the magnetic information in the landmark geometry,
 together with an explicit varying-profile bias budget; increasing event
 count alone does not address both limitations.
+The [fixed-event paired design comparison](design_pilot_results.md) tested
+wider centers on eight fresh shared orders. It did not improve magnetic
+uncertainty and increased actual tensor error in seven pairs; that selector
+is not adopted. A separate [gradient diagnosis](gradient_model_diagnosis.md)
+reduced continuum bias through oracle subtraction of the missing fifth-degree
+term. An order-only local information audit retains rank ten when all 24
+vacuum gradient components are freed, at a nominal variance cost of
+13.5--48.4% in four checked configurations. The enlarged blind fit, fresh
+validation and powered accuracy remain unfinished.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
