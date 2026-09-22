@@ -57,9 +57,12 @@ a well-populated measurement clock. Neither case was dropped or re-seeded.
 
 Raw order/truth archives and full fit arrays remain in
 `outputs/intrinsic_weyl_coverage_v1`. The committed
-`coverage_summary.json` is a byte-identical copy of the complete summary,
-including all case dispositions and artifact hashes. Its SHA-256 is
+`coverage_summary.json` preserves the complete summary with line endings
+normalized to LF, including all case dispositions and artifact hashes.
+The original raw summary's SHA-256 is
 `1939a131288790615e7db91cd0f09798ebf01f6693e266ba768294119194d756`.
+The committed LF copy's SHA-256 is
+`ae84f3987c6017092f0c6255b944e1004d9c03d3fc8d733938860bbecdf520f3`.
 
 `check_intrinsic_weyl_coverage.py` verified all 256 archive schemas, seeds,
 population assignments and saved confidence calculations; all **766 artifact
