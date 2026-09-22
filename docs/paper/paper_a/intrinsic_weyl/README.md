@@ -8,10 +8,17 @@ without supplied coordinates, a wave profile, or a paired flat control.
 The proposed lever is to retain the geometry of multiple intervals instead of
 averaging it into a single chain statistic. Their first-order incompatibility
 with flat geometry contains signed Weyl information. This record establishes
-a local algebraic route and tests its continuum bias. Actual finite-order
-recovery, order-only landmark selection, and calibrated uncertainty remain open.
+a local algebraic route and tests its continuum bias. The original checkpoint
+left finite-order recovery, order-only landmark selection, and calibrated
+uncertainty open; the update below records which parts have since progressed.
 This is not a new theory of spacetime, a universal global formula, or a
 preregistered accuracy result. Earlier frozen verdicts are unchanged.
+
+Update: the subsequent [joint finite-order pilot](joint_pilot_results.md)
+implements order-derived landmark selection and a joint geometry/Weyl fit.
+It produced quantitative tidal spectra from six saved finite orders, with a
+separately replayed estimator that receives no generator data. Independent
+accuracy confirmation and varying-profile validation are still outstanding.
 
 ## 1. What the input can determine
 

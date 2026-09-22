@@ -14,7 +14,14 @@ import time
 from pathlib import Path
 
 import numpy as np
-from intrinsic_weyl_joint import ETA, fit_joint, model, select_landmarks
+from intrinsic_weyl_joint import (
+    ETA,
+    fit_joint,
+    fit_order_archive,
+    model,
+    select_landmarks,
+    selection,
+)
 from p14_plane_wave import PlaneWaveGeometry, Slab, causal_relation
 from window_response import action, order_matrix, sample_points
 
@@ -22,22 +29,6 @@ ROOT = Path(__file__).resolve().parents[2]
 MEASUREMENT_N = 262144
 SELECTION_N = 1024
 CHUNK = 4096
-
-
-def selection(order):
-    """Order-only choice of landmarks and of informative pair clocks."""
-    order = np.asarray(order, dtype=bool)
-    if order.ndim != 2 or order.shape[0] != order.shape[1] or np.any(np.diag(order)):
-        raise ValueError("Strict selection order required")
-    if not np.all(order[0, 1:]) or not np.all(order[:-1, -1]):
-        raise ValueError("Selection events must be in the supplied outer interval")
-    counts = order.astype(float) @ order.astype(float)
-    counts += counts.T.copy()
-    ids = select_landmarks(counts)
-    restricted = counts[ids[:, None], ids]
-    clock_mask = restricted >= 2
-    clock_mask[0, -1] = clock_mask[-1, 0] = False
-    return ids, clock_mask
 
 
 def relation_queries(landmarks, points, amplitude):
@@ -105,69 +96,6 @@ def generate_archive(path, amplitude, seed):
         measurement_n=MEASUREMENT_N,
     )
     return {"escalations": escalations, "landmarks": len(ids) - 2}
-
-
-def fit_order_archive(path):
-    """Blind boundary: accept only saved order bits; infer all other inputs."""
-    with np.load(path, allow_pickle=False) as source:
-        allowed = {
-            "selection_order",
-            "selected_ids",
-            "after",
-            "before",
-            "measurement_n",
-        }
-        if set(source.files) != allowed:
-            raise ValueError("Archive contains unexpected fields")
-        order, ids = source["selection_order"], source["selected_ids"]
-        after, before = source["after"], source["before"]
-        n = int(source["measurement_n"])
-    expected, clock_mask = selection(order)
-    if not np.array_equal(ids, expected):
-        raise ValueError("Saved landmarks differ from the order-only selection")
-    if after.shape != (len(ids), n // 8) or before.shape != after.shape or n % 8:
-        raise ValueError("Packed order dimensions are inconsistent")
-    if not (
-        np.all(after[0] == 255)
-        and np.all(before[-1] == 255)
-        and np.all(before[0] == 0)
-        and np.all(after[-1] == 0)
-    ):
-        raise ValueError("Measurement order is not contained in the outer interval")
-    counts = np.zeros((len(ids), len(ids)))
-    restricted_order = order[ids[:, None], ids]
-    for i, j in itertools.combinations(range(len(ids)), 2):
-        if restricted_order[i, j]:
-            a, b = i, j
-        elif restricted_order[j, i]:
-            a, b = j, i
-        else:
-            continue
-        counts[i, j] = counts[j, i] = np.bitwise_count(after[a] & before[b]).sum()
-    pairs = np.column_stack(np.nonzero(np.triu(clock_mask, 1)))
-    forward = restricted_order[pairs[:, 0], pairs[:, 1]]
-    a = np.where(forward, pairs[:, 0], pairs[:, 1])
-    b = np.where(forward, pairs[:, 1], pairs[:, 0])
-    p = counts[pairs[:, 0], pairs[:, 1]] / n
-    if np.any(p <= 0):
-        raise ValueError("A selected clock has zero measurement count")
-    second = np.zeros((len(pairs), len(pairs)))
-    for start in range(0, n // 8, CHUNK // 8):
-        membership = np.unpackbits(
-            after[a, start : start + CHUNK // 8]
-            & before[b, start : start + CHUNK // 8],
-            axis=1,
-        ).astype(float)
-        second += membership @ membership.T
-    indicator_covariance = (second - n * np.outer(p, p)) / (n - 1)
-    derivative = -0.5 / np.sqrt(p)
-    clock_covariance = indicator_covariance * np.outer(derivative, derivative) / n
-    result = fit_joint(counts, clock_mask=clock_mask, clock_covariance=clock_covariance)
-    result["selected_ids"] = ids.tolist()
-    result["measurement_n"] = n
-    result["smallest_measurement_clock"] = int(np.min(p * n))
-    result["order_archive_sha256"] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
-    return result
 
 
 def selfcheck():

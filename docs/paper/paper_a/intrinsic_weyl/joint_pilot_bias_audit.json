@@ -1,0 +1,351 @@
+{
+  "kind": "Post-pilot continuum bias diagnostic on previously selected landmarks",
+  "scope": "No frozen accuracy verdict or independent coverage certification",
+  "original_pilot_code_version": "0bb682d59f3c1e4d9689fbd134341fa6e25ac01f",
+  "original_summary_sha256": "f71d1791782d7ca839dc5c9ec17fb1fc36c47e4cd29c3bc1989d5ce1cc9624fd",
+  "cases": [
+    {
+      "case": 0,
+      "amplitude": 0.0,
+      "quadrature_relative_change": 2.6645352591003757e-15,
+      "continuum_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "continuum_eigen_bias": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "continuum_magnetic_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.7417531533297788,
+        0.11009534822325578,
+        0.6316578051065233
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.15002342538738547,
+          0.037117215716944124,
+          0.11290620967044133
+        ],
+        "nominal_eigen_se": [
+          0.06798832861059126,
+          0.07094420016678245,
+          0.07357714389121785
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.28327810083321847,
+            -0.016768749941552474
+          ],
+          [
+            -0.10193086152194997,
+            0.17616529295583822
+          ],
+          [
+            -0.031302342441666894,
+            0.25711476178254955
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 8.372716360491308,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      }
+    },
+    {
+      "case": 1,
+      "amplitude": 0.0,
+      "quadrature_relative_change": 2.6645352591003757e-15,
+      "continuum_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "continuum_eigen_bias": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "continuum_magnetic_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.5042801473856275,
+        -0.07973860822262221,
+        0.5840187556082496
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.1519415296108904,
+          -0.05556893552560662,
+          0.207510465136497
+        ],
+        "nominal_eigen_se": [
+          0.09787310676876865,
+          0.0901868013722554,
+          0.07639285473804272
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.3437692939327204,
+            0.03988623471093952
+          ],
+          [
+            -0.23233181809609474,
+            0.12119394704488148
+          ],
+          [
+            0.057783221173733246,
+            0.3572377090992608
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 9.274719845049738,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      }
+    },
+    {
+      "case": 2,
+      "amplitude": 0.25,
+      "quadrature_relative_change": 2.7755575615628914e-15,
+      "continuum_eigenvalues": [
+        -0.24980164398118707,
+        -0.0004395711321877677,
+        0.2502412151133748
+      ],
+      "continuum_eigen_bias": [
+        0.00019835601881293408,
+        -0.0004395711321877677,
+        0.00024121511337482637
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.24937486271326195,
+        0.00045992183133562964,
+        0.24891494088192634
+      ],
+      "finite_magnetic_eigenvalues": [
+        -1.5194779000675558,
+        0.615638043277527,
+        0.903839856790029
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.16299880763362656,
+          -0.13302695030344705,
+          0.29602575793707364
+        ],
+        "nominal_eigen_se": [
+          0.06392457077921437,
+          0.06195671303580909,
+          0.059164436547325276
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.2882886640880683,
+            -0.03770895117918485
+          ],
+          [
+            -0.25445987645411616,
+            -0.011594024152777965
+          ],
+          [
+            0.1800655931387108,
+            0.4119859227354365
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 44.3749556078349,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      }
+    },
+    {
+      "case": 3,
+      "amplitude": 0.25,
+      "quadrature_relative_change": 2.7755575615628914e-15,
+      "continuum_eigenvalues": [
+        -0.24975388107163915,
+        -0.00031804460388577946,
+        0.2500719256755249
+      ],
+      "continuum_eigen_bias": [
+        0.00024611892836085003,
+        -0.00031804460388577946,
+        7.192567552488649e-05
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.24971725248319354,
+        -5.166011343521839e-06,
+        0.249722418494537
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.1781799743098736,
+        -0.03127241952642811,
+        0.2094523938363017
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.2359637986618206,
+          -0.1094839481632537,
+          0.34544774682507434
+        ],
+        "nominal_eigen_se": [
+          0.059296680619240524,
+          0.05755210111319568,
+          0.061125789013497515
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.3521831570783063,
+            -0.11974444024533494
+          ],
+          [
+            -0.22228399357972478,
+            0.0033160972532173955
+          ],
+          [
+            0.22564340183202508,
+            0.4652520918181236
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 33.34481722819736,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      }
+    },
+    {
+      "case": 4,
+      "amplitude": 0.75,
+      "quadrature_relative_change": 2.7755575615628914e-15,
+      "continuum_eigenvalues": [
+        -0.747919242768244,
+        -0.0019122300998110485,
+        0.7498314728680548
+      ],
+      "continuum_eigen_bias": [
+        0.0020807572317560474,
+        -0.0019122300998110485,
+        -0.0001685271319451509
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.7306010542932,
+        -0.015251381363192526,
+        0.7458524356563926
+      ],
+      "finite_magnetic_eigenvalues": [
+        -1.3018446100289456,
+        0.1276479864688465,
+        1.1741966235600976
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.6405130648555873,
+          -0.028330958175944578,
+          0.6688440230315319
+        ],
+        "nominal_eigen_se": [
+          0.06290087584189792,
+          0.06552836797617824,
+          0.061640985989133666
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.7637965161017328,
+            -0.5172296136094419
+          ],
+          [
+            -0.15676419937494177,
+            0.1001022830230526
+          ],
+          [
+            0.5480299105212918,
+            0.789658135541772
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 180.9946356907608,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      }
+    },
+    {
+      "case": 5,
+      "amplitude": 0.75,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "continuum_eigenvalues": [
+        -0.7491912519324248,
+        0.0016737862526420657,
+        0.7475174656797828
+      ],
+      "continuum_eigen_bias": [
+        0.000808748067575249,
+        0.0016737862526420657,
+        -0.002482534320217167
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.7303039502664888,
+        -0.020071118662780635,
+        0.7503750689292698
+      ],
+      "finite_magnetic_eigenvalues": [
+        -1.0579422030995935,
+        -0.40139799289182565,
+        1.4593401959914187
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.72810693884842,
+          -0.05101193287200005,
+          0.7791188717204196
+        ],
+        "nominal_eigen_se": [
+          0.0616191928162424,
+          0.06895158216144061,
+          0.06119836475573052
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.8488783375246843,
+            -0.6073355401721557
+          ],
+          [
+            -0.18615455058547808,
+            0.084130684841478
+          ],
+          [
+            0.6591722808864424,
+            0.8990654625543968
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 236.58754215062856,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      }
+    }
+  ],
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_joint_audit.py": "20a74664f0810485cdef9fc1962bcb30a84170b57ba71f5279beb2acfea82d15",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "e044482b26d6958e67ff3cbd3daa7d185a96bfc4a2c3a5a26d18b4463e262ca6",
+    "experiments/positive_control/intrinsic_weyl_joint_pilot.py": "a2926ab3bbd19ba6a9f3391082f9234518cc7ca2ffd656912d8230eab87d085a",
+    "experiments/positive_control/intrinsic_weyl.py": "9f6bd6cf1d5d557993c70e2053b02e5591e52dacd76a57e5d0931bc5f75f35e0",
+    "experiments/positive_control/window_response.py": "cc7b00f8c5571856ea7c6084e797c2a904feb10ca15eac87b129cc9b406cd61e"
+  }
+}
