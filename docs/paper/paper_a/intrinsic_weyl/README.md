@@ -72,9 +72,12 @@ The [curvature-squared correction](square_correction.md) adds known distance
 and volume-clock terms without adding fitted components. On three selected
 coverage failures it reduces continuum bias to 1.25--1.32%, but actual finite
 errors remain 28--53% and do not improve consistently. The
-[fresh paired pilot](square_pilot_protocol.md) freezes eight independent
-orders before testing this correction. Neither selected-case diagnosis nor
-its protocol establishes coverage or accuracy.
+[fresh paired pilot](square_pilot_results.md), frozen before eight independent
+orders, meets the 2% bias condition in all eight. It improves actual finite
+error in only two of six curved cases and leaves variance essentially
+unchanged. About 82--85% of nominal tidal variance remains in magnetic
+components. This is bias repair, not a precision gain or coverage/accuracy
+certification; the original fifth-degree coverage verdict is not changed.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
