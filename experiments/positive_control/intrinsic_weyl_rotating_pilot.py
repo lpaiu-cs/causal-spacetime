@@ -84,11 +84,16 @@ def generate(path, truth_path, amplitude, rotation_rate, seed):
     }
 
 
-def evaluate(path, truth_path, *, model_order=4):
-    fit, clocks = fit_order_archive(path, with_clocks=True, model_order=model_order)
+def evaluate(path, truth_path, *, model_order=4, square_correction=False):
+    fit, clocks = fit_order_archive(
+        path,
+        with_clocks=True,
+        model_order=model_order,
+        square_correction=square_correction,
+    )
     inference = confidence_ball(fit)
     # The estimator has returned before oracle inputs are read. The fit remains
-    # a general ten-component quartic Weyl fit, with no profile or type-N prior.
+    # a general ten-component Weyl fit, with no profile or type-N prior.
     with np.load(truth_path, allow_pickle=False) as saved:
         points = saved["points"]
         amplitude, rotation = float(saved["amplitude"]), float(saved["rotation_rate"])
@@ -110,6 +115,7 @@ def evaluate(path, truth_path, *, model_order=4):
         clock_mask=mask,
         clock_covariance=covariance,
         model_order=model_order,
+        square_correction=square_correction,
     )
     mean = confidence_ball(continuum)
     bias = tidal_distance(mean["coefficients_xy_positive"], expected)
@@ -140,7 +146,10 @@ def run(
     model_order=4,
     data_seed=2026092600,
     protocol="rotating_pilot_protocol.md",
+    square_correction=False,
 ):
+    if square_correction and model_order != 5:
+        raise ValueError("Curvature-square pilot requires the fifth-degree model")
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
         raise RuntimeError("Commit protocol and code before new rotating orders")
     if destination.exists():
@@ -148,6 +157,10 @@ def run(
     checked = selfcheck()
     if model_order == 5:
         checked["jet_inverse"] = selfcheck_jet()
+    if square_correction:
+        from intrinsic_weyl_square_diagnostic import physics_check
+
+        checked["curvature_square"] = physics_check()
     stamp = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
@@ -168,6 +181,18 @@ def run(
         ROOT / "docs/paper/paper_a/intrinsic_weyl" / protocol,
         ROOT / "docs/paper/paper_a/intrinsic_weyl/rotating_generator.md",
     ]
+    if square_correction:
+        sources.extend(
+            [
+                Path(__file__).with_name("intrinsic_weyl_square.py"),
+                Path(__file__).with_name("intrinsic_weyl_square_diagnostic.py"),
+                Path(__file__).with_name("intrinsic_weyl_gradient_diagnostic.py"),
+                ROOT / "docs/paper/paper_a/intrinsic_weyl/square_correction.md",
+                ROOT
+                / "docs/paper/paper_a/window_response"
+                / "vacuum_generalization_derivation.md",
+            ]
+        )
     manifest = {
         "code_version": stamp,
         "selfcheck": checked,
@@ -188,6 +213,8 @@ def run(
             for p in sources
         },
     }
+    if square_correction:
+        manifest["curvature_square_correction"] = True
     destination.mkdir(parents=True)
     (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     rows = []
@@ -200,20 +227,26 @@ def run(
         except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
             row["failure"] = f"{type(error).__name__}: {error}"
         if "failure" not in row:
-            for order in [5, 4] if model_order == 5 else [4]:
-                reference = model_order == 5 and order == 4
-                label = "quartic_full" if reference else "full"
+            variants = [(model_order, square_correction, "")]
+            if square_correction:
+                variants.append((5, False, "fifth"))
+            elif model_order == 5:
+                variants.append((4, False, "quartic"))
+            for order, corrected, reference in variants:
+                label = f"{reference}_full" if reference else "full"
                 try:
-                    result = evaluate(path, truth, model_order=order)
+                    result = evaluate(
+                        path, truth, model_order=order, square_correction=corrected
+                    )
                     (destination / f"case_{i}_{label}.json").write_text(
                         json.dumps(result, indent=2) + "\n"
                     )
                     if reference:
-                        row["quartic_reference"] = result["evaluation"]
+                        row[f"{reference}_reference"] = result["evaluation"]
                     else:
                         row.update(result["evaluation"])
                 except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
-                    key = "quartic_reference_failure" if reference else "failure"
+                    key = f"{reference}_reference_failure" if reference else "failure"
                     row[key] = f"{type(error).__name__}: {error}"
         row["seconds"] = time.perf_counter() - started
         row["artifact_sha256"] = {
@@ -225,7 +258,8 @@ def run(
             row["artifact_sha256"][full.name] = hashlib.sha256(
                 full.read_bytes()
             ).hexdigest()
-        baseline_path = destination / f"case_{i}_quartic_full.json"
+        reference_label = "fifth" if square_correction else "quartic"
+        baseline_path = destination / f"case_{i}_{reference_label}_full.json"
         if baseline_path.exists():
             row["artifact_sha256"][baseline_path.name] = hashlib.sha256(
                 baseline_path.read_bytes()
@@ -263,10 +297,12 @@ if __name__ == "__main__":
     parser.add_argument("--model-order", type=int, choices=(4, 5), default=4)
     parser.add_argument("--data-seed", type=int, default=2026092600)
     parser.add_argument("--protocol", default="rotating_pilot_protocol.md")
+    parser.add_argument("--square-correction", action="store_true")
     args = parser.parse_args()
     run(
         args.output,
         model_order=args.model_order,
         data_seed=args.data_seed,
         protocol=args.protocol,
+        square_correction=args.square_correction,
     )

@@ -58,16 +58,35 @@ varying-profile cases its continuum bias is 1.19--1.83%, below the unchanged
 2% allowance; paired quartic biases are 2.14--4.31%. Actual finite-order
 errors and confidence widths remain large. The enlarged-model coverage,
 regularity scope and powered accuracy demonstration are still unfinished.
-The [independent fifth-degree coverage protocol](jet_coverage_protocol.md)
-now freezes 256 fresh cases from an iid constant/rotating-wave mixture,
-including selection, fit and bias failures in its confidence gate. Its
-protocol is not a result; no coverage or accuracy success is claimed here.
+The [independent fifth-degree coverage campaign](jet_coverage_results.md)
+completed 256 fresh cases from the frozen iid constant/rotating-wave mixture.
+It returned 246 valid-and-covered cases, with exact 95% interval
+[0.92934,0.98111], so the frozen gate is **NOT_SUPPORTED**. Nine bias failures
+and one zero-count failure remain in the denominator. All 255 returned balls
+contain truth, but that does not repair their violated bias assumption or
+establish useful precision. Median finite relative errors are 101.51% for
+weak waves and 35.08% for strong waves. Later development does not re-score it.
 The [local error derivation and fixed-scale check](local_consistency_scope.md)
 explain the possible rate benefit: under explicit regularity, conditioning
 and local-solution assumptions the physical-curvature bias becomes quadratic
 in window size. A four-scale continuum audit observes successive bias
 reductions approaching four when the window is halved. These conditions
 are not yet proved for the random selector and implemented optimizer.
+The [curvature-squared correction](square_correction.md) adds known distance
+and volume-clock terms without adding fitted components. On three selected
+coverage failures it reduces continuum bias to 1.25--1.32%, but actual finite
+errors remain 28--53% and do not improve consistently. The
+[fresh paired pilot](square_pilot_results.md), frozen before eight independent
+orders, meets the 2% bias condition in all eight. It improves actual finite
+error in only two of six curved cases and leaves variance essentially
+unchanged. About 82--85% of nominal tidal variance remains in magnetic
+components. This is bias repair, not a precision gain or coverage/accuracy
+certification; the original fifth-degree coverage verdict is not changed.
+The next [nested-landmark comparison](nested_pilot_protocol.md) preserves all
+64 baseline landmarks and adds a connected proposal from the same selection
+order, while both arms share the same measurement events. It freezes a direct
+test of whether the additional relations reduce magnetic/full-tensor
+uncertainty and finite error. No improvement is assumed from the larger set.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed

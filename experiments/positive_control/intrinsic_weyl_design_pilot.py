@@ -1,4 +1,4 @@
-"""Fixed-event paired comparison of central landmark spread, order-only fits."""
+"""Fixed-event paired landmark comparisons with order-only fits."""
 
 import argparse
 import hashlib
@@ -24,7 +24,7 @@ from rotating_plane_wave import RotatingWave
 DESIGNS = ("connected", "wide")
 
 
-def selfcheck():
+def selfcheck(designs=DESIGNS, *, model_order=4, square_correction=False):
     clouds = []
     for t, number, low, high in (
         (-0.3, 64, 0.12, 0.19),
@@ -49,29 +49,50 @@ def selfcheck():
     delta = points[:, None] - points[None]
     tau2 = delta[..., 0] ** 2 - np.sum(delta[..., 1:] ** 2, axis=-1)
     counts = 1e7 * np.maximum(tau2, 0) ** 2
-    chosen = [select_landmarks(counts, design=design) for design in DESIGNS]
+    chosen = [select_landmarks(counts, design=design) for design in designs]
     old, new = chosen
-    for band in (-0.3, 0.3):
-        assert np.array_equal(old[points[old, 0] == band], new[points[new, 0] == band])
     assert np.array_equal(old[:3], new[:3])
-    assert len(set(new)) == len(new) == 66
+    if designs[1] == "nested":
+        assert np.array_equal(old[:-1], new[: len(old) - 1]) and new[-1] == old[-1]
+        assert len(set(new)) == len(new) and 66 < len(new) <= 194
+    else:
+        for band in (-0.3, 0.3):
+            assert np.array_equal(
+                old[points[old, 0] == band], new[points[new, 0] == band]
+            )
+        assert len(set(new)) == len(new) == 66
     radii = [
         float(np.median(np.linalg.norm(points[ids[points[ids, 0] == 0], 1:], axis=1)))
         for ids in chosen
     ]
-    assert radii[1] > radii[0]
-    fitted = fit_joint(counts[new[:, None], new], minimum_count=2, starts=2)
+    if designs[1] == "wide":
+        assert radii[1] > radii[0]
+    fitted = fit_joint(
+        counts[new[:, None], new],
+        minimum_count=2,
+        starts=2,
+        model_order=model_order,
+        square_correction=square_correction,
+    )
     assert fitted["projected_curvature_rank"] == 10
     assert np.linalg.norm(fitted["coefficients"]) < 1e-7
+    if model_order == 5:
+        assert fitted["nuisance_rank"] == fitted["nuisance_parameters"]
+        assert np.linalg.norm(fitted["gradient_coefficients"]) < 1e-7
     return {
-        "same_outer_landmarks_and_frame": True,
+        "same_frame_vectors": True,
+        "baseline_is_subset": set(old) <= set(new),
+        "selected_landmarks_including_tips": [len(old), len(new)],
         "central_median_radii": radii,
         "exact_flat_projected_rank": 10,
         "exact_flat_coefficient_norm": float(np.linalg.norm(fitted["coefficients"])),
+        "exact_flat_nuisance_rank": fitted.get(
+            "nuisance_rank", fitted["coordinate_rank"]
+        ),
     }
 
 
-def generate(folder, case, amplitude, rotation_rate, seed, arms):
+def generate(folder, case, amplitude, rotation_rate, seed, arms, designs=DESIGNS):
     wave = RotatingWave(amplitude, rotation_rate)
     rng = np.random.default_rng([seed, 0])
     points = np.vstack(([0, 0.5, 0, 0], wave.sample(SELECTION_N, rng), [1, -0.5, 0, 0]))
@@ -81,7 +102,7 @@ def generate(folder, case, amplitude, rotation_rate, seed, arms):
     points = points[permutation]
     order = wave.order(points)
     selections = {}
-    for design in DESIGNS:
+    for design in designs:
         try:
             selections[design] = selection(order, design)[0]
         except ValueError as error:
@@ -127,12 +148,27 @@ def generate(folder, case, amplitude, rotation_rate, seed, arms):
     }
 
 
-def run(folder):
+def run(
+    folder,
+    *,
+    design="wide",
+    model_order=4,
+    square_correction=False,
+    data_seed=2026092700,
+    protocol="design_pilot_protocol.md",
+):
+    designs = ("connected", design)
+    if design not in ("wide", "nested"):
+        raise ValueError("Unknown paired landmark comparison")
+    if square_correction and model_order != 5:
+        raise ValueError("Curvature-square correction requires model order five")
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
         raise RuntimeError("Commit the paired protocol and code before data")
     if folder.exists():
         raise FileExistsError("Preserve existing paired pilots")
-    checked = selfcheck()
+    checked = selfcheck(
+        designs, model_order=model_order, square_correction=square_correction
+    )
     stamp = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
@@ -151,12 +187,17 @@ def run(folder):
                 "p14_plane_wave.py",
             )
         ],
-        ROOT / "docs/paper/paper_a/intrinsic_weyl/design_pilot_protocol.md",
+        ROOT / "docs/paper/paper_a/intrinsic_weyl" / protocol,
     ]
+    if square_correction:
+        sources.append(Path(__file__).with_name("intrinsic_weyl_square.py"))
     manifest = {
         "code_version": stamp,
         "selfcheck": checked,
-        "designs": DESIGNS,
+        "designs": designs,
+        "model_order": model_order,
+        "curvature_square_correction": square_correction,
+        "data_seed": data_seed,
         "cases_fixed_before_data": CASES,
         "selection_n": SELECTION_N,
         "measurement_n": MEASUREMENT_N,
@@ -177,16 +218,16 @@ def run(folder):
     rows = []
     for case, (a, w) in enumerate(CASES):
         started = time.perf_counter()
-        arms = {design: {} for design in DESIGNS}
+        arms = {name: {} for name in designs}
         row = {
             "case": case,
             "amplitude": a,
             "rotation_rate": w,
-            "seed": 2026092700 + case,
+            "seed": data_seed + case,
             "arms": arms,
         }
         try:
-            row["generation"] = generate(folder, case, a, w, row["seed"], arms)
+            row["generation"] = generate(folder, case, a, w, row["seed"], arms, designs)
         except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
             row["generation_failure"] = f"{type(error).__name__}: {error}"
             for arm in arms.values():
@@ -198,6 +239,8 @@ def run(folder):
                 result = evaluate(
                     folder / f"case_{case}_{design}.npz",
                     folder / f"truth_{case}_{design}.npz",
+                    model_order=model_order,
+                    square_correction=square_correction,
                 )
                 (folder / f"case_{case}_{design}_full.json").write_text(
                     json.dumps(result, indent=2) + "\n"
@@ -219,7 +262,7 @@ def run(folder):
             frame_difference = float(
                 np.max(
                     abs(
-                        np.array(arms["wide"]["truth_coefficients_xy_positive"])
+                        np.array(arms[designs[1]]["truth_coefficients_xy_positive"])
                         - np.array(arms["connected"]["truth_coefficients_xy_positive"])
                     )
                 )
@@ -227,8 +270,8 @@ def run(folder):
             if frame_difference >= 1e-10:
                 raise ArithmeticError("Paired designs changed the true internal frame")
             row["shared_frame_truth_max_difference"] = frame_difference
-            row["wide_to_connected_ratios"] = {
-                k: arms["wide"][k] / arms["connected"][k]
+            row[f"{designs[1]}_to_connected_ratios"] = {
+                k: arms[designs[1]][k] / arms["connected"][k]
                 for k in (
                     "magnetic_tidal_variance",
                     "electric_tidal_variance",
@@ -261,11 +304,31 @@ def run(folder):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--design", choices=("wide", "nested"), default="wide")
+    parser.add_argument("--model-order", type=int, choices=(4, 5), default=4)
+    parser.add_argument("--square-correction", action="store_true")
+    parser.add_argument("--data-seed", type=int, default=2026092700)
+    parser.add_argument("--protocol", default="design_pilot_protocol.md")
     parser.add_argument(
         "--output", type=Path, default=ROOT / "outputs/intrinsic_weyl_design_pilot_v1"
     )
     args = parser.parse_args()
     if args.check:
-        print(json.dumps(selfcheck()))
+        print(
+            json.dumps(
+                selfcheck(
+                    ("connected", args.design),
+                    model_order=args.model_order,
+                    square_correction=args.square_correction,
+                )
+            )
+        )
     else:
-        run(args.output)
+        run(
+            args.output,
+            design=args.design,
+            model_order=args.model_order,
+            square_correction=args.square_correction,
+            data_seed=args.data_seed,
+            protocol=args.protocol,
+        )
