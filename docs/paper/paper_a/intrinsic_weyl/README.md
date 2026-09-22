@@ -58,10 +58,14 @@ varying-profile cases its continuum bias is 1.19--1.83%, below the unchanged
 2% allowance; paired quartic biases are 2.14--4.31%. Actual finite-order
 errors and confidence widths remain large. The enlarged-model coverage,
 regularity scope and powered accuracy demonstration are still unfinished.
-The [independent fifth-degree coverage protocol](jet_coverage_protocol.md)
-now freezes 256 fresh cases from an iid constant/rotating-wave mixture,
-including selection, fit and bias failures in its confidence gate. Its
-protocol is not a result; no coverage or accuracy success is claimed here.
+The [independent fifth-degree coverage campaign](jet_coverage_results.md)
+completed 256 fresh cases from the frozen iid constant/rotating-wave mixture.
+It returned 246 valid-and-covered cases, with exact 95% interval
+[0.92934,0.98111], so the frozen gate is **NOT_SUPPORTED**. Nine bias failures
+and one zero-count failure remain in the denominator. All 255 returned balls
+contain truth, but that does not repair their violated bias assumption or
+establish useful precision. Median finite relative errors are 101.51% for
+weak waves and 35.08% for strong waves. Later development does not re-score it.
 The [local error derivation and fixed-scale check](local_consistency_scope.md)
 explain the possible rate benefit: under explicit regularity, conditioning
 and local-solution assumptions the physical-curvature bias becomes quadratic
