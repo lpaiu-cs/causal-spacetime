@@ -82,11 +82,13 @@ error in only two of six curved cases and leaves variance essentially
 unchanged. About 82--85% of nominal tidal variance remains in magnetic
 components. This is bias repair, not a precision gain or coverage/accuracy
 certification; the original fifth-degree coverage verdict is not changed.
-The next [nested-landmark comparison](nested_pilot_protocol.md) preserves all
-64 baseline landmarks and adds a connected proposal from the same selection
-order, while both arms share the same measurement events. It freezes a direct
-test of whether the additional relations reduce magnetic/full-tensor
-uncertainty and finite error. No improvement is assumed from the larger set.
+The [completed nested-landmark comparison](nested_pilot_results.md) preserves
+all 64 baseline landmarks and uses 122--131 landmarks on the same event
+samples. Error improves in all eight pairs; median maximum-variance and
+actual-error ratios are 0.1837 and 0.5628. This establishes a useful pilot
+precision gain at greater computation/query cost. One of the eight narrowed
+nominal balls misses truth, so independent coverage validation is required.
+All bias conditions hold, but no 25% confidence-contained accuracy is shown.
 
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
