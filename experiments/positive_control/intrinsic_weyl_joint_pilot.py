@@ -61,10 +61,11 @@ def relation_queries(landmarks, points, amplitude):
 
 def generate_archive(path, amplitude, seed, selection_design="two"):
     selection_rng = np.random.default_rng([seed, 0])
+    selection_n = 4096 if selection_design == "connected" else SELECTION_N
     points = np.vstack(
         (
             [0, 0.5, 0, 0],
-            sample_points("D", amplitude, SELECTION_N, selection_rng),
+            sample_points("D", amplitude, selection_n, selection_rng),
             [1, -0.5, 0, 0],
         )
     )
@@ -76,7 +77,15 @@ def generate_archive(path, amplitude, seed, selection_design="two"):
         0, selection_rng.permutation(np.arange(1, len(points) - 1)), len(points) - 1
     ]
     ordered, order = ordered[permutation], order[permutation][:, permutation]
-    ids, _ = selection(order, design=selection_design)
+    try:
+        ids, clock_mask = selection(order, design=selection_design)
+    except ValueError:
+        np.savez_compressed(
+            path.with_name(path.stem + "_selection_failed.npz"),
+            selection_order=order,
+            selection_design=selection_design,
+        )
+        raise
     landmarks = ordered[ids]
     after = np.zeros((len(ids), MEASUREMENT_N // 8), dtype=np.uint8)
     before = np.zeros_like(after)
@@ -96,7 +105,24 @@ def generate_archive(path, amplitude, seed, selection_design="two"):
         measurement_n=MEASUREMENT_N,
         **({"selection_design": selection_design} if selection_design != "two" else {}),
     )
-    return {"escalations": escalations, "landmarks": len(ids) - 2}
+    times = (
+        np.sqrt((order[:, ids].sum(axis=0) - order[0, ids]) / selection_n)
+        - np.sqrt((order[ids].sum(axis=1) - order[ids, -1]) / selection_n)
+    ) / 2
+    past, middle, future = times < -0.075, abs(times) <= 0.075, times > 0.075
+    past[0], future[-1] = False, False
+    return {
+        "escalations": escalations,
+        "landmarks": len(ids) - 2,
+        "selection_n": selection_n,
+        "retained_bands": [int(x.sum()) for x in (past, middle, future)],
+        "minimum_central_clocks_each_side": [
+            int(clock_mask[middle][:, side].sum(axis=1).min())
+            if middle.any()
+            else 0
+            for side in (past, future)
+        ],
+    }
 
 
 def selfcheck():
@@ -139,6 +165,36 @@ def selfcheck():
     result = fit_joint(counts[ids[:, None], ids], starts=2)
     assert np.linalg.norm(result["coefficients"]) < 1e-7
     assert result["projected_curvature_rank"] == 10
+    # All three strata are populated, with clocks connecting each center to
+    # both sides. This catches the prior selector's silent central peeling.
+    k = np.arange(72)
+    z = 1 - 2 * (k + 0.5) / len(k)
+    angle = k * np.pi * (3 - np.sqrt(5))
+    directions = np.column_stack(
+        (np.sqrt(1 - z * z) * np.cos(angle), np.sqrt(1 - z * z) * np.sin(angle), z)
+    )
+    x = np.zeros((74, 4))
+    x[0, 0], x[-1, 0] = -0.5, 0.5
+    x[1:-1, 0] = 0.3 * ((k % 3) - 1) + 0.005 * np.sin(k)
+    x[1:-1, 1:] = (0.09 + 0.05 * np.sin(k * 2.1) ** 2)[:, None] * directions
+    d = x[:, None] - x[None, :]
+    tau2 = -np.einsum("ija,ab,ijb->ij", d, ETA, d)
+    counts = 1e10 * np.maximum(tau2, 0) ** 2
+    ids = select_landmarks(counts, design="connected")
+    assert np.count_nonzero(abs(x[ids, 0]) <= 0.075) == 22
+    result = fit_joint(counts[ids[:, None], ids], starts=2)
+    assert np.linalg.norm(result["coefficients"]) < 1e-7
+    assert result["projected_curvature_rank"] == 10
+    broken = counts.copy()
+    center = np.flatnonzero(abs(x[:, 0]) <= 0.075)
+    future = np.flatnonzero((x[:, 0] >= 0.24) & (x[:, 0] <= 0.36))
+    broken[np.ix_(center, future)] = broken[np.ix_(future, center)] = 0
+    try:
+        select_landmarks(broken, design="connected")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Missing central-to-future clocks must fail selection")
     # Compare a rectangular query to the previously validated complete predicate.
     points = np.array(
         [
@@ -158,6 +214,7 @@ def selfcheck():
         "derivatives": "passed",
         "flat_clock_recovery": "passed",
         "three_band_flat_clock_recovery": "passed",
+        "connected_flat_recovery_and_missing_band_failure": "passed",
         "order_queries": "matched existing predicate",
     }
 
@@ -176,7 +233,9 @@ def run(destination, selection_design="two"):
     for case, (amplitude, repeat) in enumerate(
         itertools.product((0.0, 0.25, 0.75), range(2))
     ):
-        seed = (2026092220 if selection_design == "two" else 2026092230) + case
+        seed = {"two": 2026092220, "three": 2026092230, "connected": 2026092240}[
+            selection_design
+        ] + case
         path = destination / f"case_{case}.npz"
         started = time.perf_counter()
         row = {
@@ -194,6 +253,11 @@ def run(destination, selection_design="two"):
             row["fit"] = fit_order_archive(path)
         except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
             row["failure"] = f"{type(error).__name__}: {error}"
+            failed_order = path.with_name(path.stem + "_selection_failed.npz")
+            if failed_order.exists():
+                row["failed_selection_archive_sha256"] = hashlib.sha256(
+                    failed_order.read_bytes()
+                ).hexdigest()
         row["seconds"] = time.perf_counter() - started
         rows.append(row)
         (destination / f"case_{case}_result.json").write_text(
@@ -218,6 +282,10 @@ def run(destination, selection_design="two"):
         sources.append(
             ROOT / "docs/paper/paper_a/intrinsic_weyl/three_band_pilot_protocol.md"
         )
+    elif selection_design == "connected":
+        sources.append(
+            ROOT / "docs/paper/paper_a/intrinsic_weyl/connected_pilot_protocol.md"
+        )
     result = {
         "kind": "Finite-order development pilot; no accuracy or coverage verdict",
         "code_version": stamp,
@@ -239,7 +307,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--fit", type=Path)
-    parser.add_argument("--selection-design", choices=("two", "three"), default="two")
+    parser.add_argument(
+        "--selection-design", choices=("two", "three", "connected"), default="two"
+    )
     parser.add_argument(
         "--output", type=Path, default=ROOT / "outputs/intrinsic_weyl_joint_pilot_v1"
     )

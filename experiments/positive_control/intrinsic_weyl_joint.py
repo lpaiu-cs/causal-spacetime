@@ -38,19 +38,46 @@ def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"
     tau_p, tau_q = np.sqrt(counts[0] / total), np.sqrt(counts[-1] / total)
     times = (tau_p - tau_q) / 2
     radius2 = 0.25 + times**2 - (tau_p + tau_q) / 2
-    if design not in ("two", "three"):
+    if design not in ("two", "three", "connected"):
         raise ValueError("Unknown prospective selection design")
-    outer = (abs(times) >= 0.15) & (abs(times) <= 0.32)
+    outer_floor = 0.24 if design == "connected" else 0.15
+    outer_ceiling = 0.36 if design == "connected" else 0.32
+    outer = (abs(times) >= outer_floor) & (abs(times) <= outer_ceiling)
     eligible_time = outer if design == "two" else outer | (abs(times) <= 0.075)
+    eligible_radius = (
+        (radius2 >= 0.075**2) & (radius2 <= 0.2**2)
+        if design == "connected"
+        else radius2 >= 0.01
+    )
     ids = np.flatnonzero(
         eligible_time
-        & (radius2 >= 0.01)
+        & eligible_radius
         & (counts[0] >= minimum_count)
         & (counts[-1] >= minimum_count)
     )
     related = counts[ids[:, None], ids] >= minimum_count
     score = related.sum(axis=1) * np.minimum(radius2[ids], 0.04)
-    if design == "two":
+    if design == "connected":
+        third = maximum // 3
+        ends = []
+        for condition in (times[ids] <= -outer_floor, times[ids] >= outer_floor):
+            choices = np.flatnonzero(condition)
+            ranked = choices[np.argsort(-score[choices], kind="stable")]
+            ends.append(ids[ranked[:third]])
+        middle = ids[abs(times[ids]) <= 0.075]
+        degrees = np.column_stack(
+            [
+                (counts[middle[:, None], end] >= minimum_count).sum(axis=1)
+                for end in ends
+            ]
+        )
+        connected = np.all(degrees >= 4, axis=1)
+        middle, degrees = middle[connected], degrees[connected]
+        score = degrees.min(axis=1) * np.minimum(radius2[middle], 0.04)
+        ranked = np.argsort(-score, kind="stable")
+        ids = np.r_[ends[0], middle[ranked[: maximum - 2 * third]], ends[1]]
+        strata = []
+    elif design == "two":
         strata = [(times[ids] < 0, maximum // 2), (times[ids] >= 0, maximum // 2)]
     else:
         third = maximum // 3
@@ -64,7 +91,8 @@ def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"
         choices = np.flatnonzero(condition)
         ranked = choices[np.argsort(-score[choices], kind="stable")]
         selected.append(ids[ranked[:limit]])
-    ids = np.concatenate(selected)
+    if selected:
+        ids = np.concatenate(selected)
     while len(ids):
         graph = counts[ids[:, None], ids] >= minimum_count
         degrees = graph.sum(axis=1)
@@ -74,6 +102,23 @@ def select_landmarks(selection_counts, maximum=64, minimum_count=2, design="two"
         ids = np.delete(ids, int(np.argmin(score)))
     if len(ids) < 16:
         raise ValueError("Insufficient mutually informative landmarks")
+    if design == "connected":
+        past, middle, future = (
+            ids[times[ids] <= -outer_floor],
+            ids[abs(times[ids]) <= 0.075],
+            ids[times[ids] >= outer_floor],
+        )
+        if len(past) < 16 or len(middle) < 8 or len(future) < 16:
+            raise ValueError(
+                "Connected design requires at least 16/8/16 retained landmarks"
+            )
+        if any(
+            np.any((counts[middle[:, None], end] >= minimum_count).sum(axis=1) < 4)
+            for end in (past, future)
+        ):
+            raise ValueError(
+                "Every central landmark needs four retained clocks to each side"
+            )
     return np.r_[0, ids, len(counts) - 1]
 
 
