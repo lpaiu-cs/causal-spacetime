@@ -103,6 +103,40 @@ increase the finite variance, as the completed pilot actually observed.
 For special constant profiles the quartic leading bias can already be
 quadratic, so the generic exponent comparison does not apply there.
 
+## Finite-count scope of the square-root approximation
+
+The total event count alone does not justify the clock approximation: the
+expected count of each retained interval matters. Conditional on fixed
+landmarks, one clock has `K ~ Binomial(N,p)` and `Y=-sqrt(K/N)`. Directly,
+
+```text
+E[Y^2] = p,
+Var(Y) = p - (sum_k sqrt(k/N) BinomialPMF(k;N,p))^2.
+```
+
+Compare this with the known-p first-order value `v_delta=(1-p)/(4N)`.
+The implemented diagonal instead plugs in K/N and uses N-1 from the
+unbiased indicator covariance; neither is an exact transformed variance.
+For the stipulated probability `p=3/262144`, numerical binomial sums give:
+
+| N | Expected K | P(K=0) | Var(Y)/v_delta | Var(Y given K>0)/v_delta |
+|---:|---:|---:|---:|---:|
+| 262144 | 3 | .0497862 | 1.3599625 | .8445185 |
+| 4194304 | 48 | 1.42477e-21 | 1.0080554 | 1.0080554 |
+
+The sums used SciPy 1.18.1 binomial PMFs between the 1e-14 lower and upper
+tail quantiles. Omitted probability was below 1e-14 in these two rows;
+centered-moment calculations independently agreed with the displayed second-
+moment identity to absolute 3e-19. No random samples were drawn.
+
+These are illustrative marginal calculations at stated p, not an estimate
+of p from an observed count of three or a diagnosis of pilot case 6. The
+inverse rejects zero clocks, and the frozen reliability gate counts those
+failures; conditioning just on one positive clock is not conditioning on a
+successful full fit. Marginal moment correction would not establish joint
+covariance or ten-component confidence coverage. The calculation changes
+no clock mask, radius, failure accounting or ongoing coverage protocol.
+
 ## Fixed deterministic check of the predicted bias orders
 
 Before executing this diagnostic, fix the existing jet pilot case 7, its
