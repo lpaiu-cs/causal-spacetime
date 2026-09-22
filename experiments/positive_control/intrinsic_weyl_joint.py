@@ -512,6 +512,34 @@ def selection(order, design="two"):
     return ids, clock_mask
 
 
+def _clock_second_moment(after, before, a, b):
+    """Sum repeated causal-membership patterns with exact integer weights."""
+    landmarks, bytes_per_landmark = after.shape
+    n = 8 * bytes_per_landmark
+    # ponytail: keep signatures in memory, like the packed input; external
+    # grouping is needed only if this linear memory cost exceeds the run budget.
+    signatures = np.empty((n, (2 * landmarks + 7) // 8), dtype=np.uint8)
+    for start in range(0, bytes_per_landmark, 4096):
+        end = min(start + 4096, bytes_per_landmark)
+        bits = np.unpackbits(
+            np.vstack((after[:, start:end], before[:, start:end])), axis=1
+        )
+        signatures[8 * start : 8 * end] = np.packbits(bits, axis=0).T
+    width = signatures.shape[1]
+    unique, weights = np.unique(
+        signatures.view(np.dtype(f"V{width}")).ravel(), return_counts=True
+    )
+    unique = unique.view(np.uint8).reshape(-1, width)
+    second = np.zeros((len(a), len(a)))
+    for start in range(0, len(unique), 4096):
+        bits = np.unpackbits(unique[start : start + 4096], axis=1)
+        membership = (bits[:, a] & bits[:, landmarks + b]).T.astype(float)
+        # No sqrt(weights): every product and partial sum stays an exactly
+        # representable integer when the event count is below 2**53.
+        second += (membership * weights[start : start + 4096]) @ membership.T
+    return second
+
+
 def read_order_clocks(path):
     """Derive clocks and their covariance from the saved order bits."""
     with np.load(path, allow_pickle=False) as source:
@@ -561,13 +589,7 @@ def read_order_clocks(path):
     p = counts[pairs[:, 0], pairs[:, 1]] / n
     if np.any(p <= 0):
         raise ValueError("A selected clock has zero measurement count")
-    second = np.zeros((len(pairs), len(pairs)))
-    for start in range(0, n // 8, 4096 // 8):
-        membership = np.unpackbits(
-            after[a, start : start + 4096 // 8] & before[b, start : start + 4096 // 8],
-            axis=1,
-        ).astype(float)
-        second += membership @ membership.T
+    second = _clock_second_moment(after, before, a, b)
     indicator_covariance = (second - n * np.outer(p, p)) / (n - 1)
     derivative = -0.5 / np.sqrt(p)
     clock_covariance = indicator_covariance * np.outer(derivative, derivative) / n
@@ -596,6 +618,19 @@ def fit_order_archive(
 
 def selfcheck_jet():
     """One deterministic check of the full fifth-degree inverse path."""
+    rng = np.random.default_rng(719)
+    for landmarks, n, distinct in ((13, 8192, 7), (9, 512, 512), (11, 256, 1)):
+        patterns = rng.integers(0, 2, (2 * landmarks, distinct), dtype=np.uint8)
+        bits = patterns[:, np.arange(n) % distinct]
+        a, b = np.arange(landmarks - 1), np.arange(1, landmarks)
+        membership = (bits[a] & bits[landmarks + b]).astype(float)
+        grouped = _clock_second_moment(
+            np.packbits(bits[:landmarks], axis=1),
+            np.packbits(bits[landmarks:], axis=1),
+            a,
+            b,
+        )
+        assert np.array_equal(grouped, membership @ membership.T)
     points = 0.1 * np.sin(np.arange(32).reshape(8, 4))
     coefficients = np.linspace(-0.2, 0.3, 34)
     pairs = np.array(list(itertools.combinations(range(8), 2)))
@@ -643,6 +678,7 @@ def selfcheck_jet():
     assert np.linalg.norm(fitted["coefficients"]) < 1e-7
     assert np.linalg.norm(fitted["gradient_coefficients"]) < 1e-6
     return {
+        "shared_interval_moments_exact": True,
         "maximum_jacobian_error": maximum,
         "exact_flat_weyl_rank": 10,
         "exact_flat_full_nuisance_rank": fitted["nuisance_rank"],
