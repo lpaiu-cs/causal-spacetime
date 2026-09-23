@@ -1,0 +1,561 @@
+{
+  "code_version": "85d795a12a4e283ec78e35a6356596c40b0183e7",
+  "source_sha256": {
+    "experiments/positive_control/replay_intrinsic_weyl_threads.py": "9b97dfc26492e9ffcbf1fc72e7e4a5fe839b1a2ddaa9184c670a9986c1ded201",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "a54430e00da111be4c1943073468e71af425b7aa41a73fb7c2eafbdf4df023b9",
+    "experiments/positive_control/intrinsic_weyl.py": "bc89c2f135d1bbbfbf40a01616a5b042a6c18d7b42c55899f6e1cfb4c8af9f18",
+    "experiments/positive_control/intrinsic_weyl_square.py": "5a0d2f88a55945b7b9e4c26a4a951ca5f1fa40c66c50b675773655a7b795a2d0",
+    "docs/paper/paper_a/intrinsic_weyl/nested_pilot_results.md": "bf23b956aa6405f3f18304e726f742c1a3852eea4bd75929b944fe5760f1d283"
+  },
+  "pilot_manifest_sha256": "2f1297445550d4a2245efe55045f2adf45a94761db43ab043c10bae343fdddd7",
+  "scope": "Numerical replay and descriptive profiled cost at N=262144",
+  "fresh_events": 0,
+  "continuous_field_tolerance": {
+    "absolute": 1e-08,
+    "relative": 1e-08
+  },
+  "runtime_counter_reported_separately": "function_evaluations",
+  "concurrent_campaign_settings_changed": false,
+  "completed_replays": 10,
+  "all_single_replays_match": false,
+  "raw_summary_sha256": "46b29b213d4acdcbb1525c6a851d473778e84ed27b0c54993ac29cd023a87522",
+  "frame_audit_file_sha256": "98bd26316a746f78cfc5f666e221cfe188568c3fa719449ae6cdc6e26f159d37",
+  "frame_audit": {
+    "scope": "Post-result frame-symmetry audit, using the previously defined reflection quotient; raw replay verdicts remain unchanged",
+    "fresh_events": 0,
+    "truth_used_to_choose_frame": false,
+    "evaluated_truth_used_only_after_pure_replays": true,
+    "cases": [
+      {
+        "case": 0,
+        "actual_file_sha256": "f9d60a2da361079498a4638e12468249a39046410a25a7d1de55785c71c4a7ef",
+        "original_file_sha256": "27497f57232b8a5daff891442e72ad4fe32b93ad7777ba5728d2b7ca0d5caec8",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          1,
+          1
+        ],
+        "raw_comparison_passes": true,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 2.7755575615628914e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 4.628242233906121e-15,
+        "coefficients_max_absolute_difference": 7.269185253733212e-14,
+        "gradient_coefficients_max_absolute_difference": 3.5997871350446076e-12,
+        "covariant_gradient_components_max_absolute_difference": 4.348965632061663e-12,
+        "nominal_component_covariance_max_absolute_difference": 2.983724378680108e-16
+      },
+      {
+        "case": 1,
+        "actual_file_sha256": "3355320759a1c2dcf1ce57f2a37929f57bec6013285975ecb574508b9a42a5c3",
+        "original_file_sha256": "a5ae01f3f89a6ed52979a53aa83f76cb03b626e7f0db7251b006ccd427e6dff7",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          -1,
+          -1,
+          -1
+        ],
+        "raw_comparison_passes": false,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 5.551115123125783e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 2.215485824311192e-15,
+        "coefficients_max_absolute_difference": 3.93574062229618e-14,
+        "gradient_coefficients_max_absolute_difference": 2.645439423076823e-12,
+        "covariant_gradient_components_max_absolute_difference": 2.0401458300511877e-12,
+        "nominal_component_covariance_max_absolute_difference": 1.552306460456121e-16
+      },
+      {
+        "case": 2,
+        "actual_file_sha256": "f5bf5f2c05667b1e77ba1d0625df0e0d6acc50e117efa2de8931a1a192512d9b",
+        "original_file_sha256": "ff28990bb454fa117a172599adfae1533914350e3a60ecd369f09bdeef4e6bec",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          1,
+          1
+        ],
+        "raw_comparison_passes": true,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 2.7755575615628914e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 4.6074255521944e-15,
+        "coefficients_max_absolute_difference": 1.644517855226013e-13,
+        "gradient_coefficients_max_absolute_difference": 4.589661983800397e-12,
+        "covariant_gradient_components_max_absolute_difference": 2.660982545421575e-12,
+        "nominal_component_covariance_max_absolute_difference": 5.1336972867188635e-16
+      },
+      {
+        "case": 3,
+        "actual_file_sha256": "5d96b73087bdce8a9cbdd99dcc040b5aa82ff7ef391f1d8a7af714a7abd05636",
+        "original_file_sha256": "dab3f0e11aee4d731b555401eeadda0c4ecb45f0b22a6cb5ea3ffdc7b8bb84af",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          1,
+          1
+        ],
+        "raw_comparison_passes": true,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 2.7755575615628914e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 1.1726730697603216e-15,
+        "coefficients_max_absolute_difference": 2.3273050153704844e-14,
+        "gradient_coefficients_max_absolute_difference": 1.1700640456524525e-12,
+        "covariant_gradient_components_max_absolute_difference": 1.5591972157835698e-12,
+        "nominal_component_covariance_max_absolute_difference": 2.706168622523819e-16
+      },
+      {
+        "case": 4,
+        "actual_file_sha256": "74e671bb5d56cb0e826d686af4fa420a699465ab22bb3ee562054c8050bd85e7",
+        "original_file_sha256": "5b56e82cb2aaf556fd067200dff59408132aa0a6d001f693e7d5df772a3f6f9e",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          1,
+          1
+        ],
+        "raw_comparison_passes": true,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 2.7755575615628914e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 2.7998436902265667e-15,
+        "coefficients_max_absolute_difference": 7.79515341164938e-14,
+        "gradient_coefficients_max_absolute_difference": 2.8591573553171656e-12,
+        "covariant_gradient_components_max_absolute_difference": 2.5202062658991053e-12,
+        "nominal_component_covariance_max_absolute_difference": 4.2934406030425976e-16
+      },
+      {
+        "case": 5,
+        "actual_file_sha256": "925686e69b05fbf46932aecd2189e405f4809a05cdea9d418271ccbcbd07521a",
+        "original_file_sha256": "e28718ed04a0f16564a15c8e9cd22ade08717db2db184b9419521933e9d81faf",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          -1,
+          -1
+        ],
+        "raw_comparison_passes": false,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 5.551115123125783e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 1.6965595595053173e-15,
+        "coefficients_max_absolute_difference": 2.4397150966137815e-14,
+        "gradient_coefficients_max_absolute_difference": 1.5334400416122662e-12,
+        "covariant_gradient_components_max_absolute_difference": 1.4139800441625994e-12,
+        "nominal_component_covariance_max_absolute_difference": 6.164638027481018e-16
+      },
+      {
+        "case": 6,
+        "actual_file_sha256": "786f2e76f90951956332bb6aa57b69f12625125097658e0b55c8964c886adf2e",
+        "original_file_sha256": "be8cfc5cb363fbcebdd2975d9cb52cdf9527936d88850ce3d14e5d73e81b0cb6",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          1,
+          1
+        ],
+        "raw_comparison_passes": true,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 5.551115123125783e-17,
+        "ball_contains_truth": false,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 7.077671781985373e-16,
+        "coefficients_max_absolute_difference": 2.4147350785597155e-14,
+        "gradient_coefficients_max_absolute_difference": 8.850697952311748e-13,
+        "covariant_gradient_components_max_absolute_difference": 1.070254995738651e-12,
+        "nominal_component_covariance_max_absolute_difference": 2.740863092043355e-16
+      },
+      {
+        "case": 7,
+        "actual_file_sha256": "daa911dff8fe3400b7bae48e8bd0a2805f82b09acbdd239329fc9f960aab02d7",
+        "original_file_sha256": "4285249df49b90624cfcb4bd015fce999fa9865201bd659bc5402fd06f6cd1b8",
+        "axis_signs_chosen_from_inferred_coordinates_only": [
+          1,
+          1,
+          1
+        ],
+        "raw_comparison_passes": true,
+        "fit_differences_after_frame_change": {},
+        "confidence_differences_after_frame_change": {},
+        "all_pair_model_invariance_max_error": 5.551115123125783e-17,
+        "ball_contains_truth": true,
+        "old_ball_flag_preserved": true,
+        "coordinates_inferred_from_counts_max_absolute_difference": 8.743006318923108e-16,
+        "coefficients_max_absolute_difference": 6.122879980807738e-14,
+        "gradient_coefficients_max_absolute_difference": 1.6515122602811516e-12,
+        "covariant_gradient_components_max_absolute_difference": 1.7248424910576432e-12,
+        "nominal_component_covariance_max_absolute_difference": 5.100087019371813e-16
+      }
+    ]
+  },
+  "cases": [
+    {
+      "mode": "default_before",
+      "case": 5,
+      "archive_sha256": "5e024dec22f1fc6005c79140e3c17905facb508f82d79c9a8448f467297e8f5a",
+      "original_wrapper_sha256": "e28718ed04a0f16564a15c8e9cd22ade08717db2db184b9419521933e9d81faf",
+      "function_evaluations": {
+        "replay": 6,
+        "original": 6
+      },
+      "all_original_fields_exact": true,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 164.11034050001763,
+      "process_cpu_seconds": 417.4375,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 32.5183162,
+        "_clock_second_moment": 29.510185900000003,
+        "fit_joint": 131.55275160000002
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "85d5fec5448e570f64357c79262ef572f7b6c6e7edda6cd1618b3aeaf37a7809",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.2730057675790433,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "28512fed7d2b4b97f8da3957fe1381cffa339266a3bb39159d2038668adc0bc9"
+    },
+    {
+      "mode": "single",
+      "case": 0,
+      "archive_sha256": "ceccb993f3bfe1a18ebf5e6a0d494ef3923d6abccae012997ccd8a0b046b5585",
+      "original_wrapper_sha256": "27497f57232b8a5daff891442e72ad4fe32b93ad7777ba5728d2b7ca0d5caec8",
+      "function_evaluations": {
+        "replay": 5,
+        "original": 5
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 190.6897967000259,
+      "process_cpu_seconds": 106.515625,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 48.417151200000006,
+        "_clock_second_moment": 45.565333,
+        "fit_joint": 142.20811
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "f9d60a2da361079498a4638e12468249a39046410a25a7d1de55785c71c4a7ef",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.3386412979441017,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "42d62aabfd1549b92ccc13361005f457d2ab594c3f9d00834dcd9cf160d2d206"
+    },
+    {
+      "mode": "single",
+      "case": 1,
+      "archive_sha256": "548dc05751785da61e1e3e81b957ef45c8cde0ea1612f008944cfb6bc5b2fb91",
+      "original_wrapper_sha256": "a5ae01f3f89a6ed52979a53aa83f76cb03b626e7f0db7251b006ccd427e6dff7",
+      "function_evaluations": {
+        "replay": 5,
+        "original": 5
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": false,
+      "wall_seconds": 215.5028457000153,
+      "process_cpu_seconds": 100.59375,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 104.84641470000001,
+        "_clock_second_moment": 99.8467878,
+        "fit_joint": 110.54059260000001
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "3355320759a1c2dcf1ce57f2a37929f57bec6013285975ecb574508b9a42a5c3",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.24102076700158662,
+      "fit_mismatches_per_field": {
+        "coefficients": 5,
+        "coordinates_inferred_from_counts": 378,
+        "gradient_coefficients": 24,
+        "covariant_gradient_components": 20,
+        "nominal_component_covariance": 50
+      },
+      "confidence_mismatches_per_field": {
+        "coefficients_xy_positive": 5,
+        "nominal_covariance_xy_positive": 50
+      },
+      "complete_comparison_file_sha256": "912915488eb9fc0295238ead6474c61f7d597ead9b345c1b7fd1032b4e13813c"
+    },
+    {
+      "mode": "single",
+      "case": 2,
+      "archive_sha256": "92018d5820da85b1b30c1b4adb8e4306e61551ba78acade6d6d36e4142f8b55a",
+      "original_wrapper_sha256": "ff28990bb454fa117a172599adfae1533914350e3a60ecd369f09bdeef4e6bec",
+      "function_evaluations": {
+        "replay": 5,
+        "original": 5
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 121.30196279997472,
+      "process_cpu_seconds": 83.03125,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 38.199721600000004,
+        "_clock_second_moment": 34.484489700000005,
+        "fit_joint": 83.06574570000001
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "f5bf5f2c05667b1e77ba1d0625df0e0d6acc50e117efa2de8931a1a192512d9b",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.22000484268527506,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "30024dc01db41966020a26a6832df27fda92ef83e31b1d46ace9f39f941e6780"
+    },
+    {
+      "mode": "single",
+      "case": 3,
+      "archive_sha256": "df299302c55e11f8b9798fee8b290efc7e548e1228a6f5879aed234d0a45945f",
+      "original_wrapper_sha256": "dab3f0e11aee4d731b555401eeadda0c4ecb45f0b22a6cb5ea3ffdc7b8bb84af",
+      "function_evaluations": {
+        "replay": 6,
+        "original": 6
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 164.73289750004187,
+      "process_cpu_seconds": 84.640625,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 71.06769650000001,
+        "_clock_second_moment": 67.7090775,
+        "fit_joint": 93.59369720000001
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "5d96b73087bdce8a9cbdd99dcc040b5aa82ff7ef391f1d8a7af714a7abd05636",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.10847376469019719,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "39ace9e43dd05e044d94ea83d303cc94c5bb7d5afa757bfadefa5ba3f78efbbe"
+    },
+    {
+      "mode": "single",
+      "case": 4,
+      "archive_sha256": "087466c154dd08b97ea8004b4fed93659e065ef5093a8c6c54a79d86494ceae6",
+      "original_wrapper_sha256": "5b56e82cb2aaf556fd067200dff59408132aa0a6d001f693e7d5df772a3f6f9e",
+      "function_evaluations": {
+        "replay": 5,
+        "original": 5
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 176.53314730001148,
+      "process_cpu_seconds": 91.3125,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 82.745057,
+        "_clock_second_moment": 75.97010610000001,
+        "fit_joint": 93.68063020000001
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "74e671bb5d56cb0e826d686af4fa420a699465ab22bb3ee562054c8050bd85e7",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.37124249748703403,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "01188c0423b8d9d5956427881c359b679c04195b98ae4891be0e89fd3b846aba"
+    },
+    {
+      "mode": "single",
+      "case": 5,
+      "archive_sha256": "5e024dec22f1fc6005c79140e3c17905facb508f82d79c9a8448f467297e8f5a",
+      "original_wrapper_sha256": "e28718ed04a0f16564a15c8e9cd22ade08717db2db184b9419521933e9d81faf",
+      "function_evaluations": {
+        "replay": 6,
+        "original": 6
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": false,
+      "wall_seconds": 160.47490259999176,
+      "process_cpu_seconds": 129.203125,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 46.3153358,
+        "_clock_second_moment": 43.402782900000005,
+        "fit_joint": 114.12204870000001
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "925686e69b05fbf46932aecd2189e405f4809a05cdea9d418271ccbcbd07521a",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.27300576757902506,
+      "fit_mismatches_per_field": {
+        "coefficients": 4,
+        "coordinates_inferred_from_counts": 249,
+        "gradient_coefficients": 24,
+        "covariant_gradient_components": 20,
+        "nominal_component_covariance": 48
+      },
+      "confidence_mismatches_per_field": {
+        "coefficients_xy_positive": 5,
+        "nominal_covariance_xy_positive": 50
+      },
+      "complete_comparison_file_sha256": "cc7960f3aa2c2616f7a854f37464b5bc0b90537869a7f1b0f4859c0e3e7f80fd"
+    },
+    {
+      "mode": "single",
+      "case": 6,
+      "archive_sha256": "ea6818d1a3f7b51696744dd9c51426b92918b50539e03d3d78ad671a12a0606c",
+      "original_wrapper_sha256": "be8cfc5cb363fbcebdd2975d9cb52cdf9527936d88850ce3d14e5d73e81b0cb6",
+      "function_evaluations": {
+        "replay": 5,
+        "original": 5
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 159.99828190001426,
+      "process_cpu_seconds": 121.609375,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 62.371944500000005,
+        "_clock_second_moment": 58.831839800000004,
+        "fit_joint": 97.5382769
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "786f2e76f90951956332bb6aa57b69f12625125097658e0b55c8964c886adf2e",
+      "ball_contains_truth": false,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.4417607516481072,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "09df994d027662e78e8904ae9aacf1bb6eec86ceed00d3eb9d079caef17add6d"
+    },
+    {
+      "mode": "single",
+      "case": 7,
+      "archive_sha256": "11d0c4eafa5a916865159c614ceb4b6d66ca984fd4167c9c4b6e6153d6ea173f",
+      "original_wrapper_sha256": "4285249df49b90624cfcb4bd015fce999fa9865201bd659bc5402fd06f6cd1b8",
+      "function_evaluations": {
+        "replay": 6,
+        "original": 6
+      },
+      "all_original_fields_exact": false,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 153.1742862999672,
+      "process_cpu_seconds": 111.875,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 55.3291447,
+        "_clock_second_moment": 51.307844900000006,
+        "fit_joint": 97.804499
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "daa911dff8fe3400b7bae48e8bd0a2805f82b09acbdd239329fc9f960aab02d7",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.3432631261263734,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "1b5288991e7b2420d5f50afca215580a5afb27321bc30ed0f5c0bc886ab63c1e"
+    },
+    {
+      "mode": "default_after",
+      "case": 5,
+      "archive_sha256": "5e024dec22f1fc6005c79140e3c17905facb508f82d79c9a8448f467297e8f5a",
+      "original_wrapper_sha256": "e28718ed04a0f16564a15c8e9cd22ade08717db2db184b9419521933e9d81faf",
+      "function_evaluations": {
+        "replay": 6,
+        "original": 6
+      },
+      "all_original_fields_exact": true,
+      "within_frozen_tolerance": true,
+      "wall_seconds": 303.550751200004,
+      "process_cpu_seconds": 615.421875,
+      "profile_cumulative_seconds": {
+        "read_order_clocks": 65.8244884,
+        "_clock_second_moment": 58.219288500000005,
+        "fit_joint": 237.67078110000003
+      },
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": null,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "oracle_or_generator_imported": false,
+      "replay_file_sha256": "ae9445ea2d515deac1dd9dac3190842d73ce669c12f538458c37006e787f3a44",
+      "ball_contains_truth": true,
+      "old_ball_flag_preserved": true,
+      "full_tidal_error": 0.2730057675790433,
+      "fit_mismatches_per_field": {},
+      "confidence_mismatches_per_field": {},
+      "complete_comparison_file_sha256": "8f40b4a470b23bc762808e0c7b71b87ba7101a6ea9b5e66f8fd8a873194b95b8"
+    }
+  ],
+  "raw_mismatches_preserved": true,
+  "full_reports_location": "outputs/intrinsic_weyl_thread_replay_v1"
+}

@@ -187,6 +187,58 @@ speedup. A successful replay could justify considering a thread limit for
 a later, separately frozen run, not changing the active run. OpenBLAS checks
 these variables on startup; see its [runtime documentation](https://www.openmathlib.org/OpenBLAS/docs/runtime_variables/).
 
+### Completed replay and its limits
+
+The plan was committed as `75b9356`; the ten replays ran from clean commit
+`85d795a12a4e283ec78e35a6356596c40b0183e7`. Five source files and all replay
+inputs were bound by hash. The [compact record](thread_replay_result.json)
+preserves all outcomes and hashes the complete per-field comparisons in
+`outputs/intrinsic_weyl_thread_replay_v1`. Its raw summary SHA256 is
+`46b29b213d4acdcbb1525c6a851d473778e84ed27b0c54993ac29cd023a87522`.
+
+Both default case-5 replays match every original fit and confidence field
+exactly. Under the one-thread setting, **six of eight** satisfy the frozen
+direct field comparison. Cases **1 and 5 fail it**, and the recorded aggregate
+`all_single_replays_match` remains false. Their differences are spatial-frame
+signs, not a changed curvature solution:
+
+- Case 1 is related to the original by `(x,y,z) -> (-x,-y,-z)`.
+- Case 5 is related by `(x,y,z) -> (x,-y,-z)`.
+
+A separate **post-result** audit chose signs using inferred landmark
+coordinates only and transformed Weyl coefficients, the full covariant
+gradient, and covariance by their tensor rules. It did not choose a frame
+using truth or change the direct comparison rule. All eight fits and balls
+then agree within the original 1e-8 tolerance. Across them, the largest
+absolute discrepancies are 4.63e-15 in coordinates, 1.65e-13 in Weyl
+coefficients, 4.59e-12 in gradient coefficients, and 6.17e-16 in covariance.
+The all-pair model values are invariant under the sign transformations to
+5.56e-17. All original containment flags are preserved, including the
+**case-6 missed ball**. This uses the reflection quotient already defined in
+[the original estimand](coverage_protocol.md#estimand-and-internal-frame);
+it is not a new way to rescue a statistical failure. Direct byte/numeric
+reproducibility and equivalence of the defined physical output are distinct
+claims, and only the latter holds across all eight one-thread replays.
+
+For the same case-5 input, the measured profiled costs were:
+
+| Setting | Wall seconds | Process CPU seconds | Clock building | Nonlinear fit |
+|---|---:|---:|---:|---:|
+| Default, before | 164.11 | 417.44 | 32.52 | 131.55 |
+| One thread | 160.47 | 129.20 | 46.32 | 114.12 |
+| Default, after | 303.55 | 615.42 | 65.82 | 237.67 |
+
+CPU time is aggregated over process threads; it is not elapsed time. The
+one-thread run used 69--79% less CPU time than the two bracketing default
+runs on this loaded host. Wall times and stage costs varied substantially,
+and the first default wall time is close to the one-thread time. These
+observations do **not** establish a controlled wall-time speedup, a best
+worker/thread allocation, or a high-count event price. They support testing
+a thread limit in future, separately frozen work without the affine bias
+introduced by the rejected count-map shortcut. The active 512-case campaign
+was not reconfigured or re-scored. No new events or improved physical
+accuracy claim resulted from this engineering replay.
+
 The [recorded audit](nested_pilot_summary.json) includes source and artifact
 hashes under `engineering_clock_reuse`. Raw engineering files are retained at
 `outputs/weyl_clock_reuse` in the isolated `weyl-curvature-square` worktree.
