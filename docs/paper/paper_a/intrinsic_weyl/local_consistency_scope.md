@@ -188,3 +188,138 @@ The LF summary hash is
 This supports the order-of-bias mechanism on one deterministic shape. It
 does not validate the conditional density rate, the random selector,
 confidence coverage, a universal 2% allowance, or finite-sample accuracy.
+
+## A finite-sample route for an independently fixed affine inverse
+
+2026-09-23. This is a conditional statistical construction, not an implemented
+replacement for the nonlinear inverse or a new coverage/accuracy verdict.
+The ongoing 512-case campaign and all earlier failures remain unchanged.
+
+Condition on the independently selected landmarks and a separate pilot fit.
+For each subsequent measurement event, let I be the vector of interval
+membership indicators. Its entries may be arbitrarily correlated. Freeze a
+matrix A and offset b using the pilot only, and put
+
+```text
+Z = b + A I,       mu = E[Z | pilot],       estimate = mean_i Z_i.
+```
+
+Use ten orthonormal tidal components, so Euclidean distance is the existing
+electric-plus-magnetic Frobenius distance. A row's range length is bounded by
+`R_j = sum_k |A_jk|`, regardless of which indicator patterns are realizable.
+Known constant indicators can be removed before taking this bound. Neither
+the observed range nor an observed minimum interval count supplies a valid
+population range bound. Conditional on the pilot, different sampled events
+are iid; different clocks or components need not be independent.
+
+This permits a finite-sample confidence construction. With m independent
+calibration events, let s_j be the usual sample standard deviation of Z_j.
+For K fixed cases and d=10 components, set a calibration failure budget eta.
+Theorem 10(3) of [Maurer and Pontil (2009)](https://www.cs.mcgill.ca/~colt2009/papers/012.pdf)
+gives simultaneous variance upper bounds, with probability at least 1-eta:
+
+```text
+u_j = min(R_j^2/4,
+          (s_j + R_j sqrt(2 log(K d / eta)/(m-1)))^2).
+```
+
+Here the first term is the universal variance bound for an interval of length
+R_j. Calibration must be independent of both pilot fitting and the final
+measurement sample. For a sampling error budget gamma, define
+
+```text
+L_gamma = log(2 K d / gamma),
+a_j = R_j L_gamma / (3 N),
+q_j(N,gamma) = a_j + sqrt(a_j^2 + 2 u_j L_gamma/N),
+r(N,gamma) = sqrt(sum_j q_j(N,gamma)^2).
+```
+
+Inverting the two-sided scalar Bernstein inequality and taking a union bound
+over components and cases yields `||estimate-mu|| <= r(N,gamma)` except on
+probability at most eta+gamma. The scalar inequality is stated in section 3.1
+of [Martinez-Taboada and Ramdas (2024), v1](https://arxiv.org/html/2409.06060v1#S3.SS1).
+This use does not require their more elaborate vector confidence sequence.
+N may be selected from calibration results, before opening the independent
+final sample; conditioning on calibration preserves the fixed-N argument.
+It does not authorize optional stopping on the final sample.
+
+The bound is for mu, not yet for the physical tensor theta. If a separately
+justified bound `||mu-theta|| <= delta ||theta||`, delta<1, holds in the
+chosen internal frame (or one fixed representative of its reflection orbit),
+an observable radius for theta is
+
+```text
+R_theta = (r(N,gamma) + delta ||estimate||)/(1-delta).
+```
+
+The denominator follows from the triangle inequality; it is not optional.
+For simultaneous 95% coverage and 90% planning power, one example allocates
+eta=.01, gamma=.04 for coverage, and gamma_power=.09 for the noise event used
+in the power proof. On the latter event,
+
+```text
+||estimate-theta|| + R_theta
+ <= (r(N,.04) + r(N,.09) + 2 delta ||theta||)/(1-delta).
+```
+
+Thus the existing 25% containment target has a sufficient condition
+`r(N,.04)+r(N,.09) <= .205 ||theta||` when delta=.02. This is a
+power inequality, not just a break-even width. A future protocol would have
+to fix calibration size, the count-selection rule, all error allocations,
+and a maximum affordable N before data; exceeding the cap is a failure of
+feasibility, not permission to drop difficult cases. No numeric sample price
+is established here. An end-to-end 90% claim must also charge pilot, bias and
+cap failures to its failure budget; the displayed noise calculation alone
+does not do so. Conditioning on a favorable calibration or a successful pilot
+cannot establish unconditional 90% power. Flat targets require an absolute
+bias/accuracy treatment; the relative formula cannot silently supply one.
+
+The possible computational benefit is also specific. After A is frozen,
+the final estimate needs only the interval counts, since
+`mean_i Z_i = b + A mean_i I_i`. Calibration can process ten-dimensional
+event scores. The large-count phase need not reconstruct the full clock-by-
+clock covariance or repeat the nonlinear fit. This is an algebraic work
+reduction, not a measured runtime or memory saving. Pilot fitting, calibration,
+relation queries and any retained order archives must still be charged.
+
+### Bounded diagnostic fixed before its calculation
+
+Before considering fresh events or adopting this construction, use **all eight**
+existing nested-pilot cases 0--7, including the missed ball in case 6, at
+`outputs/intrinsic_weyl_nested_pilot_v1`. Draw no new events. The pure stage
+receives each saved order archive and the previously returned `fit` subobject,
+not its truth/evaluation fields. Keep its selected mask, fifth-degree model,
+curvature-square terms, whitening cutoff and gauge.
+
+At that pilot solution theta0, write f0 for the negative squared-time clock
+model, J for its full geometry/curvature/gradient Jacobian and W for its saved-
+data whitening map. Let E_C select the ten curvature parameters. Freeze
+
+```text
+A_C = E_C (W J)^+ W diag(1/(2 f0)),
+b_C = C0 - A_C f0^2.
+```
+
+Require f0 to be strictly negative and its square to be a probability.
+Canonicalize the pilot frame and apply the existing tidal norm transform to
+A_C and b_C. Verify the local left-inverse identity to absolute 1e-7 and
+replay the saved clock-linearized covariance to relative 1e-8. Preserve
+rank, domain or replay failures; do not remove troublesome clocks.
+
+Freeze and hash the resulting map before the evaluator opens the saved
+truth archive. The evaluator then computes the same exact interval-volume
+fractions at quadrature orders 32 and 64, requiring their existing 1e-10
+relative agreement. Report the affine conditional mean b+A p, its full tidal
+bias, every component range and its empirical score standard deviation, and
+all eight outcomes. Label the latter variances descriptive: the same pilot
+sample chose A, so they are not the independent calibration bounds above.
+
+Compare mean bias with the **unchanged** 2% nonzero-target allowance and 1e-10
+flat-zero tolerance for this diagnostic. A violation must be retained and
+prevents claiming that the old bias condition transfers. This mean bias
+includes pilot linearization error; the old continuum nonlinear-fit bias
+alone does not bound it. The diagnostic cannot certify power, future coverage,
+or recovery, and must not re-score the ongoing nonlinear campaign. Quadrature
+agreement is a numerical check, not a rigorous bias remainder bound. Numerical
+rounding error also needs a budget before a finite-sample implementation can
+claim the mathematical guarantee.
