@@ -12,13 +12,27 @@ from pathlib import Path
 
 import numpy as np
 from intrinsic_weyl import gradient_basis
-from intrinsic_weyl_joint import TIDAL_GRAM, TIDAL_ROOT, fit_order_archive, model
+from intrinsic_weyl_joint import (
+    TIDAL_GRAM,
+    TIDAL_ROOT,
+    axis_signs,
+    confidence_ball,
+    fit_order_archive,
+    model,
+)
 
 
-def information(fit, mask, covariance):
+def linearization(fit, mask):
+    """Reuse the fitted model and its gauge, without any oracle inputs."""
     points = np.array(fit["coordinates_inferred_from_counts"])
     pairs = np.column_stack(np.nonzero(np.triu(mask, 1)))
-    _, dl, dr, curvature = model(points, np.array(fit["coefficients"]), pairs)
+    coefficients = np.r_[fit["coefficients"], fit.get("gradient_coefficients", [])]
+    value, dl, dr, curvature = model(
+        points,
+        coefficients,
+        pairs,
+        square_correction=fit.get("curvature_square_correction", False),
+    )
     free = np.ones_like(points, dtype=bool)
     free[[0, -1]] = False
     free[1, 2:] = False
@@ -31,6 +45,83 @@ def information(fit, mask, covariance):
             index = indices[pairs[:, side], component]
             keep = index >= 0
             geometry[np.flatnonzero(keep), index[keep]] = derivative[keep, component]
+    return value, np.column_stack((geometry, curvature)), pairs, int(free.sum())
+
+
+def whitening(covariance):
+    scales = np.sqrt(np.diag(covariance))
+    if not np.isfinite(covariance).all() or np.any(scales <= 0):
+        raise ValueError("Finite covariance with positive variances required")
+    values, vectors = np.linalg.eigh(covariance / scales[:, None] / scales)
+    keep = values > values[-1] * 1e-8
+    return (vectors[:, keep] / np.sqrt(values[keep])).T / scales
+
+
+def affine_map(fit, counts, mask, covariance, n):
+    """Freeze a one-step count map; its conditional mean bias is still unknown."""
+    confidence_ball(fit)  # Reuse rank, optimizer, frame and covariance guards.
+    if fit.get("model_order") != 5 or not fit.get("curvature_square_correction"):
+        raise ValueError("The fixed diagnostic requires fifth-degree plus square terms")
+    value, jacobian, pairs, dimension = linearization(fit, mask)
+    if not np.isfinite(value).all() or np.any(value >= 0) or np.any(value**2 > 1):
+        raise ValueError(
+            "Pilot model clocks outside the negative probability domain: "
+            f"nonnegative={int(np.sum(value >= 0))}, "
+            f"squared_above_one={int(np.sum(value**2 > 1))}"
+        )
+    whiten = whitening(covariance)
+    influence = np.linalg.pinv(whiten @ jacobian)[dimension : dimension + 10]
+    clock_map = influence @ whiten
+    count_map = clock_map / (2 * value)
+    selector = np.eye(jacobian.shape[1])[dimension : dimension + 10]
+    left_error = float(
+        np.max(abs(count_map @ (2 * value[:, None] * jacobian) - selector))
+    )
+    if not np.isfinite(left_error) or left_error > 1e-7:
+        raise ValueError(f"Local curvature left inverse failed: {left_error}")
+    expected_covariance = np.asarray(fit["nominal_component_covariance"])
+    covariance_error = float(
+        np.linalg.norm(clock_map @ covariance @ clock_map.T - expected_covariance)
+        / np.linalg.norm(expected_covariance)
+    )
+    if not np.isfinite(covariance_error) or covariance_error > 1e-8:
+        raise ValueError(f"Saved covariance replay failed: {covariance_error}")
+    points = np.asarray(fit["coordinates_inferred_from_counts"])
+    signs = axis_signs([np.sign(points[1, 1]), np.sign(points[2, 2]), 1])
+    transform = TIDAL_ROOT * signs
+    matrix = transform @ count_map
+    offset = transform @ (np.asarray(fit["coefficients"]) - count_map @ value**2)
+    probabilities = counts[pairs[:, 0], pairs[:, 1]] / n
+    # Undo the empirical square-root-clock delta method. The same sample
+    # chose this map, so these score variances are descriptive, not calibration.
+    score_clock_map = matrix * (-2 * np.sqrt(probabilities))
+    score_covariance = n * score_clock_map @ covariance @ score_clock_map.T
+    if not np.isfinite(score_covariance).all() or np.any(np.diag(score_covariance) <= 0):
+        raise ValueError("Nonpositive empirical score variance")
+    details = {
+        "local_left_inverse_max_error": left_error,
+        "saved_covariance_relative_replay_error": covariance_error,
+        "model_probability_minimum": float(np.min(value**2)),
+        "model_probability_maximum": float(np.max(value**2)),
+        "component_range_bounds": np.sum(abs(matrix), axis=1).tolist(),
+        "descriptive_component_score_sd": np.sqrt(np.diag(score_covariance)).tolist(),
+        "descriptive_score_covariance": score_covariance.tolist(),
+        "same_sample_affine_estimate_tidal": (offset + matrix @ probabilities).tolist(),
+        "measurement_n": int(n),
+        "measured_intervals": len(pairs),
+        "retained_covariance_rank": len(whiten),
+    }
+    return matrix, offset, pairs, details
+
+
+def information(fit, mask, covariance):
+    if fit.get("model_order", 4) != 4:
+        raise ValueError(
+            "The original gradient-price diagnostic requires a quartic fit"
+        )
+    points = np.array(fit["coordinates_inferred_from_counts"])
+    _, jacobian, pairs, dimension = linearization(fit, mask)
+    geometry, curvature = jacobian[:, :dimension], jacobian[:, dimension:]
     # -C(x,y,x,y)/3 becomes -(nabla_e C)(x,y,x,y)(x+y)^e/12.
     gradient = (
         np.einsum(
@@ -38,10 +129,7 @@ def information(fit, mask, covariance):
         ).reshape(len(pairs), 40)
         @ gradient_basis()
     )
-    scales = np.sqrt(np.diag(covariance))
-    values, vectors = np.linalg.eigh(covariance / scales[:, None] / scales)
-    keep = values > values[-1] * 1e-8
-    whiten = (vectors[:, keep] / np.sqrt(values[keep])).T / scales
+    whiten = whitening(covariance)
     geometry, curvature, gradient = (
         whiten @ x for x in (geometry, curvature, gradient)
     )
