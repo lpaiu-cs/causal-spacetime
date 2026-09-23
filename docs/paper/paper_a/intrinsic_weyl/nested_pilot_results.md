@@ -161,6 +161,32 @@ result**. The grouping requires additional memory linear in N times the
 number of landmarks, plus sorting temporaries; its benefit depends on repeated
 signatures. It does not remove fitting or dense covariance factorization.
 
+## Fixed thread-setting replay before high-count work
+
+2026-09-23, before calculation: replay the existing nested cases 0--7 in
+separate processes with `OPENBLAS_NUM_THREADS=1` and `OMP_NUM_THREADS=1`.
+Bracket these eight replays with two default-environment replays of case 5.
+Each process receives only the same order archive and keeps the nonlinear
+fifth-degree-plus-square estimator. No new events, landmarks, model terms,
+selection changes or confidence changes are permitted. The ongoing 512-case
+campaign keeps its original sources, processes and unset thread variables.
+
+Check every returned fit and confidence field against the saved pilot at
+absolute and relative tolerance 1e-8, with identical discrete fields and
+rank/success flags. Record optimizer function-evaluation counts separately:
+they describe computation, not the estimator output. Retain failures and all
+numeric discrepancies, and recompute the original ball-containment flag after
+the pure process returns. Case 6's missed ball may not disappear from the
+record. Store wall time, process CPU time and clock-building/fitting profile
+times, together with source and input hashes. Preserve the complete outputs.
+
+This is a numerical-portability and execution-cost check at N=262144, not
+high-count calibration or an accuracy test. Concurrent campaign load is
+variable; two bracketing timings cannot establish a controlled or universal
+speedup. A successful replay could justify considering a thread limit for
+a later, separately frozen run, not changing the active run. OpenBLAS checks
+these variables on startup; see its [runtime documentation](https://www.openmathlib.org/OpenBLAS/docs/runtime_variables/).
+
 The [recorded audit](nested_pilot_summary.json) includes source and artifact
 hashes under `engineering_clock_reuse`. Raw engineering files are retained at
 `outputs/weyl_clock_reuse` in the isolated `weyl-curvature-square` worktree.
