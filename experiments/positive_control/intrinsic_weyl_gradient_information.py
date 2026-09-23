@@ -96,7 +96,9 @@ def affine_map(fit, counts, mask, covariance, n):
     # chose this map, so these score variances are descriptive, not calibration.
     score_clock_map = matrix * (-2 * np.sqrt(probabilities))
     score_covariance = n * score_clock_map @ covariance @ score_clock_map.T
-    if not np.isfinite(score_covariance).all() or np.any(np.diag(score_covariance) <= 0):
+    if not np.isfinite(score_covariance).all() or np.any(
+        np.diag(score_covariance) <= 0
+    ):
         raise ValueError("Nonpositive empirical score variance")
     details = {
         "local_left_inverse_max_error": left_error,

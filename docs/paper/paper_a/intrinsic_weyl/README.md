@@ -90,6 +90,14 @@ precision gain at greater computation/query cost. One of the eight narrowed
 nominal balls misses truth, so independent coverage validation is required.
 All bias conditions hold, but no 25% confidence-contained accuracy is shown.
 
+A [fixed affine count-map diagnostic](local_consistency_scope.md#completed-eight-case-affine-diagnostic)
+tests whether pilot fitting can eliminate the later covariance construction
+and nonlinear solve. All eight maps reproduce the local derivative and
+covariance, but only five retain the old mean-bias condition: the two flat
+cases acquire nonzero means and case 6 reaches 2.84% relative bias. This
+particular shortcut is not adopted. It supplies no improved precision,
+validated high-count price, or replacement for the ongoing coverage study.
+
 The [finite-resolution obstruction](finite_resolution_obstruction.md) gives
 an explicit oscillating vacuum family: midpoint tidal strength stays fixed
 while finite-order laws approach the flat law as frequency grows. Thus a

@@ -268,10 +268,11 @@ power inequality, not just a break-even width. A future protocol would have
 to fix calibration size, the count-selection rule, all error allocations,
 and a maximum affordable N before data; exceeding the cap is a failure of
 feasibility, not permission to drop difficult cases. No numeric sample price
-is established here. An end-to-end 90% claim must also charge pilot, bias and
-cap failures to its failure budget; the displayed noise calculation alone
-does not do so. Conditioning on a favorable calibration or a successful pilot
-cannot establish unconditional 90% power. Flat targets require an absolute
+is established here. End-to-end coverage and power claims must also account
+for pilot, bias and cap failures wherever they prevent the required output;
+the displayed noise calculation alone does not do so. Conditioning on a
+favorable calibration or a successful pilot cannot establish unconditional
+90% power. Flat targets require an absolute
 bias/accuracy treatment; the relative formula cannot silently supply one.
 
 The possible computational benefit is also specific. After A is frozen,
@@ -323,3 +324,74 @@ or recovery, and must not re-score the ongoing nonlinear campaign. Quadrature
 agreement is a numerical check, not a rigorous bias remainder bound. Numerical
 rounding error also needs a budget before a finite-sample implementation can
 claim the mathematical guarantee.
+
+### Completed eight-case affine diagnostic
+
+The preceding calculation plan was committed as `081f0ae` before execution.
+The implementation and its synthetic derivative/covariance check were
+committed as `aea7eb61b286d415d8af6a2e648499ffd490b874`; all eight maps were
+saved and hashed before any truth archive was opened or oracle module
+imported. No new events were generated. The full result and two read-only
+audits are preserved in [affine_diagnostic_result.json](affine_diagnostic_result.json).
+The raw diagnostic summary SHA256 is
+`4b2b7335611bf004292963b17c665d9357176c1e20c952f34ab50d511f14da13`.
+
+All eight maps passed the domain, rank and covariance-replay requirements.
+The largest local left-inverse discrepancy was 2.85e-13 and the largest
+relative covariance discrepancy was 5.51e-14. Exact-volume quadrature
+differences were below 2.89e-15. The unchanged bias condition held in **five
+of eight** cases:
+
+| Case | Amplitude | Rotation | Absolute mean bias | Relative mean bias | Old bias condition |
+|---|---:|---:|---:|---:|---|
+| 0 | 0 | 0 | 0.00569195 | undefined | FAIL |
+| 1 | 0 | +0.5 | 0.00709783 | undefined | FAIL |
+| 2 | 0.25 | 0 | 0.00517963 | 1.03593% | met |
+| 3 | 0.75 | 0 | 0.00600480 | 0.40032% | met |
+| 4 | 0.25 | +0.5 | 0.00672979 | 1.34596% | met |
+| 5 | 0.75 | +0.5 | 0.01666881 | 1.11125% | met |
+| 6 | 0.25 | -0.5 | 0.01418166 | 2.83633% | FAIL |
+| 7 | 0.75 | -0.5 | 0.02312156 | 1.54144% | met |
+
+These are conditional means with exact probabilities, so increasing only the
+future measurement count cannot remove these discrepancies with the pilot
+map held fixed. The flat cases violate the fixed 1e-10 tolerance. Case 6
+violates the 2% allowance even without future sampling noise. This finding
+rejects transfer of the old bias condition to this particular affine
+construction at the existing pilot size; it does not rule out all one-step
+estimators, better pilots, or separately justified bias bounds.
+
+A post-result comparison with the previously saved nonlinear continuum fits
+locates the additional error. The old nonlinear mean satisfies the same
+bias condition in all eight cases. In case 6 its bias is 0.00640067 (1.28013%),
+while its full-tidal distance from the affine mean is 0.01038240. These vector
+errors do not add as scalars; their combined bias is the 0.01418166 above.
+Both flat nonlinear means are zero, whereas their affine means are not.
+This comparison used saved results only, performed no new fits, and does
+not re-score either pipeline's original finite-order outcome.
+
+An independent direct event-score replay of case 6 reconstructed all 262144
+score vectors from the packed order bits and the frozen map. Its empirical
+covariance agreed with the delta-method reconstruction to 2.10e-15 relative
+error and its mean to 3.51e-14 absolute error. This rules out a covariance
+conversion/counting mismatch in that replay; it is not an independent
+calibration sample. The observed score ranges are not population bounds.
+
+There is also a separate precision obstacle: across the eight cases the
+valid triangle-inequality range bounds are 1188--2297 times the same-pilot
+empirical component standard deviations. A valid bound can be this loose;
+this ratio is not a sample-price estimate or proof that all concentration
+methods are unaffordable. No calibrated finite-sample radius or power price
+has been obtained. The diagnostic therefore does **not** justify replacing
+the nonlinear inverse, claiming a measured cost saving, or running the
+large-count accuracy study with this map. No threshold or clock was changed
+to rescue its failed cases.
+
+The statistical ingredients are established prior work. One-step estimation
+from an initial estimator is described, with its regularity assumptions, by
+[Brouste, Dutang and Noutsa Mieniedou (2021)](https://journal.r-project.org/articles/RJ-2021-044/).
+First-order nuisance cancellation and sample splitting also have extensive
+precedent in [Chernozhukov et al.](https://arxiv.org/abs/1608.00060). Neither
+source establishes the geometric remainder bound needed here. The possible
+research contribution is a validated order-only Weyl instrument and its
+cost, not rediscovery of those statistical methods.
