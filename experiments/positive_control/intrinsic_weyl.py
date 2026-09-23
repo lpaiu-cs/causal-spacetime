@@ -9,7 +9,6 @@ import itertools
 from functools import lru_cache
 
 import numpy as np
-from scipy.linalg import null_space
 
 ETA = np.diag([-1.0, 1.0, 1.0, 1.0])
 PAIRS = list(itertools.combinations(range(4), 2))
@@ -63,6 +62,9 @@ WEYL = weyl_basis()
 @lru_cache(maxsize=1)
 def gradient_basis():
     """24 vacuum Weyl gradients, in derivative-major (4,10) component order."""
+    # The exact algebraic certificate needs only the Weyl basis and NumPy.
+    from scipy.linalg import null_space
+
     rows = []
     for a, b, c in itertools.combinations(range(4), 3):
         for d, e in itertools.combinations(range(4), 2):

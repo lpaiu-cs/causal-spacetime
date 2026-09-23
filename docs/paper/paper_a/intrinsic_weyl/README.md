@@ -197,6 +197,43 @@ The two exact null vectors are in the certificate. Cross-probe intervals
 remove this obstruction. This rank-eight result is not a theorem about all
 possible reference configurations or methods.
 
+An exact follow-up on 2026-09-23 supplies a counterexample to making that
+restriction universal. Keep the origin and use reference vectors
+`(1,0,0,0)`, `(2,1/2,0,0)`, `(3,1/4,1/2,0)`, `(4,1/8,1/4,1/2)`.
+They and the origin are pairwise timelike. Their reference-only curvature
+polynomial map has rank ten, with a minor `-9943115/3359232`.
+Freeing all 24 vacuum curvature-gradient components preserves identifiability:
+the combined 62-by-34 polynomial coefficient matrix has a 34-by-34 minor equal
+to **438280 modulo the prime 1000003**. No denominator vanishes modulo this
+prime, so this is an exact nonzero-minor proof over the rationals, not a
+floating-point rank threshold. Its row monomials and the rational vacuum
+Bianchi construction are reproducible in the same certificate and checker.
+
+For this fifth-degree linearization, replace each quartic response by
+
+```text
+Q(a,b) = C(a,b,a,b) + (a+b)^e (nabla_e C)(a,b,a,b)/4,
+6 D_xx = -2 sum_i c_xi Q(a_i,x) + sum_ij c_xi c_xj Q(a_i,a_j).
+```
+
+The second formula uses only clocks between the five references (including
+the origin) and from each probe to those references. Polynomial independence
+implies the existence of 34 probes giving an invertible evaluation matrix:
+on any nonempty open region, a nonzero polynomial cannot vanish identically,
+so independent evaluation rows can be chosen successively. The probes may
+lie in an open common timelike future of the references. The determinant is
+then a nonzero polynomial in the probe coordinates, giving generic local
+identifiability there. For m probes the required pair clocks number `10+5m`;
+probe-to-probe clocks are not algebraically necessary for this configuration.
+
+This identifies a possible way to reduce the number of clocks whose covariance
+must be processed. It does not establish better conditioning, smaller event
+cost, a stable order-only selector for these references, or a finite-count
+inverse. Coordinates above specify an existence proof, not an allowed input
+to a future estimator. The ongoing nested coverage campaign, its failures and
+its frozen model are unchanged; this algebraic result does not certify that
+campaign or replace its powered accuracy requirement.
+
 ## 4. Continuum checks and development changes
 
 `intrinsic_weyl_development.py` uses exact plane-wave interval volumes as a
