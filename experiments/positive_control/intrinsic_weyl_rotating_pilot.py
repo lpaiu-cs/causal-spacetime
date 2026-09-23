@@ -91,6 +91,17 @@ def evaluate(path, truth_path, *, model_order=4, square_correction=False):
         model_order=model_order,
         square_correction=square_correction,
     )
+    return evaluate_fit(
+        fit,
+        clocks,
+        truth_path,
+        model_order=model_order,
+        square_correction=square_correction,
+    )
+
+
+def evaluate_fit(fit, clocks, truth_path, *, model_order=4, square_correction=False):
+    """Evaluate an already returned pure fit without fitting its order twice."""
     inference = confidence_ball(fit)
     # The estimator has returned before oracle inputs are read. The fit remains
     # a general ten-component Weyl fit, with no profile or type-N prior.
