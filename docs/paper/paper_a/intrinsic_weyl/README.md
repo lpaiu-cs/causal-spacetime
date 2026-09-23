@@ -1,9 +1,21 @@
 # Local Weyl reconstruction from interval cardinalities
 
-Development record, 2026-09-22. The active research objective is to determine
+Development record, updated 2026-09-23. The research objective is to determine
 whether Weyl tidal information can actually be recovered from causal order,
 without supplied coordinates, a wave profile, or a paired flat control.
-**That objective is not yet achieved.**
+**Finite-order recovery is demonstrated on the tested local vacuum plane-wave
+geometries; general and prospectively powered accuracy remain open.**
+
+The [verified completion report](verified_results_20260923.md) records the
+512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
+of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
+nonzero cases have 1.64--16.23% point errors. Error plus the nominal confidence
+radius is still 30.70--46.61% of the truth norm in the three weak cases.
+This is not a powered 25% accuracy verdict. The final audit checks preserved
+artifacts and reproduces every fit field of one saved case in a separate
+post-completion replay.
+The chronological development records below retain their original failures
+and limits; the completion report states the current evidence and scope.
 
 The proposed lever is to retain the geometry of multiple intervals instead of
 averaging it into a single chain statistic. Their first-order incompatibility
