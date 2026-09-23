@@ -27,8 +27,8 @@ class RotatingWaveGPU:
             np.asarray(events, dtype=np.float64)[None],
         )
         return (
-            np.asnumpy(np.packbits(future, axis=1)),
-            np.asnumpy(np.packbits(past, axis=1)),
+            np.asnumpy(np.packbits(future).reshape(len(landmarks), -1)),
+            np.asnumpy(np.packbits(past).reshape(len(landmarks), -1)),
         )
 
     def blocks(self, length):
