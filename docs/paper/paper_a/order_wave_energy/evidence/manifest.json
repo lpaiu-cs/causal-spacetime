@@ -1,0 +1,13 @@
+{
+  "status": "diagnostic_completed",
+  "code_version": "7abd689df3be6253deabf37b6470ebcdf31932de",
+  "design_sha256": "95453b63d5df4a2e831150d3654cfb52f2647df09d357b624cfbb96d5d80cb94",
+  "source_sha256": "91cc0cfe12672892ea6e8abdd21f4d0b864bec8b39b5a2a80292be2199266c62",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "utc_started": "2026-09-23T13:07:46Z",
+  "scope": "deterministic continuum diagnostic, no sampling confidence claim",
+  "elapsed_seconds": 64.23627829551697,
+  "rows_sha256": "4daffee70c7da1024dbaa52c65e277dff69f5e17b1f95b2ae50371737ee30c18"
+}
