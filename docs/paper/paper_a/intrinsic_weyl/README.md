@@ -3,8 +3,21 @@
 Development record, updated 2026-09-23. The research objective is to determine
 whether Weyl tidal information can actually be recovered from causal order,
 without supplied coordinates, a wave profile, or a paired flat control.
-**Finite-order recovery is demonstrated on the tested local vacuum plane-wave
-geometries; general and prospectively powered accuracy remain open.**
+**The frozen weak-curvature accuracy gate is SUPPORTED on all eight assigned
+cases, with independent post-completion verification. General recovery and
+unconditional high-count uncertainty calibration remain open.**
+
+The [weak-curvature precision report](weak_curvature_accuracy_results.md)
+records six A=.25 cases and two flat controls, using 391,794,688 entirely new
+measurement events. Relative point errors in the weak cases are 3.46--7.36%;
+error plus the adjusted simultaneous-confidence radius is 11.94--18.83%,
+below the frozen 25% limit in all six. The 95% family confidence and 90%
+joint-power design remain conditional on Gaussian, variance and bias
+assumptions. The separate audit checked all eight raw archives and metrics
+and reproduced every fit field of the designated 71,720,960-event case.
+This required about 50.15 minutes for the campaign and 19.65 for the audit;
+it establishes tested precision at substantial event cost, not a new
+sample-efficiency advantage or arbitrary-profile accuracy.
 
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
@@ -15,7 +28,7 @@ This is not a powered 25% accuracy verdict. The final audit checks preserved
 artifacts and reproduces every fit field of one saved case in a separate
 post-completion replay.
 The chronological development records below retain their original failures
-and limits; the completion report states the current evidence and scope.
+and limits; the precision report above is the latest completed stage.
 
 The proposed lever is to retain the geometry of multiple intervals instead of
 averaging it into a single chain statistic. Their first-order incompatibility
@@ -23,8 +36,9 @@ with flat geometry contains signed Weyl information. This record establishes
 a local algebraic route and tests its continuum bias. The original checkpoint
 left finite-order recovery, order-only landmark selection, and calibrated
 uncertainty open; the update below records which parts have since progressed.
-This is not a new theory of spacetime, a universal global formula, or a
-preregistered accuracy result. Earlier frozen verdicts are unchanged.
+The original algebraic checkpoint was not a prospective accuracy result;
+the later frozen accuracy test is linked above. No new spacetime theory or
+universal global formula is claimed. Earlier frozen verdicts are unchanged.
 
 Update: the subsequent [joint finite-order pilot](joint_pilot_results.md)
 implements order-derived landmark selection and a joint geometry/Weyl fit.
