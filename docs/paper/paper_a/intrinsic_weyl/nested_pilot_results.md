@@ -92,6 +92,28 @@ the pure-fit replay below is substantially slower. High-count calibration and
 measured computational feasibility are still necessary; weak cases cannot be
 dropped to turn the cheaper strong-case counts into the full result.
 
+An exploratory planning check also tested whether retaining the covariance
+spectrum in the Gaussian **power term alone** could reduce the conditional
+price above, keeping the confidence construction unchanged. For normalized
+eigenvalues `l_i=lambda_i/lambda_max`, [Hsu, Kakade and Zhang (2012),
+Proposition 1.1](https://www.cs.columbia.edu/~djhsu/papers/quadratic-ecp.pdf)
+gives the squared-norm bound
+`sum(l_i)+2*sqrt(sum(l_i^2)*t)+2*t`, with `t=log(6/.1)`.
+The tighter of this bound and the existing chi-square bound is admissible
+within the same fixed-Gaussian planning assumption.
+
+On all eight pilot covariances this alternative is **looser**: 22.20--24.01
+versus the existing 21.70739. Their trace-to-largest-eigenvalue ratios are
+5.81--6.62. Consequently this substitution saves **zero** events; the six
+nonzero cases' conditional total remains 102,189,784. It is not adopted.
+This is a negative check of this particular bound, not a calibrated event
+price or a claim that every spectral construction is useless. No new samples,
+estimator changes or re-scored cases were involved. The calculation and eight
+input hashes are retained in
+`outputs/intrinsic_weyl_gaussian_planning_diagnostic.json` at the main checkout;
+its SHA256 is
+`6ae7b09925d00ff8cfa185c6c47fde6d364925c9d69380604bf7c35289093429`.
+
 ## Resource cost and audit
 
 The total sample is **2,129,920 events plus 16 supplied tips**; events were
