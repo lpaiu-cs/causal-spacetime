@@ -124,3 +124,15 @@ The estimate uses standard coupling and oscillatory-integral tools; applying
 them is not by itself a new physical law. A matching upper/lower resolution
 law, or a counterexample defeating any proposed universal law, is the intended
 payoff. This probe gives a specific question and a first bound, not that payoff.
+
+## Fixed-q sufficient side added on 2026-09-24
+
+The subsequent [fixed-energy derivation](full_order_chain_asymptotics.md)
+removes the weak-q-first loophole for the exact circular family. It obtains
+`P2_lambda-P2_0=-A(q) lambda^4 log(1/lambda)+O_q(lambda^4)` with an explicit
+strictly positive A(q), and constructs a wavelength-free pair-count test at
+fixed known q. Thus `N lambda^8 log^2(1/lambda) -> infinity` is sufficient
+for separation. The [frozen checks and limits](full_order_chain_results.md)
+also explain why a fixed list of ordinary chain fractions does not improve
+this rate for regular Gaussian tests. The sharp full-order boundary and an
+observable attaining it remain unresolved; the research goal is still active.

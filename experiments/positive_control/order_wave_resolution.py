@@ -106,11 +106,14 @@ def pair_change(kernel, q, n):
 
 def reject_from_pair_count(comparable_pairs, n, q, alpha=0.025):
     """Order-only test; requires fixed known q, no wavelength or coordinates."""
+    if not all(isinstance(value, (int, np.integer)) for value in (n, comparable_pairs)):
+        raise ValueError("event/pair counts must be integers")
+    n, comparable_pairs = int(n), int(comparable_pairs)
     if n < 2 or not 0 <= comparable_pairs <= n * (n - 1) // 2:
         raise ValueError("invalid event/pair counts")
     if not (0 < q < math.pi**2 and 0 < alpha < 1):
         raise ValueError("require 0 < q < pi^2 and 0 < alpha < 1")
-    observed = comparable_pairs / (n * (n - 1) / 2)
+    observed = comparable_pairs / math.comb(n, 2)
     threshold = background_probability(q) - math.sqrt(
         math.log(1 / alpha) / (2 * (n // 2))
     )
@@ -138,6 +141,13 @@ def self_check():
     assert reject_from_pair_count(0, 10_000, 1)
     assert not reject_from_pair_count(4_999_500, 10_000, 1)
     assert not reject_from_pair_count(1, 2, 1)
+    for pairs, n in ((2, 2), (0, 1), (0, 2.5)):
+        try:
+            reject_from_pair_count(pairs, n, 1)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("invalid counts were accepted")
     print(
         "Controls passed: positive coefficient, independent Rosen kernel/P2, "
         "weak limit, test."
@@ -211,12 +221,74 @@ def run(output):
     print(json.dumps(manifest, indent=2))
 
 
+def summarize(folder):
+    manifest = json.loads((folder / "manifest.json").read_text())
+    raw = (folder / "rows.jsonl").read_bytes()
+    assert manifest["status"] == "completed"
+    assert hashlib.sha256(raw).hexdigest() == manifest["rows_sha256"]
+    stamp = manifest["code_version"]
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"], cwd=ROOT, check=True
+    )
+    for path, expected in manifest["files"].items():
+        saved = subprocess.check_output(["git", "show", f"{stamp}:{path}"], cwd=ROOT)
+        assert hashlib.sha256(saved).hexdigest() == expected
+    rows = [json.loads(line) for line in raw.splitlines()]
+    assert [(row["q"], row["r"]) for row in rows] == [
+        (q, r) for q in (0.25, 1.0, 4.0) for r in (32, 64, 128, 256, 512, 1024)
+    ]
+    summary = {
+        "code_version": stamp,
+        "raw_sha256": manifest["rows_sha256"],
+        "elapsed_seconds": manifest["elapsed_seconds"],
+        "all_pair_changes_negative": all(row["p2_change"] < 0 for row in rows),
+        "by_q": [
+            {
+                "q": q,
+                "predicted_A": coefficient(q),
+                "scaled_coefficient_range": [
+                    min(row["scaled_coefficient"] for row in rows if row["q"] == q),
+                    max(row["scaled_coefficient"] for row in rows if row["q"] == q),
+                ],
+                "bounded_scale_remainder_range": [
+                    min(
+                        row["bounded_scale_remainder"] for row in rows if row["q"] == q
+                    ),
+                    max(
+                        row["bounded_scale_remainder"] for row in rows if row["q"] == q
+                    ),
+                ],
+            }
+            for q in (0.25, 1.0, 4.0)
+        ],
+        "refinements": [
+            {
+                "q": row["q"],
+                "r": row["r"],
+                "absolute_change": abs(
+                    row["refinement"]["p2_change"] - row["p2_change"]
+                ),
+                "relative_change": abs(
+                    row["refinement"]["p2_change"] / row["p2_change"] - 1
+                ),
+            }
+            for row in rows
+            if "refinement" in row
+        ],
+    }
+    (folder / "summary.json").write_text(json.dumps(summary, indent=2))
+    print(json.dumps(summary, indent=2))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--summarize", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
     if args.output:
         run(args.output)
+    if args.summarize:
+        summarize(args.summarize)

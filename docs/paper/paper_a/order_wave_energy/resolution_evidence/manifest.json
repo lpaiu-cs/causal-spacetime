@@ -1,0 +1,16 @@
+{
+  "status": "completed",
+  "code_version": "e5cfddfdd7bab2d744756fc00cef05ed4b219f6f",
+  "files": {
+    "experiments/positive_control/order_wave_resolution.py": "12ee9d0db8aa9d658f4cd278f0dc8049e7f239cb8fb251b8e636233d4bd297da",
+    "experiments/positive_control/order_wave_energy.py": "bf2bd0ea0c149966029e1c63b45e2dcec64c30897948f41ee1417266de7555e5",
+    "docs/paper/paper_a/order_wave_energy/full_order_chain_asymptotics.md": "a80bc3f0f57f2fa779f49201b0629decb24e12f10754d5a43e8430525f1e1ff3"
+  },
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "utc_started": "2026-09-24T06:04:03Z",
+  "scope": "deterministic fixed-q asymptotics; no boundary/power campaign",
+  "elapsed_seconds": 11.097285032272339,
+  "rows_sha256": "33aa0c4531b92a4f61e1533feb23334ac04fd7b2695d3cb8d67c6b3cec7b1fdc"
+}
