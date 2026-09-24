@@ -590,7 +590,7 @@ def cross_check(folder):
         zeta = 1 - v - 0.5 * xy @ np.linalg.solve(matrix(u, 0.5), xy)
         length = u + 0.5
 
-        def local(s, t):
+        def local(s, t, length=length):
             return kernel(-0.5 + length * (s + 0.5), -0.5 + length * (t + 0.5))
 
         probability = relation_probability(local, order_for(length))
