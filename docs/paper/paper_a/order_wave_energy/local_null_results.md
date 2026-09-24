@@ -97,3 +97,12 @@ hashes were verified against their respective Git objects; both stamps are
 ancestors of the branch carrying this record. The raw grid is exactly the
 12 predeclared cases. None of these checks supplies a finite-N power estimate,
 an optimality theorem, or an independent researcher proof review.
+
+An additional archive audit caught Git's automatic CRLF-to-LF conversion:
+the copied working files matched the run hashes, but the first archived Git
+blobs did not. The evidence directories now have `-text` attributes and
+retain the original emitted bytes. All 23 evidence files were compared with
+their staged blobs, all six raw-row receipts reverified, and every changed
+blob checked to differ from its predecessor only in line endings. This is
+an append-only archive repair; run values, hashes, and historical commits
+were not rewritten.

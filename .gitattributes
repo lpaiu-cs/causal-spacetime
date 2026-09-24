@@ -16,3 +16,6 @@ tests/*.py text eol=lf
 # without eol=lf an autocrlf=true checkout materializes CRLF and the
 # raw SHA-256 stops being checkout-independent
 pyproject.toml text eol=lf
+# These run receipts hash raw bytes already emitted on Windows. Preserve
+# those bytes in Git as well as the checkout; do not normalize the receipts.
+docs/paper/paper_a/order_wave_energy/*evidence/* -text
