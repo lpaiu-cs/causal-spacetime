@@ -1,0 +1,53 @@
+{
+  "code_version": "e8a8087de57df38d539c35d36a33538a9b20556e",
+  "scope": "exact-rational all-phase domain certificate at r=512",
+  "signed_audit_sha256": "796d71492c74284de0a33720addf92f9b686fa4623aab250ad8ec3cdcf77d871",
+  "files": {
+    "experiments/positive_control/order_wave_cone_constraints.py": "8fdafc5a7cb0c6a9dd05e053683e9d4642bb85ab62fd8ff3200c16192e10c7ec",
+    "docs/paper/paper_a/order_wave_energy/cone_constraint_challenge.md": "2b22717afd8dd5508ff888073b60343895b7cd1b4034657e232ad33429678dff"
+  },
+  "rows": [
+    {
+      "n": 128,
+      "seed": 118,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": false,
+      "minimum_certified_slack": -0.0006532867738875388
+    },
+    {
+      "n": 128,
+      "seed": 819,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 4.302248168125367e-05
+    },
+    {
+      "n": 256,
+      "seed": 118,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": false,
+      "minimum_certified_slack": -0.0006532867738875388
+    },
+    {
+      "n": 256,
+      "seed": 819,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 4.302248168125367e-05
+    },
+    {
+      "n": 512,
+      "seed": 118,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": false,
+      "minimum_certified_slack": -0.0006532867738875388
+    },
+    {
+      "n": 512,
+      "seed": 819,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 4.302248168125367e-05
+    }
+  ]
+}

@@ -9,6 +9,12 @@ sufficient condition to `N lambda^3/log N -> infinity`. The sharp boundary
 and an observer attaining it remain unresolved; these proofs await independent
 researcher audit.
 
+The subsequent [joint-cone diagnostic](cone_constraint_challenge.md) found
+a coordinate-adjustment residual, but also certified examples with unchanged
+finite orders. Its linear conditional average vanishes by rotation symmetry.
+This rules out a direct residual-to-observer inference and leaves the above
+resolution bracket unchanged.
+
 2026-09-24. Analytic probe after the pointwise pair-fraction inverse was stopped.
 This is not a preregistered experiment or a claimed discovery. The potentially
 substantial target is a **sharp event-count versus wavelength law for the full

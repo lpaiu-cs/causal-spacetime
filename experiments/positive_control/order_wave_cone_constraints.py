@@ -157,6 +157,18 @@ def self_check():
     independent = -dm * np.sum(dy * inverse_change, axis=1) / denominator
     assert np.max(abs(independent - linear)) < 2e-8
     assert not any(np.any(item) for item in action_changes(dm, dy, 0 * e, denominator))
+    rotated = points.copy()
+    rotated[:, 3], rotated[:, 4] = -points[:, 4], points[:, 3]
+    _, ri, rj, rden, rmatrix, _ = cone_system(rotated)
+    assert np.array_equal(i, ri) and np.array_equal(j, rj)
+    transformed = matrix.toarray().reshape(len(i), len(points), 4).copy()
+    original = transformed.copy()
+    transformed[:, :, 2], transformed[:, :, 3] = -original[:, :, 3], original[:, :, 2]
+    assert (
+        np.max(abs(rmatrix.toarray().reshape(transformed.shape) - transformed)) < 1e-14
+    )
+    opposite, _ = action_changes(dm, rotated[j, 3:] - rotated[i, 3:], e, rden)
+    assert np.max(abs(opposite + linear)) < 1e-14
     print(
         json.dumps(
             {
@@ -165,6 +177,7 @@ def self_check():
                 ),
                 "coordinate_control": control,
                 "zero_control": True,
+                "quarter_turn_odd_forcing_and_equal_coordinate_range": True,
             },
             indent=2,
         )

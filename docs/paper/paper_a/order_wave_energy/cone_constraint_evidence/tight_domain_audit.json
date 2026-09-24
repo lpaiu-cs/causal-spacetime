@@ -1,0 +1,55 @@
+{
+  "code_version": "4e61579f57b057c0c14c6e303b5e00ee4a2e7874",
+  "scope": "exact-rational all-phase domain certificate at r=512",
+  "signed_audit_sha256": "796d71492c74284de0a33720addf92f9b686fa4623aab250ad8ec3cdcf77d871",
+  "files": {
+    "experiments/positive_control/order_wave_cone_constraints.py": "7c317b90654faf59d54ea9cbadf2ff916b80bda14a465c24b9ef5077f9ed6701",
+    "docs/paper/paper_a/order_wave_energy/cone_constraint_challenge.md": "47088da15c65b715e3817d4a51f271c55c096c582752f4ba6329009290dacc5c"
+  },
+  "rows": [
+    {
+      "n": 128,
+      "seed": 118,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 0.00014289182272465788
+    },
+    {
+      "n": 128,
+      "seed": 819,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 0.0004617138239328765
+    },
+    {
+      "n": 256,
+      "seed": 118,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 0.00014289182272465788
+    },
+    {
+      "n": 256,
+      "seed": 819,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 0.0004617138239328765
+    },
+    {
+      "n": 512,
+      "seed": 118,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 0.00014289182272465788
+    },
+    {
+      "n": 512,
+      "seed": 819,
+      "r": 512,
+      "all_points_inside_wave_diamond_all_phases": true,
+      "minimum_certified_slack": 0.00031256426820541375
+    }
+  ],
+  "endpoint_lower_bound": "78475097036043334842005334626682477584/71823850792335276175127688803304217777",
+  "tight_endpoint_enclosure": true
+}

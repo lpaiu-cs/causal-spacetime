@@ -1,0 +1,137 @@
+{
+  "scope": "post-run binary-order audit with rational all-phase bounds",
+  "code_version": "df0d7ed994430f80058a7c524c09c79bc7104e20",
+  "files": {
+    "experiments/positive_control/order_wave_cone_constraints.py": "5324a88b420c59f3d3d3da8eb1008a7dbb0e7faefe38c79304b32952063483ab",
+    "docs/paper/paper_a/order_wave_energy/cone_constraint_challenge.md": "b63220c9ca5f4557d828eb39a16b608ea3b3daab60677f8444bcf72fe847db87"
+  },
+  "primary_raw_sha256": "d6326b7520f8543d4fb945d992d19800c78ae321ef131e4dec2dbc06ab098ba9",
+  "rows": [
+    {
+      "n": 128,
+      "seed": 118,
+      "r": 32,
+      "numerical_pair_sign_changes": 5
+    },
+    {
+      "n": 128,
+      "seed": 118,
+      "r": 128,
+      "numerical_pair_sign_changes": 0
+    },
+    {
+      "n": 128,
+      "seed": 118,
+      "r": 512,
+      "numerical_pair_sign_changes": 0,
+      "rational_bound_unresolved_pairs": 0,
+      "certified_identical_order_all_phases": true,
+      "minimum_certificate_clearance": 3.084301673213105e-05
+    },
+    {
+      "n": 128,
+      "seed": 819,
+      "r": 32,
+      "numerical_pair_sign_changes": 4
+    },
+    {
+      "n": 128,
+      "seed": 819,
+      "r": 128,
+      "numerical_pair_sign_changes": 1
+    },
+    {
+      "n": 128,
+      "seed": 819,
+      "r": 512,
+      "numerical_pair_sign_changes": 0,
+      "rational_bound_unresolved_pairs": 1,
+      "certified_identical_order_all_phases": false,
+      "minimum_certificate_clearance": -5.6196635686011576e-05
+    },
+    {
+      "n": 256,
+      "seed": 118,
+      "r": 32,
+      "numerical_pair_sign_changes": 18
+    },
+    {
+      "n": 256,
+      "seed": 118,
+      "r": 128,
+      "numerical_pair_sign_changes": 0
+    },
+    {
+      "n": 256,
+      "seed": 118,
+      "r": 512,
+      "numerical_pair_sign_changes": 0,
+      "rational_bound_unresolved_pairs": 0,
+      "certified_identical_order_all_phases": true,
+      "minimum_certificate_clearance": 3.084301673213105e-05
+    },
+    {
+      "n": 256,
+      "seed": 819,
+      "r": 32,
+      "numerical_pair_sign_changes": 13
+    },
+    {
+      "n": 256,
+      "seed": 819,
+      "r": 128,
+      "numerical_pair_sign_changes": 3
+    },
+    {
+      "n": 256,
+      "seed": 819,
+      "r": 512,
+      "numerical_pair_sign_changes": 0,
+      "rational_bound_unresolved_pairs": 1,
+      "certified_identical_order_all_phases": false,
+      "minimum_certificate_clearance": -5.6196635686011576e-05
+    },
+    {
+      "n": 512,
+      "seed": 118,
+      "r": 32,
+      "numerical_pair_sign_changes": 71
+    },
+    {
+      "n": 512,
+      "seed": 118,
+      "r": 128,
+      "numerical_pair_sign_changes": 3
+    },
+    {
+      "n": 512,
+      "seed": 118,
+      "r": 512,
+      "numerical_pair_sign_changes": 0,
+      "rational_bound_unresolved_pairs": 2,
+      "certified_identical_order_all_phases": false,
+      "minimum_certificate_clearance": -3.219330050859761e-05
+    },
+    {
+      "n": 512,
+      "seed": 819,
+      "r": 32,
+      "numerical_pair_sign_changes": 86
+    },
+    {
+      "n": 512,
+      "seed": 819,
+      "r": 128,
+      "numerical_pair_sign_changes": 4
+    },
+    {
+      "n": 512,
+      "seed": 819,
+      "r": 512,
+      "numerical_pair_sign_changes": 0,
+      "rational_bound_unresolved_pairs": 3,
+      "certified_identical_order_all_phases": false,
+      "minimum_certificate_clearance": -6.745893827167448e-05
+    }
+  ]
+}

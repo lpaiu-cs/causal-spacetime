@@ -148,3 +148,105 @@ endpoint bound by the lower endpoint of the existing exact-rational
 matrix bound, and strict-positive criterion unchanged. Save a new receipt
 and retain any remaining failures. This is a deterministic bound refinement,
 not a new statistical test or a changed sampling gate.
+
+## Completed results and what this route did not establish
+
+The primary source/design freeze was
+`80e5ad018c3732b0ce384f3a80ab6b2fb086cc98`. All 18 rows completed on CPU in
+5.97 seconds. Raw SHA256:
+`d6326b7520f8543d4fb945d992d19800c78ae321ef131e4dec2dbc06ab098ba9`.
+All six coordinate-adjustment controls met the frozen numerical criterion;
+their largest relative residual was `1.345e-9`.
+
+The wave residual/forcing ratios ranged from 0.4477 to 0.6656. Residual RMS
+divided by lambda squared ranged from 0.8756 to 1.0766. The largest normalized
+stationarity residual was `2.96e-9`. The dense SVD check changed the residual
+vector by `5.69e-9` of the forcing norm, and the tighter large solve changed
+it by `2.53e-8`. Thus the measured residual is not explained by the solver's
+failure to remove a pure coordinate adjustment. These are numerical
+projection checks, not a uniform coercivity theorem as N grows. Every
+selected graph had isolated vertices; the small dense matrix had rank 455
+out of 512 columns. There is no demonstrated recovery of all coordinates.
+
+The signed audit was frozen at `df0d7ed`, the first domain check at
+`e8a8087`, and its endpoint precision refinement at `4e61579`. At r=512,
+all six finite point sets had **zero numerical pair-sign changes**, despite
+the large relative projection residuals. The rational bound proved identical
+full orders at N=128 and N=256 for seed 118, at every wave phase. Its smallest
+pair clearance was `3.0843e-5`. At the other four configurations it left
+1, 1, 2, and 3 pairs unresolved; these are neither certified equalities nor
+certified flips. The refined rational endpoint bound certified that all six
+point sets lie in both diamonds; the smallest certified wave-tip slack was
+`1.4289e-4`. The earlier coarse-domain failures remain in their own receipt.
+Sizes with a common seed are nested point sets, not independent replicates.
+
+Consequently there are configurations of positive local measure admissible
+in both sampling models, with the same finite order and a nonzero
+coordinate-based wave-forcing residual. A nonzero residual therefore does
+**not** imply that the observed order is incompatible with the background.
+This is a failure of that proposed inference, not equality of the order
+probability laws or a new lower bound. The existing 4/3-to-3 bracket stands.
+
+The [manifest](cone_constraint_evidence/manifest.json),
+[raw rows](cone_constraint_evidence/rows.jsonl),
+[summary](cone_constraint_evidence/summary.json),
+[signed audit](cone_constraint_evidence/signed_information_audit.json),
+[coarse domain check](cone_constraint_evidence/domain_audit.json), and
+[refined domain check](cone_constraint_evidence/tight_domain_audit.json)
+are byte-identical archived outputs. Each source/design digest was verified
+against its frozen Git object and each stamp verified reachable. No earlier
+raw row or failed bound was overwritten.
+
+## Exact obstruction to simply averaging away the hidden coordinates
+
+There is also an analytic obstruction to the most direct proposed repair.
+Let C0(X) be the sampled background order, and Q the quarter-turn
+`(y1,y2)->(-y2,y1)` applied at every event. The background density, diamond,
+order, and this diagnostic's selected edge set are invariant under Q.
+For any fixed trace-free symmetric 2 by 2 matrix E,
+`Q^T E Q=-E`; hence `b(QX)=-b(X)`. The constraint matrix transforms by a
+right orthogonal coordinate change, so its column space is unchanged.
+Writing Pi_X for its orthogonal projector gives
+
+\[
+\Pi_{QX}=\Pi_X,\qquad r(QX)=-r(X).
+\]
+
+Pad missing selected edges by zero to regard r as a fixed-length vector.
+The reference conditional law of X given C0(X)=C is invariant under Q.
+Since the macroscopic-segment restriction makes r bounded, its conditional
+expectation exists and satisfies
+
+\[
+\boxed{\mathbb E_0[r(X)\mid C_0(X)=C]=0.}
+\]
+
+This holds for every positive-probability labeled order C, every N and every
+fixed wavelength in this construction. Order-measurable linear weights
+cannot change the conclusion. The new self-check verifies the quarter-turn
+matrix transformation and odd forcing separately from the least-squares
+solver. No unproved coordinate-recovery rate is used in this argument.
+
+The same symmetry constrains a likelihood approach. Introduce only as an
+auxiliary contrast path `sinh(2 beta)=2 kappa lambda sqrt(q)` with a(u) fixed.
+Quarter-turn rotation maps the kappa geometry and its volume sampling law to
+the -kappa geometry. Thus, exactly,
+
+\[
+p_{N,\lambda,\kappa}(C)=p_{N,\lambda,-\kappa}(C).
+\]
+
+Whenever an ordinary derivative at kappa=0 exists, the corresponding linear
+order-likelihood score is zero. Evenness alone does not rule out a cusp,
+and no differentiability or uniform second-order expansion is assumed here.
+The auxiliary path is not asserted vacuum at intermediate kappa.
+
+This directs the next attempt toward **even, joint information**, such as a
+properly calibrated likelihood or quadratic conditional correlation. Merely
+squaring the oracle residual and reporting that it is positive is still
+insufficient: it can be positive for background configurations. If a regular
+second-order likelihood expansion is used, its coefficient's joint growth
+with N and frequency must be proved, and orders outside the background
+support must be handled separately. A vanishing linear score does not settle
+the resolution exponent. No boundary-attaining observable has yet been
+constructed from this diagnostic.
