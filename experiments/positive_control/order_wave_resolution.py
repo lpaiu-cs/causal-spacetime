@@ -45,8 +45,8 @@ def coefficient(q):
     )
 
 
-def circular_correction(q, lam, *, tighter=False):
-    """Return K0 and (K_lambda/c-K0)/K0 without subtractive cancellation."""
+def circular_primitive(q, lam, *, tighter=False):
+    """Integrate the exact circular family's complex primitive on the unit patch."""
     if not (0 <= q < math.pi**2 and lam > 0):
         raise ValueError("q must be in [0,pi^2); lambda must be positive")
     k = math.sqrt(q)
@@ -62,6 +62,13 @@ def circular_correction(q, lam, *, tighter=False):
     )
     if not sol.success:
         raise RuntimeError(sol.message)
+    return sol
+
+
+def circular_correction(q, lam, *, tighter=False):
+    """Return K0 and (K_lambda/c-K0)/K0 without subtractive cancellation."""
+    sol = circular_primitive(q, lam, tighter=tighter)
+    k = math.sqrt(q)
 
     def kernel(s, t):
         s, t = np.broadcast_arrays(s, t)
