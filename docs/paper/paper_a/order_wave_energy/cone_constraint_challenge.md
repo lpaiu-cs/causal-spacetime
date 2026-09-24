@@ -122,3 +122,19 @@ the nonzero coordinate-based linear residual. Otherwise retain the number
 of pairs left unresolved by this conservative bound; no assertion of a flip
 follows from failing the bound. Save the audit separately with its own source
 stamp and the primary raw hash. No point-set or frequency reselection.
+
+### Domain check required before interpreting a shared-order example
+
+The signed audit certified identical internal orders at (N,seed)=(128,118)
+and (256,118), r=512. Background coordinates alone do not automatically lie
+inside the wave diamond. Before calling either a configuration admissible
+under both sampling models, check all six original r=512 point sets against
+both wave tips. Use the exact-rational same-phase-independent bound above,
+with m for the past tip and the conservative `131/120-m` for the future tip.
+For either positive segment length d, the wave action is at most
+`|y|^2/[2(d-min(2 lambda d,316 lambda^2/49))]`. The future-tip action bound
+is valid because this expression decreases as the segment length increases.
+Both resulting slacks must be strictly positive at every point. Store this
+as a separate post-run receipt; preserve both earlier outputs unchanged.
+This checks support overlap of these finite configurations, not equality
+of their probabilities under the two sampling laws or any TV boundary.

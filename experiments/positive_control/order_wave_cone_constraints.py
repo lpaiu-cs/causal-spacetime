@@ -351,11 +351,53 @@ def signed_audit(folder):
     target.write_text(json.dumps(result, indent=2))
 
 
+def domain_audit(folder):
+    if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
+        raise RuntimeError("Commit domain check before running")
+    target = folder / "domain_audit.json"
+    if target.exists():
+        raise FileExistsError(target)
+    previous = (folder / "signed_information_audit.json").read_bytes()
+    result = {
+        "code_version": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT)
+        .decode()
+        .strip(),
+        "scope": "exact-rational all-phase domain certificate at r=512",
+        "signed_audit_sha256": hashlib.sha256(previous).hexdigest(),
+        "files": {
+            p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in (Path(__file__), DESIGN)
+        },
+        "rows": [],
+    }
+    lam = F(1, 512)
+    for n in (128, 256, 512):
+        for seed in (118, 819):
+            slacks = []
+            for point in background_points(n, seed):
+                m, v, y1, y2 = map(lambda x: F(float(x)), point[1:])
+                for length, available in ((m, v), (F(131, 120) - m, 1 - v)):
+                    assert length > 0
+                    error = min(2 * lam * length, F(316, 49) * lam**2)
+                    slacks.append(available - (y1**2 + y2**2) / (2 * (length - error)))
+            row = {
+                "n": n,
+                "seed": seed,
+                "r": 512,
+                "all_points_inside_wave_diamond_all_phases": min(slacks) > 0,
+                "minimum_certified_slack": float(min(slacks)),
+            }
+            result["rows"].append(row)
+            print(json.dumps(row))
+    target.write_text(json.dumps(result, indent=2))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--signed-audit", type=Path)
+    parser.add_argument("--domain-audit", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
@@ -363,3 +405,5 @@ if __name__ == "__main__":
         run(args.output)
     if args.signed_audit:
         signed_audit(args.signed_audit)
+    if args.domain_audit:
+        domain_audit(args.domain_audit)
