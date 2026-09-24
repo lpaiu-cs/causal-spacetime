@@ -57,14 +57,24 @@ def inverse_shape(beta, theta):
 
 def rosen_kernel(q, lam, profile, phase=0.37, *, tighter=False):
     """K(s,t)=a(s)a(t)sqrt(det integral_s^t gamma^-1), on [-1/2,1/2]."""
+
+    def coefficients(u):
+        beta, theta, forcing = shape(u, q, lam, profile, phase)
+        return inverse_shape(beta, theta), forcing
+
+    return rosen_kernel_from_coefficients(q, lam, coefficients, tighter=tighter)
+
+
+def rosen_kernel_from_coefficients(q, lam, coefficients, *, tighter=False):
+    """Solve the vacuum Rosen ODE from (inverse unimodular metric, Q)."""
     if not (0 <= q < math.pi**2 and lam > 0):
         raise ValueError("q must be in [0,pi^2); lambda must be positive")
     k = np.sqrt(q)
 
     def rhs(u, state):
         a, ap = state[:2]
-        beta, theta, forcing = shape(u, q, lam, profile, phase)
-        return np.r_[ap, -forcing * a, inverse_shape(beta, theta) / a**2]
+        sinv, forcing = coefficients(u)
+        return np.r_[ap, -forcing * a, sinv / a**2]
 
     initial = [np.cos(k / 2), k * np.sin(k / 2), 0, 0, 0]
     sol = solve_ivp(
