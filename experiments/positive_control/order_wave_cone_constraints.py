@@ -9,6 +9,7 @@ import math
 import platform
 import subprocess
 import time
+from fractions import Fraction as F
 from pathlib import Path
 
 import numpy as np
@@ -276,12 +277,89 @@ def run(output):
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
 
+def signed_audit(folder):
+    if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
+        raise RuntimeError("Commit signed-audit plan before running")
+    target = folder / "signed_information_audit.json"
+    if target.exists():
+        raise FileExistsError(target)
+    raw = (folder / "rows.jsonl").read_bytes()
+    manifest = json.loads((folder / "manifest.json").read_text())
+    assert hashlib.sha256(raw).hexdigest() == manifest["rows_sha256"]
+    waves = {r: WaveFixture(1, r) for r in (32, 128, 512)}
+    result = {
+        "scope": "post-run binary-order audit with rational all-phase bounds",
+        "code_version": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT)
+        .decode()
+        .strip(),
+        "files": {
+            p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in (Path(__file__), DESIGN)
+        },
+        "primary_raw_sha256": manifest["rows_sha256"],
+        "rows": [],
+    }
+    for n in (128, 256, 512):
+        for seed in (118, 819):
+            points = background_points(n, seed)
+            points = points[np.argsort(points[:, 1])]
+            i, j = np.triu_indices(n, 1)
+            dm, dv = points[j, 1] - points[i, 1], points[j, 2] - points[i, 2]
+            dy = points[j, 3:] - points[i, 3:]
+            baseline = dv - np.sum(dy * dy, axis=1) / (2 * dm)
+            chart_delta_t = (dm + dv) / math.sqrt(2)
+            denominator = chart_delta_t + np.sqrt(
+                (dm - dv) ** 2 / 2 + np.sum(dy * dy, axis=1)
+            )
+            for r, wave in waves.items():
+                _, exact = forcing(points, i, j, denominator, wave)
+                shifted = baseline + exact * denominator / (2 * dm)
+                row = {
+                    "n": n,
+                    "seed": seed,
+                    "r": r,
+                    "numerical_pair_sign_changes": int(
+                        np.count_nonzero((baseline > 0) != (shifted > 0))
+                    ),
+                }
+                if r == 512:
+                    values = [tuple(F(float(v)) for v in point[1:]) for point in points]
+                    assert all(0 < item[0] < F(131, 120) for item in values)
+                    unresolved, minimum = 0, None
+                    lam = F(1, r)
+                    for left in range(n):
+                        for right in range(left + 1, n):
+                            delta = [
+                                values[right][k] - values[left][k] for k in range(4)
+                            ]
+                            action = (delta[2] ** 2 + delta[3] ** 2) / (2 * delta[0])
+                            bound = min(2 * lam * delta[0], F(316, 49) * lam**2)
+                            clearance = abs(delta[1] - action) - action * bound / (
+                                delta[0] - bound
+                            )
+                            unresolved += clearance <= 0
+                            minimum = (
+                                clearance
+                                if minimum is None
+                                else min(minimum, clearance)
+                            )
+                    row["rational_bound_unresolved_pairs"] = unresolved
+                    row["certified_identical_order_all_phases"] = unresolved == 0
+                    row["minimum_certificate_clearance"] = float(minimum)
+                result["rows"].append(row)
+                print(json.dumps(row), flush=True)
+    target.write_text(json.dumps(result, indent=2))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--signed-audit", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
     if args.output:
         run(args.output)
+    if args.signed_audit:
+        signed_audit(args.signed_audit)

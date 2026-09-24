@@ -84,3 +84,41 @@ are not a theorem of 1/N coordinate recovery from four-dimensional causal
 orders. We will not assume such a recovery rate to manufacture the missing
 upper bound. The earlier null-incidence and causal-set embedding references
 are discussed in [the current results](local_null_results.md).
+
+## Post-run signed-information audit, frozen before that audit
+
+The initial campaign found a nonzero least-squares residual in all 18 rows.
+Before using this to motivate an observer, explicitly test the information
+loss from continuous cone margins to the **binary sampled order**. This is
+a post-run diagnostic and will not replace or rerun the primary rows.
+
+On every originally fixed point set and frequency, compare all pairwise
+background and wave causal signs, recording the number of changes. At the
+highest rung r=512, for all six point sets also apply this exact-rational
+certificate, with input binary floats treated as exact coordinates (m,v,y):
+
+For q=1, `cos(u)>=7/8` on the unit patch, hence `f(u)<=64/49`. Its total
+variation on any subinterval is at most `30/49`. Integration by parts gives
+`|integral_s^t f(u) exp(iu/lambda) du|<=158 lambda/49`, while the direct
+bound is Delta m. Therefore
+
+\[
+\|E_{ij}\|\le e_{ij}:=\min(2\lambda\Delta m,316\lambda^2/49).
+\]
+
+Put `A0=|Delta y|^2/(2 Delta m)`, `Fv0=Delta v-A0`. Positive definiteness
+and the inverse norm bound give
+
+\[
+|Fv_\lambda-Fv_0|\le A0\frac{e_{ij}}{\Delta m-e_{ij}}.
+\]
+
+If the absolute background margin exceeds this bound, that pair's causal
+sign cannot change, at **any phase**. Evaluate the comparison using exact
+Fractions. Verify `0<m<131/120<2 tan(1/2)` using the first three positive
+tangent-series terms, so every certified coordinate is inside the u patch.
+If all pairs pass, the full finite orders are provably identical, despite
+the nonzero coordinate-based linear residual. Otherwise retain the number
+of pairs left unresolved by this conservative bound; no assertion of a flip
+follows from failing the bound. Save the audit separately with its own source
+stamp and the primary raw hash. No point-set or frequency reselection.
