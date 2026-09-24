@@ -14,7 +14,7 @@ from pathlib import Path
 
 import numpy as np
 import scipy
-from order_wave_null_coordinate import ROOT, WaveFixture
+from order_wave_null_coordinate import ROOT, WaveFixture, series
 from scipy.linalg import lstsq
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import lsmr
@@ -351,10 +351,10 @@ def signed_audit(folder):
     target.write_text(json.dumps(result, indent=2))
 
 
-def domain_audit(folder):
+def domain_audit(folder, *, tight=False):
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
         raise RuntimeError("Commit domain check before running")
-    target = folder / "domain_audit.json"
+    target = folder / ("tight_domain_audit.json" if tight else "domain_audit.json")
     if target.exists():
         raise FileExistsError(target)
     previous = (folder / "signed_information_audit.json").read_bytes()
@@ -371,12 +371,17 @@ def domain_audit(folder):
         "rows": [],
     }
     lam = F(1, 512)
+    endpoint = (
+        (series(F(1, 4), 1, 128) / series(F(1, 4), 0, 128)).lo if tight else F(131, 120)
+    )
+    result["endpoint_lower_bound"] = str(endpoint)
+    result["tight_endpoint_enclosure"] = tight
     for n in (128, 256, 512):
         for seed in (118, 819):
             slacks = []
             for point in background_points(n, seed):
                 m, v, y1, y2 = map(lambda x: F(float(x)), point[1:])
-                for length, available in ((m, v), (F(131, 120) - m, 1 - v)):
+                for length, available in ((m, v), (endpoint - m, 1 - v)):
                     assert length > 0
                     error = min(2 * lam * length, F(316, 49) * lam**2)
                     slacks.append(available - (y1**2 + y2**2) / (2 * (length - error)))
@@ -398,6 +403,7 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path)
     parser.add_argument("--signed-audit", type=Path)
     parser.add_argument("--domain-audit", type=Path)
+    parser.add_argument("--tight-domain-audit", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
@@ -407,3 +413,5 @@ if __name__ == "__main__":
         signed_audit(args.signed_audit)
     if args.domain_audit:
         domain_audit(args.domain_audit)
+    if args.tight_domain_audit:
+        domain_audit(args.tight_domain_audit, tight=True)

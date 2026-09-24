@@ -138,3 +138,13 @@ Both resulting slacks must be strictly positive at every point. Store this
 as a separate post-run receipt; preserve both earlier outputs unchanged.
 This checks support overlap of these finite configurations, not equality
 of their probabilities under the two sampling laws or any TV boundary.
+
+The first domain bound was inconclusive for seed 118 at all three sizes;
+it proved inclusion for seed 819. The endpoint lower bound `131/120` is
+about 9.4e-4 below the actual M, much coarser than the wave action correction.
+Retain that receipt. A separate precision check will replace **only** this
+endpoint bound by the lower endpoint of the existing exact-rational
+128-bit enclosure `C1(1/4)/C0(1/4)=2 tan(1/2)`. Keep every point, lambda,
+matrix bound, and strict-positive criterion unchanged. Save a new receipt
+and retain any remaining failures. This is a deterministic bound refinement,
+not a new statistical test or a changed sampling gate.
