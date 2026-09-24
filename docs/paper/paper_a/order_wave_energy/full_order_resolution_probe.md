@@ -136,3 +136,14 @@ for separation. The [frozen checks and limits](full_order_chain_results.md)
 also explain why a fixed list of ordinary chain fractions does not improve
 this rate for regular Gaussian tests. The sharp full-order boundary and an
 observable attaining it remain unresolved; the research goal is still active.
+
+## Conditional-order improvement added on 2026-09-24
+
+The [null-coordinate construction](null_coordinate_challenge.md) and its
+[results/audit](null_coordinate_results.md) subsequently improve the sufficient
+region to `N lambda^4/log N -> infinity` for fixed known `0<q<=1`. The test
+uses conditional order counts to reconstruct a background null time and
+checks its monotonicity along causal pairs. It is wavelength-independent.
+The frozen numerical evidence consists of constructed population witnesses,
+not a finite-N power campaign. The necessity side is still only
+`N lambda -> 0`; exponent 4 is not established as the optimal boundary.

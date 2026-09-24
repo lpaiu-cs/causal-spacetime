@@ -19,7 +19,12 @@ from pathlib import Path
 
 import numpy as np
 import scipy
-from order_wave_energy import background_probability, rule
+from order_wave_energy import (
+    background_probability,
+    relation_probability,
+    rosen_kernel,
+    rule,
+)
 from order_wave_resolution import (
     circular_correction,
     circular_primitive,
@@ -196,6 +201,7 @@ def order_test(order, q, rng):
     references, probes = shuffled[: n // 2], shuffled[n // 2 :]
     exponent, bits = (6 * n**3).bit_length(), 40 + n.bit_length()
     boxes = {}
+    # ponytail: direct O(N^3) chain counting; batch/bitset it before a powered run.
     for i in probes:
         ancestors = references[order[references, i]]
         future_count = int(np.count_nonzero(order[i, references]))
@@ -383,6 +389,10 @@ def self_check():
         * np.sqrt(np.linalg.det(fixture.matrix(-0.31, 0.27)))
     )
     assert abs(from_matrix - base * (1 + correction)) < 2e-12
+    # The scalar correction above shares a primitive implementation. Also use
+    # the original five-state Rosen ODE for an independent formulation check.
+    rosen, _ = rosen_kernel(1, 1 / 32, "circular", phase=0.37, tighter=True)
+    assert abs(from_matrix - rosen(-0.31, 0.27) / math.sqrt(1 + 4 / 32**2)) < 2e-12
     print(
         json.dumps(
             {
@@ -479,12 +489,152 @@ def run(output):
     print(json.dumps(manifest, indent=2))
 
 
+def summarize(folder):
+    manifest = json.loads((folder / "manifest.json").read_text())
+    raw = (folder / "rows.jsonl").read_bytes()
+    assert manifest["status"] == "completed"
+    assert hashlib.sha256(raw).hexdigest() == manifest["rows_sha256"]
+    stamp = manifest["code_version"]
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", stamp, "HEAD"], cwd=ROOT, check=True
+    )
+    for path, digest in manifest["files"].items():
+        saved = subprocess.check_output(["git", "show", f"{stamp}:{path}"], cwd=ROOT)
+        assert hashlib.sha256(saved).hexdigest() == digest
+    rows = [json.loads(line) for line in raw.splitlines()]
+    assert [(row["q"], row["r"]) for row in rows] == [
+        (q, r) for q in (0.25, 1.0) for r in (64, 128, 256, 512, 1024, 2048)
+    ]
+    assert all(row["wave_margin"] > 0 for row in rows)
+    summary = {
+        "source_commit": stamp,
+        "raw_sha256": manifest["rows_sha256"],
+        "elapsed_seconds": manifest["elapsed_seconds"],
+        "positive_population_witnesses": sum(
+            row["population_v_decrease"] > 0 for row in rows
+        ),
+        "rows": [
+            {
+                key: row[key]
+                for key in (
+                    "q",
+                    "r",
+                    "population_v_decrease",
+                    "scaled_population_decrease",
+                    "scaled_wave_margin",
+                )
+            }
+            for row in rows
+        ],
+        "refinement": [
+            {
+                "q": row["q"],
+                "r": row["r"],
+                "population_decrease_change": row["refinement"]["population_v_decrease"]
+                - row["population_v_decrease"],
+                "largest_moment_change": float(
+                    np.max(
+                        abs(
+                            np.array(row["refinement"]["moments"])
+                            - np.array(row["moments"])
+                        )
+                    )
+                ),
+            }
+            for row in rows
+            if "refinement" in row
+        ],
+    }
+    (folder / "summary.json").write_text(json.dumps(summary, indent=2))
+    print(json.dumps(summary, indent=2))
+
+
+def cross_check(folder):
+    """Post-run independent-formulation check of the largest q=1 witness."""
+    rows = [
+        json.loads(line) for line in (folder / "rows.jsonl").read_text().splitlines()
+    ]
+    row = next(item for item in rows if item["q"] == 1 and item["r"] == 2048)
+    q, r, phase = row["q"], row["r"], row["phase"]
+    kernel, details = rosen_kernel(q, 1 / r, "circular", phase=phase, tighter=True)
+    k = math.sqrt(q)
+
+    def order_for(length):
+        return 2 * max(96, math.ceil(r * length / 2) + 64)
+
+    def alpha(start, end):
+        x, w = rule(order_for(end - start))
+        u = start + (end - start) * x
+        return float(
+            (end - start)
+            * np.sum(w * kernel(start, u) * kernel(u, end))
+            / kernel(start, end)
+        )
+
+    def matrix(start, end):
+        x, w = rule(order_for(end - start))
+        u = start + (end - start) * x
+        weight = (end - start) * w / np.cos(k * u) ** 2
+        factor = 2 * k / r / math.sqrt(1 + 4 * q / r**2)
+        real, imag = weight @ np.cos(r * u + phase), weight @ np.sin(r * u + phase)
+        return weight.sum() * np.eye(2) - factor * np.array(
+            [[real, imag], [imag, -real]]
+        )
+
+    gamma = alpha(-0.5, 0.5)
+    moments = []
+    for point in row["points"]:
+        u, v, *xy = point
+        xy = np.array(xy)
+        eta = v - 0.5 * xy @ np.linalg.solve(matrix(-0.5, u), xy)
+        zeta = 1 - v - 0.5 * xy @ np.linalg.solve(matrix(u, 0.5), xy)
+        length = u + 0.5
+
+        def local(s, t):
+            return kernel(-0.5 + length * (s + 0.5), -0.5 + length * (t + 0.5))
+
+        probability = relation_probability(local, order_for(length))
+        moments.append(
+            (
+                alpha(-0.5, u) * eta**2 / gamma,
+                alpha(u, 0.5) * zeta**2 / gamma,
+                probability,
+            )
+        )
+    coordinates = [population_v(*item, q)[0] for item in moments]
+    gap = coordinates[0] - coordinates[1]
+    difference = gap - row["population_v_decrease"]
+    result = {
+        "scope": "post-run independent five-state ODE and direct action quadrature",
+        "source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "raw_sha256": hashlib.sha256((folder / "rows.jsonl").read_bytes()).hexdigest(),
+        "q": q,
+        "r": r,
+        "moments": moments,
+        "population_v_decrease": gap,
+        "change_from_primary": difference,
+        "relative_change": abs(difference / row["population_v_decrease"]),
+        **details,
+    }
+    (folder / "independent_formulation_check.json").write_text(
+        json.dumps(result, indent=2)
+    )
+    print(json.dumps(result, indent=2))
+    assert gap > 0 and abs(difference) < 0.01 * row["population_v_decrease"]
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--summarize", type=Path)
+    parser.add_argument("--cross-check", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
     if args.output:
         run(args.output)
+    if args.summarize:
+        summarize(args.summarize)
+    if args.cross_check:
+        cross_check(args.cross_check)

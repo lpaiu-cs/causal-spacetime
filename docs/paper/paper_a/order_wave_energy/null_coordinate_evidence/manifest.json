@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "code_version": "ab16d6a3f96a5a462e976e6efb4b3e9059fc336e",
+  "utc_started": "2026-09-24T06:35:20Z",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "files": {
+    "experiments/positive_control/order_wave_null_coordinate.py": "fdfe9fbf33a31f5fa7b741c33713fe04578ac66e3e946e2e0aa4813ee08d3624",
+    "experiments/positive_control/order_wave_resolution.py": "0974a003a282e7ce496f7eb2fff61ffa69b62c1b2af46ded0c434e1791e48b93",
+    "experiments/positive_control/order_wave_energy.py": "bf2bd0ea0c149966029e1c63b45e2dcec64c30897948f41ee1417266de7555e5",
+    "docs/paper/paper_a/order_wave_energy/null_coordinate_challenge.md": "c51b66f08d665da14517bd2a2f363f23efc50ee2c9becac3686a6907a9a55507"
+  },
+  "scope": "constructed population witnesses, not a finite-N power experiment",
+  "elapsed_seconds": 24.647416353225708,
+  "rows_sha256": "0924f97d4bb3a44dd0d7c1f405605d006f807e7f48ce307058d10e9a75a11357"
+}

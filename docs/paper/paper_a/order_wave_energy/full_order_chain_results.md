@@ -137,3 +137,9 @@ and a few more ordinary chain features is not a demonstrated route to the
 sharp boundary. The unresolved target must use more of the order or improve
 the full-order impossibility argument. This partial result is not being
 promoted to completion or automatically recast as a small publication.
+
+Subsequent progress: the [conditional null-coordinate test](null_coordinate_results.md)
+uses a growing collection of event-specific statistics and improves the
+sufficient exponent to 4, with a logarithmic loss, for known `0<q<=1`.
+It does not contradict the fixed-vector limitation above. The full-order
+boundary remains unresolved.
