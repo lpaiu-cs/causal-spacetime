@@ -69,6 +69,16 @@ control was therefore added against the original independent five-state
 Rosen ODE; it passed the `2e-12` absolute comparison. It does not retrospectively
 make the original shared-primitive check independent.
 
+The largest q=1, r=2048 witness was then recomputed at `7904c10` using
+the five-state Rosen ODE for all scalar kernels and direct Gauss integration
+for its action matrices. This replaces both the primitive and stable-change
+routes used by the primary run. The [independent-formulation check](null_coordinate_evidence/independent_formulation_check.json)
+found decrease `4.08122519113e-8`, differing from the primary value by
+`3.42504e-14` (relative `8.39217e-7`). It passed the pre-execution numerical
+check of positive sign and less than 1% relative change. This is a distinct
+mathematical formulation implemented by the same author, not an independent
+researcher audit or a rigorous numerical enclosure.
+
 ## 2. Why the violating set has positive measure
 
 This expands the measure argument in the design; the numerical pair search
