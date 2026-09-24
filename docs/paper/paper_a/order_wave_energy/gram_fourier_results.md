@@ -52,6 +52,16 @@ Raw SHA256:
 
 ## What the new noise argument would change
 
+The subsequent exact-rational anchor guard was frozen at
+`f1072f0b6be60249b41b796b91e20e897e4dc827` before running. Its
+[certificate](gram_fourier_evidence/anchor_guard_certificate.json) passed
+without changing the prescribed neighbourhood: Im D_A is bounded below by
+`0.01069797`, |D_A| above by `0.04239071`, and the frequency-grid perturbation
+leaves a coefficient lower bound `0.01016809`. Anchor-pair and active-probe
+slack lower bounds are `0.02891667` and `0.10019723`. This certifies geometric
+regularity and noncancellation for the stated neighbourhood and q range;
+it does not certify the stochastic noise argument or detection power.
+
 The subsequent [proof draft](gram_fourier_noise.md) expands the empirical
 raw moments before calibration, retains repeated reference indices, and
 uses bounded variation along background null generators. It proposes
