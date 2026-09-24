@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "code_version": "3eb68f452256d7777b266ae868b9545a6502d5df",
+  "utc_started": "2026-09-24T09:28:19Z",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "scope": "deterministic population Fourier coefficient, not finite-order power",
+  "files": {
+    "experiments/positive_control/order_wave_gram_fourier.py": "6eec069d18cd10121b583746a848c4745e42cc3ff2d899b4f87e6998c547c73a",
+    "docs/paper/paper_a/order_wave_energy/gram_fourier_challenge.md": "6c2c670c4d878ba8da7e67b766f3121ca03cace7650724c7e8d74e56e3c6d3ab",
+    "experiments/positive_control/order_wave_null_coordinate.py": "1018d7e6d4a2f8e05d503065f61ecdbbec2a65c7a7f62cc577e857f30bcc9221",
+    "experiments/positive_control/order_wave_resolution.py": "0974a003a282e7ce496f7eb2fff61ffa69b62c1b2af46ded0c434e1791e48b93",
+    "experiments/positive_control/order_wave_energy.py": "bf2bd0ea0c149966029e1c63b45e2dcec64c30897948f41ee1417266de7555e5"
+  },
+  "elapsed_seconds": 206.56824326515198,
+  "rows_sha256": "5c018c32903926b8055710f3769fa225b905540cd80b2fe8ac3c9d20c1849802"
+}

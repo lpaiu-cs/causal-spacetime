@@ -15,6 +15,13 @@ finite orders. Its linear conditional average vanishes by rotation symmetry.
 This rules out a direct residual-to-observer inference and leaves the above
 resolution bracket unchanged.
 
+The subsequent [anchor Gram Fourier challenge](gram_fourier_results.md)
+finds a nonzero population coefficient, and its [noise proof draft](gram_fourier_noise.md)
+proposes an order-only test family covering every fixed power above 2.
+Its full precision-controlled count implementation and finite-data power
+assessment are still outstanding. It has not replaced the established
+upper condition above, and it does not close the gap to the lower bound.
+
 2026-09-24. Analytic probe after the pointwise pair-fraction inverse was stopped.
 This is not a preregistered experiment or a claimed discovery. The potentially
 substantial target is a **sharp event-count versus wavelength law for the full

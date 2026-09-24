@@ -9,12 +9,13 @@ import math
 import platform
 import subprocess
 import time
+from fractions import Fraction as F
 from pathlib import Path
 
 import numpy as np
 import scipy
 from order_wave_energy import background_probability, rule
-from order_wave_null_coordinate import WaveFixture, population_v
+from order_wave_null_coordinate import Box, WaveFixture, population_v, series
 from scipy.special import hyp0f1
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -249,6 +250,78 @@ def self_check():
     )
 
 
+def guard_check(output):
+    """Exact-rational outer-anchor bounds for the subsequent proof draft."""
+    if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
+        raise RuntimeError("commit the guard proof and source before checking")
+    if output.exists():
+        raise FileExistsError(output)
+    small = Box(F(638, 100000), F(642, 100000))
+    large = Box(F(1278, 100000), F(1282, 100000))
+    off = Box(-F(2, 100000), F(2, 100000))
+    x1 = small.sqrt(128)
+    x2 = off / x1
+    y2 = (small - x2 * x2).sqrt(128)
+    x3 = small / x1
+    y3 = (small - x2 * x3) / y2
+    ell2 = -(small - off * small / small) / (small - off * off / small)
+    ell_bound = max(abs(ell2.lo), abs(ell2.hi))
+    cosine = series(F(1, 4), 0, 128)
+    derivative_bound = (Box.point(1) / (cosine * cosine)).hi
+    assert derivative_bound < F(13, 10)
+    assert min(x3.lo, y3.lo) > F(79, 1000)
+    assert ell_bound < F(102, 100)
+    determinant = small * small - off * off
+    assert determinant.lo > 0
+    imaginary_lower = x3.lo * y3.lo / (
+        F(13, 10) * F(452, 1000)
+    ) - ell_bound * off.hi / F(348, 1000)
+    absolute_upper = (
+        ell_bound * small.hi / F(448, 1000)
+        + ell_bound * small.hi / F(348, 1000)
+        + large.hi / F(248, 1000)
+    ) / 2
+    assert imaginary_lower > F(1, 100) and absolute_upper < F(1, 20)
+    # A frequency-grid error <=1/8 rotates phases by <=0.1/8 about u=0.2.
+    grid_lower = imaginary_lower - absolute_upper / 80
+    assert grid_lower > F(9, 1000)
+    radii, cross = [small, small, large], {(0, 1): off, (0, 2): small, (1, 2): small}
+    ua = [F(-35, 100), F(-25, 100), F(-15, 100)]
+    va = [F(15, 100), F(25, 100), F(35, 100)]
+    pair_slacks, probe_slacks = [], []
+    for (i, j), g in cross.items():
+        gap = ua[j] - ua[i] - F(4, 1000)
+        distance = (radii[i] + radii[j] - 2 * g).hi
+        pair_slacks.append(va[j] - va[i] - F(4, 1000) - distance / (2 * gap))
+    for i in range(3):
+        distance = (F(1, 5) + radii[i].sqrt(128).hi) ** 2
+        gap = F(1, 10) - ua[i] - F(2, 1000)
+        probe_slacks.append(F(65, 100) - va[i] - F(2, 1000) - distance / (2 * gap))
+    assert min(pair_slacks + probe_slacks) > 0
+    files = [Path(__file__), DESIGN.with_name("gram_fourier_noise.md")]
+    result = {
+        "code_version": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT)
+        .decode()
+        .strip(),
+        "scope": "rational anchor bounds; not finite-order noise or power",
+        "files": {
+            p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in files
+        },
+        "passed": True,
+        "m_derivative_upper": float(derivative_bound),
+        "third_anchor_coordinate_lower": float(min(x3.lo, y3.lo)),
+        "ell_magnitude_upper": float(ell_bound),
+        "D_imaginary_lower": float(imaginary_lower),
+        "D_absolute_upper": float(absolute_upper),
+        "grid_coefficient_lower": float(grid_lower),
+        "anchor_pair_slack_lower": float(min(pair_slacks)),
+        "active_probe_slack_lower": float(min(probe_slacks)),
+    }
+    output.write_text(json.dumps(result, indent=2))
+    print(json.dumps(result))
+
+
 def run(output):
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
         raise RuntimeError("commit source and design before running")
@@ -312,8 +385,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--guard-output", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
     if args.output:
         run(args.output)
+    if args.guard_output:
+        guard_check(args.guard_output)
