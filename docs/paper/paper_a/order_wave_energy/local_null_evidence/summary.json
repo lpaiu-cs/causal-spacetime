@@ -1,0 +1,145 @@
+{
+  "code_version": "7dec69a787164b3f9b0c9ee70754879f6b15fc3d",
+  "raw_sha256": "108d77a2ccf2fa720223b7e86a7cbcc8ad1a916107c945fb29aedc9a84377c83",
+  "elapsed_seconds": 17.60289430618286,
+  "positive_population_witnesses": 10,
+  "rows": [
+    {
+      "q": 0.25,
+      "r": 64,
+      "scaled_population_decrease": -0.2718536988636515,
+      "scaled_nonnegative_increments": [
+        1.0755554373614498,
+        0.3654179233034994,
+        0.024888051230209346
+      ]
+    },
+    {
+      "q": 0.25,
+      "r": 128,
+      "scaled_population_decrease": 0.016543384575925302,
+      "scaled_nonnegative_increments": [
+        1.056020769833756,
+        0.38444584200911636,
+        0.02354590082286101
+      ]
+    },
+    {
+      "q": 0.25,
+      "r": 256,
+      "scaled_population_decrease": 0.07552302957628854,
+      "scaled_nonnegative_increments": [
+        1.0462356794097865,
+        0.3939717797400175,
+        0.02289827687089252
+      ]
+    },
+    {
+      "q": 0.25,
+      "r": 512,
+      "scaled_population_decrease": 0.09047838734113611,
+      "scaled_nonnegative_increments": [
+        1.041339255855874,
+        0.39873799390648657,
+        0.022580275546302153
+      ]
+    },
+    {
+      "q": 0.25,
+      "r": 1024,
+      "scaled_population_decrease": 0.09203514986438677,
+      "scaled_nonnegative_increments": [
+        1.0388890878566173,
+        0.40112176565303415,
+        0.022422697336624386
+      ]
+    },
+    {
+      "q": 0.25,
+      "r": 2048,
+      "scaled_population_decrease": 0.09175027115270495,
+      "scaled_nonnegative_increments": [
+        1.0376644166974245,
+        0.40231396434109,
+        0.02234428227569696
+      ]
+    },
+    {
+      "q": 1.0,
+      "r": 64,
+      "scaled_population_decrease": -0.17941524627462968,
+      "scaled_nonnegative_increments": [
+        1.0770738882896698,
+        0.35159915201136593,
+        0.023833953559981275
+      ]
+    },
+    {
+      "q": 1.0,
+      "r": 128,
+      "scaled_population_decrease": 0.09236130552653776,
+      "scaled_nonnegative_increments": [
+        1.0555712550557033,
+        0.36980015526570686,
+        0.02250727728797039
+      ]
+    },
+    {
+      "q": 1.0,
+      "r": 256,
+      "scaled_population_decrease": 0.14706166766336537,
+      "scaled_nonnegative_increments": [
+        1.0448467850063423,
+        0.3789351203597664,
+        0.021868627070076085
+      ]
+    },
+    {
+      "q": 1.0,
+      "r": 512,
+      "scaled_population_decrease": 0.16051563240762334,
+      "scaled_nonnegative_increments": [
+        1.039491227534306,
+        0.38351216740099936,
+        0.021555423312907163
+      ]
+    },
+    {
+      "q": 1.0,
+      "r": 1024,
+      "scaled_population_decrease": 0.1626711303833872,
+      "scaled_nonnegative_increments": [
+        1.0368130263253619,
+        0.38580284360197226,
+        0.02140030008427196
+      ]
+    },
+    {
+      "q": 1.0,
+      "r": 2048,
+      "scaled_population_decrease": 0.16208745073527098,
+      "scaled_nonnegative_increments": [
+        1.0354755279241488,
+        0.3869490033850269,
+        0.0213231424531668
+      ]
+    }
+  ],
+  "refinement": [
+    {
+      "q": 1.0,
+      "r": 2048,
+      "population_decrease_change": 0.0
+    }
+  ],
+  "synthetic_count_controls": [
+    {
+      "scope": "population moments; no sampled order or measured power",
+      "reference_count": 1000000000000000000000000000000,
+      "difference_interval": [
+        -8.705234025605792e-08,
+        9.763044096146444e-09
+      ]
+    }
+  ]
+}

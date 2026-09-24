@@ -76,3 +76,24 @@ moments; it does not retrospectively convert the frozen control to a pass.
 
 The unresolved scientific work remains the optimal full-order boundary and
 an observable attaining it, with a proof audit and finite-sample validation.
+
+## Post-run outcome and archived provenance
+
+The eight-band revision and the preceding plan were committed at
+`9c44b7d4c3dde132a35a0a46ae7522feee835523`. Its clean-tree recheck returned
+`[-3.87906123997e-8, -3.84986837602e-8]`, so the pre-execution negative-upper-
+endpoint criterion passed. The original failed interval remains unchanged.
+The focused rational controls still enclose all checked gradient and Hessian
+finite differences, and the background difference interval contains zero.
+
+Archived byte-identical outputs:
+[manifest](local_null_evidence/manifest.json),
+[raw rows](local_null_evidence/rows.jsonl),
+[summary](local_null_evidence/summary.json),
+[independent formulation](local_null_evidence/independent_formulation_check.json),
+and [post-run enclosure check](local_null_evidence/post_run_enclosure_check.json).
+The manifest's frozen source/design hashes and the recheck's own source/plan
+hashes were verified against their respective Git objects; both stamps are
+ancestors of the branch carrying this record. The raw grid is exactly the
+12 predeclared cases. None of these checks supplies a finite-N power estimate,
+an optimality theorem, or an independent researcher proof review.

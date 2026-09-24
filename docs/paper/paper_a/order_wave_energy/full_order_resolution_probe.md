@@ -3,8 +3,11 @@
 Latest bound (2026-09-24): the [quantized-coordinate proof](quantized_order_bound.md)
 improves the impossibility region to every fixed power `N=O(lambda^(-alpha))`
 with `alpha<4/3`. The earlier sections below retain their derivation history.
-The known-q<=1 sufficient condition remains `N lambda^4/log N -> infinity`;
-the sharp boundary and an observer attaining it remain unresolved.
+The [shared-reference construction](local_null_challenge.md), with
+[retained checks and failures](local_null_results.md), improves the known-q<=1
+sufficient condition to `N lambda^3/log N -> infinity`. The sharp boundary
+and an observer attaining it remain unresolved; these proofs await independent
+researcher audit.
 
 2026-09-24. Analytic probe after the pointwise pair-fraction inverse was stopped.
 This is not a preregistered experiment or a claimed discovery. The potentially

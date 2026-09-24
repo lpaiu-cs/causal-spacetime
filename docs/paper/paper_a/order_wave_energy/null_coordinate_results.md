@@ -1,5 +1,9 @@
 # A constructive improvement of the sufficient resolution region
 
+Later update: [shared-reference differences](local_null_results.md) improve
+the sufficient exponent from 4 to 3. The historical construction and its
+original evidence below remain in their original scope.
+
 2026-09-24. The sharp full-order boundary is **still unresolved**. This step
 supplies a more informative observable, not just another global chain count:
 reconstruct a background null coordinate from conditional order statistics,

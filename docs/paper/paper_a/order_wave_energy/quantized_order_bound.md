@@ -26,7 +26,9 @@ boundary at `N lambda~1`. Thus, for any fixed `1<alpha<4/3`, at
 `N~lambda^(-alpha)` exact coordinates plus order distinguish consistently,
 while the full finite order alone is asymptotically indistinguishable.
 This is a strict separation of observation protocols, conditional on the
-proofs. It is not evidence that the order-only sufficient exponent 4 is sharp.
+proofs. It is not evidence that the order-only sufficient exponent is sharp.
+The later [shared-reference construction](local_null_challenge.md) improves
+that exponent from 4 to 3, still leaving a gap.
 
 ## 1. Put the background in a fixed Minkowski chart
 
@@ -247,9 +249,9 @@ Also record the full-pattern Hellinger distance from eps=0. This is a
 deterministic algebra/geometry control, not a finite-event power campaign,
 an independent researcher audit, or a proof for arbitrarily large K.
 
-The present full-order bracket is now: indistinguishable at every fixed
-power below 4/3, and distinguishable when `N lambda^4/log N -> infinity`
-under the earlier known-q<=1 null-coordinate construction. A matching law,
+The full-order bracket after the later [shared-reference improvement](local_null_challenge.md)
+is: indistinguishable at every fixed power below 4/3, and distinguishable when
+`N lambda^3/log N -> infinity` for known q<=1. A matching law,
 an observer attaining it, and novelty verification remain open. The
 coordinate-oracle formula is not substituted for that missing result.
 
