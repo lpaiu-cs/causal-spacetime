@@ -106,3 +106,52 @@ their staged blobs, all six raw-row receipts reverified, and every changed
 blob checked to differ from its predecessor only in line endings. This is
 an append-only archive repair; run values, hashes, and historical commits
 were not rewritten.
+
+## Why changing only the pair separation is not the next improvement
+
+For this witness construction let h be the longitudinal separation scale.
+On the favorable phase/direction sets, the available null-coordinate signal
+has scale `d(h)=lambda min(h,lambda)`: it is lambda h below one wavelength,
+and lambda squared above it. The action constraint permits a transverse
+ball of radius proportional to `sqrt(h d(h))` and a negative null-time
+interval of width d(h). Including the h-wide separation window, the pair
+mass has scale `h^2 d(h)^2`. Thus the second-moment witness argument needs
+
+\[
+N\gg \frac{1}{h d(h)}.
+\]
+
+The shared-reference confidence construction has an increment term of
+order `sqrt(h log N/N)` on these compact sets. Making this certified width
+smaller than d(h) requires
+
+\[
+N\gg \frac{h\log N}{d(h)^2}.
+\]
+
+Suppressing logarithms, for h<=lambda the two sufficient sample prices are
+`1/(lambda h^2)` and `1/(lambda^2 h)`; both decrease up to h=lambda. For
+h>=lambda they are `1/(lambda^2 h)` and `h/lambda^4`; their maximum is
+smallest at h=lambda. This recovers the exponent 3. It explains why another
+separation sweep would not improve this particular proof. It is **not** a
+lower bound for arbitrary full-order tests, or even an exhaustive analysis
+of all possible witnesses of the same test.
+
+The next unresolved question is whether simultaneous cone constraints can
+remove the latent-coordinate errors more efficiently than these individual
+moment differences. A valid solution must still use only the sampled order:
+an oracle projection using true coordinates would not close the gap.
+
+There is relevant prior work that prevents calling generic curvature
+reconstruction a new result. [Nenashev and Baranovskii (2023), Definition 1
+and Theorems 1-2](https://arxiv.org/html/2302.12209v1) characterize four-
+dimensional conformal flatness with a configuration of eight events and
+sixteen **null-incidence** tests. Their fifteen prescribed null relations
+cannot simply be replaced by comparabilities or empty sampled intervals.
+For the present absolutely continuous iid sprinkling, exact null pairs have
+probability zero. A probabilistic, robust order-only version would require
+a new error and event-count argument; the incidence theorem is not the
+missing finite-sampling boundary. [Johnston (2025)](https://arxiv.org/abs/2502.09701)
+already gives volume-based finite causal-set embeddings into Minkowski
+space. Neither a new embedding plot nor reproduction of that procedure
+would by itself establish our joint high-frequency resolution law.
