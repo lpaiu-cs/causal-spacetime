@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "code_version": "b1bf8801a8416baf93ec01bcf85d42db13c5acb2",
+  "utc_started": "2026-09-24T07:15:09Z",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "files": {
+    "experiments/positive_control/order_wave_oracle_barrier.py": "98b9c984e3415127f64a605d342e1030e04e45e107ccf5eb9cb80d7ab1329a81",
+    "experiments/positive_control/order_wave_resolution.py": "0974a003a282e7ce496f7eb2fff61ffa69b62c1b2af46ded0c434e1791e48b93",
+    "experiments/positive_control/order_wave_energy.py": "bf2bd0ea0c149966029e1c63b45e2dcec64c30897948f41ee1417266de7555e5",
+    "docs/paper/paper_a/order_wave_energy/coordinate_oracle_barrier.md": "75fc9e5d52582065f6c6d4d51cbd99851aab353daf5da23f6f1dc64581f90906"
+  },
+  "scope": "exact reference-coordinate loss integral; not order-only power",
+  "elapsed_seconds": 47.65211820602417,
+  "rows_sha256": "faa777d3b665bb7172c591e3ab7f2dd6e6eaf18a37235a871564a66dd9816fe0"
+}

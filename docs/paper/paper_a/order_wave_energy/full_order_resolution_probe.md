@@ -1,5 +1,11 @@
 # Next high-risk question: the full-order resolution law
 
+Latest bound (2026-09-24): the [quantized-coordinate proof](quantized_order_bound.md)
+improves the impossibility region to every fixed power `N=O(lambda^(-alpha))`
+with `alpha<4/3`. The earlier sections below retain their derivation history.
+The known-q<=1 sufficient condition remains `N lambda^4/log N -> infinity`;
+the sharp boundary and an observer attaining it remain unresolved.
+
 2026-09-24. Analytic probe after the pointwise pair-fraction inverse was stopped.
 This is not a preregistered experiment or a claimed discovery. The potentially
 substantial target is a **sharp event-count versus wavelength law for the full
@@ -147,3 +153,18 @@ checks its monotonicity along causal pairs. It is wavelength-independent.
 The frozen numerical evidence consists of constructed population witnesses,
 not a finite-N power campaign. The necessity side is still only
 `N lambda -> 0`; exponent 4 is not established as the optimal boundary.
+
+## Subsequent impossibility improvement on 2026-09-24
+
+The [coordinate-oracle calculation](coordinate_oracle_barrier.md) first showed
+that the existing `N lambda` comparison is sharp when exact coordinates are
+revealed, including a Poisson critical-window law. The subsequent
+[quantized-coordinate argument and frozen checks](quantized_order_bound.md)
+retain uncertainty inside small cells instead. For any fixed integer K>=2,
+`N^(3K+1) lambda^(4K) -> 0` now suffices for full-order indistinguishability.
+Thus every fixed power below 4/3 is insufficient, improving the former
+exponent 1. This does not establish the logarithmic/critical boundary at
+4/3 itself. In the range `N~lambda^(-alpha)`, `1<alpha<4/3`, the arguments
+give a strict separation: coordinates plus order distinguish consistently,
+while order alone does not. These proofs await independent audit and do not
+complete the sharp full-order resolution goal.

@@ -1,0 +1,97 @@
+{
+  "scope": "unit-cube three-time polytope check; not wave detection power",
+  "code_version": "5dda03d9786a96d4e8b6891cff8186e0e08d704c",
+  "files": {
+    "experiments/positive_control/order_wave_cluster_check.py": "c6745e4e497a41a7c125bac2eb9fd5070315dc443c55725f234bc67969a929a8",
+    "docs/paper/paper_a/order_wave_energy/quantized_order_bound.md": "fb9e3b2768c93f20e9f403283685a3ca2022eaad061dc707fc0493265dcfdfcb"
+  },
+  "rows": [
+    {
+      "eps": 0.0,
+      "probabilities": [
+        0.0,
+        0.16666666666666663,
+        0.16666666666666663,
+        0.16666666666666663,
+        0.16666666666666663,
+        0.16666666666666663,
+        0.16666666666666663,
+        0.0
+      ],
+      "cycle_probability": 0.0,
+      "cycle_polynomial": 0.0,
+      "hellinger_squared": 0.0,
+      "hellinger_squared_over_eps_squared": null
+    },
+    {
+      "eps": 0.001,
+      "probabilities": [
+        0.0,
+        0.16566866533333333,
+        0.16566866533333333,
+        0.1676631693333333,
+        0.16566866533333333,
+        0.1676631693333333,
+        0.1676631693333333,
+        4.4960000000000345e-06
+      ],
+      "cycle_probability": 4.4960000000000345e-06,
+      "cycle_polynomial": 4.496e-06,
+      "hellinger_squared": 1.3446769525360634e-05,
+      "hellinger_squared_over_eps_squared": 13.446769525360635
+    },
+    {
+      "eps": 0.01,
+      "probabilities": [
+        0.0,
+        0.1568653333333333,
+        0.1568653333333333,
+        0.17631933333333333,
+        0.1568653333333333,
+        0.1763193333333333,
+        0.17631933333333333,
+        0.000446000000000001
+      ],
+      "cycle_probability": 0.000446000000000001,
+      "cycle_polynomial": 0.00044600000000000005,
+      "hellinger_squared": 0.0012990599183376585,
+      "hellinger_squared_over_eps_squared": 12.990599183376585
+    },
+    {
+      "eps": 0.1,
+      "probabilities": [
+        0.0,
+        0.08533333333333334,
+        0.08533333333333334,
+        0.2343333333333334,
+        0.08533333333333334,
+        0.2343333333333334,
+        0.2343333333333334,
+        0.041000000000000016
+      ],
+      "cycle_probability": 0.041000000000000016,
+      "cycle_polynomial": 0.04100000000000001,
+      "hellinger_squared": 0.09870953857753628,
+      "hellinger_squared_over_eps_squared": 9.870953857753626
+    },
+    {
+      "eps": 0.4,
+      "probabilities": [
+        0.0,
+        0.0013333333333333322,
+        0.0013333333333333329,
+        0.17733333333333332,
+        0.001333333333333333,
+        0.17733333333333334,
+        0.17733333333333334,
+        0.4640000000000001
+      ],
+      "cycle_probability": 0.4640000000000001,
+      "cycle_polynomial": 0.46400000000000013,
+      "hellinger_squared": 0.8790535242417983,
+      "hellinger_squared_over_eps_squared": 5.494084526511238
+    }
+  ],
+  "frozen_absolute_tolerance": 2e-12,
+  "all_controls_passed": true
+}

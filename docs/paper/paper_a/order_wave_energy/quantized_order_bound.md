@@ -252,3 +252,46 @@ power below 4/3, and distinguishable when `N lambda^4/log N -> infinity`
 under the earlier known-q<=1 null-coordinate construction. A matching law,
 an observer attaining it, and novelty verification remain open. The
 coordinate-oracle formula is not substituted for that missing result.
+
+## 7. Frozen checks completed; provenance and limits
+
+The coordinate-oracle design and implementation were committed at
+`b1bf8801a8416baf93ec01bcf85d42db13c5acb2` before the 18 primary cases and
+one refinement. The CPU run took 47.65 seconds. Its
+[manifest](oracle_barrier_evidence/manifest.json),
+[raw rows](oracle_barrier_evidence/rows.jsonl), and
+[summary](oracle_barrier_evidence/summary.json) are preserved. Raw SHA256:
+`faa777d3b665bb7172c591e3ab7f2dd6e6eaf18a37235a871564a66dd9816fe0`.
+
+| q | Predicted kappa(q) | At r=1024: twice exact reference loss / (lambda^2 kappa) |
+|---:|---:|---:|
+| 0.25 | 0.3221254984 | 1.0000181590 |
+| 1 | 0.6316283583 | 1.0000475553 |
+| 4 | 1.1375203435 | 1.0000828696 |
+
+Doubling all quadrature orders and tightening the ODE at q=1,r=1024 changed
+the scaled reference-loss integral by `2.0638319e-7` relatively, within the
+pre-execution numerical tolerance `1e-5`. Refining the limiting coefficient
+changed it by `1.1623540e-9` relatively. The lower r=32 case at q=0.25 lies
+below its limiting coefficient; all rows are retained, and no monotonicity
+or exact finite-frequency scaling was assumed. These are deterministic
+consistency checks, not confidence intervals or certified integration bounds.
+
+The quantized-order proof and polytope control were then frozen at
+`5dda03d9786a96d4e8b6891cff8186e0e08d704c`. The
+[separate cluster check](oracle_barrier_evidence/cluster_check.json) passed
+all five frozen polynomial and probability-sum checks. At eps=0.001 the
+new cyclic-pattern mass was `4.496e-6`, agreeing with the exact polynomial;
+the full-pattern squared Hellinger distance divided by eps^2 was 13.44677.
+This pattern is used to challenge a mathematical bound; no cyclic order
+is asserted to arise from a wave spacetime. The calculation does not prove
+the arbitrary-K lemma, whose proof is Section 4.
+
+All four portable evidence files were copied byte-for-byte from the original
+output. Both stamps precede their respective executions and remain reachable
+in the actual branch history. The evidence does not replace a separate
+researcher's audit of either mathematical derivation.
+
+The old coordinate-oracle design records the pre-existing necessity exponent
+1 in its final section. Sections 1-5 here are the subsequent improvement,
+not a retroactive change to that design or its frozen numerical predictions.

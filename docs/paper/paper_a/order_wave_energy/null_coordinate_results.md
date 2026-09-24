@@ -179,3 +179,8 @@ Verification of the portable evidence:
 ```powershell
 E:/lab/causal-spacetime/.venv/Scripts/python.exe experiments/positive_control/order_wave_null_coordinate.py --self-check --summarize docs/paper/paper_a/order_wave_energy/null_coordinate_evidence
 ```
+
+Subsequent update, 2026-09-24: the [quantized-coordinate lower-bound proof](quantized_order_bound.md)
+improves the necessity side quoted above from exponent 1 to every fixed power
+below 4/3. It leaves this instrument and its sufficient condition unchanged.
+Neither the endpoint at 4/3 nor a matching upper/lower boundary is established.
