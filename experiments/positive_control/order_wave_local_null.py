@@ -112,6 +112,41 @@ def derivative_boxes(theta, q, bits=96):
     c = rounded(a / square(p), bits)
     if c.lo <= p0_box(q, bits + 16).hi or c.hi >= F(1, 10):
         return None
+    # Split the inverse coordinate to limit interval dependency inflation.
+    pieces = [
+        derivatives_on_chain_band(
+            p,
+            f,
+            Box(c.lo + (c.hi - c.lo) * F(i, 8), c.lo + (c.hi - c.lo) * F(i + 1, 8)),
+            q,
+            bits,
+        )
+        for i in range(8)
+    ]
+    if any(piece is None for piece in pieces):
+        return None
+    gradient = [
+        Box(
+            min(piece[0][i].lo for piece in pieces),
+            max(piece[0][i].hi for piece in pieces),
+        )
+        for i in range(3)
+    ]
+    hessian = [
+        [
+            Box(
+                min(piece[1][i][j].lo for piece in pieces),
+                max(piece[1][i][j].hi for piece in pieces),
+            )
+            for j in range(3)
+        ]
+        for i in range(3)
+    ]
+    return gradient, hessian
+
+
+def derivatives_on_chain_band(p, f, c, q, bits):
+    """Enclose derivatives where a/p^2 lies in this band; a remains a coordinate."""
     z = Box(inverse_z(c.hi, q, bits).lo, inverse_z(c.lo, q, bits).hi)
     s = rounded((z / q).sqrt(bits), bits)
     if s.lo <= 0 or s.hi >= 1:
@@ -138,13 +173,13 @@ def derivative_boxes(theta, q, bits=96):
     s2 = rounded(z2 / (2 * q * s) - square(z1) / (4 * q * q * s * square(s)), bits)
     zero = Box.point(0)
     cg = [
-        rounded(-2 * a / (p * square(p)), bits),
+        rounded(-2 * c / p, bits),
         zero,
         rounded(Box.point(1) / square(p), bits),
     ]
     ch = [
         [
-            rounded(6 * a / square(square(p)), bits),
+            rounded(6 * c / square(p), bits),
             zero,
             rounded(Box.point(-2) / (p * square(p)), bits),
         ],
@@ -533,12 +568,68 @@ def summarize(folder):
     print(json.dumps(result, indent=2))
 
 
+def recheck_enclosure(folder):
+    """Post-run check on unchanged synthetic moments; preserve the primary failure."""
+    if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
+        raise RuntimeError("Commit enclosure revision and plan before rechecking")
+    path = folder / "post_run_enclosure_check.json"
+    if path.exists():
+        raise FileExistsError(path)
+    raw = (folder / "rows.jsonl").read_bytes()
+    manifest = json.loads((folder / "manifest.json").read_text())
+    assert hashlib.sha256(raw).hexdigest() == manifest["rows_sha256"]
+    row = next(
+        item
+        for item in map(json.loads, raw.splitlines())
+        if (item["q"], item["r"]) == (1, 2048)
+    )
+    count = row["synthetic_count_control"]["reference_count"]
+    assert count == 10**30
+    denominators = (count, count, math.comb(count, 2))
+    moments = [
+        tuple(
+            F(round(F(float(value)) * den), den)
+            for value, den in zip((p, f, p * p * c), denominators, strict=True)
+        )
+        for p, f, c in row["moments"]
+    ]
+    bound = difference_interval(
+        *moments, count, F(1), (32 * (2 * count) ** 4).bit_length(), 128
+    )
+    plan = DESIGN.with_name("local_null_results.md")
+    result = {
+        "scope": "post-run eight-band enclosure; synthetic moments, not sampled power",
+        "code_version": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT)
+        .decode()
+        .strip(),
+        "files": {
+            item.relative_to(ROOT).as_posix(): hashlib.sha256(
+                item.read_bytes()
+            ).hexdigest()
+            for item in (Path(__file__), plan)
+        },
+        "raw_sha256": manifest["rows_sha256"],
+        "reference_count": count,
+        "bands": 8,
+        "original_difference_interval": row["synthetic_count_control"][
+            "difference_interval"
+        ],
+        "difference_interval": None
+        if bound is None
+        else [float(bound.lo), float(bound.hi)],
+        "negative_upper_endpoint": bound is not None and bound.hi < 0,
+    }
+    path.write_text(json.dumps(result, indent=2))
+    print(json.dumps(result, indent=2))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--summarize", type=Path)
     parser.add_argument("--cross-check", type=Path)
+    parser.add_argument("--recheck-enclosure", type=Path)
     args = parser.parse_args()
     if args.self_check:
         self_check()
@@ -546,6 +637,8 @@ if __name__ == "__main__":
         run(args.output)
     if args.summarize:
         summarize(args.summarize)
+    if args.recheck_enclosure:
+        recheck_enclosure(args.recheck_enclosure)
     if args.cross_check:
         if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT).strip():
             raise RuntimeError("Run the independent formulation from a clean worktree")
