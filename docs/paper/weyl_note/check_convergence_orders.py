@@ -22,11 +22,13 @@ sys.path.insert(0, str(ROOT / "experiments/positive_control"))
 from intrinsic_weyl import ETA, PAIRS, WEYL, gradient_basis  # noqa: E402
 from intrinsic_weyl_joint import (  # noqa: E402
     BIVECTOR,
+    TIDAL_GRAM,
     TIDAL_ROOT,
     axis_signs,
     fit_joint,
     model,
 )
+from intrinsic_weyl_square import correction  # noqa: E402
 from rotating_plane_wave import RotatingWave  # noqa: E402
 
 AMPLITUDE, ROTATION = 0.75, 0.5
@@ -293,5 +295,76 @@ def rank_certificate(per_band=5):
     }
 
 
+def volume_expansion():
+    """The half-interval computation of Lemma 2, done by exact quadrature.
+
+    (i) Without the vacuum condition its term of relative order tau^2 is
+    Myrheim's formula, -R/180 + R_00/30, as stated after Lemma 2.
+    (ii) In vacuum its term of relative order tau^4, built from the
+    curvature-squared term of the model and the volume element
+    1 - tr(E^2)/180, is (17 E^2 + 3 B^2)/10080, the volume-clock coefficient
+    of Eq. (4). The proof of Proposition 1 uses neither coefficient.
+    """
+    radius, radial = np.polynomial.legendre.leggauss(6)
+    radius, radial = (radius + 1) / 2, radial / 2
+    cosine, polar = np.polynomial.legendre.leggauss(6)
+    angle = 2 * np.pi * np.arange(12) / 12
+    r, c, a = np.meshgrid(radius, cosine, angle, indexing="ij")
+    s = np.sqrt(1 - c * c)
+    nu = np.stack((np.ones_like(r), r * s * np.cos(a), r * s * np.sin(a), r * c), -1)
+    nu = nu.reshape(-1, 4)  # directions (1, vec nu) with vec nu in the unit ball
+    weight = (radial * radius**2)[:, None, None] * polar[None, :, None] / 12 + 0 * r
+    weight = weight.ravel() * 3 / 2  # average over the unit ball
+    assert abs(weight.sum() - 1) < 1e-13
+    tip = np.array([1.0, 0, 0, 0])
+    pairs = np.column_stack((np.arange(len(nu)), np.full(len(nu), len(nu))))
+    signs = np.diag(ETA)
+    rng = np.random.default_rng(2026)
+    worst = 0.0
+    for _ in range(4):
+        # (i) generic algebraic curvature tensor: a Kulkarni-Nomizu product
+        h, k = (x + x.T for x in rng.normal(size=(2, 4, 4)))
+        riemann = (
+            np.einsum("ac,bd->abcd", h, k)
+            + np.einsum("bd,ac->abcd", h, k)
+            - np.einsum("ad,bc->abcd", h, k)
+            - np.einsum("bc,ad->abcd", h, k)
+        )
+        ricci = np.einsum("ac,abcd->bd", ETA, riemann)
+        tidal = np.einsum("abcd,na,b,nc,d->n", riemann, nu, tip, nu, tip)
+        second = weight @ (tidal / 3 - np.einsum("ab,na,nb->n", ricci, nu, nu) / 36)
+        myrheim = -np.trace(ETA @ ricci) / 180 + ricci[0, 0] / 30
+        worst = max(worst, abs(second - myrheim))
+        # (ii) generic Weyl tensor, electric and magnetic parts
+        coefficients = rng.normal(size=10)
+        weyl = np.einsum("k,kabcd->abcd", coefficients, WEYL)
+        tidal = np.einsum("abcd,na,b,nc,d->n", weyl, nu, tip, nu, tip)
+        square = correction(
+            np.vstack((nu / 2, tip)), coefficients, pairs, volume_clock=False
+        )[0]
+        jacobi = np.einsum("paqb,na,nb->npq", weyl, nu, nu)
+        trace = np.einsum("p,q,npq,nqp->n", signs, signs, jacobi, jacobi)
+        fourth = weight @ (7 * tidal**2 / 72 - 4 * square - trace / 5760)
+        norm = TIDAL_GRAM[:5, :5]
+        electric = coefficients[:5] @ norm @ coefficients[:5]
+        magnetic = coefficients[5:] @ norm @ coefficients[5:]
+        worst = max(worst, abs(fourth - (17 * electric + 3 * magnetic) / 10080))
+    assert worst < 1e-12, worst
+    return {
+        "myrheim_coefficients_reproduced": True,
+        "vacuum_coefficient_17_3_over_10080_reproduced": True,
+        "largest_discrepancy": float(worst),
+    }
+
+
 if __name__ == "__main__":
-    print(json.dumps({"orders": orders(), "rank": rank_certificate()}, indent=2))
+    print(
+        json.dumps(
+            {
+                "orders": orders(),
+                "rank": rank_certificate(),
+                "volume": volume_expansion(),
+            },
+            indent=2,
+        )
+    )
