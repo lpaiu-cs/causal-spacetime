@@ -3,8 +3,9 @@
 Deterministic, CPU only, a few seconds. Exact rotating vacuum plane waves
 stand in for a general vacuum spacetime, and exact interval volumes for
 counts. This checks orders in one family and one landmark configuration and
-an exact rank for one rational configuration. It proves nothing about the
-landmark selector, the optimizer, finite counts or confidence coverage.
+an exact rank for one rational configuration, and it evaluates the constants
+of the proof quoted in the appendix. It proves nothing about the landmark
+selector, the optimizer, finite counts or confidence coverage.
 
     .venv/Scripts/python.exe docs/paper/weyl_note/check_convergence_orders.py
 """
@@ -39,8 +40,9 @@ PRIME = 2147483647
 def configuration():
     """48 landmarks in three time bands, as in intrinsic_weyl_joint.selfcheck_jet.
 
-    Returns Brinkmann coordinates (u, v, transverse) and the clock mask: pairs
-    whose flat squared interval is below -0.01, the same set at every scale.
+    Returns Brinkmann coordinates (u, v, transverse), the clock mask (pairs
+    whose flat squared interval is below -0.01, the same set at every scale)
+    and the flat reference coordinates in units of T.
     """
     k = np.arange(48)
     z = 1 - 2 * (k + 0.5) / len(k)
@@ -57,7 +59,55 @@ def configuration():
     mask[0, -1] = mask[-1, 0] = False
     t, x, y, zz = flat.T
     brinkmann = np.column_stack((0.5 + t + zz, zz - t, np.sqrt(2) * x, np.sqrt(2) * y))
-    return brinkmann, mask
+    return brinkmann, mask, flat
+
+
+def adapted_frame(points):
+    """Spatial rotation to the gauge of Sect. 3: landmark 1 on x, 2 in the xy plane."""
+    first = points[1, 1:] / np.linalg.norm(points[1, 1:])
+    second = points[2, 1:] - (points[2, 1:] @ first) * first
+    second /= np.linalg.norm(second)
+    frame = np.eye(4)
+    frame[1:, 1:] = np.column_stack((first, second, np.cross(first, second)))
+    return frame
+
+
+def free_coordinates(count):
+    """Landmark coordinates left free by the gauge; the two tips are fixed."""
+    return [
+        (i, a)
+        for i in range(1, count - 1)
+        for a in range(4)
+        if not (i == 1 and a >= 2) and not (i == 2 and a == 3)
+    ]
+
+
+def flat_jacobian(points, pairs):
+    """J(xi, 0, 0) of the implemented model for gauge-fixed points, in floats."""
+    free = free_coordinates(len(points))
+    _, dl, dr, dc = model(points, np.zeros(34), pairs)
+    jacobian = np.zeros((len(pairs), len(free) + 34))
+    for n, (i, a) in enumerate(free):
+        jacobian[:, n] = (pairs[:, 0] == i) * dl[:, a] + (pairs[:, 1] == i) * dr[:, a]
+    jacobian[:, len(free) :] = dc
+    return jacobian
+
+
+def proof_constants(jacobian):
+    """mu and a lower bound for the constant C_2 given by the proof of Proposition 1.
+
+    The proof takes lambda = w_- mu^2 / 4. With M_1 >= ||J||, M_2 >= 2 (the flat
+    part of the model) and w_- <= w_+, Lemma 5 gives
+    epsilon_1 <= mu^4 / (3072 ||J||^2), and C_2 = 4 |P| / epsilon_1^2.
+    """
+    singular = np.linalg.svd(jacobian, compute_uv=False)
+    mu, norm = float(singular[-1]), float(singular[0])
+    epsilon = mu**4 / (3072 * norm**2)
+    return {
+        "mu_smallest_singular_value": mu,
+        "largest_singular_value": norm,
+        "log10_lower_bound_of_C2": float(np.log10(4 * len(jacobian) / epsilon**2)),
+    }
 
 
 def truth(wave, brinkmann):
@@ -78,26 +128,21 @@ def truth(wave, brinkmann):
     curvature = 2 * riemann(np.diag([a, -a]))
     slope = riemann(2 * w * a * np.array([[0, 1.0], [1.0, 0]]))
     gradient = 2 * np.sqrt(2) * np.einsum("e,abcd->eabcd", k, slope)
-    first = normal[1, 1:] / np.linalg.norm(normal[1, 1:])
-    second = normal[2, 1:] - (normal[2, 1:] @ first) * first
-    second /= np.linalg.norm(second)
-    frame = np.eye(4)
-    frame[1:, 1:] = np.column_stack((first, second, np.cross(first, second)))
-    f = frame
+    f = adapted_frame(normal)
     curvature = np.einsum("ia,jb,kc,ld,ijkl->abcd", f, f, f, f, curvature)
     gradient = np.einsum("ne,ia,jb,kc,ld,nijkl->eabcd", f, f, f, f, f, gradient)
     basis = WEYL.reshape(10, -1).T
     c = np.linalg.lstsq(basis, curvature.ravel(), rcond=None)[0]
     g = np.array([np.linalg.lstsq(basis, s.ravel(), rcond=None)[0] for s in gradient])
-    d = gradient_basis().T @ g.ravel()
+    b = gradient_basis().T @ g.ravel()
     assert np.max(abs(basis @ c - curvature.ravel())) < 1e-12
-    assert np.max(abs(gradient_basis() @ d - g.ravel())) < 1e-12  # vacuum Bianchi
-    return normal @ frame, np.r_[c, d]
+    assert np.max(abs(gradient_basis() @ b - g.ravel())) < 1e-12  # vacuum Bianchi
+    return normal @ f, np.r_[c, b]
 
 
 def orders():
     """Halving the window: model and volume residuals by 16, relative bias by 4."""
-    brinkmann, mask = configuration()
+    brinkmann, mask, flat = configuration()
     pairs = np.column_stack(np.nonzero(np.triu(mask, 1)))
     earlier = brinkmann[pairs[:, 0], 0] < brinkmann[pairs[:, 1], 0]
     pairs = np.where(earlier[:, None], pairs, pairs[:, ::-1])
@@ -142,17 +187,22 @@ def orders():
                 )
                 weyl = axis_signs(signs) * np.array(fit["coefficients"]) - theta[:10]
                 reflected = slope * np.r_[1, signs][:, None] * axis_signs(signs)
+                gradient = gradient_basis().T @ reflected.ravel() - theta[10:]
                 difference = np.r_[
-                    (inferred * np.r_[1, signs] - points).ravel(),
-                    weyl,
-                    gradient_basis().T @ reflected.ravel() - theta[10:],
+                    (inferred * np.r_[1, signs] - points).ravel(), weyl, gradient
                 ]
                 errors.append(
-                    (np.linalg.norm(TIDAL_ROOT @ weyl), np.linalg.norm(difference))
+                    (
+                        np.linalg.norm(TIDAL_ROOT @ weyl),
+                        np.linalg.norm(difference),
+                        np.linalg.norm(gradient),
+                    )
                 )
-            tidal, parameter = min(errors)
+            tidal, parameter, gradient = min(errors)
             row[name + "_relative"] = float(tidal / (2 * wave.amplitude))
             row[name.replace("fit", "parameter")] = float(parameter)
+            row[name.replace("fit", "gradient")] = float(gradient)
+        row["true_gradient_norm"] = float(np.linalg.norm(theta[10:]))
         rows.append(row)
     ratios = {
         key: [rows[i][key] / rows[i + 1][key] for i in range(len(rows) - 1)]
@@ -164,12 +214,17 @@ def orders():
         ("relative_volume_correction", 16, 2),
         ("fit_error_relative", 4, 2),
         ("fit_error_sigma2_relative", 4, 2),
-        ("parameter_error", 16, 1),  # |theta_hat - theta*|, all coordinates, c and d
+        ("parameter_error", 16, 1),  # |theta_hat - theta*|, all coordinates, c and b
         ("parameter_error_sigma2", 16, 1),
     ):
         last = ratios[key][-checked:]
         assert all(abs(r / expected - 1) < 0.1 for r in last), (key, ratios)
-    return {"clocks": len(pairs), "rows": rows, "ratios_per_halving": ratios}
+    return {
+        "clocks": len(pairs),
+        "rows": rows,
+        "ratios_per_halving": ratios,
+        "constants": proof_constants(flat_jacobian(flat @ adapted_frame(flat), pairs)),
+    }
 
 
 def rank_mod_prime(matrix):
@@ -218,14 +273,8 @@ def rank_certificate(per_band=5):
         for i, j in itertools.combinations(range(count), 2)
         if band[i] != band[j] and (i, j) != (0, count - 1)
     ]
-    free = [
-        (i, a)
-        for i in range(1, count - 1)
-        for a in range(4)
-        if not (i == 1 and a >= 2) and not (i == 2 and a == 3)
-    ]
-    column = {key: n for n, key in enumerate(free)}
-    size = len(free)
+    column = {key: n for n, key in enumerate(free_coordinates(count))}
+    size = len(column)
     eta = (-1, 1, 1, 1)
     bivector = np.rint(BIVECTOR).astype(int)
     assert np.array_equal(bivector, BIVECTOR)
@@ -274,16 +323,8 @@ def rank_certificate(per_band=5):
         (exact[:, : size + 10], exact[:, size + 10 :] @ gradient_basis())
     )
     floats = np.array([[float(v) for v in p] for p in points])
-    index = np.array(pairs)
-    _, dl, dr, dc = model(floats, np.zeros(34), index)
-    implemented = np.zeros_like(exact)
-    for (i, a), n in column.items():
-        implemented[:, n] = (index[:, 0] == i) * dl[:, a] + (index[:, 1] == i) * dr[
-            :, a
-        ]
-    implemented[:, size:] = dc
+    implemented = flat_jacobian(floats, np.array(pairs))
     assert np.max(abs(exact - implemented)) < 1e-12
-    singular = np.linalg.svd(implemented, compute_uv=False)
     return {
         "landmarks": count - 2,
         "clocks": clocks,
@@ -291,7 +332,7 @@ def rank_certificate(per_band=5):
         "rank_modulo_prime_with_bianchi_rows": rank,
         "full_column_rank": True,
         "prime": PRIME,
-        "singular_values_largest_smallest": [float(singular[0]), float(singular[-1])],
+        "constants": proof_constants(implemented),
     }
 
 

@@ -1,10 +1,11 @@
 % appendix_convergence.tex: fragment for \appendix\input{appendix_convergence} in note.tex.
 % Packages: amsmath and amssymb only (already loaded by note.tex); no amsthm.
-% Labels of note.tex used: setting, estimator, tests, limits, clock, cov, model, square, ball.
+% Labels of note.tex used: setting, estimator, tests, limits, clock, cov, model, square,
+% ball, wave.
 % Citation keys used: brewin, gibbons, wang, madsen, and ONE new key, oneill:
 %   \bibitem{oneill} O'Neill, B.: Semi-Riemannian Geometry with Applications to
 %   Relativity. Academic Press, New York (1983)
-% Check of the orders and of the rank certificate: python check_convergence_orders.py
+% Orders, rank certificate and constants quoted below: python check_convergence_orders.py
 \section{A conditional convergence statement}\label{app:conv}
 This appendix states what we can prove about the fit of
 Sect.~\ref{estimator} in shrinking windows, and what we cannot. The
@@ -12,16 +13,21 @@ statement is conditional: it assumes that the landmarks form a
 well-conditioned configuration, and it concerns the solution of the fit that
 lies near the true geometry. It does not show that the selection rule and
 the optimizer of Sect.~\ref{estimator} meet these two conditions, and it
-says nothing about the coverage of the ball \eqref{ball}. Only orders are
-established; no constant is evaluated.
+says nothing about the coverage of the ball \eqref{ball}. It is an
+asymptotic statement: only orders are established, and the constants that
+the proof provides are far from the conditions of the tests
+(Sect.~\ref{app:open}).
 
 \subsection{Setting and assumptions}\label{app:setting}
 We write $|\cdot|$ for the Euclidean norm of a vector of components,
 $\|\cdot\|$ for the corresponding operator norm, and $A\succeq B$ if $A-B$
 is positive semidefinite. For two events $x,x'$ of a convex normal
-neighbourhood, $s(x,x')=g(v,v)$ with $v=\exp_x^{-1}x'$ is the signed squared
-geodesic interval, so that $s=-\tau^2$ for timelike separation, and the
-quantity $\sigma(x,y)$ of Sect.~\ref{estimator} is $s/T^2$.
+neighbourhood, $\psi(x,x')=g(v,v)$ with $v=\exp_x^{-1}x'$ is the signed
+squared geodesic interval, so that $\psi=-\tau^2$ for timelike separation,
+and the quantity $\sigma(x,y)$ of Sect.~\ref{estimator} is $\psi/T^2$. The
+curvature convention is that of Ref.~\cite{brewin}, for which
+$R_{uaub}=-H_{ab}$ in the metrics \eqref{wave}. For an open set $U$,
+$J^\pm(x,U)$ denote the causal future and past of $x$ within $U$.
 
 \begin{description}
 \item[(A1) Geometry.] $(M,g)$ is a time-oriented four-dimensional Lorentzian
@@ -36,8 +42,10 @@ $\|g_{ab}(x)-\eta_{ab}\|\le1/10$ on $U$. Every point of a Ricci-flat region
 has arbitrarily small neighbourhoods of this kind. For $0<T\le T_0$ the tips
 are $p=\exp_o(-\tfrac T2e_0)$ and $q=\exp_o(\tfrac T2e_0)$, and, as in
 Sect.~\ref{setting}, $I(p,q)=J^+(p)\cap J^-(q)\subset U$; this holds for
-small $T$ if $M$ is strongly causal at $o$. The proofs use finitely many
-derivatives, six of $s$ and four of the metric components in normal
+small $T$ if $M$ is strongly causal at $o$. A causal curve between two
+events of $I(p,q)$ stays in $I(p,q)$, hence in $U$, so the causal relations
+among these events are those of $(U,g)$. The proofs use finitely many
+derivatives, six of $\psi$ and four of the metric components in normal
 coordinates; we have not determined the least differentiability of $g$ that
 provides them.
 \item[(A2) Sampling.] Conditionally on the landmarks, the $N$ measurement
@@ -53,29 +61,31 @@ Sect.~\ref{estimator}: $x_1=(x_1^0,x_1^1,0,0)$ with $x_1^1>0$ and
 $x_2=(x_2^0,x_2^1,x_2^2,0)$ with $x_2^2>0$. This fixes the frame up to the
 reflection of $e_3$, and we fix one of the two frames. The remaining $4L-3$
 coordinates form $\xi\in\mathbb R^{4L-3}$. The clocks are the pairs
-$(\ell_i,\ell_j)$ with $(i,j)$ in a fixed set $\mathcal P$ of $m$ index
-pairs, $(i,j)\neq(0,L+1)$. We assume that $\xi$ lies in a fixed compact set
-$\mathcal K\subset\mathbb R^{4L-3}$ such that, for every configuration in
-$\mathcal K$, the $L+2$ points $x_i$ are distinct, $x_1,\dots,x_L$ lie in
-the open flat interval $\{|x^0|+|\vec x|<\tfrac12\}$, and $x_j-x_i$ is
-future-directed timelike with respect to $\eta$ for every
-$(i,j)\in\mathcal P$.
-\item[(A4) Conditioning.] Let $\theta=(\xi,c,d)\in\mathbb R^D$, $D=4L+31$,
-where $c\in\mathbb R^{10}$ and $d\in\mathbb R^{24}$ are the components of the
-curvature and of its gradient in the bases of Sect.~\ref{estimator} (there
-$d$ is called $g$, a letter needed here for the metric). Let
-$\sigma(\theta)\in\mathbb R^m$ be the model \eqref{model} for the pairs of
-$\mathcal P$, with $\sigma_2$ as in \eqref{square} or with $\sigma_2=0$, and
-$J(\theta)=\partial\sigma/\partial\theta$. We assume that the $m\times D$
-matrix $J(\xi,0,0)$ has rank $D$ for every $\xi\in\mathcal K$.
+$(\ell_i,\ell_j)$ with $(i,j)$ in a fixed finite set $\mathcal P$ of index
+pairs, $(i,j)\neq(0,L+1)$, and $|\mathcal P|$ is their number. We assume
+that $\xi$ lies in a fixed compact set $\mathcal K\subset\mathbb R^{4L-3}$
+such that, for every configuration in $\mathcal K$, the $L+2$ points $x_i$
+are distinct, $x_1,\dots,x_L$ lie in the open flat interval
+$\{|x^0|+|\vec x|<\tfrac12\}$, and $x_j-x_i$ is future-directed timelike
+with respect to $\eta$ for every $(i,j)\in\mathcal P$.
+\item[(A4) Conditioning.] Let $\theta=(\xi,c,b)\in\mathbb R^{n_\theta}$,
+$n_\theta=4L+31$, where $c\in\mathbb R^{10}$ and $b\in\mathbb R^{24}$ are
+the components of the curvature and of its gradient in the bases of
+Sect.~\ref{estimator} (there $b$ is called $g$, a letter needed here for
+the metric). Let $\sigma(\theta)\in\mathbb R^{|\mathcal P|}$ be the model
+\eqref{model} for the pairs of $\mathcal P$, with $\sigma_2$ as in
+\eqref{square} or with $\sigma_2=0$, and
+$J(\theta)=\partial\sigma/\partial\theta$. We assume that the matrix
+$J(\xi,0,0)$, which has $|\mathcal P|$ rows and $n_\theta$ columns, has rank
+$n_\theta$ for every $\xi\in\mathcal K$.
 \item[(A5) Weights.] The fit minimizes
 $\chi^2(\theta)=N[y-\sigma(\theta)]^{\!\top}\widehat W[y-\sigma(\theta)]$
-with a symmetric matrix $\widehat W$ that may depend on the data, and there
-are constants $0<w_-\le w_+$ such that $w_-I\preceq\widehat W\preceq w_+I$
-with probability at least $1-\varpi_N$, where $\varpi_N\to0$ as
-$N\to\infty$. For the weight of Sect.~\ref{estimator},
-$\widehat W=(N\widehat\Sigma)^{-1}$, this is proved in
-Lemma~4 below.
+with a symmetric matrix $\widehat W$ that may depend on the data. There are
+constants $0<w_-\le w_+$ and a sequence $\varpi_N\to0$ such that, for all
+sufficiently small $T$ and all configurations allowed by (A3), conditionally
+on the landmarks, $w_-I\preceq\widehat W\preceq w_+I$ with probability at
+least $1-\varpi_N$. For the weight of Sect.~\ref{estimator},
+$\widehat W=(N\widehat\Sigma)^{-1}$, this is proved in Lemma~4 below.
 \end{description}
 
 Assumptions (A3) and (A4) are substantive, and (A4) is a condition on the
@@ -84,13 +94,14 @@ $\mu>0$ such that $\eta(x_j-x_i,x_j-x_i)\le-\tau_0^2$ for
 $(i,j)\in\mathcal P$ and the smallest singular value of $J(\xi,0,0)$ is at
 least $\mu$, for all $\xi\in\mathcal K$; all constants below depend on
 these numbers. The spatial axes of the frame $(e_a)$ depend on the
-landmarks; since the orthonormal frames at $o$ with the given $e_0$ form a
-compact set, all estimates below are uniform over them. The true parameter
-is $\theta^*_T=(\xi,c^*,d^*)$, where $\xi$
-is the true configuration and $c^*$, $d^*$ are the components of
-$T^2C_{abcd}(o)$ and of $T^3\nabla_eC_{abcd}(o)$ in the frame $(e_a)$. The
-measured clocks are $y_{ij}=-(n_{ij}/N)^{1/2}$, with $n_{ij}$ the number of
-measurement events in $I(\ell_i,\ell_j)$, and the continuum clocks are
+landmarks. The orthonormal frames at $o$ with the given $e_0$ form a compact
+set, and the bound of (A1) on the metric components is the same for all of
+them, so all estimates below are uniform over these frames. The true
+parameter is $\theta^*_T=(\xi,c^*,b^*)$, where $\xi$ is the true
+configuration and $c^*$, $b^*$ are the components of $T^2C_{abcd}(o)$ and of
+$T^3\nabla_eC_{abcd}(o)$ in the frame $(e_a)$. The measured clocks are
+$y_{ij}=-(n_{ij}/N)^{1/2}$, with $n_{ij}$ the number of measurement events in
+$I(\ell_i,\ell_j)$, and the continuum clocks are
 $\bar y_{ij}=-[V(\ell_i,\ell_j)/V(p,q)]^{1/2}$.
 
 \subsection{Statement}
@@ -101,13 +112,14 @@ for all $0<T\le T_1$, all $N\ge2$ and every landmark configuration allowed
 by (A3) the following holds with probability at least $1-\varpi_N-C_2/N$.}
 \begin{enumerate}
 \item[(i)] \emph{$\chi^2$ has exactly one critical point
-$\hat\theta=(\hat\xi,\hat c,\hat d)$ in the closed ball of radius $r_1$
+$\hat\theta=(\hat\xi,\hat c,\hat b)$ in the closed ball of radius $r_1$
 around $\theta^*_T$, and $\hat\theta$ is the unique minimizer of $\chi^2$
 on this ball.}
 \item[(ii)] \emph{$|\hat\theta-\theta^*_T|\le C_1\left(T^4+|y-\bar y|\right)$.}
 \end{enumerate}
-\emph{Moreover $\operatorname{E}|y-\bar y|^2\le m/N$. Consequently, for
-every $t>0$, with probability at least $1-\varpi_N-C_2/N-m/t^2$,}
+\emph{Moreover $\operatorname{E}|y-\bar y|^2\le|\mathcal P|/N$. Consequently,
+for every $t>0$, with probability at least
+$1-\varpi_N-C_2/N-|\mathcal P|/t^2$,}
 \begin{equation}
  |\hat\theta-\theta^*_T|\le C_1\left(T^4+tN^{-1/2}\right),\qquad
  \left|\hat c/T^2-c^*/T^2\right|\le C_1\left(T^2+tN^{-1/2}T^{-2}\right),
@@ -124,7 +136,9 @@ without $\sigma_2$, because $\sigma_2=O(|c|^2)$; in particular the
 coefficient of the volume term in \eqref{square} is not used. The estimator
 returns $\hat c$, an estimate of $T^2C(o)$. The second inequality of
 \eqref{conv:rate} refers to the tensor in physical units, which requires
-$T$, or equivalently bounds the relative error when $C(o)\neq0$.
+$T$, or equivalently bounds the relative error when $C(o)\neq0$. The
+constants that the proof provides are discussed in Sect.~\ref{app:open};
+they make Proposition~1 an asymptotic statement.
 
 \medskip
 \noindent\textbf{Corollary 1.} \emph{Let the measurement events be a
@@ -142,37 +156,48 @@ $O_p(\rho^{-1/6})$.}
 \subsection{Proofs}
 \noindent\textbf{Lemma 1} (normal coordinates). \emph{Let $\mathcal F$ be a
 compact set of orthonormal frames $(x,f)$ with $x\in U$. Let
-$w\in\mathbb R^4$ be the normal coordinates based at $(x,f)$, and let
-$s_{x,f}(w,w')$ and $\gamma_{x,f}(w)$ be the function $s$ and the matrix of
-metric components in these coordinates. There are $r_0>0$ and $C_0$ such
-that for all $(x,f)\in\mathcal F$ and $|w|,|w'|\le r_0$, with
-$\Delta=w-w'$:}
+$\zeta\in\mathbb R^4$ be the normal coordinates based at $(x,f)$, and let
+$\psi_{x,f}(\zeta,\zeta')$ and $g_{x,f}(\zeta)$ be the function $\psi$ and
+the matrix of metric components in these coordinates. Put
+$\Delta=\zeta-\zeta'$ and}
+\begin{equation}
+ P_{x,f}(\zeta,\zeta')=\eta(\Delta,\Delta)
+ -\tfrac13R(\zeta,\zeta',\zeta,\zeta')
+ -\tfrac1{12}(\zeta+\zeta')^e\nabla_eR(\zeta,\zeta',\zeta,\zeta'),
+ \label{conv:taylor}
+\end{equation}
+\emph{where $R$ and $\nabla R$ are the components of the curvature and of
+its gradient at $x$ in the frame $f$. There are $r_0>0$ and $C_0$ such that
+for all $(x,f)\in\mathcal F$ and $|\zeta|,|\zeta'|\le r_0$:}
 \begin{enumerate}
-\item[(a)] \emph{$s_{x,f}(w,w')=\eta(\Delta,\Delta)-\tfrac13R(w,w',w,w')
--\tfrac1{12}(w+w')^e\nabla_eR(w,w',w,w')+\varrho$ with
-$|\varrho|\le C_0(|w|+|w'|)^6$, where $R$ and $\nabla R$ are the components
-of the curvature and its gradient at $x$ in the frame $f$;}
-\item[(b)] \emph{$s_{x,f}(w,w')-\eta(\Delta,\Delta)$ is bounded by
-$C_0(|w|+|w'|)^4$ and its first derivatives by $C_0(|w|+|w'|)^3$;}
-\item[(c)] $\bigl|\,|\det\gamma_{x,f}(w)|^{1/2}-1\,\bigr|\le C_0|w|^4$;
-\item[(d)] $s_{x,f}(0,w)=\eta(w,w)$.
+\item[(a)] $|\psi_{x,f}(\zeta,\zeta')-P_{x,f}(\zeta,\zeta')|\le
+C_0(|\zeta|+|\zeta'|)^6$;
+\item[(b)] \emph{$\psi_{x,f}(\zeta,\zeta')-\eta(\Delta,\Delta)$ is bounded
+by $C_0(|\zeta|+|\zeta'|)^4$ and its first derivatives by
+$C_0(|\zeta|+|\zeta'|)^3$;}
+\item[(c)] $\bigl|\,|\det g_{x,f}(\zeta)|^{1/2}-1\,\bigr|\le C_0|\zeta|^4$;
+\item[(d)] $\psi_{x,f}(0,\zeta)=\eta(\zeta,\zeta)$.
 \end{enumerate}
 
-\noindent\emph{Proof.} The maps $(x,f,w,w')\mapsto s_{x,f}(w,w')$ and
-$(x,f,w)\mapsto\gamma_{x,f}(w)$ are smooth on an open set that contains
+\noindent\emph{Proof.} The maps
+$(x,f,\zeta,\zeta')\mapsto\psi_{x,f}(\zeta,\zeta')$ and
+$(x,f,\zeta)\mapsto g_{x,f}(\zeta)$ are smooth on an open set that contains
 $\mathcal F\times\{0\}\times\{0\}$, hence on
-$\mathcal F\times\{|w|,|w'|\le r_0\}$ for some $r_0>0$. Statement (d) is the
-definition of $s$. For (a) apply Taylor's theorem in $(w,w')$ at the
-origin: the derivatives of order six are bounded on this compact set, and
-the Taylor polynomial of degree five is the expansion of the squared
-geodesic interval in normal coordinates, Sect.~9 of Ref.~\cite{brewin}
-(Eqs.~(11.21a)--(11.21c) in arXiv:0903.2087v3). That polynomial has no terms
-of degree three, which gives (b) in the same way. For (c),
-$\gamma_{ab}(w)=\eta_{ab}-\tfrac13R_{acbd}w^cw^d
--\tfrac16\nabla_eR_{acbd}w^cw^dw^e+O(|w|^4)$ \cite{brewin}, and the traces
-of the second and third terms with $\eta^{ab}$ contain only the Ricci tensor
-and its gradient, which vanish; hence $\det\gamma=-1+O(|w|^4)$, with a
-remainder bounded as before. \hfill$\square$
+$\mathcal F\times\{|\zeta|,|\zeta'|\le r_0\}$ for some $r_0>0$. Statement
+(d) is the definition of $\psi$. For (a) apply Taylor's theorem in
+$(\zeta,\zeta')$ at the origin: the derivatives of order six are bounded on
+this compact set, and the Taylor polynomial of degree five is
+\eqref{conv:taylor}, the expansion of the squared geodesic interval in
+normal coordinates given in Sect.~9 of Ref.~\cite{brewin}; in the arXiv
+version 0903.2087v3 its terms are also listed as Eqs.~(11.21a)--(11.21c) of
+Sect.~11. That polynomial has no terms of degree three, which gives (b) in
+the same way. For (c),
+$g_{ab}(\zeta)=\eta_{ab}-\tfrac13R_{acbd}\zeta^c\zeta^d
+-\tfrac16\nabla_eR_{acbd}\zeta^c\zeta^d\zeta^e+O(|\zeta|^4)$ \cite{brewin},
+and the traces of the second and third terms with $\eta^{ab}$ contain only
+the Ricci tensor and its gradient, which vanish on $U$; hence
+$\det g_{x,f}=-1+O(|\zeta|^4)$, with a remainder bounded as before.
+\hfill$\square$
 
 \medskip
 \noindent\textbf{Lemma 2} (volume of a small vacuum interval). \emph{Let
@@ -185,54 +210,61 @@ $J^+(x)\cap J^-(x')\subset U$,}
  \label{conv:volume}
 \end{equation}
 
-\noindent\emph{Proof.} Complete $u$ to an orthonormal frame $f$ with
-$f_0=u$. The frames so obtained form a compact set, to which Lemma~1
-applies. We use the normal coordinates $w$ based at $(x,f)$, in which $x'$
-is $\tau\hat e$ with $\hat e=(1,0,0,0)$, write $s=s_{x,f}$, and put
-$\Xi(w)=s(0,w)-s(w,\tau\hat e)$. We show that the half
-$H_-=\{z\in J^+(x)\cap J^-(x'):\Xi\ge0\}$ of the interval has volume
-$\tfrac{\pi}{48}\tau^4+O(\tau^8)$. The other half, where $\Xi\le0$, is
-treated in the same way from $x'$ with the time orientation reversed, and
-the common boundary $\Xi=0$ has measure zero. All $O(\cdot)$ below are
-uniform over $\mathcal T$ and over the directions $\nu$.
+\noindent\emph{Proof.} By hypothesis every causal curve from $x$ to $x'$
+lies in $J^+(x)\cap J^-(x')$, hence in $U$. This set therefore equals
+$\mathcal D=J^+(x,U)\cap J^-(x',U)$, and the statements of
+Ref.~\cite{oneill} on convex sets apply to it. Complete $u$ to an
+orthonormal frame $f$ with $f_0=u$. The frames so obtained form a compact
+set, to which Lemma~1 applies. We use the normal coordinates $\zeta$ based
+at $(x,f)$, in which $x'$ is $\tau\hat e$ with $\hat e=(1,0,0,0)$, write
+$\psi=\psi_{x,f}$, and put $\Xi(\zeta)=\psi(0,\zeta)-\psi(\zeta,\tau\hat e)$.
+We show that the half $H_-=\{z\in\mathcal D:\Xi\ge0\}$ of the interval has
+volume $\tfrac{\pi}{48}\tau^4+O(\tau^8)$. The other half, where $\Xi\le0$,
+is treated in the same way from $x'$ with the time orientation reversed;
+the reversed vectors $(x',-u')$, with $u'$ the tangent at $x'$ of the
+geodesic from $x$, form a compact set over $U$ for small $\tau_1$, as the
+continuous image of $\mathcal T\times[0,\tau_1]$. The common boundary
+$\Xi=0$ has measure zero. All $O(\cdot)$ below are uniform over $\mathcal T$
+and over the directions $\nu$.
 
 (1) \emph{Localization.} By (A1), every causal vector $v$ at a point of $U$
 has $|\vec v|\le\tfrac54|v^0|$ in the coordinates of (A1), with $v^0>0$ if
 it is future-directed. Hence $x^0$ increases along future-directed causal
 curves in $U$, and the coordinate differences satisfy
-$|z-x|\le\tfrac94|x'-x|$ for every $z\in J^+(x)\cap J^-(x')$. Since the
-change to the coordinates $w$ is smooth, uniformly over the frames, there
-is $C\ge1$ such that $|w|\le C\tau$ for all these $z$.
+$|z-x|\le\tfrac94|x'-x|$ for every $z\in\mathcal D$. Since the change to
+the coordinates $\zeta$ is smooth, uniformly over the frames, there is
+$C_3\ge1$ such that $|\zeta|\le C_3\tau$ for all these $z$.
 
-(2) \emph{Rays.} In a convex normal neighbourhood, $z\in J^+(x)$ if and
+(2) \emph{Rays.} In a convex normal neighbourhood, $z\in J^+(x,U)$ if and
 only if $\exp_x^{-1}z$ is zero or future-directed causal
-\cite[Lemma~14.2]{oneill}, that is, if and only if $w=t\nu$ with $t\ge0$
-and $\nu\in\mathcal N=\{(1,\vec\nu):|\vec\nu|\le1\}$. For $\nu\in\mathcal N$
-let $\phi_\nu(t)=\Xi(t\nu)$. By Lemma~1(d),
-$\phi_\nu(t)=t^2\eta(\nu,\nu)-s(t\nu,\tau\hat e)$, and
+\cite[Lemma~14.2]{oneill}, that is, if and only if $\zeta=t\nu$ with
+$t\ge0$ and $\nu\in\mathcal N=\{(1,\vec\nu):|\vec\nu|\le1\}$. For
+$\nu\in\mathcal N$ let $\phi_\nu(t)=\Xi(t\nu)$. By Lemma~1(d),
+$\phi_\nu(t)=t^2\eta(\nu,\nu)-\psi(t\nu,\tau\hat e)$, and
 $\eta(t\nu-\tau\hat e,t\nu-\tau\hat e)=t^2\eta(\nu,\nu)+2\tau t-\tau^2$.
-By Lemma~1(b), for $0\le t\le C\tau$,
+By Lemma~1(b), for $0\le t\le C_3\tau$,
 \begin{equation}
  \phi_\nu(t)=\tau^2-2\tau t+O(\tau^4),\qquad
  \phi_\nu'(t)=-2\tau+O(\tau^3).
 \end{equation}
 For $\tau\le\tau_1$ small, $\phi_\nu$ is therefore strictly decreasing on
-$[0,C\tau]$, with $\phi_\nu(0)=\tau^2$ and $\phi_\nu(\tau)<0$. It has a
+$[0,C_3\tau]$, with $\phi_\nu(0)=\tau^2$ and $\phi_\nu(\tau)<0$. It has a
 single zero $t_*(\nu)\in(0,\tau)$, which depends continuously on $\nu$.
 
 (3) \emph{The half-interval is
 $\{t\nu:\nu\in\mathcal N,\ 0\le t\le t_*(\nu)\}$.} If $z\in H_-$, then
-$w=t\nu$ with $t\le C\tau$ by (1) and (2), and $\phi_\nu(t)\ge0$ gives
+$\zeta=t\nu$ with $t\le C_3\tau$ by (1) and (2), and $\phi_\nu(t)\ge0$ gives
 $t\le t_*(\nu)$. Conversely, let $0\le t\le t_*(\nu)$. On the segment from
-$0$ to $t\nu$ we have $\Xi\ge0$, that is, $s(\cdot,x')\le s(x,\cdot)\le0$,
-so the segment lies in the set of events causally related to $x'$, and it
-does not contain $x'$, where $\Xi=-\tau^2$. The sets
-$J^-(x')\setminus\{x'\}$ and $J^+(x')\setminus\{x'\}$ are disjoint and
-closed in $U\setminus\{x'\}$, and the segment starts at $x\in J^-(x')$;
-being connected, it lies in $J^-(x')$. Hence $t\nu\in H_-$.
+$0$ to $t\nu$ we have $\Xi\ge0$, that is,
+$\psi(\cdot,x')\le\psi(x,\cdot)\le0$, so the segment lies in
+$J^+(x',U)\cup J^-(x',U)$, and it does not contain $x'$, where
+$\Xi=-\tau^2$. The sets $J^-(x',U)\setminus\{x'\}$ and
+$J^+(x',U)\setminus\{x'\}$ are disjoint and closed in $U\setminus\{x'\}$
+\cite[Lemma~14.2]{oneill}, and the segment starts at $x\in J^-(x',U)$;
+being connected, it lies in $J^-(x',U)$. Hence $t\nu\in H_-$.
 
-(4) \emph{Volume.} With $w=(t,t\vec\nu)$ we have
-$\mathrm d^4w=t^3\,\mathrm dt\,\mathrm d^3\vec\nu$, and Lemma~1(c) gives
+(4) \emph{Volume.} With $\zeta=(t,t\vec\nu)$ we have
+$\mathrm d^4\zeta=t^3\,\mathrm dt\,\mathrm d^3\vec\nu$, and Lemma~1(c) gives
 \begin{equation}
  \operatorname{Vol}(H_-)=\int_{|\vec\nu|\le1}\int_0^{t_*(\nu)}
  \left[1+O(\tau^4)\right]t^3\,\mathrm dt\,\mathrm d^3\vec\nu
@@ -240,8 +272,8 @@ $\mathrm d^4w=t^3\,\mathrm dt\,\mathrm d^3\vec\nu$, and Lemma~1(c) gives
  \label{conv:half}
 \end{equation}
 
-(5) \emph{Expansion of $t_*$.} Insert Lemma~1(a) with $w=t\nu$ and
-$w'=\tau\hat e$. Since
+(5) \emph{Expansion of $t_*$.} Insert Lemma~1(a) with $\zeta=t\nu$ and
+$\zeta'=\tau\hat e$. Since
 $R(t\nu,\tau\hat e,t\nu,\tau\hat e)=t^2\tau^2E_{ij}\nu^i\nu^j$ with
 $E_{ij}=R_{0i0j}$,
 \begin{equation}
@@ -267,7 +299,7 @@ $\operatorname{Vol}(H_-)=\tfrac14\cdot\tfrac{4\pi}3(\tau/2)^4+O(\tau^8)
 Lemma~2 uses the field equations only through $R_{ab}=0$, and it gives only
 the order of the correction. As a check of the method, without that
 condition the same computation, with the volume element
-$1-\tfrac16R_{ab}w^aw^b$, gives
+$1-\tfrac16R_{ab}\zeta^a\zeta^b$, gives
 $V=\tfrac{\pi}{24}\tau^4[1-\tfrac1{180}R^a{}_a\tau^2+\tfrac1{30}R_{00}\tau^2
 +O(\tau^3)]$, which is the formula of Myrheim, Eqs.~(7), (14) and (23) of
 Ref.~\cite{gibbons}. In vacuum the first correction is of relative order
@@ -276,14 +308,14 @@ which \eqref{square} and Ref.~\cite{wang} differ, plays no role here.
 
 \medskip
 \noindent\textbf{Lemma 3} (clocks). \emph{Assume (A1)--(A3). (a) There are
-$T_1>0$ and $C_b$ such that $|\bar y_{ij}-\sigma_{ij}(\theta^*_T)|\le
-C_bT^4$ for all $T\le T_1$, $\xi\in\mathcal K$ and $(i,j)\in\mathcal P$.
-(b) $\operatorname{E}|y-\bar y|^2\le m/N$.}
+$T_1>0$ and $C_5$ such that $|\bar y_{ij}-\sigma_{ij}(\theta^*_T)|\le
+C_5T^4$ for all $T\le T_1$, $\xi\in\mathcal K$ and $(i,j)\in\mathcal P$.
+(b) $\operatorname{E}|y-\bar y|^2\le|\mathcal P|/N$.}
 
-\noindent\emph{Proof.} (a) Lemma~1(a) at $(o,e)$ with $w=Tx_i$ and
-$w'=Tx_j$, and $R_{abcd}=C_{abcd}$ in vacuum, give
+\noindent\emph{Proof.} (a) Lemma~1(a) at $(o,e)$ with $\zeta=Tx_i$ and
+$\zeta'=Tx_j$, and $R_{abcd}=C_{abcd}$ in vacuum, give
 \begin{equation}
- \frac{s(\ell_i,\ell_j)}{T^2}=\eta(\Delta,\Delta)
+ \frac{\psi(\ell_i,\ell_j)}{T^2}=\eta(\Delta,\Delta)
  -\frac{T^2}3C(x_i,x_j,x_i,x_j)
  -\frac{T^3}{12}(x_i+x_j)^e\nabla_eC(x_i,x_j,x_i,x_j)+O(T^4),
 \end{equation}
@@ -291,16 +323,16 @@ with $\Delta=x_i-x_j$ and the tensors at $o$. The right-hand side is the
 model \eqref{model} at $\theta^*_T$ without $\sigma_2$, up to $O(T^4)$, and
 $\sigma_2(\theta^*_T)=O(|c^*|^2)=O(T^4)$. Since
 $\eta(\Delta,\Delta)\le-\tau_0^2$, for small $T$ we have
-$\tau_{ij}^2=-s(\ell_i,\ell_j)\ge\tau_0^2T^2/2$ and $\tau_{ij}=O(T)$. In
-the coordinates of (A1) the vector $\exp_{\ell_i}^{-1}\ell_j$ has components
-$T(x_j-x_i)+O(T^2)$, so for small $T$ it is future-directed and $\ell_j$
-lies in the timelike future of $\ell_i$. The unit tangent at $\ell_i$ of the
-geodesic to $\ell_j$ then has bounded components, and these vectors lie in a
-compact set $\mathcal T$.
+$\tau_{ij}^2=-\psi(\ell_i,\ell_j)\ge\tau_0^2T^2/2$ and $\tau_{ij}=O(T)$. In
+the coordinates of (A1) the connection coefficients vanish at $o$, so the
+vector $\exp_{\ell_i}^{-1}\ell_j$ has components $T(x_j-x_i)+O(T^3)$; for
+small $T$ it is future-directed, and $\ell_j$ lies in the timelike future
+of $\ell_i$. The unit tangent at $\ell_i$ of the geodesic to $\ell_j$ then
+has bounded components, and these vectors lie in a compact set $\mathcal T$.
 Moreover $J^+(\ell_i)\cap J^-(\ell_j)\subset I(p,q)\subset U$. Lemma~2
 therefore gives $V(\ell_i,\ell_j)=\tfrac{\pi}{24}\tau_{ij}^4[1+O(T^4)]$, and
 likewise $V(p,q)=\tfrac{\pi}{24}T^4[1+O(T^4)]$. Hence
-$\bar y_{ij}=-(\tau_{ij}^2/T^2)[1+O(T^4)]=s(\ell_i,\ell_j)/T^2+O(T^4)$.
+$\bar y_{ij}=-(\tau_{ij}^2/T^2)[1+O(T^4)]=\psi(\ell_i,\ell_j)/T^2+O(T^4)$.
 
 (b) Given the landmarks, $n_{ij}$ is binomial with parameters $N$ and
 $\pi_{ij}=V(\ell_i,\ell_j)/V(p,q)=\bar y_{ij}^2$. Since
@@ -309,99 +341,109 @@ $|\sqrt a-\sqrt b|\le|a-b|/\sqrt b$,
  |y_{ij}-\bar y_{ij}|\le\frac{|n_{ij}/N-\pi_{ij}|}{\sqrt{\pi_{ij}}},
  \qquad\operatorname{E}|y_{ij}-\bar y_{ij}|^2\le\frac{1-\pi_{ij}}N .
 \end{equation}
-Summing over the $m$ pairs gives (b). The clocks are strongly correlated,
-see \eqref{cov}, but no independence is used. \hfill$\square$
+Summing over the pairs of $\mathcal P$ gives (b). The clocks are strongly
+correlated, see \eqref{cov}, but no independence is used. \hfill$\square$
 
 \medskip
 \noindent\textbf{Lemma 4} (weights). \emph{Let $N\widehat\Sigma=\widehat
-D\,\widehat\Gamma\,\widehat D$ be the covariance of Sect.~\ref{estimator},
-where $\widehat\Gamma$ is the empirical covariance matrix of the membership
-indicators of the $m$ intervals and
-$\widehat D=\operatorname{diag}(\tfrac12\hat\pi_{ij}^{-1/2})$ with
+\Lambda\,\widehat\Gamma\,\widehat\Lambda$ be the covariance of
+Sect.~\ref{estimator}, where $\widehat\Gamma$ is the empirical covariance
+matrix of the membership indicators of the $|\mathcal P|$ intervals and
+$\widehat\Lambda=\operatorname{diag}(\tfrac12\hat\pi_{ij}^{-1/2})$ with
 $\hat\pi_{ij}=n_{ij}/N$. Under (A1)--(A3) there are $T_2>0$,
-$0<w_-\le w_+$ and $C_W$ such that $\widehat W=(N\widehat\Sigma)^{-1}$
-satisfies (A5) with $\varpi_N=C_W/N$ for all $T\le T_2$.}
+$0<w_-\le w_+$ and $C_W$ such that, for all $T\le T_2$ and $N\ge2$,
+$\widehat W=(N\widehat\Sigma)^{-1}$ satisfies (A5) with $\varpi_N=C_W/N$.}
 
 \noindent\emph{Proof.} Let $\Gamma_T(\xi)$ be the covariance matrix of the
-indicators under the sampling law, and $\Gamma_0(\xi)$ the same matrix for
-the flat metric $\eta$ and the points $x_i$.
+indicators under the sampling law; it depends on $T$, on $\xi$ and on the
+spatial frame at $o$. Let $\Gamma_0(\xi)$ be the same matrix for the flat
+metric $\eta$ and the points $x_i$.
 
 (1) \emph{$\Gamma_0(\xi)$ is positive definite.} Otherwise a combination
-$\sum\lambda_{ij}1_{ij}$ of the indicators with $\lambda\neq0$ is constant
-almost everywhere in the flat interval. Fix a pair $(i,j)$. The edge of its
-interval, where the future cone of $x_i$ meets the past cone of $x_j$, is a
-round two-sphere, and the only null cones that contain it are those of
-$x_i$ and $x_j$; the null cone of any other point meets it in the zero set
-of a quadratic polynomial that does not vanish identically on the sphere,
-a closed set without interior points. Choose $z$ on the edge and on none of
-the other cones, and a ball $B$ around $z$ that meets no null cone of a
-point $x_k$ other than the future cone of $x_i$ and the past cone of $x_j$.
-In $B$, every indicator other than $1_{ij}$ is a constant, or a constant
-times the indicator of $J^+(x_i)$ or of $J^-(x_j)$, while $1_{ij}$ is the
-product of these two. The two cones cross transversally at $z$. If
+$\sum\beta_{ij}1_{ij}$ of the indicators, with coefficients not all zero,
+is constant almost everywhere in the flat interval. Fix a pair $(i,j)$. The
+edge of its interval, where the future cone of $x_i$ meets the past cone of
+$x_j$, is a round two-sphere, and the only null cones that contain it are
+those of $x_i$ and $x_j$; the null cone of any other point meets it in the
+zero set of a quadratic polynomial that does not vanish identically on the
+sphere, a closed set without interior points. Choose $z$ on the edge and on
+none of the other cones, and a ball $B$ around $z$ that meets no null cone
+of a point $x_k$ other than the future cone of $x_i$ and the past cone of
+$x_j$. In $B$, every indicator other than $1_{ij}$ is a constant, or a
+constant times the indicator of $J^+(x_i)$ or of $J^-(x_j)$, while $1_{ij}$
+is the product of these two. The two cones cross transversally at $z$. If
 $1\le i,j\le L$, all four combinations of the two indicators occur on sets
 of positive measure in $B$, and constancy of the sum forces
-$\lambda_{ij}=0$. If $i=0$, only $B\cap J^+(p)$ carries probability, and no
+$\beta_{ij}=0$. If $i=0$, only $B\cap J^+(p)$ carries probability, and no
 interval $I(x_k,x_j)$ with $k\neq0$ meets $B$, because
 $z\in\partial J^+(p)$ whereas $x_k$ lies in the open interval; the two
-values of the indicator of $J^-(x_j)$ again force $\lambda_{0j}=0$. The
+values of the indicator of $J^-(x_j)$ again force $\beta_{0j}=0$. The
 case $j=L+1$ is symmetric.
 
-(2) In the coordinates $x/T$ the metric has components $g_{ab}(Tx)$. These,
-the inverse exponential map and the volume density converge to their flat
-values as $T\to0$, uniformly on compact sets. The indicator of each
-interval is therefore continuous in $(T,\xi)$ and in the spatial frame at
-$o$ at every point off the boundary of the limiting interval, and by
-dominated convergence $\Gamma_T(\xi)$ is continuous in these variables on
-$[0,T_0]\times\mathcal K$ times the compact set of frames, with the value
-$\Gamma_0(\xi)$ at $T=0$. With (1) and compactness,
-$\Gamma_T(\xi)\succeq4\gamma I$ for some $\gamma>0$, all $\xi\in\mathcal K$,
-all frames and all $T\le T_2$. In the same way $\pi_{ij}\ge\pi_->0$.
+(2) By (A1) the intervals $I(\ell_i,\ell_j)$ and $I(p,q)$ are those of
+$(U,g)$. In the coordinates $x/T$ the metric $T^{-2}g$, which has the same
+intervals and the same sampling law as $g$, has components $g_{ab}(Tx)$.
+These, the inverse exponential map and the volume density converge to their
+flat values as $T\to0$, uniformly on compact sets, and by step (1) of the
+proof of Lemma~2 the intervals stay in a fixed bounded set of these
+coordinates. Hence, when $T\to0$ and the configuration converges to some
+$\xi\in\mathcal K$, the indicator of each interval converges at every point
+off the boundary of the limiting flat interval, whatever the frames, and by
+dominated convergence the covariance matrix converges to $\Gamma_0(\xi)$.
+The same argument at $T=0$ shows that $\Gamma_0$ is continuous on
+$\mathcal K$. With (1) and the compactness of $\mathcal K$ it follows that
+there are $\lambda_0>0$ and $T_2>0$ such that
+$\Gamma_T(\xi)\succeq4\lambda_0I$ for all configurations allowed by (A3),
+all frames and all $T\le T_2$. By the proof of Lemma~3(a) there is also
+$\pi_->0$ with $\pi_{ij}\ge\pi_-$.
 
 (3) $\widehat\Gamma$ and $\hat\pi$ are built from averages of bounded
-variables, so $\operatorname{E}\|\widehat\Gamma-\Gamma_T\|^2\le Cm^2/N$ and
-$\operatorname{E}|\hat\pi-\pi|^2\le m/N$. By Chebyshev's inequality the
-event that $\|\widehat\Gamma-\Gamma_T\|\le2\gamma$ and
+variables, so
+$\operatorname{E}\|\widehat\Gamma-\Gamma_T\|^2\le C_4|\mathcal P|^2/N$ and
+$\operatorname{E}|\hat\pi-\pi|^2\le|\mathcal P|/N$. By Chebyshev's
+inequality the event that $\|\widehat\Gamma-\Gamma_T\|\le2\lambda_0$ and
 $\hat\pi_{ij}\ge\pi_-/2$ for all pairs has probability at least $1-C_W/N$.
-On this event the diagonal entries of $\widehat D$ lie between $\tfrac12$
-and $(2\pi_-)^{-1/2}$, $\widehat\Gamma\succeq2\gamma I$ and
-$\operatorname{tr}\widehat\Gamma\le m/2$, hence
-$\tfrac\gamma2I\preceq N\widehat\Sigma\preceq\tfrac{m}{4\pi_-}I$.
-\hfill$\square$
+On this event the diagonal entries of $\widehat\Lambda$ lie between
+$\tfrac12$ and $(2\pi_-)^{-1/2}$, $\widehat\Gamma\succeq2\lambda_0I$ and
+$\operatorname{tr}\widehat\Gamma\le|\mathcal P|/2$, hence
+$\tfrac{\lambda_0}2I\preceq N\widehat\Sigma\preceq
+\tfrac{|\mathcal P|}{4\pi_-}I$. \hfill$\square$
 
 \medskip
 \noindent\textbf{Lemma 5} (local minimizer). \emph{Let $F$ be a twice
 continuously differentiable map from the closed ball of radius $r_0$ around
-$\theta^*\in\mathbb R^D$ to $\mathbb R^m$, with $\|DF\|\le M_1$ and
-$\|D^2F\|\le M_2$. Let $W$ be symmetric with $0\preceq W\preceq w_+I$ and
-$DF(\theta^*)^{\!\top}W\,DF(\theta^*)\succeq\lambda I$, $\lambda>0$. For
-$y\in\mathbb R^m$ let $Q(\theta)=\tfrac12[y-F(\theta)]^{\!\top}
+$\theta^*\in\mathbb R^n$ to $\mathbb R^k$, with derivatives bounded by
+$\|F'\|\le M_1$ and $\|F''\|\le M_2$. Let $W$ be symmetric with
+$0\preceq W\preceq w_+I$ and
+$F'(\theta^*)^{\!\top}W\,F'(\theta^*)\succeq\lambda I$, $\lambda>0$. For
+$y\in\mathbb R^k$ let $\Phi(\theta)=\tfrac12[y-F(\theta)]^{\!\top}
 W[y-F(\theta)]$ and $\epsilon=|y-F(\theta^*)|$, and put}
 \begin{equation}
  r_1=\min\left\{r_0,\frac{\lambda}{12M_1M_2w_+}\right\},\qquad
  \epsilon_1=\min\left\{\frac{\lambda}{4M_2w_+},
  \frac{\lambda r_1}{8M_1w_+}\right\}.
+ \label{conv:radii}
 \end{equation}
-\emph{If $\epsilon\le\epsilon_1$, then $Q$ has exactly one critical point
-$\hat\theta$ in the closed ball of radius $r_1$ around $\theta^*$, it is the
-unique minimizer of $Q$ on this ball, and
+\emph{If $\epsilon\le\epsilon_1$, then $\Phi$ has exactly one critical
+point $\hat\theta$ in the closed ball of radius $r_1$ around $\theta^*$, it
+is the unique minimizer of $\Phi$ on this ball, and
 $|\hat\theta-\theta^*|\le4M_1w_+\epsilon/\lambda$.}
 
-\noindent\emph{Proof.} Let $|\theta-\theta^*|\le r_1$, let $v$ be a unit
-vector and $\rho=y-F(\theta)$. Then
+\noindent\emph{Proof.} Let $|\theta-\theta^*|\le r_1$ and let $v$ be a unit
+vector. Then
 \begin{equation}
- v^{\!\top}D^2Q(\theta)\,v=[DF(\theta)v]^{\!\top}W[DF(\theta)v]
- -\rho^{\!\top}W\,D^2F(\theta)[v,v].
+ v^{\!\top}\Phi''(\theta)\,v=[F'(\theta)v]^{\!\top}W[F'(\theta)v]
+ -[y-F(\theta)]^{\!\top}W\,F''(\theta)[v,v].
 \end{equation}
-Here $|\rho|\le\epsilon+M_1r_1$ and $\|DF(\theta)-DF(\theta^*)\|\le M_2r_1$,
-so that
-$v^{\!\top}D^2Q(\theta)v\ge\lambda-2M_1M_2w_+r_1-M_2w_+(\epsilon+M_1r_1)
-\ge\lambda/2$. Thus $Q$ is strongly convex on the ball. It has a unique
+Here $|y-F(\theta)|\le\epsilon+M_1r_1$ and
+$\|F'(\theta)-F'(\theta^*)\|\le M_2r_1$, so that
+$v^{\!\top}\Phi''(\theta)v\ge\lambda-2M_1M_2w_+r_1-M_2w_+(\epsilon+M_1r_1)
+\ge\lambda/2$. Thus $\Phi$ is strongly convex on the ball. It has a unique
 minimizer $\hat\theta$ there and at most one critical point, and
-$Q(\theta)\ge Q(\theta^*)+DQ(\theta^*)(\theta-\theta^*)
+$\Phi(\theta)\ge\Phi(\theta^*)+\Phi'(\theta^*)(\theta-\theta^*)
 +\tfrac\lambda4|\theta-\theta^*|^2$. Since
-$|DQ(\theta^*)|=|DF(\theta^*)^{\!\top}W[y-F(\theta^*)]|\le M_1w_+\epsilon$,
-we get $Q(\theta)>Q(\theta^*)$ whenever
+$|\Phi'(\theta^*)|=|F'(\theta^*)^{\!\top}W[y-F(\theta^*)]|
+\le M_1w_+\epsilon$, we get $\Phi(\theta)>\Phi(\theta^*)$ whenever
 $|\theta-\theta^*|>4M_1w_+\epsilon/\lambda$. Hence
 $|\hat\theta-\theta^*|\le4M_1w_+\epsilon/\lambda\le r_1/2$, so $\hat\theta$
 is an interior point and therefore a critical point. \hfill$\square$
@@ -410,23 +452,24 @@ is an interior point and therefore a critical point. \hfill$\square$
 \noindent\emph{Proof of Proposition 1.} The map $\sigma$ is a polynomial in
 $\theta$. Let $M_1$ and $M_2$ bound its first and second derivatives on the
 set of all $\theta$ at distance at most one from
-$\{(\xi,c,d):\xi\in\mathcal K,\ |c|,|d|\le1\}$; for small $T$ this set
+$\{(\xi,c,b):\xi\in\mathcal K,\ |c|,|b|\le1\}$; for small $T$ this set
 contains the ball of radius $r_0=1$ around $\theta^*_T$. Because $\sigma_2$
 is quadratic in $c$, the matrix $J(\xi,0,0)$ does not depend on it, and
-$\|J(\theta^*_T)-J(\xi,0,0)\|\le M_2(|c^*|+|d^*|)=O(T^2)$. By (A4) the
+$\|J(\theta^*_T)-J(\xi,0,0)\|\le M_2(|c^*|+|b^*|)=O(T^2)$. By (A4) the
 smallest singular value of $J(\theta^*_T)$ is at least $\mu/2$ for
 $T\le T_1$, so that on the event of (A5)
 $J(\theta^*_T)^{\!\top}\widehat WJ(\theta^*_T)\succeq\lambda I$ with
 $\lambda=w_-\mu^2/4$. Apply Lemma~5 on this event with $F=\sigma$,
-$W=\widehat W$ and $\theta^*=\theta^*_T$; the functions $\chi^2$ and $Q$
+$W=\widehat W$ and $\theta^*=\theta^*_T$; the functions $\chi^2$ and $\Phi$
 differ by the factor $2N$. By Lemma~3(a),
-$\epsilon=|y-\sigma(\theta^*_T)|\le|y-\bar y|+\sqrt m\,C_bT^4$. Reduce $T_1$
-so that $\sqrt m\,C_bT_1^4\le\epsilon_1/2$. By Lemma~3(b) and Chebyshev's
-inequality, $|y-\bar y|\le\epsilon_1/2$ except on an event of probability at
-most $C_2/N$ with $C_2=4m/\epsilon_1^2$. Lemma~5 then gives (i), and (ii)
-with $C_1=4M_1w_+\max(1,\sqrt m\,C_b)/\lambda$. Finally
-$|y-\bar y|\le tN^{-1/2}$ except with probability $m/t^2$, which gives
-\eqref{conv:rate}, the second inequality because
+$\epsilon=|y-\sigma(\theta^*_T)|\le|y-\bar y|+|\mathcal P|^{1/2}C_5T^4$.
+Reduce $T_1$ so that $|\mathcal P|^{1/2}C_5T_1^4\le\epsilon_1/2$. By
+Lemma~3(b) and Chebyshev's inequality, $|y-\bar y|\le\epsilon_1/2$ except
+on an event of probability at most $C_2/N$ with
+$C_2=4|\mathcal P|/\epsilon_1^2$. Lemma~5 then gives (i), and (ii) with
+$C_1=4M_1w_+\max(1,|\mathcal P|^{1/2}C_5)/\lambda$. Finally
+$|y-\bar y|\le tN^{-1/2}$ except with probability $|\mathcal P|/t^2$, which
+gives \eqref{conv:rate}, the second inequality because
 $|\hat c-c^*|\le|\hat\theta-\theta^*_T|$. \hfill$\square$
 
 \medskip
@@ -446,8 +489,8 @@ events of a selection sample chosen by counts, with a clock set chosen by
 counts. Assumption (A4) is not vacuous: for an explicit rational
 configuration with five landmarks in each of three time bands, and with
 the clocks between different bands and to the tips, exact modular
-arithmetic gives $J(\xi,0,0)$ the full rank $D=91$. Since full rank is the
-non-vanishing of a polynomial, (A4) then holds for almost every
+arithmetic gives $J(\xi,0,0)$ the full rank $n_\theta=91$. Since full rank
+is the non-vanishing of a polynomial, (A4) then holds for almost every
 configuration with these clocks (see Corollary~2). This identifies the
 parameters; it does not bound $\mu$, on which the constants depend. In
 that configuration the singular values of $J(\xi,0,0)$ range over eight
@@ -467,16 +510,26 @@ $T$ proportional to $\rho^{-1/12}$ the bias and the noise in
 covariance alone cannot be expected to cover, and the allowance $\delta$
 remains an assumption. In the regime $N^{1/2}T^4\to0$, where the noise
 dominates, one may expect $\hat\theta$ to be asymptotically normal with the
-covariance used in Sect.~\ref{estimator}, but we have not proved this, and
-no asymptotic statement bears on the coverage at the values of $N$ and $T$
-of the tests.
+covariance used in Sect.~\ref{estimator}, but we have not proved this.
 
-\emph{The constants.} $C_1$ and $T_1$ depend on $\mu$ and on bounds for the
-derivatives of the metric on $U$ up to the order that controls the sixth
-derivatives of $s$. They are not computed, so Proposition~1 gives no bias
-bound at a given window, such as the allowance of 2\% in \eqref{ball}. It
-is not uniform over spacetimes without a bound on these derivatives, in
-agreement with the obstruction of Sect.~\ref{limits}.
+\emph{The constants.} $C_1$, $C_2$, $r_1$ and $T_1$ depend on $\mu$ and on
+bounds for the derivatives of the metric on $U$ up to the order that
+controls the sixth derivatives of $\psi$. The values that the proof
+provides are far too conservative to be of use. Following the proof, $r_1$
+is of order $\mu^2$, $T_1$ of order $\mu$, $C_1$ of order $\mu^{-2}$ and
+$C_2$ of order $\mu^{-8}$. Indeed, since $M_1$ is at least the largest
+singular value $\|J\|$ of $J(\xi,0,0)$, $M_2\ge2$ and $w_-\le w_+$,
+\eqref{conv:radii} gives $\epsilon_1\le\mu^4/(3072\|J\|^2)$, and
+$C_2=4|\mathcal P|/\epsilon_1^2$. For the configuration of 48 landmarks of
+Sect.~\ref{app:check} and for the rational configuration above,
+$\mu=2.8\times10^{-5}$ and $\mu=2.7\times10^{-8}$, and this gives
+$C_2>10^{50}$ and $C_2>10^{72}$: the probability bound of Proposition~1 is
+empty for every attainable $N$. Proposition~1 is therefore
+an asymptotic statement. It gives no bias bound at a given window, such as
+the allowance of 2\% in \eqref{ball}, and it does not reach the values of
+$N$ and $T$ of the tests, for accuracy as well as for coverage. It is also
+not uniform over spacetimes without a bound on the derivatives of the
+metric, in agreement with the obstruction of Sect.~\ref{limits}.
 
 \emph{Further restrictions.} The tips are given events and are not chosen
 from the causal set. Vacuum is essential: Ricci terms change the clocks
@@ -506,33 +559,36 @@ of $T$, with respect to a fixed frame at $o$, have a joint density bounded
 by a constant independent of $T$. Let the clocks be all pairs of landmarks
 from different sets and all pairs of a landmark and a tip, and let
 $\widehat W$ be the weight of Lemma~4 or the identity. Then for every
-$\varepsilon>0$ there are $r,C,T_\varepsilon,N_\varepsilon$ such that, for
+$\varepsilon>0$ there are
+$r_\varepsilon,C_\varepsilon,T_\varepsilon,N_\varepsilon$ such that, for
 $T\le T_\varepsilon$ and $N\ge N_\varepsilon$, statements (i) and (ii) of
-Proposition~1 hold with $r_1=r$ and $C_1=C$ with probability at least
-$1-\varepsilon$. In particular
+Proposition~1 hold with $r_1=r_\varepsilon$ and $C_1=C_\varepsilon$ with
+probability at least $1-\varepsilon$. In particular
 $\hat\theta-\theta^*_T=O_p(T^4+N^{-1/2})$.}
 
 \noindent\emph{Proof.} Let $\tilde x=(\tilde x_1,\dots,\tilde x_L)$ be the
 coordinates in the fixed frame; they range over a compact product
 $\mathcal S$ of the three sets. Let $\tilde J(\tilde x)$ be the Jacobian of
-the model with respect to all $4L$ coordinates and $(c,d)$, at $c=d=0$. Its
+the model with respect to all $4L$ coordinates and $(c,b)$, at $c=b=0$. Its
 entries are polynomials in $\tilde x$. The model is invariant under a
 common spatial rotation of the points and of the tensors, so the three
 infinitesimal rotations of the points lie in the kernel of $\tilde J$, and
 $\tilde J$ has the same rank at $\tilde x$ and at the rotated configuration
 $x$ that satisfies the gauge of (A3). When $x_1^1\neq0$ and $x_2^2\neq0$,
 the three gauge conditions define a complement of the infinitesimal
-rotations, and therefore $J(\xi,0,0)$ has rank $D$ if and only if
+rotations, and therefore $J(\xi,0,0)$ has rank $n_\theta$ if and only if
 $\tilde J(\tilde x)$ has rank $4L+31$. The configurations of smaller rank
 are the common zeros of the minors of order $4L+31$. These polynomials do
-not all vanish identically: for five landmarks in each set this is the
-exact computation quoted in Sect.~\ref{app:open}, and a further landmark
-adds four columns, which are nonzero only in the rows of its own clocks,
-where they equal $\pm2\eta(x_{\rm new}-x_j)$ and have rank four for a
-suitable position, so that the rank increases by four. Hence the
-configurations of smaller rank, together with those in which two points
-coincide or the spatial parts of $\tilde x_1$ and $\tilde x_2$ are linearly
-dependent, form a set $\mathcal Z$ of Lebesgue measure zero.
+not all vanish identically. For five landmarks in each set this is the
+exact computation quoted in Sect.~\ref{app:open}. A further landmark adds
+four columns, which are nonzero only in the rows of its own clocks, where
+they equal $\pm2\eta(x_{\rm new}-x_j)$; the matrix is then block
+triangular, and its rank is at least the previous rank plus four as soon
+as the differences $x_{\rm new}-x_j$ to the clock partners of the new
+landmark span $\mathbb R^4$. Hence the configurations of smaller rank,
+together with those in which two points coincide or the spatial parts of
+$\tilde x_1$ and $\tilde x_2$ are linearly dependent, form a set
+$\mathcal Z$ of Lebesgue measure zero.
 
 For $\mu>0$ let $\mathcal G_\mu\subset\mathcal S$ be the set on which the
 singular value of order $4L+31$ of $\tilde J$, the distances between the
@@ -541,13 +597,14 @@ and $\vec{\tilde x}_2$ are all at least $\mu$. These sets are compact,
 they increase to $\mathcal S\setminus\mathcal Z$ as $\mu\to0$, and the
 gauge rotation is continuous on them. Their images $\mathcal K_\mu$ in the
 gauge of (A3) are compact and satisfy (A3) and (A4), and for small $T$ the
-landmarks lie in $I(p,q)$ by Lemma~1. Since the density is bounded, the
-probability that $\tilde x\notin\mathcal G_\mu$ is at most a constant times
-the Lebesgue measure of $\mathcal S\setminus\mathcal G_\mu$, which tends to
-zero as $\mu\to0$, uniformly in $T$. Given $\varepsilon$, choose $\mu$ such
-that this probability is at most $\varepsilon/2$, and apply Proposition~1
-and Lemma~4 with $\mathcal K=\mathcal K_\mu$, conditionally on the
-landmarks. \hfill$\square$
+landmarks lie in $I(p,q)$, by the argument of the proof of Lemma~3(a)
+applied to the pairs that they form with the tips. Since the density is
+bounded, the probability that $\tilde x\notin\mathcal G_\mu$ is at most a
+constant times the Lebesgue measure of $\mathcal S\setminus\mathcal G_\mu$,
+which tends to zero as $\mu\to0$, uniformly in $T$. Given $\varepsilon$,
+choose $\mu$ such that this probability is at most $\varepsilon/2$, and
+apply Proposition~1 and Lemma~4 with $\mathcal K=\mathcal K_\mu$,
+conditionally on the landmarks. \hfill$\square$
 
 \medskip
 The constants of Corollary~2 depend on $\varepsilon$ through $\mu$ and are
@@ -566,18 +623,19 @@ $C[\log(e+\rho)/\rho]^{1/[2(3d+4)]}$ holds simultaneously at all these
 points with probability at least $1-\rho^{-n}$ for every $n$, with a
 constant that depends on $n$, and almost surely for large $\rho$.
 
-Proposition~1 is weaker in each of these respects. It is restricted to
-$d=4$ and to vacuum, the tips are given, the conditioning of the landmarks
-and the choice of the local solution are assumed, the tensor is estimated
-at one point, and the convergence is in probability. Under these
-assumptions the exponent is $1/6$ instead of $1/32$. The two exponents do
-not refer to the same problem, and the comparison does not show that one
-construction is more efficient than the other. In particular, the rate
-$\rho^{-1/6}$ relies on vacuum, which makes the volume clocks accurate to
-relative order $T^4$ (Lemma~2); without it the clocks are accurate only to
-relative order $T^2$ and the present estimator is not consistent.
+Proposition~1 does not need the density, but in every other respect it is
+the weaker statement. It is restricted to $d=4$ and to vacuum, the tips are
+given, the conditioning of the landmarks and the choice of the local
+solution are assumed, the tensor is estimated at one point, and the
+convergence is in probability. Under these assumptions the exponent is
+$1/6$ instead of $1/32$. The two exponents do not refer to the same
+problem, and the comparison does not show that one construction is more
+efficient than the other. In particular, the rate $\rho^{-1/6}$ relies on
+vacuum, which makes the volume clocks accurate to relative order $T^4$
+(Lemma~2); without it the clocks are accurate only to relative order $T^2$
+and the present estimator is not consistent.
 
-\subsection{Numerical check of the orders}
+\subsection{Numerical check of the orders}\label{app:check}
 The script \texttt{check\_convergence\_orders.py} in the repository checks
 the orders used above on exact rotating plane waves
 (Sect.~\ref{tests}), for a fixed configuration of 48 landmarks in windows
@@ -590,8 +648,11 @@ $16$. The relative error of the fitted tensor decreases by $4.3$, $4.1$
 and $4.0$ without $\sigma_2$ and by $3.8$, $4.0$ and $4.0$ with it, to be
 compared with $4$, and the error $|\hat\theta-\theta^*_T|$ of all
 parameters by $22.8$, $18.0$ and $16.6$ without $\sigma_2$ and by $26.9$,
-$17.4$ and $16.6$ with it, to be compared with $16$. The same script
-verifies the statement on Myrheim's formula made after Lemma~2 and
-performs the exact rank computation
-quoted in Sect.~\ref{app:open}. This checks the orders in one family of
-spacetimes and one configuration; it does not test the assumptions.
+$17.4$ and $16.6$ with it, to be compared with $16$. At the largest window
+this error is $1.2$ without $\sigma_2$ and $0.06$ with it, almost all of it
+in the gradient components, whose true norm is $1.5$; that window is far
+outside the range covered by Proposition~1. The same script verifies the
+statement on Myrheim's formula made after Lemma~2, performs the exact rank
+computation and evaluates the constants quoted in Sect.~\ref{app:open}.
+This checks the orders in one family of spacetimes and for one
+configuration; it does not test the assumptions.
