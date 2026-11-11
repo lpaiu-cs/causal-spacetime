@@ -1,0 +1,1127 @@
+{
+  "engineering_only": false,
+  "code_version": "c14d4a28dea56ac3ed72da2934be029c6bb52a8b",
+  "worktree_clean_at_start": true,
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_bombelli_benchmark.py": "eee5b270c48481e259f58a4e9e885f217d5fe9cd4996f1e0b895f1365c0c928c",
+    "experiments/positive_control/profile_plane_wave.py": "1c0f7285dcd745bcfcfbe7d8d331c4096072b04d62f415eff02272afcc99aaf0",
+    "experiments/positive_control/replay_intrinsic_weyl_threads.py": "9b97dfc26492e9ffcbf1fc72e7e4a5fe839b1a2ddaa9184c670a9986c1ded201",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "a54430e00da111be4c1943073468e71af425b7aa41a73fb7c2eafbdf4df023b9",
+    "experiments/positive_control/intrinsic_weyl.py": "bc89c2f135d1bbbfbf40a01616a5b042a6c18d7b42c55899f6e1cfb4c8af9f18",
+    "experiments/positive_control/intrinsic_weyl_square.py": "5a0d2f88a55945b7b9e4c26a4a951ca5f1fa40c66c50b675773655a7b795a2d0",
+    "experiments/positive_control/intrinsic_weyl_gpu_counts.py": "62f82a6262acfa713ec6faa3372c6e6cc82819f7cf232ce646d666e5b25b2306",
+    "experiments/positive_control/intrinsic_weyl_high_count.py": "014cf02e1bebd9287433f1adcbcca07e75d1347f602be1fe6c60d27c995d304e",
+    "experiments/positive_control/intrinsic_weyl_joint_audit.py": "08266e1624b63825b2bca19b798bcdaae7b7bfcf7db427ec934d44129df62581",
+    "experiments/positive_control/intrinsic_weyl_joint_pilot.py": "4dd7be436b9279c5631e4c713564d6a2f6a5ede9cd612431b98314acaf23208e",
+    "experiments/positive_control/rotating_plane_wave.py": "b85ad0c2ea90ae438eae81073aad332f5bb6b60eac32066b823e7fe2b03125cc",
+    "experiments/positive_control/window_response.py": "cc7b00f8c5571856ea7c6084e797c2a904feb10ca15eac87b129cc9b406cd61e",
+    "experiments/positive_control/p14_plane_wave.py": "8fc0db68f7a0df5996ea7d4f5d0619c3a18ed6b355ad11bb6f69fc5d98f9228f",
+    "docs/paper/paper_a/intrinsic_weyl/bombelli_benchmark_protocol.md": "a2113e0a368ba331455e6e1b6464fd90cddb8522dcf62cf25878c8585e5c3b6e"
+  },
+  "selfcheck": {
+    "generator": {
+      "decimal_pi_matches_float": true,
+      "constant_sample_max_difference": 3.4763858458575214e-15,
+      "constant_action_max_difference": 6.481059244833887e-09,
+      "constant_volume_max_difference": 2.7755575615628914e-17,
+      "constant_normal_max_difference": 2.0195650707321988e-14,
+      "flat_sample_max_difference": 0.0,
+      "half_cycle_series_max_error": 2.220446049250313e-16,
+      "half_cycle_wronskian_max_error": 4.440892098500626e-16,
+      "half_cycle_independent_ode_max_difference": 2.398081733190338e-14,
+      "half_cycle_independent_action_max_error": 3.552713678800501e-14,
+      "half_cycle_geodesic_roundtrip_max_error": 1.6001644453922381e-12,
+      "half_cycle_volume_refinement": 1.4432899320127035e-15,
+      "half_cycle_diamond_volume_over_flat": 1.00000696868747,
+      "guarded_margin_resolved_in_decimal_arithmetic": true
+    },
+    "jet_inverse": {
+      "shared_interval_moments_exact": true,
+      "maximum_jacobian_error": 3.4040068974553004e-12,
+      "exact_flat_weyl_rank": 10,
+      "exact_flat_full_nuisance_rank": 213,
+      "exact_flat_coefficient_norm": 0.0
+    },
+    "gpu_second_moment": {
+      "direct_and_grouped_second_moments_bit_exact": true,
+      "cases": 3
+    },
+    "verdict": {
+      "threshold_chi2_10": 29.58829844507442,
+      "strict_exceedance_required": true,
+      "control_exceedance_invalidates": true,
+      "failure_cannot_disappear": true,
+      "all_four_required": true
+    }
+  },
+  "h0": "0.01",
+  "amplitudes_outer_tip_units": {
+    "wave": "0.0493480220054467930941724549993807556765684970362039531320668",
+    "flat": "0"
+  },
+  "cases": [
+    {
+      "case": 0,
+      "kind": "wave",
+      "seed": 2026111100
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "seed": 2026111101
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111102
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111103
+    }
+  ],
+  "measurement_levels": [
+    1048576,
+    4194304,
+    16777216,
+    67108864
+  ],
+  "selection_n": 4096,
+  "sampling_chunk": 4096,
+  "classification_batch": 65536,
+  "false_positive_level_per_test": 0.001,
+  "threshold_chi2_10": 29.58829844507442,
+  "worker_thread_environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": null,
+    "OPENBLAS_DEFAULT_NUM_THREADS": null,
+    "GOTO_NUM_THREADS": null
+  },
+  "runtime": {
+    "python": "3.14.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "cupy": "14.2.0",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "scope": "Existence gate on one benchmark wave and window; no accuracy, generality or superiority claim",
+  "results": [
+    {
+      "case": 0,
+      "kind": "wave",
+      "seed": 2026111100,
+      "measurement_n": 1048576,
+      "archive_sha256": "0d9195cb01d9d497e9c6e8d1ef7fc99dd149dfd5b834e41e434af82f63fff5ad",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 91.76891389999946,
+      "wall_seconds": 186.14470399999118,
+      "process_cpu_seconds": 181.4375,
+      "peak_working_set_bytes": 4694736896,
+      "detection": {
+        "q": 11.022039545334142,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.35580349689251994,
+        "tidal_norm_estimate": 0.1493624333656198,
+        "largest_tidal_variance": 0.0025071452111002134,
+        "variance_times_N": 2628.9322968746174
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.031092104630458008,
+          -0.018241710761094022,
+          0.033520757049115765,
+          0.013979359342403493,
+          0.01959229013821247,
+          0.034333512403566316,
+          0.0029693372742640085,
+          0.02112687028514112,
+          0.025703071589018613,
+          -0.015574834799021319
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.1762960335040286,
+        "relative_full_tidal_error": 1.7862522786077413,
+        "continuum_bias_mod_reflection": 0.011916465160599498,
+        "relative_continuum_bias": 0.12073903549046218,
+        "continuum_tidal_norm": 0.08719497661060649,
+        "confidence_radius_95": 0.22165956521415753,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 5.773159728050814e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": 0.0091495042304191,
+            "nominal_sigma": 0.035724649453856255,
+            "expected_snr": 1.9535150956913179,
+            "realized_z": 0.256111798724213,
+            "events_for_expected_snr_one": 274768.1376556303
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": -0.06666888199980182,
+            "nominal_sigma": 0.045683674999562114,
+            "expected_snr": 1.5276494720938656,
+            "realized_z": -1.4593589942236664,
+            "events_for_expected_snr_one": 449316.6214625856
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089359,
+            "estimate": 0.004912832042887405,
+            "nominal_sigma": 0.04092228972806427,
+            "expected_snr": 2.411791829507732,
+            "realized_z": 0.12005271639329149,
+            "events_for_expected_snr_one": 180268.67813371934
+          }
+        }
+      },
+      "archive_bytes": 49302032
+    },
+    {
+      "case": 0,
+      "kind": "wave",
+      "seed": 2026111100,
+      "measurement_n": 4194304,
+      "archive_sha256": "dc67ae38923c01422f2e121768edd479ca91a6cb0a3a0251b4d47ac973b09ebb",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 64.10355069999059,
+      "wall_seconds": 130.40575619999436,
+      "process_cpu_seconds": 128.03125,
+      "peak_working_set_bytes": 9392787456,
+      "detection": {
+        "q": 16.237431771219235,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.09303437968061178,
+        "tidal_norm_estimate": 0.08200739938639301,
+        "largest_tidal_variance": 0.0006313067990350933,
+        "variance_times_N": 2647.892632420088
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.031092104630458008,
+          -0.018241710761094022,
+          0.033520757049115765,
+          0.013979359342403493,
+          0.01959229013821247,
+          0.034333512403566316,
+          0.0029693372742640085,
+          0.02112687028514112,
+          0.025703071589018613,
+          -0.015574834799021319
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.08509922649269616,
+        "relative_full_tidal_error": 0.8622354355287364,
+        "continuum_bias_mod_reflection": 0.011922337382273433,
+        "relative_continuum_bias": 0.12079853353552351,
+        "continuum_tidal_norm": 0.08718971660866316,
+        "confidence_radius_95": 0.11137275455173515,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 5.773159728050814e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": 0.02681659568207342,
+            "nominal_sigma": 0.017888327785829036,
+            "expected_snr": 3.9013508043873553,
+            "realized_z": 1.4991113760402621,
+            "events_for_expected_snr_one": 275568.70675320056
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": -0.03551764473755746,
+            "nominal_sigma": 0.02293050150450299,
+            "expected_snr": 3.0434852016945206,
+            "realized_z": -1.5489257716662963,
+            "events_for_expected_snr_one": 452811.57059102564
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089359,
+            "estimate": 0.04673056757394597,
+            "nominal_sigma": 0.020558290766376473,
+            "expected_snr": 4.800790354240592,
+            "realized_z": 2.2730764977006173,
+            "events_for_expected_snr_one": 181984.50941517798
+          }
+        }
+      },
+      "archive_bytes": 146819600
+    },
+    {
+      "case": 0,
+      "kind": "wave",
+      "seed": 2026111100,
+      "measurement_n": 16777216,
+      "archive_sha256": "9f48b128972f1fca45642802deb4827da89aada97a1eba9cecc7756dd34d7575",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 96.79020899999887,
+      "wall_seconds": 185.85312800000247,
+      "process_cpu_seconds": 182.8125,
+      "peak_working_set_bytes": 13880598528,
+      "detection": {
+        "q": 75.59563381039536,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 3.64269851234491e-12,
+        "tidal_norm_estimate": 0.08292245317954888,
+        "largest_tidal_variance": 0.00015865112894384884,
+        "variance_times_N": 2661.724258934804
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.031092104630458008,
+          -0.018241710761094022,
+          0.033520757049115765,
+          0.013979359342403493,
+          0.01959229013821247,
+          0.034333512403566316,
+          0.0029693372742640085,
+          0.02112687028514112,
+          0.025703071589018613,
+          -0.015574834799021319
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.028828542598983486,
+        "relative_full_tidal_error": 0.29209420588125634,
+        "continuum_bias_mod_reflection": 0.011924943902124686,
+        "relative_continuum_bias": 0.12082494310317513,
+        "continuum_tidal_norm": 0.08718782432210315,
+        "confidence_radius_95": 0.05668493252590085,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 5.773159728050814e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": 0.06233498808688719,
+            "nominal_sigma": 0.008944307662968866,
+            "expected_snr": 7.802576188800732,
+            "realized_z": 6.969235678795564,
+            "events_for_expected_snr_one": 275577.5659035556
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": -0.02075589671087513,
+            "nominal_sigma": 0.011499576654482918,
+            "expected_snr": 6.06880097357174,
+            "realized_z": -1.8049270277079104,
+            "events_for_expected_snr_one": 455526.9814336288
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089359,
+            "estimate": 0.07997259482148512,
+            "nominal_sigma": 0.010287363828433597,
+            "expected_snr": 9.59391012672306,
+            "realized_z": 7.773866673252688,
+            "events_for_expected_snr_one": 182275.62848546507
+          }
+        }
+      },
+      "archive_bytes": 536889872
+    },
+    {
+      "case": 0,
+      "kind": "wave",
+      "seed": 2026111100,
+      "measurement_n": 67108864,
+      "archive_sha256": "30b768cdcdf9eff02dc46715a269d3939f8a965a59acf634483dde7ccd078206",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 190.15417460000026,
+      "wall_seconds": 244.29544860000897,
+      "process_cpu_seconds": 238.734375,
+      "peak_working_set_bytes": 20406587392,
+      "detection": {
+        "q": 347.1181313969751,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 1.628921072926003e-68,
+        "tidal_norm_estimate": 0.09157457566900144,
+        "largest_tidal_variance": 3.9683112084051736e-05,
+        "variance_times_N": 2663.0885719453845
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.031092104630458008,
+          -0.018241710761094022,
+          0.033520757049115765,
+          0.013979359342403493,
+          0.01959229013821247,
+          0.034333512403566316,
+          0.0029693372742640085,
+          0.02112687028514112,
+          0.025703071589018613,
+          -0.015574834799021319
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.013030179235998637,
+        "relative_full_tidal_error": 0.13202331832631944,
+        "continuum_bias_mod_reflection": 0.01192505084180782,
+        "relative_continuum_bias": 0.12082602662870247,
+        "continuum_tidal_norm": 0.08718703624973753,
+        "confidence_radius_95": 0.02937223362790462,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 5.773159728050814e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": 0.06357198305113901,
+            "nominal_sigma": 0.004474033723889738,
+            "expected_snr": 15.598595429386782,
+            "realized_z": 14.209097868817436,
+            "events_for_expected_snr_one": 275809.2954354553
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638879,
+            "estimate": -0.022634504905688614,
+            "nominal_sigma": 0.00575494851135171,
+            "expected_snr": 12.126718746263288,
+            "realized_z": -3.9330508102794943,
+            "events_for_expected_snr_one": 456344.9795022156
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089359,
+            "estimate": 0.09097135868715092,
+            "nominal_sigma": 0.005144390559426726,
+            "expected_snr": 19.185177111026334,
+            "realized_z": 17.683602680681474,
+            "events_for_expected_snr_one": 182325.85618265107
+          }
+        }
+      },
+      "archive_bytes": 2097170960
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "seed": 2026111101,
+      "measurement_n": 1048576,
+      "archive_sha256": "9300363fcb6612bd23a500512ea400ce87341e0738fc7404660ca796f081f885",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 64.47644169999694,
+      "wall_seconds": 130.53234059999522,
+      "process_cpu_seconds": 127.78125,
+      "peak_working_set_bytes": 5875707904,
+      "detection": {
+        "q": 15.696796430586229,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.10864715968966084,
+        "tidal_norm_estimate": 0.1641682410045914,
+        "largest_tidal_variance": 0.0029530557685585133,
+        "variance_times_N": 3096.5034055720116
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.001872924246683928,
+          -0.01213909571330657,
+          0.006467959498229161,
+          -0.03551783229628444,
+          0.0316819582961025,
+          -0.026416182677659106,
+          -0.04735890641801002,
+          0.023996532139105815,
+          0.005762854706561659,
+          -0.01168520542228556
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.10976232666254787,
+        "relative_full_tidal_error": 1.112124885678628,
+        "continuum_bias_mod_reflection": 0.01146602285322921,
+        "relative_continuum_bias": 0.11617510071592785,
+        "continuum_tidal_norm": 0.08770275625641151,
+        "confidence_radius_95": 0.24060723904368503,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 4.6629367034256575e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638883,
+            "estimate": -0.0584928586275076,
+            "nominal_sigma": 0.03455016366308845,
+            "expected_snr": 2.0199221826247755,
+            "realized_z": -1.6929835469925214,
+            "events_for_expected_snr_one": 256998.5281358088
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638882,
+            "estimate": 0.10558014567544406,
+            "nominal_sigma": 0.05264303275826627,
+            "expected_snr": 1.3256956968428126,
+            "realized_z": 2.0055863073136746,
+            "events_for_expected_snr_one": 596639.7995608426
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089362,
+            "estimate": 0.12484974626159208,
+            "nominal_sigma": 0.04530552769032443,
+            "expected_snr": 2.1784547944239354,
+            "realized_z": 2.755728773649299,
+            "events_for_expected_snr_one": 220954.47858734557
+          }
+        }
+      },
+      "archive_bytes": 50874944
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "seed": 2026111101,
+      "measurement_n": 4194304,
+      "archive_sha256": "ba15de0e709968eef0c5721879830c8ba585573ac743365b5e3b893a0135ca4a",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 79.86969639999734,
+      "wall_seconds": 142.68238660000497,
+      "process_cpu_seconds": 141.3125,
+      "peak_working_set_bytes": 10542473216,
+      "detection": {
+        "q": 29.983266011944487,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.0008620567160984685,
+        "tidal_norm_estimate": 0.12409247137382565,
+        "largest_tidal_variance": 0.0007426787897969782,
+        "variance_times_N": 3115.020618760625
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.001872924246683928,
+          -0.01213909571330657,
+          0.006467959498229161,
+          -0.03551783229628444,
+          0.0316819582961025,
+          -0.026416182677659106,
+          -0.04735890641801002,
+          0.023996532139105815,
+          0.005762854706561659,
+          -0.01168520542228556
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.07476538166645738,
+        "relative_full_tidal_error": 0.7575316965916602,
+        "continuum_bias_mod_reflection": 0.011472989926181128,
+        "relative_continuum_bias": 0.11624569192372892,
+        "continuum_tidal_norm": 0.08769752732550384,
+        "confidence_radius_95": 0.12151510547106543,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 4.6629367034256575e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638883,
+            "estimate": -0.050883569856953,
+            "nominal_sigma": 0.017313746845753326,
+            "expected_snr": 4.0308225953705925,
+            "realized_z": -2.938911508310149,
+            "events_for_expected_snr_one": 258150.2415862703
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638882,
+            "estimate": 0.08286559531090655,
+            "nominal_sigma": 0.026394947154627917,
+            "expected_snr": 2.6440152195626783,
+            "realized_z": 3.139449184173776,
+            "events_for_expected_snr_one": 599973.4095769866
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089362,
+            "estimate": 0.09904139753147102,
+            "nominal_sigma": 0.022686075446862318,
+            "expected_snr": 4.350512024085864,
+            "realized_z": 4.365735173695251,
+            "events_for_expected_snr_one": 221604.7974134466
+          }
+        }
+      },
+      "archive_bytes": 153111104
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "seed": 2026111101,
+      "measurement_n": 16777216,
+      "archive_sha256": "e22607800ce0050ad405da0d45f0dd0277d6838114b6b65ac40d9711e2adea5f",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 116.7722611999925,
+      "wall_seconds": 188.66842489999544,
+      "process_cpu_seconds": 182.90625,
+      "peak_working_set_bytes": 19928432640,
+      "detection": {
+        "q": 97.03078079232812,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 2.137341700723171e-16,
+        "tidal_norm_estimate": 0.11498363570626982,
+        "largest_tidal_variance": 0.00018592446667273698,
+        "variance_times_N": 3119.2949370533097
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.001872924246683928,
+          -0.01213909571330657,
+          0.006467959498229161,
+          -0.03551783229628444,
+          0.0316819582961025,
+          -0.026416182677659106,
+          -0.04735890641801002,
+          0.023996532139105815,
+          0.005762854706561659,
+          -0.01168520542228556
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.049405057055597834,
+        "relative_full_tidal_error": 0.5005778858790404,
+        "continuum_bias_mod_reflection": 0.011477517736317675,
+        "relative_continuum_bias": 0.1162915682319632,
+        "continuum_tidal_norm": 0.08769400650942362,
+        "confidence_radius_95": 0.06187870974999589,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 4.6629367034256575e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638883,
+            "estimate": -0.04268669585511468,
+            "nominal_sigma": 0.008661809921927197,
+            "expected_snr": 8.05705073482625,
+            "realized_z": -4.928149686944084,
+            "events_for_expected_snr_one": 258444.74092928995
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638882,
+            "estimate": 0.09446597849570493,
+            "nominal_sigma": 0.013199138260700296,
+            "expected_snr": 5.287363509493694,
+            "realized_z": 7.1569807535823875,
+            "events_for_expected_snr_one": 600124.7762384517
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089362,
+            "estimate": 0.1039620489687535,
+            "nominal_sigma": 0.011353055683986663,
+            "expected_snr": 8.693346245989359,
+            "realized_z": 9.157186563912534,
+            "events_for_expected_snr_one": 221996.4047619159
+          }
+        }
+      },
+      "archive_bytes": 562055744
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "seed": 2026111101,
+      "measurement_n": 67108864,
+      "archive_sha256": "c1789e45ac42955f9e212853bd55c1be1a0aa313172eacf73697c731b4ef98a1",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 250.37948170000163,
+      "wall_seconds": 325.4461750000046,
+      "process_cpu_seconds": 312.515625,
+      "peak_working_set_bytes": 30355210240,
+      "detection": {
+        "q": 313.696814135705,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 1.9699597195103567e-61,
+        "tidal_norm_estimate": 0.09710775677096835,
+        "largest_tidal_variance": 4.6619046326997274e-05,
+        "variance_times_N": 3128.5512397681596
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          -0.001872924246683928,
+          -0.01213909571330657,
+          0.006467959498229161,
+          -0.03551783229628444,
+          0.0316819582961025,
+          -0.026416182677659106,
+          -0.04735890641801002,
+          0.023996532139105815,
+          0.005762854706561659,
+          -0.01168520542228556
+        ],
+        "truth_norm": 0.09869604401089359,
+        "full_tidal_error_mod_reflection": 0.0245851517515495,
+        "relative_full_tidal_error": 0.2490996675493489,
+        "continuum_bias_mod_reflection": 0.011478915702543354,
+        "relative_continuum_bias": 0.11630573259123099,
+        "continuum_tidal_norm": 0.0876934208574409,
+        "confidence_radius_95": 0.03179197511131156,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 4.6629367034256575e-15,
+        "patterns": {
+          "electric": {
+            "truth_amplitude": 0.06978864199638883,
+            "estimate": -0.04900370031729909,
+            "nominal_sigma": 0.004330615886428744,
+            "expected_snr": 16.11517710797026,
+            "realized_z": -11.315642301795124,
+            "events_for_expected_snr_one": 258410.24130363698
+          },
+          "magnetic": {
+            "truth_amplitude": 0.06978864199638882,
+            "estimate": 0.07478668777091659,
+            "nominal_sigma": 0.006605380406199043,
+            "expected_snr": 10.56542359481572,
+            "realized_z": 11.322086416208593,
+            "events_for_expected_snr_one": 601182.1258960337
+          },
+          "full": {
+            "truth_amplitude": 0.09869604401089362,
+            "estimate": 0.09405846013338594,
+            "nominal_sigma": 0.0056776562252869945,
+            "expected_snr": 17.38323704265922,
+            "realized_z": 16.566423961082897,
+            "events_for_expected_snr_one": 222084.67066611943
+          }
+        }
+      },
+      "archive_bytes": 2197834392
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111102,
+      "measurement_n": 1048576,
+      "archive_sha256": "f41a3bd5fcf5833956f688a01623f48d144f9e3188e591d7ee98f7d5b4dfd00c",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 57.95166330000211,
+      "wall_seconds": 114.42937280000478,
+      "process_cpu_seconds": 111.84375,
+      "peak_working_set_bytes": 4736757760,
+      "detection": {
+        "q": 10.624260265725361,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.3875305250325669,
+        "tidal_norm_estimate": 0.14253713330913417,
+        "largest_tidal_variance": 0.003244937990215574,
+        "variance_times_N": 3402.5640980282856
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.14253713330913417,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.2516148665345558,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.552713678800501e-15
+      },
+      "archive_bytes": 51399248
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111102,
+      "measurement_n": 4194304,
+      "archive_sha256": "ddc24210e436cfc67c1ea84d7121fd0c289091ab0a3e0ae029e1d83afde9b33a",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 73.60932360000152,
+      "wall_seconds": 140.7688882999937,
+      "process_cpu_seconds": 126.890625,
+      "peak_working_set_bytes": 8126398464,
+      "detection": {
+        "q": 17.77841807344467,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.05881844328455939,
+        "tidal_norm_estimate": 0.08462983051574648,
+        "largest_tidal_variance": 0.0008173181230280956,
+        "variance_times_N": 3428.0806726892333
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.08462983051574648,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.12654551632142766,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.552713678800501e-15
+      },
+      "archive_bytes": 155208272
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111102,
+      "measurement_n": 16777216,
+      "archive_sha256": "bcfb099d2668e997c265e52da95fbe9f8ddf16b6211f2cb45cf621efa0837956",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 110.21211549999134,
+      "wall_seconds": 167.40649069999927,
+      "process_cpu_seconds": 158.6875,
+      "peak_working_set_bytes": 14477193216,
+      "detection": {
+        "q": 11.458790869023925,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.32290775630110913,
+        "tidal_norm_estimate": 0.035553620778964595,
+        "largest_tidal_variance": 0.00020532751505216752,
+        "variance_times_N": 3444.824070773466
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.035553620778964595,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.06328699608720674,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.552713678800501e-15
+      },
+      "archive_bytes": 570444368
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111102,
+      "measurement_n": 67108864,
+      "archive_sha256": "8f9dd1acd8faac028fdeafb79bab164832bf2184fac34972d1897e7dc7e4216b",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 234.34734179999214,
+      "wall_seconds": 295.2035496000026,
+      "process_cpu_seconds": 279.96875,
+      "peak_working_set_bytes": 27383504896,
+      "detection": {
+        "q": 10.819030283197545,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.3717900403302403,
+        "tidal_norm_estimate": 0.016267904085715913,
+        "largest_tidal_variance": 5.134434293394852e-05,
+        "variance_times_N": 3445.660527123712
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.016267904085715913,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.03161650152553581,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.552713678800501e-15
+      },
+      "archive_bytes": 2231388840
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111103,
+      "measurement_n": 1048576,
+      "archive_sha256": "f5653ea5bc44092309ed60ff8c2255dcdaf1092df57bbb79cca6cadb4dfe1ec1",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 69.73703059999389,
+      "wall_seconds": 139.09315319999587,
+      "process_cpu_seconds": 134.4375,
+      "peak_working_set_bytes": 10124947456,
+      "detection": {
+        "q": 4.360803355366721,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.9296062600093784,
+        "tidal_norm_estimate": 0.0975627121714786,
+        "largest_tidal_variance": 0.003333521571835429,
+        "variance_times_N": 3495.450715708907
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.0975627121714786,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.25406887662061106,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.219646771412954e-15
+      },
+      "archive_bytes": 51661400
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111103,
+      "measurement_n": 4194304,
+      "archive_sha256": "92622af059c91b580148990e0f84d0d6b9876f8ca169943949486d3b46519567",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 90.14976949999982,
+      "wall_seconds": 158.15937579999445,
+      "process_cpu_seconds": 153.796875,
+      "peak_working_set_bytes": 19003990016,
+      "detection": {
+        "q": 9.841998174486715,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.4544631053409848,
+        "tidal_norm_estimate": 0.0641820955670508,
+        "largest_tidal_variance": 0.0008417432882923579,
+        "variance_times_N": 3530.52724105779
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.0641820955670508,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.12797955488896806,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.219646771412954e-15
+      },
+      "archive_bytes": 156256856
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111103,
+      "measurement_n": 16777216,
+      "archive_sha256": "cde3588104b0015e4275448d14b1d8982462c87b82a1d52b2e899f2856e57a71",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 130.23836020000454,
+      "wall_seconds": 195.54316660000768,
+      "process_cpu_seconds": 190.59375,
+      "peak_working_set_bytes": 36282015744,
+      "detection": {
+        "q": 10.8733456489129,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.3674703829012391,
+        "tidal_norm_estimate": 0.04019517372057618,
+        "largest_tidal_variance": 0.00021100550621924705,
+        "variance_times_N": 3540.084955029651
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.04019517372057618,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.06424083873107958,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.219646771412954e-15
+      },
+      "archive_bytes": 574638680
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111103,
+      "measurement_n": 67108864,
+      "archive_sha256": "edaa17b599a88b88c802146a3af90394ddcfeb32808b8a8f9a998f391c5f257f",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 242.0146861999965,
+      "wall_seconds": 307.4819781999977,
+      "process_cpu_seconds": 299.03125,
+      "peak_working_set_bytes": 58837475328,
+      "detection": {
+        "q": 13.472294988349521,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.1984502947144962,
+        "tidal_norm_estimate": 0.023197246212160776,
+        "largest_tidal_variance": 5.287628234451383e-05,
+        "variance_times_N": 3548.46724068358
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "full_tidal_error_mod_reflection": 0.023197246212160776,
+        "relative_full_tidal_error": null,
+        "continuum_bias_mod_reflection": 0.0,
+        "relative_continuum_bias": null,
+        "continuum_tidal_norm": 0.0,
+        "confidence_radius_95": 0.032221197629565046,
+        "nominal_ball_contains_truth": true,
+        "quadrature_relative_change": 3.219646771412954e-15
+      },
+      "archive_bytes": 2248166064
+    }
+  ],
+  "elapsed_seconds": 3620.4999873638153,
+  "level_verdicts": {
+    "1048576": "NOT_DETECTED",
+    "4194304": "MIXED",
+    "16777216": "DETECTED",
+    "67108864": "DETECTED"
+  }
+}

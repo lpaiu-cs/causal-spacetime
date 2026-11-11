@@ -19,6 +19,19 @@ This required about 50.15 minutes for the campaign and 19.65 for the audit;
 it establishes tested precision at substantial event cost, not a new
 sample-efficiency advantage or arbitrary-profile accuracy.
 
+The [Ibrahim–Bombelli benchmark report](bombelli_benchmark_results.md)
+(2026-11-11) runs the unchanged inverse once on the exact vacuum plane wave
+whose tidal profile is the linearized wave of arXiv:2611.09056 (`h0 = 1e-2`,
+window `lambda/2`, crest-centered), for which that paper estimates
+`1e8–1e9` elements by discrete geodesic deviation. The frozen existence gate
+reads NOT_DETECTED at 1,048,576 measurement events, MIXED at 4,194,304 and
+DETECTED at 16,777,216 and 67,108,864, with both flat controls below the
+threshold at every level and an independent post-completion audit. This is
+detection, not accuracy: error plus nominal radius is still 43–57% of the
+truth norm at the top level, and the fifth-degree model reads the crest
+curvature about 12% low in the continuum limit. The two methods use different
+inputs and regions; no efficiency claim is made.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
