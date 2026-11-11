@@ -24,33 +24,34 @@ a finite-density estimator and a gravitational-wave benchmark}
 \begin{document}
 \maketitle
 \begin{abstract}
-Recent work shows that the Riemann tensor can in principle be reconstructed
-from the causal order and element counts of a sprinkled causal set (Madsen,
-arXiv:2610.36695), and estimates that detecting one Weyl component of a
+Recent work proves that the Riemann tensor can be reconstructed from the
+causal order and element counts of a sprinkled causal set (Madsen,
+arXiv:2610.36695) and estimates that detecting one Weyl component of a
 plane gravitational wave by discrete geodesic deviation requires
 $10^8$--$10^9$ elements (Ibrahim and Bombelli, arXiv:2611.09056). We present
-an estimator of the vacuum Weyl tensor from order relations only, with
-numerical tests of its accuracy, uncertainty and cost at finite density.
-From the relations between about one hundred order-selected landmarks and
-$N$ events sprinkled in an Alexandrov interval, it fits all ten Weyl
-components, jointly with 24 curvature-gradient components and the landmarks'
-normal coordinates, in a frame fixed by the interval's tips, with a
-covariance that accounts for shared events. In tests on
-exact vacuum plane waves with pre-specified criteria, (i) nominal 95\%
-confidence balls contained the true tensor in 509 of 512 cases; (ii) at
-dimensionless tidal norm $0.5$, six cases gave errors of 3.5--7.4\% and
-error plus confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$;
-and (iii) the five-times weaker wave of Ibrahim and Bombelli was
-detected at $N=1.7\times10^7$, a sprinkling density two to four orders of
-magnitude below their estimate for geodesic deviation, but not at
-$N\le4.2\times10^6$. Detection is not accuracy: for that wave the local
-model underestimates the crest curvature by 12\%, and the fit residuals do
-not reveal this. The tests cover plane waves only, assume vacuum, and rely
-on nominal Gaussian uncertainties.
+an estimator of the vacuum Weyl tensor from order relations alone and test
+its accuracy, uncertainty and cost at finite density. From the relations
+between about a hundred landmarks and $N$ events sprinkled in an Alexandrov
+interval it fits all ten components, with curvature gradients, the
+landmarks' normal coordinates and a covariance that accounts for shared
+events. In pre-specified tests on exact vacuum plane waves, (i) nominal
+95\% confidence balls contained the true tensor in 509 of 512 cases; (ii)
+at tidal norm $0.5$, six cases gave errors of 3.5--7.4\% and error plus
+confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$; and (iii)
+the five-times weaker wave of Ibrahim and Bombelli was detected at
+$N=1.7\times10^7$, a density two to four orders of magnitude below their
+estimate, but not at $N\le4.2\times10^6$. (iv) Unchanged, it detected the
+static tidal field of a Schwarzschild interval of similar strength at
+$N=4.2\times10^6$. Detection is not accuracy: for the wave the local model
+underestimates the crest curvature by 12\%, which the fit residuals do not
+reveal. An appendix proves a conditional, asymptotic convergence statement.
+The tests cover plane waves and one Schwarzschild interval, assume vacuum,
+and rely on nominal Gaussian uncertainties.
 \end{abstract}
 
 \noindent\textbf{Keywords} Causal sets $\cdot$ Weyl tensor $\cdot$ Curvature
-estimation $\cdot$ Plane gravitational waves $\cdot$ Poisson sprinkling
+estimation $\cdot$ Plane gravitational waves $\cdot$ Schwarzschild spacetime
+$\cdot$ Poisson sprinkling
 
 \section{Introduction}
 In causal set theory a Lorentzian geometry is to be recovered from a locally
@@ -94,17 +95,20 @@ comparisons of clocks~\cite{puetzfeld}.
 
 This paper presents an estimator of the Weyl tensor that was applied to
 sprinkled data, together with measurements of its accuracy, coverage and
-cost. It makes three limited claims. First, on exact vacuum plane waves all
+cost. It makes four limited claims. First, on exact vacuum plane waves all
 ten components were estimated from order relations alone, with tested
 accuracy, at event counts that a single workstation can handle. Second, the
 uncertainty reported by the estimator was tested for coverage on a stated
 population of cases. Third, at the condition analysed in Ref.~\cite{ib} the
-estimator detected the wave. We do not claim the first reconstruction of
-curvature from a causal set, a convergence theorem, or greater efficiency
+estimator detected the wave. Fourth, without any change it detected the
+tidal field of a Schwarzschild exterior, which is static and of a different
+algebraic type. We do not claim the first reconstruction of curvature from
+a causal set, an unconditional convergence theorem, or greater efficiency
 than another method applied to the same input. Section~\ref{setting} defines
 the setting and the estimand, Sect.~\ref{estimator} the estimator and
 Sect.~\ref{tests} the tests; Sect.~\ref{results} reports the results and
-Sect.~\ref{limits} the limitations.
+Sect.~\ref{limits} the limitations. Appendix~\ref{app:conv} proves a
+conditional convergence statement for the fit.
 
 \section{Setting and estimand}\label{setting}
 Let $(M,g)$ be a four-dimensional Ricci-flat spacetime and $p\prec q$ two
@@ -180,7 +184,12 @@ $\kappa=\tau^4(17E^2+3B^2)/10080$ for the observer along
 $\Delta$.\footnote{This coefficient was derived independently and checked
 against exact plane-wave volumes: with it, the residual of the volume clock
 for a constant wave with $s=1.5$ falls from $3.9\times10^{-4}$ to
-$1.7\times10^{-6}$. We were unable to reproduce the corresponding
+$1.7\times10^{-6}$. A plane wave has $E^2=B^2$ and tests only the sum of
+the two coefficients. For the Schwarzschild interval of Sect.~\ref{tests},
+where $B=0$, a quadrature of the volume gives an excess over
+$(\pi/24)\tau^4$ of $1.0004$ times $17E^2\tau^4/10080$ at $r_a=6M$,
+$\tau=M/2$, and of $1.015$ times that value at $\tau=3M$. We were unable to
+reproduce the corresponding
 coefficient of Eq.~(79) in Ref.~\cite{wang} (arXiv version 2), from which
 ours differs by about 15\% for a plane wave. The term $\sigma_2$ changes the
 fitted curvature by about 1\% at $s=1.5$ and by less at weaker curvature.}
@@ -236,8 +245,9 @@ bands, $t\in[-0.36,-0.24]$, $|t|\le0.075$ and $t\in[0.24,0.36]$, with
 $0.075\le r\le0.2$. They are ranked by connectivity and radius and pruned
 until every landmark has at least eight clocks and every central landmark
 at least four to each outer band. We use the union of the selections with
-caps of 64 and 128 landmarks. In the accuracy test and the benchmark below
-this gave 104--131 landmarks and $2.8$--$4.5\times10^3$ clocks, a clock
+caps of 64 and 128 landmarks. In the accuracy test, the benchmark and the
+Schwarzschild test below this gave 104--131 landmarks and
+$2.8$--$4.5\times10^3$ clocks, a clock
 being a related pair whose interval holds at least two selection events.
 These settings were fixed in preliminary runs before the tests reported
 here. The estimator then needs, for each measurement event, only its
@@ -279,6 +289,30 @@ them, a quadratic form in the transverse endpoints built from the Jacobi
 propagator~\cite{harte}. The generators evaluate it with guarded
 floating-point margins and never guess a pair inside the guard.
 
+One further test uses the Schwarzschild exterior in isotropic coordinates,
+\begin{equation}
+ \dd s^2=-\left(\frac{2\bar r-M}{2\bar r+M}\right)^{\!2}\dd t^2
+ +\left(1+\frac{M}{2\bar r}\right)^{\!4}\delta_{ij}\dd X^i\dd X^j,
+ \qquad\bar r=|X|. \label{schw}
+\end{equation}
+The tips lie on the radial geodesic that is momentarily at rest at areal
+radius $r_a$, at proper times $\mp T/2$ from this apex, which is therefore
+the midpoint of the tip geodesic. In the rest frame of that geodesic at the
+apex, with the radial axis first,
+$T^2E=(T^2M/r_a^3)\operatorname{diag}(-2,1,1)$ and $B=0$, so that
+$s=\sqrt6\,T^2M/r_a^3$. Because the metric is static, two events are related
+exactly when their difference in $t$ is at least the optical distance
+between their spatial positions, the minimum over paths of
+$\int(1+M/2\bar r)^3(1-M/2\bar r)^{-1}|\dd X|$. The generator finds this
+minimum by Newton iteration on a polynomial deviation from the straight
+chord and samples uniformly with respect to
+$\sqrt{-g}=(1-M/2\bar r)(1+M/2\bar r)^5$. Its travel times
+agree with the exact radial formula and with an independent solver that uses
+the Clairaut constant in areal coordinates; the tidal tensor was confirmed
+by integrating the geodesic deviation, and the sampling measure by a
+quadrature of the volume. Flat controls for this test come from the same
+generator with $M=0$.
+
 \subsection{Blind estimation and pre-specified criteria}\label{procedure}
 The estimator runs in a separate process that reads only an order archive
 containing the selection order, the landmark labels, the landmark--event
@@ -303,12 +337,15 @@ the CuPy library. All runs used one workstation with eight CPU cores,
 
 Large language models (OpenAI Codex and Anthropic Claude) were used
 extensively in this work, under the direction of the author: for writing and
-running the code, for the derivations and their numerical checks, for the
-comparison with the literature and for drafting the text. Since such tools
-can produce plausible errors, the conclusions rest on the safeguards of
-Sect.~\ref{procedure}: criteria fixed before the data were generated, an
-estimator isolated from the true geometry, no exclusion of cases, and
-recomputation of the outcomes by separate code. The bibliographic data of
+running the code, for the derivations and proofs and their numerical
+checks, for the comparison with the literature and for drafting the text.
+Since such tools can produce plausible errors, the numerical conclusions
+rest on the safeguards of Sect.~\ref{procedure}: criteria fixed before the
+data were generated, an estimator isolated from the true geometry, no
+exclusion of cases, and recomputation of the outcomes by separate code. The
+proofs of Appendix~\ref{app:conv} were rederived line by line in a separate
+pass, and the orders they assert were checked numerically
+(Sect.~\ref{app:check}). The bibliographic data of
 all references were checked against publisher, arXiv or repository records. The author
 has examined the results and the text and takes full responsibility for
 them.
@@ -345,7 +382,8 @@ the final $N$, so the noise decreases as $N^{-1/2}$. The number of events
 needed for a given relative precision is therefore proportional to
 $N\lambda_{\max}/s^2$; $N\lambda_{\max}$ was between $2.2\times10^3$ and
 $6.7\times10^3$ for the selections of this test and of the diagnostic run,
-and between $2.6\times10^3$ and $3.5\times10^3$ in the benchmark below. In
+between $2.6\times10^3$ and $3.5\times10^3$ in the benchmark below, and
+between $2.6\times10^3$ and $4.4\times10^3$ in the Schwarzschild test. In
 the diagnostic run, which had no pre-specified accuracy criterion, the
 stronger waves with $A=0.75$ gave errors of 1.6--5.9\% at
 $N=4.2\times10^6$.
@@ -498,13 +536,86 @@ the input of the other. The difference is in the direction anticipated in
 the outlook of Ref.~\cite{ib}: more information from the sprinkling, an
 exact vacuum wave, and lower memory requirements.
 
+\subsection{A Schwarzschild interval}\label{schwres}
+The tests above use plane waves, which are of Petrov type N with electric
+and magnetic parts of equal norm. To test the estimator outside this class
+we applied it, unchanged, to an interval of the metric \eqref{schw} with
+$r_a=6M$ and $T=3M$. The true tensor is static, of type D and purely
+electric, $T^2E=\operatorname{diag}(-\tfrac1{12},\tfrac1{24},\tfrac1{24})$,
+with $s=0.102$, close to the strength of the wave of Sect.~\ref{ibwave}. It
+is far from uniform: the interval covers areal radii from $4.8M$ to $7.2M$,
+over which $M/r^3$ ranges from $1.93$ to $0.57$ times its value at the apex.
+Exact interval volumes were not available for this geometry, so the
+continuum bias was not measured, and the errors below include it.
+
+The criterion, the levels and the threshold were those of
+Sect.~\ref{ibwave} and were fixed before the data were generated, with two
+independent Schwarzschild cases and two flat controls.
+Table~\ref{schwtable} gives the outcome: a mixed outcome at $1.05\times10^6$ events, where only one of the two
+Schwarzschild cases exceeded the threshold, and detection at
+$4.19\times10^6$, $1.68\times10^7$ and $6.71\times10^7$. The eight control
+values average $10.2$. The
+predictions recorded with the criterion, obtained from the covariances of
+the benchmark fits, were $Q\approx19,44,150,560$, with no detection
+expected at the lowest level and a detection or a mixed outcome at the
+second. The value $32.1$ at the lowest level lies $2.3$ nominal standard
+deviations above the expectation for that case, $16.5$; the other seven
+values of the Schwarzschild cases lie within $1.3$.
+
+\begin{table}[t]
+\centering\small
+\caption{Detection statistic $Q$ for the Schwarzschild interval; threshold
+$q^*=29.59$. Levels are nested prefixes of one event stream per case, so
+the rows are not independent}
+\label{schwtable}
+\begin{tabular}{rrrrrl}
+\toprule
+$N$ & Schwarzschild 0 & Schwarzschild 1 & Flat 2 & Flat 3 & Outcome\\
+\midrule
+1,048,576 & 32.14 & 19.27 & 6.20 & 9.94 & mixed\\
+4,194,304 & 42.00 & 42.12 & 10.45 & 9.46 & detected\\
+16,777,216 & 140.29 & 158.44 & 10.10 & 13.13 & detected\\
+67,108,864 & 462.38 & 534.25 & 10.57 & 11.47 & detected\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At the top level the errors are 16.5\% and 14.4\% of $s$, with
+nominal 95\% radii of 37\% and 34\%, and the balls contain the
+true tensor at every level. The estimated electric eigenvalues,
+$(-0.0846,0.0390,0.0456)$ and $(-0.0800,0.0382,0.0418)$, show the pattern
+of the true ones, $(-0.0833,0.0417,0.0417)$, and the estimated magnetic
+parts, which should vanish, have norms $0.016$ and $0.013$, against radii
+of $0.038$ and $0.034$. The component of each estimate along the true
+tensor, weighted by $S^{-1}$, is $1.05\pm0.05$ and $0.97\pm0.04$ times that
+tensor, so no bias is resolved at this precision. The fitted landmark
+coordinates agree with the true normal coordinates to an rms of
+$10^{-4}\,T$. As in Sect.~\ref{ibwave}, this is a detection of the field
+and not an accurate measurement: error plus radius is still about half of
+$s$. The nominal signal-to-noise ratio along the true tensor reaches one at
+$N=1.2$--$1.7\times10^5$.
+
+One auxiliary run preceded the criterion and is reported for completeness.
+To test the software we used a larger interval at the same apex, $T=4M$
+with $s=0.18$, which gave $Q=9.2$, $86.5$ and $393.7$ at the first three
+levels and read $0.94\pm0.05$ of the true tensor at the third. Its first
+$2^{24}$ events, cut into sixteen disjoint blocks of $2^{20}$ and fitted
+with the same landmarks, gave a mean $Q$ of $37.0$, where the true tensor
+and the nominal covariance imply $37.2$, but a mean of $13.4$ for the
+statistic of the estimate about the true tensor, where $10$ is nominal.
+At about $10^6$ events the nominal covariance may thus understate the
+scatter by some 15\% in standard deviation. This concerns one selection and
+was not a pre-specified test.
+
 \subsection{Computational cost}
 The accuracy test used $3.9\times10^8$ measurement events and
 $9.8\times10^{10}$ landmark--event relation tests, and ran in 50 minutes
 with a peak memory of 52\,GiB. The benchmark used $2.7\times10^8$ events and
 $7.0\times10^{10}$ relation tests, and ran in 60 minutes with a peak of
 55\,GiB. At the level of detection one fit takes about three minutes and
-13--34\,GiB.
+13--34\,GiB. The Schwarzschild test used $2.7\times10^8$ events and
+$6.8\times10^{10}$ relation tests, and ran in 74 minutes with a peak of
+52\,GiB.
 
 \section{Limitations and outlook}\label{limits}
 The first limitation is that detection is not accuracy. The bias of the
@@ -521,24 +632,35 @@ flat spacetime as $w\to\infty$, while the midpoint tidal norm stays $2a$, so
 no estimator is uniformly accurate over all smooth vacuum profiles at fixed
 $N$.
 
-The second limitation is scope. Only plane waves were tested, although no
-algebraic type is imposed. The estimator assumes vacuum, because Ricci terms
-enter \eqref{clock} and \eqref{model} at lower order; it also assumes
-uniform sprinkling, a regular normal neighbourhood and given tips. Its
-uncertainty is nominal and Gaussian. Coverage was tested at
-$N=2.6\times10^5$ on one population; at larger $N$ it rests on the cases
-reported above and on four flat controls.
+The second limitation is scope. The tests cover plane waves and one
+Schwarzschild interval. No algebraic type is imposed, but a field with
+independent electric and magnetic parts, such as that of a rotating source,
+was not tested, and neither was a second radius or interval size. The
+estimator assumes vacuum, because Ricci terms enter \eqref{clock} and
+\eqref{model} at lower order; it also assumes uniform sprinkling, a regular
+normal neighbourhood and given tips. Its uncertainty is nominal and
+Gaussian. Coverage was tested at $N=2.6\times10^5$ on one population; at
+larger $N$ it rests on the cases reported above and on six flat controls,
+and the block test of Sect.~\ref{schwres} suggests that the nominal
+covariance is somewhat too small at $N\approx10^6$.
 
-Third, the results are numerical observations and not a convergence proof
-of the kind given in Ref.~\cite{madsen}. At a fixed window the noise
-decreases as $N^{-1/2}$ and the bias is fixed by the window. For a window of
-size $\epsilon$ at density $\rho$ the noise in the physical curvature scales
-as $\rho^{-1/2}\epsilon^{-4}$ and the bias as a positive power of
-$\epsilon$, which suggests the regime $\epsilon\to0$,
-$\rho\epsilon^8\to\infty$. We have not proved this for the random landmark
-rule and the nonlinear fit. A convergence proof for a local fit of the kind
-used here, tests on other vacuum geometries, and a comparison with geodesic
-deviation on equal inputs are the natural next steps.
+Third, what we can prove about convergence is conditional and asymptotic.
+At a fixed window the noise decreases as $N^{-1/2}$ and the bias is fixed by
+the window. Appendix~\ref{app:conv} shows that, for a well-conditioned
+configuration of landmarks, the solution of the fit near the true geometry
+satisfies $\hat c/T^2-C=O(T^2)+O_p(\rho^{-1/2}T^{-4})$ as the window
+shrinks at sprinkling density $\rho$, which gives the rate $\rho^{-1/6}$
+for $T\propto\rho^{-1/12}$. It does not show that the landmark rule
+produces such configurations or that the optimizer finds that solution, it
+says nothing about coverage, and its constants are far too conservative to
+reach the event counts of the tests. Unlike the theorem of
+Ref.~\cite{madsen}, it is restricted to vacuum, to given tips and to one
+point. A proof for the implemented procedure, tests on further vacuum
+geometries, and a comparison with geodesic deviation on equal inputs are
+the natural next steps.
+
+\appendix
+\input{appendix_convergence}
 
 \section*{Statements and Declarations}
 \paragraph{Funding} No funding was received for conducting this study.
@@ -546,14 +668,17 @@ deviation on equal inputs are the natural next steps.
 declare that are relevant to the content of this article.
 \paragraph{Data and code availability} The source code of the estimator and
 of the generators, the pre-specified protocols, the summaries of all runs
-and the records of the checks are available at
-\url{https://github.com/lpaiu-cs/causal-spacetime}, in the directories
-\nolinkurl{experiments/positive_control} and
-\nolinkurl{docs/paper/paper_a/intrinsic_weyl}. The accuracy test corresponds
-to commit \texttt{0ff9802}, and the benchmark to commits \texttt{c14d4a2}
-(run) and \texttt{a54ac97} (check). The order archives, about 23\,GiB for
-the accuracy test and the benchmark, can be regenerated from the recorded
-seeds and are available from the author on reasonable request.
+and the records of the checks are public. They are in the directories
+\nolinkurl{experiments/positive_control},
+\nolinkurl{docs/paper/paper_a/intrinsic_weyl} and
+\nolinkurl{docs/paper/weyl_note} of the repository
+\url{https://github.com/lpaiu-cs/causal-spacetime/tree/c74240a8dbc0}. The
+accuracy test corresponds to commit \texttt{0ff9802}, the benchmark to
+commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), and the
+Schwarzschild test to commit \texttt{7224c69} (run and check), with its
+record in \texttt{c74240a}. The order archives, about 34\,GiB for the three
+tests, can be regenerated from the recorded seeds and are available from the
+author on reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
 and directed the study, examined the results and wrote the manuscript, with
 the assistance of the AI tools described in Sect.~\ref{implementation}.
@@ -592,5 +717,6 @@ the assistance of the AI tools described in Sect.~\ref{implementation}.
 \bibitem{scipy} Virtanen, P., Gommers, R., Oliphant, T.E., et al.: SciPy 1.0: fundamental algorithms for scientific computing in Python. Nat. Methods \textbf{17}, 261--272 (2020). \doi{10.1038/s41592-019-0686-2}
 \bibitem{clopper} Clopper, C.J., Pearson, E.S.: The use of confidence or fiducial limits illustrated in the case of the binomial. Biometrika \textbf{26}, 404--413 (1934). \doi{10.1093/biomet/26.4.404}
 \bibitem{bombelli} Bombelli, L.: Statistical Lorentzian geometry and the closeness of Lorentzian manifolds. J. Math. Phys. \textbf{41}, 6944--6958 (2000). \doi{10.1063/1.1288494}
+\bibitem{oneill} O'Neill, B.: Semi-Riemannian Geometry with Applications to Relativity. Academic Press, New York (1983)
 \end{thebibliography}
 \end{document}
