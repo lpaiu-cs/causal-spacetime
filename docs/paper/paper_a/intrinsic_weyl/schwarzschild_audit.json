@@ -1,0 +1,722 @@
+{
+  "audited_folder": "E:\\lab\\causal-spacetime\\.claude\\worktrees\\fervent-engelbart-fa5233\\outputs\\intrinsic_weyl_schwarzschild_v1",
+  "audit_code_version": "cf04e81fd7af413f62ff740bdaaa48879fd65bd1",
+  "audit_worktree_clean": true,
+  "run_code_version": "7224c691ea2a74fbeb4b13624145cf1f33097561",
+  "run_stamp_is_ancestor_of_head": true,
+  "summary_sha256": "9dcce79e72478fff8b819a880b2e2449d81794e06fbc7c4abfe7256c6dca7e4b",
+  "manifest_sha256": "7af11e7fe077527b65e560d7db2db2a4a88de0014c8a02d2d9167fd0212ac003",
+  "threshold_chi2_10": 29.588298445074415,
+  "truth": {
+    "hessian_tidal_eigenvalues": [
+      -0.08333333332229469,
+      0.0416666666652934,
+      0.0416666666652934
+    ],
+    "difference_from_closed_form": 1.103864222251616e-11,
+    "trace": 8.292116993047216e-12,
+    "flat_tensor_norm": 0.0
+  },
+  "rows": [
+    {
+      "case": 0,
+      "kind": "curved",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 32.139897997441174,
+      "nominal_p_value": 0.0003794969771473711,
+      "variance_times_N": 4365.493025233264,
+      "radius_95": 0.28657511304366495,
+      "error_mod_reflection": 0.17485744198376993,
+      "error_with_independent_truth": 0.17491290350447355,
+      "truth_vectors_differ_by": 0.00020426226794561123,
+      "landmark_coordinate_rms_residual": 0.0009222436057087776,
+      "estimate_tidal_norm": 0.23847332081181555,
+      "electric_eigenvalues": [
+        -0.15478968684119332,
+        0.019925203656607157,
+        0.13486448318458613
+      ],
+      "magnetic_norm": 0.11968389624848294,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 2.518306323591325,
+        "events_for_expected_snr_one": 165341.85328728342
+      },
+      "relative_error": 1.7132460425243137,
+      "relative_radius": 2.8078512000283546,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3253.3889033910386,
+        "fit_degrees_of_freedom": 3158,
+        "fit_chi2_z": 1.200264041706636,
+        "flat_minus_curved_chi2": 51.03253392518491,
+        "noncentrality_of_the_truth": 6.47734214899366,
+        "q_about_the_truth": 15.024914275645619
+      }
+    },
+    {
+      "case": 0,
+      "kind": "curved",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 42.00144618518155,
+      "nominal_p_value": 7.4942366592841815e-06,
+      "variance_times_N": 4417.243340189313,
+      "radius_95": 0.1446118096530237,
+      "error_mod_reflection": 0.10062327371820357,
+      "error_with_independent_truth": 0.1006269854009281,
+      "truth_vectors_differ_by": 5.772479160262941e-05,
+      "landmark_coordinate_rms_residual": 0.0003462781202409934,
+      "estimate_tidal_norm": 0.14333690938551125,
+      "electric_eigenvalues": [
+        -0.08383714766358691,
+        0.015065863747850307,
+        0.06877128391573657
+      ],
+      "magnetic_norm": 0.092522065054432,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 5.018812655388313,
+        "events_for_expected_snr_one": 166516.75376029545
+      },
+      "relative_error": 0.9859027075299106,
+      "relative_radius": 1.4169005778622712,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3136.633849873967,
+        "fit_degrees_of_freedom": 3158,
+        "fit_chi2_z": -0.2688470125382784,
+        "flat_minus_curved_chi2": 67.08640669565966,
+        "noncentrality_of_the_truth": 25.777374144518546,
+        "q_about_the_truth": 14.324377161430277
+      }
+    },
+    {
+      "case": 0,
+      "kind": "curved",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 140.29014079054218,
+      "nominal_p_value": 3.6751519466200575e-25,
+      "variance_times_N": 4427.352320565218,
+      "radius_95": 0.07335607440072624,
+      "error_mod_reflection": 0.049372023967954266,
+      "error_with_independent_truth": 0.04937395649308311,
+      "truth_vectors_differ_by": 5.7615687488012926e-05,
+      "landmark_coordinate_rms_residual": 0.00022744406827100586,
+      "estimate_tidal_norm": 0.1191569281259676,
+      "electric_eigenvalues": [
+        -0.09105331669970759,
+        0.03360457635023701,
+        0.057448740349470576
+      ],
+      "magnetic_norm": 0.03844530815301093,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 10.043072490176888,
+        "events_for_expected_snr_one": 166336.17144368042
+      },
+      "relative_error": 0.4837450652078304,
+      "relative_radius": 0.7187398073330418,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3108.0302620948873,
+        "fit_degrees_of_freedom": 3158,
+        "fit_chi2_z": -0.6287616006564382,
+        "flat_minus_curved_chi2": 167.22326343012264,
+        "noncentrality_of_the_truth": 103.21913556925512,
+        "q_about_the_truth": 14.767167794506003
+      }
+    },
+    {
+      "case": 0,
+      "kind": "curved",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 462.38099817306687,
+      "nominal_p_value": 4.7693272872090535e-93,
+      "variance_times_N": 4431.684655467343,
+      "radius_95": 0.03762196990982932,
+      "error_mod_reflection": 0.01684071539030916,
+      "error_with_independent_truth": 0.01681895539527408,
+      "truth_vectors_differ_by": 0.00016366322215122017,
+      "landmark_coordinate_rms_residual": 9.099189372061461e-05,
+      "estimate_tidal_norm": 0.10498119822638814,
+      "electric_eigenvalues": [
+        -0.0846407701857058,
+        0.038999956086802005,
+        0.04564081409890378
+      ],
+      "magnetic_norm": 0.01590319203919628,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 20.09523714807608,
+        "events_for_expected_snr_one": 166185.68660767993
+      },
+      "relative_error": 0.16500463845515653,
+      "relative_radius": 0.3686185176262992,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3109.363788230402,
+        "fit_degrees_of_freedom": 3158,
+        "fit_chi2_z": -0.6119820444163089,
+        "flat_minus_curved_chi2": 489.90639540391703,
+        "noncentrality_of_the_truth": 413.3506475149834,
+        "q_about_the_truth": 6.171402600417773
+      }
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 19.272046327869848,
+      "nominal_p_value": 0.036940277792257156,
+      "variance_times_N": 3646.3419665676306,
+      "radius_95": 0.26134292301684864,
+      "error_mod_reflection": 0.15917445953797854,
+      "error_with_independent_truth": 0.15917499589418985,
+      "truth_vectors_differ_by": 0.00026093396195313903,
+      "landmark_coordinate_rms_residual": 0.0008036052641365849,
+      "estimate_tidal_norm": 0.19020679195501963,
+      "electric_eigenvalues": [
+        -0.08507399146030227,
+        0.008679082191586479,
+        0.07639490926871575
+      ],
+      "magnetic_norm": 0.15175483864763228,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 2.898795123042397,
+        "events_for_expected_snr_one": 124785.71428648737
+      },
+      "relative_error": 1.5595848239601973,
+      "relative_radius": 2.560627237369236,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3482.142977687093,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": 1.2299802899503498,
+        "flat_minus_curved_chi2": 49.94526361724502,
+        "noncentrality_of_the_truth": 8.735597745074367,
+        "q_about_the_truth": 9.292053742332094
+      }
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 42.11624316909184,
+      "nominal_p_value": 7.149827185998849e-06,
+      "variance_times_N": 3685.17186180818,
+      "radius_95": 0.13176807393168535,
+      "error_mod_reflection": 0.06095073743553164,
+      "error_with_independent_truth": 0.06111426874258133,
+      "truth_vectors_differ_by": 0.0005210063115633741,
+      "landmark_coordinate_rms_residual": 0.0004117793599376702,
+      "estimate_tidal_norm": 0.11534047446400464,
+      "electric_eigenvalues": [
+        -0.08175621566773547,
+        0.02427408592458019,
+        0.05748212974315524
+      ],
+      "magnetic_norm": 0.05221034152339554,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 5.815834706437295,
+        "events_for_expected_snr_one": 124004.02870819868
+      },
+      "relative_error": 0.5971928247129201,
+      "relative_radius": 1.291058182216031,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3411.364190241159,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": 0.3692530749141109,
+        "flat_minus_curved_chi2": 86.12379668707035,
+        "noncentrality_of_the_truth": 35.12270299884785,
+        "q_about_the_truth": 6.574987198286738
+      }
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 158.43837505834517,
+      "nominal_p_value": 6.805457852432006e-29,
+      "variance_times_N": 3697.0844374901767,
+      "radius_95": 0.06708943205353925,
+      "error_mod_reflection": 0.042936000052065305,
+      "error_with_independent_truth": 0.043062686607773605,
+      "truth_vectors_differ_by": 0.0005888158481155744,
+      "landmark_coordinate_rms_residual": 0.00022464680747689788,
+      "estimate_tidal_norm": 0.11161406133713256,
+      "electric_eigenvalues": [
+        -0.08451464116609793,
+        0.03799553246714455,
+        0.04651910869895335
+      ],
+      "magnetic_norm": 0.04131931939333005,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 11.662698796508433,
+        "events_for_expected_snr_one": 123345.06459976564
+      },
+      "relative_error": 0.4206851669364599,
+      "relative_radius": 0.6573395027224441,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3233.514065054373,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": -1.7935480759646407,
+        "flat_minus_curved_chi2": 184.37769332527978,
+        "noncentrality_of_the_truth": 141.2460403947096,
+        "q_about_the_truth": 10.140558237936796
+      }
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 534.2548908349626,
+      "nominal_p_value": 2.095148234563567e-108,
+      "variance_times_N": 3698.334676375856,
+      "radius_95": 0.03442813304804184,
+      "error_mod_reflection": 0.014648529882961791,
+      "error_with_independent_truth": 0.014705289197734764,
+      "truth_vectors_differ_by": 0.00021069355656827118,
+      "landmark_coordinate_rms_residual": 9.875702706201986e-05,
+      "estimate_tidal_norm": 0.0988260009231721,
+      "electric_eigenvalues": [
+        -0.07997398014987142,
+        0.03818541585137898,
+        0.04178856429849245
+      ],
+      "magnetic_norm": 0.012896932487332055,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "truth_pattern": {
+        "expected_snr": 23.33310960880278,
+        "events_for_expected_snr_one": 123263.54251373671
+      },
+      "relative_error": 0.14352569479492253,
+      "relative_radius": 0.337325435090907,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3388.9054028663354,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": 0.09613608311781352,
+        "flat_minus_curved_chi2": 578.751609579861,
+        "noncentrality_of_the_truth": 565.3712600058162,
+        "q_about_the_truth": 6.373430647422822
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 6.202180617461371,
+      "nominal_p_value": 0.798000429519541,
+      "variance_times_N": 2888.0306088683046,
+      "radius_95": 0.23131044022507732,
+      "error_mod_reflection": 0.10679114408909622,
+      "error_with_independent_truth": 0.10679114408909622,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0006488602968653473,
+      "estimate_tidal_norm": 0.10679114408909622,
+      "electric_eigenvalues": [
+        -0.041156503765423645,
+        0.004275879935057372,
+        0.03688062383036628
+      ],
+      "magnetic_norm": 0.091279938049545,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3886.3566078480258,
+        "fit_degrees_of_freedom": 3788,
+        "fit_chi2_z": 1.130013310899581,
+        "flat_minus_curved_chi2": 24.016237379047652,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 6.202180617461371
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 10.45146424700216,
+      "nominal_p_value": 0.4018162813732392,
+      "variance_times_N": 2914.3953088935946,
+      "radius_95": 0.11646833217313755,
+      "error_mod_reflection": 0.06767262432967651,
+      "error_with_independent_truth": 0.06767262432967651,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0003404286027439356,
+      "estimate_tidal_norm": 0.06767262432967651,
+      "electric_eigenvalues": [
+        -0.034851591134322395,
+        0.012565807895061072,
+        0.022285783239261316
+      ],
+      "magnetic_norm": 0.05206145422890746,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3849.422700103706,
+        "fit_degrees_of_freedom": 3788,
+        "fit_chi2_z": 0.705681806511937,
+        "flat_minus_curved_chi2": 29.348388965221602,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 10.45146424700216
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 10.09733526046586,
+      "nominal_p_value": 0.4319956624249814,
+      "variance_times_N": 2930.164052247068,
+      "radius_95": 0.05831156023965292,
+      "error_mod_reflection": 0.03001089359547288,
+      "error_with_independent_truth": 0.03001089359547288,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.00020424803395633606,
+      "estimate_tidal_norm": 0.03001089359547288,
+      "electric_eigenvalues": [
+        -0.02052897171895537,
+        0.004184505181871613,
+        0.01634446653708375
+      ],
+      "magnetic_norm": 0.013948597942523297,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3741.354265025481,
+        "fit_degrees_of_freedom": 3788,
+        "fit_chi2_z": -0.5359101190165622,
+        "flat_minus_curved_chi2": 43.7967993785619,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 10.097335260465854
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 10.565648323537467,
+      "nominal_p_value": 0.39234284911362527,
+      "variance_times_N": 2934.902409899649,
+      "radius_95": 0.029194560038486705,
+      "error_mod_reflection": 0.01576313834346963,
+      "error_with_independent_truth": 0.01576313834346963,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.00010297358395576618,
+      "estimate_tidal_norm": 0.01576313834346963,
+      "electric_eigenvalues": [
+        -0.008271266858045575,
+        -0.0010421743513901384,
+        0.009313441209435709
+      ],
+      "magnetic_norm": 0.009603976283709195,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3621.856523717796,
+        "fit_degrees_of_freedom": 3788,
+        "fit_chi2_z": -1.9088126748749794,
+        "flat_minus_curved_chi2": 42.86004079553686,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 10.565648323537468
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 9.943085420431274,
+      "nominal_p_value": 0.44550073890252195,
+      "variance_times_N": 2627.808698577867,
+      "radius_95": 0.22126404624193965,
+      "error_mod_reflection": 0.1322713784155798,
+      "error_with_independent_truth": 0.1322713784155798,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0007694417527648907,
+      "estimate_tidal_norm": 0.1322713784155798,
+      "electric_eigenvalues": [
+        -0.031657023874183454,
+        -0.015359992949178263,
+        0.04701701682336171
+      ],
+      "magnetic_norm": 0.1185201296532357,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3522.21914443852,
+        "fit_degrees_of_freedom": 3456,
+        "fit_chi2_z": 0.7964925180642944,
+        "flat_minus_curved_chi2": 39.960075684949516,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 9.943085420431274
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 9.459812112480039,
+      "nominal_p_value": 0.48909084875606385,
+      "variance_times_N": 2654.3242601716042,
+      "radius_95": 0.11109475670752,
+      "error_mod_reflection": 0.06186131904716256,
+      "error_with_independent_truth": 0.06186131904716256,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.00033946389794647827,
+      "estimate_tidal_norm": 0.06186131904716256,
+      "electric_eigenvalues": [
+        -0.02431571221198834,
+        -0.0007736474056398811,
+        0.02508935961762822
+      ],
+      "magnetic_norm": 0.05104404409475872,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3518.2678810653665,
+        "fit_degrees_of_freedom": 3456,
+        "fit_chi2_z": 0.7489662061449366,
+        "flat_minus_curved_chi2": 24.922328334474514,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 9.45981211248004
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 13.125091153295735,
+      "nominal_p_value": 0.21676170755050225,
+      "variance_times_N": 2666.168741509395,
+      "radius_95": 0.0557817748242378,
+      "error_mod_reflection": 0.03641894254134281,
+      "error_with_independent_truth": 0.03641894254134281,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.00019605677303448406,
+      "estimate_tidal_norm": 0.03641894254134281,
+      "electric_eigenvalues": [
+        -0.014665151498172128,
+        -0.0015331982665908333,
+        0.01619834976476297
+      ],
+      "magnetic_norm": 0.029095282699073667,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3337.567378782789,
+        "fit_degrees_of_freedom": 3456,
+        "fit_chi2_z": -1.4245230362622854,
+        "flat_minus_curved_chi2": 28.255426127606825,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 13.125091153295733
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 11.467225639132474,
+      "nominal_p_value": 0.3222929393603897,
+      "variance_times_N": 2668.8396028737975,
+      "radius_95": 0.02789939015797262,
+      "error_mod_reflection": 0.01795086620354622,
+      "error_with_independent_truth": 0.01795086620354622,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 9.451158369801187e-05,
+      "estimate_tidal_norm": 0.01795086620354622,
+      "electric_eigenvalues": [
+        -0.007019938441047107,
+        0.000783037523184932,
+        0.006236900917862177
+      ],
+      "magnetic_norm": 0.015278808229687989,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3262.896633752361,
+        "fit_degrees_of_freedom": 3456,
+        "fit_chi2_z": -2.3226725100936916,
+        "flat_minus_curved_chi2": 36.89976656038243,
+        "noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 11.467225639132472
+      }
+    }
+  ],
+  "level_verdicts": {
+    "1048576": "MIXED",
+    "4194304": "DETECTED",
+    "16777216": "DETECTED",
+    "67108864": "DETECTED"
+  },
+  "level_verdicts_match_run": true,
+  "cases": [
+    {
+      "case": 0,
+      "kind": "curved",
+      "landmarks_including_tips": 120,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 2.1906365610391276e-12,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_height_difference_from_generator": 2.2776637242927222e-09,
+        "proper_volume": 10.603064353564932,
+        "proper_volume_over_flat": 1.0000178392837515,
+        "moment_z_scores": [
+          -0.50183602176729,
+          0.12215603532733663,
+          -1.698035640272107,
+          -0.49867643733494704
+        ]
+      },
+      "independent_pairs_checked": 1994,
+      "independent_pairs_inside_the_error_bound": 0,
+      "independent_bits_match": 1994,
+      "largest_margin_difference_between_solvers": 2.410588995083174e-07,
+      "smallest_margin_checked": 2.713882617411123e-06
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "landmarks_including_tips": 130,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 2.1906365610391276e-12,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_height_difference_from_generator": 2.2776637242927222e-09,
+        "proper_volume": 10.603064353564932,
+        "proper_volume_over_flat": 1.0000178392837515,
+        "moment_z_scores": [
+          -0.6490833222622835,
+          0.10408010483654277,
+          1.1270793236911407,
+          -0.6225102864646249
+        ]
+      },
+      "independent_pairs_checked": 2000,
+      "independent_pairs_inside_the_error_bound": 0,
+      "independent_bits_match": 2000,
+      "largest_margin_difference_between_solvers": 1.5138561515470883e-08,
+      "smallest_margin_checked": 5.598268593032252e-06
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "landmarks_including_tips": 131,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 1.6653345369377348e-16,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_height_difference_from_generator": 2.690439260266686e-08,
+        "proper_volume": 10.602875206236847,
+        "proper_volume_over_flat": 1.0000000000350184,
+        "moment_z_scores": [
+          1.1950643912782222,
+          0.9035803044926115,
+          -1.365987951255036,
+          1.2297480459642596
+        ]
+      },
+      "closed_form_pairs_checked": 536576,
+      "closed_form_bits_match": true
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "landmarks_including_tips": 127,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 1.6653345369377348e-16,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_height_difference_from_generator": 2.690439260266686e-08,
+        "proper_volume": 10.602875206236847,
+        "proper_volume_over_flat": 1.0000000000350184,
+        "moment_z_scores": [
+          -0.7010588057388851,
+          0.38587692816842084,
+          -1.6085852023259986,
+          -0.6152030034145227
+        ]
+      },
+      "closed_form_pairs_checked": 520192,
+      "closed_form_bits_match": true
+    }
+  ],
+  "posthoc_power_if_unbiased": {
+    "0": {
+      "noncentrality_per_event": 6.159404628202072e-06,
+      "events_for_power_50": 3332621.80243267,
+      "events_for_power_90": 5698993.619866571
+    },
+    "1": {
+      "noncentrality_per_event": 8.424688279715422e-06,
+      "events_for_power_50": 2436525.3018767247,
+      "events_for_power_90": 4166612.0469784276
+    }
+  },
+  "refits": [
+    {
+      "case": 0,
+      "measurement_n": 1048576,
+      "q": 32.139897997441174,
+      "fields_identical": true,
+      "differences_beyond_1e-8": {}
+    },
+    {
+      "case": 1,
+      "measurement_n": 4194304,
+      "q": 42.11624316909184,
+      "fields_identical": true,
+      "differences_beyond_1e-8": {}
+    }
+  ],
+  "passed": true
+}

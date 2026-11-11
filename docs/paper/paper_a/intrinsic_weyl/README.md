@@ -32,6 +32,19 @@ truth norm at the top level, and the fifth-degree model reads the crest
 curvature about 12% low in the continuum limit. The two methods use different
 inputs and regions; no efficiency claim is made.
 
+The [Schwarzschild detection report](schwarzschild_results.md) (2026-11-12)
+runs the unchanged inverse once outside the plane-wave class: the interval of
+two events on the radial geodesic momentarily at rest at areal radius `6M`, a
+proper time `3M` apart, whose tidal field is static, Petrov type D and purely
+electric with norm `0.102`. The frozen existence gate reads MIXED at 1,048,576
+measurement events and DETECTED at 4,194,304, 16,777,216 and 67,108,864, with
+both flat controls below the threshold at every level and an independent
+post-completion audit. At the top level the point errors are 14–17% of the
+truth norm with nominal radii of 34–37%, and the estimates read `1.05 ± 0.05`
+and `0.97 ± 0.04` of the true tensor. This is detection at one radius and one
+interval, not accuracy: no exact interval volumes exist here, so the model
+bias was not measured.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
