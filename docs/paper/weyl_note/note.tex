@@ -1,0 +1,596 @@
+% Build: tectonic --outdir ../../../outputs/weyl_note note.tex   (pdfLaTeX also works)
+% Figure: python make_figure.py   (reads the committed benchmark summary)
+\documentclass[11pt,a4paper]{article}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\fi
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,labelsep=space}
+\captionsetup[figure]{name=Fig.}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\IB}{Ibrahim and Bombelli}
+\newcommand{\doi}[1]{\url{https://doi.org/#1}}
+\title{Vacuum tidal curvature from causal order and interval counts:\\
+a finite-density estimator and a gravitational-wave benchmark}
+\author{Juneyoung Kim\thanks{Corresponding author. E-mail: \texttt{lpaiu.cs@gmail.com}}\\
+\small Independent researcher, Seoul, Republic of Korea}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Recent work shows that the Riemann tensor can in principle be reconstructed
+from the causal order and element counts of a sprinkled causal set (Madsen,
+arXiv:2610.36695), and estimates that detecting one Weyl component of a
+plane gravitational wave by discrete geodesic deviation requires
+$10^8$--$10^9$ elements (Ibrahim and Bombelli, arXiv:2611.09056). We present
+an estimator of the vacuum Weyl tensor from order relations only, with
+numerical tests of its accuracy, uncertainty and cost at finite density.
+From the relations between about one hundred order-selected landmarks and
+$N$ events sprinkled in an Alexandrov interval, it fits all ten Weyl
+components, jointly with 24 curvature-gradient components and the landmarks'
+normal coordinates, in a frame fixed by the interval's tips, with a
+covariance that accounts for shared events. In tests on
+exact vacuum plane waves with pre-specified criteria, (i) nominal 95\%
+confidence balls contained the true tensor in 509 of 512 cases; (ii) at
+dimensionless tidal norm $0.5$, six cases gave errors of 3.5--7.4\% and
+error plus confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$;
+and (iii) the five-times weaker wave of Ibrahim and Bombelli was
+detected at $N=1.7\times10^7$, a sprinkling density two to four orders of
+magnitude below their estimate for geodesic deviation, but not at
+$N\le4.2\times10^6$. Detection is not accuracy: for that wave the local
+model underestimates the crest curvature by 12\%, and the fit residuals do
+not reveal this. The tests cover plane waves only, assume vacuum, and rely
+on nominal Gaussian uncertainties.
+\end{abstract}
+
+\noindent\textbf{Keywords} Causal sets $\cdot$ Weyl tensor $\cdot$ Curvature
+estimation $\cdot$ Plane gravitational waves $\cdot$ Poisson sprinkling
+
+\section{Introduction}
+In causal set theory a Lorentzian geometry is to be recovered from a locally
+finite partial order together with counting: the order carries the conformal
+structure \cite{zeeman,hkm,malament} and the number of elements the volume
+\cite{blms,surya,braun}. For sprinklings, that is, Poisson samples of a
+spacetime with their induced order, order-only estimators are known for
+proper time \cite{myrheim,brightwell}, dimension \cite{myrheim,meyer},
+scalar curvature \cite{benincasa}, the Ricci terms that enter the volume of
+small intervals \cite{gibbons,roy}, and spatial distance
+\cite{rideout,eichhorn,boguna}. Numerical studies of curvature estimators on
+sprinkled causal sets have addressed Ricci-type quantities
+\cite{kambor,barton}. In vacuum these quantities vanish, and the curvature
+that remains is tidal: the ten components of the Weyl tensor.
+
+Several recent works bear on this problem. Madsen~\cite{madsen} constructs
+approximate normal coordinates, parallel transport and the full Riemann
+tensor from the order and element counts, given the dimension $d$ and the
+density $\rho$, and proves a uniform error bound
+$C[\log(e+\rho)/\rho]^{1/[2(3d+4)]}$, that is, an exponent of $1/32$ for
+$d=4$. That paper contains no numerical experiment, and its conclusion calls
+for sharper rates, practical anchor selection and numerical studies of the
+error at finite density. \IB~\cite{ib} study geodesic deviation between
+geodesic analogs, built from longest maximal chains, in a linearized plane
+wave. From the measured thickness of these chains they estimate that
+detecting one Weyl component requires $N_{\rm total}\sim10^8$ elements under
+their most liberal assumptions and $\sim10^9$ under those they expect, even
+with an ideal distance estimator, whereas $3$--$4\times10^6$ elements can be
+simulated with their method. Their outlook names the use of more information
+from the sprinkling, exact pp-waves and lower memory requirements as next
+steps. Shuman~\cite{shumana,shumanb} constructs coordinates, derivatives and
+tangent spaces on causal sets, with numerical tests in flat $1+1$
+dimensions. In a preprint, Alfyorov and Shnyukov~\cite{alfyorov} propose a
+statistic of the Hasse diagram that responds to the scalar invariant
+$E_{ij}E^{ij}$ and report simulations of sprinkled pp-wave diamonds with up
+to $1.5\times10^4$ elements. Ghosh~\cite{ghosh} discusses bounds on the
+number of elements needed to estimate curvature from a finite causal set. In
+the continuum, gravitational compasses determine all curvature components
+from the relative acceleration of test bodies~\cite{szekeres} or from
+comparisons of clocks~\cite{puetzfeld}.
+
+This paper presents an estimator of the Weyl tensor that was applied to
+sprinkled data, together with measurements of its accuracy, coverage and
+cost. It makes three limited claims. First, on exact vacuum plane waves all
+ten components were estimated from order relations alone, with tested
+accuracy, at event counts that a single workstation can handle. Second, the
+uncertainty reported by the estimator was tested for coverage on a stated
+population of cases. Third, at the condition analysed in Ref.~\cite{ib} the
+estimator detected the wave. We do not claim the first reconstruction of
+curvature from a causal set, a convergence theorem, or greater efficiency
+than another method applied to the same input. Section~\ref{setting} defines
+the setting and the estimand, Sect.~\ref{estimator} the estimator and
+Sect.~\ref{tests} the tests; Sect.~\ref{results} reports the results and
+Sect.~\ref{limits} the limitations.
+
+\section{Setting and estimand}\label{setting}
+Let $(M,g)$ be a four-dimensional Ricci-flat spacetime and $p\prec q$ two
+events whose Alexandrov interval $I(p,q)=J^+(p)\cap J^-(q)$ lies in a convex
+normal neighbourhood. Let $T$ be the proper time from $p$ to $q$. Sprinkle
+$N$ events independently and uniformly with respect to volume in $I(p,q)$,
+that is, a Poisson sprinkling conditioned on its number of events. The data
+are order relations among the sprinkled events and the two tips. No
+coordinates, metric functions, density or flat reference sample are given.
+
+Two exact invariances bound what can be estimated. Under
+$g\to\lambda^2g$ the order and the sampling law are unchanged while
+orthonormal curvature components scale as $\lambda^{-2}$, so only
+$T^2C_{abcd}$ is identifiable. A spatial reflection also preserves the
+order, so the tensor is determined at most up to parity. The estimand is
+therefore $T^2C_{abcd}$ at the midpoint of the tip geodesic, in an
+orthonormal frame whose time axis is the tip direction and whose spatial
+axes are fixed by two landmarks, modulo one reflection. Equivalently it is
+the pair $E_{ij}=C_{0i0j}$, $B_{ij}=\tfrac12\epsilon_{ikl}C_{kl0j}$. We
+measure size and error by the full tidal norm
+$s=T^2(E_{ij}E_{ij}+B_{ij}B_{ij})^{1/2}$.
+
+\section{Estimator}\label{estimator}
+\subsection{Interval clocks}
+For $x\prec y$ in $I(p,q)$ let $n(x,y)$ be the number of sprinkled events in
+$I(x,y)$. Every event lies in $I(p,q)$, so $n(x,y)/N$ estimates
+$V(x,y)/V(p,q)$ without bias. In vacuum a small interval has
+$V=(\pi/24)\tau^4[1+O(C^2\tau^4)]$, because the $O(\tau^2)$ correction is
+built from the Ricci tensor \cite{gibbons,roy}. Hence
+\begin{equation}
+ y(x,y)=-\sqrt{n(x,y)/N} \label{clock}
+\end{equation}
+estimates the signed squared interval $\sigma(x,y)=-\tau(x,y)^2/T^2$ up to
+curvature-squared terms, with no reference to the density. One event belongs
+to many intervals, so the clocks are strongly correlated. For intervals $a$
+and $b$,
+\begin{equation}
+ \operatorname{Cov}\!\left(n_a/N,\,n_b/N\right)=(\pi_{ab}-\pi_a\pi_b)/N,
+ \label{cov}
+\end{equation}
+where $\pi_a$ is the probability of $I_a$ and $\pi_{ab}$ that of
+$I_a\cap I_b$. We estimate \eqref{cov} from the exact empirical frequencies
+of joint membership and propagate it to \eqref{clock} by the delta method,
+which gives the clock covariance $\widehat\Sigma$.
+
+\subsection{Model}
+Give each landmark normal coordinates $x_i\in\mathbb R^4$ based at the
+midpoint of the tip geodesic, in units of $T$, with the tips at
+$(\mp\tfrac12,0,0,0)$. Write $\Delta=x-y$, $\eta=\operatorname{diag}(-1,1,1,1)$
+and $C(x,y,x,y)=C_{abcd}x^ay^bx^cy^d$. The world-function expansion
+\cite{brewin} gives
+\begin{equation}
+ \sigma(x,y)=\eta(\Delta,\Delta)-\tfrac13C(x,y,x,y)
+ -\tfrac1{12}(x+y)^e\nabla_eC(x,y,x,y)+\sigma_2(x,y;C)+\cdots,
+ \label{model}
+\end{equation}
+with all tensors at the origin. The omitted terms start with second
+covariant derivatives of the curvature. The term $\sigma_2$ collects the
+known curvature-squared contributions and has no free parameter:
+\begin{align}
+ \sigma_2&=\tfrac1{45}\left(4\,u\!\cdot\!v-u\!\cdot\!u-v\!\cdot\!v\right)
+ +\tfrac12\eta(\Delta,\Delta)\left[\kappa(\Delta)-\kappa(\Delta_0)\right],\nonumber\\
+ \kappa(\Delta)&=\frac{20\,E_{ab}(\Delta)E^{ab}(\Delta)-3\,\eta(\Delta,\Delta)^2K}{10080},
+ \qquad E_{ab}(\Delta)=C_{acbd}\Delta^c\Delta^d,\quad
+ K=\tfrac18C_{abcd}C^{abcd}. \label{square}
+\end{align}
+Here $u_a=C(x,y,x,e_a)$, $v_a=C(x,y,y,e_a)$ and dots are taken with $\eta$.
+The first part is the second-order world function \cite{brewin}. The second
+converts volume clocks to proper times for both the interval and the
+reference interval, whose separation is $\Delta_0=(1,0,0,0)$; it uses the
+vacuum expansion $V=(\pi/24)\tau^4[1+\kappa+\cdots]$, where
+$\kappa=\tau^4(17E^2+3B^2)/10080$ for the observer along
+$\Delta$.\footnote{This coefficient was derived independently and checked
+against exact plane-wave volumes: with it, the residual of the volume clock
+for a constant wave with $s=1.5$ falls from $3.9\times10^{-4}$ to
+$1.7\times10^{-6}$. We were unable to reproduce the corresponding
+coefficient of Eq.~(79) in Ref.~\cite{wang} (arXiv version 2), from which
+ours differs by about 15\% for a plane wave. The term $\sigma_2$ changes the
+fitted curvature by about 1\% at $s=1.5$ and by less at weaker curvature.}
+
+The unknowns are the landmark coordinates, the ten Weyl components $c$ in a
+fixed basis of five electric and five magnetic tensors, and the 24
+components $g$ of $\nabla C$ allowed by the vacuum Bianchi identity. The
+rotation gauge is fixed by placing the first landmark in the $(t,x)$ plane
+and the second in the $(t,x,y)$ hyperplane, which leaves $4L-3$ coordinates
+for $L$ landmarks. No algebraic type, polarization or profile is imposed.
+
+\subsection{Linear response and identifiability}
+With normal coordinates based at an event $o$, the quantity
+$G_{xy}=\tfrac12(\sigma_{ox}+\sigma_{oy}-\sigma_{xy})
+=\eta(x,y)+\tfrac16C(x,y,x,y)+\cdots$ is a Gram matrix in flat spacetime.
+For four reference events $a_i$ with Gram matrix $G_A$ and
+$g_x=(G_{a_ix})$, flat geometry forces the Schur residual
+$D_{xy}=G_{xy}-g_x^{\!\top}G_A^{-1}g_y$ to vanish. To first order in the
+curvature, with $k_x=G_A^{-1}g_x$,
+\begin{equation}
+ 6D_{xy}=C(x,y,x,y)-\sum_ik_{yi}C(a_i,x,a_i,x)-\sum_ik_{xi}C(a_i,y,a_i,y)
+ +\sum_{ij}k_{xi}k_{yj}C(a_i,a_j,a_i,a_j). \label{schur}
+\end{equation}
+The failure of interval data to embed in flat spacetime is thus linear in
+$C$. Lorentzian Gram embedding is established~\cite{clough} and is also the
+coordinate step of Ref.~\cite{madsen}; the residual \eqref{schur} is what
+carries the tidal information. The estimator does not solve \eqref{schur};
+it fits \eqref{model} jointly, so that every clock and its covariance are
+used. Exact rational computations for explicit timelike configurations give
+the response matrix of \eqref{schur} rank ten, and rank 34 when the gradient
+terms of \eqref{model} are added. Nonvanishing minors are polynomial
+statements, so all 34 parameters are generically locally identifiable. This
+says nothing about conditioning. In particular, if every landmark lies on
+one of two time slices, write $x=(t,\mathbf r)$, $y=(s,\mathbf z)$ and
+$\mathbf F(\mathbf r)=\mathbf r\times(B\mathbf r)$; the magnetic part of the
+response is $2[t\,\mathbf r\!\cdot\!\mathbf F(\mathbf z)
++s\,\mathbf z\!\cdot\!\mathbf F(\mathbf r)]$, and the displacements
+$\delta\mathbf r=s\mathbf F(\mathbf r)/3$,
+$\delta\mathbf z=t\mathbf F(\mathbf z)/3$ reproduce its effect on every
+cross-slice interval while leaving the clocks to the tips unchanged. All
+five magnetic components are then absorbed by the unknown positions at first
+order. A third time band removes the degeneracy, which is why the landmarks
+are placed in three bands.
+
+\subsection{Landmark selection}
+Landmarks are chosen from the order of an independent selection sample of
+4096 events, so that the selection does not condition the measurement
+sample. For candidate $i$ the counts to the tips give
+$\alpha_i=\sqrt{n_{pi}/n_{pq}}$ and $\beta_i=\sqrt{n_{iq}/n_{pq}}$, and the
+flat proxies $t_i=(\alpha_i-\beta_i)/2$,
+$r_i^2=\tfrac14+t_i^2-(\alpha_i+\beta_i)/2$. Candidates are kept in three
+bands, $t\in[-0.36,-0.24]$, $|t|\le0.075$ and $t\in[0.24,0.36]$, with
+$0.075\le r\le0.2$. They are ranked by connectivity and radius and pruned
+until every landmark has at least eight clocks and every central landmark
+at least four to each outer band. We use the union of the selections with
+caps of 64 and 128 landmarks. In the accuracy test and the benchmark below
+this gave 104--131 landmarks and $2.8$--$4.5\times10^3$ clocks, a clock
+being a related pair whose interval holds at least two selection events.
+These settings were fixed in preliminary runs before the tests reported
+here. The estimator then needs, for each measurement event, only its
+relations to the landmarks: $2LN$ bits, and no $N\times N$ order matrix.
+
+\subsection{Fit and uncertainty}
+The estimate minimizes
+$\chi^2(\theta)=[y-\sigma(\theta)]^{\!\top}\widehat\Sigma^{-1}[y-\sigma(\theta)]$
+over $\theta=(x_i,c,g)$ by Levenberg--Marquardt iteration from four
+deterministic starts built from the tip clocks. The covariance $S$ of
+$\hat c$ is the corresponding block of $(J^{\!\top}\widehat\Sigma^{-1}J)^{-1}$,
+with $J$ the Jacobian at the solution. We report the ball
+\begin{equation}
+ \|C-\widehat C\|\le r=\frac{(\chi^2_{10;\gamma}\,\lambda_{\max})^{1/2}
+ +\delta\|\widehat C\|}{1-\delta}, \label{ball}
+\end{equation}
+where $\lambda_{\max}$ is the largest eigenvalue of $S$ in the tidal metric,
+$\gamma$ the nominal coverage and $\delta=0.02$ an allowance for model bias.
+The allowance is an assumption that the tests check; it is not derived from
+the data. For detection we use $Q=\hat c^{\top}S^{-1}\hat c$, nominally
+$\chi^2_{10}$ in flat spacetime.
+
+\section{Numerical tests}\label{tests}
+\subsection{Test geometries}
+The tests use exact vacuum plane waves in Brinkmann form,
+\begin{equation}
+ \dd s^2=2\,\dd u\,\dd v+H_{ab}(u)x^ax^b\,\dd u^2+\delta_{ab}\dd x^a\dd x^b,
+ \qquad\operatorname{tr}H=0, \label{wave}
+\end{equation}
+with tips $p=(u,v,x)=(0,\tfrac12,0)$ and $q=(1,-\tfrac12,0)$. Then
+$T=\sqrt2$, $R_{uaub}=-H_{ab}$, and the midpoint tidal norm is $s=2A$ when
+$H(\tfrac12)$ has eigenvalues $\pm A$. Two families are used: a rotating
+polarization, $H(u)=R_\phi\operatorname{diag}(A,-A)R_\phi^{\!\top}$ with
+$\phi=w(u-\tfrac12)$, $A\in\{0,0.25,0.75\}$ and $w\in\{0,\pm0.5\}$; and the
+oscillating profile of Sect.~\ref{ibwave}. Since $\det g=-1$, uniform
+sampling in the chart is uniform in volume. Two events with $u_x<u_y$ are
+related exactly when $v_x-v_y$ exceeds the minimal transverse action between
+them, a quadratic form in the transverse endpoints built from the Jacobi
+propagator~\cite{harte}. The generators evaluate it with guarded
+floating-point margins and never guess a pair inside the guard.
+
+\subsection{Blind estimation and pre-specified criteria}\label{procedure}
+The estimator runs in a separate process that reads only an order archive
+containing the selection order, the landmark labels, the landmark--event
+relation bits and $N$. The generator and the true geometry are accessed only
+after the fit has been written to disk. For each test, the cases, random
+seeds, sample sizes, statistics, thresholds and rules for failed cases were
+fixed and recorded in a version-controlled repository before the
+corresponding data were generated. No case was regenerated, extended or
+removed, and failed cases are counted as failures. Two quantities use the
+true geometry: the error $\|\widehat C-C\|$, taken modulo the reflection,
+and the \emph{continuum bias}, obtained by applying the same fit to exact
+interval volumes on the same landmarks, which isolates the error of the
+model \eqref{model}. After each test, separately written code recomputed all
+reported outcomes from the saved fits.
+
+\subsection{Implementation and use of AI tools}\label{implementation}
+The estimator, the generators and the checking code are written in Python
+with NumPy~\cite{numpy} and SciPy~\cite{scipy}. The relation tests and the
+integer sums of the clock covariance were run on a graphics processor with
+the CuPy library. All runs used one workstation with eight CPU cores,
+126\,GiB of memory and one graphics processor.
+
+Large language models (OpenAI Codex and Anthropic Claude) were used
+extensively in this work, under the direction of the author: for writing and
+running the code, for the derivations and their numerical checks, for the
+comparison with the literature and for drafting the text. Since such tools
+can produce plausible errors, the conclusions rest on the safeguards of
+Sect.~\ref{procedure}: criteria fixed before the data were generated, an
+estimator isolated from the true geometry, no exclusion of cases, and
+recomputation of the outcomes by separate code. The bibliographic data of
+all references were checked against publisher, arXiv or repository records. The author
+has examined the results and the text and takes full responsibility for
+them.
+
+\section{Results}\label{results}
+\subsection{Coverage}
+We generated 512 independent cases from the product mixture
+$A\in\{0,0.25,0.75\}$, $w\in\{0,\pm0.5\}$, each with $N=262{,}144$. A case
+counts as a success if the fit is valid, its continuum bias is at most 2\%,
+and the true tensor lies in the ball \eqref{ball} with $\gamma=0.95$. There
+were 509 successes, which gives an exact two-sided 95\% confidence interval
+\cite{clopper} of $[0.983,0.999]$ for the success probability; the
+pre-specified requirement was a lower limit of at least $0.95$. Two of the
+failures had an empty measurement clock, and in one flat case the ball did
+not contain the true tensor. At this $N$ the balls are wide, so this test
+concerns the reliability of the reported uncertainty and not precision. An
+earlier version of the estimator, without $\sigma_2$, did not meet the same
+requirement: it had 246 successes in 256 cases, and nine of the failures
+were violations of the bias allowance. We report that result unchanged; it
+is the reason for including $\sigma_2$.
+
+\subsection{Accuracy at weak curvature}
+The pre-specified criterion required, jointly for eight cases, a continuum
+bias of at most 2\%, the true tensor inside the ball, and an error plus
+radius of at most 25\% of $s$ for six cases with $A=0.25$ ($s=0.5$), or at
+most $0.125$ for two flat cases. The family confidence level was 95\%, so
+that each ball has $\gamma=0.99375$, and the sample sizes were chosen for
+90\% joint power from bounds on $N\lambda_{\max}$ fixed in advance. All
+eight cases met the criterion (Table~\ref{accuracy}). The two flat cases had
+errors of $0.023$ and $0.022$ with radii of $0.056$. For the three landmark
+selections that had been used in an earlier diagnostic run,
+$N\lambda_{\max}$ changed by less than 0.5\% between $N=4.2\times10^6$ and
+the final $N$, so the noise decreases as $N^{-1/2}$. The number of events
+needed for a given relative precision is therefore proportional to
+$N\lambda_{\max}/s^2$; $N\lambda_{\max}$ was between $2.2\times10^3$ and
+$6.7\times10^3$ for the selections of this test and of the diagnostic run,
+and between $2.6\times10^3$ and $3.5\times10^3$ in the benchmark below. In
+the diagnostic run, which had no pre-specified accuracy criterion, the
+stronger waves with $A=0.75$ gave errors of 1.6--5.9\% at
+$N=4.2\times10^6$.
+
+\begin{table}[t]
+\centering\small
+\caption{Weak-curvature accuracy test, $s=0.5$. Errors, radii and biases
+are percentages of the true tidal norm; the radius is that of the
+simultaneous ball of Eq.~\eqref{ball} with $\gamma=0.99375$}
+\label{accuracy}
+\begin{tabular}{rrrrrrr}
+\toprule
+Case & $w$ & $N/10^6$ & Error & Radius & Error $+$ radius & Continuum bias\\
+\midrule
+2 & $0$ & 49.3 & 3.85 & 11.59 & 15.44 & 0.004\\
+3 & $+0.5$ & 51.1 & 7.36 & 11.47 & 18.83 & 1.24\\
+4 & $-0.5$ & 26.0 & 5.03 & 11.39 & 16.42 & 1.28\\
+5 & $-0.5$ & 71.7 & 3.46 & 8.47 & 11.94 & 1.25\\
+6 & $0$ & 71.7 & 5.20 & 11.85 & 17.05 & 0.003\\
+7 & $+0.5$ & 71.7 & 4.48 & 8.98 & 13.45 & 1.26\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The wave of \IB}\label{ibwave}
+The linearized wave of Ref.~\cite{ib} has amplitude $h_0=10^{-2}$ and tidal
+profile $\tfrac12\omega^2h_0\cos[\omega(t-z)]$ along the central observer,
+in a region of height $H=\lambda/2$ with a crest at mid-height. In the units
+of \eqref{wave} this is $\omega T=\pi$ and
+\begin{equation}
+ H(u)=A_0\sin(\pi u)\operatorname{diag}(1,-1),\qquad
+ A_0=\pi^2h_0/2=0.0493,\qquad s=2A_0=0.0987 .
+\end{equation}
+The wave is five times weaker than in Table~\ref{accuracy} and varies by
+half a cycle across the window. We use the exact vacuum wave with this axis
+profile, since the linearized metric is vacuum only to first order in $h_0$;
+the polarization is rotated by a quarter turn, which the estimator does not
+use. The estimator, the landmark rule and the uncertainty were not changed.
+
+The criterion was fixed before the data were generated. At each of four
+nested levels $N=2^{20},2^{22},2^{24},2^{26}$, with two independent wave
+cases and two independent flat controls, the level counts as a detection if
+$Q>q^*=\chi^2_{10}(0.999)=29.59$ in both wave cases and in neither control.
+Table~\ref{benchmark} and Fig.~\ref{fig} give the outcome: no detection at
+$1.05\times10^6$ events, a mixed outcome at $4.19\times10^6$, and detection
+at $1.68\times10^7$ and $6.71\times10^7$. The eight control values average
+$11.2$, consistent with the $\chi^2_{10}$ mean of 10, but two independent
+controls cannot test a $10^{-3}$ tail, so the false-positive level is
+nominal. The predictions recorded with the criterion were
+$Q\approx15,33,100,370$ and a continuum bias of 10--20\%.
+
+\begin{table}[t]
+\centering\small
+\caption{Detection statistic $Q$ at the condition of Ref.~\cite{ib};
+threshold $q^*=29.59$. Levels are nested prefixes of one event stream per
+case, so the rows are not independent}
+\label{benchmark}
+\begin{tabular}{rrrrrl}
+\toprule
+$N$ & Wave 0 & Wave 1 & Flat 2 & Flat 3 & Outcome\\
+\midrule
+1,048,576 & 11.02 & 15.70 & 10.62 & 4.36 & not detected\\
+4,194,304 & 16.24 & 29.98 & 17.78 & 9.84 & mixed\\
+16,777,216 & 75.60 & 97.03 & 11.46 & 10.87 & detected\\
+67,108,864 & 347.12 & 313.70 & 10.82 & 13.47 & detected\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=119mm]{Fig1.pdf}
+\caption{Benchmark at the condition of Ref.~\cite{ib}. \textbf{a} Detection
+statistic $Q$ for the two wave cases (filled symbols) and the two flat
+controls (open symbols); circles and squares mark the independent cases of
+each kind, and the dashed line is the threshold $q^*=29.59$. \textbf{b}
+Full-tidal error (filled symbols) and nominal 95\% confidence radius (open
+symbols) of the two wave cases, relative to the crest tidal norm; the dashed
+line is the bias of the model in the continuum limit}
+\label{fig}
+\end{figure}
+
+This result is a detection and not an accurate measurement. At the top
+level the errors are 13\% and 25\% of $s$, with nominal 95\% radii of 30\%
+and 32\%. The estimated electric eigenvalues, $(-0.0455,0.0003,0.0451)$ and
+$(-0.0429,0.0026,0.0403)$, show the pattern of the true ones,
+$(-0.0493,0,0.0493)$. The continuum bias is 12.1\% and 11.6\%: the fit
+returns a window-averaged curvature, $0.88$--$0.89$ of the crest value,
+because the half-cycle variation lies outside \eqref{model}. This violates
+the allowance $\delta$, so the balls are not accuracy statements for this
+wave. The residuals do not show the misfit: the continuum refit has
+$\chi^2\approx0.3$ at the top level, and the sixteen finite fits have
+$\chi^2$ within $2.3$ standard deviations of their
+$3.1$--$3.9\times10^3$ degrees of freedom. The nominal signal-to-noise ratio
+along the electric pattern of the true tensor reaches one at
+$N=2.6$--$2.8\times10^5$.
+
+Two further observations are post hoc and were not part of the criterion.
+The noncentrality implied by the continuum refit predicts $Q=14$--$15$,
+$28$--$29$, $80$--$87$ and $290$--$316$ at the four levels, within $1.4$
+standard deviations of all eight observed values, and places 50\% and 90\%
+detection power at $N\approx4.5$--$4.9\times10^6$ and
+$7.7$--$8.4\times10^6$. Moreover, only about $1.6\times10^{-4}$ of the
+landmark--event relations differ from those of the flat metric in the same
+chart (86 and 83 of about $5\times10^5$ among the first 4096 events); the
+whole signal is carried by these.
+
+\subsection{Comparison in common units}
+The number $N_{\rm total}$ of Ref.~\cite{ib} counts elements in a thin box
+of volume $(a_w\delta)^2(L+a_w\delta)H$ around two chains of thickness
+$\delta/H=A_4(\pi\rho H^4/24)^{-\beta_4}$, with $A_4\approx0.30$--$0.32$ and
+$\beta_4\approx0.11$. With their most liberal $a_w=2$ and $L=\lambda/2$,
+their Eq.~(20), $N_{\rm total}\approx4.5\times10^{11}/m^{7/2}$, gives the
+densities in Table~\ref{units}, where $m$ is the number of mid-level
+elements of each chain bundle. Our $N$ counts events in the whole interval
+of height $H$, of volume $\pi H^4/24$. The level at which the pre-specified
+criterion was met lies at a density $2.4\times10^2$ ($m=11$) to
+$2.7\times10^4$ ($m=4$) times lower, or at a discreteness scale
+$\ell=\rho^{-1/4}$ that is 4 to 13 times coarser, under a stricter
+criterion.
+
+\begin{table}[t]
+\centering\small
+\caption{Event counts in common units. $H$ is the height of the region and
+$\ell=\rho^{-1/4}$. The first two rows are the requirement estimated in
+Ref.~\cite{ib} for geodesic deviation with an ideal distance estimator, for
+which no recovery was performed; the last three rows are this work. S/N
+denotes the signal-to-noise ratio}
+\label{units}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+ & Criterion & Events & $\rho H^4$ & $H/\ell$\\
+\midrule
+Ref.~\cite{ib}, $m=11$ & S/N $=1$, one component & $1.0\times10^8$ (box) & $3.1$--$3.6\times10^{10}$ & 420--440\\
+Ref.~\cite{ib}, $m=4$--$5$ & S/N $=1$, one component & $1.6$--$3.5\times10^9$ (box) & $1.1$--$3.5\times10^{12}$ & 1020--1370\\
+\midrule
+nominal & S/N $=1$, electric pattern & $2.6$--$2.8\times10^5$ & $2.0$--$2.1\times10^6$ & 38\\
+post hoc & $Q>q^*$ with 90\% power & $7.7$--$8.4\times10^6$ & $5.9$--$6.4\times10^7$ & 88--90\\
+pre-specified & $Q>q^*$, both waves, no control & $1.68\times10^7$ & $1.28\times10^8$ & 106\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This is not a like-for-like comparison of two procedures. The number of
+Ref.~\cite{ib} is an estimated requirement for measuring the separation of
+two chains. Our estimator uses the relations between all events of the
+interval and about 130 landmarks, assumes vacuum, and fits a local model.
+We did not implement geodesic deviation, and neither method was applied to
+the input of the other. The difference is in the direction anticipated in
+the outlook of Ref.~\cite{ib}: more information from the sprinkling, an
+exact vacuum wave, and lower memory requirements.
+
+\subsection{Computational cost}
+The accuracy test used $3.9\times10^8$ measurement events and
+$9.8\times10^{10}$ landmark--event relation tests, and ran in 50 minutes
+with a peak memory of 52\,GiB. The benchmark used $2.7\times10^8$ events and
+$7.0\times10^{10}$ relation tests, and ran in 60 minutes with a peak of
+55\,GiB. At the level of detection one fit takes about three minutes and
+13--34\,GiB.
+
+\section{Limitations and outlook}\label{limits}
+The first limitation is that detection is not accuracy. The bias of the
+model was at most 0.004\% for constant profiles, 1.2--1.3\% for $|w|=0.5$,
+and 12\% for the half-cycle wave, and the order data alone did not reveal
+it. An accuracy statement therefore needs a regularity assumption on how the
+curvature varies across the window. Such an assumption cannot be avoided.
+For $H_w(u)=a\cos[w(u-\tfrac12)]\operatorname{diag}(1,-1)$ with fixed $a$,
+an integration by parts along the minimizing path bounds the difference
+between the minimal transverse action and its flat value by a constant times
+$aR^2/w$ for transverse endpoints bounded by $R$. For any fixed $N$ the
+probability law of the sampled order~\cite{bombelli} thus approaches that of
+flat spacetime as $w\to\infty$, while the midpoint tidal norm stays $2a$, so
+no estimator is uniformly accurate over all smooth vacuum profiles at fixed
+$N$.
+
+The second limitation is scope. Only plane waves were tested, although no
+algebraic type is imposed. The estimator assumes vacuum, because Ricci terms
+enter \eqref{clock} and \eqref{model} at lower order; it also assumes
+uniform sprinkling, a regular normal neighbourhood and given tips. Its
+uncertainty is nominal and Gaussian. Coverage was tested at
+$N=2.6\times10^5$ on one population; at larger $N$ it rests on the cases
+reported above and on four flat controls.
+
+Third, the results are numerical observations and not a convergence proof
+of the kind given in Ref.~\cite{madsen}. At a fixed window the noise
+decreases as $N^{-1/2}$ and the bias is fixed by the window. For a window of
+size $\epsilon$ at density $\rho$ the noise in the physical curvature scales
+as $\rho^{-1/2}\epsilon^{-4}$ and the bias as a positive power of
+$\epsilon$, which suggests the regime $\epsilon\to0$,
+$\rho\epsilon^8\to\infty$. We have not proved this for the random landmark
+rule and the nonlinear fit. A convergence proof for a local fit of the kind
+used here, tests on other vacuum geometries, and a comparison with geodesic
+deviation on equal inputs are the natural next steps.
+
+\section*{Statements and Declarations}
+\paragraph{Funding} No funding was received for conducting this study.
+\paragraph{Competing interests} The author has no competing interests to
+declare that are relevant to the content of this article.
+\paragraph{Data and code availability} The source code of the estimator and
+of the generators, the pre-specified protocols, the summaries of all runs
+and the records of the checks are available at
+\url{https://github.com/lpaiu-cs/causal-spacetime}, in the directories
+\nolinkurl{experiments/positive_control} and
+\nolinkurl{docs/paper/paper_a/intrinsic_weyl}. The accuracy test corresponds
+to commit \texttt{0ff9802}, and the benchmark to commits \texttt{c14d4a2}
+(run) and \texttt{a54ac97} (check). The order archives, about 23\,GiB for
+the accuracy test and the benchmark, can be regenerated from the recorded
+seeds and are available from the author on reasonable request.
+\paragraph{Author contribution} J.K. is the sole author: J.K. conceived
+and directed the study, examined the results and wrote the manuscript, with
+the assistance of the AI tools described in Sect.~\ref{implementation}.
+
+\begin{thebibliography}{99}\small
+\bibitem{zeeman} Zeeman, E.C.: Causality implies the Lorentz group. J. Math. Phys. \textbf{5}, 490--493 (1964). \doi{10.1063/1.1704140}
+\bibitem{hkm} Hawking, S.W., King, A.R., McCarthy, P.J.: A new topology for curved space--time which incorporates the causal, differential, and conformal structures. J. Math. Phys. \textbf{17}, 174--181 (1976). \doi{10.1063/1.522874}
+\bibitem{malament} Malament, D.B.: The class of continuous timelike curves determines the topology of spacetime. J. Math. Phys. \textbf{18}, 1399--1404 (1977). \doi{10.1063/1.523436}
+\bibitem{blms} Bombelli, L., Lee, J., Meyer, D., Sorkin, R.D.: Space-time as a causal set. Phys. Rev. Lett. \textbf{59}, 521--524 (1987). \doi{10.1103/PhysRevLett.59.521}
+\bibitem{surya} Surya, S.: The causal set approach to quantum gravity. Living Rev. Relativ. \textbf{22}, 5 (2019). \doi{10.1007/s41114-019-0023-1}
+\bibitem{braun} Braun, M.: Spacetime reconstruction by order and number. arXiv:2507.01907 (2025). \url{https://arxiv.org/abs/2507.01907}
+\bibitem{myrheim} Myrheim, J.: Statistical geometry. CERN preprint TH-2538 (1978). \url{https://cds.cern.ch/record/293594}
+\bibitem{brightwell} Brightwell, G., Gregory, R.: Structure of random discrete spacetime. Phys. Rev. Lett. \textbf{66}, 260--263 (1991). \doi{10.1103/PhysRevLett.66.260}
+\bibitem{meyer} Meyer, D.A.: The dimension of causal sets. Ph.D. thesis, Massachusetts Institute of Technology (1988). \url{http://hdl.handle.net/1721.1/14328}
+\bibitem{benincasa} Benincasa, D.M.T., Dowker, F.: Scalar curvature of a causal set. Phys. Rev. Lett. \textbf{104}, 181301 (2010). \doi{10.1103/PhysRevLett.104.181301}
+\bibitem{gibbons} Gibbons, G.W., Solodukhin, S.N.: The geometry of small causal diamonds. Phys. Lett. B \textbf{649}, 317--324 (2007). \doi{10.1016/j.physletb.2007.03.068}
+\bibitem{roy} Roy, M., Sinha, D., Surya, S.: Discrete geometry of a small causal diamond. Phys. Rev. D \textbf{87}, 044046 (2013). \doi{10.1103/PhysRevD.87.044046}
+\bibitem{rideout} Rideout, D., Wallden, P.: Spacelike distance from discrete causal order. Class. Quantum Grav. \textbf{26}, 155013 (2009). \doi{10.1088/0264-9381/26/15/155013}
+\bibitem{eichhorn} Eichhorn, A., Surya, S., Versteegen, F.: Induced spatial geometry from causal structure. Class. Quantum Grav. \textbf{36}, 105005 (2019). \doi{10.1088/1361-6382/ab114b}
+\bibitem{boguna} Bogu\~n\'a, M., Krioukov, D.: Measuring spatial distances in causal sets via causal overlaps. Phys. Rev. D \textbf{110}, 024008 (2024). \doi{10.1103/PhysRevD.110.024008}
+\bibitem{kambor} Kambor, J., Nomaan X: Manifold properties from causal sets using chains. Class. Quantum Grav. \textbf{38}, 025012 (2021). \doi{10.1088/1361-6382/abc8c9}
+\bibitem{barton} Barton, J., Borza, S., R\"ohrig, J.: Ollivier--Ricci curvature for causal sets. arXiv:2606.04910 (2026). \url{https://arxiv.org/abs/2606.04910}
+\bibitem{madsen} Madsen, N.: Reconstruction of the Riemann tensor from causal order and element counts. arXiv:2610.36695 (2026). \url{https://arxiv.org/abs/2610.36695}
+\bibitem{ib} Ibrahim, N., Bombelli, L.: The Weyl tensor for gravitational-wave causal sets: thickness of geodesic analogs and geodesic deviation. arXiv:2611.09056 (2026). \url{https://arxiv.org/abs/2611.09056}
+\bibitem{shumana} Shuman, S.: Partial derivatives on causal sets. arXiv:2405.10574 (2024). \url{https://arxiv.org/abs/2405.10574}
+\bibitem{shumanb} Shuman, S.: The geometry of tangent spaces on causal sets. arXiv:2405.11805 (2024). \url{https://arxiv.org/abs/2405.11805}
+\bibitem{alfyorov} Alfyorov, D., Shnyukov, I.: Weyl curvature from the Hasse diagram: a parameter-free bridge formula for causal sets. Preprint, Zenodo (2026). \doi{10.5281/zenodo.19364212}
+\bibitem{ghosh} Ghosh, A.: Sample-complexity bounds and an exact bulk-sector channel obstruction for curvature estimation on finite causal sets. Preprint, Zenodo (2026). \doi{10.5281/zenodo.21931074}
+\bibitem{szekeres} Szekeres, P.: The gravitational compass. J. Math. Phys. \textbf{6}, 1387--1391 (1965). \doi{10.1063/1.1704788}
+\bibitem{puetzfeld} Puetzfeld, D., Obukhov, Y.N., L\"ammerzahl, C.: Gravitational clock compass in general relativity. Phys. Rev. D \textbf{98}, 024032 (2018). \doi{10.1103/PhysRevD.98.024032}
+\bibitem{brewin} Brewin, L.: Riemann normal coordinate expansions using Cadabra. Class. Quantum Grav. \textbf{26}, 175017 (2009). \doi{10.1088/0264-9381/26/17/175017}
+\bibitem{wang} Wang, J.: Geometry of small causal diamonds. Phys. Rev. D \textbf{100}, 064020 (2019). \doi{10.1103/PhysRevD.100.064020}
+\bibitem{clough} Clough, J.R., Evans, T.S.: Embedding graphs in Lorentzian spacetime. PLoS ONE \textbf{12}, e0187301 (2017). \doi{10.1371/journal.pone.0187301}
+\bibitem{harte} Harte, A.I., Drivas, T.D.: Caustics and wave propagation in curved spacetimes. Phys. Rev. D \textbf{85}, 124039 (2012). \doi{10.1103/PhysRevD.85.124039}
+\bibitem{numpy} Harris, C.R., Millman, K.J., van der Walt, S.J., et al.: Array programming with NumPy. Nature \textbf{585}, 357--362 (2020). \doi{10.1038/s41586-020-2649-2}
+\bibitem{scipy} Virtanen, P., Gommers, R., Oliphant, T.E., et al.: SciPy 1.0: fundamental algorithms for scientific computing in Python. Nat. Methods \textbf{17}, 261--272 (2020). \doi{10.1038/s41592-019-0686-2}
+\bibitem{clopper} Clopper, C.J., Pearson, E.S.: The use of confidence or fiducial limits illustrated in the case of the binomial. Biometrika \textbf{26}, 404--413 (1934). \doi{10.1093/biomet/26.4.404}
+\bibitem{bombelli} Bombelli, L.: Statistical Lorentzian geometry and the closeness of Lorentzian manifolds. J. Math. Phys. \textbf{41}, 6944--6958 (2000). \doi{10.1063/1.1288494}
+\end{thebibliography}
+\end{document}
