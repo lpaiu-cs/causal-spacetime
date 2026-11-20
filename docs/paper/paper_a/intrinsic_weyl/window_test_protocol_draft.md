@@ -168,8 +168,11 @@ design (`2^25`, `R = 64`) the power of G1 is 0.98 (`kappa = 1`) and 0.94
 (`kappa = 1.2`) at the continuum reading, 0.87 and 0.81 if the reading is one
 percent lower, and 0.61 and 0.53 if two percent lower. A finite-N bias of two
 percent would therefore most likely give UNRESOLVED, not a false ACCURATE.
-The three-point correction cannot pass at `t = 0.05` (continuum reading
-0.970). G2 has power near 1 (single-window reading 0.885).
+The three-point first-order correction is not a candidate for the primary
+gate: its continuum reading, 0.970, leaves a margin of 0.020 to `1 - t`, and
+at `2^24` it does not reach 90% power within 256 replicates (0.77 at 256,
+`kappa = 1`). G2 has power 0.985 at 64 replicates even with the one-window
+variance at `2^24` and `kappa = 1.2` (single-window reading 0.885).
 
 Cost model, scaled from one calibration replicate at `2^24` and to be checked
 by the pilot: about 16 GPU hours and 15 CPU hours of fits at the proposed
@@ -214,11 +217,12 @@ others. Summaries and a results note are committed.
    `2^25`); 0.04 costs about 1.6e10 events.
 2. **Events per window and replicates.** Proposed `2^25` and 64. `2^24` needs
    about twice the replicates and fits for the same GPU time and is more
-   exposed to finite-N bias; `2^26` halves the fits but needs about 74 GB per
-   window during generation.
+   exposed to finite-N bias; `2^26` needs about 0.6 times the replicates and
+   fits (28 / 32) but about 74 GB per window during generation.
 3. **Primary operator.** Proposed minimum-norm (no wave type assumed).
-   Plane-wave with the estimated principal null direction is slightly
-   cheaper (variance ratio 1.21 instead of 1.29).
+   Plane-wave with the estimated principal null direction has a slightly
+   smaller variance (ratio 1.21 instead of 1.29) but needs the same
+   replicates at `t = 0.05`, and it assumes the wave type.
 4. **Amplitude.** Proposed the benchmark `h0 = 0.01`. Twice that would need
    about a quarter of the events, but would no longer be the Ibrahim–Bombelli
    condition.
