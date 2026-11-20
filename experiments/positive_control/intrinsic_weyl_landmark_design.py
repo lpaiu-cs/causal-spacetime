@@ -596,15 +596,25 @@ def ideal_geometry(config, wave, amplitude, log2_size, n=REFERENCE_N):
         )
     )
     normal = wave.normal_coordinates(brinkmann)
-    dt = normal[None, :, 0] - normal[:, None, 0]
-    dx2 = ((normal[None, :, 1:] - normal[:, None, 1:]) ** 2).sum(axis=-1)
-    tau2 = np.where(dt > 0, dt * dt - dx2, -1.0)
-    tau = np.sqrt(np.maximum(np.maximum(tau2, tau2.T), 0))
-    mask = tau >= tau_min
-    np.fill_diagonal(mask, False)
-    mask[0, -1] = mask[-1, 0] = False
-    if not (np.all(mask[0, 1:-1]) and np.all(mask[1:-1, -1])):
-        raise ArithmeticError("A placed landmark lacks a tip clock")
+
+    def clocks_of(normal):
+        dt = normal[None, :, 0] - normal[:, None, 0]
+        dx2 = ((normal[None, :, 1:] - normal[:, None, 1:]) ** 2).sum(axis=-1)
+        tau2 = np.where(dt > 0, dt * dt - dx2, -1.0)
+        tau = np.sqrt(np.maximum(np.maximum(tau2, tau2.T), 0))
+        mask = tau >= tau_min
+        np.fill_diagonal(mask, False)
+        mask[0, -1] = mask[-1, 0] = False
+        return dt, mask
+
+    dt, mask = clocks_of(normal)
+    # The curvature moves normal coordinates slightly off the flat placement,
+    # so a landmark placed at the tip-clock floor can fall below it. Such
+    # landmarks are dropped and counted; a tip clock depends only on its own
+    # landmark, so one pass suffices.
+    keep = np.r_[True, mask[0, 1:-1] & mask[1:-1, -1], True]
+    brinkmann, normal = brinkmann[keep], normal[keep]
+    dt, mask = clocks_of(normal)
     pairs = np.column_stack(np.nonzero(np.triu(mask, 1)))
     forward = dt[pairs[:, 0], pairs[:, 1]] > 0
     a = np.where(forward, pairs[:, 0], pairs[:, 1])
@@ -616,7 +626,8 @@ def ideal_geometry(config, wave, amplitude, log2_size, n=REFERENCE_N):
     start = gauge(normal)
     result = {
         "ideal": config,
-        "landmarks": len(t),
+        "landmarks": len(normal) - 2,
+        "dropped_without_tip_clock": int(np.sum(~keep)),
         "clocks": len(pairs),
         "reference_n": n,
     }
