@@ -106,6 +106,18 @@ them by 1°, 3° or 10° raises the corrected bias to as much as 0.7%, 1.4% or
 4.5%, so an order-only frame link accurate to about a degree is the open
 requirement. Nothing here is a finite-N result.
 
+The [frame-link study](frame_link_results.md) (2026-11-21, deterministic,
+continuum, no criterion) meets that requirement. Each window off the centre
+adds the landmarks of its inner neighbour that lie inside it; the rotation
+between two windows' gauge frames is the Procrustes rotation of the shared
+landmarks' inferred coordinates, chained to the outer windows. The link
+errors are 0.005–0.029° systematic, almost all of it the curvature's own
+distortion of normal coordinates, and 0.08–0.10° statistical at 16,777,216
+events per window. The corrected biases equal the oracle-aligned ones to 8e-6
+in both cases at four wavelengths. In this idealized setting (expected-count
+clocks, flat clock covariances, independent windows) the five-window
+correction is order-only from end to end. Nothing here is a finite-N result.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
