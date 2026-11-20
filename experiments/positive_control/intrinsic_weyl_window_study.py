@@ -438,10 +438,25 @@ def whitening(covariance):
 def alias_map(points, mask, whiten):
     """Weyl rows of J5^+ Jd at the given gauge-fixed coordinates, zero curvature.
 
+    Also returns the column consistency check and the linearized covariance
+    of the ten Weyl coefficients.
+    """
+    design = fifth_degree_design(points, mask, whiten)
+    inverse = np.linalg.pinv(design["j5"])
+    rows = slice(design["dimension"], design["dimension"] + 10)
+    influence = inverse[rows]
+    alias = (inverse @ design["jd"])[rows]
+    return alias, design["consistency"], influence @ influence.T
+
+
+def fifth_degree_design(points, mask, whiten):
+    """Whitened fifth-degree Jacobian at zero curvature and second-derivative columns.
+
     J5: coordinates, ten Weyl and 24 gradient columns of the fifth-degree jet
     with curvature-square terms; Jd: the 100 packed second-derivative
     components (symmetric fill), whose span-of-basis restriction is the
-    sixth-degree jet's 42 columns. Both whitened.
+    sixth-degree jet's 42 columns. Both whitened. ``index[i, a]`` is the J5
+    column of coordinate ``a`` of point ``i``, or -1 where the gauge fixes it.
     """
     from intrinsic_weyl import PAIRS, SYMMETRIC_PAIRS, second_derivative_basis
     from intrinsic_weyl_joint import BIVECTOR, model
@@ -484,11 +499,13 @@ def alias_map(points, mask, whiten):
         np.max(abs(packed @ second_derivative_basis() - dc[:, 34:]))
         / np.max(abs(dc[:, 34:]))
     )
-    j5 = whiten @ np.column_stack((geometry, dc[:, :34]))
-    inverse = np.linalg.pinv(j5)
-    alias = (inverse @ (whiten @ packed))[dimension : dimension + 10]
-    influence = inverse[dimension : dimension + 10]
-    return alias, consistency, influence @ influence.T
+    return {
+        "j5": whiten @ np.column_stack((geometry, dc[:, :34])),
+        "jd": whiten @ packed,
+        "dimension": dimension,
+        "index": index,
+        "consistency": consistency,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -684,6 +701,20 @@ def displacement_functional(n):
     weights = np.array([(1 if e == f else 2) * n[e] * n[f] for e, f in SYMMETRIC_PAIRS])
     packed = second_derivative_basis().reshape(10, 10, 42)
     return np.einsum("s,skj->kj", weights, packed)
+
+
+def minimum_norm_operator(alias42):
+    """Time-time slice -> first-order bias, the other components at minimum norm.
+
+    Among the 42 vacuum second derivatives with a given time-time slice, the
+    one smallest in the regularity norm of ``second_metric``. Returns the 10x10
+    map and the rank of the slice map.
+    """
+    tt = displacement_functional(np.array([1.0, 0, 0, 0]))
+    metric_inverse = np.linalg.inv(second_metric())
+    gram = tt @ metric_inverse @ tt.T
+    operator = alias42 @ metric_inverse @ tt.T @ np.linalg.pinv(gram)
+    return operator, int(np.linalg.matrix_rank(gram))
 
 
 def displacement_study(alias42_n, metric_root_inverse):
@@ -933,10 +964,7 @@ def analyse_case(case, windows, cache, amplitude):
     }
     # Minimum-norm second derivative with a given time-time slice.
     tt = displacement_functional(np.array([1.0, 0, 0, 0]))
-    metric_inverse = np.linalg.inv(metric)
-    gram = tt @ metric_inverse @ tt.T
-    result["time_time_slice_rank"] = int(np.linalg.matrix_rank(gram))
-    minimum_norm = alias42_n @ metric_inverse @ tt.T @ np.linalg.pinv(gram)
+    minimum_norm, result["time_time_slice_rank"] = minimum_norm_operator(alias42_n)
     rows, sixth, per_window, pnd, turned = [], [], [], [], []
     context = {"alias_n": alias_n, "minimum_norm": minimum_norm, "truth": truth}
     context["window_sets"], context["estimated_k"] = {}, {}
