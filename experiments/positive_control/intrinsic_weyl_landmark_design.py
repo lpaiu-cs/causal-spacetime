@@ -78,6 +78,25 @@ def selection_sample(seed, size, wave):
     return points, wave.order(points)
 
 
+def cached_selection(cache, case, size, wave):
+    """Selection sample of case ``case`` (seed BENCHMARK_SEED + case), cached.
+
+    Written under a temporary name and renamed, so that parallel preparation
+    never exposes a partial file.
+    """
+    import os
+
+    path = Path(cache) / f"selection_case{case}_n{size}.npz"
+    if path.exists():
+        with np.load(path) as saved:
+            return saved["points"], saved["order"]
+    points, order = selection_sample(BENCHMARK_SEED + case, size, wave)
+    partial = path.with_name(f"{path.stem}.{os.getpid()}.partial.npz")
+    np.savez(partial, points=points, order=order)
+    os.replace(partial, path)
+    return points, order
+
+
 def selection_counts(order):
     order = np.asarray(order, dtype=bool)
     counts = order.astype(np.float32) @ order.astype(np.float32)
@@ -784,13 +803,7 @@ def validate(archive, cache, wave, amplitude, log2_sizes=(20, 22)):
 
     rows = []
     for case in (0, 1):
-        path = cache / f"selection_case{case}_n{SELECTION_N}.npz"
-        if path.exists():
-            with np.load(path) as saved:
-                points, order = saved["points"], saved["order"]
-        else:
-            points, order = selection_sample(BENCHMARK_SEED + case, SELECTION_N, wave)
-            np.savez(path, points=points, order=order)
+        points, order = cached_selection(cache, case, SELECTION_N, wave)
         name = archive / f"case_{case}_n{REFERENCE_N}.npz"
         with np.load(name) as saved:
             archived_order, archived_ids = (
@@ -894,6 +907,11 @@ def main():
         type=Path,
         help="JSON list of idealized geometries (mechanism test, not order-only)",
     )
+    parser.add_argument(
+        "--prepare",
+        type=int,
+        help="only cache the selection samples of this size for --cases",
+    )
     args = parser.parse_args()
     from intrinsic_weyl_bombelli_benchmark import benchmark_amplitude
     from profile_plane_wave import half_cycle
@@ -948,6 +966,10 @@ def main():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")
         return
+    if args.prepare:
+        for case in args.cases:
+            cached_selection(args.cache, case, args.prepare, wave)
+        return
     specs = json.loads(args.layouts.read_text(encoding="utf-8"))
     rows = []
     if args.output.exists():
@@ -961,15 +983,9 @@ def main():
                 continue
             key = (case, spec["selection_n"])
             if key not in samples:
-                path = args.cache / f"selection_case{case}_n{spec['selection_n']}.npz"
-                if path.exists():
-                    with np.load(path) as saved:
-                        points, order = saved["points"], saved["order"]
-                else:
-                    points, order = selection_sample(
-                        BENCHMARK_SEED + case, spec["selection_n"], wave
-                    )
-                    np.savez(path, points=points, order=order)
+                points, order = cached_selection(
+                    args.cache, case, spec["selection_n"], wave
+                )
                 samples = {key: (points, order, selection_counts(order))}
             points, order, counts = samples[key]
             try:
