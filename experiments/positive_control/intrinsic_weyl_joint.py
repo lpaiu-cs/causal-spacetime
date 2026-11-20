@@ -11,7 +11,14 @@ import json
 from pathlib import Path
 
 import numpy as np
-from intrinsic_weyl import ETA, PAIRS, WEYL, gradient_basis
+from intrinsic_weyl import (
+    ETA,
+    PAIRS,
+    WEYL,
+    gradient_basis,
+    second_derivative_basis,
+    second_derivative_tensor,
+)
 from scipy.optimize import least_squares
 from scipy.stats import chi2
 
@@ -264,6 +271,11 @@ def model(points, coefficients, pairs, *, square_correction=False):
     )
     basis = np.einsum("pi,kij,pj->pk", wedge, BIVECTOR, wedge, optimize=True)
     gradient = None
+    if len(coefficients) == 76:
+        value, dl, dr, dc = model(points, coefficients[:34], pairs)
+        return _second_derivative_term(
+            left, right, wedge, basis, coefficients[34:], value, dl, dr, dc
+        )
     if len(coefficients) == 34:
         gradient = (gradient_basis() @ coefficients[10:]).reshape(4, 10)
         effective = coefficients[:10] + (left + right) @ gradient / 4
@@ -273,7 +285,9 @@ def model(points, coefficients, pairs, *, square_correction=False):
         curvature = np.einsum("k,kij->ij", coefficients, BIVECTOR)
         cw = wedge @ curvature
     else:
-        raise ValueError("Ten Weyl or ten Weyl plus 24 gradient coefficients required")
+        raise ValueError(
+            "Ten Weyl, plus 24 gradient, plus 42 second-derivative coefficients"
+        )
     dl = 2 * delta @ ETA
     dr = -dl.copy()
     for k, (a, b) in enumerate(PAIRS):
@@ -295,6 +309,40 @@ def model(points, coefficients, pairs, *, square_correction=False):
     return value, dl, dr, np.column_stack((dc, dg))
 
 
+def _second_derivative_term(left, right, wedge, basis, second, value, dl, dr, dc):
+    """Add the term linear in second curvature derivatives to a fifth-degree jet.
+
+    Brewin, arXiv:0903.2087v3, Eq. (11.21d), at linear order in curvature and in
+    pair-symmetric form, with midpoint m and step D of the pair:
+        -(1/20) m^e m^f D_ef R(x,y,x,y) - (1/240) D^e D^f D_ef R(x,y,x,y).
+    The curvature-squared part of the same order is intrinsic_weyl_square.
+    """
+    tensor = second_derivative_tensor(second)
+    middle, step = (left + right) / 2, right - left
+    weight = (
+        np.einsum("pe,pf->pef", middle, middle) / 20
+        + np.einsum("pe,pf->pef", step, step) / 240
+    )
+    effective = np.einsum("pef,efk->pk", weight, tensor)
+    value = value - np.einsum("pk,pk->p", basis, effective)
+    curvature = np.einsum("pk,kij->pij", effective, BIVECTOR)
+    cw = np.einsum("pi,pij->pj", wedge, curvature)
+    dl, dr = dl.copy(), dr.copy()
+    for k, (a, b) in enumerate(PAIRS):
+        dl[:, a] -= 2 * cw[:, k] * right[:, b]
+        dl[:, b] += 2 * cw[:, k] * right[:, a]
+        dr[:, a] += 2 * cw[:, k] * left[:, b]
+        dr[:, b] -= 2 * cw[:, k] * left[:, a]
+    dl -= np.einsum("pk,pf,gfk->pg", basis, middle / 20 - step / 120, tensor)
+    dr -= np.einsum("pk,pf,gfk->pg", basis, middle / 20 + step / 120, tensor)
+    packed = second_derivative_basis().reshape(10, 10, 42)
+    full = np.zeros((4, 4, 10, 42))
+    for s, (e, f) in enumerate([(e, f) for e in range(4) for f in range(e, 4)]):
+        full[e, f] = full[f, e] = packed[s]
+    d2 = -np.einsum("pk,pef,efkj->pj", basis, weight, full, optimize=True)
+    return value, dl, dr, np.column_stack((dc, d2))
+
+
 def fit_joint(
     counts,
     minimum_count=32,
@@ -310,11 +358,11 @@ def fit_joint(
     a confidence statement. The local truncation assumes a small vacuum
     diamond and the outer-tip observer; nonlocal and matter cases are excluded.
     """
-    if model_order not in (4, 5):
-        raise ValueError("World-function order must be four or five")
-    if square_correction and model_order != 5:
-        raise ValueError("The curvature-square variant requires the fifth-degree fit")
-    curvature_parameters = 10 if model_order == 4 else 34
+    if model_order not in (4, 5, 6):
+        raise ValueError("World-function order must be four, five or six")
+    if square_correction and model_order < 5:
+        raise ValueError("The curvature-square variant requires a fifth-degree fit")
+    curvature_parameters = {4: 10, 5: 34, 6: 76}[model_order]
     counts = np.asarray(counts, dtype=float)
     if (
         counts.ndim != 2
@@ -438,7 +486,7 @@ def fit_joint(
     curvature = jac[:, dimension : dimension + 10]
     nuisance = (
         np.column_stack((geometry, jac[:, dimension + 10 :]))
-        if model_order == 5
+        if model_order >= 5
         else geometry
     )
     projected = (
@@ -464,27 +512,31 @@ def fit_joint(
         "function_evaluations": int(curved.nfev),
         "boundary_excess": float(max(0, np.max(abs(points[:, 0])) - 0.5)),
     }
-    if model_order == 5:
+    if model_order >= 5:
         result.update(
             {
-                "model_order": 5,
-                "gradient_coefficients": c[10:].tolist(),
-                "covariant_gradient_components": (gradient_basis() @ c[10:])
+                "model_order": model_order,
+                "gradient_coefficients": c[10:34].tolist(),
+                "covariant_gradient_components": (gradient_basis() @ c[10:34])
                 .reshape(4, 10)
                 .tolist(),
                 "nuisance_rank": int(np.linalg.matrix_rank(nuisance)),
                 "nuisance_parameters": nuisance.shape[1],
             }
         )
+    if model_order == 6:
+        result["second_derivative_coefficients"] = c[34:].tolist()
     if whiten is not None:
         inverse = np.linalg.pinv(jac)
         influence = inverse[dimension : dimension + 10]
         component_covariance = influence @ influence.T
         result["nominal_component_covariance"] = component_covariance.tolist()
         result["uncertainty_scope"] = (
-            "Local linearized covariance under the quartic model; "
-            if model_order == 4
-            else "Local linearized covariance under the fifth-degree model; "
+            {
+                4: "Local linearized covariance under the quartic model; ",
+                5: "Local linearized covariance under the fifth-degree model; ",
+                6: "Local linearized covariance under the sixth-degree model; ",
+            }[model_order]
         ) + "coverage and truncation bias not certified"
         result["retained_clock_covariance_rank"] = len(whiten)
     if square_correction:
@@ -492,6 +544,9 @@ def fit_joint(
         result["model_scope"] = (
             "Fifth-degree jet plus curvature-squared world-function and volume-clock "
             "terms; second covariant curvature derivatives still omitted"
+            if model_order == 5
+            else "Sixth-degree jet: second covariant curvature derivatives at linear "
+            "order plus curvature-squared world-function and volume-clock terms"
         )
     return result
 
@@ -680,6 +735,71 @@ def selfcheck_jet():
     return {
         "shared_interval_moments_exact": True,
         "maximum_jacobian_error": maximum,
+        "exact_flat_weyl_rank": 10,
+        "exact_flat_full_nuisance_rank": fitted["nuisance_rank"],
+        "exact_flat_coefficient_norm": float(np.linalg.norm(fitted["coefficients"])),
+    }
+
+
+def selfcheck_second():
+    """Checks of the sixth-degree jet: derivatives, reduction, symmetry, flat fit."""
+    rng = np.random.default_rng(2026112001)
+    points = 0.2 * rng.normal(size=(9, 4))
+    pairs = np.array(list(itertools.combinations(range(9), 2)))
+    coefficients = rng.normal(size=76) * np.r_[np.full(10, 0.3), np.full(66, 0.5)]
+    value, dl, dr, dc = model(points, coefficients, pairs, square_correction=True)
+    # Coefficients by central differences (the fifth-degree path is real-only);
+    # the value is exactly quadratic in them, so the difference is exact up to
+    # rounding. Points by complex step.
+    maximum = 0.0
+    for k in range(76):
+        step = np.zeros(76)
+        step[k] = 1e-5
+        numeric = (
+            model(points, coefficients + step, pairs, square_correction=True)[0]
+            - model(points, coefficients - step, pairs, square_correction=True)[0]
+        ) / 2e-5
+        maximum = max(maximum, float(np.max(abs(numeric - dc[:, k]))))
+    for i in range(len(points)):
+        for a in range(4):
+            changed = points.astype(complex)
+            changed[i, a] += 1e-30j
+            numeric = (
+                model(changed, coefficients, pairs, square_correction=True)[0].imag
+                / 1e-30
+            )
+            expected = (pairs[:, 0] == i) * dl[:, a] + (pairs[:, 1] == i) * dr[:, a]
+            maximum = max(maximum, float(np.max(abs(numeric - expected))))
+    assert maximum < 1e-10 and np.isfinite(value).all()
+    swapped = model(points, coefficients, pairs[:, ::-1], square_correction=True)[0]
+    symmetry = float(np.max(abs(swapped - value)))
+    assert symmetry < 1e-14
+    reduced = model(points, np.r_[coefficients[:34], np.zeros(42)], pairs)
+    original = model(points, coefficients[:34], pairs)
+    reduction = max(
+        float(np.max(abs(a - b))) for a, b in zip(reduced[:3], original[:3], strict=True)
+    )
+    assert reduction < 1e-14
+    k = np.arange(48)
+    z = 1 - 2 * (k + 0.5) / len(k)
+    phi = k * np.pi * (3 - np.sqrt(5))
+    directions = np.column_stack(
+        (np.sqrt(1 - z * z) * np.cos(phi), np.sqrt(1 - z * z) * np.sin(phi), z)
+    )
+    flat = np.zeros((50, 4))
+    flat[0, 0], flat[-1, 0] = -0.5, 0.5
+    flat[1:-1, 0] = 0.27 * ((k % 3) - 1) + 0.015 * np.sin(k)
+    flat[1:-1, 1:] = (0.12 + 0.08 * np.sin(k * 2.1) ** 2)[:, None] * directions
+    delta = flat[:, None] - flat[None]
+    tau2 = delta[..., 0] ** 2 - np.sum(delta[..., 1:] ** 2, axis=-1)
+    fitted = fit_joint(1e8 * np.maximum(tau2, 0) ** 2, starts=2, model_order=6)
+    assert fitted["projected_curvature_rank"] == 10
+    assert fitted["nuisance_rank"] == fitted["nuisance_parameters"]
+    assert np.linalg.norm(fitted["coefficients"]) < 1e-7
+    return {
+        "maximum_complex_step_jacobian_error": maximum,
+        "pair_swap_symmetry": symmetry,
+        "reduction_to_fifth_degree": reduction,
         "exact_flat_weyl_rank": 10,
         "exact_flat_full_nuisance_rank": fitted["nuisance_rank"],
         "exact_flat_coefficient_norm": float(np.linalg.norm(fitted["coefficients"])),

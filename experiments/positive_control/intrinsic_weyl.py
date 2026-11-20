@@ -81,6 +81,50 @@ def gradient_basis():
     return basis
 
 
+SYMMETRIC_PAIRS = [(e, f) for e in range(4) for f in range(e, 4)]
+
+
+@lru_cache(maxsize=1)
+def second_derivative_basis():
+    """42 vacuum second derivatives of Weyl, as (10 symmetric pairs, 10) components.
+
+    Linear order in curvature: the derivative pair is symmetrized, because its
+    antisymmetric part is quadratic in curvature and belongs with the
+    curvature-squared terms. Every derivative slice obeys the differential
+    Bianchi identity; with the trace-free Weyl basis this also gives the
+    divergence and wave equations at this order (checked in the selfcheck).
+    """
+    from scipy.linalg import null_space
+
+    slot = {}
+    for s, (e, f) in enumerate(SYMMETRIC_PAIRS):
+        slot[e, f] = slot[f, e] = s
+    rows = []
+    for e in range(4):
+        for a, b, c in itertools.combinations(range(4), 3):
+            for d, g in itertools.combinations(range(4), 2):
+                row = np.zeros((10, 10))
+                row[slot[e, a]] += WEYL[:, b, c, d, g]
+                row[slot[e, b]] += WEYL[:, c, a, d, g]
+                row[slot[e, c]] += WEYL[:, a, b, d, g]
+                rows.append(row.ravel())
+    constraint = np.array(rows)
+    basis = null_space(constraint)
+    if basis.shape != (100, 42) or np.max(abs(constraint @ basis)) >= 1e-12:
+        raise ArithmeticError("Invalid second-derivative Bianchi null space")
+    basis.setflags(write=False)
+    return basis
+
+
+def second_derivative_tensor(coefficients):
+    """Map 42 coefficients to symmetric (4, 4, 10) derivative-pair components."""
+    packed = (second_derivative_basis() @ coefficients).reshape(10, 10)
+    full = np.zeros((4, 4, 10), dtype=packed.dtype)
+    for s, (e, f) in enumerate(SYMMETRIC_PAIRS):
+        full[e, f] = full[f, e] = packed[s]
+    return full
+
+
 def quartic(x, y):
     """Return C(x,y,x,y) for each tensor in the fixed algebraic basis."""
     return np.einsum("a,b,c,d,kabcd->k", x, y, x, y, WEYL)
