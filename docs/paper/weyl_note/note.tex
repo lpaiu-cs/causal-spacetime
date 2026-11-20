@@ -27,25 +27,25 @@ a finite-density estimator and a gravitational-wave benchmark}
 In vacuum the curvature a causal set must encode is the Weyl tensor. We
 present an estimator of all ten Weyl components from the order relations of
 a sprinkled Alexandrov interval and measure its accuracy, uncertainty and
-cost at finite density. From the relations between about a hundred
-landmarks and $N$ sprinkled events it fits the tensor, its gradient and the
-landmarks' normal coordinates, with a covariance that accounts for shared
-events. In pre-specified tests on exact vacuum plane waves, (i) nominal
+cost at finite density. It fits the tensor, its gradient and landmark
+coordinates to the relations between about a hundred landmarks and $N$
+sprinkled events, with a covariance for shared events. In pre-specified
+tests on exact vacuum plane waves, (i) nominal
 95\% confidence balls contained the true tensor in 509 of 512 cases; (ii)
 at tidal norm $0.5$, six cases gave errors of 3.5--7.4\% and error plus
 confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$; and (iii) a
 wave for which discrete geodesic deviation was estimated to need
 $10^8$--$10^9$ elements was detected at $N=1.7\times10^7$, but not at
 $N\le4.2\times10^6$. (iv) Unchanged, it detected the static tidal field of a
-Schwarzschild interval of similar strength at $N=4.2\times10^6$, and (v) on
-64 flat replicates its nominal covariance was calibrated at $N=10^6$ and
-$1.7\times10^7$. Detection is not accuracy: for the wave the estimator reads
-the crest curvature 12\% low, which the residuals cannot reveal at these
-$N$. The bias comes from the omitted second covariant derivatives of the
-curvature; including them removes it in the continuum limit, to 0.5\%, but
-enlarges the statistical radius five- to sixfold. The tests cover plane
-waves and one Schwarzschild interval, assume vacuum, and rely on Gaussian
-uncertainties.
+Schwarzschild interval at $N=4.2\times10^6$ and, for a circular-orbit
+observer, its magnetic part at the same $N$ and the inequality of its
+electric and magnetic norms at $N=1.7\times10^7$; (v) on 64 flat replicates
+its nominal covariance was calibrated at $N=10^6$ and $1.7\times10^7$.
+Detection is not accuracy: for the wave the estimator reads the crest
+curvature 12\% low, undetectably at these $N$, because it omits second
+covariant derivatives of the curvature; including them removes the bias in
+the continuum but enlarges the statistical radius five- to sixfold.
+The tests assume vacuum and rely on Gaussian uncertainties.
 \end{abstract}
 
 \noindent\textbf{Keywords} Causal sets $\cdot$ Weyl tensor $\cdot$ Curvature
@@ -101,7 +101,9 @@ uncertainty reported by the estimator was tested for coverage on a stated
 population of cases, and for calibration in flat spacetime at higher event
 counts. Third, at the condition analysed in Ref.~\cite{ib} the estimator
 detected the wave. Fourth, without any change it detected the tidal field of
-a Schwarzschild exterior, which is static and of a different algebraic type.
+a Schwarzschild exterior, which is static and of a different algebraic type,
+and, for an observer on a circular orbit, the magnetic part of that field and
+the inequality of its electric and magnetic norms.
 Fifth, the bias that the estimator showed for the wave of Ref.~\cite{ib} was
 traced to one omitted term of the world-function expansion, whose inclusion
 removes it in the continuum limit at a measured cost in precision. We do not
@@ -348,6 +350,22 @@ the Clairaut constant in areal coordinates; the tidal tensor was confirmed
 by integrating the geodesic deviation, and the sampling measure by a
 quadrature of the volume. Flat controls for this test come from the same
 generator with $M=0$.
+
+A last test keeps the apex event, $r_a=6M$ and $T=3M$, but puts the tips on
+the circular timelike geodesic through it, which moves with speed
+$\tfrac12$ relative to the static observer. In the rest frame of this
+geodesic, with axes along the radial direction, the direction of motion and
+the normal to the orbit,
+$T^2E=\operatorname{diag}(-\tfrac18,\tfrac1{24},\tfrac1{12})$ and
+$T^2B_{13}=T^2B_{31}=\tfrac1{12}$, the other components of $B$ vanishing.
+Thus $|B|/|E|=0.76$ and $s=\sqrt{22}/24=0.195$, while the invariants
+$T^4(|E|^2-|B|^2)=6/576$ and $E\cdot B=0$ are those of the static observer.
+The generator differs from the static one only in the tips, which it finds
+by shooting geodesics, in the sampling region, and in the boosted frame of
+the normal coordinates and of the true tensor. The tensor was confirmed by a
+finite-difference curvature, by the relative motion of test particles and by
+the excess volume of small moving intervals. Flat controls for this test have
+tips moving with the same speed.
 
 \subsection{Blind estimation and pre-specified criteria}\label{procedure}
 The estimator runs in a separate process that reads only an order archive
@@ -771,6 +789,70 @@ was not a pre-specified test; the pre-specified calibration of
 Sect.~\ref{calibration}, over 64 selections in flat spacetime, found no such
 understatement for this jet.
 
+\subsection{A circular orbit}\label{orbit}
+The plane waves have $|E|=|B|$ and the static interval $B=0$. To test the
+magnetic part in another class we applied the estimator, unchanged, to the
+orbit of Sect.~\ref{tests}, with two orbit cases, two static intervals at the
+same event and two moving flat controls, each at the four nested levels of
+Sect.~\ref{ibwave}. Three gates were fixed before the data were generated.
+G1, detection of the field, is the criterion of Sect.~\ref{ibwave} with the
+moving flat controls. G2, detection of the magnetic part, requires
+$Q_B>\chi^2_5(0.999)=20.52$ in both orbit cases and in none of the four
+controls, where $Q_B$ is the statistic of the five magnetic coefficients with
+their marginal covariance. G3 requires that the 95\% two-sided interval of a
+noise-debiased estimate $\hat I$ of $T^4(|E|^2-|B|^2)$ exclude zero in both
+orbit cases. This invariant is the same for every observer at the event, so
+G3 alone says nothing about the moving observer and is read together with
+G2.
+
+Table~\ref{orbittable} gives the outcome. The field was detected at every
+level, its magnetic part from $4.19\times10^6$ events and the inequality of
+the norms from $1.68\times10^7$, so the pre-specified claim, all three gates
+at the top level, was supported. The controls stayed below the thresholds
+throughout, and the static intervals never showed a magnetic part. At the
+top level the estimated magnetic eigenvalues were $(-1.91,-0.14,2.05)/24$
+and $(-2.05,0.03,2.03)/24$, against $(-2,0,2)/24$. The components of the two
+estimates along the true magnetic and electric parts were, combined,
+$1.00\pm0.04$ and $1.01\pm0.02$ of these, and the errors were 6.1\% and
+7.7\% of $s$ with nominal 95\% radii of 16.5\% and 18.6\%. The balls
+contained the true tensor at every level. Exact volumes were not available
+here either, so the model bias was not measured, and these numbers are a
+detection and an ordering, not an accuracy statement.
+
+The predictions recorded with the criteria held for the three gates but
+failed in three other respects. The detection statistics of one orbit case
+exceeded their predicted range, which had been built from the covariance of
+the flat calibration rather than from that of the case. An electric reading
+about 4.5\% low, suggested by an engineering run with $T=4M$, did not appear.
+The eight values of $Q$ for the moving flat controls averaged 15.0 rather
+than 10; against the calibration replicates of Sect.~\ref{calibration} an
+excess this large has a probability of about 0.8\%, computed after the fact,
+and it does not grow with $N$ as a generator error would. No control value
+came near a threshold. An independent check recomputed the verdicts and the
+true tensor without the code of the run, and re-decided a sample of the
+order relations with a solver that shares no code with the generator.
+
+\begin{table}[t]
+\centering\small
+\caption{Circular-orbit test. $Q$ and $Q_B$ are the detection statistics of
+the full tensor and of its magnetic part, with thresholds 29.59 and 20.52,
+and $576\hat I$ estimates $576\,T^4(|E|^2-|B|^2)$, whose true value is 6,
+with the lower end of its 95\% interval in brackets where it is positive.
+Entries are for the two orbit cases. At every level the flat controls had
+$Q\le21.8$ and all four controls $Q_B\le10.5$}
+\label{orbittable}
+\begin{tabular}{rllll}
+\toprule
+$N$ & $Q$ & $Q_B$ & $576\hat I$ & Gates passed\\
+\midrule
+1,048,576 & 59.4, 33.5 & 16.4, 19.0 & $4.8$, $-17.9$ & field\\
+4,194,304 & 154.5, 107.6 & 51.5, 26.7 & $-3.4$, $1.4$ & field, magnetic part\\
+16,777,216 & 538.1, 409.6 & 93.7, 75.3 & $6.3\,[2.3]$, $5.1\,[0.3]$ & all three\\
+67,108,864 & 2309.0, 1802.6 & 398.2, 299.6 & $6.7\,[4.7]$, $6.0\,[3.6]$ & all three\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Computational cost}
 The accuracy test used $3.9\times10^8$ measurement events and
 $9.8\times10^{10}$ landmark--event relation tests, and ran in 50 minutes
@@ -782,7 +864,9 @@ $6.8\times10^{10}$ relation tests, and ran in 74 minutes with a peak of
 52\,GiB. The calibration used $1.3\times10^9$ events and
 $3.5\times10^{11}$ relation tests in 80 replicates, and ran in 1.8 hours;
 one replicate at $N=2^{24}$, with both jets, took about three minutes and up
-to 36\,GiB.
+to 36\,GiB. The orbit test used $4.0\times10^8$ events and
+$1.0\times10^{11}$ relation tests, and ran in 96 minutes with a peak of
+31\,GiB.
 
 \section{Limitations and outlook}\label{limits}
 The first limitation is that detection is not accuracy. With the
@@ -805,10 +889,12 @@ flat spacetime as $w\to\infty$, while the midpoint tidal norm stays $2a$, so
 no estimator is uniformly accurate over all smooth vacuum profiles at fixed
 $N$.
 
-The second limitation is scope. The tests cover plane waves and one
-Schwarzschild interval. No algebraic type is imposed, but a field with
-independent electric and magnetic parts, such as that of a rotating source,
-was not tested, and neither was a second radius or interval size. The
+The second limitation is scope. The tests cover plane waves and one event of
+the Schwarzschild exterior, seen by a static and by an orbiting observer. No
+algebraic type is imposed, and the orbit gives a magnetic part that is not
+tied to the electric one as in a plane wave, but the field is still static
+and of type D: the gravitomagnetic field of a rotating source was not tested,
+and neither was a second radius, speed or interval size. The
 estimator assumes vacuum, because Ricci terms enter \eqref{clock} and
 \eqref{model} at lower order; it also assumes uniform sprinkling, a regular
 normal neighbourhood and given tips. Its uncertainty is nominal and
@@ -847,7 +933,8 @@ estimator met pre-specified criteria for coverage and for accuracy at weak
 curvature. At the condition for which discrete geodesic deviation was
 estimated to need $10^8$--$10^9$ elements it detected the wave with
 $1.7\times10^7$ events, and without change it detected the static field of a
-Schwarzschild interval with $4.2\times10^6$. On 64 independent flat
+Schwarzschild interval with $4.2\times10^6$ and, for an orbiting observer,
+the magnetic part of that field with as many. On 64 independent flat
 replicates its nominal covariance was calibrated, within the pre-specified
 tolerance, at $10^6$ and $1.7\times10^7$ events.
 
@@ -859,7 +946,7 @@ precision that no landmark layout we tried removed. The chord-moment
 mechanism of Sect.~\ref{bias} suggests that this cost is structural within
 one window, so that an accuracy statement for varying fields needs either a
 stated bound on the variation of the curvature or data from more than one
-window. Fields with independent electric and magnetic parts and a
+window. The field of a rotating source and a
 comparison with geodesic deviation on the same input are the natural next
 steps.
 
@@ -874,18 +961,20 @@ and the records of the checks are public. They are in the directories
 \nolinkurl{experiments/positive_control},
 \nolinkurl{docs/paper/paper_a/intrinsic_weyl} and
 \nolinkurl{docs/paper/weyl_note} of the repository
-\url{https://github.com/lpaiu-cs/causal-spacetime/tree/6f3b42df072e}. The
+\url{https://github.com/lpaiu-cs/causal-spacetime/tree/0b607a201b8a}. The
 accuracy test corresponds to commit \texttt{0ff9802}, the benchmark to
 commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), the
 Schwarzschild test to commit \texttt{7224c69} (run and check), with its
-record in \texttt{c74240a}, and the calibration test to commits
+record in \texttt{c74240a}, the orbit test to commit \texttt{f5d309a}
+(protocol, run and check), with its record in \texttt{182e82f}, and the
+calibration test to commits
 \texttt{cfb8e8b} (protocol and run) and \texttt{f4854be} (check), with its
 record in \texttt{c076fec}. The sixth-degree jet and its continuum check are
 in commit \texttt{b5e14e1}, the post hoc refit in \texttt{d7c5d1d}, with
 its record in \texttt{fbb5613}, and the landmark design study in commits
 \texttt{5de89e4} (harness), \texttt{65713dd} and \texttt{0a0577f} (runs),
-with its record in \texttt{8e57669}. The order archives, about 79\,GiB for the
-four tests, can be regenerated from the recorded seeds and are available
+with its record in \texttt{8e57669}. The order archives, about 95\,GiB for the
+five tests, can be regenerated from the recorded seeds and are available
 from the author on reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
 and directed the study, examined the results and wrote the manuscript, with
