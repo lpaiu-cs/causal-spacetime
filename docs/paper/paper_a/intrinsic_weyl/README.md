@@ -45,6 +45,35 @@ and `0.97 ± 0.04` of the true tensor. This is detection at one radius and one
 interval, not accuracy: no exact interval volumes exist here, so the model
 bias was not measured.
 
+The [circular-orbit Schwarzschild report](schwarzschild_orbit_results.md)
+(2026-11-21) tests, for one geometry, a field whose electric and magnetic
+parts are both nonzero and of unequal norm. At the same event as the
+detection test above, the interval's tips move on the circular geodesic
+(speed 1/2 relative to the static observer, `T = 3M`). Their observer sees
+`T^2 E = diag(-1/8, 1/24, 1/12)` and `T^2 B_xz = 1/12` (`|B|/|E| = 0.756`).
+The controls are two intervals at rest at the same event (`B = 0`) and two
+moving flat intervals.
+
+The unchanged inverse gave three frozen verdicts:
+
+- It detected the field at every level.
+- It detected the magnetic part from 4,194,304 measurement events
+  (NOT_DETECTED at 1,048,576), while all four controls stayed below the
+  threshold at every level.
+- It resolved `|E|^2 - |B|^2 > 0` on its 95% interval from 16,777,216 events.
+
+The frozen primary claim at 67,108,864 events is SUPPORTED, and an independent
+post-completion audit passed. At the top level the estimated magnetic
+eigenvalues are `(-1.91, -0.14, 2.05)/24` and `(-2.05, 0.03, 2.03)/24`
+against `(-2, 0, 2)/24`. The nominal radii are 16.5% and 18.6% of the truth
+norm. The
+electric bias suggested by the engineering replay did not appear (combined
+electric reading `1.009 +/- 0.017`). The moving flat controls averaged
+`Q = 15.0` against a nominal 10, high in the flat calibration's distribution
+but far below the threshold. This result is detection and ordering for the
+magnetic part that a boost induces in a static type-D field. It is not the
+gravitomagnetic field of a rotating source, and it is not accuracy.
+
 The [sixth-degree record](second_derivative_results.md) (2026-11-20) traces
 the 12% half-cycle bias to the omitted second covariant derivatives of the
 curvature: a jet that includes them removes the bias in the continuum but

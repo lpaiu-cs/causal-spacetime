@@ -1,0 +1,2931 @@
+{
+  "engineering_only": false,
+  "code_version": "f5d309a82f5070079c3dfd72c2bbebe91667fb91",
+  "worktree_clean_at_start": true,
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_schwarzschild_orbit.py": "29c21850b280a41d3fa1ddd51bb13097fcf7cfb772893d0ac5aa7d60c22cebbf",
+    "experiments/positive_control/schwarzschild_orbit.py": "e576f767492e2314397267a2b0e277fa0b42320171dc031aa66edc781f59cc50",
+    "experiments/positive_control/schwarzschild_diamond.py": "8d4ed553dd99269fecccafb3765146f1c962ff212ad07d8330376565bfee2fb1",
+    "experiments/positive_control/intrinsic_weyl_bombelli_benchmark.py": "eee5b270c48481e259f58a4e9e885f217d5fe9cd4996f1e0b895f1365c0c928c",
+    "experiments/positive_control/replay_intrinsic_weyl_threads.py": "9b97dfc26492e9ffcbf1fc72e7e4a5fe839b1a2ddaa9184c670a9986c1ded201",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "49ddb6bc2b7a4fa737235241221b0c50b94fb6ba02c338d5cf85d2bbd3287985",
+    "experiments/positive_control/intrinsic_weyl.py": "c164906c30f8e278d6b0634ad1b1ee286474865b9336af41020cd1a47cb7e702",
+    "experiments/positive_control/intrinsic_weyl_square.py": "5a0d2f88a55945b7b9e4c26a4a951ca5f1fa40c66c50b675773655a7b795a2d0",
+    "experiments/positive_control/intrinsic_weyl_gpu_counts.py": "62f82a6262acfa713ec6faa3372c6e6cc82819f7cf232ce646d666e5b25b2306",
+    "experiments/positive_control/intrinsic_weyl_high_count.py": "014cf02e1bebd9287433f1adcbcca07e75d1347f602be1fe6c60d27c995d304e",
+    "docs/paper/paper_a/intrinsic_weyl/schwarzschild_orbit_protocol.md": "0d78e62fe2b5063d6cc44f2c3267ca9729387b68d997237d6e9ef4bcf3d3b033"
+  },
+  "selfcheck": {
+    "generator": {
+      "circular_velocity": 0.5,
+      "rest_tips_and_ball_equal_old_bitwise": true,
+      "rest_samples_equal_old_bitwise": true,
+      "rest_normal_coordinates_equal_old": 0.0,
+      "rest_tidal_difference_from_old": 0.0,
+      "orbit_tip_error": 2.220446049250313e-15,
+      "orbit_tip_reflection_vs_integration": 0.0,
+      "orbit_tips_normal_coordinate_error": 4.6629367034256575e-15,
+      "truth_closed_form_difference": 2.7755575615628914e-17,
+      "truth_invariant_residuals": [
+        3.469446951953614e-18,
+        0.0,
+        1.3877787807814457e-17,
+        0.0
+      ],
+      "truth_electric": [
+        [
+          -0.12500000000000003,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.041666666666666685,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.08333333333333336
+        ]
+      ],
+      "truth_magnetic": [
+        [
+          0.0,
+          0.0,
+          0.08333333333333336
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.08333333333333336,
+          0.0,
+          0.0
+        ]
+      ],
+      "truth_vs_finite_difference_riemann": 2.1205039113514346e-10,
+      "electric_from_comoving_particles_relative_error": 1.4514559879512208e-05,
+      "electric_from_comoving_particles": [
+        [
+          -0.12499839533067214,
+          -1.7915297370607597e-06,
+          -2.2628545912062314e-06
+        ],
+        [
+          -1.7915297370607597e-06,
+          0.041666359352141025,
+          -1.4988010832439613e-11
+        ],
+        [
+          -2.2628545912062314e-06,
+          -1.4988010832439613e-11,
+          0.08333292178371032
+        ]
+      ],
+      "world_function_relative_error": 1.158981600790389e-08,
+      "world_function_electric": [
+        [
+          -0.12500000141592285,
+          7.04764309948263e-10,
+          1.0994954759206949e-10
+        ],
+        [
+          7.04764309948263e-10,
+          0.04166666790622821,
+          -1.1051670282774872e-09
+        ],
+        [
+          1.0994954759206949e-10,
+          -1.1051670282774872e-09,
+          0.08333333350969464
+        ]
+      ],
+      "world_function_magnetic": [
+        [
+          6.443094012438615e-11,
+          -1.4511916691599441e-09,
+          0.08333333559837734
+        ],
+        [
+          -1.4511916691599441e-09,
+          -2.762427589480571e-10,
+          -1.2834632853674455e-09
+        ],
+        [
+          0.08333333559837734,
+          -1.2834632853674455e-09,
+          2.1181181882367093e-10
+        ]
+      ],
+      "normal_coordinates_return_tetrad_vectors": 3.409328375170162e-12,
+      "small_interval_volume_over_curvature_square_law": {
+        "orbit": 1.0002430265270925,
+        "rest": 1.0004308294810473
+      },
+      "orbit_volume_grid_change": 0.0,
+      "rest_volume_against_parent_quadrature": 3.3306690738754696e-15,
+      "orbit_surrogate_bits_equal_direct_solver": true,
+      "orbit_sampled_events_inside": true,
+      "orbit_margins_resolved_directly": 32,
+      "flat_moving_surrogate_bits_equal_direct_solver": true,
+      "flat_moving_sampled_events_inside": true,
+      "flat_moving_margins_resolved_directly": 32,
+      "largest_boundary_crossings_per_ray": 1,
+      "largest_envelope_ratio": 0.7593708121070589,
+      "sampler_moment_z_scores": {
+        "x": 0.255336886196175,
+        "y": -0.4778728262276346,
+        "squared_offset": 0.40353523259092305,
+        "isotropic_radius": 0.31966017132020047,
+        "t_squared": -0.0884121191052168,
+        "t_times_y": -0.016725229733519923
+      },
+      "orbit_volume_over_flat": 1.000045510845607,
+      "flat_moving_error": 1.6653345369377348e-15,
+      "parent_selfcheck_tidal_error": 1.1549586730663641e-05,
+      "tidal_norm": 0.19543398999264294,
+      "electric_norm": 0.15590239111558093,
+      "magnetic_norm": 0.11785113019775796
+    },
+    "gpu_relation_bits": {
+      "orbit": {
+        "pairs": 262144,
+        "related": 31091,
+        "resolved_by_the_direct_solver": 0
+      },
+      "rest": {
+        "pairs": 262144,
+        "related": 34452,
+        "resolved_by_the_direct_solver": 0
+      },
+      "flat": {
+        "pairs": 262144,
+        "related": 32097,
+        "resolved_by_the_direct_solver": 0
+      }
+    },
+    "jet_inverse": {
+      "shared_interval_moments_exact": true,
+      "maximum_jacobian_error": 3.4040068974553004e-12,
+      "exact_flat_weyl_rank": 10,
+      "exact_flat_full_nuisance_rank": 213,
+      "exact_flat_coefficient_norm": 0.0
+    },
+    "gpu_second_moment": {
+      "direct_and_grouped_second_moments_bit_exact": true,
+      "cases": 3
+    },
+    "verdict": {
+      "field_chi2_10": 29.58829844507442,
+      "magnetic_chi2_5": 20.515005652432873,
+      "interval_normal_quantile": 1.959963984540054,
+      "strict_exceedance_required": true,
+      "control_exceedance_invalidates": true,
+      "bad_news_precedes_incomplete": true,
+      "primary_level": 67108864,
+      "failure_cannot_disappear": true,
+      "all_six_assigned": true
+    }
+  },
+  "geometry": {
+    "orbit": {
+      "mass": 1.0,
+      "apex_areal_radius": 6.0,
+      "speed_relative_to_static_observer": 0.5,
+      "tip_proper_time": 3.0,
+      "apex_isotropic_radius": 4.949489742783178,
+      "tips": [
+        [
+          -2.12132034355964,
+          4.898022004828035,
+          -0.7119193452465288,
+          0.0
+        ],
+        [
+          2.12132034355964,
+          4.898022004828035,
+          0.7119193452465288,
+          0.0
+        ]
+      ],
+      "bounding_ball_centre": [
+        4.898022004828035,
+        0.0,
+        0.0
+      ],
+      "bounding_ball_radius": 1.6027408953036655,
+      "true_electric": [
+        [
+          -0.12500000000000003,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.041666666666666685,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.08333333333333336
+        ]
+      ],
+      "true_magnetic": [
+        [
+          0.0,
+          0.0,
+          0.08333333333333336
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.08333333333333336,
+          0.0,
+          0.0
+        ]
+      ],
+      "true_electric_eigenvalues": [
+        -0.12500000000000003,
+        0.041666666666666685,
+        0.08333333333333336
+      ],
+      "true_magnetic_eigenvalues": [
+        -0.08333333333333336,
+        0.0,
+        0.08333333333333336
+      ],
+      "true_full_tidal_norm": 0.19543398999264294,
+      "true_invariant": 0.01041666666666667
+    },
+    "rest": {
+      "mass": 1.0,
+      "apex_areal_radius": 6.0,
+      "speed_relative_to_static_observer": 0.0,
+      "tip_proper_time": 3.0,
+      "apex_isotropic_radius": 4.949489742783178,
+      "tips": [
+        [
+          -1.8387212286859531,
+          4.917860423315897,
+          -0.0,
+          0.0
+        ],
+        [
+          1.8387212286859531,
+          4.917860423315897,
+          0.0,
+          0.0
+        ]
+      ],
+      "bounding_ball_centre": [
+        4.917860423315897,
+        0.0,
+        0.0
+      ],
+      "bounding_ball_radius": 1.374392595751154,
+      "true_electric": [
+        [
+          -0.08333333333333333,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.041666666666666664,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.041666666666666664
+        ]
+      ],
+      "true_magnetic": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "true_electric_eigenvalues": [
+        -0.08333333333333333,
+        0.041666666666666664,
+        0.041666666666666664
+      ],
+      "true_magnetic_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "true_full_tidal_norm": 0.10206207261596575,
+      "true_invariant": 0.010416666666666668
+    },
+    "flat": {
+      "mass": 0.0,
+      "apex_areal_radius": 6.0,
+      "speed_relative_to_static_observer": 0.5,
+      "tip_proper_time": 3.0,
+      "apex_isotropic_radius": 6.0,
+      "tips": [
+        [
+          -1.732050807568878,
+          6.0,
+          -0.866025403784439,
+          0.0
+        ],
+        [
+          1.732050807568878,
+          6.0,
+          0.866025403784439,
+          0.0
+        ]
+      ],
+      "bounding_ball_centre": [
+        6.0,
+        0.0,
+        0.0
+      ],
+      "bounding_ball_radius": 1.732050807568878,
+      "true_electric": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "true_magnetic": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "true_electric_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "true_magnetic_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "true_full_tidal_norm": 0.0,
+      "true_invariant": 0.0
+    }
+  },
+  "cases": [
+    {
+      "case": 0,
+      "kind": "orbit",
+      "seed": 2026112200
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "seed": 2026112201
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "seed": 2026112202
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "seed": 2026112203
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "seed": 2026112204
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "seed": 2026112205
+    }
+  ],
+  "measurement_levels": [
+    1048576,
+    4194304,
+    16777216,
+    67108864
+  ],
+  "selection_n": 4096,
+  "sampling_chunk": 4096,
+  "classification_batch": 65536,
+  "false_positive_level_per_test": 0.001,
+  "interval_coverage": 0.95,
+  "thresholds": {
+    "field_chi2_10": 29.58829844507442,
+    "magnetic_chi2_5": 20.515005652432873,
+    "interval_normal_quantile": 1.959963984540054
+  },
+  "worker_thread_environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": null,
+    "OPENBLAS_DEFAULT_NUM_THREADS": null,
+    "GOTO_NUM_THREADS": null
+  },
+  "runtime": {
+    "python": "3.14.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "cupy": "14.2.0",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "scope": "Existence gates for the field and its magnetic part and an ordering gate for |E| > |B| on one circular-orbit interval; no accuracy, generality or superiority claim",
+  "results": [
+    {
+      "case": 0,
+      "kind": "orbit",
+      "seed": 2026112200,
+      "measurement_n": 1048576,
+      "archive_sha256": "2fd9c210ecff697e05e59443fd6a100c6349e4a1fa268144fe36bf42b8db9c8a",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 58.62849249999272,
+      "wall_seconds": 58.70176289998926,
+      "process_cpu_seconds": 58.5,
+      "peak_working_set_bytes": 5456494592,
+      "detection": {
+        "q": 59.39837275428364,
+        "q_magnetic": 16.429831648244935,
+        "q_electric": 42.50046002451436,
+        "invariant": 0.00834628939939691,
+        "invariant_se": 0.021995429231046717,
+        "invariant_interval_95": [
+          -0.034763959717954186,
+          0.05145653851674801
+        ],
+        "invariant_raw": 0.001994527654560313,
+        "electric_dot_magnetic": -0.0077459931447228635,
+        "electric_dot_magnetic_se": 0.011468331370570859,
+        "electric_eigenvalues": [
+          -0.15105221905587896,
+          0.042271269237439645,
+          0.10878094981843932
+        ],
+        "magnetic_eigenvalues": [
+          -0.14239729436841014,
+          0.026327073173895404,
+          0.11607022119451468
+        ],
+        "electric_norm": 0.19088459374200728,
+        "magnetic_norm": 0.18558663872566597,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 4.709592082156383e-09,
+        "nominal_p_value_magnetic": 0.005718248843718816,
+        "tidal_norm_estimate": 0.26623171975093807,
+        "largest_tidal_variance": 0.002631042220462348,
+        "variance_times_N": 2758.847727363527
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.04739751409537299,
+          -0.061305794875699704,
+          -0.04717085142569699,
+          -0.02661399430549361,
+          -0.01757033739426432,
+          0.03139562045234048,
+          0.015869619894472272,
+          0.05098419551003716,
+          -0.00987518519139328,
+          -0.059230428951863534
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.11473032150027516,
+        "relative_full_tidal_error": 0.5870540815576357,
+        "confidence_radius_95": 0.2293811389076392,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 8.378535135820403,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.2244847311507556,
+            "reading_sigma": 0.1685233486805302,
+            "expected_snr_less_favorable": 5.933895853776918,
+            "events_for_expected_snr_one": 29779.683233496624,
+            "part_error_matched_reflection": 0.11473032150027516
+          },
+          "electric": {
+            "reading_matched_reflection": 1.175854389116227,
+            "reading_sigma": 0.187199950875906,
+            "expected_snr_less_favorable": 5.341881743670411,
+            "events_for_expected_snr_one": 36746.11028636898,
+            "part_error_matched_reflection": 0.06163554081793855
+          },
+          "magnetic": {
+            "reading_matched_reflection": 1.4302317739260964,
+            "reading_sigma": 0.39383112812091875,
+            "expected_snr_less_favorable": 2.479260619115354,
+            "events_for_expected_snr_one": 170590.77771836612,
+            "part_error_matched_reflection": 0.09676831495710118
+          }
+        }
+      },
+      "archive_bytes": 51661400
+    },
+    {
+      "case": 0,
+      "kind": "orbit",
+      "seed": 2026112200,
+      "measurement_n": 4194304,
+      "archive_sha256": "36863d4b66591ed5549423e19ada3a18fa818a95025e90849652e651201966c2",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 71.79805699997814,
+      "wall_seconds": 71.94245059997775,
+      "process_cpu_seconds": 71.609375,
+      "peak_working_set_bytes": 10290454528,
+      "detection": {
+        "q": 154.46135478021037,
+        "q_magnetic": 51.5302232584607,
+        "q_electric": 101.41475625770771,
+        "invariant": -0.005855625373552654,
+        "invariant_se": 0.009363718722824347,
+        "invariant_interval_95": [
+          -0.024208176831651766,
+          0.012496926084546459
+        ],
+        "invariant_raw": -0.007464844328112284,
+        "electric_dot_magnetic": 0.0074849245001836024,
+        "electric_dot_magnetic_se": 0.004475189993687334,
+        "electric_eigenvalues": [
+          -0.11530674850538396,
+          0.031578168262768734,
+          0.08372858024261522
+        ],
+        "magnetic_eigenvalues": [
+          -0.12138658873155991,
+          0.0029607621441433527,
+          0.11842582658741657
+        ],
+        "electric_norm": 0.1459565076012702,
+        "magnetic_norm": 0.16961175206710155,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 4.4964836507305885e-28,
+        "nominal_p_value_magnetic": 6.734357972742737e-10,
+        "tidal_norm_estimate": 0.2237665045319151,
+        "largest_tidal_variance": 0.0006653136703814379,
+        "variance_times_N": 2790.5277889355466
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.04739751409537299,
+          -0.061305794875699704,
+          -0.04717085142569699,
+          -0.02661399430549361,
+          -0.01757033739426432,
+          0.03139562045234048,
+          0.015869619894472272,
+          0.05098419551003716,
+          -0.00987518519139328,
+          -0.059230428951863534
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.08013896678242725,
+        "relative_full_tidal_error": 0.41005644302428695,
+        "confidence_radius_95": 0.11718165008868416,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 12.982261260399769,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.0027471227247897,
+            "reading_sigma": 0.0843031224412515,
+            "expected_snr_less_favorable": 11.861956841478465,
+            "events_for_expected_snr_one": 29808.987538329253,
+            "part_error_matched_reflection": 0.08013896678242725
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9288978880623512,
+            "reading_sigma": 0.09347595997558564,
+            "expected_snr_less_favorable": 10.697937739940658,
+            "events_for_expected_snr_one": 36648.80113908884,
+            "part_error_matched_reflection": 0.028684076630959572
+          },
+          "magnetic": {
+            "reading_matched_reflection": 1.3190740349994228,
+            "reading_sigma": 0.19802831787419095,
+            "expected_snr_less_favorable": 4.948298151626588,
+            "events_for_expected_snr_one": 171296.38022611386,
+            "part_error_matched_reflection": 0.07482965818967915
+          }
+        }
+      },
+      "archive_bytes": 156256856
+    },
+    {
+      "case": 0,
+      "kind": "orbit",
+      "seed": 2026112200,
+      "measurement_n": 16777216,
+      "archive_sha256": "caf4a2db143ff1120d1f82cc51b418721b1e98a92d80b2905e9e6976f3d15c5b",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 102.60814570001094,
+      "wall_seconds": 102.99896410002839,
+      "process_cpu_seconds": 102.578125,
+      "peak_working_set_bytes": 18208235520,
+      "detection": {
+        "q": 538.1167875093746,
+        "q_magnetic": 93.6503084690607,
+        "q_electric": 441.77954781980037,
+        "invariant": 0.010902272281315883,
+        "invariant_se": 0.003526875518806472,
+        "invariant_interval_95": [
+          0.00398972328649918,
+          0.017814821276132587
+        ],
+        "invariant_raw": 0.010500353005122268,
+        "electric_dot_magnetic": 0.001495675270092761,
+        "electric_dot_magnetic_se": 0.002052408276841437,
+        "electric_eigenvalues": [
+          -0.12157838041183483,
+          0.03630036114620296,
+          0.08527801926563194
+        ],
+        "magnetic_eigenvalues": [
+          -0.0843571816193745,
+          0.009036433128641315,
+          0.07532074849073317
+        ],
+        "electric_norm": 0.15287694192643667,
+        "magnetic_norm": 0.11345045776750672,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 3.126652863956352e-109,
+        "nominal_p_value_magnetic": 1.148187961965374e-18,
+        "tidal_norm_estimate": 0.19037427804311147,
+        "largest_tidal_variance": 0.00016626319834967557,
+        "variance_times_N": 2789.4335915633505
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.04739751409537299,
+          -0.061305794875699704,
+          -0.04717085142569699,
+          -0.02661399430549361,
+          -0.01757033739426432,
+          0.03139562045234048,
+          0.015869619894472272,
+          0.05098419551003716,
+          -0.00987518519139328,
+          -0.059230428951863534
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.02067530793936787,
+        "relative_full_tidal_error": 0.10579177112510564,
+        "confidence_radius_95": 0.06018164222974897,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 4.361478097158463,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.9747258808202257,
+            "reading_sigma": 0.04217599608510679,
+            "expected_snr_less_favorable": 23.710169120418723,
+            "events_for_expected_snr_one": 29843.557536062606,
+            "part_error_matched_reflection": 0.02067530793936787
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9807198695373127,
+            "reading_sigma": 0.04677764768585234,
+            "expected_snr_less_favorable": 21.377731661834822,
+            "events_for_expected_snr_one": 36711.03705537329,
+            "part_error_matched_reflection": 0.012284782704660803
+          },
+          "magnetic": {
+            "reading_matched_reflection": 0.9490319683630885,
+            "reading_sigma": 0.09899391589966766,
+            "expected_snr_less_favorable": 9.898456715721702,
+            "events_for_expected_snr_one": 171231.99605337993,
+            "part_error_matched_reflection": 0.016629866875202425
+          }
+        }
+      },
+      "archive_bytes": 574638680
+    },
+    {
+      "case": 0,
+      "kind": "orbit",
+      "seed": 2026112200,
+      "measurement_n": 67108864,
+      "archive_sha256": "538d6683fbdee9ae06a2751f22eccda1ba9e3e68ba6b9b500ccbf22b8377f051",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 202.98091319995,
+      "wall_seconds": 206.64502479997464,
+      "process_cpu_seconds": 205.234375,
+      "peak_working_set_bytes": 31419793408,
+      "detection": {
+        "q": 2309.0215015629897,
+        "q_magnetic": 398.23404313238314,
+        "q_electric": 1897.549190309916,
+        "invariant": 0.011667569837051925,
+        "invariant_se": 0.0018089180907595673,
+        "invariant_interval_95": [
+          0.008122155528180217,
+          0.015212984145923633
+        ],
+        "invariant_raw": 0.011567131085027948,
+        "electric_dot_magnetic": -0.0001669332159001784,
+        "electric_dot_magnetic_se": 0.0010601634652461361,
+        "electric_eigenvalues": [
+          -0.12629201240956614,
+          0.03788534456405783,
+          0.08840666784550837
+        ],
+        "magnetic_eigenvalues": [
+          -0.07960482713125416,
+          -0.005629881180611588,
+          0.08523470831186576
+        ],
+        "electric_norm": 0.15874731698753666,
+        "magnetic_norm": 0.11676292033738066,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.0,
+        "nominal_p_value_magnetic": 7.126399858805787e-84,
+        "tidal_norm_estimate": 0.1970641779128184,
+        "largest_tidal_variance": 4.157024818487165e-05,
+        "variance_times_N": 2789.7321318847985
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.04739751409537299,
+          -0.061305794875699704,
+          -0.04717085142569699,
+          -0.02661399430549361,
+          -0.01757033739426432,
+          0.03139562045234048,
+          0.015869619894472272,
+          0.05098419551003716,
+          -0.00987518519139328,
+          -0.059230428951863534
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.011830514811680563,
+        "relative_full_tidal_error": 0.060534581584942924,
+        "confidence_radius_95": 0.032171450605230884,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 7.04320190805625,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.0119507668253784,
+            "reading_sigma": 0.021090092479120855,
+            "expected_snr_less_favorable": 47.415628973177704,
+            "events_for_expected_snr_one": 29849.485888489977,
+            "part_error_matched_reflection": 0.011830514811680563
+          },
+          "electric": {
+            "reading_matched_reflection": 1.0175888870659038,
+            "reading_sigma": 0.02339100649133745,
+            "expected_snr_less_favorable": 42.75147374997894,
+            "events_for_expected_snr_one": 36717.88913361274,
+            "part_error_matched_reflection": 0.009099638045630538
+          },
+          "magnetic": {
+            "reading_matched_reflection": 0.9862731262557963,
+            "reading_sigma": 0.049518311142542175,
+            "expected_snr_less_favorable": 19.799928584127613,
+            "events_for_expected_snr_one": 171179.84926914208,
+            "part_error_matched_reflection": 0.007560269052613566
+          }
+        }
+      },
+      "archive_bytes": 2248166064
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "seed": 2026112201,
+      "measurement_n": 1048576,
+      "archive_sha256": "0845c2fef1ed238d41ac72b09b1daf9720ed99ac0b9af09b15bca455645a9498",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 54.13775990001159,
+      "wall_seconds": 54.216812399972696,
+      "process_cpu_seconds": 53.90625,
+      "peak_working_set_bytes": 5112758272,
+      "detection": {
+        "q": 33.525292912361955,
+        "q_magnetic": 19.00975616149379,
+        "q_electric": 14.555240743936094,
+        "invariant": -0.031134065019067743,
+        "invariant_se": 0.027384104546775458,
+        "invariant_interval_95": [
+          -0.08480592367962718,
+          0.022537793641491694
+        ],
+        "invariant_raw": -0.04017016046835372,
+        "electric_dot_magnetic": -0.009459510225990767,
+        "electric_dot_magnetic_se": 0.011072683601193624,
+        "electric_eigenvalues": [
+          -0.07307371957817688,
+          -0.01361820642826985,
+          0.08669192600644672
+        ],
+        "magnetic_eigenvalues": [
+          -0.14993634448165336,
+          -0.023747362118240783,
+          0.17368370659989416
+        ],
+        "electric_norm": 0.11419594596140546,
+        "magnetic_norm": 0.23067482424914507,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.00022218888317957944,
+        "nominal_p_value_magnetic": 0.0019141106411903535,
+        "tidal_norm_estimate": 0.25739383950746414,
+        "largest_tidal_variance": 0.0034678228777993555,
+        "variance_times_N": 3636.275841911337
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.026429678853800053,
+          0.005716546666231961,
+          -0.0449197842436001,
+          0.02751332569426035,
+          0.09379705396741846,
+          -0.012525407862343116,
+          0.0703877111812262,
+          0.005365272446094671,
+          0.030276070380950676,
+          0.002463197072894769
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.19282944634912808,
+        "relative_full_tidal_error": 0.9866730263061563,
+        "confidence_radius_95": 0.26235846685714925,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 16.934430914852683,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.7956202443461832,
+            "reading_sigma": 0.18877636020313493,
+            "expected_snr_less_favorable": 5.297273445276404,
+            "events_for_expected_snr_one": 37367.593483940655,
+            "part_error_matched_reflection": 0.19282944634912808
+          },
+          "electric": {
+            "reading_matched_reflection": 0.6884110398053067,
+            "reading_sigma": 0.2075673711119881,
+            "expected_snr_less_favorable": 4.817712893133254,
+            "events_for_expected_snr_one": 45177.0723077632,
+            "part_error_matched_reflection": 0.08228813367572084
+          },
+          "magnetic": {
+            "reading_matched_reflection": 1.3814160641990523,
+            "reading_sigma": 0.47173789644137937,
+            "expected_snr_less_favorable": 2.1005527072297916,
+            "events_for_expected_snr_one": 237647.22453013432,
+            "part_error_matched_reflection": 0.17438996082194055
+          }
+        }
+      },
+      "archive_bytes": 51137096
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "seed": 2026112201,
+      "measurement_n": 4194304,
+      "archive_sha256": "b8f8a070a7bb605e5178f1631d10e9f2a0faecc528ad45f903ee5efb05f9fabb",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 67.00069479999365,
+      "wall_seconds": 67.14248069998575,
+      "process_cpu_seconds": 66.8125,
+      "peak_working_set_bytes": 9910755328,
+      "detection": {
+        "q": 107.61105362990162,
+        "q_magnetic": 26.693889350636425,
+        "q_electric": 79.9562290623674,
+        "invariant": 0.002378705151172511,
+        "invariant_se": 0.009194946272933047,
+        "invariant_interval_95": [
+          -0.015643058383557062,
+          0.020400468685902083
+        ],
+        "invariant_raw": 9.706972877123948e-05,
+        "electric_dot_magnetic": 0.009492156101701643,
+        "electric_dot_magnetic_se": 0.004738485540145313,
+        "electric_eigenvalues": [
+          -0.1056360762587854,
+          0.015662850289095896,
+          0.08997322596968953
+        ],
+        "magnetic_eigenvalues": [
+          -0.08791701115157174,
+          -0.01852475568038472,
+          0.10644176683195647
+        ],
+        "electric_norm": 0.1396405631538464,
+        "magnetic_norm": 0.1392925595613496,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 1.6163334416527404e-18,
+        "nominal_p_value_magnetic": 6.542933738200231e-05,
+        "tidal_norm_estimate": 0.1972356560743404,
+        "largest_tidal_variance": 0.0008704917486768595,
+        "variance_times_N": 3651.1070234423464
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.026429678853800053,
+          0.005716546666231961,
+          -0.0449197842436001,
+          0.02751332569426035,
+          0.09379705396741846,
+          -0.012525407862343116,
+          0.0703877111812262,
+          0.005365272446094671,
+          0.030276070380950676,
+          0.002463197072894769
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.09271754056315659,
+        "relative_full_tidal_error": 0.47441870560308835,
+        "confidence_radius_95": 0.13283987874706996,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 14.74447152180248,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.9156852439737815,
+            "reading_sigma": 0.09461665078611288,
+            "expected_snr_less_favorable": 10.568964254088483,
+            "events_for_expected_snr_one": 37548.71218390952,
+            "part_error_matched_reflection": 0.09271754056315659
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9068919736719304,
+            "reading_sigma": 0.10396205932925552,
+            "expected_snr_less_favorable": 9.618893723843293,
+            "events_for_expected_snr_one": 45332.498082607744,
+            "part_error_matched_reflection": 0.03731084401629067
+          },
+          "magnetic": {
+            "reading_matched_reflection": 0.9543064831977146,
+            "reading_sigma": 0.2365453968783466,
+            "expected_snr_less_favorable": 4.184407794116752,
+            "events_for_expected_snr_one": 239547.64181313227,
+            "part_error_matched_reflection": 0.08487899178755963
+          }
+        }
+      },
+      "archive_bytes": 154159688
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "seed": 2026112201,
+      "measurement_n": 16777216,
+      "archive_sha256": "3fb3e2569de2c01a64b5f99fd2b34682a359863ec80d6c66102b36f5c4be163c",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 97.14499240001896,
+      "wall_seconds": 97.54440410004463,
+      "process_cpu_seconds": 97.265625,
+      "peak_working_set_bytes": 17591357440,
+      "detection": {
+        "q": 409.63926114830156,
+        "q_magnetic": 75.34129066242055,
+        "q_electric": 328.98473342496163,
+        "invariant": 0.008792513997509705,
+        "invariant_se": 0.004227772964734974,
+        "invariant_interval_95": [
+          0.0005062312518170284,
+          0.017078796743202382
+        ],
+        "invariant_raw": 0.008220818891083172,
+        "electric_dot_magnetic": -0.00045670609184307424,
+        "electric_dot_magnetic_se": 0.002314109332403297,
+        "electric_eigenvalues": [
+          -0.12064340046197494,
+          0.04461266865018487,
+          0.07603073181179003
+        ],
+        "magnetic_eigenvalues": [
+          -0.07878769393734146,
+          -0.009563902642226094,
+          0.08835159657956754
+        ],
+        "electric_norm": 0.14941817981409083,
+        "magnetic_norm": 0.11876436152260833,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 8.351461827979773e-82,
+        "nominal_p_value_magnetic": 7.89569793487974e-15,
+        "tidal_norm_estimate": 0.19086845215181267,
+        "largest_tidal_variance": 0.00021801010925071292,
+        "variance_times_N": 3657.602693082809
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.026429678853800053,
+          0.005716546666231961,
+          -0.0449197842436001,
+          0.02751332569426035,
+          0.09379705396741846,
+          -0.012525407862343116,
+          0.0703877111812262,
+          0.005365272446094671,
+          0.030276070380950676,
+          0.002463197072894769
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.023445733619610623,
+        "relative_full_tidal_error": 0.11996753287641126,
+        "confidence_radius_95": 0.06835987312167442,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 5.440713112157706,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.9518735385773214,
+            "reading_sigma": 0.047285292331268415,
+            "expected_snr_less_favorable": 21.148224970129423,
+            "events_for_expected_snr_one": 37512.158310465464,
+            "part_error_matched_reflection": 0.023445733619610623
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9400425275085711,
+            "reading_sigma": 0.05196329897709656,
+            "expected_snr_less_favorable": 19.244351680611384,
+            "events_for_expected_snr_one": 45301.57759950224,
+            "part_error_matched_reflection": 0.012391417409886371
+          },
+          "magnetic": {
+            "reading_matched_reflection": 1.0122516218609439,
+            "reading_sigma": 0.11846475927341486,
+            "expected_snr_less_favorable": 8.362535532933276,
+            "events_for_expected_snr_one": 239907.5655000956,
+            "part_error_matched_reflection": 0.01990364789519009
+          }
+        }
+      },
+      "archive_bytes": 566250056
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "seed": 2026112201,
+      "measurement_n": 67108864,
+      "archive_sha256": "7a53e6bfc19fe8c3e742a9188515ebfa6e45ec82db335f04c1de23edbff50f9f",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 200.37962079996942,
+      "wall_seconds": 204.00129579997156,
+      "process_cpu_seconds": 202.890625,
+      "peak_working_set_bytes": 30339739648,
+      "detection": {
+        "q": 1802.6433339812977,
+        "q_magnetic": 299.56346464687556,
+        "q_electric": 1477.7961087702822,
+        "invariant": 0.010421007431644548,
+        "invariant_se": 0.002168063535145471,
+        "invariant_interval_95": [
+          0.006171680986564835,
+          0.01467033387672426
+        ],
+        "invariant_raw": 0.01027803639960528,
+        "electric_dot_magnetic": 0.00026474472138752293,
+        "electric_dot_magnetic_se": 0.0012055583785405746,
+        "electric_eigenvalues": [
+          -0.1263122743158315,
+          0.043316295589377024,
+          0.08299597872645449
+        ],
+        "magnetic_eigenvalues": [
+          -0.08553787233338937,
+          0.0011378372946007284,
+          0.0844000350387886
+        ],
+        "electric_norm": 0.15722412216700793,
+        "magnetic_norm": 0.12017232706235224,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.0,
+        "nominal_p_value_magnetic": 1.2431232893233853e-62,
+        "tidal_norm_estimate": 0.1978909113192599,
+        "largest_tidal_variance": 5.457909239577209e-05,
+        "variance_times_N": 3662.7408888313034
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.026429678853800053,
+          0.005716546666231961,
+          -0.0449197842436001,
+          0.02751332569426035,
+          0.09379705396741846,
+          -0.012525407862343116,
+          0.0703877111812262,
+          0.005365272446094671,
+          0.030276070380950676,
+          0.002463197072894769
+        ],
+        "truth_norm": 0.19543398999264294,
+        "truth_electric_norm": 0.15590239111558093,
+        "truth_magnetic_norm": 0.11785113019775796,
+        "truth_electric_eigenvalues": [
+          -0.12500000000000003,
+          0.041666666666666685,
+          0.08333333333333336
+        ],
+        "truth_magnetic_eigenvalues": [
+          -0.08333333333333336,
+          0.0,
+          0.08333333333333336
+        ],
+        "truth_invariant": 0.01041666666666667,
+        "full_tidal_error_mod_reflection": 0.01495990512109432,
+        "relative_full_tidal_error": 0.07654709972230256,
+        "confidence_radius_95": 0.03629352132247437,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 8.038751507777594,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.0021054501224291,
+            "reading_sigma": 0.023655279256885122,
+            "expected_snr_less_favorable": 42.27386154018618,
+            "events_for_expected_snr_one": 37552.25713230013,
+            "part_error_matched_reflection": 0.01495990512109432
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9979273042925166,
+            "reading_sigma": 0.026000140739464484,
+            "expected_snr_less_favorable": 38.46133026819133,
+            "events_for_expected_snr_one": 45366.08319833951,
+            "part_error_matched_reflection": 0.008781056310818233
+          },
+          "magnetic": {
+            "reading_matched_reflection": 1.020253442782186,
+            "reading_sigma": 0.059247984075955766,
+            "expected_snr_less_favorable": 16.725252608556293,
+            "events_for_expected_snr_one": 239902.35741990976,
+            "part_error_matched_reflection": 0.012111639496714857
+          }
+        }
+      },
+      "archive_bytes": 2214611616
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "seed": 2026112202,
+      "measurement_n": 1048576,
+      "archive_sha256": "9fee6e0272df0a6a00274339805fc35dffe28afc543f7d15840fd2fe7fd6f654",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 37.15431539999554,
+      "wall_seconds": 37.22534669999732,
+      "process_cpu_seconds": 36.953125,
+      "peak_working_set_bytes": 3913175040,
+      "detection": {
+        "q": 19.27449542500865,
+        "q_magnetic": 9.260885975468467,
+        "q_electric": 9.90798800166529,
+        "invariant": -0.007041086777865543,
+        "invariant_se": 0.021971658046576654,
+        "invariant_interval_95": [
+          -0.05010474522978546,
+          0.03602257167405437
+        ],
+        "invariant_raw": -0.016373858196739095,
+        "electric_dot_magnetic": 0.004113185816071953,
+        "electric_dot_magnetic_se": 0.008905763283640521,
+        "electric_eigenvalues": [
+          -0.0845424598705003,
+          0.028470371167178255,
+          0.05607208870332205
+        ],
+        "magnetic_eigenvalues": [
+          -0.10778243032607403,
+          -0.016997248119615227,
+          0.12477967844568927
+        ],
+        "electric_norm": 0.1053663546247343,
+        "magnetic_norm": 0.1657586404494329,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.03691154823686518,
+        "nominal_p_value_magnetic": 0.09909993489805248,
+        "tidal_norm_estimate": 0.1964128192622611,
+        "largest_tidal_variance": 0.003438244462272779,
+        "variance_times_N": 3605.2606252721416
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.03770914148650821,
+          0.04167256956699894,
+          0.012215216579263458,
+          0.01816086798283344,
+          -0.05605496505491349,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.17489368758642354,
+        "relative_full_tidal_error": 1.7136011752818805,
+        "confidence_radius_95": 0.26001513140674337,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 12.366103716049459,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.8411362853836531,
+            "reading_sigma": 0.3142609932189078,
+            "expected_snr_less_favorable": 2.9689014232877673,
+            "events_for_expected_snr_one": 118962.0275223475,
+            "part_error_matched_reflection": 0.17489368758642354
+          },
+          "electric": {
+            "reading_matched_reflection": 0.8515186804116408,
+            "reading_sigma": 0.3151457688721555,
+            "expected_snr_less_favorable": 2.966046681546019,
+            "events_for_expected_snr_one": 119191.13335443816,
+            "part_error_matched_reflection": 0.05578418300856568
+          }
+        }
+      },
+      "archive_bytes": 48253424
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "seed": 2026112202,
+      "measurement_n": 4194304,
+      "archive_sha256": "44a152babe344a80881f81fcd64599d8a642248ae94c9ee459a416aaa8faea82",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 47.10321939998539,
+      "wall_seconds": 47.22881969995797,
+      "process_cpu_seconds": 46.96875,
+      "peak_working_set_bytes": 6731304960,
+      "detection": {
+        "q": 39.06711443441601,
+        "q_magnetic": 6.84051113550028,
+        "q_electric": 31.81635578365096,
+        "invariant": 0.006590177708366167,
+        "invariant_se": 0.005461796311507647,
+        "invariant_interval_95": [
+          -0.004114746353082531,
+          0.017295101769814865
+        ],
+        "invariant_raw": 0.0042403335261921495,
+        "electric_dot_magnetic": 0.0004851453156837342,
+        "electric_dot_magnetic_se": 0.003067330327868934,
+        "electric_eigenvalues": [
+          -0.07539350598447886,
+          0.024401358954639466,
+          0.050992147029839334
+        ],
+        "magnetic_eigenvalues": [
+          -0.047270681631596354,
+          -0.001738825013956763,
+          0.04900950664555311
+        ],
+        "electric_norm": 0.09423272320259861,
+        "magnetic_norm": 0.06811367407492724,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 2.4710599473725643e-05,
+        "nominal_p_value_magnetic": 0.23277448929306474,
+        "tidal_norm_estimate": 0.11627243318243144,
+        "largest_tidal_variance": 0.0008647604210454918,
+        "variance_times_N": 3627.0680930327903
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.03770914148650821,
+          0.04167256956699894,
+          0.012215216579263458,
+          0.01816086798283344,
+          -0.05605496505491349,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.07554129598030643,
+        "relative_full_tidal_error": 0.7401505186412348,
+        "confidence_radius_95": 0.13076280916509508,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 10.616708013403715,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.8525141557910291,
+            "reading_sigma": 0.1574196857831465,
+            "expected_snr_less_favorable": 5.922174714580732,
+            "events_for_expected_snr_one": 119590.71797334288,
+            "part_error_matched_reflection": 0.07554129598030643
+          },
+          "electric": {
+            "reading_matched_reflection": 0.8473758479453544,
+            "reading_sigma": 0.15788262353667318,
+            "expected_snr_less_favorable": 5.91691335845193,
+            "events_for_expected_snr_one": 119803.49415148074,
+            "part_error_matched_reflection": 0.03266519252046197
+          }
+        }
+      },
+      "archive_bytes": 142625264
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "seed": 2026112202,
+      "measurement_n": 16777216,
+      "archive_sha256": "9c112c772e7083ac1cc9fb88e6d55402f677c5cfa9cbb6e15116cfcc73eba4f0",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 68.67228540003998,
+      "wall_seconds": 69.03193430003012,
+      "process_cpu_seconds": 68.65625,
+      "peak_working_set_bytes": 11510386688,
+      "detection": {
+        "q": 142.59928278300717,
+        "q_magnetic": 4.971937116341411,
+        "q_electric": 136.09954722640305,
+        "invariant": 0.008401067042419753,
+        "invariant_se": 0.00183243756066941,
+        "invariant_interval_95": [
+          0.00480955541958928,
+          0.011992578665250227
+        ],
+        "invariant_raw": 0.007815194827002785,
+        "electric_dot_magnetic": -0.00044544065508854804,
+        "electric_dot_magnetic_se": 0.0013490234028435185,
+        "electric_eigenvalues": [
+          -0.07608212402408271,
+          0.03457309315323989,
+          0.041509030870842845
+        ],
+        "magnetic_eigenvalues": [
+          -0.023615498055604978,
+          0.006561056716884906,
+          0.017054441338720073
+        ],
+        "electric_norm": 0.09331017098920723,
+        "magnetic_norm": 0.02985955764964222,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 1.235378533026806e-25,
+        "nominal_p_value_magnetic": 0.4193146259358107,
+        "tidal_norm_estimate": 0.09797132842351071,
+        "largest_tidal_variance": 0.00021638146470533416,
+        "variance_times_N": 3630.2785717577676
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.03770914148650821,
+          0.04167256956699894,
+          0.012215216579263458,
+          0.01816086798283344,
+          -0.05605496505491349,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.03276388251788544,
+        "relative_full_tidal_error": 0.32101917664525387,
+        "confidence_radius_95": 0.06622277066260032,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 7.363457110018097,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.9197824130256869,
+            "reading_sigma": 0.07879183939539645,
+            "expected_snr_less_favorable": 11.827005671210948,
+            "events_for_expected_snr_one": 119941.72368819438,
+            "part_error_matched_reflection": 0.03276388251788544
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9176150328782797,
+            "reading_sigma": 0.07902514913993564,
+            "expected_snr_less_favorable": 11.816587094881909,
+            "events_for_expected_snr_one": 120153.31996102107,
+            "part_error_matched_reflection": 0.013486245386077315
+          }
+        }
+      },
+      "archive_bytes": 520112624
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "seed": 2026112202,
+      "measurement_n": 67108864,
+      "archive_sha256": "9896ed1d65011a9687ad4a7cf69a151c37deb29ad6d74239582faac825442e34",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 146.04765850002877,
+      "wall_seconds": 147.3634287000168,
+      "process_cpu_seconds": 146.75,
+      "peak_working_set_bytes": 18120376320,
+      "detection": {
+        "q": 569.8027762852145,
+        "q_magnetic": 3.7767573528414724,
+        "q_electric": 565.7660284182919,
+        "invariant": 0.009072696222133246,
+        "invariant_se": 0.0007987094422832216,
+        "invariant_interval_95": [
+          0.007507254481146058,
+          0.010638137963120433
+        ],
+        "invariant_raw": 0.00892598663886794,
+        "electric_dot_magnetic": 5.799855948443112e-05,
+        "electric_dot_magnetic_se": 0.0006695785463923903,
+        "electric_eigenvalues": [
+          -0.07782013490359019,
+          0.03638115422741241,
+          0.04143898067617781
+        ],
+        "magnetic_eigenvalues": [
+          -0.009540611219077677,
+          0.0006333159857875346,
+          0.008907295233290147
+        ],
+        "electric_norm": 0.09537688870377549,
+        "magnetic_norm": 0.013067679975590095,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 5.171125575969266e-116,
+        "nominal_p_value_magnetic": 0.5819838974492405,
+        "tidal_norm_estimate": 0.09626793421880839,
+        "largest_tidal_variance": 5.410947581435466e-05,
+        "variance_times_N": 3631.225453536816
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.03770914148650821,
+          0.04167256956699894,
+          0.012215216579263458,
+          0.01816086798283344,
+          -0.05605496505491349,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.017604127035153502,
+        "relative_full_tidal_error": 0.1724845144130422,
+        "confidence_radius_95": 0.03408051717186877,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 11.237167001896388,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.9335647737097836,
+            "reading_sigma": 0.03940078695604217,
+            "expected_snr_less_favorable": 23.6477975882411,
+            "events_for_expected_snr_one": 120004.76434144375,
+            "part_error_matched_reflection": 0.017604127035153502
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9363226696625165,
+            "reading_sigma": 0.039518108210984206,
+            "expected_snr_less_favorable": 23.626688556512402,
+            "events_for_expected_snr_one": 120219.29427832495,
+            "part_error_matched_reflection": 0.011795805556441835
+          }
+        }
+      },
+      "archive_bytes": 2030062064
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "seed": 2026112203,
+      "measurement_n": 1048576,
+      "archive_sha256": "b38d9a003758cebfdddfe8c9862647d208b6e259c8e8bdecf260673629ef0688",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 65.96623869996984,
+      "wall_seconds": 66.04455349995987,
+      "process_cpu_seconds": 65.8125,
+      "peak_working_set_bytes": 5748494336,
+      "detection": {
+        "q": 25.92503263253176,
+        "q_magnetic": 5.1617552967892575,
+        "q_electric": 20.925541727166227,
+        "invariant": 0.017918505530586284,
+        "invariant_se": 0.01626944911126089,
+        "invariant_interval_95": [
+          -0.013969028775792251,
+          0.04980603983696482
+        ],
+        "invariant_raw": 0.011673528915100656,
+        "electric_dot_magnetic": 0.005393853280185201,
+        "electric_dot_magnetic_se": 0.009030688468793239,
+        "electric_eigenvalues": [
+          -0.10892022036285069,
+          0.005122736236704454,
+          0.10379748412614623
+        ],
+        "magnetic_eigenvalues": [
+          -0.07214966378408164,
+          -0.0038117864781951703,
+          0.07596145026227683
+        ],
+        "electric_norm": 0.15054492532583216,
+        "magnetic_norm": 0.10483437235115078,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.0038423318085156334,
+        "nominal_p_value_magnetic": 0.3964601880552525,
+        "tidal_norm_estimate": 0.18345032070732425,
+        "largest_tidal_variance": 0.002710237401438991,
+        "variance_times_N": 2841.8898934512913
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.041642440234999904,
+          0.023191720197072413,
+          0.0012068263176544512,
+          0.0012535099829562909,
+          -0.06244290771675813,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.13424753979477075,
+        "relative_full_tidal_error": 1.3153518868846699,
+        "confidence_radius_95": 0.23103718383945984,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 11.223749977652878,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.2615485787824219,
+            "reading_sigma": 0.32187421706201985,
+            "expected_snr_less_favorable": 3.0814722929623404,
+            "events_for_expected_snr_one": 110429.0609319297,
+            "part_error_matched_reflection": 0.13424753979477075
+          },
+          "electric": {
+            "reading_matched_reflection": 1.2625870766161855,
+            "reading_sigma": 0.3219501042707243,
+            "expected_snr_less_favorable": 3.0796595420041655,
+            "events_for_expected_snr_one": 110559.10082655452,
+            "part_error_matched_reflection": 0.0838579531987803
+          }
+        }
+      },
+      "archive_bytes": 51661400
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "seed": 2026112203,
+      "measurement_n": 4194304,
+      "archive_sha256": "abca1483abab432ca320899f23ae19123173e9c34ee81c3480820a11f11c08ed",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 80.302356900007,
+      "wall_seconds": 80.44927470001858,
+      "process_cpu_seconds": 80.203125,
+      "peak_working_set_bytes": 11119063040,
+      "detection": {
+        "q": 65.33056329423378,
+        "q_magnetic": 4.413352071553226,
+        "q_electric": 60.82931016246992,
+        "invariant": 0.015112388469720095,
+        "invariant_se": 0.005298593283700733,
+        "invariant_interval_95": [
+          0.004727336464940838,
+          0.025497440474499353
+        ],
+        "invariant_raw": 0.013529771538120995,
+        "electric_dot_magnetic": 0.0002482334217835083,
+        "electric_dot_magnetic_se": 0.0032503107309247914,
+        "electric_eigenvalues": [
+          -0.10349182306701277,
+          0.045561605457064405,
+          0.057930217609948376
+        ],
+        "magnetic_eigenvalues": [
+          -0.03769265864291425,
+          0.0033309960279508735,
+          0.03436166261496335
+        ],
+        "electric_norm": 0.1270524594248181,
+        "magnetic_norm": 0.051113167655449154,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 3.503909660296583e-10,
+        "nominal_p_value_magnetic": 0.4915596523897485,
+        "tidal_norm_estimate": 0.1369484697018156,
+        "largest_tidal_variance": 0.0006863427891984515,
+        "variance_times_N": 2878.730306106222
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.041642440234999904,
+          0.023191720197072413,
+          0.0012068263176544512,
+          0.0012535099829562909,
+          -0.06244290771675813,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.0597634746758704,
+        "relative_full_tidal_error": 0.585560072846507,
+        "confidence_radius_95": 0.11717576531722719,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 8.080576973398271,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.2388514343800259,
+            "reading_sigma": 0.16065929785868827,
+            "expected_snr_less_favorable": 6.160218252513946,
+            "events_for_expected_snr_one": 110526.82794199821,
+            "part_error_matched_reflection": 0.0597634746758704
+          },
+          "electric": {
+            "reading_matched_reflection": 1.2381496968139998,
+            "reading_sigma": 0.1606948525486779,
+            "expected_snr_less_favorable": 6.156580433794753,
+            "events_for_expected_snr_one": 110657.48337908335,
+            "part_error_matched_reflection": 0.030969614100911046
+          }
+        }
+      },
+      "archive_bytes": 156256856
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "seed": 2026112203,
+      "measurement_n": 16777216,
+      "archive_sha256": "3e69860dc42159540673d62894fa4dd4bf07bf46b184c53e0122608c4041bf5b",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 113.35521370003698,
+      "wall_seconds": 113.76427740004146,
+      "process_cpu_seconds": 113.1875,
+      "peak_working_set_bytes": 19835727872,
+      "detection": {
+        "q": 170.24782230665792,
+        "q_magnetic": 8.759023736432578,
+        "q_electric": 161.0536416478392,
+        "invariant": 0.009725391299291127,
+        "invariant_se": 0.001995857619750077,
+        "invariant_interval_95": [
+          0.005813582246311138,
+          0.013637200352271115
+        ],
+        "invariant_raw": 0.009327931458392459,
+        "electric_dot_magnetic": -0.0008654286856787777,
+        "electric_dot_magnetic_se": 0.0013080988433251217,
+        "electric_eigenvalues": [
+          -0.08339248106908789,
+          0.03070191904294796,
+          0.05269056202613993
+        ],
+        "magnetic_eigenvalues": [
+          -0.028794521230292386,
+          0.0072701672141405735,
+          0.021524354016151808
+        ],
+        "electric_norm": 0.10331122426149258,
+        "magnetic_norm": 0.036678026119407715,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 2.464878489125136e-31,
+        "nominal_p_value_magnetic": 0.1190706160869823,
+        "tidal_norm_estimate": 0.10962885869343149,
+        "largest_tidal_variance": 0.00017206182820716742,
+        "variance_times_N": 2886.7184571865405
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.041642440234999904,
+          0.023191720197072413,
+          0.0012068263176544512,
+          0.0012535099829562909,
+          -0.06244290771675813,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.04181282737505599,
+        "relative_full_tidal_error": 0.4096803670878533,
+        "confidence_radius_95": 0.05950706648649,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 13.93482485838034,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 1.0046560941253435,
+            "reading_sigma": 0.08035542701031988,
+            "expected_snr_less_favorable": 12.324903662583198,
+            "events_for_expected_snr_one": 110446.72163205419,
+            "part_error_matched_reflection": 0.04181282737505599
+          },
+          "electric": {
+            "reading_matched_reflection": 1.003467748310031,
+            "reading_sigma": 0.0803755728552079,
+            "expected_snr_less_favorable": 12.317439867198384,
+            "events_for_expected_snr_one": 110580.61333349056,
+            "part_error_matched_reflection": 0.020075729951368564
+          }
+        }
+      },
+      "archive_bytes": 574638680
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "seed": 2026112203,
+      "measurement_n": 67108864,
+      "archive_sha256": "6bd7c5dcf0e701def53a0ad30cb2c1fecda837d468e025e66fac9aea755c1895",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 217.80170609999914,
+      "wall_seconds": 221.69734030001564,
+      "process_cpu_seconds": 220.484375,
+      "peak_working_set_bytes": 33305772032,
+      "detection": {
+        "q": 578.352190482146,
+        "q_magnetic": 7.704574813986614,
+        "q_electric": 570.1797225675039,
+        "invariant": 0.009312295301645812,
+        "invariant_se": 0.0008436113678617813,
+        "invariant_interval_95": [
+          0.0076588474036881505,
+          0.010965743199603474
+        ],
+        "invariant_raw": 0.009212853194884088,
+        "electric_dot_magnetic": 0.0007581863330400097,
+        "electric_dot_magnetic_se": 0.0005859912390198911,
+        "electric_eigenvalues": [
+          -0.07940342393957633,
+          0.03391495841928632,
+          0.04548846552029004
+        ],
+        "magnetic_eigenvalues": [
+          -0.009157514569972236,
+          -0.005056732551230264,
+          0.0142142471212025
+        ],
+        "electric_norm": 0.09759266690331106,
+        "magnetic_norm": 0.017648666760311935,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 7.636316395564486e-118,
+        "nominal_p_value_magnetic": 0.17328625536131026,
+        "tidal_norm_estimate": 0.09917562236617003,
+        "largest_tidal_variance": 4.302480213838763e-05,
+        "variance_times_N": 2887.3455953319644
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.041642440234999904,
+          0.023191720197072413,
+          0.0012068263176544512,
+          0.0012535099829562909,
+          -0.06244290771675813,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596575,
+        "truth_electric_norm": 0.10206207261596574,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.010416666666666668,
+        "full_tidal_error_mod_reflection": 0.02018306027361866,
+        "relative_full_tidal_error": 0.1977527964728142,
+        "confidence_radius_95": 0.030661973999880788,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 12.2562840344225,
+        "truth_pattern": {
+          "full": {
+            "reading_matched_reflection": 0.9572981083292693,
+            "reading_sigma": 0.04019478343314672,
+            "expected_snr_less_favorable": 24.64296246267892,
+            "events_for_expected_snr_one": 110508.08581387074,
+            "part_error_matched_reflection": 0.02018306027361866
+          },
+          "electric": {
+            "reading_matched_reflection": 0.9570366853808047,
+            "reading_sigma": 0.040204772348310304,
+            "expected_snr_less_favorable": 24.628330874789135,
+            "events_for_expected_snr_one": 110639.42959658126,
+            "part_error_matched_reflection": 0.009791858025522248
+          }
+        }
+      },
+      "archive_bytes": 2248166064
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "seed": 2026112204,
+      "measurement_n": 1048576,
+      "archive_sha256": "8ceb611b23a8f50054d79dfbd1100d157cf619988919bd962df6a1caf35f5609",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 29.77536540001165,
+      "wall_seconds": 29.822349000023678,
+      "process_cpu_seconds": 29.734375,
+      "peak_working_set_bytes": 2809073664,
+      "detection": {
+        "q": 13.86268559461083,
+        "q_magnetic": 3.023673583690787,
+        "q_electric": 11.089654302215667,
+        "invariant": 0.012801470128983689,
+        "invariant_se": 0.018425752239768698,
+        "invariant_interval_95": [
+          -0.0233123406490212,
+          0.04891528090698857
+        ],
+        "invariant_raw": 0.0022139460837027184,
+        "electric_dot_magnetic": -0.009315725060183218,
+        "electric_dot_magnetic_se": 0.008714374422818184,
+        "electric_eigenvalues": [
+          -0.059926098662948124,
+          -0.030685834332772107,
+          0.0906119329957202
+        ],
+        "magnetic_eigenvalues": [
+          -0.08364643447589147,
+          0.037685280168373116,
+          0.04596115430751833
+        ],
+        "electric_norm": 0.11288613790399869,
+        "magnetic_norm": 0.10261254332282137,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.17934758863808326,
+        "nominal_p_value_magnetic": 0.696335891535872,
+        "tidal_norm_estimate": 0.15255364360794044,
+        "largest_tidal_variance": 0.004159977227126711,
+        "variance_times_N": 4362.052280911618
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.15255364360794044,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.28471061154418575,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 13.86268559461083
+      },
+      "archive_bytes": 46156208
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "seed": 2026112204,
+      "measurement_n": 4194304,
+      "archive_sha256": "5618be9825fd11730dcd72ad0e748ccda25f0ad58cca2bc97ecabc97218d7152",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 36.67897320003249,
+      "wall_seconds": 36.78792249999242,
+      "process_cpu_seconds": 36.6875,
+      "peak_working_set_bytes": 4636827648,
+      "detection": {
+        "q": 16.852491955152058,
+        "q_magnetic": 5.5538409733910665,
+        "q_electric": 11.329043599462121,
+        "invariant": 0.0013032504502657474,
+        "invariant_se": 0.005982247463519138,
+        "invariant_interval_95": [
+          -0.010421739124837853,
+          0.013028240025369347
+        ],
+        "invariant_raw": -0.0013867741512327161,
+        "electric_dot_magnetic": -0.001512031223114555,
+        "electric_dot_magnetic_se": 0.0024672602538629122,
+        "electric_eigenvalues": [
+          -0.04144674407731926,
+          -0.006639776835700955,
+          0.048086520913020216
+        ],
+        "magnetic_eigenvalues": [
+          -0.040581510166011525,
+          -0.018379119656632414,
+          0.05896062982264395
+        ],
+        "electric_norm": 0.06382971662601238,
+        "magnetic_norm": 0.07389862566915407,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.0776923478451138,
+        "nominal_p_value_magnetic": 0.3520781366938196,
+        "tidal_norm_estimate": 0.09764855145032515,
+        "largest_tidal_variance": 0.0010485257441585228,
+        "variance_times_N": 4397.835722827069
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.09764855145032515,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.14336779422396653,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 16.852491955152058
+      },
+      "archive_bytes": 134236592
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "seed": 2026112204,
+      "measurement_n": 16777216,
+      "archive_sha256": "2732fea2ecc66abbababf94e96ce81cec5beb22ed7834699152962e634ac334e",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 55.72756089997711,
+      "wall_seconds": 56.05011620000005,
+      "process_cpu_seconds": 55.890625,
+      "peak_working_set_bytes": 7237271552,
+      "detection": {
+        "q": 13.864797466167836,
+        "q_magnetic": 10.110033469674182,
+        "q_electric": 3.704324117578866,
+        "invariant": -0.0013529777772400733,
+        "invariant_se": 0.0016588008233951602,
+        "invariant_interval_95": [
+          -0.004604167648619974,
+          0.0018982120941398275
+        ],
+        "invariant_raw": -0.0020232651377196983,
+        "electric_dot_magnetic": 0.0007023977534097577,
+        "electric_dot_magnetic_se": 0.0005650372932710829,
+        "electric_eigenvalues": [
+          -0.013343141511088955,
+          0.003331870127053305,
+          0.010011271384035647
+        ],
+        "magnetic_eigenvalues": [
+          -0.028857020526391886,
+          -0.008631628785410234,
+          0.037488649311802104
+        ],
+        "electric_norm": 0.01701077125392339,
+        "magnetic_norm": 0.04808982716098077,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.17924842444727754,
+        "nominal_p_value_magnetic": 0.07217685951149644,
+        "tidal_norm_estimate": 0.051009781562228934,
+        "largest_tidal_variance": 0.0002621529146885633,
+        "variance_times_N": 4398.1960747595995
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.051009781562228934,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.07173139522473468,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 13.864797466167836
+      },
+      "archive_bytes": 486558128
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "seed": 2026112204,
+      "measurement_n": 67108864,
+      "archive_sha256": "0d1ff6557d054ea285599fbf297f46b7ed8eeba0d34340e8c4ffb3f5b1bafeb0",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 121.40868549997685,
+      "wall_seconds": 122.62809829995967,
+      "process_cpu_seconds": 122.03125,
+      "peak_working_set_bytes": 11433762816,
+      "detection": {
+        "q": 9.398683550025517,
+        "q_magnetic": 6.762499918201683,
+        "q_electric": 2.57877472735705,
+        "invariant": -0.00014785154950564452,
+        "invariant_se": 0.0003427091872381248,
+        "invariant_interval_95": [
+          -0.0008195492136633631,
+          0.0005238461146520741
+        ],
+        "invariant_raw": -0.0003155497749819763,
+        "electric_dot_magnetic": 9.914056453440829e-05,
+        "electric_dot_magnetic_se": 0.00012042000769976292,
+        "electric_eigenvalues": [
+          -0.005653997304148928,
+          0.0018828884842512089,
+          0.0037711088198977187
+        ],
+        "magnetic_eigenvalues": [
+          -0.011959615710643691,
+          -0.0027016488010671875,
+          0.014661264511710872
+        ],
+        "electric_norm": 0.007052249023606549,
+        "magnetic_norm": 0.019112404120699623,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.4947305144450935,
+        "nominal_p_value_magnetic": 0.2389111246629516,
+        "tidal_norm_estimate": 0.020371995669641586,
+        "largest_tidal_variance": 6.571303903016518e-05,
+        "variance_times_N": 4409.927399302047
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.020371995669641586,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.03580805143686316,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 9.398683550025517
+      },
+      "archive_bytes": 1895844272
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "seed": 2026112205,
+      "measurement_n": 1048576,
+      "archive_sha256": "ba6c646ca88da2c98b703b2b67d9c2de5874045c1cd41c48fd998fe39bd0c5a5",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 39.55754509998951,
+      "wall_seconds": 39.60897229996044,
+      "process_cpu_seconds": 39.09375,
+      "peak_working_set_bytes": 4831141888,
+      "detection": {
+        "q": 11.419793276232298,
+        "q_magnetic": 4.987010070688685,
+        "q_electric": 6.757778715302787,
+        "invariant": 0.004219697495309557,
+        "invariant_se": 0.01735533887941584,
+        "invariant_interval_95": [
+          -0.02979614164783323,
+          0.03823553663845235
+        ],
+        "invariant_raw": -0.002878023789395146,
+        "electric_dot_magnetic": -0.005208106973062063,
+        "electric_dot_magnetic_se": 0.007844798691930168,
+        "electric_eigenvalues": [
+          -0.07923125969037116,
+          0.015490495485292228,
+          0.06374076420507893
+        ],
+        "magnetic_eigenvalues": [
+          -0.09406456869033451,
+          0.037382358205617715,
+          0.05668221048471679
+        ],
+        "electric_norm": 0.10286123168594845,
+        "magnetic_norm": 0.11601058905697148,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.32576049664241646,
+        "nominal_p_value_magnetic": 0.41746755613910314,
+        "tidal_norm_estimate": 0.15504479919460656,
+        "largest_tidal_variance": 0.0031141427213513717,
+        "variance_times_N": 3265.415318183736
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.15504479919460656,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.24680621704648734,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 11.419793276232298
+      },
+      "archive_bytes": 48253424
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "seed": 2026112205,
+      "measurement_n": 4194304,
+      "archive_sha256": "b7f28fe8565eb115bddc18231ce14b888c4927b6d4cbc5ef75875fc9646f5537",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 48.62048739998136,
+      "wall_seconds": 48.729757599998266,
+      "process_cpu_seconds": 48.296875,
+      "peak_working_set_bytes": 8723361792,
+      "detection": {
+        "q": 19.74038694536299,
+        "q_magnetic": 3.546990711201227,
+        "q_electric": 15.776899681375442,
+        "invariant": 0.005279442079353372,
+        "invariant_se": 0.004561830556007267,
+        "invariant_interval_95": [
+          -0.003661581513995203,
+          0.014220465672701946
+        ],
+        "invariant_raw": 0.003458964306697153,
+        "electric_dot_magnetic": 0.0004507297866500718,
+        "electric_dot_magnetic_se": 0.002441779211742467,
+        "electric_eigenvalues": [
+          -0.05749924570969843,
+          0.008974780679456137,
+          0.048524465030242304
+        ],
+        "magnetic_eigenvalues": [
+          -0.02527392086021007,
+          -0.013094467160784903,
+          0.03836838802099497
+        ],
+        "electric_norm": 0.07577158868533654,
+        "magnetic_norm": 0.04777414934044003,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.03180605040967839,
+        "nominal_p_value_magnetic": 0.6162895707586323,
+        "tidal_norm_estimate": 0.08957512487907837,
+        "largest_tidal_variance": 0.0007925603862533591,
+        "variance_times_N": 3324.2391983040093
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.08957512487907837,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.12474143973801424,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 19.74038694536299
+      },
+      "archive_bytes": 142625264
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "seed": 2026112205,
+      "measurement_n": 16777216,
+      "archive_sha256": "0ea221d2ec1f53646d10c2e6f6a3a2e9697f7acac3c6f5105cffe13b47c5da4c",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 76.982981499983,
+      "wall_seconds": 77.32849380001426,
+      "process_cpu_seconds": 76.859375,
+      "peak_working_set_bytes": 14874914816,
+      "detection": {
+        "q": 21.7548537002981,
+        "q_magnetic": 10.534595696339517,
+        "q_electric": 10.725083106713424,
+        "invariant": -0.0003268028758543246,
+        "invariant_se": 0.0013931105643587977,
+        "invariant_interval_95": [
+          -0.003057249408479837,
+          0.002403643656771188
+        ],
+        "invariant_raw": -0.000782712818131959,
+        "electric_dot_magnetic": -8.248554984154918e-05,
+        "electric_dot_magnetic_se": 0.0006084395850436426,
+        "electric_eigenvalues": [
+          -0.021324574817439417,
+          -0.001382807912250437,
+          0.02270738272968985
+        ],
+        "magnetic_eigenvalues": [
+          -0.029833509146658877,
+          0.00042658039518961316,
+          0.02940692875146927
+        ],
+        "electric_norm": 0.031181322603433148,
+        "magnetic_norm": 0.0418925732968426,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.016403353463058035,
+        "nominal_p_value_magnetic": 0.061429594984145096,
+        "tidal_norm_estimate": 0.05222319960257798,
+        "largest_tidal_variance": 0.0001980763517040521,
+        "variance_times_N": 3323.1697370308502
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.05222319960257798,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.06251258096796423,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 21.7548537002981
+      },
+      "archive_bytes": 520112624
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "seed": 2026112205,
+      "measurement_n": 67108864,
+      "archive_sha256": "e37da3a2d09b7d77f3165c9e27dc682b22e844f256b9c820818f807661551c44",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 161.63439730001846,
+      "wall_seconds": 162.93507250002585,
+      "process_cpu_seconds": 160.6875,
+      "peak_working_set_bytes": 23576363008,
+      "detection": {
+        "q": 12.99663315235986,
+        "q_magnetic": 5.725127435612268,
+        "q_electric": 7.363661509431559,
+        "invariant": 2.9984605030330174e-05,
+        "invariant_se": 0.00027061487308727015,
+        "invariant_interval_95": [
+          -0.0005004107999015969,
+          0.0005603800099622571
+        ],
+        "invariant_raw": -8.441307918300438e-05,
+        "electric_dot_magnetic": 7.456342580551017e-05,
+        "electric_dot_magnetic_se": 0.00012398749611602038,
+        "electric_eigenvalues": [
+          -0.008935856492765504,
+          0.0007240059439976856,
+          0.008211850548767816
+        ],
+        "magnetic_eigenvalues": [
+          -0.009806173005092202,
+          -0.0017293994935132814,
+          0.01153557249860548
+        ],
+        "electric_norm": 0.012157639791568992,
+        "magnetic_norm": 0.015238808499503697,
+        "field_chi2_10": 29.58829844507442,
+        "magnetic_chi2_5": 20.515005652432873,
+        "interval_normal_quantile": 1.959963984540054,
+        "nominal_p_value": 0.22386012192134094,
+        "nominal_p_value_magnetic": 0.33389048949669076,
+        "tidal_norm_estimate": 0.01949434507199685,
+        "largest_tidal_variance": 4.964057274876483e-05,
+        "variance_times_N": 3331.322445478965
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_norm": 0.0,
+        "truth_magnetic_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_magnetic_eigenvalues": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_invariant": 0.0,
+        "full_tidal_error_mod_reflection": 0.01949434507199685,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.031158908132378208,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes between landmarks are not implemented for this geometry",
+        "q_about_truth": 12.99663315235986
+      },
+      "archive_bytes": 2030062064
+    }
+  ],
+  "elapsed_seconds": 5786.869303703308,
+  "level_verdicts": {
+    "field": {
+      "1048576": "DETECTED",
+      "4194304": "DETECTED",
+      "16777216": "DETECTED",
+      "67108864": "DETECTED"
+    },
+    "magnetic": {
+      "1048576": "NOT_DETECTED",
+      "4194304": "MAGNETIC_DETECTED",
+      "16777216": "MAGNETIC_DETECTED",
+      "67108864": "MAGNETIC_DETECTED"
+    },
+    "unequal_norms": {
+      "1048576": "NOT_RESOLVED",
+      "4194304": "NOT_RESOLVED",
+      "16777216": "UNEQUAL",
+      "67108864": "UNEQUAL"
+    }
+  },
+  "primary_claim": "SUPPORTED",
+  "consistency_label": {
+    "1048576": "CONSISTENT",
+    "4194304": "CONSISTENT",
+    "16777216": "CONSISTENT",
+    "67108864": "CONSISTENT"
+  }
+}
