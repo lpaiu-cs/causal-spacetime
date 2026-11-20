@@ -145,7 +145,8 @@ def main():
             )
             row["case"] = case
             result["rows"].append(row)
-            args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+            text = json.dumps(result, indent=2) + "\n"
+            args.output.write_text(text, encoding="utf-8")
             o5, o6 = row["fits"]["order_5"], row["fits"]["order_6"]
             extra = (
                 f" err5={o5['relative_error']:.3f} err6={o6['relative_error']:.3f}"

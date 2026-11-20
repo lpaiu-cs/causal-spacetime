@@ -14,6 +14,7 @@ import numpy as np
 from intrinsic_weyl import (
     ETA,
     PAIRS,
+    SYMMETRIC_PAIRS,
     WEYL,
     gradient_basis,
     second_derivative_basis,
@@ -337,7 +338,7 @@ def _second_derivative_term(left, right, wedge, basis, second, value, dl, dr, dc
     dr -= np.einsum("pk,pf,gfk->pg", basis, middle / 20 + step / 120, tensor)
     packed = second_derivative_basis().reshape(10, 10, 42)
     full = np.zeros((4, 4, 10, 42))
-    for s, (e, f) in enumerate([(e, f) for e in range(4) for f in range(e, 4)]):
+    for s, (e, f) in enumerate(SYMMETRIC_PAIRS):
         full[e, f] = full[f, e] = packed[s]
     d2 = -np.einsum("pk,pef,efkj->pj", basis, weight, full, optimize=True)
     return value, dl, dr, np.column_stack((dc, d2))
@@ -532,12 +533,15 @@ def fit_joint(
         component_covariance = influence @ influence.T
         result["nominal_component_covariance"] = component_covariance.tolist()
         result["uncertainty_scope"] = (
-            {
-                4: "Local linearized covariance under the quartic model; ",
-                5: "Local linearized covariance under the fifth-degree model; ",
-                6: "Local linearized covariance under the sixth-degree model; ",
-            }[model_order]
-        ) + "coverage and truncation bias not certified"
+            (
+                {
+                    4: "Local linearized covariance under the quartic model; ",
+                    5: "Local linearized covariance under the fifth-degree model; ",
+                    6: "Local linearized covariance under the sixth-degree model; ",
+                }[model_order]
+            )
+            + "coverage and truncation bias not certified"
+        )
         result["retained_clock_covariance_rank"] = len(whiten)
     if square_correction:
         result["curvature_square_correction"] = True
@@ -777,7 +781,8 @@ def selfcheck_second():
     reduced = model(points, np.r_[coefficients[:34], np.zeros(42)], pairs)
     original = model(points, coefficients[:34], pairs)
     reduction = max(
-        float(np.max(abs(a - b))) for a, b in zip(reduced[:3], original[:3], strict=True)
+        float(np.max(abs(a - b)))
+        for a, b in zip(reduced[:3], original[:3], strict=True)
     )
     assert reduction < 1e-14
     k = np.arange(48)
