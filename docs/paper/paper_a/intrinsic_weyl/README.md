@@ -87,6 +87,25 @@ straight chord between its landmarks, and three time-symmetric bands make its
 time-time part identical for every landmark clock. No finite-N protocol was
 drafted.
 
+The [multi-window study](window_study_results.md) (2026-11-21, deterministic,
+continuum, no criterion) removes the same bias without the sixth-degree jet.
+A window displaced along the observer's worldline is isometric to the
+standard window of the wave with a shifted profile, so fifth-degree windows at
+proper-time offsets 0, ±1/2 and ±1 can be combined by finite differences. A
+linear alias map of the second derivatives, computed from the inferred
+coordinates and the clock covariance, predicts the quadratic profile's
+continuum bias to 6e-5 of the truth norm and corrects the centre window. With
+five windows the half-cycle bias falls from 12.1% and 11.6% to 0.61% and
+0.57%, at 5.7 and 5.6 times the events of one window, against 37 and 23 times
+for the sixth-degree jet; a minimum-norm variant that assumes no wave type
+does as well. The same map gives first-order bias bounds: 0.0124–0.0134
+`|f''/f| T^2` for any plane-wave direction and polarization, and at most
+0.0095 `κT^2` for vacuum curvature with `‖∇∇C‖ ≤ κ‖C‖`. Frame alignment
+between windows was oracle. When the side windows carry curvature, misaligning
+them by 1°, 3° or 10° raises the corrected bias to as much as 0.7%, 1.4% or
+4.5%, so an order-only frame link accurate to about a degree is the open
+requirement. Nothing here is a finite-N result.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
