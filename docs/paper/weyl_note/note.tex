@@ -24,29 +24,28 @@ a finite-density estimator and a gravitational-wave benchmark}
 \begin{document}
 \maketitle
 \begin{abstract}
-Recent work proves that the Riemann tensor can be reconstructed from the
-causal order and element counts of a sprinkled causal set (Madsen,
-arXiv:2610.36695) and estimates that detecting one Weyl component of a
-plane gravitational wave by discrete geodesic deviation requires
-$10^8$--$10^9$ elements (Ibrahim and Bombelli, arXiv:2611.09056). We present
-an estimator of the vacuum Weyl tensor from order relations alone and test
-its accuracy, uncertainty and cost at finite density. From the relations
-between about a hundred landmarks and $N$ events sprinkled in an Alexandrov
-interval it fits all ten components, with curvature gradients, the
-landmarks' normal coordinates and a covariance that accounts for shared
+In vacuum the curvature a causal set must encode is the Weyl tensor. We
+present an estimator of all ten Weyl components from the order relations of
+a sprinkled Alexandrov interval and measure its accuracy, uncertainty and
+cost at finite density. From the relations between about a hundred
+landmarks and $N$ sprinkled events it fits the tensor, its gradient and the
+landmarks' normal coordinates, with a covariance that accounts for shared
 events. In pre-specified tests on exact vacuum plane waves, (i) nominal
 95\% confidence balls contained the true tensor in 509 of 512 cases; (ii)
 at tidal norm $0.5$, six cases gave errors of 3.5--7.4\% and error plus
-confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$; and (iii)
-the five-times weaker wave of Ibrahim and Bombelli was detected at
-$N=1.7\times10^7$, a density two to four orders of magnitude below their
-estimate, but not at $N\le4.2\times10^6$. (iv) Unchanged, it detected the
-static tidal field of a Schwarzschild interval of similar strength at
-$N=4.2\times10^6$. Detection is not accuracy: for the wave the local model
-underestimates the crest curvature by 12\%, which the fit residuals do not
-reveal. An appendix proves a conditional, asymptotic convergence statement.
-The tests cover plane waves and one Schwarzschild interval, assume vacuum,
-and rely on nominal Gaussian uncertainties.
+confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$; and (iii) a
+wave for which discrete geodesic deviation was estimated to need
+$10^8$--$10^9$ elements was detected at $N=1.7\times10^7$, but not at
+$N\le4.2\times10^6$. (iv) Unchanged, it detected the static tidal field of a
+Schwarzschild interval of similar strength at $N=4.2\times10^6$, and (v) on
+64 flat replicates its nominal covariance was calibrated at $N=10^6$ and
+$1.7\times10^7$. Detection is not accuracy: for the wave the estimator reads
+the crest curvature 12\% low, which the residuals cannot reveal at these
+$N$. The bias comes from the omitted second covariant derivatives of the
+curvature; including them removes it in the continuum limit, to 0.5\%, but
+enlarges the statistical radius five- to sixfold. The tests cover plane
+waves and one Schwarzschild interval, assume vacuum, and rely on Gaussian
+uncertainties.
 \end{abstract}
 
 \noindent\textbf{Keywords} Causal sets $\cdot$ Weyl tensor $\cdot$ Curvature
@@ -383,6 +382,57 @@ requirement: it had 246 successes in 256 cases, and nine of the failures
 were violations of the bias allowance. We report that result unchanged; it
 is the reason for including $\sigma_2$.
 
+\subsection{Calibration at higher event counts}\label{calibration}
+The coverage test was run at $N=2.6\times10^5$, and the auxiliary run of
+Sect.~\ref{schwres} hinted that the nominal covariance may be too small at
+$N\approx10^6$. We therefore tested its calibration at the event counts of
+the benchmark. Sixty-four independent flat replicates, each with its own
+landmark selection, were fitted at the nested levels $N=2^{20}$ and
+$2^{24}$ with both jets.
+In flat spacetime the true tensor vanishes and neither jet has model bias,
+so $Q$ follows $\chi^2_{10}$ if $S$ is correct. Writing $Q\sim\kappa\,
+\chi^2_{10}$, we estimate $\hat\kappa=\sum Q/(10R)$ with the exact 95\%
+interval of the scaled $\chi^2_{10R}$ law. The pre-specified criterion calls
+$S$ calibrated if this interval lies within $[0.8,1.25]$, so that radii are
+correct to about 11\%; the design gave this verdict a probability of $0.96$
+at $\kappa=1$ and of $0.001$ at $\kappa=1.34$.
+
+Table~\ref{calibtable} gives the outcome. The covariance of the
+fifth-degree jet, used in all other tests, was calibrated at both levels,
+with $\hat\kappa=1.02$ and $0.95$. That of the sixth-degree jet was
+calibrated at $N=2^{24}$ but too small at $N=2^{20}$, with
+$\hat\kappa=1.20$; as fixed in advance, its radii at comparable $N$ must be
+enlarged by $\sqrt{1.34}=1.16$, and we quote none. None of the 254 values of
+$Q$ exceeded $q^*$, and the predictions recorded with the design,
+$\hat\kappa$ in $[0.95,1.35]$ and $[0.95,1.20]$ for the fifth-degree jet and
+in $[0.95,1.5]$ for the sixth, held. One replicate at $N=2^{24}$ was lost
+when the graphics driver failed to allocate page-locked memory while a
+separate analysis ran concurrently; it counts as a failure, and the verdicts
+use the remaining 63, as the design allows. A descriptive companion of
+sixteen replicates of a constant wave with the strength of the benchmark
+crest gave $\hat\kappa=1.06$--$1.08$ for the statistic of the estimate about
+the true tensor.
+
+\begin{table}[t]
+\centering\small
+\caption{Calibration of the nominal covariance on independent flat
+replicates. $R$ is the number of completed replicates and
+$\hat\kappa=\sum Q/(10R)$ the estimated variance scale; the interval is the
+exact 95\% interval of the scaled $\chi^2_{10R}$ law, and the pre-specified
+tolerance is $[0.8,1.25]$}
+\label{calibtable}
+\begin{tabular}{llrrll}
+\toprule
+Jet & $N$ & $R$ & $\hat\kappa$ & 95\% interval & Verdict\\
+\midrule
+fifth & $2^{20}$ & 64 & 1.016 & $[0.913,1.137]$ & calibrated\\
+fifth & $2^{24}$ & 63 & 0.952 & $[0.855,1.067]$ & calibrated\\
+sixth & $2^{20}$ & 64 & 1.201 & $[1.079,1.344]$ & not calibrated, too small\\
+sixth & $2^{24}$ & 63 & 0.964 & $[0.866,1.080]$ & calibrated\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Accuracy at weak curvature}
 The pre-specified criterion required, jointly for eight cases, a continuum
 bias of at most 2\%, the true tensor inside the ball, and an error plus
@@ -488,7 +538,8 @@ and 32\%. The estimated electric eigenvalues, $(-0.0455,0.0003,0.0451)$ and
 $(-0.0429,0.0026,0.0403)$, show the pattern of the true ones,
 $(-0.0493,0,0.0493)$. The continuum bias is 12.1\% and 11.6\%: the fit
 returns a window-averaged curvature, $0.88$--$0.89$ of the crest value,
-because the half-cycle variation lies outside \eqref{model}. This violates
+because the half-cycle variation lies outside \eqref{model}
+(Sect.~\ref{bias}). This violates
 the allowance $\delta$, so the balls are not accuracy statements for this
 wave. The residuals do not show the misfit: the continuum refit has
 $\chi^2\approx0.3$ at the top level, and the sixteen finite fits have
@@ -549,7 +600,26 @@ statistical radius & 54.6 & 332 & 59.1 & 285\\
 \end{tabular}
 \end{table}
 
-%REFIT-PLACEHOLDER
+A post hoc refit of the saved benchmark archives with the sixth-degree jet,
+from the same order bits, shows what this costs at finite $N$. At
+$N=6.71\times10^7$ its errors were 110\% and 97\% of $s$, against 13\% and
+25\% for the fifth-degree jet, because its statistical radii, 166\% and
+142\% of $s$ against 27\% and 30\% without the allowance $\delta$, outweigh
+the bias it removes. Its detection statistic was 14.2 and 3.6 at
+$N=1.68\times10^7$ and 16.7 and 11.2 at $6.71\times10^7$, so it would not
+have detected the wave at either level. This leaves the detections of
+Table~\ref{benchmark} intact: in flat spacetime, the null hypothesis of that
+test, neither jet is biased, and the smaller model gives the more powerful
+test. Twice the drop in the whitened cost from the fifth- to the
+sixth-degree fit, the likelihood-ratio statistic for the 42 second
+derivatives, lay between 27 and 57 in all sixteen fits, waves and controls
+alike, inside the central 95\% range of $\chi^2_{42}$. It could not have
+done better: fitted to exact volumes, the fifth-degree jet leaves
+$\chi^2=0.34$ and $0.31$ with the covariance of the top level, which bounds
+the noncentrality of this test. With this landmark design the second
+derivatives are thus nearly degenerate with the midpoint tensor and the
+landmark coordinates: they move the fifth-degree estimate by 12\% of $s$
+while changing its fit by less than one unit of $\chi^2$.
 
 \subsection{Comparison in common units}
 The number $N_{\rm total}$ of Ref.~\cite{ib} counts elements in a thin box
@@ -668,7 +738,9 @@ and the nominal covariance imply $37.2$, but a mean of $13.4$ for the
 statistic of the estimate about the true tensor, where $10$ is nominal.
 At about $10^6$ events the nominal covariance may thus understate the
 scatter by some 15\% in standard deviation. This concerns one selection and
-was not a pre-specified test.
+was not a pre-specified test; the pre-specified calibration of
+Sect.~\ref{calibration}, over 64 selections in flat spacetime, found no such
+understatement for this jet.
 
 \subsection{Computational cost}
 The accuracy test used $3.9\times10^8$ measurement events and
@@ -678,7 +750,10 @@ $7.0\times10^{10}$ relation tests, and ran in 60 minutes with a peak of
 55\,GiB. At the level of detection one fit takes about three minutes and
 13--34\,GiB. The Schwarzschild test used $2.7\times10^8$ events and
 $6.8\times10^{10}$ relation tests, and ran in 74 minutes with a peak of
-52\,GiB.
+52\,GiB. The calibration used $1.3\times10^9$ events and
+$3.5\times10^{11}$ relation tests in 80 replicates, and ran in 1.8 hours;
+one replicate at $N=2^{24}$, with both jets, took about three minutes and up
+to 36\,GiB.
 
 \section{Limitations and outlook}\label{limits}
 The first limitation is that detection is not accuracy. With the
@@ -708,16 +783,18 @@ was not tested, and neither was a second radius or interval size. The
 estimator assumes vacuum, because Ricci terms enter \eqref{clock} and
 \eqref{model} at lower order; it also assumes uniform sprinkling, a regular
 normal neighbourhood and given tips. Its uncertainty is nominal and
-Gaussian. Coverage was tested at $N=2.6\times10^5$ on one population; at
-larger $N$ it rests on the cases reported above and on six flat controls,
-and the block test of Sect.~\ref{schwres} suggests that the nominal
-covariance is somewhat too small at $N\approx10^6$.
+Gaussian. Coverage was tested at $N=2.6\times10^5$ on one population, and
+calibration at $10^6$ and $1.7\times10^7$ events in flat spacetime only. In
+curved spacetime the model bias adds to the error, and the block test of
+Sect.~\ref{schwres} hints, for one selection, at a larger scatter at
+$N\approx10^6$.
 
 Third, removing the bias costs precision. With the landmarks of the
 benchmark, the sixth-degree jet removes the continuum bias of the half-cycle
 wave but multiplies the statistical radius by 4.8 to 6.1, so that it needs
-23 to 37 times more events than the fifth-degree jet for the same radius; a
-95\% radius of 10\% of $s$ for that wave would take about
+23 to 37 times more events than the fifth-degree jet for the same radius,
+and it did not detect that wave even at $6.7\times10^7$ events. A 95\%
+radius of 10\% of $s$ for that wave would take about
 $1.4$--$1.8\times10^{10}$ events. At a fixed window the noise decreases as
 $N^{-1/2}$ while the bias is fixed by the window and the jet, so the error
 of the implemented procedure is set by the window, the landmark design and
@@ -733,8 +810,9 @@ estimator met pre-specified criteria for coverage and for accuracy at weak
 curvature. At the condition for which discrete geodesic deviation was
 estimated to need $10^8$--$10^9$ elements it detected the wave with
 $1.7\times10^7$ events, and without change it detected the static field of a
-Schwarzschild interval with $4.2\times10^6$.
-%CALIBRATION-PLACEHOLDER
+Schwarzschild interval with $4.2\times10^6$. On 64 independent flat
+replicates its nominal covariance was calibrated, within the pre-specified
+tolerance, at $10^6$ and $1.7\times10^7$ events.
 
 Detection and accuracy part when the curvature varies across the window.
 For the benchmark wave the 12\% bias comes from the second covariant
@@ -756,13 +834,17 @@ and the records of the checks are public. They are in the directories
 \nolinkurl{experiments/positive_control},
 \nolinkurl{docs/paper/paper_a/intrinsic_weyl} and
 \nolinkurl{docs/paper/weyl_note} of the repository
-\url{https://github.com/lpaiu-cs/causal-spacetime/tree/c74240a8dbc0}. The
+\url{https://github.com/lpaiu-cs/causal-spacetime/tree/fbb561399f56}. The
 accuracy test corresponds to commit \texttt{0ff9802}, the benchmark to
-commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), and the
+commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), the
 Schwarzschild test to commit \texttt{7224c69} (run and check), with its
-record in \texttt{c74240a}. The order archives, about 34\,GiB for the three
-tests, can be regenerated from the recorded seeds and are available from the
-author on reasonable request.
+record in \texttt{c74240a}, and the calibration test to commits
+\texttt{cfb8e8b} (protocol and run) and \texttt{f4854be} (check), with its
+record in \texttt{c076fec}. The sixth-degree jet and its continuum check are
+in commit \texttt{b5e14e1}, and the post hoc refit in \texttt{d7c5d1d}, with
+its record in \texttt{fbb5613}. The order archives, about 79\,GiB for the
+four tests, can be regenerated from the recorded seeds and are available
+from the author on reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
 and directed the study, examined the results and wrote the manuscript, with
 the assistance of the AI tools described below.
