@@ -38,12 +38,9 @@ def main(out, tectonic=TECTONIC):
     source = out / "source"
     source.mkdir(parents=True, exist_ok=True)
     tex = (HERE / "note.tex").read_text(encoding="utf-8")
-    # The journal takes one source file: inline the appendix fragment.
-    fragment = (HERE / "appendix_convergence.tex").read_text(encoding="utf-8")
-    marker = "\\input{appendix_convergence}"
-    if tex.count(marker) != 1:
-        raise ValueError("note.tex must input the appendix exactly once")
-    tex = tex.replace(marker, fragment)
+    # The journal takes one source file; the note no longer inputs fragments.
+    if "\\input{" in tex or "\\include{" in tex:
+        raise ValueError("note.tex must be a single source file")
     if any(ord(c) > 127 for c in tex):
         raise ValueError("The submission server uses pdfLaTeX: keep note.tex ASCII")
     (source / "main.tex").write_text(tex, encoding="utf-8", newline="\n")

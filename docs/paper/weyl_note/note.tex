@@ -95,19 +95,24 @@ comparisons of clocks~\cite{puetzfeld}.
 
 This paper presents an estimator of the Weyl tensor that was applied to
 sprinkled data, together with measurements of its accuracy, coverage and
-cost. It makes four limited claims. First, on exact vacuum plane waves all
+cost. It makes five limited claims. First, on exact vacuum plane waves all
 ten components were estimated from order relations alone, with tested
 accuracy, at event counts that a single workstation can handle. Second, the
 uncertainty reported by the estimator was tested for coverage on a stated
-population of cases. Third, at the condition analysed in Ref.~\cite{ib} the
-estimator detected the wave. Fourth, without any change it detected the
-tidal field of a Schwarzschild exterior, which is static and of a different
-algebraic type. We do not claim the first reconstruction of curvature from
-a causal set, an unconditional convergence theorem, or greater efficiency
-than another method applied to the same input. Section~\ref{setting} defines
-the setting and the estimand, Sect.~\ref{estimator} the estimator and
-Sect.~\ref{tests} the tests; Sect.~\ref{results} reports the results and
-Sect.~\ref{limits} the limitations.
+population of cases, and for calibration in flat spacetime at higher event
+counts. Third, at the condition analysed in Ref.~\cite{ib} the estimator
+detected the wave. Fourth, without any change it detected the tidal field of
+a Schwarzschild exterior, which is static and of a different algebraic type.
+Fifth, the bias that the estimator showed for the wave of Ref.~\cite{ib} was
+traced to one omitted term of the world-function expansion, whose inclusion
+removes it in the continuum limit at a measured cost in precision. We do not
+claim the first reconstruction of curvature from a causal set, a convergence
+theorem for the implemented procedure, or greater efficiency than another
+method applied to the same input. Section~\ref{setting} defines the setting
+and the estimand, Sect.~\ref{estimator} the estimator and
+Sect.~\ref{tests} the tests; Sect.~\ref{results} reports the results,
+Sect.~\ref{limits} the limitations and Sect.~\ref{conclusions} the
+conclusions.
 
 \section{Setting and estimand}\label{setting}
 Let $(M,g)$ be a four-dimensional Ricci-flat spacetime and $p\prec q$ two
@@ -502,6 +507,50 @@ landmark--event relations differ from those of the flat metric in the same
 chart (86 and 83 of about $5\times10^5$ among the first 4096 events); the
 whole signal is carried by these.
 
+\subsection{Origin of the bias}\label{bias}
+The bias for this wave has a single cause, the second covariant derivatives
+of the curvature that Eq.~\eqref{model} omits. After the benchmark we applied
+the fifth- and sixth-degree jets, with no other change, to exact interval
+volumes on the landmarks of the two wave cases, with the clock mask and
+covariance of the run at $N=1.68\times10^7$. Four profiles with the same
+midpoint value were used: constant, linear in $u$, quadratic in $u$ with the
+second derivative of the half cycle, and the half cycle itself
+(Table~\ref{biastable}). The fifth-degree jet is exact for the first two and
+is off by 12--13\% for the quadratic profile, about as much as for the half
+cycle. The sixth-degree jet reduces the half-cycle bias from 12.1\% and
+11.6\% to 0.44\% and 0.47\%, and the quadratic one to 0.06\% or less. The
+price is precision. With the same landmarks and clocks, the 95\% statistical
+radius at this $N$ grows from 0.55 to 3.3 and from 0.59 to 2.8 times $s$, a
+factor of 4.8 to 6.1. The landmarks lie within $|t|\le0.36$ and $r\le0.2$ of
+the centre, in units where the tips are at $t=\pm\tfrac12$, and this
+configuration separates the 42 second derivatives poorly from the midpoint
+tensor.
+
+\begin{table}[t]
+\centering\small
+\caption{Continuum bias, in per cent of $s$, of the fifth- and sixth-degree
+jets on the landmarks, clock mask and clock covariance of the two wave cases
+of Table~\ref{benchmark} at $N=1.68\times10^7$. All profiles have the
+midpoint value of the benchmark wave. The last row is the nominal 95\%
+statistical radius at that $N$, also in per cent of $s$}
+\label{biastable}
+\begin{tabular}{lrrrr}
+\toprule
+ & \multicolumn{2}{c}{Wave case 0} & \multicolumn{2}{c}{Wave case 1}\\
+Profile & fifth & sixth & fifth & sixth\\
+\midrule
+constant & 0.00 & 0.00 & 0.00 & 0.00\\
+linear in $u$ & 0.02 & 0.03 & 0.01 & 0.02\\
+quadratic in $u$ & 12.78 & 0.06 & 12.29 & 0.05\\
+half cycle & 12.08 & 0.44 & 11.63 & 0.47\\
+\midrule
+statistical radius & 54.6 & 332 & 59.1 & 285\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%REFIT-PLACEHOLDER
+
 \subsection{Comparison in common units}
 The number $N_{\rm total}$ of Ref.~\cite{ib} counts elements in a thin box
 of volume $(a_w\delta)^2(L+a_w\delta)H$ around two chains of thickness
@@ -632,11 +681,17 @@ $6.8\times10^{10}$ relation tests, and ran in 74 minutes with a peak of
 52\,GiB.
 
 \section{Limitations and outlook}\label{limits}
-The first limitation is that detection is not accuracy. The bias of the
-model was at most 0.004\% for constant profiles, 1.2--1.3\% for $|w|=0.5$,
-and 12\% for the half-cycle wave, and the order data alone did not reveal
-it. An accuracy statement therefore needs a regularity assumption on how the
-curvature varies across the window. Such an assumption cannot be avoided.
+The first limitation is that detection is not accuracy. With the
+fifth-degree jet the continuum bias was at most 0.004\% for constant
+profiles, 1.2--1.3\% for $|w|=0.5$ and 12\% for the half-cycle wave. For
+$|w|=0.5$ the second derivative of the profile is $-H$, smaller by $\pi^2$
+than for the half cycle, and the bias is smaller by about the same factor
+than that of the quadratic profile in Table~\ref{biastable}, as the origin
+found in Sect.~\ref{bias} implies. The order data did not reveal either
+bias. The sixth-degree jet removes it, but the next term of the expansion
+then sets the bias, so an accuracy statement needs a regularity assumption on
+how the curvature varies across the window. Such an assumption cannot be
+avoided.
 For $H_w(u)=a\cos[w(u-\tfrac12)]\operatorname{diag}(1,-1)$ with fixed $a$,
 an integration by parts along the minimizing path bounds the difference
 between the minimal transverse action and its flat value by a constant times
@@ -660,15 +715,35 @@ covariance is somewhat too small at $N\approx10^6$.
 
 Third, removing the bias costs precision. With the landmarks of the
 benchmark, the sixth-degree jet removes the continuum bias of the half-cycle
-wave but multiplies the statistical radius by five to six, so that an
-accurate measurement of that wave needs some 25 to 35 times more events than
-its detection with the fifth-degree jet. At a fixed window the noise
-decreases as $N^{-1/2}$ and the bias is fixed by the window and the jet; we
-claim no convergence theorem for the implemented procedure, which, unlike
-the construction of Ref.~\cite{madsen}, is restricted to vacuum, to given
-tips and to one point. A landmark design that conditions the second
-derivatives better, tests on further vacuum geometries, and a comparison
-with geodesic deviation on equal inputs are the natural next steps.
+wave but multiplies the statistical radius by 4.8 to 6.1, so that it needs
+23 to 37 times more events than the fifth-degree jet for the same radius; a
+95\% radius of 10\% of $s$ for that wave would take about
+$1.4$--$1.8\times10^{10}$ events. At a fixed window the noise decreases as
+$N^{-1/2}$ while the bias is fixed by the window and the jet, so the error
+of the implemented procedure is set by the window, the landmark design and
+$N$ together. We claim no convergence theorem for it; unlike the
+construction of Ref.~\cite{madsen}, it is restricted to vacuum, to given
+tips and to one point.
+
+\section{Conclusions}\label{conclusions}
+Order relations alone, read through interval clocks with a covariance for
+shared events, determine all ten components of the vacuum Weyl tensor at
+event counts that one workstation can handle. On exact plane waves the
+estimator met pre-specified criteria for coverage and for accuracy at weak
+curvature. At the condition for which discrete geodesic deviation was
+estimated to need $10^8$--$10^9$ elements it detected the wave with
+$1.7\times10^7$ events, and without change it detected the static field of a
+Schwarzschild interval with $4.2\times10^6$.
+%CALIBRATION-PLACEHOLDER
+
+Detection and accuracy part when the curvature varies across the window.
+For the benchmark wave the 12\% bias comes from the second covariant
+derivatives of the curvature, which leave no trace in the residuals at these
+event counts and which a sixth-degree jet can include, at a cost in
+precision that the landmark design sets. A landmark design that conditions
+the second derivatives, fields with independent electric and magnetic parts,
+and a comparison with geodesic deviation on the same input are the natural
+next steps.
 
 
 \section*{Statements and Declarations}
