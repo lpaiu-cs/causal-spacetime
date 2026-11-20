@@ -45,6 +45,19 @@ and `0.97 ± 0.04` of the true tensor. This is detection at one radius and one
 interval, not accuracy: no exact interval volumes exist here, so the model
 bias was not measured.
 
+The [sixth-degree record](second_derivative_results.md) (2026-11-20) traces
+the 12% half-cycle bias to the omitted second covariant derivatives of the
+curvature: a jet that includes them removes the bias in the continuum but
+widens the 95% radius 4.8–6.1-fold at the benchmark landmarks. The
+[landmark design study](landmark_design_results.md) (2026-11-21,
+deterministic, no criterion) finds no layout that brings this factor below
+about four, among 22 order-only band rules and nine directly placed
+geometries; the present rule itself spans 4.55–6.10 over six selection
+samples. The sixth-degree weight of a clock is the second moment of the
+straight chord between its landmarks, and three time-symmetric bands make its
+time-time part identical for every landmark clock. No finite-N protocol was
+drafted.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
