@@ -118,9 +118,11 @@ Let $(M,g)$ be a four-dimensional Ricci-flat spacetime and $p\prec q$ two
 events whose Alexandrov interval $I(p,q)=J^+(p)\cap J^-(q)$ lies in a convex
 normal neighbourhood. Let $T$ be the proper time from $p$ to $q$. Sprinkle
 $N$ events independently and uniformly with respect to volume in $I(p,q)$,
-that is, a Poisson sprinkling conditioned on its number of events. The data
-are order relations among the sprinkled events and the two tips. No
-coordinates, metric functions, density or flat reference sample are given.
+that is, a Poisson sprinkling conditioned on its number of events. A
+second, independent sprinkling of 4096 events serves only to choose landmarks
+(Sect.~\ref{landmarks}); the counts $N$ below exclude it. The data are order
+relations among the sprinkled events and the two tips. No coordinates,
+metric functions, density or flat reference sample are given.
 
 Two exact invariances bound what can be estimated. Under
 $g\to\lambda^2g$ the order and the sampling law are unchanged while
@@ -169,8 +171,13 @@ and $C(x,y,x,y)=C_{abcd}x^ay^bx^cy^d$. The world-function expansion
  \label{model}
 \end{equation}
 with all tensors at the origin. The omitted terms start with second
-covariant derivatives of the curvature. The term $\sigma_2$ collects the
-known curvature-squared contributions and has no free parameter:
+covariant derivatives of the curvature. For a fixed spacetime and a
+shrinking window these are of the same order in $T$ as the
+curvature-squared terms, $T^4$ relative to the flat part, against $T^2$ and
+$T^3$ for the curvature and gradient terms; we keep the curvature-squared
+terms, collected in $\sigma_2$,
+because they add no free parameter, whereas the second derivatives add 42
+(see below and Sect.~\ref{bias}). Explicitly,
 \begin{align}
  \sigma_2&=\tfrac1{45}\left(4\,u\!\cdot\!v-u\!\cdot\!u-v\!\cdot\!v\right)
  +\tfrac12\eta(\Delta,\Delta)\left[\kappa(\Delta)-\kappa(\Delta_0)\right],\nonumber\\
@@ -257,7 +264,7 @@ five magnetic components are then absorbed by the unknown positions at first
 order. A third time band removes the degeneracy, which is why the landmarks
 are placed in three bands.
 
-\subsection{Landmark selection}
+\subsection{Landmark selection}\label{landmarks}
 Landmarks are chosen from the order of an independent selection sample of
 4096 events, so that the selection does not condition the measurement
 sample. For candidate $i$ the counts to the tips give
@@ -265,10 +272,16 @@ $\alpha_i=\sqrt{n_{pi}/n_{pq}}$ and $\beta_i=\sqrt{n_{iq}/n_{pq}}$, and the
 flat proxies $t_i=(\alpha_i-\beta_i)/2$,
 $r_i^2=\tfrac14+t_i^2-(\alpha_i+\beta_i)/2$. Candidates are kept in three
 bands, $t\in[-0.36,-0.24]$, $|t|\le0.075$ and $t\in[0.24,0.36]$, with
-$0.075\le r\le0.2$. They are ranked by connectivity and radius and pruned
-until every landmark has at least eight clocks and every central landmark
-at least four to each outer band. We use the union of the selections with
-caps of 64 and 128 landmarks. In the accuracy test, the benchmark and the
+$0.075\le r\le0.2$. Within each band they are ranked by the number of
+related candidates times $\min(r^2,0.04)$ and pruned until every landmark
+has at least eight clocks and every central landmark at least four to each
+outer band. We use the union of the selections with caps of 64 and 128
+landmarks, which keeps every landmark of the smaller one. The first and
+second landmarks of the rotation gauge of Sect.~\ref{estimator} are the two
+highest-ranked landmarks of the past band that survive the pruning. Only an
+exactly collinear pair is rejected; in the 40 fits reported below the angle
+between their spatial vectors ranged from $23.5^\circ$ to $87.7^\circ$. In
+the accuracy test, the benchmark and the
 Schwarzschild test below this gave 104--131 landmarks and
 $2.8$--$4.5\times10^3$ clocks, a clock
 being a related pair whose interval holds at least two selection events.
@@ -572,10 +585,24 @@ cycle. The sixth-degree jet reduces the half-cycle bias from 12.1\% and
 11.6\% to 0.44\% and 0.47\%, and the quadratic one to 0.06\% or less. The
 price is precision. With the same landmarks and clocks, the 95\% statistical
 radius at this $N$ grows from 0.55 to 3.3 and from 0.59 to 2.8 times $s$, a
-factor of 4.8 to 6.1. The landmarks lie within $|t|\le0.36$ and $r\le0.2$ of
-the centre, in units where the tips are at $t=\pm\tfrac12$, and this
-configuration separates the 42 second derivatives poorly from the midpoint
-tensor.
+factor of 4.8 to 6.1.
+
+The reason is geometric. The weight of the term \eqref{sixth} is the second
+moment of the straight chord between the two landmarks,
+$\tfrac1{20}\int_0^1z^ez^f\,\dd s$ with $z(s)=x+s(y-x)$, so that a clock
+sees, up to the factor $-\tfrac13$ of Eq.~\eqref{model},
+$C+\tfrac12\langle z\rangle\!\cdot\!\nabla C
++\tfrac3{20}\langle zz\rangle\!:\!\nabla\nabla C$ evaluated on $(x,y,x,y)$,
+where $\langle\cdot\rangle$ is the average over the chord. The second
+derivatives differ from a shift of $C$ only through the variation of
+$\langle zz\rangle$ from clock to clock. For landmarks on three time slices
+$t_1,t_2,t_3$ the time--time part is $\langle t^2\rangle=(t_a^2+t_at_b+t_b^2)/3$
+for a clock between slices $a$ and $b$, and its values for the three pairs
+differ by multiples of $t_1+t_2+t_3$. They coincide for time-symmetric bands
+such as ours, centred near $t=-0.3$, $0$ and $0.3$ in units where the tips
+are at $t=\pm\tfrac12$, and only the width of the bands, the clocks to the
+tips and the spatial part of $\langle zz\rangle$ separate the second
+derivatives from the midpoint tensor.
 
 \begin{table}[t]
 \centering\small
@@ -644,16 +671,18 @@ joint test of all ten components at a false-positive level of $10^{-3}$.
 $\ell=\rho^{-1/4}$. The first two rows are the requirement estimated in
 Ref.~\cite{ib} for geodesic deviation with an ideal distance estimator, for
 which no recovery was performed; the last three rows are this work. S/N
-denotes the signal-to-noise ratio}
+denotes the signal-to-noise ratio. Both S/N criteria refer to a direction
+known in advance. Geodesic deviation does not require vacuum, whereas this
+estimator does}
 \label{units}
 \begin{tabular}{@{}llrrr@{}}
 \toprule
  & Criterion & Events & $\rho H^4$ & $H/\ell$\\
 \midrule
-Ref.~\cite{ib}, $m=11$ & S/N $=1$, one component & $1.0\times10^8$ (box) & $3.1$--$3.6\times10^{10}$ & 420--440\\
-Ref.~\cite{ib}, $m=4$--$5$ & S/N $=1$, one component & $1.6$--$3.5\times10^9$ (box) & $1.1$--$3.5\times10^{12}$ & 1020--1370\\
+Ref.~\cite{ib}, $m=11$ & S/N $=1$, one known component & $1.0\times10^8$ (box) & $3.1$--$3.6\times10^{10}$ & 420--440\\
+Ref.~\cite{ib}, $m=4$--$5$ & S/N $=1$, one known component & $1.6$--$3.5\times10^9$ (box) & $1.1$--$3.5\times10^{12}$ & 1020--1370\\
 \midrule
-nominal & S/N $=1$, electric pattern & $2.6$--$2.8\times10^5$ & $2.0$--$2.1\times10^6$ & 38\\
+nominal & S/N $=1$, known electric pattern & $2.6$--$2.8\times10^5$ & $2.0$--$2.1\times10^6$ & 38\\
 post hoc & $Q>q^*$ with 90\% power & $7.7$--$8.4\times10^6$ & $5.9$--$6.4\times10^7$ & 88--90\\
 pre-specified & $Q>q^*$, both waves, no control & $1.68\times10^7$ & $1.28\times10^8$ & 106\\
 \bottomrule
@@ -795,7 +824,15 @@ wave but multiplies the statistical radius by 4.8 to 6.1, so that it needs
 23 to 37 times more events than the fifth-degree jet for the same radius,
 and it did not detect that wave even at $6.7\times10^7$ events. A 95\%
 radius of 10\% of $s$ for that wave would take about
-$1.4$--$1.8\times10^{10}$ events. At a fixed window the noise decreases as
+$1.4$--$1.8\times10^{10}$ events. The landmark designs we tried did not
+remove this cost. A deterministic study with exact volumes and the expected
+flat covariance tried 22 band layouts, 18 of which passed the selection, and
+9 directly placed geometries; none brought the ratio of the radii clearly
+below the range 4.6--6.1 that the present rule shows across six selection
+samples, and the lowest value, 4.0, came with a fifth-degree radius of 70\%
+of $s$. Breaking the time symmetry of Sect.~\ref{bias} conditions the second
+derivatives only at the expense of the fifth-degree precision. At a fixed
+window the noise decreases as
 $N^{-1/2}$ while the bias is fixed by the window and the jet, so the error
 of the implemented procedure is set by the window, the landmark design and
 $N$ together. We claim no convergence theorem for it; unlike the
@@ -818,10 +855,13 @@ Detection and accuracy part when the curvature varies across the window.
 For the benchmark wave the 12\% bias comes from the second covariant
 derivatives of the curvature, which leave no trace in the residuals at these
 event counts and which a sixth-degree jet can include, at a cost in
-precision that the landmark design sets. A landmark design that conditions
-the second derivatives, fields with independent electric and magnetic parts,
-and a comparison with geodesic deviation on the same input are the natural
-next steps.
+precision that no landmark layout we tried removed. The chord-moment
+mechanism of Sect.~\ref{bias} suggests that this cost is structural within
+one window, so that an accuracy statement for varying fields needs either a
+stated bound on the variation of the curvature or data from more than one
+window. Fields with independent electric and magnetic parts and a
+comparison with geodesic deviation on the same input are the natural next
+steps.
 
 
 \section*{Statements and Declarations}
@@ -834,15 +874,17 @@ and the records of the checks are public. They are in the directories
 \nolinkurl{experiments/positive_control},
 \nolinkurl{docs/paper/paper_a/intrinsic_weyl} and
 \nolinkurl{docs/paper/weyl_note} of the repository
-\url{https://github.com/lpaiu-cs/causal-spacetime/tree/fbb561399f56}. The
+\url{https://github.com/lpaiu-cs/causal-spacetime/tree/6f3b42df072e}. The
 accuracy test corresponds to commit \texttt{0ff9802}, the benchmark to
 commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), the
 Schwarzschild test to commit \texttt{7224c69} (run and check), with its
 record in \texttt{c74240a}, and the calibration test to commits
 \texttt{cfb8e8b} (protocol and run) and \texttt{f4854be} (check), with its
 record in \texttt{c076fec}. The sixth-degree jet and its continuum check are
-in commit \texttt{b5e14e1}, and the post hoc refit in \texttt{d7c5d1d}, with
-its record in \texttt{fbb5613}. The order archives, about 79\,GiB for the
+in commit \texttt{b5e14e1}, the post hoc refit in \texttt{d7c5d1d}, with
+its record in \texttt{fbb5613}, and the landmark design study in commits
+\texttt{5de89e4} (harness), \texttt{65713dd} and \texttt{0a0577f} (runs),
+with its record in \texttt{8e57669}. The order archives, about 79\,GiB for the
 four tests, can be regenerated from the recorded seeds and are available
 from the author on reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
