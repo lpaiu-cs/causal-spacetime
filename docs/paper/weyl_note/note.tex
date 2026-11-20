@@ -107,8 +107,7 @@ a causal set, an unconditional convergence theorem, or greater efficiency
 than another method applied to the same input. Section~\ref{setting} defines
 the setting and the estimand, Sect.~\ref{estimator} the estimator and
 Sect.~\ref{tests} the tests; Sect.~\ref{results} reports the results and
-Sect.~\ref{limits} the limitations. Appendix~\ref{app:conv} proves a
-conditional convergence statement for the fit.
+Sect.~\ref{limits} the limitations.
 
 \section{Setting and estimand}\label{setting}
 Let $(M,g)$ be a four-dimensional Ricci-flat spacetime and $p\prec q$ two
@@ -137,7 +136,7 @@ For $x\prec y$ in $I(p,q)$ let $n(x,y)$ be the number of sprinkled events in
 $I(x,y)$. Every event lies in $I(p,q)$, so $n(x,y)/N$ estimates
 $V(x,y)/V(p,q)$ without bias. In vacuum a small interval has
 $V=(\pi/24)\tau^4[1+O(C^2\tau^4)]$, because the $O(\tau^2)$ correction is
-built from the Ricci tensor \cite{gibbons,roy}. Hence
+built from the Ricci tensor \cite{gibbons,roy,wang}. Hence
 \begin{equation}
  y(x,y)=-\sqrt{n(x,y)/N} \label{clock}
 \end{equation}
@@ -188,18 +187,38 @@ $1.7\times10^{-6}$. A plane wave has $E^2=B^2$ and tests only the sum of
 the two coefficients. For the Schwarzschild interval of Sect.~\ref{tests},
 where $B=0$, a quadrature of the volume gives an excess over
 $(\pi/24)\tau^4$ of $1.0004$ times $17E^2\tau^4/10080$ at $r_a=6M$,
-$\tau=M/2$, and of $1.015$ times that value at $\tau=3M$. We were unable to
-reproduce the corresponding
-coefficient of Eq.~(79) in Ref.~\cite{wang} (arXiv version 2), from which
-ours differs by about 15\% for a plane wave. The term $\sigma_2$ changes the
-fitted curvature by about 1\% at $s=1.5$ and by less at weaker curvature.}
+$\tau=M/2$, and of $1.015$ times that value at $\tau=3M$. The term $\sigma_2$
+changes the fitted curvature by about 1\% at $s=1.5$ and by less at weaker
+curvature.}
 
 The unknowns are the landmark coordinates, the ten Weyl components $c$ in a
 fixed basis of five electric and five magnetic tensors, and the 24
 components $g$ of $\nabla C$ allowed by the vacuum Bianchi identity. The
 rotation gauge is fixed by placing the first landmark in the $(t,x)$ plane
 and the second in the $(t,x,y)$ hyperplane, which leaves $4L-3$ coordinates
-for $L$ landmarks. No algebraic type, polarization or profile is imposed.
+for $L$ landmarks. No algebraic type, polarization or profile is imposed. We
+call this estimator the fifth-degree jet; it is the one used in every test
+of Sects.~\ref{tests} and~\ref{results} unless stated otherwise.
+
+The sixth-degree jet adds the term linear in the second covariant
+derivatives. At linear order in the curvature, Eq.~(11.21d) of
+Ref.~\cite{brewin} gives, in a form symmetric in the pair, with
+$m=(x+y)/2$,
+\begin{equation}
+ \sigma_3(x,y)=-\tfrac1{20}\,m^em^f\,\nabla_e\nabla_fC(x,y,x,y)
+ -\tfrac1{240}\,\Delta^e\Delta^f\,\nabla_e\nabla_fC(x,y,x,y). \label{sixth}
+\end{equation}
+The antisymmetric part of $\nabla_e\nabla_f C$ is quadratic in the curvature
+and belongs with $\sigma_2$. The symmetric second derivatives that obey the
+differentiated Bianchi identity form a space of dimension 42, as the count
+of the totally symmetric spinor $\nabla\nabla\Psi$ predicts, and we fit them
+in a basis of that space; they also satisfy the divergence and wave
+equations at this order. For a plane wave whose profile is quadratic in $u$
+the linear part of $\sigma$ ends at this order. On the exact intervals of
+such a wave between the landmarks of the benchmark below, the sixth-degree
+jet recovers the midpoint tensor to $1\times10^{-5}$ of its norm at
+amplitude $10^{-3}$ and to $1\times10^{-4}$ at $10^{-2}$, the size of the
+omitted curvature-squared terms, whereas the fifth-degree jet is off by 9\%.
 
 \subsection{Linear response and identifiability}
 With normal coordinates based at an event $o$, the quantity
@@ -335,20 +354,12 @@ integer sums of the clock covariance were run on a graphics processor with
 the CuPy library. All runs used one workstation with eight CPU cores,
 126\,GiB of memory and one graphics processor.
 
-Large language models (OpenAI Codex and Anthropic Claude) were used
-extensively in this work, under the direction of the author: for writing and
-running the code, for the derivations and proofs and their numerical
-checks, for the comparison with the literature and for drafting the text.
-Since such tools can produce plausible errors, the numerical conclusions
-rest on the safeguards of Sect.~\ref{procedure}: criteria fixed before the
-data were generated, an estimator isolated from the true geometry, no
-exclusion of cases, and recomputation of the outcomes by separate code. The
-proofs of Appendix~\ref{app:conv} were rederived line by line in a separate
-pass, and the orders they assert were checked numerically
-(Sect.~\ref{app:check}). The bibliographic data of
-all references were checked against publisher, arXiv or repository records. The author
-has examined the results and the text and takes full responsibility for
-them.
+The use of AI tools is described in the AI Use Disclosure at the end of the
+paper. Because such tools can produce plausible errors, the numerical
+conclusions rest on the safeguards of Sect.~\ref{procedure}: criteria fixed
+before the data were generated, an estimator isolated from the true
+geometry, no exclusion of cases, and recomputation of the outcomes by
+separate code.
 
 \section{Results}\label{results}
 \subsection{Coverage}
@@ -499,11 +510,14 @@ $\beta_4\approx0.11$. With their most liberal $a_w=2$ and $L=\lambda/2$,
 their Eq.~(20), $N_{\rm total}\approx4.5\times10^{11}/m^{7/2}$, gives the
 densities in Table~\ref{units}, where $m$ is the number of mid-level
 elements of each chain bundle. Our $N$ counts events in the whole interval
-of height $H$, of volume $\pi H^4/24$. The level at which the pre-specified
-criterion was met lies at a density $2.4\times10^2$ ($m=11$) to
-$2.7\times10^4$ ($m=4$) times lower, or at a discreteness scale
-$\ell=\rho^{-1/4}$ that is 4 to 13 times coarser, under a stricter
-criterion.
+of height $H$, of volume $\pi H^4/24$. In simulated elements, the cost that
+limits both methods, the level at which our pre-specified criterion was met
+is 6 ($m=11$) to 200 ($m=4$--5) times below their estimate. Because their box
+is a small part of the interval, the same level lies at a density
+$2.4\times10^2$ to $2.7\times10^4$ times lower, or at a discreteness scale
+$\ell=\rho^{-1/4}$ that is 4 to 13 times coarser. The criteria differ as
+well: theirs is a signal-to-noise ratio of one for one component, ours a
+joint test of all ten components at a false-positive level of $10^{-3}$.
 
 \begin{table}[t]
 \centering\small
@@ -644,23 +658,18 @@ larger $N$ it rests on the cases reported above and on six flat controls,
 and the block test of Sect.~\ref{schwres} suggests that the nominal
 covariance is somewhat too small at $N\approx10^6$.
 
-Third, what we can prove about convergence is conditional and asymptotic.
-At a fixed window the noise decreases as $N^{-1/2}$ and the bias is fixed by
-the window. Appendix~\ref{app:conv} shows that, for a well-conditioned
-configuration of landmarks, the solution of the fit near the true geometry
-satisfies $\hat c/T^2-C=O(T^2)+O_p(\rho^{-1/2}T^{-4})$ as the window
-shrinks at sprinkling density $\rho$, which gives the rate $\rho^{-1/6}$
-for $T\propto\rho^{-1/12}$. It does not show that the landmark rule
-produces such configurations or that the optimizer finds that solution, it
-says nothing about coverage, and its constants are far too conservative to
-reach the event counts of the tests. Unlike the theorem of
-Ref.~\cite{madsen}, it is restricted to vacuum, to given tips and to one
-point. A proof for the implemented procedure, tests on further vacuum
-geometries, and a comparison with geodesic deviation on equal inputs are
-the natural next steps.
+Third, removing the bias costs precision. With the landmarks of the
+benchmark, the sixth-degree jet removes the continuum bias of the half-cycle
+wave but multiplies the statistical radius by five to six, so that an
+accurate measurement of that wave needs some 25 to 35 times more events than
+its detection with the fifth-degree jet. At a fixed window the noise
+decreases as $N^{-1/2}$ and the bias is fixed by the window and the jet; we
+claim no convergence theorem for the implemented procedure, which, unlike
+the construction of Ref.~\cite{madsen}, is restricted to vacuum, to given
+tips and to one point. A landmark design that conditions the second
+derivatives better, tests on further vacuum geometries, and a comparison
+with geodesic deviation on equal inputs are the natural next steps.
 
-\appendix
-\input{appendix_convergence}
 
 \section*{Statements and Declarations}
 \paragraph{Funding} No funding was received for conducting this study.
@@ -681,7 +690,24 @@ tests, can be regenerated from the recorded seeds and are available from the
 author on reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
 and directed the study, examined the results and wrote the manuscript, with
-the assistance of the AI tools described in Sect.~\ref{implementation}.
+the assistance of the AI tools described below.
+\paragraph{AI Use Disclosure} Two families of AI coding agents were used
+substantively: OpenAI Codex with GPT-6-series models (GPT-6, GPT-6.1 and
+GPT-6.2 variants) and Anthropic Claude Code with Claude Opus 5.5 and Claude
+Fable 5.2. Under the author's direction they wrote and ran the code of the
+estimator, the generators and the checks; carried out the numerical
+experiments and their statistical analysis; derived and implemented the
+expansions of Sect.~\ref{estimator}, including the sixth-degree term;
+compared the work with the literature; and drafted the text, including the
+protocols and their acceptance criteria. The author chose the research
+questions, directed the work, and reviewed the results and the manuscript.
+Each protocol was committed to the public repository before its data were
+generated. The outputs were checked as described in Sect.~\ref{procedure}:
+pre-specified criteria, an estimator that cannot see the true geometry, and
+recomputation of every reported outcome by separately written code. The
+bibliographic data of all references were checked against publisher, arXiv
+or repository records. The author takes full responsibility for the
+content.
 
 \begin{thebibliography}{99}\small
 \bibitem{zeeman} Zeeman, E.C.: Causality implies the Lorentz group. J. Math. Phys. \textbf{5}, 490--493 (1964). \doi{10.1063/1.1704140}
@@ -717,6 +743,5 @@ the assistance of the AI tools described in Sect.~\ref{implementation}.
 \bibitem{scipy} Virtanen, P., Gommers, R., Oliphant, T.E., et al.: SciPy 1.0: fundamental algorithms for scientific computing in Python. Nat. Methods \textbf{17}, 261--272 (2020). \doi{10.1038/s41592-019-0686-2}
 \bibitem{clopper} Clopper, C.J., Pearson, E.S.: The use of confidence or fiducial limits illustrated in the case of the binomial. Biometrika \textbf{26}, 404--413 (1934). \doi{10.1093/biomet/26.4.404}
 \bibitem{bombelli} Bombelli, L.: Statistical Lorentzian geometry and the closeness of Lorentzian manifolds. J. Math. Phys. \textbf{41}, 6944--6958 (2000). \doi{10.1063/1.1288494}
-\bibitem{oneill} O'Neill, B.: Semi-Riemannian Geometry with Applications to Relativity. Academic Press, New York (1983)
 \end{thebibliography}
 \end{document}
