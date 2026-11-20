@@ -21,6 +21,8 @@ LEVELS = (1048576, 4194304, 16777216, 67108864)
 
 
 def refit(archive, truth_path):
+    import intrinsic_weyl_joint as joint
+    from intrinsic_weyl_gpu_counts import clock_second_moment
     from intrinsic_weyl_joint import (
         confidence_ball,
         fit_joint,
@@ -29,6 +31,8 @@ def refit(archive, truth_path):
         tidal_distance,
     )
 
+    # The exact integer-weighted second moment on GPU, as in the benchmark worker.
+    joint._clock_second_moment = clock_second_moment
     begin = time.time()
     counts, mask, covariance, _, n = read_order_clocks(archive)
     clock_seconds = time.time() - begin
