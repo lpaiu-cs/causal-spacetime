@@ -35,17 +35,18 @@ tests on exact vacuum plane waves, (i) nominal
 at tidal norm $0.5$, six cases gave errors of 3.5--7.4\% and error plus
 confidence radius of 11.9--18.8\% for $N=2.6$--$7.2\times10^7$; and (iii) a
 wave for which discrete geodesic deviation was estimated to need
-$10^8$--$10^9$ elements was detected at $N=1.7\times10^7$, but not at
-$N\le4.2\times10^6$. (iv) Unchanged, it detected the static tidal field of a
-Schwarzschild interval at $N=4.2\times10^6$ and, for a circular-orbit
-observer, its magnetic part at the same $N$ and the inequality of its
-electric and magnetic norms at $N=1.7\times10^7$; (v) on 64 flat replicates
-its nominal covariance was calibrated at $N=10^6$ and $1.7\times10^7$.
-Detection is not accuracy: for the wave the estimator reads the crest
-curvature 12\% low, undetectably at these $N$, because it omits second
-covariant derivatives of the curvature; including them removes the bias in
-the continuum but enlarges the statistical radius five- to sixfold.
-The tests assume vacuum and rely on Gaussian uncertainties.
+$10^8$--$10^9$ elements was detected at $N=1.7\times10^7$. (iv) Unchanged,
+it detected the tidal field of a Schwarzschild interval at
+$N=4.2\times10^6$ and, for a circular-orbit observer, its magnetic part at
+the same $N$; (v) on 64 flat replicates its nominal covariance was
+calibrated at $N=10^6$ and $1.7\times10^7$. Detection is not accuracy: for
+the wave it reads the crest curvature 12\% low, undetectably at these $N$,
+because it omits second covariant derivatives of the curvature. (vi) Five
+windows along the observer's worldline, aligned by order alone, removed this
+bias: over 64 replicates with $3.4\times10^7$ events per window, the
+amplitude along the true tensor was 0.998 (95\% interval 0.977--1.018),
+against 0.887 for one window. The tests assume vacuum and Gaussian
+uncertainties.
 \end{abstract}
 
 \noindent\textbf{Keywords} Causal sets $\cdot$ Weyl tensor $\cdot$ Curvature
@@ -94,7 +95,7 @@ comparisons of clocks~\cite{puetzfeld}.
 
 This paper presents an estimator of the Weyl tensor that was applied to
 sprinkled data, together with measurements of its accuracy, coverage and
-cost. It makes five limited claims. First, on exact vacuum plane waves all
+cost. It makes six limited claims. First, on exact vacuum plane waves all
 ten components were estimated from order relations alone, with tested
 accuracy, at event counts that a single workstation can handle. Second, the
 uncertainty reported by the estimator was tested for coverage on a stated
@@ -106,7 +107,11 @@ and, for an observer on a circular orbit, the magnetic part of that field and
 the inequality of its electric and magnetic norms.
 Fifth, the bias that the estimator showed for the wave of Ref.~\cite{ib} was
 traced to one omitted term of the world-function expansion, whose inclusion
-removes it in the continuum limit at a measured cost in precision. We do not
+removes it in the continuum limit at a measured cost in precision. Sixth,
+combining the estimates of five windows along the observer's worldline,
+aligned by the order alone, removed that bias at finite density in a
+pre-specified test, for the component of the estimate along the true
+tensor. We do not
 claim the first reconstruction of curvature from a causal set, a convergence
 theorem for the implemented procedure, or greater efficiency than another
 method applied to the same input. Section~\ref{setting} defines the setting
@@ -666,6 +671,88 @@ derivatives are thus nearly degenerate with the midpoint tensor and the
 landmark coordinates: they move the fifth-degree estimate by 12\% of $s$
 while changing its fit by less than one unit of $\chi^2$.
 
+\subsection{Five windows along the worldline}\label{windows}
+For these plane waves a window of the same size, displaced by a proper time
+$\delta T$ along the observer's geodesic $x=0$, is the standard window of
+the profile $a(u+\delta)$. The coordinate frame is parallel along that
+geodesic, so the normal frames of displaced windows are parallel transports
+of one another, and the fifth-degree estimates $\widehat C_\delta$ of
+windows at $\delta=0,\pm\tfrac12,\pm1$ can be combined by finite differences
+along the worldline. To first order the bias of one window is a linear map
+of the second derivatives of the curvature, which we compute from the
+inferred coordinates and the clock covariance of the centre window alone.
+The windows measure only the time--time derivative $\nabla_t\nabla_tC$; an
+operator $B$ assigns to it the bias of the second derivatives of minimal
+norm that share this time--time part, so that no wave type is assumed. The
+five-point correction is $\widehat C_0-BD_2[\widehat C]+B^2D_4[\widehat C]$,
+with central differences $D_2$ and $D_4$ of step $\tfrac12$ for the second
+and fourth derivatives along the worldline. With exact volumes on the
+landmarks of the two wave cases it leaves 0.54\% and 0.59\% of $s$, against
+12.1\% and 11.6\% for one window, at 6.1 and 6.0 times the events of one
+window for the same radius, where the sixth-degree jet needs 23 to 37 times
+as many.
+
+Each window fixes its frame by its own landmarks, so the windows must be
+aligned without the true geometry. A window off the centre also takes the
+landmarks that its inner neighbour selected, keeping those with at least two
+of its own selection events between each tip and the landmark, and the map
+between the two frames is the orthogonal Procrustes map of the shared
+landmarks' inferred spatial coordinates, chained outward from the centre.
+It must be taken in $O(3)$, not $SO(3)$: the order does not fix the
+handedness of an embedding, and at finite density the fits converged to the
+mirror image of the truth in 149 of 320 windows.
+
+The pre-specified test drew 64 replicates of five independent windows with
+$N=2^{25}\approx3.4\times10^7$ events each, $1.07\times10^{10}$ events in
+all. Its statistic is the component of an estimate along the true tensor,
+$a=(C,\widehat C)/(C,C)$, where $(\cdot,\cdot)$ is the inner product that
+defines $s$ and $C$ is expressed in the centre window's inferred frame. The
+corrected estimate was to count as accurate if the 95\% two-sided Student
+$t$ interval of the mean of $a$ lay inside $[0.95,1.05]$, a criterion sized
+for 90\% power, and the single window, on the same data, as biased if its
+interval lay below $0.95$. The correction used only the five fits and the
+clocks of the centre window, and was saved before the true geometry was
+accessed. All replicates completed and both held
+(Table~\ref{windowtable}). The correction raised $a$ by 0.111 on average,
+with a standard deviation of 0.012 across replicates, as the continuum
+calculation predicts. The order-only links
+agreed in parity with the true relative frames in all 256 cases, with angle
+errors of at most $0.054^\circ$, and oracle links would have changed no
+reading by more than $1.2\times10^{-5}$. In this geometry the windows at
+$\delta=\pm\tfrac12$ sit on nodes of the wave, so that their own frame
+errors hardly matter, while those at $\pm1$ carry the opposite crest.
+
+The test concerns the amplitude along the true tensor only. One replicate's
+reading has a standard deviation of 0.082, larger than the tolerance, and
+the full-tensor bias of the corrected estimate is not resolved: the norm of
+its mean error over the replicates is 4.4\% of $s$, against a noise floor of
+3.5\%.
+An independent check recomputed the verdicts and every corrected estimate
+without the code of the run, re-derived the landmarks of all 320 windows,
+and re-decided a sample of the order relations with a solver that shares no
+code with the generator.
+
+\begin{table}[t]
+\centering\small
+\caption{Five-window test: component $a$ of the estimates along the true
+tensor, mean over 64 replicates with its 95\% two-sided $t$ interval, and
+the standard deviation of one replicate. The last column gives $a$ with
+exact volumes for the two wave cases. Only the first two rows were
+pre-specified; the plane-wave operator uses the principal null direction of
+the centre window's estimate}
+\label{windowtable}
+\begin{tabular}{lcllc}
+\toprule
+Estimate & windows & mean $a$ [95\% interval] & sd & continuum\\
+\midrule
+one window & 1 & 0.887 [0.869, 0.905] & 0.073 & 0.883, 0.888\\
+five-point, minimal norm & 5 & 0.998 [0.977, 1.018] & 0.082 & 0.996, 0.996\\
+five-point, plane wave & 5 & 0.996 [0.976, 1.017] & 0.081 & 0.994, 0.994\\
+three-point, plane wave & 3 & 0.973 [0.953, 0.992] & 0.078 & 0.970, 0.971\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Comparison in common units}
 The number $N_{\rm total}$ of Ref.~\cite{ib} counts elements in a thin box
 of volume $(a_w\delta)^2(L+a_w\delta)H$ around two chains of thickness
@@ -866,7 +953,12 @@ $3.5\times10^{11}$ relation tests in 80 replicates, and ran in 1.8 hours;
 one replicate at $N=2^{24}$, with both jets, took about three minutes and up
 to 36\,GiB. The orbit test used $4.0\times10^8$ events and
 $1.0\times10^{11}$ relation tests, and ran in 96 minutes with a peak of
-31\,GiB.
+31\,GiB. The five-window test used $1.07\times10^{10}$ events and
+$3.4\times10^{12}$ relation tests, and ran in 8.6 hours; one window's fit
+took 1.6 to 7.6 minutes and at most 4.7\,GiB, once the integer sums of the
+clock covariance were computed in chunks in single precision, with the
+weights split so that every partial sum stays an exactly represented
+integer.
 
 \section{Limitations and outlook}\label{limits}
 The first limitation is that detection is not accuracy. With the
@@ -904,8 +996,9 @@ curved spacetime the model bias adds to the error, and the block test of
 Sect.~\ref{schwres} hints, for one selection, at a larger scatter at
 $N\approx10^6$.
 
-Third, removing the bias costs precision. With the landmarks of the
-benchmark, the sixth-degree jet removes the continuum bias of the half-cycle
+Third, removing the bias within one window costs precision. With the
+landmarks of the benchmark, the sixth-degree jet removes the continuum bias
+of the half-cycle
 wave but multiplies the statistical radius by 4.8 to 6.1, so that it needs
 23 to 37 times more events than the fifth-degree jet for the same radius,
 and it did not detect that wave even at $6.7\times10^7$ events. A 95\%
@@ -917,7 +1010,16 @@ flat covariance tried 22 band layouts, 18 of which passed the selection, and
 below the range 4.6--6.1 that the present rule shows across six selection
 samples, and the lowest value, 4.0, came with a fifth-degree radius of 70\%
 of $s$. Breaking the time symmetry of Sect.~\ref{bias} conditions the second
-derivatives only at the expense of the fifth-degree precision. At a fixed
+derivatives only at the expense of the fifth-degree precision. Windows along
+the worldline avoid most of this cost (Sect.~\ref{windows}) but have limits
+of their own. Only the amplitude along the true tensor was tested at finite
+density; the windows were independent sprinkles, not regions of one causal
+set; and the correction measures only the time--time second derivative,
+giving the others their minimal norm. Under
+$\|\nabla\nabla C\|\le\kappa\|C\|$, summed over the observer's frame, its
+worst first-order bias in the continuum is $0.0011\,\kappa T^2$, against
+$0.0095\,\kappa T^2$ for one window, and determining all second derivatives
+would need windows displaced in four more directions. At a fixed
 window the noise decreases as
 $N^{-1/2}$ while the bias is fixed by the window and the jet, so the error
 of the implemented procedure is set by the window, the landmark design and
@@ -944,11 +1046,13 @@ derivatives of the curvature, which leave no trace in the residuals at these
 event counts and which a sixth-degree jet can include, at a cost in
 precision that no landmark layout we tried removed. The chord-moment
 mechanism of Sect.~\ref{bias} suggests that this cost is structural within
-one window, so that an accuracy statement for varying fields needs either a
-stated bound on the variation of the curvature or data from more than one
-window. The field of a rotating source and a
-comparison with geodesic deviation on the same input are the natural next
-steps.
+one window. Data from five windows along the observer's worldline, aligned
+by the order alone, removed the bias at about six times the events of one
+window: in a pre-specified test the amplitude along the true tensor came out
+as 0.998, with 95\% interval 0.977--1.018, where one window read 0.887.
+Accuracy for the full tensor, windows that are regions of one causal set,
+the field of a rotating source and a comparison with geodesic deviation on
+the same input are the natural next steps.
 
 
 \section*{Statements and Declarations}
@@ -961,7 +1065,7 @@ and the records of the checks are public. They are in the directories
 \nolinkurl{experiments/positive_control},
 \nolinkurl{docs/paper/paper_a/intrinsic_weyl} and
 \nolinkurl{docs/paper/weyl_note} of the repository
-\url{https://github.com/lpaiu-cs/causal-spacetime/tree/0b607a201b8a}. The
+\url{https://github.com/lpaiu-cs/causal-spacetime/tree/02c21e2b6418}. The
 accuracy test corresponds to commit \texttt{0ff9802}, the benchmark to
 commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), the
 Schwarzschild test to commit \texttt{7224c69} (run and check), with its
@@ -973,9 +1077,14 @@ record in \texttt{c076fec}. The sixth-degree jet and its continuum check are
 in commit \texttt{b5e14e1}, the post hoc refit in \texttt{d7c5d1d}, with
 its record in \texttt{fbb5613}, and the landmark design study in commits
 \texttt{5de89e4} (harness), \texttt{65713dd} and \texttt{0a0577f} (runs),
-with its record in \texttt{8e57669}. The order archives, about 95\,GiB for the
-five tests, can be regenerated from the recorded seeds and are available
-from the author on reasonable request.
+with its record in \texttt{8e57669}. The multi-window and frame-link studies
+are in commits \texttt{d4ebd51} and \texttt{c9f1606}, with their records in
+\texttt{bba7b8a} and \texttt{556778e}, and the five-window test in commit
+\texttt{1ca7af2} (protocol, run and check), with its record in
+\texttt{02c21e2}. All order archives can be regenerated from the recorded
+seeds; those of the first five tests, about 95\,GiB, and of two replicates
+of the five-window test, 12\,GiB, are available from the author on
+reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
 and directed the study, examined the results and wrote the manuscript, with
 the assistance of the AI tools described below.
