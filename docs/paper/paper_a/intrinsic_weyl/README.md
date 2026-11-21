@@ -133,6 +133,16 @@ data reads 0.8870 [0.8689, 0.9051], below 0.95. The independent audit passed.
 Only the amplitude along the true tensor is claimed. The corrected estimate's
 full-tensor bias lies below this run's noise floor of 3.5% and is not
 resolved, and one replicate's reading has a standard deviation of 0.082.
+A [post hoc split](window_test_sensitivity.json), added after an independent
+review, shows that in this geometry the verdict barely depends on the side
+windows and the links. The windows at ±1/2 lie on nodes of the wave and read
+about zero, and those at ±1 carry little weight, so the centre term alone
+(1.0086 [0.9883, 1.0290]), identity links (1.0098) and random side links
+(64/64 draws) would also have passed. The test therefore confirms mainly the
+finite-N size of the bias operator inferred from the centre window. The side
+windows' finite differences and the order-only links remain to be tested in a
+geometry where they carry the correction; the links' accuracy rests on the
+direct comparison (parity 256/256, angle errors at most 0.054°).
 
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
