@@ -1,10 +1,16 @@
 # Finite-N test of the five-window correction with load-bearing side windows and links (DRAFT)
 
-2026-11-21. **Draft for decisions, not frozen.** Nothing here binds until a
-freeze commit that adds the runner and the checking script and precedes every
-test selection and measurement event (Sect. 10). Section 12 lists the
-decisions still open; Sects. 6–9 use the proposed choices. All numbers come
-from the design aid `experiments/positive_control/intrinsic_weyl_window_link_test_power.py`
+2026-11-21. **Draft, not frozen.** Nothing here binds until a freeze commit
+that renames this file to `window_link_test_protocol.md` together with the
+runner and the checking script and precedes every test selection and
+measurement event (Sect. 10). The user took the proposed choices of Sect. 12
+on 2026-11-21 (spacing `T/3`, `t = 0.05`, 96 replicates, F2 as proposed, G3
+secondary, four fit workers, the seeds of Sect. 6). The runner
+`experiments/positive_control/intrinsic_weyl_window_link_test.py` and the
+checking script `check_intrinsic_weyl_window_link_test.py` are written and
+committed as drafts; the engineering pilot (Sect. 8) comes next and waits for
+the user's go-ahead. All design numbers come from the design aid
+`experiments/positive_control/intrinsic_weyl_window_link_test_power.py`
 (commit `a58965c`), whose recorded run is
 [`window_link_test_power.json`](window_link_test_power.json). That run drew no
 measurement event; its only draws are selection events of a dry run (Sect. 6).
@@ -131,8 +137,14 @@ Changes:
    the plane-wave operator, three-point first order (windows 0, ±1/3) with
    both operators.
 3. **Evaluation** (after the corrections are saved) adds the counterfactual
-   readings of Sect. 4 and the linked readings of the side windows.
-4. Seeds, replicates and destination (Sect. 6).
+   readings of Sect. 4 and the linked readings of the side windows. It first
+   replays the primary reading from the saved weights, links and fits; a
+   difference above `1e-9` is an `ArithmeticError` and fails the replicate.
+4. Seeds, replicates, destination, four fit workers (Sect. 6).
+5. Selfchecks added: the stencil against `correction_specs` (bit for bit at
+   1/4, 1/2, 1) and its structure at 1/3; the chart move, the GPU relation
+   bits and the links on the new offsets; the new gates (`--check-cpu` runs
+   every selfcheck that needs no GPU).
 
 Unchanged from the frozen protocol, Sects. 2–6: the wave and amplitude
 (`a(u) = A0 sin(pi u)`, `A0 = pi^2 h0 / 2`, `h0 = 0.01`), tips, 4096
@@ -161,9 +173,11 @@ With the full-tidal inner product and `<x> = <c, x> / <c, c>`:
   frame, unrelated to the centre's); (ii) flipped handedness,
   `R_s -> -R_s` (the order-only link composed with spatial inversion, which
   flips the magnetic part); (iii) Haar-random links, `R_s` replaced by
-  independent Haar-random elements of O(3): 64 draws per replicate,
-  `default_rng(2026113050)`, drawn replicate by replicate, draw by draw, side
-  windows in the order of their offsets (as the post hoc script);
+  independent Haar-random elements of O(3): for replicate `r`,
+  `default_rng([2026113050, r])`, 64 draws, each draw the four side windows in
+  the order of their offsets, each element the QR of a standard normal 3x3
+  matrix with the sign fix (the post hoc script's construction, seeded per
+  replicate so that replicates evaluated in parallel draw the same matrices);
 - **G3 readings**, each side window's linked reading `rho_(r,s) = <M(R_s) c_s>`.
 
 Over the completed replicates: means and their 95% two-sided Student-t
@@ -311,11 +325,24 @@ For comparison, `R = 80` costs 1.34e10 events and 10.7 h; `R = 112` costs
 ## 8. Engineering pilot (before the freeze, not test data)
 
 Two replicates, seeds 2026113000 and 2026113001, at `2^22` and `2^24` events
-per window (nested prefixes), engineering mode of the uncommitted runner. It
+per window (nested prefixes), engineering mode of the draft runner. It
 checks the runner end to end at the new spacing: selection and links (shared
 counts, parity against the oracle, angle errors), the new stencil's
 structure, the counterfactual readings, the checking script, timings and
 memory. Nothing is inferred from its readings.
+
+Done before the pilot, CPU only, no events: the runner's selfchecks that need
+no GPU pass (gates, selection, links with mixed parity on the new offsets,
+stencil, chart moves between the new neighbours to `6e-12`). A plumbing test
+relabelled the frozen run's replicates 0 and 31 (whose centre clocks are kept)
+to the new offsets and ran the draft correction and evaluation on them: the
+primary reading replays exactly, and the draft checking script reproduces the
+links, estimates, readings and every counterfactual reading including the 64
+Haar draws, with the five-point structure at `h = 1/3` to `4e-16`; the
+runner's and the checker's verdicts agree. Its readings mean nothing, since
+those side windows were drawn at the old offsets; as expected, the relabelled
+outer windows (old ±T, signal −0.88) read −0.87 to −0.97 and pass G3, and the
+relabelled inner windows (old nodes) read about 0 and fail it.
 
 ## 9. Predictions (before data)
 
@@ -344,8 +371,9 @@ freeze) after the pilot; the pilot replayed from the clean worktree at the
 freeze commit and compared before the test starts; one run from the clean
 worktree with no other GPU job; the runner binds the hashes of its sources and
 of this protocol and refuses a dirty worktree or an existing destination;
-checking script with two refits; summaries, audit receipt and a results note
-committed. Merge commits only, so the `code_version` stamps stay reachable.
+checking script with the refits `rep00:3:33554432` and `rep48:0:33554432`;
+summaries, audit receipt and a results note committed. Merge commits only, so
+the `code_version` stamps stay reachable.
 The pilot (tens of minutes of GPU) and the test (about 13 hours with the GPU
 reserved) each wait for the user's go-ahead, since other work may need the
 GPU.
@@ -361,7 +389,7 @@ structure (recovering `B = -h^2 (W_h + 4 W_(2h))`), the readings of every
 counterfactual and of the linked side windows from the saved fits, links and
 weights, the 64 Haar draws from their seed, and the verdicts of F1, F2 and G3.
 
-## 12. Open decisions (draft only)
+## 12. Decisions (the proposed choices, taken by the user on 2026-11-21)
 
 1. **Spacing.** Proposed `T/3`. `3/8` is dyadic and cheaper (ratio 1.62;
    roughly 85 replicates by scaling the variance ratio, not computed
