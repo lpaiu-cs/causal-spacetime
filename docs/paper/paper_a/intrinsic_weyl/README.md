@@ -118,6 +118,16 @@ in both cases at four wavelengths. In this idealized setting (expected-count
 clocks, flat clock covariances, independent windows) the five-window
 correction is order-only from end to end. Nothing here is a finite-N result.
 
+The [finite-N five-window test](window_test_protocol.md) was frozen on
+2026-11-21, before any test event. It asks whether the order-only five-window
+correction recovers the crest tensor's amplitude along the true tensor to
+within ±0.05 on the 95% two-sided interval of its mean over 64 independent
+replicates (five windows of 2^25 events each, 1.07e10 events), while the
+single window on the same data reads low by more than 0.05. Windows off the
+centre keep their inner neighbour's landmarks by an order-only count rule,
+and the links are over O(3), because finite-N fits do converge to mirror
+embeddings. Results are not yet in.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
