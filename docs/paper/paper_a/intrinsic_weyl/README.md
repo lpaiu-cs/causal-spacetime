@@ -126,7 +126,13 @@ replicates (five windows of 2^25 events each, 1.07e10 events), while the
 single window on the same data reads low by more than 0.05. Windows off the
 centre keep their inner neighbour's landmarks by an order-only count rule,
 and the links are over O(3), because finite-N fits do converge to mirror
-embeddings. Results are not yet in.
+embeddings. The [run](window_test_results.md) (64 replicates, 8.6 hours, no
+failure) is SUPPORTED. The corrected reading has mean 0.9976, with 95%
+interval [0.9772, 1.0180] inside [0.95, 1.05]. The single window on the same
+data reads 0.8870 [0.8689, 0.9051], below 0.95. The independent audit passed.
+Only the amplitude along the true tensor is claimed. The corrected estimate's
+full-tensor bias lies below this run's noise floor of 3.5% and is not
+resolved, and one replicate's reading has a standard deviation of 0.082.
 
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
