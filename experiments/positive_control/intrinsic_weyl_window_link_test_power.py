@@ -1,8 +1,9 @@
 """Geometry, power and cost of a finite-N test in which the side windows and the
 order-only links of the five-window correction carry the result (design aid).
 
-Design aid for ``docs/paper/paper_a/intrinsic_weyl/window_link_test_protocol_draft.md``.
-No measurement event is drawn and nothing here is a test result.
+Design aid for ``docs/paper/paper_a/intrinsic_weyl/window_link_test_protocol.md``
+(the draft until the freeze). No measurement event is drawn and nothing here is
+a test result.
 
 Why. The frozen test (``window_test_protocol.md``, commit ``1ca7af2``) put its
 side windows at proper-time offsets +-1/2 and +-1 of the tip separation on the
@@ -38,8 +39,10 @@ Parts:
    against the frozen engineering pilot's selection records at h = 1/2.
 4. Power and cost. Replicates for 90% power of the accuracy gate on its 95%
    two-sided Student-t interval (house rule), the power of the control,
-   falsification and link-sign gates, and GPU and wall hours from the frozen
-   run's measured generation and fit times.
+   falsification and link-sign gates, the power of the secondary side-share
+   gate G4 against its band (computed last, so that every earlier draw is
+   unchanged), and GPU and wall hours from the frozen run's measured
+   generation and fit times.
 """
 
 import argparse
@@ -113,6 +116,12 @@ SIZING_SCENARIOS = ((1.2, 0.0), (1.0, 0.01), (1.0, -0.01))
 TARGET_POWER = 0.9
 DRAWS = 20000
 POWER_SEED = 2026112952
+# G4 (secondary): the side windows' share a - a0 inside this band; the continuum
+# layouts give -0.2018 and -0.1904, widened by 0.02 on each side. Its power is
+# also reported at a stress standard deviation and at finite-N mean offsets.
+SIDE_SHARE_BAND = (-0.22, -0.17)
+SIDE_SHARE_OFFSETS = (-0.01, 0.0, 0.01)
+SIDE_SHARE_STRESS_SD = 0.03
 # Cost, measured in the frozen run at 2^25 (window_test_results.md): generation
 # per window is nearly independent of the landmark count (centre median 94 s
 # with 130 landmarks, side 96-98 s with 168); a fit's wall time grows as
@@ -503,6 +512,10 @@ def case_geometry(case, fits, clock_cache, amplitude, frozen_power):
                     [weights[centre_index]],
                     [covariances[centre_index]],
                 ),
+                "side_share": (
+                    [weights[i] for i in sides],
+                    [covariances[i] for i in sides],
+                ),
                 "five_point_plane_wave": (plane_weights, covariances),
             }.items()
         }
@@ -524,6 +537,7 @@ def case_geometry(case, fits, clock_cache, amplitude, frozen_power):
                 "primary_minimum_norm": primary,
                 "five_point_plane_wave": reading(range(5), use=plane_weights),
                 "centre_term_only": reading([centre_index]),
+                "side_share": reading(sides),
                 "outer_pair_deleted": reading([centre_index, *inner]),
                 "inner_pair_deleted": reading([centre_index, *outer]),
                 "parity_flipped_side_links": reading(
@@ -661,6 +675,9 @@ def frozen_empirical(run, summary_path, rho_old, rho_new):
                     "primary_swapped": sum(
                         along(new[i] @ swapped[i]) for i in range(5)
                     ),
+                    "side_share_swapped": sum(
+                        along(new[i] @ swapped[i]) for i in (0, 1, 3, 4)
+                    ),
                     "identity_links_unswapped": sum(
                         along(new[i] @ own[i]) for i in range(5)
                     ),
@@ -702,6 +719,7 @@ def frozen_empirical(run, summary_path, rho_old, rho_new):
                 "single",
                 "centre_term_only",
                 "primary_swapped",
+                "side_share_swapped",
                 "identity_links_unswapped",
                 "haar_side_links_swapped_mean",
             )
@@ -854,7 +872,9 @@ def dry_run(workers, engineering):
 # ---------------------------------------------------------------------------
 
 
-def interval_power(mean, sd, replicates, rule, rng, tolerance, draws=DRAWS):
+def interval_power(
+    mean, sd, replicates, rule, rng, tolerance, draws=DRAWS, band=SIDE_SHARE_BAND
+):
     """P(rule) on the 95% two-sided t-interval of the mean of R readings.
 
     ``sd`` is a scalar or an array of per-replicate standard deviations to
@@ -882,6 +902,8 @@ def interval_power(mean, sd, replicates, rule, rng, tolerance, draws=DRAWS):
         hit = low > 0
     elif rule == "negative":
         hit = high < 0
+    elif rule == "inside_band":
+        hit = (low > band[0]) & (high < band[1])
     else:
         raise ValueError(rule)
     return float(hit.mean())
@@ -1151,6 +1173,57 @@ def power_and_cost(geometry, empirical, dry, calibration_sd, realized):
         ),
         "by_kappa": others,
     }
+    # G4 (secondary), the side share a - a0 against its band, drawn after every
+    # other power above so that those draws are unchanged.
+    share_means = {
+        str(c): g["readings"]["side_share"] for c, g in zip(CASES, chosen, strict=True)
+    }
+    share_candidates = {
+        "single_times_continuum_ratio": single_sd * math.sqrt(ratio_of("side_share")),
+        "frozen_run_signal_swap": empirical_chosen["side_share_swapped"]["sd"],
+    }
+    share_sd = max(share_candidates.values())
+    share_power = {}
+    for kappa in KAPPAS:
+        for case, mean in share_means.items():
+            for offset in SIDE_SHARE_OFFSETS:
+                share_power[f"kappa {kappa}, case {case}, offset {offset:+.2f}"] = {
+                    str(r): interval_power(
+                        mean + offset,
+                        shape * share_sd * math.sqrt(kappa),
+                        r,
+                        "inside_band",
+                        rng,
+                        0.05,
+                    )
+                    for r in sizes
+                }
+    stress = {
+        f"case {case}, offset {offset:+.2f}": interval_power(
+            mean + offset, SIDE_SHARE_STRESS_SD, proposed, "inside_band", rng, 0.05
+        )
+        for case, mean in share_means.items()
+        for offset in SIDE_SHARE_OFFSETS
+    }
+    result["g4_side_share_secondary"] = {
+        "band": list(SIDE_SHARE_BAND),
+        "means_continuum_by_case": share_means,
+        "mean_frozen_run_reweighted": empirical_chosen["side_share_swapped"]["mean"],
+        "variance_ratio_to_single": ratio_of("side_share"),
+        "sd_2_25_candidates": share_candidates,
+        "sd_2_25_design": share_sd,
+        "power_by_scenario": share_power,
+        "lowest_power_at_proposed": min(v[str(proposed)] for v in share_power.values()),
+        "stress_sd": SIDE_SHARE_STRESS_SD,
+        "stress_power_at_proposed": stress,
+    }
+    print(
+        "G4",
+        round(share_sd, 4),
+        result["g4_side_share_secondary"]["lowest_power_at_proposed"],
+        min(stress.values()),
+        flush=True,
+    )
     side_clocks = dry["summary"]["side"]["clocks"]
     per_replicate = {
         f"{level}_{label}_side_clocks": replicate_cost(level, side_clocks[label])

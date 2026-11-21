@@ -1,18 +1,19 @@
-"""Finite-N test of the five-window correction with load-bearing side windows.
+"""Finite-N test of the five-window correction whose side windows enter the reading.
 
 A reviewed copy of the frozen runner ``intrinsic_weyl_window_test.py`` (commit
-1ca7af2) with the changes of the protocol draft
-``docs/paper/paper_a/intrinsic_weyl/window_link_test_protocol_draft.md``,
-Sect. 3; everything else is unchanged. The frozen test put its side windows on
-nodes of the half-cycle wave (spacing 1/2), so its reading did not depend on
-them or on the links. Here the spacing is 1/3 of the tip separation.
+1ca7af2) with the changes of the protocol
+``docs/paper/paper_a/intrinsic_weyl/window_link_test_protocol.md``, Sect. 3;
+everything else is unchanged. The frozen test put its side windows on nodes of
+the half-cycle wave (spacing 1/2), so its reading did not depend on them or on
+the links. Here the spacing is 1/3 of the tip separation.
 
 The geometry is the Ibrahim-Bombelli half-cycle plane wave of the benchmark
 (h0 = 1e-2). Five windows lie along the observer's geodesic x = y = 0 of the
 Brinkmann chart, centred at proper-time offsets -2/3, -1/3, 0, 1/3, 2/3 of the
 tip separation (the floats k * (1/3)). The window at offset delta is the
 standard window of the profile a(u + delta), and an event's chart coordinates
-in windows delta1 and delta2 differ by (delta1 - delta2, delta2 - delta1, 0, 0).
+in windows delta1 and delta2 satisfy
+x(delta1) - x(delta2) = (delta2 - delta1, delta1 - delta2, 0, 0).
 
 Each window is an independent sprinkle. Its landmarks are the unchanged nested
 selection on its own 4096 selection events, plus, off the centre, the
@@ -33,8 +34,12 @@ counterfactual readings of the falsification gates: the centre term alone and
 the correction with identity, handedness-flipped and Haar-random side links,
 and each side window's linked reading.
 
-See docs/paper/paper_a/intrinsic_weyl/window_link_test_protocol.md (the draft
-until the freeze).
+An infrastructure interruption or a code defect is never an outcome: a
+MemoryError anywhere, a worker that exits with a non-zero code, or a failed
+replay of the primary reading stops the run without a summary (protocol
+Sect. 5); only the listed replicate failures stay in the result.
+
+See docs/paper/paper_a/intrinsic_weyl/window_link_test_protocol.md.
 """
 
 import argparse
@@ -102,6 +107,9 @@ CORRECTIONS = {
 # Falsification: Haar-random side links, default_rng([HAAR_SEED, replicate]),
 # HAAR_DRAWS draws of the four side windows in the order of their offsets.
 HAAR_SEED, HAAR_DRAWS = 2026113050, 64
+# G4 (secondary): the side windows' share a - a0 of the corrected reading; the
+# continuum layouts give -0.2018 and -0.1904, widened by 0.02 on each side.
+SIDE_SHARE_BAND = (-0.22, -0.17)
 ELECTRIC = np.r_[np.ones(5), np.zeros(5)]
 MAGNETIC = np.r_[np.zeros(5), np.ones(5)]
 BOOTSTRAP, BOOTSTRAP_SEED = 10000, 2026113051
@@ -126,6 +134,11 @@ ORACLES = (
     "window_response",
     "p14_plane_wave",
 )
+
+
+class Interruption(RuntimeError):
+    """An infrastructure interruption or a code defect; never an outcome. The
+    run stops without a summary (protocol Sect. 5)."""
 
 
 # ---------------------------------------------------------------------------
@@ -169,9 +182,10 @@ def control_verdict(interval, tolerance=TOLERANCE):
 
 
 def falsification_verdict(interval, tolerance=TOLERANCE):
-    """F1, and each F2 variant: the interval lies strictly above 1 + t, the
-    side the mechanism predicts (the side windows' contributions are negative)."""
-    return "LOAD_BEARING" if interval[0] > 1 + tolerance else "NOT_SHOWN"
+    """F1, and each F2 variant: the variant misses the band, its interval lying
+    strictly above 1 + t, the side the mechanism predicts (the side windows'
+    contributions are negative). A variant below the band does not count."""
+    return "MISSES" if interval[0] > 1 + tolerance else "NOT_SHOWN"
 
 
 def link_sign_verdict(interval, offset):
@@ -182,20 +196,34 @@ def link_sign_verdict(interval, offset):
     return "LINKED" if interval[1] < 0 else "NOT_LINKED"
 
 
+def side_share_verdict(interval, band=SIDE_SHARE_BAND):
+    """G4 (secondary): the side windows' share a - a0 lies strictly inside the
+    predicted band; strictly outside it is NOT_AS_PREDICTED."""
+    low, high = interval
+    if low > band[0] and high < band[1]:
+        return "AS_PREDICTED"
+    if high < band[0] or low > band[1]:
+        return "NOT_AS_PREDICTED"
+    return "UNRESOLVED"
+
+
 def label(shift):
     return f"{shift:+.4f}"
 
 
 def primary_claim(
-    complete, accuracy, control, side_windows, links, minimum=MINIMUM_COMPLETE
+    complete, accuracy, control, centre_term, links, signs, minimum=MINIMUM_COMPLETE
 ):
+    """SUPPORTED needs G1 ACCURATE, G2 BIASED_LOW, F1 and F2 missing the band
+    on the predicted side, and G3 LINKED for each of the four side windows."""
     if complete < minimum:
         return "INCOMPLETE"
-    if (accuracy, control, side_windows, links) == (
-        "ACCURATE",
-        "BIASED_LOW",
-        "LOAD_BEARING",
-        "LOAD_BEARING",
+    verdicts = (accuracy, control, centre_term, links)
+    expected = ("ACCURATE", "BIASED_LOW", "CENTRE_TERM_MISSES", "WRONG_LINKS_MISS")
+    if (
+        verdicts == expected
+        and len(signs) == len(SIDES)
+        and all(sign == "LINKED" for sign in signs)
     ):
         return "SUPPORTED"
     return "NOT_SUPPORTED"
@@ -216,18 +244,19 @@ def judge(rows, tolerance=TOLERANCE, minimum=MINIMUM_COMPLETE):
         t_interval([row["counterfactuals"]["haar_links"][d] for row in complete])
         for d in range(HAAR_DRAWS)
     ]
-    side_windows = links = None
+    centre_term = links = None
     if variants["centre_term_only"]:
-        side_windows = falsification_verdict(
-            variants["centre_term_only"]["interval"], tolerance
+        alone = variants["centre_term_only"]["interval"]
+        centre_term = (
+            "CENTRE_TERM_MISSES"
+            if falsification_verdict(alone, tolerance) == "MISSES"
+            else "NOT_SHOWN"
         )
         each = [
             falsification_verdict(v["interval"], tolerance)
             for v in [variants["identity_links"], variants["flipped_links"], *haar]
         ]
-        links = (
-            "LOAD_BEARING" if all(v == "LOAD_BEARING" for v in each) else "NOT_SHOWN"
-        )
+        links = "WRONG_LINKS_MISS" if all(v == "MISSES" for v in each) else "NOT_SHOWN"
     signs = {}
     for w in SIDES:
         key = label(WINDOWS[w])
@@ -241,6 +270,28 @@ def judge(rows, tolerance=TOLERANCE, minimum=MINIMUM_COMPLETE):
             if linked
             else None,
         }
+    share = t_interval(
+        [
+            row["readings"]["primary"]["value"]
+            - row["counterfactuals"]["centre_term_only"]
+            for row in complete
+        ]
+    )
+    oracle = [row["oracle_links"] for row in complete if "oracle_links" in row]
+    disagreeing = int(
+        sum(
+            not link["parity_agrees_with_oracle"]
+            for o in oracle
+            for link in o["links"].values()
+        )
+    )
+    missing = len(complete) - len(oracle)
+    if disagreeing:
+        handedness = "DISAGREE"
+    elif missing or not complete:
+        handedness = "UNAVAILABLE"
+    else:
+        handedness = "ALL_AGREE"
     return {
         "assigned": len(rows),
         "complete": len(complete),
@@ -251,13 +302,13 @@ def judge(rows, tolerance=TOLERANCE, minimum=MINIMUM_COMPLETE):
         "g1_accuracy": accuracy,
         "g2_control": control,
         "centre_term_only_reading": variants["centre_term_only"],
-        "f1_side_windows": side_windows,
+        "f1_centre_term": centre_term,
         "identity_links_reading": variants["identity_links"],
         "flipped_links_reading": variants["flipped_links"],
         "haar_links": {
             "draws": HAAR_DRAWS,
-            "load_bearing_draws": sum(
-                falsification_verdict(h["interval"], tolerance) == "LOAD_BEARING"
+            "draws_missing_band": sum(
+                falsification_verdict(h["interval"], tolerance) == "MISSES"
                 for h in haar
                 if h
             ),
@@ -269,10 +320,28 @@ def judge(rows, tolerance=TOLERANCE, minimum=MINIMUM_COMPLETE):
                 max((h["mean"] for h in haar if h), default=None),
             ],
         },
-        "f2_links": links,
-        "g3_link_signs_secondary": signs,
+        "f2_wrong_links": links,
+        "g3_link_signs": signs,
+        "g4_side_share_secondary": {
+            "band": list(SIDE_SHARE_BAND),
+            "reading": share,
+            "verdict": side_share_verdict(share["interval"]) if share else None,
+        },
+        "g5_oracle_handedness_secondary": {
+            "replicates_with_oracle_links": len(oracle),
+            "replicates_without_oracle_links": missing,
+            "links_compared": int(sum(len(o["links"]) for o in oracle)),
+            "links_disagreeing": disagreeing,
+            "verdict": handedness,
+        },
         "primary_claim": primary_claim(
-            len(complete), accuracy, control, side_windows, links, minimum
+            len(complete),
+            accuracy,
+            control,
+            centre_term,
+            links,
+            [s["verdict"] for s in signs.values()],
+            minimum,
         ),
     }
 
@@ -280,22 +349,44 @@ def judge(rows, tolerance=TOLERANCE, minimum=MINIMUM_COMPLETE):
 def selfcheck():
     """The gates, including strictness and the completion rule."""
 
-    def row(primary, single, failed=False, centre=1.2, identity=1.2, flipped=1.14):
+    def row(
+        primary,
+        single,
+        failed=False,
+        centre=1.2,
+        identity=1.19,
+        flipped=1.14,
+        haar=1.21,
+        sides=None,
+        agrees=True,
+        oracle=True,
+    ):
         if failed:
             return {"failure": "kept"}
         side = {
             label(WINDOWS[w]): 0.44 if abs(w - CENTRE) == 1 else -0.44 for w in SIDES
         }
-        return {
+        side.update(sides or {})
+        item = {
             "readings": {"primary": {"value": primary}, "single": {"value": single}},
             "counterfactuals": {
                 "centre_term_only": centre,
                 "identity_links": identity,
                 "flipped_links": flipped,
-                "haar_links": [identity] * HAAR_DRAWS,
+                "haar_links": [haar] * HAAR_DRAWS,
                 "linked_side_readings": side,
             },
         }
+        if oracle:
+            item["oracle_links"] = {
+                "links": {
+                    label(WINDOWS[w]): {"parity_agrees_with_oracle": agrees}
+                    for w in SIDES
+                }
+            }
+        else:
+            item["oracle_links_failure"] = "kept"
+        return item
 
     assert MINIMUM_COMPLETE == math.ceil(0.9 * REPLICATES)
     assert WINDOWS[CENTRE] == 0.0 and SIDES == tuple(
@@ -312,7 +403,7 @@ def selfcheck():
     assert accuracy_verdict([0.94, 1.06]) == "UNRESOLVED"
     assert control_verdict([0.80, 0.9499]) == "BIASED_LOW"
     assert control_verdict([0.80, 0.95]) == "NOT_BIASED"
-    assert falsification_verdict([1.0501, 1.3]) == "LOAD_BEARING"
+    assert falsification_verdict([1.0501, 1.3]) == "MISSES"
     assert falsification_verdict([1.05, 1.3]) == "NOT_SHOWN"
     assert falsification_verdict([0.80, 0.9]) == "NOT_SHOWN"  # wrong side
     assert link_sign_verdict([0.001, 0.5], 1) == "LINKED"
@@ -320,13 +411,27 @@ def selfcheck():
     assert link_sign_verdict([-0.5, -0.001], 2) == "LINKED"
     assert link_sign_verdict([-0.5, 0.0], -2) == "NOT_LINKED"
     assert link_sign_verdict([-0.5, -0.1], 1) == "NOT_LINKED"
-    ok = ("ACCURATE", "BIASED_LOW", "LOAD_BEARING", "LOAD_BEARING")
-    assert primary_claim(87, *ok) == "SUPPORTED"
-    assert primary_claim(86, *ok) == "INCOMPLETE"
-    assert primary_claim(96, "ACCURATE", "NOT_BIASED", *ok[2:]) == "NOT_SUPPORTED"
-    assert primary_claim(96, "UNRESOLVED", "BIASED_LOW", *ok[2:]) == "NOT_SUPPORTED"
-    assert primary_claim(96, *ok[:2], "NOT_SHOWN", ok[3]) == "NOT_SUPPORTED"
-    assert primary_claim(96, *ok[:3], "NOT_SHOWN") == "NOT_SUPPORTED"
+    assert side_share_verdict([-0.2199, -0.1701]) == "AS_PREDICTED"
+    assert side_share_verdict([-0.22, -0.18]) == "UNRESOLVED"
+    assert side_share_verdict([-0.21, -0.17]) == "UNRESOLVED"
+    assert side_share_verdict([-0.30, -0.2201]) == "NOT_AS_PREDICTED"
+    assert side_share_verdict([-0.30, -0.22]) == "UNRESOLVED"
+    assert side_share_verdict([-0.1699, -0.1]) == "NOT_AS_PREDICTED"
+    assert side_share_verdict([-0.17, -0.1]) == "UNRESOLVED"
+    ok = ("ACCURATE", "BIASED_LOW", "CENTRE_TERM_MISSES", "WRONG_LINKS_MISS")
+    linked = ["LINKED"] * len(SIDES)
+    assert primary_claim(87, *ok, linked) == "SUPPORTED"
+    assert primary_claim(86, *ok, linked) == "INCOMPLETE"
+    assert primary_claim(96, "ACCURATE", "NOT_BIASED", *ok[2:], linked) == (
+        "NOT_SUPPORTED"
+    )
+    assert primary_claim(96, "UNRESOLVED", "BIASED_LOW", *ok[2:], linked) == (
+        "NOT_SUPPORTED"
+    )
+    assert primary_claim(96, *ok[:2], "NOT_SHOWN", ok[3], linked) == "NOT_SUPPORTED"
+    assert primary_claim(96, *ok[:3], "NOT_SHOWN", linked) == "NOT_SUPPORTED"
+    assert primary_claim(96, *ok, linked[:-1] + ["NOT_LINKED"]) == "NOT_SUPPORTED"
+    assert primary_claim(96, *ok, linked[:-1]) == "NOT_SUPPORTED"
     rng = np.random.default_rng(2026113052)
 
     def noisy(**options):
@@ -338,22 +443,44 @@ def selfcheck():
     good = noisy()
     verdict = judge(good)
     assert verdict["primary_claim"] == "SUPPORTED"
-    assert verdict["f1_side_windows"] == verdict["f2_links"] == "LOAD_BEARING"
-    assert all(
-        s["verdict"] == "LINKED" for s in verdict["g3_link_signs_secondary"].values()
+    assert verdict["f1_centre_term"] == "CENTRE_TERM_MISSES"
+    assert verdict["f2_wrong_links"] == "WRONG_LINKS_MISS"
+    assert verdict["haar_links"]["draws_missing_band"] == HAAR_DRAWS
+    assert all(s["verdict"] == "LINKED" for s in verdict["g3_link_signs"].values())
+    assert verdict["g4_side_share_secondary"]["verdict"] == "AS_PREDICTED"
+    assert verdict["g5_oracle_handedness_secondary"]["verdict"] == "ALL_AGREE"
+    assert verdict["g5_oracle_handedness_secondary"]["links_compared"] == (
+        len(SIDES) * REPLICATES
     )
     failed = good[:86] + [row(0, 0, failed=True)] * 10
     verdict = judge(failed)
     assert verdict["complete"] == 86 and verdict["primary_claim"] == "INCOMPLETE"
     assert verdict["g1_accuracy"] == "ACCURATE"
     # A design whose variants pass is not discriminating: NOT_SUPPORTED.
-    assert judge(noisy(centre=1.0))["primary_claim"] == "NOT_SUPPORTED"
-    assert judge(noisy(identity=1.0))["f2_links"] == "NOT_SHOWN"
+    verdict = judge(noisy(centre=1.0))
+    assert verdict["primary_claim"] == "NOT_SUPPORTED"
+    assert verdict["f1_centre_term"] == "NOT_SHOWN"
+    assert verdict["g4_side_share_secondary"]["verdict"] == "NOT_AS_PREDICTED"
+    assert judge(noisy(identity=1.0))["f2_wrong_links"] == "NOT_SHOWN"
     assert judge(noisy(flipped=1.0))["primary_claim"] == "NOT_SUPPORTED"
+    assert judge(noisy(haar=1.0))["f2_wrong_links"] == "NOT_SHOWN"
     one_haar_draw_passes = noisy()
     for item in one_haar_draw_passes:
-        item["counterfactuals"]["haar_links"] = [1.0] + [1.2] * (HAAR_DRAWS - 1)
-    assert judge(one_haar_draw_passes)["f2_links"] == "NOT_SHOWN"
+        item["counterfactuals"]["haar_links"] = [1.0] + [1.21] * (HAAR_DRAWS - 1)
+    verdict = judge(one_haar_draw_passes)
+    assert verdict["f2_wrong_links"] == "NOT_SHOWN"
+    assert verdict["haar_links"]["draws_missing_band"] == HAAR_DRAWS - 1
+    # G3 is part of the primary claim: one outer window on the wrong side.
+    verdict = judge(noisy(sides={label(WINDOWS[0]): 0.01}))
+    assert verdict["g3_link_signs"][label(WINDOWS[0])]["verdict"] == "NOT_LINKED"
+    assert verdict["primary_claim"] == "NOT_SUPPORTED"
+    # G4 and G5 are secondary: they never change the primary claim.
+    verdict = judge(noisy(agrees=False))
+    assert verdict["g5_oracle_handedness_secondary"]["verdict"] == "DISAGREE"
+    assert verdict["primary_claim"] == "SUPPORTED"
+    verdict = judge(noisy(oracle=False))
+    assert verdict["g5_oracle_handedness_secondary"]["verdict"] == "UNAVAILABLE"
+    assert verdict["primary_claim"] == "SUPPORTED"
     return {
         "tolerance": TOLERANCE,
         "coverage_two_sided": COVERAGE,
@@ -362,6 +489,9 @@ def selfcheck():
         "failures_kept_and_counted": True,
         "falsification_side": "above 1 + t",
         "haar_draws_all_required": HAAR_DRAWS,
+        "g3_part_of_primary_claim": True,
+        "g4_side_share_band_secondary": list(SIDE_SHARE_BAND),
+        "g5_oracle_handedness_secondary": True,
     }
 
 
@@ -994,7 +1124,9 @@ def window_worker(archive, output, clocks=None):
             )
         }
         record["fit_summary"]["shared_landmarks"] = len(rows)
-    except (ValueError, ArithmeticError, MemoryError, np.linalg.LinAlgError) as error:
+    # A MemoryError is an interruption, never an outcome: it ends the worker
+    # with a non-zero exit, which stops the run (protocol Sect. 5).
+    except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
         record["failure"] = f"{type(error).__name__}: {error}"
     record.update(
         wall_seconds=time.perf_counter() - wall,
@@ -1042,7 +1174,9 @@ def combine_worker(folder, prefix, n, output):
         record["correction_seconds"] = time.perf_counter() - wall
         record["links"] = correction["links"]["steps"]
         record["evaluation"] = evaluate(folder, prefix, fits, correction)
-    except (ValueError, ArithmeticError, MemoryError, np.linalg.LinAlgError) as error:
+    # A MemoryError is an interruption, never an outcome: it ends the worker
+    # with a non-zero exit, which stops the run (protocol Sect. 5).
+    except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
         record["failure"] = f"{type(error).__name__}: {error}"
     record.update(
         wall_seconds=time.perf_counter() - wall,
@@ -1161,29 +1295,36 @@ def evaluate(folder, prefix, fits, correction):
             + sum(weights[s] @ maps[s] @ own[s] for s in sides)
         )
 
+    # Exact maps of saved quantities: a failure here, or a replay that does not
+    # reproduce the primary reading, is a code defect and stops the run.
     replicate = int(prefix.removeprefix("rep"))
     rng = np.random.default_rng([HAAR_SEED, replicate])
-    haar = []
-    for _ in range(HAAR_DRAWS):
-        haar.append(with_side_maps({s: weyl_rotation(haar_o3(rng)) for s in sides}))
-    result["counterfactuals"] = {
-        "centre_term_only": along(weights[centre_shift] @ own[centre_shift]),
-        "identity_links": with_side_maps({s: np.eye(10) for s in sides}),
-        "flipped_links": with_side_maps({s: weyl_rotation(-linked[s]) for s in sides}),
-        "haar_links": haar,
-        "haar_rng": [HAAR_SEED, replicate],
-        "linked_side_readings": {
-            label(s): along(weyl_rotation(linked[s]) @ own[s]) for s in sides
-        },
-        "primary_replayed": with_side_maps(
-            {s: weyl_rotation(linked[s]) for s in sides}
-        ),
-    }
+    try:
+        haar = []
+        for _ in range(HAAR_DRAWS):
+            haar.append(with_side_maps({s: weyl_rotation(haar_o3(rng)) for s in sides}))
+        result["counterfactuals"] = {
+            "centre_term_only": along(weights[centre_shift] @ own[centre_shift]),
+            "identity_links": with_side_maps({s: np.eye(10) for s in sides}),
+            "flipped_links": with_side_maps(
+                {s: weyl_rotation(-linked[s]) for s in sides}
+            ),
+            "haar_links": haar,
+            "haar_rng": [HAAR_SEED, replicate],
+            "linked_side_readings": {
+                label(s): along(weyl_rotation(linked[s]) @ own[s]) for s in sides
+            },
+            "primary_replayed": with_side_maps(
+                {s: weyl_rotation(linked[s]) for s in sides}
+            ),
+        }
+    except (ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
+        raise Interruption(f"Counterfactual maps failed: {error}") from error
     replay = abs(
         result["counterfactuals"]["primary_replayed"] - readings["primary"]["value"]
     )
     if replay > 1e-9:
-        raise ArithmeticError("Counterfactual path does not replay the primary reading")
+        raise Interruption("Counterfactual path does not replay the primary reading")
     # Descriptive: links against the oracle relative frames, and the primary
     # correction with oracle links. The normal frames of all windows are
     # parallel transports of one another, so the oracle map is R_s^T R_0.
@@ -1357,7 +1498,8 @@ def generate_window(folder, prefix, w, seed, wave, levels, status, neighbour):
                     events=end,
                     target=top,
                 )
-    except (ValueError, ArithmeticError, MemoryError) as error:
+    # A MemoryError (CuPy's included) propagates and stops the run.
+    except (ValueError, ArithmeticError) as error:
         generation["failure"] = f"{type(error).__name__}: {error}"
     cp.get_default_memory_pool().free_all_blocks()
     generation.update(
@@ -1706,11 +1848,17 @@ def run(destination, engineering=False, parallel=PARALLEL_FITS):
             "f1": "centre term alone above 1 + t",
             "f2": "identity, handedness-flipped and every Haar-random side-link "
             "variant above 1 + t",
-            "g3_secondary": "each side window's linked reading on its predicted "
-            "side of zero",
+            "g3": "each side window's linked reading on its predicted side of "
+            "zero; part of the primary claim",
+            "g4_secondary": "side share a - a0 inside "
+            f"({SIDE_SHARE_BAND[0]}, {SIDE_SHARE_BAND[1]})",
+            "g5_secondary": "every link's parity agrees with the oracle's",
             "haar_rng": f"default_rng([{HAAR_SEED}, replicate]), {HAAR_DRAWS} draws "
             "of the four side windows in the order of their offsets",
         },
+        "interruptions": "a MemoryError anywhere, a worker's non-zero exit, or a "
+        "failed counterfactual map or replay stops the run without a summary; "
+        "never a replicate failure",
         "parallel_fit_workers": parallel,
         "worker_thread_environment": {
             key: worker_env.get(key) for key in THREAD_VARIABLES
@@ -1728,7 +1876,8 @@ def run(destination, engineering=False, parallel=PARALLEL_FITS):
             else "Accuracy gate on the amplitude along the true tensor for one plane "
             "wave, amplitude and interval size, with the single window as control "
             "and falsification gates for the side windows and links; no "
-            "full-tensor, fine link-accuracy, generality or single-replicate claim"
+            "full-tensor, per-link handedness, fine link-accuracy, generality or "
+            "single-replicate claim"
         ),
     }
     write_json(destination / "manifest.json", manifest)
@@ -1744,12 +1893,16 @@ def run(destination, engineering=False, parallel=PARALLEL_FITS):
             )
             code = child.wait()
         if code:
-            return {
-                "failure": f"Worker exit {code}; see {output.with_suffix('.log').name}"
-            }
+            # A crashed or interrupted worker is never an outcome (Sect. 5).
+            raise Interruption(
+                f"Worker exit {code}; see {output.with_suffix('.log').name}"
+            )
         return json.loads(output.read_text(encoding="utf-8"))
 
     slots = threading.BoundedSemaphore(OUTSTANDING * len(levels))
+    # Reasons of interruptions seen in the worker threads; the generation loop
+    # stops at the next window when one is recorded.
+    halt = []
 
     def fit_task(prefix, w, n, keep):
         archive = destination / f"{prefix}_win{w}_n{n}.npz"
@@ -1764,10 +1917,20 @@ def run(destination, engineering=False, parallel=PARALLEL_FITS):
                 archive.unlink()
                 record["archive_deleted_after_fit"] = True
             return record
+        except BaseException as error:
+            halt.append(f"{type(error).__name__}: {error}")
+            raise
         finally:
             slots.release()
 
-    def combine_task(prefix, replicate, seed, n, generations, futures, keep):
+    def combine_task(*arguments):
+        try:
+            return combine_replicate(*arguments)
+        except BaseException as error:
+            halt.append(f"{type(error).__name__}: {error}")
+            raise
+
+    def combine_replicate(prefix, replicate, seed, n, generations, futures, keep):
         records = {str(w): futures[w].result() for w in sorted(futures)}
         missing = [w for w in range(len(WINDOWS)) if w not in futures]
         failed = {w: r["failure"] for w, r in records.items() if "failure" in r}
@@ -1836,6 +1999,8 @@ def run(destination, engineering=False, parallel=PARALLEL_FITS):
                     continue
                 for _ in levels:
                     slots.acquire()
+                if halt:
+                    raise Interruption(f"Stopped at {prefix} window {w}: {halt[0]}")
                 neighbour = None
                 if w in INNER:
                     points, own_rows = landmarks[INNER[w]]
@@ -1983,7 +2148,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--check-cpu",
         action="store_true",
-        help="selfchecks that need no GPU (gates, selection, links, stencil, charts)",
+        help="every selfcheck that needs no GPU (gates, generator, jet inverse, "
+        "selection, links, stencil, chart moves)",
     )
     parser.add_argument("--compare", type=Path, nargs=2)
     args = parser.parse_args()
@@ -1993,9 +2159,13 @@ if __name__ == "__main__":
         sys.exit(0 if outcome["reproduced"] else 1)
     elif args.check or args.check_cpu:
         from intrinsic_weyl_bombelli_benchmark import benchmark_amplitude
+        from intrinsic_weyl_joint import selfcheck_jet
+        from profile_plane_wave import selfcheck as wave_selfcheck
 
         report = {
             "verdict": selfcheck(),
+            "generator": wave_selfcheck(),
+            "jet_inverse": selfcheck_jet(),
             "window_selection": selection_selfcheck(),
             "links": link_selfcheck(),
             "stencil": stencil_selfcheck(),
