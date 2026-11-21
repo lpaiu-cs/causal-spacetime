@@ -1,8 +1,8 @@
 {
  "design_aid": "geometry, power and cost of a finite-N test in which the side windows and order-only links of the five-window correction carry the reading; no measurement event drawn; continuum, post hoc and selection-only inputs",
- "code_version": "a58965c",
+ "code_version": "6b4e1a4",
  "worktree_clean": true,
- "source_sha256_lf": "c9005998f61d6610337f98963e25bbdcf3acd153f1ae3541f88c6ba4d5f1d307",
+ "source_sha256_lf": "b783e48a9956c8f2cb66b716462817673f6b023d9aebffd374eea2408d71bebc",
  "benchmark_amplitude": 0.049348022005446794,
  "wavelength_diamond_heights": 2.0,
  "spacings": {
@@ -24,7 +24,7 @@
  "fits": {
   "fits": 46,
   "computed": 46,
-  "seconds": 145.09493947029114
+  "seconds": 134.33969140052795
  },
  "window_study_agreement": {
   "windows_compared": 14,
@@ -74,6 +74,7 @@
       "primary_minimum_norm": 1.0049414808814001,
       "five_point_plane_wave": 1.0030915578275599,
       "centre_term_only": 1.5555139877594164,
+      "side_share": -0.5505725068780161,
       "outer_pair_deleted": 1.0049401185215605,
       "inner_pair_deleted": 1.5555153501192558,
       "parity_flipped_side_links": 1.3653355308608404,
@@ -132,6 +133,13 @@
         2.9882983000591783
        ]
       },
+      "side_share": {
+       "median": 0.3718319919917513,
+       "5_95": [
+        0.35241232042905224,
+        0.39066751571099095
+       ]
+      },
       "five_point_plane_wave": {
        "median": 2.6478304025434607,
        "5_95": [
@@ -180,6 +188,7 @@
       "primary_minimum_norm": 1.0035972656976115,
       "five_point_plane_wave": 1.0017331696006158,
       "centre_term_only": 1.260528612300047,
+      "side_share": -0.2569313466024355,
       "outer_pair_deleted": 1.022818046729081,
       "inner_pair_deleted": 1.2413078312685775,
       "parity_flipped_side_links": 1.1764910520546326,
@@ -238,6 +247,13 @@
         1.9790486750879912
        ]
       },
+      "side_share": {
+       "median": 0.11130236259673379,
+       "5_95": [
+        0.1059773239544056,
+        0.11662799280098654
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.7702502382458192,
        "5_95": [
@@ -286,6 +302,7 @@
       "primary_minimum_norm": 1.0030326547624107,
       "five_point_plane_wave": 1.0011647955577774,
       "centre_term_only": 1.204801317609989,
+      "side_share": -0.20176866284757825,
       "outer_pair_deleted": 1.023438606844236,
       "inner_pair_deleted": 1.1843953655281636,
       "parity_flipped_side_links": 1.13967975837711,
@@ -344,6 +361,13 @@
         1.8127097209029785
        ]
       },
+      "side_share": {
+       "median": 0.07984212853762841,
+       "5_95": [
+        0.07609497673366754,
+        0.08358813110417898
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.6319867948276912,
        "5_95": [
@@ -392,6 +416,7 @@
       "primary_minimum_norm": 1.0017047281320755,
       "five_point_plane_wave": 0.9998316263543465,
       "centre_term_only": 1.1252070099134381,
+      "side_share": -0.12350228178136265,
       "outer_pair_deleted": 1.0216702150615902,
       "inner_pair_deleted": 1.1052415229839239,
       "parity_flipped_side_links": 1.0861304402269394,
@@ -450,6 +475,13 @@
         1.5884806814585677
        ]
       },
+      "side_share": {
+       "median": 0.04430748130752367,
+       "5_95": [
+        0.042267288038410025,
+        0.04629643321648728
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.4498762727131473,
        "5_95": [
@@ -498,6 +530,7 @@
       "primary_minimum_norm": 0.9991607446854439,
       "five_point_plane_wave": 0.9972875510511714,
       "centre_term_only": 1.0520897850789765,
+      "side_share": -0.05292904039353256,
       "outer_pair_deleted": 1.0156067131719864,
       "inner_pair_deleted": 1.0356438165924338,
       "parity_flipped_side_links": 1.035485819804988,
@@ -556,6 +589,13 @@
         1.3961232502314
        ]
       },
+      "side_share": {
+       "median": 0.02111942923161595,
+       "5_95": [
+        0.020162437833126164,
+        0.02201637077664774
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.2981800244859463,
        "5_95": [
@@ -604,6 +644,7 @@
       "primary_minimum_norm": 0.9958792360059543,
       "five_point_plane_wave": 0.994018330795383,
       "centre_term_only": 1.008046885584672,
+      "side_share": -0.01216764957871801,
       "outer_pair_deleted": 1.0080454094664777,
       "inner_pair_deleted": 0.9958807121241489,
       "parity_flipped_side_links": 1.0038423205120244,
@@ -660,6 +701,13 @@
        "5_95": [
         1.2745140152308512,
         1.2864925657931934
+       ]
+      },
+      "side_share": {
+       "median": 0.011369082811675807,
+       "5_95": [
+        0.010869420287282243,
+        0.011837683161042735
        ]
       },
       "five_point_plane_wave": {
@@ -725,6 +773,7 @@
       "primary_minimum_norm": 1.0041811698452972,
       "five_point_plane_wave": 1.0029521705363316,
       "centre_term_only": 1.5216345926759698,
+      "side_share": -0.5174534228306725,
       "outer_pair_deleted": 1.004181176241535,
       "inner_pair_deleted": 1.5216345862797318,
       "parity_flipped_side_links": 1.3507761260709878,
@@ -783,6 +832,13 @@
         2.821555270265936
        ]
       },
+      "side_share": {
+       "median": 0.3109753628229298,
+       "5_95": [
+        0.28957163509101225,
+        0.3421715179163831
+       ]
+      },
       "five_point_plane_wave": {
        "median": 2.427556344594178,
        "5_95": [
@@ -831,6 +887,7 @@
       "primary_minimum_norm": 1.002926417640218,
       "five_point_plane_wave": 1.0016746182527891,
       "centre_term_only": 1.2452294661517649,
+      "side_share": -0.2423030485115468,
       "outer_pair_deleted": 1.020801163140149,
       "inner_pair_deleted": 1.2273547206518338,
       "parity_flipped_side_links": 1.1696002290942866,
@@ -889,6 +946,13 @@
         1.9063410128032845
        ]
       },
+      "side_share": {
+       "median": 0.09412682142238865,
+       "5_95": [
+        0.08814076568744789,
+        0.10290440802661474
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.6771264311271414,
        "5_95": [
@@ -937,6 +1001,7 @@
       "primary_minimum_norm": 1.002397781574561,
       "five_point_plane_wave": 1.0011387056510417,
       "centre_term_only": 1.1928318492073837,
+      "side_share": -0.19043406763282275,
       "outer_pair_deleted": 1.0214014018490956,
       "inner_pair_deleted": 1.1738282289328492,
       "parity_flipped_side_links": 1.134200986507486,
@@ -995,6 +1060,13 @@
         1.7542108992728473
        ]
       },
+      "side_share": {
+       "median": 0.06770453289777348,
+       "5_95": [
+        0.06348125740249558,
+        0.07389977717796406
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.5583508144288534,
        "5_95": [
@@ -1043,6 +1115,7 @@
       "primary_minimum_norm": 1.0011518380895532,
       "five_point_plane_wave": 0.9998794444002604,
       "centre_term_only": 1.1178532737606688,
+      "side_share": -0.11670143567111554,
       "outer_pair_deleted": 1.019794567335243,
       "inner_pair_deleted": 1.099210544514979,
       "parity_flipped_side_links": 1.0826490869756873,
@@ -1101,6 +1174,13 @@
         1.5482049069494295
        ]
       },
+      "side_share": {
+       "median": 0.037737834459474276,
+       "5_95": [
+        0.03547041210094061,
+        0.041086866448540815
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.4008441977764305,
        "5_95": [
@@ -1149,6 +1229,7 @@
       "primary_minimum_norm": 0.9987576787109024,
       "five_point_plane_wave": 0.9974702375003033,
       "centre_term_only": 1.0487962320506024,
+      "side_share": -0.05003855333969972,
       "outer_pair_deleted": 1.014168166216946,
       "inner_pair_deleted": 1.033385744544559,
       "parity_flipped_side_links": 1.033834295787555,
@@ -1207,6 +1288,13 @@
         1.3704899233203804
        ]
       },
+      "side_share": {
+       "median": 0.018075661744732657,
+       "5_95": [
+        0.017026564321507492,
+        0.019618306603497213
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.2677818451304583,
        "5_95": [
@@ -1255,6 +1343,7 @@
       "primary_minimum_norm": 0.9956604401229779,
       "five_point_plane_wave": 0.9943666446732969,
       "centre_term_only": 1.0070943904634746,
+      "side_share": -0.011433950340496735,
       "outer_pair_deleted": 1.0070945715304784,
       "inner_pair_deleted": 0.9956602590559742,
       "parity_flipped_side_links": 1.0033183973623836,
@@ -1313,6 +1402,13 @@
         1.2686715686009418
        ]
       },
+      "side_share": {
+       "median": 0.009769041521022741,
+       "5_95": [
+        0.009217183929253702,
+        0.010576747941937944
+       ]
+      },
       "five_point_plane_wave": {
        "median": 1.1928914033185298,
        "5_95": [
@@ -1360,6 +1456,10 @@
      "mean": 1.0035203470039902,
      "sd": 0.1269127306898247
     },
+    "side_share_swapped": {
+     "mean": -0.5335638061683405,
+     "sd": 0.03743514525538269
+    },
     "identity_links_unswapped": {
      "mean": 1.5433927564999634,
      "sd": 0.1273747850102094
@@ -1405,6 +1505,10 @@
     "primary_swapped": {
      "mean": 1.0039455265740265,
      "sd": 0.10174046497184164
+    },
+    "side_share_swapped": {
+     "mean": -0.24888215059177082,
+     "sd": 0.020330336323098493
     },
     "identity_links_unswapped": {
      "mean": 1.256383260743902,
@@ -1452,6 +1556,10 @@
      "mean": 1.0036875756762937,
      "sd": 0.09717864563720258
     },
+    "side_share_swapped": {
+     "mean": -0.19533687422362617,
+     "sd": 0.017180584893924142
+    },
     "identity_links_unswapped": {
      "mean": 1.2020582904525814,
      "sd": 0.09674784938544922
@@ -1497,6 +1605,10 @@
     "primary_swapped": {
      "mean": 1.0027821771329328,
      "sd": 0.09079574342627597
+    },
+    "side_share_swapped": {
+     "mean": -0.11931632319894361,
+     "sd": 0.012750900305286327
     },
     "identity_links_unswapped": {
      "mean": 1.1243858603932355,
@@ -1544,6 +1656,10 @@
      "mean": 1.000619729521667,
      "sd": 0.08508422618524189
     },
+    "side_share_swapped": {
+     "mean": -0.05071024926163325,
+     "sd": 0.008782127303053939
+    },
     "identity_links_unswapped": {
      "mean": 1.0529299534444796,
      "sd": 0.08481546339807546
@@ -1589,6 +1705,10 @@
     "primary_swapped": {
      "mean": 0.997583361317667,
      "sd": 0.081720164833367
+    },
+    "side_share_swapped": {
+     "mean": -0.011058871091023693,
+     "sd": 0.00646326063906713
     },
     "identity_links_unswapped": {
      "mean": 1.0098271936641177,
@@ -1768,7 +1888,7 @@
       "clocks": 7481
      }
     ],
-    "seconds": 392.92811918258667
+    "seconds": 403.2172284126282
    },
    {
     "seed": 2026112901,
@@ -1823,7 +1943,7 @@
       "clocks": 6474
      }
     ],
-    "seconds": 391.7036964893341
+    "seconds": 401.34360671043396
    },
    {
     "seed": 2026112902,
@@ -1878,7 +1998,7 @@
       "clocks": 5467
      }
     ],
-    "seconds": 390.2396459579468
+    "seconds": 402.0845971107483
    },
    {
     "seed": 2026112903,
@@ -1933,7 +2053,7 @@
       "clocks": 5202
      }
     ],
-    "seconds": 391.473984003067
+    "seconds": 403.01760172843933
    }
   ],
   "summary": {
@@ -4603,6 +4723,131 @@
     }
    }
   },
+  "g4_side_share_secondary": {
+   "band": [
+    -0.22,
+    -0.17
+   ],
+   "means_continuum_by_case": {
+    "0": -0.20176866284757825,
+    "1": -0.19043406763282275
+   },
+   "mean_frozen_run_reweighted": -0.19533687422362617,
+   "variance_ratio_to_single": 0.07984212853762841,
+   "sd_2_25_candidates": {
+    "single_times_continuum_ratio": 0.02251177193534717,
+    "frozen_run_signal_swap": 0.017180584893924142
+   },
+   "sd_2_25_design": 0.02251177193534717,
+   "power_by_scenario": {
+    "kappa 1.0, case 0, offset -0.01": {
+     "48": 0.6932,
+     "64": 0.8243,
+     "80": 0.89785,
+     "96": 0.9422,
+     "112": 0.97005,
+     "128": 0.9845
+    },
+    "kappa 1.0, case 0, offset +0.00": {
+     "48": 0.9996,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.0, case 0, offset +0.01": {
+     "48": 1.0,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.0, case 1, offset -0.01": {
+     "48": 0.9999,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.0, case 1, offset +0.00": {
+     "48": 1.0,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.0, case 1, offset +0.01": {
+     "48": 0.88325,
+     "64": 0.9533,
+     "80": 0.9828,
+     "96": 0.9947,
+     "112": 0.99855,
+     "128": 0.99935
+    },
+    "kappa 1.2, case 0, offset -0.01": {
+     "48": 0.6139,
+     "64": 0.747,
+     "80": 0.8396,
+     "96": 0.9003,
+     "112": 0.9378,
+     "128": 0.9633
+    },
+    "kappa 1.2, case 0, offset +0.00": {
+     "48": 0.99855,
+     "64": 0.9999,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.2, case 0, offset +0.01": {
+     "48": 1.0,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.2, case 1, offset -0.01": {
+     "48": 0.99975,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.2, case 1, offset +0.00": {
+     "48": 0.99975,
+     "64": 1.0,
+     "80": 1.0,
+     "96": 1.0,
+     "112": 1.0,
+     "128": 1.0
+    },
+    "kappa 1.2, case 1, offset +0.01": {
+     "48": 0.81485,
+     "64": 0.9158,
+     "80": 0.9613,
+     "96": 0.984,
+     "112": 0.9925,
+     "128": 0.99755
+    }
+   },
+   "lowest_power_at_proposed": 0.9003,
+   "stress_sd": 0.03,
+   "stress_power_at_proposed": {
+    "case 0, offset -0.01": 0.7558,
+    "case 0, offset +0.00": 0.99995,
+    "case 0, offset +0.01": 1.0,
+    "case 1, offset -0.01": 1.0,
+    "case 1, offset +0.00": 1.0,
+    "case 1, offset +0.01": 0.9213
+   }
+  },
   "cost": {
    "model": "generation 96 s per window at 2^25 (frozen run median, independent of the landmark count there), proportional to N; side-window fit 311 s x (clocks/6209)^1.63 with its clock-moment share (128 of 311 s) proportional to N; centre fit as measured (149 s, 85 s of it moments). Wall time per replicate: the larger of generation and fits / workers; the GPU is reserved for the whole wall time. The frozen run took 8.62 h for 64 replicates with 3 fit workers; this model gives 8.53 h.",
    "side_clocks_from_dry_run": {
@@ -4904,5 +5149,5 @@
    }
   }
  },
- "elapsed_seconds": 626.8171525001526
+ "elapsed_seconds": 648.8694884777069
 }
