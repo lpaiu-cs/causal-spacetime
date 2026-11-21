@@ -8,8 +8,9 @@ on 2026-11-21 (spacing `T/3`, `t = 0.05`, 96 replicates, F2 as proposed, G3
 secondary, four fit workers, the seeds of Sect. 6). The runner
 `experiments/positive_control/intrinsic_weyl_window_link_test.py` and the
 checking script `check_intrinsic_weyl_window_link_test.py` are written and
-committed as drafts; the engineering pilot (Sect. 8) comes next and waits for
-the user's go-ahead. All design numbers come from the design aid
+committed as drafts. The engineering pilot ran on 2026-11-21 and the checking
+script passed on it (Sect. 8); the freeze (Sect. 10) waits for the user's
+go-ahead. All design numbers come from the design aid
 `experiments/positive_control/intrinsic_weyl_window_link_test_power.py`
 (commit `a58965c`), whose recorded run is
 [`window_link_test_power.json`](window_link_test_power.json). That run drew no
@@ -314,7 +315,8 @@ independent of the landmark count in the frozen run; side-window fits
 
 - **1.61e10 measurement events**, 1.97e6 selection events;
 - **GPU busy 12.8 h**, the GPU reserved for the whole run;
-- wall time **about 12.8 h** with four fit workers (generation-bound; peak
+- wall time **about 12.8 h** by this model (up to about 16 h by the
+  engineering pilot's timings, Sect. 8) with four fit workers (generation-bound; peak
   memory at most 5.1 GB per fit worker in the frozen run), up to 16.3 h with
   three if every side window had the dry run's largest clock count;
 - 49 CPU hours of fits.
@@ -325,11 +327,57 @@ For comparison, `R = 80` costs 1.34e10 events and 10.7 h; `R = 112` costs
 ## 8. Engineering pilot (before the freeze, not test data)
 
 Two replicates, seeds 2026113000 and 2026113001, at `2^22` and `2^24` events
-per window (nested prefixes), engineering mode of the draft runner. It
-checks the runner end to end at the new spacing: selection and links (shared
-counts, parity against the oracle, angle errors), the new stencil's
-structure, the counterfactual readings, the checking script, timings and
-memory. Nothing is inferred from its readings.
+per window (nested prefixes of one sprinkle), engineering mode of the draft
+runner, run on 2026-11-21 from the clean worktree at commit `7e6921d`
+(`outputs/intrinsic_weyl_window_link_test_engineering_v1`; runner SHA-256
+under the LF rule
+`1323216bea8c243c6f19a9872ba73844a8d3922180a8193566428f5c08774068`), four
+fit workers. Other applications held the GPU at about 24% utilization
+throughout; there was no other compute job.
+
+- Completed in 27.4 minutes; all four replicate-levels complete, no failure,
+  every fit valid. Every selfcheck passed at start, including the GPU
+  relation bits on the new windows and the bounded second moments.
+- Shared landmarks per link 39–48. Procrustes relative residual 0.14–0.22% at
+  `2^24`, 0.28–0.40% at `2^22`.
+- Mirror embeddings again: at every level three windows of replicate 0 (the
+  centre among them) and two of replicate 1 converged to the mirror embedding
+  of the truth. All 16 links had the oracle's parity, with angle errors
+  0.017–0.091°, and the primary readings with oracle links equal the
+  order-only ones to `7.6e-5`.
+- Nominal standard deviation at `2^24`: primary 0.132 and 0.140, single
+  window 0.097 and 0.103 (variance ratio about 1.85; the design used 1.79–1.87
+  in the continuum and 0.154 for the primary at `2^24`).
+- Generation 50–76 s per window to `2^24`, peak 1.6 GB; fit workers 86–119 s
+  (centre) and 193–422 s (side windows, 5,560–6,888 clocks), one at 765 s,
+  peak at most 2.9 GB; the correction and evaluation 6–7 s. Generation took
+  up to 1.3 times and the fits 1.5–2 times as long as in the frozen pilot
+  (three fit workers, no background load).
+  Scaled from the frozen run (8.62 h for 64 replicates), the test needs about
+  13 h; if its fits run as slowly as these, up to about 16 h.
+- The checking script passed (receipt
+  `outputs/intrinsic_weyl_window_link_test_engineering_v1.audit.json`,
+  SHA-256 `8adb8ef7ded369b503786d00172d2224ef2841fa99d69cee6d8627d4bab3c32c`):
+  all ten windows' landmarks and shared rows re-derived; links, estimates,
+  readings and every counterfactual reading (the 64 Haar draws from their
+  seed) reproduced at all four replicate-levels; the `h = 1/3` stencil
+  structure to `4.4e-16`; the minimum-norm operator recomputed to `1.3e-14`;
+  the four centre-window clock covariances (3,872 and 4,199 clocks)
+  recomputed with the inverse's CPU float64 second moment, bit-identical to
+  the saved ones; nested prefixes and the CPU replay of the first 4096
+  measurement events of every window bit for bit; 5,997 order bits checked
+  with the ODE integrator, all agree; no excluded candidate inside its
+  window; shared landmarks are the moved landmarks of the neighbour, with
+  exact squared intervals equal in both charts to `3.5e-13`; refits of window
+  3 of replicate 0 at `2^24` and window 0 of replicate 1 at `2^22` reproduce
+  every field.
+
+For the record only (engineering data, two replicates, nothing is inferred
+from them): primary readings 0.935 and 0.953 at `2^22`, 1.043 and 0.735 at
+`2^24`; single window 0.869 and 0.770, 0.917 and 0.679. At `2^24` the centre
+term alone read 0.200 and 0.188 above the primary (continuum 0.196), and the
+side windows' linked readings were +0.33 to +0.59 (±T/3) and −0.37 to −0.53
+(±2T/3).
 
 Done before the pilot, CPU only, no events: the runner's selfchecks that need
 no GPU pass (gates, selection, links with mixed parity on the new offsets,
@@ -374,9 +422,9 @@ of this protocol and refuses a dirty worktree or an existing destination;
 checking script with the refits `rep00:3:33554432` and `rep48:0:33554432`;
 summaries, audit receipt and a results note committed. Merge commits only, so
 the `code_version` stamps stay reachable.
-The pilot (tens of minutes of GPU) and the test (about 13 hours with the GPU
-reserved) each wait for the user's go-ahead, since other work may need the
-GPU.
+The pilot (tens of minutes of GPU) and the test (about 13 hours, up to about
+16, with the GPU reserved) each wait for the user's go-ahead, since other
+work may need the GPU.
 
 ## 11. Checking script
 
