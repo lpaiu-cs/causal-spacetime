@@ -1,22 +1,28 @@
-# Finite-N test of the five-window correction at spacing T/3, where the inner side windows and the links carry the reading (DRAFT)
+# Finite-N test of the five-window correction at spacing T/3, where the inner side windows and the links carry the reading
 
-2026-11-21, revised 2026-11-22. **Draft, not frozen.** Nothing here binds
-until a freeze commit that renames this file to `window_link_test_protocol.md`
-together with the runner and the checking script and precedes every test
-selection and measurement event (Sect. 10). The user took the proposed
-choices of Sect. 12.1 on 2026-11-21 (spacing `T/3`, `t = 0.05`, 96 replicates,
-F2 as proposed, G3 secondary, four fit workers, the seeds of Sect. 6). An
-independent design review and an independent code review, run before the
-freeze at the user's request, led to the revisions of Sect. 12.2. Three of
-them change the gates (G3 joins the primary claim; secondary gates G4 and G5
-are added) and wait for the user's confirmation at the freeze. The runner
+2026-11-23. **Frozen** in the commit that renames this file from
+`window_link_test_protocol_draft.md` to `window_link_test_protocol.md`. That
+commit freezes this protocol together with the runner
 `experiments/positive_control/intrinsic_weyl_window_link_test.py` and the
-checking script `check_intrinsic_weyl_window_link_test.py` are committed as
-drafts, revised at commit `6b4e1a4`. The engineering pilot ran on 2026-11-21
-with the earlier runner, and the checking script passed on it (Sect. 8). The
-revised runner changes no reading of a completed replicate, so the pilot
-replay at the freeze commit is the frozen runner's pilot and must reproduce
-the earlier one (Sect. 10). The freeze waits for the user's go-ahead. All
+checking script `experiments/positive_control/check_intrinsic_weyl_window_link_test.py`,
+both last changed at commit `6b4e1a4`. It follows the engineering pilot of
+Sect. 8 and precedes every test selection and measurement event.
+
+How the draft (commits `a6f7ae0`, `7e6921d`, `d83287a`, `871668c`) became this
+protocol:
+
+- On 2026-11-21 the user took the proposed choices of Sect. 12.1: spacing
+  `T/3`, `t = 0.05`, 96 replicates, F2 as proposed, G3 secondary, four fit
+  workers, the seeds of Sect. 6.
+- An independent design review and an independent code review, run before
+  the freeze at the user's request, led to the revisions of Sect. 12.2.
+- At the freeze on 2026-11-23 the user confirmed those revisions, including
+  G3 in the primary claim and the secondary gates G4 and G5.
+
+The engineering pilot ran on 2026-11-21 with the earlier runner, and the
+checking script passed on it (Sect. 8). The revised runner changes no reading
+of a completed replicate. The pilot replay at this commit is therefore the
+frozen runner's pilot, and it must reproduce the earlier one (Sect. 10). All
 design numbers come from the design aid
 `experiments/positive_control/intrinsic_weyl_window_link_test_power.py`
 (commit `6b4e1a4`), whose recorded run is
@@ -743,7 +749,8 @@ A design and statistics review and a code review read the draft, the runner,
 the checking script, the design aid and the pilot. They found no error in the
 design numbers and one blocking defect.
 
-**Proposed, to be confirmed by the user at the freeze:**
+**Proposed after the reviews, confirmed by the user at the freeze
+(2026-11-23):**
 
 1. **G3 in the primary claim.** It is the only gate on the outer windows and
    their chained links, and its power is 1.0000, so it costs nothing. As a
