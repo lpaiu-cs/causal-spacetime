@@ -144,6 +144,26 @@ windows' finite differences and the order-only links remain to be tested in a
 geometry where they carry the correction; the links' accuracy rests on the
 direct comparison (parity 256/256, angle errors at most 0.054°).
 
+The [five-window link test](window_link_test_protocol.md) was frozen on
+2026-11-23 (commit `d3b2a54`), before any test event, to test them. With the
+windows at 0, ±T/3 and ±2T/3 on the same wave, the side windows read ±0.44 of
+the crest and the centre term alone overshoots to about 1.20, so the reading
+returns to 1 only through the side windows and the links. The
+[run](window_link_test_results.md) (96 replicates of five windows at 2^25
+events each, 1.61e10 events, 10.8 hours, no failure) is SUPPORTED. The
+corrected reading is 1.0110 [0.9908, 1.0313], inside [0.95, 1.05], and the
+single window reads 0.8921 [0.8768, 0.9074]. The centre term alone
+(1.2052 [1.1849, 1.2256]) and the correction with identity (1.2053),
+handedness-flipped (1.1454) or Haar-random side links (64/64 draws) all lie
+above 1.05. Each side window's linked reading lies on its predicted side of
+zero. The side windows' share is −0.1942 [−0.1974, −0.1909], against −0.196
+in the continuum, and all 384 links agree in parity with the oracle. In this
+geometry the side windows' finite differences and the order-only links
+therefore carry the correction. Only the amplitude along the true tensor is
+claimed, for one wave, amplitude, interval size and spacing. Per-link
+handedness rests on the oracle comparison, and one replicate's reading has a
+standard deviation of 0.100. The independent audit passed.
+
 The [verified completion report](verified_results_20260923.md) records the
 512-case frozen coverage result (509/512, SUPPORTED) and all 24 assignments
 of the fixed high-count diagnostic. At 4,194,304 measurement events, the six
