@@ -1,0 +1,28 @@
+{
+  "stage": "control",
+  "status": "complete",
+  "code_version": "510bc469c25667829f4879c0b0691cfab8cbca99",
+  "worktree_clean_at_start": true,
+  "utc_started": "2026-11-24T08:17:16Z",
+  "device": "cpu",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "geometry": "flat_1p1",
+  "sizes": [
+    64,
+    128,
+    256
+  ],
+  "orders_per_size": 8,
+  "tracked_events_per_order": 64,
+  "blocks": 8,
+  "sweeps": "16 N",
+  "files": {
+    "flip_probe.py": "6d9ea1de2e22579e10bc406d626416a49bf197c00c80b189d79a5b72fd1c390d",
+    "hit_probe.py": "c141296b6d3e43cf53ee75fbf12037ee031b9f4cdcf05735d8c5203c2562dff6",
+    "analyse_hits.py": "18bb9b168c74225fbe663e7a675120ea672d4eaf5ae0fa453ed641d85017046d",
+    "design_v2.md": "a515cf1460449f4966609334a758cbc959541312f5dd398d27405a86b666bc5c"
+  },
+  "utc_finished": "2026-11-24T08:18:03Z",
+  "events_sha256": "d857d65c3c10c234b25cf16d35d6ec2fc2f57d10e97b34a6148746720e25fd5d"
+}
