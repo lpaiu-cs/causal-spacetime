@@ -1,187 +1,198 @@
-# Route D, first measurement: how far do central events move at fixed order? DRAFT
+# Route D, first measurement: a first look, with no verdict. DRAFT 2
 
 2026-11-24. **Draft. Not frozen. Not implemented. Not run.** It becomes a
 design only when the user approves it; freezing is then a separate commit.
 Generator coordinates throughout: a diagnostic of the background order law,
-not an observer and not a wave test. AI-written; not reviewed.
+not an observer and not a wave test. AI-written. The first draft (in the
+history at `764ef85`) was reviewed by an AI referee
+([referee_report.md](referee_report.md)); this draft answers that review
+and has not itself been reviewed.
 
-## 1. Why this measurement
+## 1. What changed, and why there is no gate
 
-Route A ([results_v3.md](../route_a/results_v3.md)) found that the walls
-of a central event do not spread over more partners as N grows. It did not
-measure how far a central event can move while the order stays the same.
-An earlier version of that record read the chain's all-event displacement
-as an answer and was corrected: that number is dominated by non-central
-events.
+The first draft gated a slope of the residual against `1/4` with a mixing
+requirement. The referee showed that this gate cannot be trusted:
 
-This is the structural unknown U2 of [next_question.md](../next_question.md)
-(phase transport): given the order, how well is the position of an event
-fixed? Two things can move it.
+- Run on the draft's own 1+1 positive control, where a count-scale effect
+  exists by construction, the mixing requirement returned "unresolved" in
+  300 of 300 replays. Collective motion relaxes in about `0.6 N^2` sweeps
+  there, and in 3+1 the conformal family is at most 18% relaxed at the
+  gated lag. A gate that passes mixing needs chains of `4 N^2` sweeps or
+  more: about 8.4 hours per order at N = 512.
+- The residual is not a power law in N. Its square is a cell-scale term
+  plus a count-scale term, `R^2 = A + B N`. A count-scale residual of the
+  size U2 itself suggests (about `0.7 / sqrt(N)`) puts the slope on the
+  decision line at these sizes, so the stated power did not hold.
+- A slowly creeping residual could pass the mixing tolerance and still
+  move the slope by several times the drift allowance.
 
-- **The order-preserving family.** The conformal maps of the diamond that
-  keep both tips fixed preserve every causal relation. They form a
-  7-parameter group (Section 2). Only the rotation about the wave axis also
-  preserves the sampling density; the other six are held by the density
-  alone, at an amplitude of order `N^(-1/2)`.
-- **Everything else,** the *residual*: what is left of the motion after the
-  best member of that group is removed.
+So this draft drops the verdict. It measures curves and reports them with
+intervals. Section 6 says in advance how the curves will be described and
+what each description cannot establish. A gated design, if one is worth
+its cost, comes after this look and needs its own approval.
 
-The question is the size of the residual for central events.
+## 2. The question (unchanged)
 
-- **Cell-scale residual.** It stays a fixed multiple of the single-move
-  scale, which is of order `1/N`. Then, up to seven global numbers, the
-  order fixes central positions far below the wavelengths of the open range
-  `N^(-3/4) < lambda < N^(-1/2)`.
-- **Count-scale residual.** It grows relative to the single-move scale,
-  like `N^(1/2)` if it sits at the count scale. Then the order does not fix
-  relative positions below about `N^(-1/2)` and phase coherence is limited.
+Given the order, how far can a central event move? Two contributions:
 
-## 2. The family, exactly
+- **The order-preserving family.** With tips p, q and inversion
+  `I(y) = y / (y . y)`, put `phi(x) = I(x - q) - I(p - q)`. The maps
+  `g = phi^-1 o (lambda Lambda) o phi`, `lambda > 0`, `Lambda` orthochronous
+  Lorentz, are the conformal maps of the diamond that fix both tips and
+  preserve every causal relation: 7 parameters. (Referee: order matrix
+  identical for 153 random elements; `phi` alone reverses the order.) Only
+  the rotation about the wave axis preserves the sampling density. Of the
+  other six, two (tilts of the wave axis) are nearly free at these sizes;
+  the remaining four are held at about `N^(-1/2)`. Estimated family
+  displacement of central events between two independent draws:
+  `3.2 / sqrt(N)`.
+- **The residual:** what is left after the best group element is removed.
 
-In the Minkowski chart let the tips be p and q, and `I(y) = y / (y . y)`
-the inversion. The map `phi(x) = I(x - q) - I(p - q)` sends q to infinity
-and p to the origin, and the open diamond onto the interior of one null
-cone at the origin. Events lie strictly inside the diamond, so `phi` is
-regular on them. Every map
+Cell-scale residual: a fixed multiple of the single-move scale (of order
+`1/N`) at every lag beyond a few sweeps. Count-scale residual: an extra
+term that grows relative to that scale like `sqrt(N)`, possibly appearing
+only at long lags.
 
-`g = phi^-1 o (lambda Lambda) o phi`, `lambda > 0`, `Lambda` an
-orthochronous Lorentz transformation,
+## 3. Estimator, fixed here
 
-is a conformal map of the diamond onto itself that preserves the causal
-order of any set of events. That is 1 + 6 = 7 parameters. The fit of
-Section 3 is over this finite group, not over its linearisation: at these
-sizes the family moves events by a tenth or more of the diamond, where the
-second-order part of a finite map exceeds the single-move scale.
+**Chain.** The Route A chain, unchanged in law, started at the sampled
+configuration (an exact draw from the conditional law given the order).
+Length `4 N^2` sweeps. Seeds `SeedSequence([20261127, dimension, N, r])`.
+Exact order comparison at every stored state.
 
-## 3. Instrument
+**Stored states.** After `t_j = N 2^j` sweeps for `j = 0, 1, ...` while
+`t_j <= 4 N^2`; after `N^2/2`, `N^2`, `2 N^2` and `4 N^2` sweeps; and one
+sweep after each of these.
 
-The chain is that of Route A, unchanged in law (one sweep moves every event
-once along a random line, uniformly on the segment where the order is
-exact, accepted by the density ratio; started at the sampled configuration,
-which is an exact draw from the conditional law given the order).
+**Lags.** The short ladder `N 2^j` up to `64 N`, and the long lags
+`N^2/2`, `N^2`, `2 N^2`.
 
-- **Chain length in units of `N^2`.** A collective coordinate shared by N
-  events diffuses under single-event moves on a time of order `N^2` sweeps.
-  Blocks are `N^2 / 8` sweeps; all positions are stored at every block end
-  and the order is compared exactly there.
-- **State pairs.** For two stored states at a lag of L blocks, the
-  displacement field of the central events (central as in Route A, by the
-  sampled position) is split into the best group element and a residual:
-  minimise `sum_k |g(x_s,k) - x_t,k|^2` over the seven parameters by
-  non-linear least squares, started at the identity.
-- **Recorded per pair:** mean square displacement of central events;
-  mean square residual, corrected for the seven fitted parameters; the
-  fitted parameters; the residual of the non-central, non-extremal tracked
-  events under the same fitted map, as an out-of-sample check.
-- **Unit.** `s1(N)`: the root-mean-square displacement of central events
-  over one sweep, measured at the start of every block. The gated quantity
-  is `R(N) = rms residual at lag N^2/2, divided by s1(N)`.
+**Event sets,** fixed from the sampled configuration and its order.
+*Central*: inside the sub-diamond scaled by 0.6 about the midpoint of the
+tips (as in Route A). *Outer*: not central, with at least one predecessor
+and one successor among the events.
+
+**State pairs.** For each lag t: the pairs `(0, t)` and `(t, 2 t)`; both
+states are stored for every lag above. Because the chain is stationary
+from its start, both are unbiased for that lag.
+
+**Per pair (a, b).**
+
+1. Total: mean over central events of `|x_b - x_a|^2` (Euclidean in the
+   chart).
+2. Fit: minimise `sum_k |g(x_a,k) - x_b,k|^2` over central events, with
+   `lambda = exp(s)` and `Lambda` the exponential of the six Lorentz
+   generators; `scipy.optimize.least_squares`, started at the identity,
+   tolerances `1e-12`. A fit that does not report success is an error for
+   that pair and is counted.
+3. Residual `r_k = g(x_a,k) - x_b,k`. Mean square residual of central
+   events, multiplied by `4 n / (4 n - 7)` for the seven fitted parameters
+   (n central events). The same for the wave coordinate `(T + Z) / sqrt(2)`
+   alone.
+4. Out of sample: mean square of `g(x_a,k) - x_b,k` over outer events with
+   the same fitted g, and their total mean square displacement.
+5. Pair differences: mean of `|r_k - r_l|^2` over pairs of central events
+   in three bins of their chart distance at state a (below 0.25, 0.25 to
+   0.5, above 0.5).
+6. The fitted parameters.
+
+**Unit.** `s1^2`, per order: the mean over central events and over stored
+states of the squared displacement during the one sweep after that state.
+`R(t) = sqrt(mean square residual at lag t / s1^2)`, per order.
+
+**Intervals.** Per-order values, mean over orders, two-sided 95% interval
+from the t distribution with (orders - 1) degrees of freedom.
+
+**Family thermometer.** The second-derivative matrix of the log conditional
+density along the seven generators, computed without a chain at each
+sampled configuration, predicts the spread of the four stiff parameters.
+The ratio of the observed variance of the fitted parameters at lag `2 N^2`
+to that prediction is reported as the fraction of the family that has
+relaxed.
 
 ## 4. Controls with known answers
 
-1. **Fit recovery, no chain.** Apply a random group element of the
-   expected size to sampled configurations, add independent noise of a
-   known size to every event, and fit. The recovered residual must equal
-   the injected noise: 95% interval of the ratio inside `1 +/- 0.05`, at
-   N = 128, 256, 512. Also: the order matrix before and after a group
-   element alone must be identical.
-2. **The chain reaches count-scale collective motion.** In 1+1 dimensions
-   with a flat density, given the two rankings the null coordinates are
-   uniform order statistics, so the mean square difference between two
-   independent draws, averaged over events, is exactly `1 / (3 (N + 1))`
-   in the chart `(T, Z)`. Almost all of that is collective motion. Chains of `8 N^2` sweeps in 16 blocks
-   at N = 64 (48 orders) and N = 128 (24 orders); the mean square
-   displacement between states at least `N^2` sweeps apart, divided by the
-   exact value, pooled over both sizes, must have a 95% interval inside
-   `1 +/- 0.15`. This is the positive control Route A lacked for the chain:
-   a case where large collective motion exists and must be found.
-   Sizing: assumed relative standard deviation per order `0.26`, 72 orders,
-   standard error `0.031`, against the requirement `0.15 / 3.2415 = 0.046`.
-   If the realised standard error is larger the control is unresolved.
+1. **Fit recovery, no chain.** At N = 128, 192, 256, 24 configurations
+   each: apply a random group element that moves central events by
+   `3.2 / sqrt(N)` rms, add independent noise of rms `10 / N` per event to
+   both states, fit. Recovered over injected residual: 95% interval inside
+   `1 +/- 0.05`. A group element alone must leave the order matrix
+   identical. (The referee's own test of this gave 0.98 to 1.00.)
+2. **The chain finds count-scale collective motion.** 1+1 dimensions, flat
+   density, N = 64, 48 orders, chains of `8 N^2` sweeps. The exact mean
+   square difference between two independent draws, averaged over events,
+   is `1 / (3 (N + 1))` in the chart `(T, Z)`. The ratio of the all-event
+   mean square displacement at lag `4 N^2` (pairs `(0, 4N^2)` and
+   `(4N^2, 8N^2)`) to that value must have a 95% interval inside
+   `1 +/- 0.2`. The whole curve against lag is reported; the referee
+   measured 0.57, 0.72, 0.87 and 0.97 at lags `N^2/4` to `2 N^2`, so the
+   control also shows how much a short lag under-reports.
+   Sizing: assumed relative standard deviation 0.5 per pair, 96 pairs,
+   standard error 0.051 against the requirement `0.2 / 3.2415 = 0.062`. A
+   larger realised standard error leaves the control unresolved.
 
-The 1+1 control validates the chain on collective modes, not the group
-fit: the order-preserving family of 1+1 is infinite-dimensional. Control 1
-validates the fit. Nothing validates both together where the answer is a
-count-scale residual; Section 7 keeps the wording that follows from that.
+If a control fails, the main stage is not run.
 
-## 5. Campaign, in two stages that can be approved separately
+## 5. Campaign
 
-CPU only; twelve single-thread workers at below-normal priority, recorded,
-as in Route A; clean-tree preflight, commit stamp, no overwriting. Twelve
-orders per size. The verdict is not changed after results are seen.
+CPU only; twelve single-thread workers at below-normal priority, recorded;
+clean-tree preflight, commit stamp, no overwriting. Twelve orders per size.
 
-| stage | what | sizes | sweeps | estimated wall time |
-|---|---|---|---|---|
-| 0 | controls of Section 4 | 1+1: 64, 128; fit: 128, 256, 512 | `8 N^2` | 45 min |
-| 1 | first look, **no verdict** | 3+1: 256 | `2 N^2` | 30 min |
-| 2 | scaling and the gate | 3+1: 128 (`2 N^2`), 512 (`N^2`) | | 2.5 h |
+| stage | what | sizes | estimated wall time |
+|---|---|---|---|
+| 0 | controls | fit: 128, 192, 256; chain: 1+1 at 64 | 15 min |
+| 1 | the curves | 3+1 at 128, 192, 256, chains of `4 N^2` | 80 min |
 
-**Stage 1 reports and decides nothing about U2.** At N = 256: the
-displacement of central events and its residual, in units of `s1`, at lags
-`N^2/8` to `15 N^2/8`; the fitted parameters; the mixing ratios of
-Section 6. A single size cannot separate "a fixed multiple of the cell
-scale" from "a larger multiple", because the multiple is not known in
-advance. Stage 1 exists to see whether the instrument works at the size
-where it is cheap, before the hours of stage 2 are spent. Its numbers will
-have been seen when stage 2 runs; the gate below is frozen before stage 1.
+N = 512 is left out: `4 N^2` sweeps there is about 8 hours per order.
+Central events per order are about 18, 27 and 39.
 
-## 6. Gates (stage 2)
+## 6. How the curves will be described. None of this is a verdict on U2
 
-Instrument gates: both controls; exact order at every block end; the fit
-converges for every state pair.
+Reported for each size, with intervals: `R(t)` at every lag; the same for
+the wave coordinate; the out-of-sample residual in the same unit; the
+pair-difference curves; total displacement of central events; fraction of
+the family relaxed.
 
-Mixing gate, every size: the ratio of the rms residual at lag `N^2/2` to
-that at lag `N^2/4` has a 95% interval upper end of at most `1.10`; at
-N = 128 and 256 the same for lag `N^2` against lag `N^2/2`. A mode slower
-than the chain is invisible to this, as in Route A.
+Three descriptions are fixed in advance.
 
-Decision gate: `kappa_R`, the least-squares slope of `log R(N)` on `log N`
-over N = 128, 256, 512; `D = kappa_R - 1/4`; 95% two-sided percentile
-interval, cluster bootstrap over orders within each size, 10000 draws.
+- **Plateau.** At a size, the ratio of R at lag `2 N^2` to R at lag `16 N`
+  has a 95% interval upper end of at most 1.10. *Cannot establish:* that no
+  slower component exists, or that the chain reaches every configuration
+  with the order. It is "no residual growth seen up to `2 N^2` sweeps by
+  this instrument".
+- **Creep.** That ratio has a lower end above 1.10. *Establishes* a lower
+  bound: the residual at lag `2 N^2` is at least what was measured, in
+  units of the single-move scale. *Cannot establish* its equilibrium size.
+- Anything between is reported as neither.
+- **Size dependence.** The least-squares fit `R^2 = A + B N` over the three
+  sizes, at lag `16 N` and at lag `N^2 / 2`, with intervals for A and B,
+  and the count-scale coefficient `c = s1 N sqrt(B)` it implies (residual
+  about `c / sqrt(N)`), next to the smallest c the data could have told
+  from zero. Three sizes within a factor 2 make this a weak fit; it is
+  reported as such.
 
-- instrument gate failed, mixing not shown, or underpowered: **unresolved**,
-  in that order of precedence;
-- interval entirely above 0: **count-scale residual**;
-- interval entirely below 0: **no residual growth seen by this instrument**
-  (not "positions are fixed at the cell scale": see Section 7);
-- otherwise: **undecided**.
-
-Sizing for 90% power: the hypotheses are slopes 0 and 1/2, the line is 1/4,
-drift allowance `0.05`, so `SE(D) <= 0.20 / 3.2415 = 0.0617`. On three
-sizes a factor 2 apart that is a standard error of `log R` of at most
-`0.0605` per size. Planning value for the between-order relative standard
-deviation `0.174` (the Route A pilot's value; the realised values in Route
-A were 0.03 to 0.05): twelve orders give `0.050`. After the run the
-realised `SE(D)` is compared with `0.0617`.
+The pair-difference curves are described as flat in separation, or rising
+with it, with the same interval rule on the ratio of the farthest to the
+nearest bin.
 
 ## 7. Limits, stated before any data
 
-- **Asymmetry.** If a count-scale residual exists and relaxes more slowly
-  than `N^2 / 2` sweeps, the chain under-reports it at every size and the
-  slope may or may not show it. A below-zero interval is therefore recorded
-  as "not seen by this instrument". The 1+1 control shows the chain can
-  equilibrate count-scale collective motion in `N^2` sweeps there; it does
-  not show the same in 3+1.
-- **Reachability.** Single-event moves may not reach every configuration
-  with the given order.
-- Central events only, one background (`q = 1`), one diamond, three sizes
-  to 512. At these sizes the estimated family amplitude is about 6 to 13
-  times the single-move cell radius, so the two scales are separated by
-  one order of magnitude at most.
-- The group fit uses central events only. With 18 central events at
-  N = 128 it estimates seven parameters from 72 numbers.
-- Whatever the verdict, it is about positions given the order on the
-  background. It is not a statement about a wave, a statistic or the
-  exponent. The heuristic consequence (a cell-scale residual would make the
-  "phase known up to a few global parameters" row of next_question.md
-  Section 3 the relevant one) stays heuristic.
+- No verdict. A plateau is not evidence that positions are fixed at the
+  cell scale; a creep is a lower bound, not a measured count-scale size.
+- At lag `2 N^2` the family itself may be far from relaxed in 3+1. The
+  thermometer reports how far.
+- The fit is blind to a common shift of the central cluster (it keeps 3%
+  of one). The out-of-sample residual is the check on that.
+- Central events only, one background, one diamond, sizes 128 to 256,
+  where the family displacement of central events is about 4 to 6 times
+  the single-move cell radius.
+- With 18 central events at N = 128 the fit estimates seven parameters from
+  72 numbers.
+- Whatever is seen is about positions given the order on the background.
+  It says nothing about a wave, a statistic or the exponent.
 
 ## 8. What has been seen that bears on this
 
-Everything in the Route A records, and from the independent check
-([checker_report.md](../route_a/checker_report.md)): a central event's
-single-move cell radius is about `9.3 / N` with the others held fixed; the
-checker's estimate of the family's equilibrium amplitude is `5.2 / sqrt(N)`;
-the all-event displacement of the Route A chains (about `3.5 / sqrt(N)`,
-mostly reached within `2N` sweeps, dominated by non-central events). No
-displacement of central events has been recorded or seen.
+The Route A records and their independent check; the referee's chain-free
+numbers quoted above; the referee's 1+1 relaxation table. No displacement
+of central events along a 3+1 chain has been recorded or seen.
