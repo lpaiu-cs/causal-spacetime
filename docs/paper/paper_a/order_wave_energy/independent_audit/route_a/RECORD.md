@@ -1,8 +1,10 @@
 # Route A: progress record
 
 2026-11-24. **No verdict on U1.** The second design is frozen and its
-control passed. Its 3+1 campaign has not produced a number and is waiting
-for the user's approval (Section 5). AI-run work throughout; no human
+control passed, but an independent review found two defects in its decision
+gate, so its 3+1 campaign is not to be run as frozen. A third design exists
+as a draft only and waits for the user's approval (Sections 5 to 7). No 3+1
+number from the chain instrument exists. AI-run work throughout; no human
 review.
 
 ## 1. Why this route first
@@ -60,8 +62,9 @@ unstated constant is what put the first grid in the wrong range.
   estimated from products of partner frequencies in different blocks.
 - Control, 1+1 dimensions (known value 4): `3.921`, 95% interval
   `[3.895, 3.942]`, tolerance `0.3`; no hit outside the candidates. Gate
-  passed. The small deficit below 4 is under independent review.
-- Campaign, 3+1 background, N = 128 to 2048, 12 orders each: **not run.**
+  passed. The small deficit below 4 is explained in Section 6.
+- Campaign, 3+1 background, N = 128 to 2048, 12 orders each: **not run**,
+  and after the review of Section 6 not to be run as frozen.
 
 **Authorisation.** The freezes and runs above were made after the user's
 go-ahead to start Route A in this session. A condition relayed afterwards
@@ -77,12 +80,50 @@ there.
 Cost if approved: CPU only, about 20 minutes for N up to 1024 and about 85
 minutes for N = 2048 on 12 workers.
 
-## 6. Pending
+## 6. Independent review of the second design
 
-- Independent review of the instrument and estimator by an AI referee that
-  was given the code and designs and no 3+1 result. Its report is to be
-  added to this folder, and any defect it finds is to be handled by an
-  amendment before the campaign runs.
-- The campaign and its gates.
+[referee_report.md](referee_report.md). An AI referee in a fresh context,
+given the code and both designs and no 3+1 result.
+
+Found correct: the row lemma and its implementation; the chain's stationary
+law (checked against exact order-statistic laws in 1+1 and against the
+density in 3+1); the rule that the partner at a segment end is a wall, with
+the exact orientation, at 72,000 segment ends; unbiasedness of the
+cross-block estimator (independent exact draws give 4.0000 in 1+1); the
+constants of design_v2.md Section 2.
+
+Found wrong or missing, in the referee's order of importance:
+
+1. Extremal events are 48% of the population at N = 256 and 22% at 2048 and
+   have more than twice the candidates. Pooling them biases the slope by an
+   amount of unknown sign.
+2. design_v2.md says the count-limited reading does not need the mixing
+   gate. For a slope that is false, and the mixing ratio it defines cannot
+   see slow relaxation.
+3. There is no control in which the right answer grows with N.
+4. The control's "known value 4" holds only for events with four distinct
+   rank neighbours; with a shared neighbour it is 8/3. That, not slow modes,
+   is 84% of the control's deficit (3.921 against 4): events with four
+   distinct neighbours gave 3.987. design_v2.md Section 5 attributes the
+   deficit to slow collective modes; that attribution is withdrawn here.
+5. A rounding case can drop a root in 1+1. No practical effect in 3+1.
+
+The design value 0.40 for the candidate slope was a single-seed reading;
+the referee's eight configurations per size give 0.48 to 0.50.
+
+The referee reported that one of its commands briefly created two untracked
+files in the worktree root and removed them. The tree is clean; no stamped
+run overlapped that interval's preflight.
+
+## 7. Where this stands
+
+- design_v2.md is left as frozen and its campaign is **not run**: findings
+  1 and 2 change what its gate would mean.
+- [design_v3_draft.md](design_v3_draft.md) answers the findings: a fixed
+  central stratum for the gate, mixing required for both verdicts with
+  longer chains to check it, corrected control values, the rounding guard.
+  It is a draft. It is not frozen, not implemented and not run, and its
+  cost is about 25 CPU hours (a little over 2 hours on 12 workers).
+- Finding 3 is not repaired, and the draft says so.
 - Nothing has been done on Routes B, C, D or on writing the regularised
   statistic of the upper-bound draft.
