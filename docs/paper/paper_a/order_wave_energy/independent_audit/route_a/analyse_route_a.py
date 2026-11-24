@@ -107,11 +107,13 @@ def participation(events, n):
     walls = np.mean([e["walls_mean"] for e in group])
     lags = sorted(group[0]["lag_overlap"])
     far = [lag for lag in lags if lag >= FAR_LAG]
-    shared = np.mean([np.mean([e["lag_overlap"][lag] for lag in far]) for e in group])
     by_lag = {
         lag: float(np.mean([e["lag_overlap"][lag] for e in group]) / walls)
         for lag in lags
     }
+    if not far:  # the control stage has two checkpoints only
+        return None, by_lag
+    shared = np.mean([np.mean([e["lag_overlap"][lag] for lag in far]) for e in group])
     return float(walls**2 / shared) if shared > 0 else None, by_lag
 
 
