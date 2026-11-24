@@ -1,12 +1,15 @@
-# Route D, first measurement: a first look, with no verdict. DRAFT 2
+# Route D, first measurement: a first look, with no verdict
 
-2026-11-24. **Draft. Not frozen. Not implemented. Not run.** It becomes a
-design only when the user approves it; freezing is then a separate commit.
-Generator coordinates throughout: a diagnostic of the background order law,
-not an observer and not a wave test. AI-written. The first draft (in the
-history at `764ef85`) was reviewed by an AI referee
-([referee_report.md](referee_report.md)); this draft answers that review
-and has not itself been reviewed.
+2026-11-25. **Frozen with the commit that adds this file under this name.**
+The user approved freezing and running the second draft in this session
+("동결하고 실행"). Implemented in [drift_probe.py](drift_probe.py) and
+[analyse_drift.py](analyse_drift.py). Generator coordinates throughout: a
+diagnostic of the background order law, not an observer and not a wave
+test. AI-written. The first draft (in the history at `764ef85`) was
+reviewed by an AI referee ([referee_report.md](referee_report.md)); this
+design answers that review and has not itself been reviewed. The second
+draft is in the history at `4220e47`; Section 9 lists the one change made
+to it before this freeze.
 
 ## 1. What changed, and why there is no gate
 
@@ -119,7 +122,7 @@ relaxed.
    `1 +/- 0.05`. A group element alone must leave the order matrix
    identical. (The referee's own test of this gave 0.98 to 1.00.)
 2. **The chain finds count-scale collective motion.** 1+1 dimensions, flat
-   density, N = 64, 48 orders, chains of `8 N^2` sweeps. The exact mean
+   density, N = 64, 96 orders, chains of `8 N^2` sweeps. The exact mean
    square difference between two independent draws, averaged over events,
    is `1 / (3 (N + 1))` in the chart `(T, Z)`. The ratio of the all-event
    mean square displacement at lag `4 N^2` (pairs `(0, 4N^2)` and
@@ -127,9 +130,10 @@ relaxed.
    `1 +/- 0.2`. The whole curve against lag is reported; the referee
    measured 0.57, 0.72, 0.87 and 0.97 at lags `N^2/4` to `2 N^2`, so the
    control also shows how much a short lag under-reports.
-   Sizing: assumed relative standard deviation 0.5 per pair, 96 pairs,
-   standard error 0.051 against the requirement `0.2 / 3.2415 = 0.062`. A
-   larger realised standard error leaves the control unresolved.
+   Sizing: relative standard deviation of the per-order value 0.47 (seen
+   in development at N = 32, Section 9), 96 orders, standard error 0.048
+   against the requirement `0.2 / 3.2415 = 0.062`. A larger realised
+   standard error leaves the control unresolved.
 
 If a control fails, the main stage is not run.
 
@@ -196,3 +200,26 @@ nearest bin.
 The Route A records and their independent check; the referee's chain-free
 numbers quoted above; the referee's 1+1 relaxation table. No displacement
 of central events along a 3+1 chain has been recorded or seen.
+
+## 9. Changes to the second draft, and what was seen before this freeze
+
+**One change.** The 1+1 chain control has 96 orders instead of 48. The
+second draft sized it on an assumed spread; the development run below gave
+a per-order relative standard deviation of 0.47, with which 48 orders would
+have left the control underpowered by its own rule. Nothing else in the
+measurement, its estimator or its descriptions was changed.
+
+**Seen in development, before the freeze.**
+
+- Fit recovery, four configurations per size: 1.003, 0.997, 1.006 at
+  N = 128, 192, 256; order matrices identical; every fit succeeded. A group
+  element is undone by the fit to `1.5e-14`.
+- 1+1 chain at N = 32, six orders: ratio to the exact value 0.45, 0.57,
+  0.83, 1.05, 1.19 at lags `N^2/4` to `4 N^2`; standard error 0.19 at the
+  last.
+- 3+1, to see that the code path runs: two orders each at N = 40 and 48
+  with the full schedule. Printed: 80 state pairs, every fit succeeded, 7
+  to 12 seconds per order. No displacement, residual or summary from these
+  runs was printed or read.
+
+No displacement of central events along a 3+1 chain has been seen.
