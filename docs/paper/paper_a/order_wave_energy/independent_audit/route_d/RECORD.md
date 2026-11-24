@@ -48,18 +48,66 @@ bound on the pinned slack inside the box; exact link cones with tangent
 critical rows give certificates without a step search but need a
 second-order cone solver, which is not installed.
 
-## 3. What the review points to instead. Not drafted
+## 3. Far-start test: drafted, reviewed, not to be frozen as written
 
-The doubt is whether the chain's plateau reflects the whole set of
-configurations with the given order or a part the chain is confined to.
-The direct test of that is the one the review names as a discriminator:
-build a configuration with the same order that is far, in residual, from
-the sampled one (by joint moves, certified by the exact order), start the
-chain there, and see whether the residual relative to the sampled
-configuration comes back to the plateau value. A known-answer control
-exists in 1+1 dimensions, where a monotone map of a null coordinate gives
-an atypical configuration with the same order and the equilibrium is exact.
+[return_design_draft.md](return_design_draft.md),
+[return_referee_report.md](return_referee_report.md). The idea: push the
+configuration along a collective non-family direction with its order kept
+exactly, start the chain there, and see whether the push is forgotten.
+Nothing in it was implemented or run by the orchestrator; the referee
+built pushed starts chain-free and ran the two controls and a 1+1 version.
 
-This is a different measurement from the one that was drafted. It has not
-been designed, and nothing is to be frozen or run without the user's
-approval.
+What the review found:
+
+- **The path as written does not get far.** None of 36 paths reached twice
+  the plateau distance (means 0.7 to 0.9), so the design could only return
+  "not far enough". A repaired step rule (floors relative to the starting
+  margin, a per-link trust region) reached 2 to 3 plateaus, of which only
+  1.5 to 2.0 lie along the pushed field, and threw single outer events far.
+  Whether such starts are sound was not tested.
+- **The controls do not exercise the main statistic.** They were scored on
+  fitted group parameters, not on the memory statistic. The rotation
+  control could not even be built at N = 128 (the required angle exceeds a
+  half turn). Scored through the main pipeline the free rotation is
+  remembered and the stiff direction is forgotten, as they should be.
+- **The descriptions lack power.** The ratio of two equilibrated distances
+  has a per-order spread of 0.14 to 0.19, so with twelve orders "neither"
+  is about as likely as "forgotten" under a perfect return. Twenty-four to
+  forty-eight orders are needed.
+- **"Forgotten" means narrow relative to the push, not cell scale.** In
+  1+1 dimensions, where the conditional law is broad at the count scale,
+  the pipeline still returns "forgotten" for a push of 2.8 plateaus.
+
+Two things follow that do not depend on running it.
+
+- **Resolution at these sizes is low.** At N = 128 to 256 the count scale
+  (about `3 / sqrt(N)`) is only 3 to 4 plateau distances. A push of 2
+  plateaus sits inside a count-scale spread, so the test could at best
+  tell a width of one plateau from a width of three or more.
+- **The reach of the repaired path is what an isotropic cell would give.**
+  For a ball-like cell whose typical spread is the measured plateau, the
+  extent along a collective direction carried by the central events is
+  about `sqrt(N / n)` typical per-event spreads, n being the number of
+  central events: roughly 2 plateaus. The path saturated at 1.5 to 2.0.
+  This is an observation from the referee's chain-free runs, not a
+  measurement of this programme, and by the draft's own rule it is not
+  evidence.
+
+## 4. Where Route D stands
+
+- The first measurement stands as recorded: a plateau of the central
+  residual at `12.4 / N`, no size dependence found, with the limits of
+  [results.md](results.md) Section 4.
+- Two attempts to reduce the non-ergodicity doubt numerically did not
+  yield a design that can be frozen: one cannot discriminate in principle
+  (a maximum is not a typical spread), the other needs a rebuilt path,
+  rebuilt controls and 24 to 48 orders, and would still resolve only a
+  factor of about three at the affordable sizes.
+- A repaired far-start design is possible and its requirements are listed
+  in the referee's report. It has not been written.
+- The simpler way to strengthen the first measurement is to extend its
+  frozen estimator to a larger size, which widens the lever of the
+  size-dependence fit. At N = 512 a chain of `N^2` sweeps is about two
+  hours per order. That would be a new freeze.
+
+Nothing is to be frozen or run without the user's approval.

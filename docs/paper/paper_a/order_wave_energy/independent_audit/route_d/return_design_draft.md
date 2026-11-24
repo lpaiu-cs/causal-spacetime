@@ -1,10 +1,15 @@
 # Route D, second measurement: does the chain forget a far start? DRAFT
 
-2026-11-25. **Draft. Not frozen. Not implemented. Not run.** It becomes a
-design only when the user approves it; freezing is then a separate commit.
-Generator coordinates throughout: a diagnostic of the background order law,
-not an observer and not a wave test. AI-written; not reviewed. It replaces
-the withdrawn joint-slack draft ([RECORD.md](RECORD.md) Section 2).
+2026-11-25. **Draft, reviewed, not to be frozen as written. Not
+implemented. Not run.** An independent review
+([return_referee_report.md](return_referee_report.md)) found that the path
+of Section 3 does not get far, so the design as written can only return
+"not far enough"; that its controls do not exercise the main statistic;
+and that its descriptions lack power. [RECORD.md](RECORD.md) Section 3
+summarises this and what a repaired design would need. The text below is
+kept as it was reviewed. Generator coordinates throughout: a diagnostic of
+the background order law, not an observer and not a wave test. AI-written.
+It replaced the withdrawn joint-slack draft (RECORD.md Section 2).
 
 ## 1. The question
 
