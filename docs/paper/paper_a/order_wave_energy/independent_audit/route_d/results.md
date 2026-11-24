@@ -63,18 +63,32 @@ All lags are in [evidence/main/summary.json](evidence/main/summary.json).
 - **Outer events** (not central, not extremal) were not used in the fit.
   Their total displacement grows from about 8 to 15, 18 and 19 in the same
   unit, and their residual under the map fitted on the central events stays
-  flat. So the fitted map is a map of the whole configuration, and the fit
-  has not hidden a common shift of the central cluster.
+  flat. So the fit has not hidden a shift of the central cluster relative
+  to the outer events. It could still hide a shift common to all interior
+  events: the independent check found such a shift is absorbed at 96 to
+  97% and leaves only 9 to 16% in the outer residual (Section 6).
 - **Family relaxed** is the squared fitted amplitude of the four stiff
-  group parameters over its Laplace prediction. It reaches 1 by about
-  `N^2/4` and stays there within wide intervals (about +/- 0.5). The three
-  soft parameters (the rotation about the wave axis and the two tilts) have
-  second derivatives of `-0.02` to `0.04` per event against 1.1 to 2.5 for
-  the stiff ones; they keep the total displacement growing.
-- **Pair differences.** Residual differences between central events more
-  than 0.5 apart are 1.07 to 1.23 times those between events less than
-  0.25 apart, at every lag and size, with no trend in lag or N. Nearby
-  residuals are mildly correlated; nothing accumulates with separation.
+  group parameters (the dilation and three boosts) over its Laplace
+  prediction. It reaches about 1 by `N^2/4` and stays there within wide
+  intervals (about +/- 0.5). The independent check calibrated it: fully
+  relaxed draws read between 0.9 and 2.0, so this shows the stiff
+  parameters near their predicted spread only to within a factor of about
+  1.5 to 2. The three soft parameters (the rotation about the wave axis and
+  the two tilts) have second derivatives of `-0.02` to `0.04` per event
+  against 1.1 to 2.5 for the stiff ones; they keep the total displacement
+  growing.
+- **Pair differences.** The root-mean-square residual difference between
+  central events more than 0.5 apart, over that between events less than
+  0.25 apart, is 1.07 to 1.23 at every lag and size, with no trend in lag
+  or N. By the design's interval rule at lag `2 N^2` this is "neither" at
+  N = 128 ([1.09, 1.28]) and "rising with separation" at N = 192
+  ([1.13, 1.26]) and 256 ([1.13, 1.23]). The independent check found that
+  most of it is not correlation: the residual variance of an event rises
+  2.4-fold from the centre to the edge of the central set, which alone
+  gives a ratio close to the observed one. A weak excess covariance between
+  near pairs remains.
+- The residual `12.4 / N` is an average over the central set; per event it
+  runs from about `9 / N` at the centre to `15 / N` at the edge.
 - No fit failed and no move was skipped.
 
 ## 4. The descriptions fixed in the design, and what they do not establish
@@ -94,6 +108,22 @@ from zero is 0.50. Three sizes within a factor 2 make this a weak fit, as
 the design said. A count-scale residual as large as `0.5 / sqrt(N)` that is
 present at these lags would have been visible; a smaller one, or one that
 needs more than `2 N^2` sweeps to appear, would not.
+
+**The wave coordinate alone is not shown flat.** The same ratio for the
+residual along `(T + Z) / sqrt(2)`, computed by the independent check, has
+intervals [1.00, 1.23], [0.89, 1.10], [0.94, 1.20] at the three sizes and
+1.06 [0.998, 1.122] pooled. By the design's rule that is "neither" at two
+sizes. It is the coordinate that carries the wave phase.
+
+**How small a late count-scale term would have shown.** From an injection
+test in the independent check: a non-family field of `0.5 / sqrt(N)`
+appearing after lag `16 N` would have broken the plateau at every size;
+the smallest that would show is about `0.33 / sqrt(N)` per size and
+`0.23 / sqrt(N)` pooled. A term already present at lag `16 N` is bounded
+only by the three-size fit above.
+
+Saturation of the residual takes about `8 N` to `16 N` sweeps, not a few:
+R at lag `2 N^2` over R at lag N is 1.13 and 1.09 at N = 128 and 256.
 
 Not established by anything here:
 
@@ -119,3 +149,49 @@ Not established by anything here:
 - `records.jsonl` SHA-256
   `eb36653fe5d7fa9efe0e80c3191a0add1ca5bd9a9fcff2f6ad4503103b0fafd7`.
 - Nothing in the design was changed after the first 3+1 number was seen.
+- Two departures from the design text, both found by the independent
+  check and neither affecting a reported number: at N = 192 the states
+  after `256 N` and `512 N` sweeps were not stored (no lag uses them); the
+  pair-difference ratio is reported as a root-mean-square ratio, which the
+  design did not specify.
+
+## 6. Independent check
+
+[checker_report.md](checker_report.md). An AI agent in a fresh context,
+given the design, the instrument and the raw records, and told not to open
+this record or any summary before it had its own numbers. The first
+version of Sections 3 and 4 of this record was corrected after it: the
+statements on the outer events, the thermometer, the pair differences, the
+wave coordinate and the saturation time.
+
+- **Every number reproduces** from the raw records, to `1e-15`. Sixty
+  recorded rows were regenerated from their seeds with the checker's own
+  mask, group map and optimiser, to `1.9e-7`.
+- **No defect in the instrument.** The group map agrees with an independent
+  coding and preserved the order in 120 trials; the fit has no local
+  minima in 96 multi-start trials and never returned the identity; the
+  central and outer sets, the schedule, the unit and the random streams
+  are as designed. Fresh seeds at N = 64 and 128 gave the same short-lag
+  values.
+- **Gaps it found,** now in Sections 3 and 4: a shift common to all
+  interior events is invisible to the residual, to the out-of-sample check
+  and to the thermometer; the pair-difference bins confound a variance
+  gradient with correlation; the thermometer is calibrated only to a factor
+  of about 1.5 to 2; the wave coordinate alone is not shown flat.
+- **Its opinion:** "about `12 / N` from `16 N` to `2 N^2`" is a fair
+  description (flat within 4% over three decades of lag, pooled log-log
+  slope -0.001 [-0.013, 0.012]) while the total displacement doubles and is
+  tracked out of sample. The strongest alternative is non-ergodicity:
+  count-scale freedom reachable only through joint moves that single-event
+  line moves do not make in `2 N^2` sweeps. Against it, the stiff family
+  parameters, which are also collective and count-scale, do relax in the
+  chain.
+- **Its proposal for the next measurement:** a chain-free joint linear
+  programme, with all events free and the seven family parameters pinned,
+  maximising the displacement of a central event at N = 128 to 512, to see
+  whether the joint slack scales like `1/N` or `N^(-1/2)`. It is a
+  proposal; nothing has been designed or run.
+
+This is AI review. It did not re-verify the chain law, run a chain above
+N = 128, or test connectivity of the set of configurations with a given
+order.
