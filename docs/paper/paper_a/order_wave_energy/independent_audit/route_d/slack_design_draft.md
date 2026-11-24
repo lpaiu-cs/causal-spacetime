@@ -1,9 +1,14 @@
 # Route D, second measurement: joint slack without a chain. DRAFT
 
-2026-11-25. **Draft. Not frozen. Not implemented. Not run.** It becomes a
-design only when the user approves it; freezing is then a separate commit.
+2026-11-25. **Withdrawn draft. Not to be frozen. Never implemented or
+run.** An independent review
+([slack_referee_report.md](slack_referee_report.md)) found that its
+positive description would be returned for a cell that is typically rigid,
+that its positive control cannot pass, and that its certification
+under-reports slack that exists. The reasons are summarised in
+[RECORD.md](RECORD.md). The text below is kept as it was reviewed.
 Generator coordinates throughout: a diagnostic of the background order law,
-not an observer and not a wave test. AI-written; not reviewed.
+not an observer and not a wave test. AI-written.
 
 ## 1. Why
 
