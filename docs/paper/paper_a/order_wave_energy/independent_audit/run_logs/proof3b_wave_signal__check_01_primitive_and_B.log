@@ -1,0 +1,17 @@
+PASS primitive table agrees with mpmath quadrature | max abs err 1.91e-17
+PASS complex representation of symmetric 2x2 matrices | max err 3.55e-15
+PASS int gamma^-1 = c (dm I - B) with B <-> beta (sign and helicity) | max err 5.28e-14
+     r        u   |B-lead|/lam^3  bound3   |B-lead-next|/lam^4  bound4
+    64     0.20        3.33715    4.100           11.52591   26.318
+   128     0.20        2.80562    4.100           18.12458   26.318
+   256     0.20        2.01438    4.100           23.81966   26.318
+   512     0.20        3.65456    4.100            6.90598   26.318
+  1024     0.20        3.59043    4.100            8.57804   26.318
+  2048     0.20        3.34400    4.100           12.98707   26.318
+PASS B = lead + O(lam^3): |B - lead| <= C lam^3 at all 24 (r,u) | max ratio 4.4232
+PASS B = lead + next + O(lam^4) with next = 2 sqrt(q) lam^3 [f' e^{i psi}]
+     r=  128  local coefficient -0.003207-1.998779i  (claimed 0.000000-2.000000i)
+     r=  512  local coefficient 0.001651-1.999744i  (claimed 0.000000-2.000000i)
+     r= 2048  local coefficient 0.000398-1.999998i  (claimed 0.000000-2.000000i)
+PASS windowed local coefficient of B/lam^2 at e^{i(u/lam+phi)} is -2 i sqrt(q)
+SUMMARY failed=0

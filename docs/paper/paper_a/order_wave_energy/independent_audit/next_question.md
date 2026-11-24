@@ -14,8 +14,10 @@ sampling, order-only observation, `N = lambda^-alpha`. Define
 - `alpha_high = inf{alpha : TV(P_{N,lambda}, P_{N,0}) -> 1}`.
 
 Status after the audit (see AUDIT.md for the conditions attached to each
-number): `4/3 <= alpha_low <= alpha_high <= 2` if the Gram-Fourier draft is
-completed, `<= 3` on what is actually proved today.
+number): all three arguments were found correct, so
+`4/3 <= alpha_low <= alpha_high <= 2`. The upper 2 rests on the audited
+draft, whose regularised statistic still has to be written into its text;
+the upper bound with a fully written proof is 3.
 
 **Question Q.** Is `alpha_low = alpha_high = 2`? Equivalently: can the
 necessary condition be raised from 4/3 to 2, or is there an order-only test
@@ -31,13 +33,21 @@ is about this family with known q. It is not a claim about generic waves.
 ## 2. Why each endpoint is a property of a method, not yet of the problem
 
 **Why 2 appears.** The Gram-Fourier statistic is first order in the wave
-amplitude and uses one global Fourier phase `exp(-i omega u_hat)`. It needs
-the order-reconstructed null coordinate to carry the wave phase across the
-whole probe window, that is `|u_hat - u| << lambda`. A coordinate built from
-reference counts has error `n^(-1/2)`. The condition `omega n^(-1/2) -> 0`
-is `alpha > 2`, and the Taylor remainder `omega^K n^(-(K+1)/2)` in the draft
-is this condition written K times. So 2 is the threshold for *global phase
-lock by count statistics*.
+amplitude and uses one global Fourier phase `exp(-i omega u_hat)`. Two
+things in it give the same number.
+
+- Its leading noise is the shared-reference term `1/(omega sqrt(n))`. At
+  `omega = 1/lambda` that is `lambda/sqrt(n)`, and the signal `lambda^2`
+  exceeds it exactly when `lambda sqrt(n) -> infinity`, that is `alpha > 2`.
+  The audit found that the wave-side error terms sit at the same order with
+  no slack, and that the Taylor remainder is not what binds: a scan capped at
+  `sqrt(n)` would still be controlled. Raising K only removes the `2/K`.
+- It needs the order-reconstructed null coordinate to carry the wave phase
+  across the whole probe window, that is `|u_hat - u| << lambda`. A
+  coordinate built from reference counts has error `n^(-1/2)`.
+
+So 2 is the threshold for *global phase lock by count statistics*, and it is
+intrinsic to this statistic.
 
 **Why 4/3 appears.** The impossibility proof gives the observer the cube
 index of every event at side `h ~ N^(-1-1/K)`. In that stronger experiment
@@ -147,6 +157,14 @@ unavailable. Two candidate replacements:
 - B2. A sequential (event-by-event) Lindeberg replacement in which the
   conditional law of each new event's relation vector is compared under the
   two kernels given only the previous order, not the previous coordinates.
+
+The prior-art report ([prior_art/report.md](prior_art/report.md), Section
+3.2) identifies the nearest worked technique for B2: the vertex-exposure
+chain rule with a posterior (cavity) analysis and a truncated chi-square,
+which is the method that has produced sharp exponents for deterministic
+hard-threshold relations in random geometric graphs. Every worked case there
+has a product-measure null. Here both hypotheses are geometric, so the method
+would have to compare two posteriors. No example of that was found.
 
 Stop rules: (i) if the quadratic term in B1 has a contribution that does not
 vanish for some `alpha < 2`, that term is a candidate statistic, Route B

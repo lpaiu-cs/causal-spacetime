@@ -1,0 +1,33 @@
+r=128 theta=0: S/(lam^2 Ew) = -0.02276391-0.06884441i, limit 0.01729433+0.00824625i, ell = [-1.0075576  -1.00596954  1.        ]
+r=256 theta=0: S/(lam^2 Ew) = 0.01524720+0.00587606i, limit 0.01729433+0.00824625i, ell = [-1.00057075 -1.0005061   1.        ]
+r=512 theta=0: S/(lam^2 Ew) = 0.01739303+0.00821975i, limit 0.01729433+0.00824625i, ell = [-1.00008587 -1.00007233  1.        ]
+PASS r=128 theta=0 reproduces the stored value of the author (a row 4.5x away from the limit) | rel diff 1.88e-05, distance from limit 4.534
+PASS r=256 theta=0 reproduces the stored value of the author | rel diff 3.53e-05
+PASS r=512 theta=0 reproduces the stored value of the author | rel diff 5.98e-07
+PASS r=512 theta=0 agrees with boxed limit (4): modulus, phase and sign | rel err 0.00533
+PASS error against the limit falls by more than 10x from r=256 to r=512 | 0.16346 -> 0.00533
+r=512 theta=pi/8: 0.01816424-0.00642681i, limit 0.01805992-0.00639796i
+PASS r=512 theta=pi/8 reproduces the stored value of the author | rel diff 5.64e-07
+PASS rotation by theta multiplies the limit by exp(-2 i theta) | rel err 0.00565
+r=512 reflected anchors: -0.01822912-0.00562428i, limit -0.01833167-0.00557176i
+PASS reflected anchors: coefficient matches the limit with D replaced by conj(D) | rel err 0.00601
+PASS reflection preserves the modulus | |S_ref|/|S| = 0.99166
+r=512 omega=r-0.125: 0.01718822+0.00864179i, offset limit 0.01708800+0.00866593i, modulus 0.019238, certified floor 0.010602
+r=512 omega=r+0.125: 0.01758704+0.00779267i, offset limit 0.01748993+0.00782147i, modulus 0.019236, certified floor 0.010602
+PASS frequency offsets +-1/8: coefficient matches the offset limit | max rel err 0.00538
+PASS (11): modulus stays above the certificate floor at offsets +-1/8
+worst admissible Gram corner: min Im D_A = 0.013802 at Gram args (0.00638, 0.00638, 2e-05, 0.00642, 0.00638)
+corner anchors (rotated 0.7, reflected): 0.00226902-0.01893787i, limit 0.00215631-0.01889342i; min probe slack 0.1069
+PASS neighbourhood corner, rotated and reflected: matches the general-anchor limit D_A | rel errs 0.00637 0.00633
+PASS (11) at the neighbourhood corner: modulus above the certificate floor | min modulus 0.019073, floor 0.010602
+r=256: canonical-coordinate value 0.01722101+0.00829845i (rel err to limit 0.00470); calibration shift |full-canonical|/|limit| = 0.16309; max|u_hat-u| = 6.280e-06 = 4864 lam^4 log(1/lam); max phase error 1.61e-03 rad
+r=512: canonical-coordinate value 0.01729385+0.00826322i (rel err to limit 0.00089); calibration shift |full-canonical|/|limit| = 0.00565; max|u_hat-u| = 4.688e-07 = 5164 lam^4 log(1/lam); max phase error 2.40e-04 rad
+PASS canonical-coordinate (calibration-free) value agrees with the limit at r=512 to 0.2% | rel err 0.00089
+PASS calibration shift of the coefficient decays faster than lam^2 (more than 16x per halving of lam) | 0.16309 -> 0.00565 of the limit
+q=0.25 phi=0.37 r=512: 0.00856605+0.00397100i, canonical 0.00846166+0.00400662i, limit 0.00846020+0.00400351i
+PASS q=0.25 phi=0.37 r=512: limit (4) holds (sqrt(q) and e^{i phi} dependence) | rel err reconstructed 0.01183, canonical 0.00037
+q=1.00 phi=2.10 r=512: -0.01078929+0.01572517i, canonical -0.01088960+0.01576423i, limit -0.01088367+0.01576833i
+PASS q=1.00 phi=2.10 r=512: limit (4) holds (sqrt(q) and e^{i phi} dependence) | rel err reconstructed 0.00542, canonical 0.00038
+PASS max |u_hat - u| scales like lam^4 log(1/lam) (ratio between 10 and 16) | ratio 13.40
+PASS phase error omega |u_hat - u| is negligible at r=512 (< 1e-3 rad) | 2.40e-04 rad
+SUMMARY failed=0

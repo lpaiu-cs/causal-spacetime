@@ -1,0 +1,23 @@
+PASS a  background: quadrature moments + calibration F return the null coordinate v | max |F - v| = 1.90e-13
+PASS b  doubling the quadrature order changes the wave moments by < 1e-13 | max change 3.03e-15
+PASS c1 independent replication of the 12-row frozen table (decrease / lambda^2) | max |referee - published| = 4.63e-07; all 12 exact margins positive: True; referee values: -0.271854, 0.016543, 0.075523, 0.090478, 0.092035, 0.091750, -0.179415, 0.092361, 0.147062, 0.160516, 0.162671, 0.162087
+PASS c2 archived q=1, r=2048 witness: margin, decrease and increments/lambda | margin 3.86450424167e-08 (published 3.86450424167e-08); F decrease 3.86446618039e-08 (published 3.86446596945e-08); increments/lambda [1.035476 0.386949 0.021323]
+PASS e0 q=1.0: |Kbar_lambda - K_0| <= C lambda^2 min(l,lambda)^2/l with C independent of lambda | sup of the ratio at r=64,256,1024,4096: 9.270, 9.084, 9.152, 8.971
+PASS e0 q=0.25: |Kbar_lambda - K_0| <= C lambda^2 min(l,lambda)^2/l with C independent of lambda | sup of the ratio at r=64,256,1024,4096: 2.073, 2.051, 2.067, 2.051
+PASS d1 q=1.0: exact wave causal margin > 0 for all 45 constructed pairs (r=64..1024) | min margin/lambda^2 after lowering v_tilde: 0.0861
+INFO q=1.0: constructed pairs whose calibrated coordinate does NOT decrease (finite-lambda bias), out of 9: r=64: 9, r=128: 6, r=256: 2, r=512: 0, r=1024: 0
+PASS d2 q=1.0: F(theta_Y) < F(theta_X) for all 9 pairs at r=512 and r=1024 | decrease/lambda^2 at r=1024: 0.0946, 0.1113, 0.0935, 0.0864, 0.1028, 0.0887, 0.1178, 0.1398, 0.1204
+PASS d3 q=1.0: F decrease -> v_tilde decrease (= exact margin after the shift) | max relative deviation r=512: 0.432, r=1024: 0.042
+PASS d4 q=1.0: after the shift, v_tilde decrease equals the remaining exact margin | max |v_tilde decrease - margin|/lambda^2 = 8.46e-11
+PASS e  q=1.0: F(theta_X) - v_tilde(X) = O(lambda^4 log(1/lambda)) at 3 u values | 16*bias(2r)/bias(r) in [1.172, 1.357]; sup |bias|/(lambda^4 log r): r=64: 14319, r=128: 18119, r=256: 21514, r=512: 24189, r=1024: 25803
+PASS f  q=1.0: increments have the nestedness signs and |theta_Y-theta_X|_1 = O(lambda) | max |d|_1/lambda: r=64: 1.999, r=128: 2.017, r=256: 2.026, r=512: 2.031, r=1024: 2.033
+PASS d1 q=0.25: exact wave causal margin > 0 for all 45 constructed pairs (r=64..1024) | min margin/lambda^2 after lowering v_tilde: 0.0493
+INFO q=0.25: constructed pairs whose calibrated coordinate does NOT decrease (finite-lambda bias), out of 9: r=64: 9, r=128: 7, r=256: 3, r=512: 0, r=1024: 0
+PASS d2 q=0.25: F(theta_Y) < F(theta_X) for all 9 pairs at r=512 and r=1024 | decrease/lambda^2 at r=1024: 0.0535, 0.0626, 0.0515, 0.0490, 0.0583, 0.0503, 0.0663, 0.0786, 0.0676
+PASS d3 q=0.25: F decrease -> v_tilde decrease (= exact margin after the shift) | max relative deviation r=512: 0.744, r=1024: 0.073
+PASS d4 q=0.25: after the shift, v_tilde decrease equals the remaining exact margin | max |v_tilde decrease - margin|/lambda^2 = 1.81e-10
+PASS e  q=0.25: F(theta_X) - v_tilde(X) = O(lambda^4 log(1/lambda)) at 3 u values | 16*bias(2r)/bias(r) in [1.171, 1.357]; sup |bias|/(lambda^4 log r): r=64: 14349, r=128: 18158, r=256: 21554, r=512: 24232, r=1024: 25862
+PASS f  q=0.25: increments have the nestedness signs and |theta_Y-theta_X|_1 = O(lambda) | max |d|_1/lambda: r=64: 2.041, r=128: 2.056, r=256: 2.063, r=512: 2.067, r=1024: 2.069
+INFO local |grad F| at the r=2048 witness: [3.326e+02 4.220e+00 1.611e+04]; max |Hessian| entry: 3.375e+08
+INFO event count at which the ideal-constant version of radius (4) drops below half the r=2048 signal: N ~ 7.61e+23 (lambda^-3 = 8.59e+09, ratio 8.86e+13); asymptotic statement only, no finite-N claim.
+SUMMARY s4_population_witness: 0 FAIL

@@ -1,0 +1,19 @@
+a priori constant for (6): 2 CJ^2 = 81.60
+     r  sup|detT-1|/e^2  TV/(lam^4 log r)  sup|dv|/lam^2  sup|dy|/bound  L1(dy)/lam^2  identity_err
+    32         16.8009           23.9674         4.4675         2.6629        2.0986      7.77e-16
+    64         12.7449           26.2793         4.5478         2.9306        2.2649      8.88e-16
+   128          9.0809           28.1004         4.5762         3.0740        2.6257      8.88e-16
+   256         13.5973           29.6730         4.6874         3.1469        2.3970      8.88e-16
+   512          7.9994           30.8839         4.7034         3.1847        2.7062      8.88e-16
+  1024         17.6569           31.9990         4.7455         3.2037        1.9026      9.99e-16
+PASS identity T (M_L^-1 + M_R^-1) T = I / W0 on every slice
+PASS (6) |det T - 1| <= 2 CJ^2 e(s)^2 for all s in [1e-7, 1/2], both tips, all lam | max ratio 17.6569
+PASS (6) normalised sup does not grow as lam -> 0 | values 16.8009 12.7449 9.0809 13.5973 7.9994 17.6569
+PASS longitudinal shift sup |dv| / lam^2 bounded, including tips | values 4.4675 4.5478 4.5762 4.6874 4.7034 4.7455
+PASS transverse shift / (lam min(sqrt s, lam/sqrt s)) bounded, including tips | values 2.6629 2.9306 3.0740 3.1469 3.1847 3.2037
+PASS L1 mean of transverse shift / lam^2 bounded | values 2.0986 2.2649 2.6257 2.3970 2.7062 1.9026
+TV / lam^4 per r: 83.06 109.29 136.34 164.54 192.66 221.80
+increments per doubling of r: 26.23 27.05 28.20 28.12 29.14
+PASS (7) TV / lam^4 is affine in log(1/lam): increments per doubling within 20% of their mean | mean increment 27.75, i.e. TV ~ 40.0 lam^4 log(1/lam)
+PASS the logarithm in (7) is genuine (increment per doubling > 0)
+SUMMARY failed=0
