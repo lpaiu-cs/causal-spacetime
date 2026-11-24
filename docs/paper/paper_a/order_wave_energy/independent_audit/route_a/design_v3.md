@@ -1,11 +1,14 @@
-# Route A, third design. DRAFT
+# Route A, third design
 
-2026-11-24. **Draft. Not frozen. Not implemented. Not run.** It becomes a
-design only when the user approves it; freezing is then a separate commit
-that changes this status line and adds the code. It answers the
+2026-11-24. **Frozen with the commit that adds this file under this name.**
+Approved by the user with two conditions, relayed by the coordinating
+session together with the user's words (Section 5). Implemented in
+[hit_probe_v3.py](hit_probe_v3.py) and
+[analyse_hits_v3.py](analyse_hits_v3.py). It answers the
 [referee report](referee_report.md) on [design_v2.md](design_v2.md), whose
-3+1 campaign has not been run and should not be run as frozen: two of the
-referee's findings (R1, R2 below) change what its decision gate would mean.
+3+1 campaign was not run: two of the referee's findings (R1, R2 below)
+change what its decision gate would mean. The draft of this design is in
+the history at `1a4cc3b`.
 
 The question, definitions and hypotheses are those of
 [design.md](design.md) Section 1. The instrument is that of design_v2.md
@@ -78,8 +81,14 @@ no non-tip hit is an error, not a NaN.
 
 ## 2. Campaign
 
-CPU only, clean-tree preflight, commit stamp, no overwriting, new seed tag.
-Twelve orders per size.
+CPU only, clean-tree preflight, commit stamp, no overwriting, seeds
+`SeedSequence([20261126, dimension, N, r])`. Twelve orders per size.
+
+Processor use, by the user's condition (about 75% of a 16-thread machine):
+twelve worker processes, one compute thread each, the runner and every
+worker at Windows priority class below normal. The runner sets the class on
+itself and each worker sets and reads back its own; worker count and the
+classes read back are written to the manifest.
 
 | stage | geometry | N | sweeps |
 |---|---|---|---|
@@ -104,8 +113,14 @@ bootstrap over orders within each size, 10000 draws.
 
 - mixing not shown: **unresolved: mixing not shown**, whatever the interval;
 - interval entirely above 0: **count-limited participation**;
-- interval entirely below 0: **cell-limited participation**;
+- interval entirely below 0: **no growth seen by this instrument**. By the
+  user's condition this is not recorded as "cell-limited participation":
+  finding R3 is not repaired, so the instrument has never been shown to
+  return growth with N where growth is the right answer;
 - otherwise: **undecided**.
+
+The order of precedence is: instrument gate failed, mixing not shown,
+underpowered, then the interval.
 
 Sizing for 90% power: drift allowance `0.05`; design value
 `kappa_F = 0.50` (the referee's candidate counts give 0.48 to 0.57
@@ -117,6 +132,10 @@ Planning value for the between-order relative standard deviation `0.174`
 events should vary less): twelve orders give `0.050`. After the run the
 realised `SE(D)` is compared with `(kappa_F_hat / 2 - 0.05) / 3.2415`, and
 a larger value makes the verdict **unresolved: underpowered**.
+
+Mixing trend, as implemented: with `r_N = K_long / K_window` at
+N = 256, 512, 1024, the largest of `r_512 - r_256`, `r_1024 - r_256`,
+`r_1024 - r_512` must be at most `0.05`.
 
 ## 4. Limits that remain
 
@@ -134,3 +153,30 @@ a larger value makes the verdict **unresolved: underpowered**.
   scale to the counting scale is 5 to 14.
 - The exponents attached to each verdict in design.md Section 1 are
   heuristic accounting with the assumptions the referee lists under item 8.
+
+## 5. Approval, and what was seen before this freeze
+
+**Approval.** The coordinating session relayed that the user approved
+freezing and running this design. It quoted the user as first asking
+"cpu 75%정도만 쓰도록 할 수 있어?" and then answering "그렇게 승인" to the
+question whether to pass on approval with a caveat and the 75% condition.
+The two conditions are the wording of the below-zero verdict (Section 3)
+and the processor settings (Section 2). The design is not to be changed
+after results are seen, and an interruption is to be reported, not worked
+around.
+
+**Seen before the freeze.** Everything listed in design.md Section 9,
+design_v2.md Section 2 and the referee report, and one development check of
+the new code:
+
+- 1+1 dimensions, six orders at N = 64 and 128: participation 3.976 for
+  343 events with four distinct neighbours (exact value 4), 2.628 for 22
+  events with a shared neighbour (exact value 8/3), no hit outside the
+  exact-orientation candidates, no skipped move, priority class read back
+  as below normal.
+- 3+1 dimensions, one order at N = 48, a chain of 16 N sweeps, run to see
+  that the code path works. Printed: 11 central and 34 extremal events of
+  48, 43 tracked events, no hit outside the candidates, no skipped move.
+  No participation, overlap or displacement from it was printed or read.
+
+No 3+1 chain-hit statistic has been seen.

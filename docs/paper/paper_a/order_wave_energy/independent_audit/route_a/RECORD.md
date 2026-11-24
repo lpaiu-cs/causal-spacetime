@@ -2,9 +2,9 @@
 
 2026-11-24. **No verdict on U1.** The second design is frozen and its
 control passed, but an independent review found two defects in its decision
-gate, so its 3+1 campaign is not to be run as frozen. A third design exists
-as a draft only and waits for the user's approval (Sections 5 to 7). No 3+1
-number from the chain instrument exists. AI-run work throughout; no human
+gate, so its 3+1 campaign was not run. A third design answers the review
+and is frozen after the user's approval (Sections 5 to 7); its results, when
+they exist, are recorded in results_v3.md. AI-run work throughout; no human
 review.
 
 ## 1. Why this route first
@@ -119,11 +119,11 @@ run overlapped that interval's preflight.
 
 - design_v2.md is left as frozen and its campaign is **not run**: findings
   1 and 2 change what its gate would mean.
-- [design_v3_draft.md](design_v3_draft.md) answers the findings: a fixed
-  central stratum for the gate, mixing required for both verdicts with
-  longer chains to check it, corrected control values, the rounding guard.
-  It is a draft. It is not frozen, not implemented and not run, and its
-  cost is about 25 CPU hours (a little over 2 hours on 12 workers).
+- [design_v3.md](design_v3.md) answers the findings: a fixed central
+  stratum for the gate, mixing required for both verdicts with longer
+  chains to check it, corrected control values, the rounding guard. The
+  user approved it with two conditions (its Section 5) and it is frozen
+  with the commit that adds it under that name. Cost about 25 CPU hours.
 - Finding 3 is not repaired, and the draft says so.
 - Nothing has been done on Routes B, C, D or on writing the regularised
   statistic of the upper-bound draft.
