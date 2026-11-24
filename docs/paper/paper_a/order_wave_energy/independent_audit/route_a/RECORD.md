@@ -1,11 +1,16 @@
 # Route A: progress record
 
-2026-11-24. **No verdict on U1.** The second design is frozen and its
-control passed, but an independent review found two defects in its decision
-gate, so its 3+1 campaign was not run. A third design answers the review
-and is frozen after the user's approval (Sections 5 to 7); its results, when
-they exist, are recorded in results_v3.md. AI-run work throughout; no human
-review.
+2026-11-24. **Third design, frozen gate: "no growth seen by this
+instrument".** Between N = 256 and 2048 the candidates per central event
+grow like `N^0.515` and the wall-hit participation stays near 9.5
+(`D = -0.244`, 95% interval `[-0.257, -0.231]`); see
+[results_v3.md](results_v3.md). This is not recorded as "cell-limited":
+the instrument has no control with a growing right answer. How the record
+got here: the second design is frozen and its control passed, but an
+independent review found two defects in its decision gate, so its 3+1
+campaign was not run; the third design answers the review and was frozen
+after the user's approval (Sections 5 to 7). AI-run work throughout; no
+human review.
 
 ## 1. Why this route first
 
