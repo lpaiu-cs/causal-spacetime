@@ -12,8 +12,9 @@ diagnostic of the background order law, not an observer.
 
 Between N = 256 and N = 2048, for events in the central region of the
 diamond, the number of transitivity-safe flips per event grew like
-`N^0.515` and the participation of the wall-hit distribution did not grow.
-By the user's condition this is not recorded as "cell-limited
+`N^0.515` and the participation of the wall-hit distribution grew at most
+like `N^0.03` (its slope interval just excludes zero; "flat" would overstate
+it). By the user's condition this is not recorded as "cell-limited
 participation": the instrument has no control in which the right answer
 grows with N (Section 5).
 
@@ -70,18 +71,30 @@ configuration, with the order exact at every block end:
 | 2048 | 0.057 | 0.073 | 3.29 | 149 |
 
 The displacement follows `N^(-1/2)`, not `1/N`: it is 60 to 150 times
-`1/N`. So the configurations with a given order are loose at the count
-scale, and over that range of motion each event keeps the same walls with
-the same weights.
+`1/N`.
 
-This is the pattern of the solvable 1+1 case in design.md Section 2.5:
-position spread `N^(-1/2)`, wall set fixed by the order. In 3+1 the exact
-order-preserving maps are the conformal maps that preserve the diamond, a
-finite-dimensional family whose spread is set by the sampling density and
-is also of order `N^(-1/2)`. Whether the measured displacement is that
-family alone, with a remainder of order `1/N`, was not measured. The chains
-at N = 64 to 256 had not stopped drifting at their end, and the chain at
-2048 is the shortest in units of N.
+**Correction (after the independent check, Section 7).** The first version
+of this section read that number as "configurations are loose at the count
+scale while each event keeps its walls", compared it to the solvable 1+1
+case, and suggested the conformal maps of the diamond as its source. The
+check shows that reading is not supported:
+
+- The number is a root mean square over **all** events and is dominated by
+  non-central events. In the first sweeps central events carry 1 to 4% of
+  the mean square. The displacement of central events alone was not
+  recorded.
+- Most of it (about 78%) is reached within the first block. A reversible
+  chain cannot move along a collective family that fast: the conformal
+  family can account for at most 1 to 16% of the first-block value. So the
+  fast part is local motion of loosely caged events, not family motion.
+  Only the slow drift afterwards has the size a freely diffusing family
+  would give.
+- For a central event with the others held fixed, the single-move cell has
+  radius about `9.3 / N` at every size.
+
+So this table says nothing settled about how far central events move, and
+the 1+1 analogy is withdrawn as a description of these data. What the gate
+measured stands on its own: the walls of central events and their weights.
 
 ## 4. What this shows, and what it does not
 
@@ -93,8 +106,7 @@ Shows, within the limits of Section 5:
 - The first design's counting argument (design.md Section 2.4) predicted
   this flat behaviour. That is a successful prediction of a heuristic, not
   a proof of the argument: its rigidity scale was not measured, and the
-  displacement above shows that rigidity "of positions at `1/N`" is false
-  as stated unless the conformal family accounts for it.
+  displacement of central events was not recorded (Section 3).
 
 Does not show:
 
@@ -126,7 +138,14 @@ Does not show:
 - The third design's code (stratum, exact-orientation check, longer
   chains, analysis) was written after the referee's review. Its 1+1 control
   passed, and its main-stage analysis ran for the first time on these data.
-  An independent recomputation is recorded in Section 7 when it exists.
+  The independent check of Section 7 was made afterwards.
+- **Mixing is shown as stationarity only.** Every chain at N of 256 or more
+  has 32,768 sweeps, which is `N^2 / 2` at 256 and `N^2 / 128` at 2048. A
+  mode slower than that is invisible to the gate, and N = 2048 has no
+  long-lag comparison at all.
+- **The participation is dominated by the heaviest walls.** A growing tail
+  of weak walls would not register in it. The number of distinct partners
+  hit rises only from 26.5 to 28.3 over the gate sizes.
 
 ## 6. Run record
 
@@ -143,3 +162,45 @@ Does not show:
   `events.jsonl` SHA-256
   `5489b25a4e4f0edf90f51225ea4c0bbd3218b905958dac9df17dd28543a30dfb`.
 - Nothing in the design was changed after the first 3+1 number was seen.
+
+## 7. Independent check
+
+[checker_report.md](checker_report.md). An AI agent in a fresh context,
+given the frozen design, the instrument and the raw evidence, and told not
+to open this record or any summary before it had its own numbers.
+
+- **The gate reproduces.** Recomputed from the raw events with its own
+  code: every point value agrees to all printed digits, intervals to the
+  third or fourth decimal, and the verdict is the same.
+- **No variant changes the sign.** Mean of per-event participations,
+  event-weighted orders, median or geometric means, other lag windows,
+  dropping either end size, a two-stage bootstrap and leave-one-order-out
+  give `D` between `-0.251` and `-0.239`. `D = 0` would need the
+  participation to rise by a factor 1.71 across the gate sizes; it rose by
+  1.024.
+- **No code defect found.** The second and third versions of the chain are
+  bitwise identical in trajectory; the exact-orientation check was verified
+  at 32,256 segment ends; stratum flags, candidate counts and tracked events
+  were regenerated from seeds for nine orders.
+- **A context for the number 9.5.** With the other events held fixed, the
+  participation of the walls of a central event is about 6.3 at every size;
+  along the chain it is about 9.5, with about 28 distinct partners against
+  12. So the chain does turn walls over, within one block, and the result
+  is as flat in N as the frozen-environment value.
+- **Correction to Section 3** of this record, made above.
+- **Its ranking of what could weaken the reading:** mixing shown only as
+  stationarity; no positive control for growth; participation dominated by
+  the heaviest walls; no long-lag check at N = 2048; the slope is slightly
+  positive, so "at most `N^0.03`" and not "flat". These are in Sections 1
+  and 5.
+- **Its proposal for the cheapest next measurement:** rerun N = 256 only,
+  recording at each block end the displacement of central events alone in
+  units of the single-move cell radius, and the residual after fitting the
+  seven conformal generators that fix the tips. That would separate motion
+  along order-preserving families from an environment that is effectively
+  frozen around central events. It is a proposal; nothing has been designed
+  or run.
+
+This check is AI review. It did not examine the linear-programme code of
+the first design, the connectivity of the set of configurations with a
+given order, or any chain longer than four sweeps.
