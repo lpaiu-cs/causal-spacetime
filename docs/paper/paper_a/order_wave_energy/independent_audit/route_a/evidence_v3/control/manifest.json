@@ -1,0 +1,33 @@
+{
+  "stage": "control",
+  "status": "complete",
+  "code_version": "8ff268e4d7b5ae30fc13b9b2872f78b9bf4b5d58",
+  "worktree_clean_at_start": true,
+  "utc_started": "2026-11-24T09:54:30Z",
+  "device": "cpu",
+  "workers": 12,
+  "threads_per_worker": 1,
+  "runner_priority_class": 16384,
+  "below_normal_priority_class": 16384,
+  "logical_processors": 16,
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "geometry": "flat_1p1",
+  "blocks_by_size": {
+    "64": 8,
+    "128": 8,
+    "256": 8
+  },
+  "orders_per_size": 8,
+  "files": {
+    "flip_probe.py": "6d9ea1de2e22579e10bc406d626416a49bf197c00c80b189d79a5b72fd1c390d",
+    "hit_probe_v3.py": "4a0a886e624dee473fb575be9fdca0747da427fd32e5cce07d7189e76471bd98",
+    "analyse_hits_v3.py": "b19887f6ea8f319dd0ce4bf4076f75ac778e057e319002515dcb4e12f060c5c8",
+    "design_v3.md": "f0434114dc7915e8bf3384b48a6e38b8791ab63cdfb0668ba8d196136960f3cc"
+  },
+  "utc_finished": "2026-11-24T09:55:16Z",
+  "worker_priority_classes": [
+    16384
+  ],
+  "events_sha256": "8273afd4c616f93f494d203401badb97df99b2fd906fbfd2f2995ab9927ee8ad"
+}
