@@ -8,7 +8,9 @@ the records and estimates costs from them. AI-written. A fresh-context AI
 reviewer was asked to argue against the first recommendation, and it
 succeeded ([lever_rebuttal.md](lever_rebuttal.md)). Sections 2, 3 and 5 were
 corrected after it, and the recommendation was replaced (Section 6). The
-version before the rebuttal is in the history at `21a9892`.
+version before the rebuttal is in the history at `21a9892`. Section 7
+records what the user then chose and what was done. Sections 1 to 6 are
+left as written.
 
 ## 1. The question and what is proved
 
@@ -345,3 +347,51 @@ told to run nothing and to argue against L1. Its verdict was to replace L1.
 **One claim of the rebuttal is not right.** The N = 512 extension ran
 `N^2 + 1` sweeps per order in 6966 s, so `2 N^2` sweeps at N = 1024 is about
 31 hours per order (Section 3), not 62.
+
+## 7. What was done (2026-11-26)
+
+The user approved the recommendation ("논증 3 마무리", relayed by the
+session that started this one).
+
+**L7: done.**
+- Argument 3's regularised statistic is written as one object in
+  [../gram_fourier_noise_r2.md](../gram_fourier_noise_r2.md). Its cutoffs
+  act on all 18 raw moments, and (5), (10) and (11) are applied to that
+  same object.
+- A fresh-context AI referee graded it **CORRECT WITH MINOR FIXES**
+  ([argument3_revision/review.md](argument3_revision/review.md)). The fixes
+  are applied (r2 Section 9).
+- Also recorded in [AUDIT.md](AUDIT.md) Section 10.
+- **What it did not do.**
+  - The bracket did not become "fully written at both ends". Argument 3's
+    remaining steps are still at outline level in its text, with the audit
+    reports supplying them: the index count, the tip estimates, the
+    expansion behind (11), and the certificate, which is corrected by hand,
+    not re-certified.
+  - The text of argument 1 (the lower end 4/3) has not been revised since
+    the audit.
+  - So Section 1's sentence "The fully written upper bound is 3" should now
+    read as follows. The upper 2 has its statistic and wave-side chain
+    written, and the rest of it is at the same outline level as the other
+    arguments.
+- **The step the referee trusts least:** the coupling uniform in the probe
+  X. Its terms sit exactly at `lambda/sqrt(n)`, with no slack against the
+  exponent 2.
+
+**L6: the U1/U2 numerics are stopped.**
+- No further numerical work on U1 (Route A) or U2 (Route D, and the
+  transport question of Route C) is planned. The readings stay exactly as
+  recorded in Sections 2 and 3 and in the route records:
+  - one-sided;
+  - from a chain whose reach is untested;
+  - pointing the cell-like way;
+  - "not seen" rather than "absent".
+- Nothing was re-read, re-scored or re-worded on stopping.
+- Not frozen, not run, and not to be revived without the user's approval:
+  - the transport draft and the far-start draft;
+  - the reduced L1;
+  - L2;
+  - L5 (Route C's Section 6 finite-N test, optional);
+  - D1.
+- Routes B, the rigidity theorem (L4) and the lower bound remain open
+  analytic questions. Stopping the numerics does not close them.

@@ -306,3 +306,50 @@ population rows to either existing statistic (their exponents are fixed).
 - It did not edit any source document.
 - It did not freeze or run any design. The two drafts in `next_question.md`
   are drafts.
+
+## 10. Addendum, 2026-11-26: argument 3's statistic written out
+
+Added after the audit, at the user's request ("논증 3 마무리"). Sections 1
+to 9 above are unchanged.
+
+- **What was done.** Section 3's items 1 to 7 for argument 3 were carried
+  into a revision, [gram_fourier_noise_r2.md](../gram_fourier_noise_r2.md).
+  The frozen original is not edited; its SHA-256 still matches the
+  anchor-guard certificate.
+  - The regularised statistic `A_reg` (r2, eq. (1a)) is written as one
+    object.
+  - Its cutoffs act on all 18 raw moments: the anchor numbers, the three
+    anchor-pair `b_ij`, and the three anchor-to-probe `b_iX` from below.
+  - The noise bound (5), the wave-side bound (10) and the signal bound (11)
+    are applied to that same object.
+  - The false sentence `|a_2x a_2y| = |G12|` is corrected, and `B` is
+    defined.
+- **Review.** A fresh-context AI referee:
+  [argument3_revision/review.md](argument3_revision/review.md). Verdict:
+  **CORRECT WITH MINOR FIXES.** It found:
+  - one statement false as stated: compact support on `R^18`, false because
+    large `b_iX` is not cut off. It is now stated on the bounded set
+    `Q = [-1, 2]^18`, and nothing downstream changes;
+  - seven minor items;
+  - an overclaiming headline.
+
+  All were corrected; r2 Section 9 lists them. Deterministic checks:
+  [argument3_revision/checks.py](argument3_revision/checks.py) and the
+  referee's [ref_checks.py](argument3_revision/ref_checks.py). Nothing was
+  sampled.
+- **What this does not change.**
+  - The bracket `4/3 <= alpha_low <= alpha_high <= 2` is this audit's
+    statement (Section 2). It is not strengthened.
+  - Argument 3's remaining steps are still at outline level in its text,
+    with the referee reports of Section 2 supplying them:
+    - the index count of (5);
+    - the tip estimates (6) to (9);
+    - the uniform closeness of moments at the tips;
+    - the expansion behind (11);
+    - the U-statistic and Hoeffding bounds.
+  - The certificate is the author's code. Its one wrong step is corrected
+    by hand, not re-certified.
+  - The source documents of arguments 1 and 2 have not been revised. Their
+    items in Section 3 are still missing from their text, including the
+    constant link of argument 1, without which its claim fails at `L = 1`.
+  - The review is AI-level. No human has checked it.

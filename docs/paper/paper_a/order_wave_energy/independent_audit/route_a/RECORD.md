@@ -132,3 +132,21 @@ run overlapped that interval's preflight.
 - Finding 3 is not repaired, and the draft says so.
 - Nothing has been done on Routes B, C, D or on writing the regularised
   statistic of the upper-bound draft.
+
+## 8. Numerics stopped (2026-11-26)
+
+Section 7 is the state when it was written. Since then:
+- design_v3 ran, with the result in [results_v3.md](results_v3.md),
+  checked in [checker_report.md](checker_report.md);
+- Routes C and D were worked;
+- the regularised statistic was written
+  ([../STATUS_AND_LEVERS.md](../STATUS_AND_LEVERS.md) Section 7).
+
+The user then approved stopping the numerical work on U1 and U2. For this
+route:
+- the frozen verdict of design_v3 stands as recorded: "no growth seen by
+  this instrument". It is one-sided, and it has no control in which the
+  right answer grows with N;
+- nothing was re-read or re-scored on stopping;
+- A1, the analytic count of realisable flips, was not attempted. It
+  remains open, as an analytic question.

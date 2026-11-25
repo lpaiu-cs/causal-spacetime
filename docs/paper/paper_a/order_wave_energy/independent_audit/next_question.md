@@ -19,6 +19,16 @@ number): all three arguments were found correct, so
 draft, whose regularised statistic still has to be written into its text;
 the upper bound with a fully written proof is 3.
 
+*Note added 2026-11-26.* The regularised statistic is now written into a
+revision of the draft, [../gram_fourier_noise_r2.md](../gram_fourier_noise_r2.md).
+An AI referee in a fresh context graded it CORRECT WITH MINOR FIXES, and the
+fixes are applied ([AUDIT.md](AUDIT.md) Section 10). The upper 2 is not yet
+written out in every step. Its index count, its tip estimates and the
+expansion behind (11) are still at outline level, and the referee reports
+supply them. The numerical work on U1 and U2 is stopped, with its readings
+left as recorded ([STATUS_AND_LEVERS.md](STATUS_AND_LEVERS.md) Section 7).
+Question Q is unchanged.
+
 **Question Q.** Is `alpha_low = alpha_high = 2`? Equivalently: can the
 necessary condition be raised from 4/3 to 2, or is there an order-only test
 below 2?

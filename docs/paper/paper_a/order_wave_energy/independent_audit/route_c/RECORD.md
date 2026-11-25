@@ -142,3 +142,15 @@ either route's branch. Its bearing on Route C's joint candidate is the
 heuristic's "U2 none" case: count-like resolution, about `alpha > 8/3`.
 That case is not supported at the central scale. The cell-like case, which
 would make the relevant row 4/3, is not shown either.
+
+## 5. Numerics stopped (2026-11-26)
+
+The user approved stopping the numerical work on U1 and U2
+([../STATUS_AND_LEVERS.md](../STATUS_AND_LEVERS.md) Section 7). For this
+route:
+- **Section 1's analytic result stands as recorded:** the per-event spin-2
+  deformation is absorbed by an event's own relations, so stop rule (i)
+  fired conditionally for the local sign statistic.
+- **Not drafted, and not to be revived without the user's approval:**
+  - the joint per-event candidate, whose resolution is a U2 question;
+  - the Section 6 finite-N test (L5, optional).

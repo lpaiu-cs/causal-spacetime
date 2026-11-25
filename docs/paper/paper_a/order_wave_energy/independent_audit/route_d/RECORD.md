@@ -159,3 +159,20 @@ no better than the central bound. The six must-fix items are listed in the
 report. No revision has been written.
 
 Nothing is to be frozen or run without the user's approval.
+
+## 6. Numerics stopped (2026-11-26)
+
+After the lever check
+([../STATUS_AND_LEVERS.md](../STATUS_AND_LEVERS.md), Sections 5 to 7), the
+user approved stopping the numerical work on U1 and U2. For this route:
+- **The readings stand exactly as recorded in Sections 1, 4 and 5:**
+  - the central residual is about `12.5 / N`;
+  - no count-scale growth was found, at about 0.26 (full) and 0.16 (wave)
+    sensitivity, and `c <= 0.55` without a fit;
+  - no transport of the heuristic's size is seen inside the central set.
+- All of these are one-sided, from a single-event chain whose reach in 3+1
+  is untested. They show neither that positions are pinned at the cell
+  scale nor that they are not.
+- Nothing was re-read or re-scored on stopping.
+- The far-start repair and a transport revision are not written. Neither
+  is to be revived without the user's approval.

@@ -14,6 +14,13 @@
 - **What it is not.** It is not a human-reviewed or published theorem.
   It is asymptotic only, and it covers one family: the exact circular
   plane wave, known `0 < q <= 1`, fixed-N i.i.d. physical-volume sampling.
+- **Status.** The original's preamble said the programme record remained
+  "insufficient below 4/3, sufficient at 3". It also said not to promote
+  the upper endpoint on the strength of this draft. Since then the AI-only
+  audit has stated the bracket `4/3 <= alpha_low <= alpha_high <= 2`, with
+  its conditions (AUDIT.md Section 2). This revision writes argument 3's
+  statistic and its wave-side chain in full. Section 8 lists what remains
+  at outline level.
 
 The proposed result is: for each fixed integer K>=1 there is a randomized,
 order-only, wavelength-free test, with known fixed 0<q<=1, separating the exact
@@ -40,6 +47,12 @@ The scan cap is the only binding requirement for the `2/K` (Section 7).
 | Section 6 | the false identity `|a_2x a_2y| = |G12|` corrected; certificate value 0.0106978; "anchor pair slacks" defined as `b_ij > 0` | items 3, 5 |
 | Section 7 | null vote bound `(K C_K / log n)^2`; no anchor-acceptance event needed under the null; scan-cap remark | items 2, 6, 7 |
 | Section 8 | status updated | |
+| preamble | replaced; the original's status sentences summarised under "Status"; a sentence on the scan cap after (1) | |
+| Section 2 | a note that `B(u)` in (3) is generic | |
+| Section 3 | the simplified-bound sentence reworded around the absorbed `1/n` | item 6 |
+| Section 6 | "outer good set" replaced by "three-quarter set, where `chi_anc = 1`"; the left side of (11) and "together with (R3)" added | items 1, 2 |
+| Section 7 | "and regularized calibration being realized" dropped, since (1a) is now written; the guard paragraph rewritten, with the "retain a failure" rule kept | |
+| (after review) Sections 1, 3, 4, 5, 6, 7, 8 | the corrections of Section 9 | review |
 
 Deterministic checks of the new numbers:
 [independent_audit/argument3_revision/checks.py](independent_audit/argument3_revision/checks.py).
@@ -101,6 +114,14 @@ g_{ij}=\frac{R_i^2+R_j^2}{2}-(m_j-m_i)(v_j-v_i-\eta^{(0)}_{ij}),
 
 with `alpha` the background interval coefficient and `gamma = alpha(1)`.
 
+**Notation.**
+- `alpha(.)` with an argument is the interval coefficient
+  (`alpha(L) = (1 - x cot x)/(2q)`, `x = sqrt(q) L`). Without an argument,
+  `alpha` is the sampling exponent in (1).
+- `c = a/p^2`. The wave normalisation `sqrt(1 + 4 q lambda^2)` is written
+  `c_lam` (Section 4).
+- `K` is the Taylor order. `K_lambda` and `K_0` in (8) are order kernels.
+
 - Let `G_A` be the 2 by 2 anchor Gram block, with diagonal `R_1^2, R_2^2`
   and off-diagonal `g_12`. The challenge called this block `B`. It is
   renamed here so that it cannot be confused with the trace-free matrix
@@ -119,8 +140,11 @@ numbers `(u_i, v_i, R_i^2, g_ij)`, `i < j`, and `iota*` for their values at
 the frozen triple of the challenge.
 - Use the outer tolerances `tau_k` of Section 6: 0.002 for the `u_i` and
   `v_i`, and 0.00002 for the six Gram entries `R_i^2` and `g_ij`.
-- Fix an even function `psi` in `C_c^infinity(R)` with `psi = 1` on
-  `[-3/4, 3/4]` and `psi = 0` outside `(-1, 1)`.
+- Use the standard smooth step
+  `s(x) = e^{-1/x} / (e^{-1/x} + e^{-1/(1-x)})` on `(0, 1)`, with `s = 0`
+  for `x <= 0` and `s = 1` for `x >= 1`. Put `psi(x) = s(4 (1 - |x|))`.
+  This is even and smooth, with `psi = 1` on `[-3/4, 3/4]` and `psi = 0`
+  outside `(-1, 1)`.
 - Put
 
 \[
@@ -147,9 +171,9 @@ An explicit computable lower bound is
 At `q` = 1, 0.25 and 0.01, `b_low` = 7.18e-6, 7.58e-6 and 7.70e-6. The
 corresponding bound for anchor-probe pairs is about 80 times larger.
 
-Put `b_flat = b_low(q) / 2 <= b_*(q) / 2`. Fix `chi_b` in `C^infinity(R)`
-with `chi_b = 0` on `(-infinity, b_flat / 2]` and `chi_b = 1` on
-`[b_flat, infinity)`.
+Put `b_flat = b_low(q) / 2 <= b_*(q) / 2` and
+`chi_b(b) = s(2 b / b_flat - 1)`. This is smooth, with `chi_b = 0` on
+`(-infinity, b_flat / 2]` and `chi_b = 1` on `[b_flat, infinity)`.
 
 **Probe weight.** `w(u, v, R^2)` is the challenge's separable bump. Its
 support lies in the interior of `Sigma(D_Sigma)`: probes are strictly
@@ -187,9 +211,23 @@ This single `F_omega` is the object of (5), of (10) and of (11) below.
 
 ### 1.4 Properties
 
-**(R1) Smooth, compact, bounded.** `A_reg` belongs to
-`C_c^infinity(R^18)`, and `F_omega` is smooth with every derivative of
-order `j` bounded by `C_j (1 + omega)^j`.
+**(R1) Smooth, and bounded on the box that matters.** Let
+`Q = [-1, 2]^18`.
+- `A_reg` is smooth on `R^18`.
+- `supp A_reg ∩ Q` is compact.
+- On `Q`, every derivative of `A_reg` is bounded, and every derivative of
+  `F_omega` of order `j` is bounded by `C_j (1 + omega)^j`.
+
+Every point the argument evaluates lies in `[0, 1]^18 ⊂ Q`, because raw
+moments and their empirical versions are probabilities:
+- population vectors;
+- empirical vectors;
+- segments between them.
+
+The bounds are **not** global. Large `b_iX` is not cut off, and `H` grows
+like `sqrt(b_iX)` there: at the frozen anchors, `H` is about 0.93 at
+`b_3X = 1` and 10 at `b_3X = 100` (review E1). Nothing in the proof leaves
+`Q`.
 
 *Proof.* On the support of the product of cutoffs:
 - `chi_anc != 0`, so the anchors are in the outer set. This is a compact
@@ -201,9 +239,11 @@ order `j` bounded by `C_j (1 + omega)^j`.
   in `eta^(0)` is smooth there, and every `alpha(u_j - u_i)` is bounded
   below.
 
-So `H` is smooth on a neighbourhood of the compact support, and the product
-is smooth with compact support. `u~` is smooth there, and `F` vanishes off
-it.
+So `H` is smooth on a neighbourhood of the support, and the product is
+smooth. Within `Q` the support is closed and bounded, so all derivatives
+are bounded on `Q`. `u~` is smooth there, and `F` vanishes off the
+support. Also, `alpha(L) = (1 - x cot x)/(2q)` with `x = sqrt(q) L <= 1`
+is increasing in `L`. This is the monotonicity used for `b_low`.
 
 **(R2) The background zero, for every anchor triple.** For every
 background probe X and **every** anchor triple,
@@ -214,9 +254,10 @@ A_{\rm reg}(\mu_0(X))=0.                                       \tag{2}
 
 *Proof.* If any cutoff factor vanishes, there is nothing to prove.
 Otherwise:
-- all six population `b` are positive, and a population interval
-  probability is positive only for related events, so
-  `A1 < A2 < A3 < X`;
+- all six population `b` are positive. A population interval probability
+  `b_ij` is positive exactly when `i` is chronologically before `j`; a
+  null-related pair has `b = 0`. So `A1 < A2 < A3 < X`, chronologically
+  and in that order;
 - X is interior;
 - `G_A` is positive definite.
 
@@ -231,10 +272,12 @@ The challenge's frozen statistic, which has only `w`, does not have this
 property: a probe that is not after anchor 3 can have `H = 0.0029`
 (audit report 3a, F1).
 
-**(R3) The population signal is unchanged.** There is `lambda_0 > 0` such
-that, for `lambda < lambda_0`, the following hold:
-- for every probe whose wave population state lies in `supp w`, and every
-  triple whose population anchor numbers lie in the three-quarter set,
+**(R3) The population signal is unchanged.** Under the alternative,
+condition on an anchor triple whose population anchor numbers lie in the
+three-quarter set. By Section 6, an accepted triple does so with
+probability tending to one. There is `lambda_0 > 0` such that, for
+`lambda < lambda_0`:
+- for every probe whose wave population state lies in `supp w`,
   `A_reg(mu_lam(X)) = (w H)(mu_lam(X))`;
 - for every probe, `|A_reg(mu_lam(X))| <= C lambda^2`.
 
@@ -243,12 +286,19 @@ that, for `lambda < lambda_0`, the following hold:
 - Wave population `b` differ from background ones by `O(lambda^2)`
   uniformly on the compact active and anchor sets, so they are at least
   `b_* - C lambda^2 >= b_flat`, where `chi_b = 1`.
-- For the second bullet, `A_reg` is Lipschitz and vanishes at `mu_0(X)`:
+- For the second bullet, `A_reg` is Lipschitz on `Q` and vanishes at
+  `mu_0(X)`:
   - inside a compact neighbourhood of the active set,
-    `|mu_lam - mu_0| = O(lambda^2)`;
-  - outside it, `A_reg` vanishes on a fixed neighbourhood of `mu_0(X)`
-    that contains `mu_lam(X)` for small `lambda` (audit report 3b,
-    Section 3.4).
+    `|mu_lam - mu_0| = O(lambda^2)` (Section 4 and (8));
+  - outside it, `A_reg` vanishes on a fixed neighbourhood of `mu_0(X)`.
+    That neighbourhood contains `mu_lam(X)` once
+    `sup_X |mu_lam(X) - mu_0(X)|` is small.
+
+**Cited, not derived here.** The uniform closeness of wave and background
+population moments for **every** probe, tips included, with anchors in a
+compact interior set, is taken from audit report 3b (Sections 3.2 and 3.4,
+`O(lambda^1.5)` near the tips). (8) itself is stated in Section 4 only for
+active probes.
 
 **(R4) Fixed and computable.** The cutoffs are fixed functions of the raw
 moments with fixed numerical constants: `tau`, `psi`, `b_flat(q)` and `w`.
@@ -347,8 +397,9 @@ independent of the references and the probes, and (2) holds for every
 triple. Use `n_P >= c n` independent probes. Then the conditional variance
 of the probe average is at most `E|F|^2 / n_P <= C E|epsilon|^2 / n_P <=
 C / n^2`, because by (2) `|A_reg(mu_0 + epsilon)| <= C |epsilon|`. Its L2
-contribution, `1/n`, is of the same order as the `k = 2` term, so it is
-absorbed there. Combining terms yields, conditionally on the anchor
+contribution is `1/n`. For `K >= 2` that is the order of the `k = 2` term,
+so it is absorbed there. For `K = 1` it is absorbed into the remainder
+`omega / n`, since `omega >= 1`. Combining terms yields, conditionally on the anchor
 triple and uniformly over triples:
 
 \[
@@ -383,8 +434,8 @@ validation of the nonlinear causal-set instrument.
 **Definition of B.**
 - `B(s, t)` is the trace-free symmetric 2 by 2 matrix whose complex
   representative is
-  `beta(s,t) = (2 lambda k / c) e^{i phi} int_s^t f(u') e^{i u'/lambda} du'`,
-  with `k = sqrt(q)` and `c = sqrt(1 + 4 q lambda^2)`. It is not
+  `beta(s,t) = (2 lambda k / c_lam) e^{i phi} int_s^t f(u') e^{i u'/lambda} du'`,
+  with `k = sqrt(q)` and `c_lam = sqrt(1 + 4 q lambda^2)`. It is not
   positive: being trace-free, it has eigenvalues `±|beta|`.
 - The exact wave action is `Mt(s, t) = Delta m(s, t) I - B(s, t)`, and
   `|beta| <= C lambda min(Delta u, lambda)`.
@@ -488,9 +539,10 @@ S_n-E_XF(\mu_\lambda(X))
 \end{aligned}
 \]
 
-The derivatives satisfy, globally (by (R1)),
-`|DF| <= C(1 + omega|A_reg|)` and
-`|D^2F| <= C(1 + omega + omega^2 |A_reg|)`.
+The derivatives satisfy, on `Q` (by (R1); every point used lies in
+`[0, 1]^18`), `|DF| <= C(1 + omega|A_reg|)` and
+`|D^2F| <= C(1 + omega + omega^2 |A_reg|)`. Throughout,
+`omega = 1/lambda + O(1)`. Condition on an anchor triple as in (R3).
 
 - **T1.** `|F(mu_lam)| <= C lambda^2` by (R3), with independent probes:
   `O(lambda^2 / sqrt(n))`.
@@ -498,7 +550,8 @@ The derivatives satisfy, globally (by (R1)),
   - On the segment, `|A_reg| <= C(lambda^2 + |epsilon_lam| + |epsilon_0|)`.
   - So the term is at most
     `C(1 + lambda + omega(|epsilon_lam| + |epsilon_0|)) |epsilon_lam - epsilon_0|`.
-  - By (9) with `p = 2, 4`, this is `C(lambda/sqrt(n) + 1/n)`.
+  - By (9) with `p = 2, 4`, and `omega ~ 1/lambda`, this is
+    `C(lambda/sqrt(n) + 1/n)`.
 - **T3.**
   - It equals
     `int int D^2F(mu_0 + t delta + s epsilon_0)[delta, epsilon_0]`, with
@@ -526,8 +579,9 @@ T3 sit at `lambda/sqrt(n)`, the order of the leading background term, so
 
 **Probes outside the active set.** The score sums over all probes. For X
 outside a compact neighbourhood of the active set, `A_reg` vanishes on a
-fixed neighbourhood of `mu_0(X)`, and `mu_lam(X)` lies in it for small
-`lambda`. T2 and T3 are then nonzero only if `|epsilon| >= const`. By
+fixed neighbourhood of `mu_0(X)`. `mu_lam(X)` lies in it for small
+`lambda`; that uniform closeness is cited from audit report 3b, as in
+(R3). T2 and T3 are then nonzero only if `|epsilon| >= const`. By
 Hoeffding that has probability `exp(-c n)`, uniformly in X.
 
 Together with (5), at the target frequency the total score error is
@@ -575,10 +629,13 @@ a_{2x}a_{2y}=G_{12}\sqrt{G_{22}/G_{11}-G_{12}^2/G_{11}^2},
 - On the box `G11, G22` in `[0.00638, 0.00642]`, `|G12| <= 0.00002`, its
   supremum is `2.0063e-5`, not `2e-5`.
 - The elementary Gram formulas still bound `a_3`'s two coordinates below
-  0.079, and `|ell_2| < 1.02`.
+  0.079, and `|ell_2| <= 1.0094` (the certificate's bound; the original
+  quoted the rounder `1.02`).
 - For `q <= 1`, `m(u) - m_3 < 1.30 * 0.452` on `0.1 <= u <= 0.3`, and
   `m(u) - m_2 > 0.348`.
-- So `Im D_A(u) >= 0.0106978 > 0.01` throughout that interval.
+- So `Im D_A(u) >= 0.0106978 > 0.01` throughout that interval. With
+  `1.02` in place of `1.0094` the same chain gives `0.0106972`, also above
+  0.01.
 
 The frozen anchor-guard certificate (`f1072f0`) records
 `0.01069797`, overstated by `1.8e-7` because it used `2e-5`. It is not
@@ -702,18 +759,42 @@ root tolerance do not implement this asymptotic requirement.
 The concrete geometric guards were frozen with the original document and
 verified by the anchor-guard certificate at `f1072f0`. It used Fraction
 interval arithmetic and the certified cosine series at q=1, whose derivative
-bound controls every 0<q<=1. That certificate's `Im D_A` value is corrected
-in Section 6. This algebraic control is not a noise-rate or
-finite-data-power test.
+bound controls every 0<q<=1.
+- **The `Im D_A` correction was not re-certified.** Section 6 computes it
+  by hand from the certificate's recorded terms; it has not been redone in
+  interval arithmetic.
+- **The rule for any re-certification stands,** as the original put it:
+  it must retain a failure without enlarging the neighbourhood or weakening
+  its target inequalities.
+
+This algebraic control is not a noise-rate or finite-data-power test.
 
 ## 8. Status, remaining work and prior art
 
-- **What this revision completes.** It writes down the statistic for which
-  (5), (10) and (11) are claimed, as one object. If the review in
+- **What this revision completes.** Argument 3's statistic is now written
+  in full, as one object for which (5), (10) and (11) hold. So are its
+  properties (R1) to (R4), the wave-side chain (the identity T1 to T4),
+  and the corrected constants. The review in
   [independent_audit/argument3_revision/](independent_audit/argument3_revision/)
-  accepts it, the upper bound 2 rests on a fully written AI-audited
-  argument, and the bracket becomes `4/3 <= alpha_low <= alpha_high <= 2`
-  with both ends written out.
+  graded this CORRECT WITH MINOR FIXES, which are applied (Section 9).
+- **What is still at outline level**, as audited, with the referee reports
+  filling in the steps:
+  - the index-counting proof of (5);
+  - the tip estimates (6) to (9);
+  - the uniform closeness of wave and background moments for every probe,
+    which is cited;
+  - the population expansion behind (11), which rests on the challenge's
+    predicted limit (derived by referee 3b) and on two assertions (anchor
+    phase terms vanish; calibration errors are `o(lambda^2)`);
+  - the anchor-guard certificate, which is the author's code. One of its
+    steps was wrong and was corrected here by hand, not re-certified;
+  - the standard U-statistic moment and Hoeffding bounds, cited.
+- **On the bracket.** `4/3 <= alpha_low <= alpha_high <= 2` is the audit's
+  statement (AUDIT.md Section 2), not something new here. Its lower end is
+  not newly written out: `quantized_order_bound.md` has not been revised
+  since the audit, so the audit's items for argument 1 are still missing
+  from its text. Among them is linking the constants, without which the
+  claim fails at `L = 1`.
 - **What it does not change.**
   - All statements are asymptotic. The constants put any finite-N test out
     of reach (AUDIT.md Section 5).
@@ -739,3 +820,49 @@ For general U-statistic background see
 [Gine, Latala and Zinn (2000)](https://arxiv.org/abs/math/0003228); no theorem
 there has been substituted for the model-specific variation and coupling
 arguments above.
+
+## 9. Review and the corrections made after it
+
+[independent_audit/argument3_revision/review.md](independent_audit/argument3_revision/review.md).
+An AI referee in a fresh context, given this revision, the frozen original,
+the challenge, AUDIT.md, both referee reports on the original and the
+certificate. It ran only short deterministic checks.
+
+**Verdict: CORRECT WITH MINOR FIXES.** `A_reg` (1a) is one well-defined
+object, and (5), (10) and (11) hold for it. The identity T1 to T4 is
+exact. AUDIT.md's items 1 to 7 for argument 3 are all addressed. Text that
+Section 0 does not mark as changed is word-identical to the original, and
+the original still matches the certificate's hash.
+
+Corrected after the review, in the text above:
+
+- **E1, an error as stated.** (R1) claimed compact support and globally
+  bounded derivatives on `R^18`. That is false, because large `b_iX` is
+  not cut off and `H` grows like `sqrt(b_iX)`. It now states smoothness on
+  `R^18` and compact support and bounded derivatives on
+  `Q = [-1, 2]^18`, which contains every point the proof uses. Section 5
+  reads "on `Q`" instead of "globally". Nothing downstream changes.
+- **M1.** Section 0 lists every change, including the preamble's status
+  sentences. The re-certification rule of the guard paragraph is restored.
+- **M2.** The cutoffs are named: the standard `exp(-1/x)` smooth step.
+- **M3.** `|ell_2| <= 1.0094`, which gives 0.0106978. The original's 1.02
+  gives 0.0106972. Both exceed 0.01.
+- **M4.** For `K = 1` the probe term is absorbed into the remainder
+  `omega / n`.
+- **M5.** "Chronologically related, in that order", in (R2).
+- **M6.** (R3) and Section 5 now state that they condition on a triple in
+  the three-quarter set. They also say that the uniform closeness of wave
+  and background moments for every probe, tips included, is cited from
+  audit report 3b, not derived here.
+- **M7.** Notation: `c_lam`, `alpha(.)` against the exponent `alpha`, and
+  `K` against the kernels `K_lambda`.
+- **The Section 8 headline**, which overclaimed, now says what is written
+  in full and what is still outline. It also notes that the bracket's lower
+  end (argument 1) has not been revised in its own text.
+
+The referee's least-trusted remaining step is the coupling uniform in X.
+- T2 and T3 sit exactly at `lambda/sqrt(n)` by (8), with no slack against
+  the exponent 2.
+- The "every probe" extension rests on a citation.
+- (8) at the tips is still the original's sketch. Its proof is in audit
+  report 3b, Section 3.2.
