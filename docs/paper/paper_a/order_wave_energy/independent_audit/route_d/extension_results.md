@@ -3,8 +3,10 @@
 2026-11-25. Design frozen at `e302056`
 ([extension_design.md](extension_design.md)); control run at `e302056`,
 chains at `458a5f2`. **No verdict on U2 was defined and none is recorded.**
-AI-run; no human review. Generator coordinates: a diagnostic of the
-background order law, not an observer.
+AI-run; no human review. Checked independently by an AI checker in a fresh
+context (Section 5); the wording of Sections 1 to 3 was corrected after
+that check. Generator coordinates: a diagnostic of the background order
+law, not an observer.
 
 ## 1. What was seen
 
@@ -12,8 +14,9 @@ At N = 512 the residual of central events, after the seven-parameter
 order-preserving group is fitted out, is the same as at the smaller sizes:
 `12.2 / N` at lag `16 N` and `12.5 / N` at lag `N^2/2` in chart units,
 beside `12.1` to `12.6` at N = 128, 192, 256. Over the four sizes no
-dependence on N was found, for the full residual or for the wave
-coordinate alone.
+count-scale growth with N was found, for the full residual or for the wave
+coordinate alone: a term above about `0.26 / sqrt(N)` (full residual) or
+`0.16 / sqrt(N)` (wave coordinate) at these lags would have been seen.
 
 By the descriptions fixed in the design:
 
@@ -62,6 +65,12 @@ zero:
 
 With three sizes the corresponding figures were 0.39 to 0.43 and 0.50.
 
+The upper ends lie below the smallest distinguishable values only because
+every slope came out negative. The smallest distinguishable value is the
+bound to quote. Without any fit, c cannot exceed 0.55 (upper end 0.58) at
+N = 512 and lag `N^2/2`, because a count-scale part cannot exceed the whole
+residual.
+
 **At N = 512 along the lags.** Total displacement of central events grows
 from 4.1 to 11.7 in units of `s1` between lag N and lag `N^2/2`, while R
 stays between 3.9 and 4.3. Outer events: total from 8.1 to 18.4, residual
@@ -78,11 +87,13 @@ identical, every fit succeeded.
 
 Adds to the first measurement:
 
-- the residual follows `1 / N` over a factor 4 in N, not 2;
-- a count-scale term that is present at these lags is now bounded at about
-  a quarter of `1 / sqrt(N)` for the full residual and about a sixth for
-  the wave coordinate, against a half before. The size U2's own estimate
-  suggested was about 0.7.
+- at lag `N^2/2` the residual follows `1 / N` over a factor 4 in N, not 2.
+  At lag `16 N` the sizes are at different stages of relaxation (Section 5),
+  so that lag is the weaker comparison;
+- a count-scale term at these lags would have been seen above about a
+  quarter of `1 / sqrt(N)` for the full residual and about a sixth for the
+  wave coordinate, against a half before. The size U2's own estimate
+  suggested was about 0.7, which also exceeds the fit-free bound of 0.55.
 
 Does not establish, as before:
 
@@ -90,6 +101,9 @@ Does not establish, as before:
   Section 4 applies: the reading is one-sided, the chain may not reach all
   configurations with the given order, and two attempts to design a test of
   that did not yield one that could be frozen ([RECORD.md](RECORD.md));
+- that the residual at N = 512 is mostly cell-scale. A count-scale part
+  just below the sensitivity (c = 0.26) would be about 47% of its rms and
+  about 22% of its mean square;
 - anything beyond lag `N^2/2` at N = 512. The 1+1 control showed that a
   chain reports about three quarters of collective motion at that lag;
 - that the wave coordinate is flat in the lag. It is "neither" at every
@@ -108,3 +122,43 @@ Does not establish, as before:
 - `records.jsonl` SHA-256 begins `2020e15afdcde347`; the full value is in
   the manifest.
 - Nothing in the design was changed after the first number was seen.
+
+## 5. Independent check
+
+[extension_checker_report.md](extension_checker_report.md). An AI checker
+in a fresh context, given the designs, the instruments and the raw records,
+and told not to open this record or any summary until it had its own
+numbers. A first checker was stopped by a usage limit partway through; a
+second, which did not see the first one's files, finished. The first one's
+partial numbers agree with the second's. AI-level check; no human review.
+
+- **Every number reproduces.** 305 values, to `6e-15` relative, with every
+  description the same.
+- **Same estimator.** The extension's task differs from the first
+  measurement's only in its schedule. At N = 64 both reproduce each other's
+  shared rows bit for bit. At N = 512 the first 4096 sweeps of two orders
+  were replayed and the stored rows matched bit for bit. Seeds, workers,
+  priority class and file hashes match the manifests.
+- **The size fit errs on the conservative side.** The N = 512 orders spread
+  about a third as much as the others. Weighted, robust and bootstrap
+  intervals of B are 1.4 to 1.6 times narrower, and "none found" holds in
+  all of them. At lag `16 N` the weighted interval lies below zero. That is
+  a decrease, not a count-scale term, and it is not robust: it goes away
+  when the per-size mean of `s1` is used.
+- **What the record had to correct.** The upper ends of c rest on negative
+  slopes; the sensitivity (0.21 to 0.26 for the full residual, depending on
+  the fit) is the honest bound. Dividing by a per-order `s1` lowers B by
+  about 0.0015; with the per-size mean of `s1` the upper ends become 0.17
+  and 0.24. At lag `16 N` the stiff-family thermometer reads 0.84, 0.86 and
+  0.64 at N = 128, 192 and 256 against 0.25 at N = 512, so that lag
+  compares different stages of relaxation; at `N^2/2` it reads 0.9 to 1.6.
+  Sections 1 to 3 were reworded to say these things. The table entries and
+  the frozen descriptions are unchanged.
+- **Wave coordinate.** "Neither" at every size is correct by the frozen
+  rule. The ratio shows no trend with N (slope p = 0.73); pooled over the
+  four sizes it is 1.048 [0.996, 1.100]. Its size means at `N^2/2` are not
+  monotone (4.66, 4.47, 3.36, 3.95; quadratic p = 0.07), and weighting
+  flips the sign of its slope.
+- **Not checked.** The text of this record; the instrument's internals
+  beyond the schedule; N = 512 rows beyond lag 2048; the pair-difference
+  bins; chain reach.

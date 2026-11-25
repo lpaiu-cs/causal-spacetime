@@ -105,9 +105,16 @@ Two things follow that do not depend on running it.
   factor of about three at the affordable sizes.
 - A repaired far-start design is possible and its requirements are listed
   in the referee's report. It has not been written.
-- The simpler way to strengthen the first measurement is to extend its
-  frozen estimator to a larger size, which widens the lever of the
-  size-dependence fit. At N = 512 a chain of `N^2` sweeps is about two
-  hours per order. That would be a new freeze.
+- The simpler way to strengthen the first measurement was to extend its
+  frozen estimator to a larger size. That was done with the user's
+  approval: [extension_design.md](extension_design.md) (frozen `e302056`),
+  [extension_results.md](extension_results.md), checked independently in
+  [extension_checker_report.md](extension_checker_report.md). At N = 512
+  the central residual is about `12.5 / N`, as at the smaller sizes. No
+  count-scale growth was found over the four sizes. A term above about
+  `0.26 / sqrt(N)` (full residual) or `0.16 / sqrt(N)` (wave coordinate)
+  would have been seen at these lags. Without any fit, c <= 0.55 at
+  N = 512. The longest lag at N = 512 is `N^2/2`, and chain reach is still
+  untested.
 
 Nothing is to be frozen or run without the user's approval.
