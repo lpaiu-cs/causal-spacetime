@@ -1,0 +1,24 @@
+{
+  "stage": "control",
+  "code_version": "e3020568469e33553c67cc4b6dcd6be99a210aba",
+  "fit": {
+    "mean": 0.9993400424338562,
+    "se": 0.0014012149656185565,
+    "ci95": [
+      0.9964414084313963,
+      1.002238676436316
+    ],
+    "orders": 24,
+    "n": 512,
+    "all_orders_identical": true,
+    "all_fits_succeeded": true
+  },
+  "fit_pass": true,
+  "workers": 12,
+  "priority_classes": [
+    16384,
+    [
+      16384
+    ]
+  ]
+}
