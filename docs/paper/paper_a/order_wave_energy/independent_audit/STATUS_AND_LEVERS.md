@@ -5,8 +5,10 @@ session that started this one): a short status of the whole campaign, then
 an assessment of the means that could make its readings two-sided, with one
 recommendation. **No new computation was run for this document.** It reads
 the records and estimates costs from them. AI-written. A fresh-context AI
-reviewer was asked to argue against the recommendation; that rebuttal is in
-Section 6.
+reviewer was asked to argue against the first recommendation, and it
+succeeded ([lever_rebuttal.md](lever_rebuttal.md)). Sections 2, 3 and 5 were
+corrected after it, and the recommendation was replaced (Section 6). The
+version before the rebuttal is in the history at `21a9892`.
 
 ## 1. The question and what is proved
 
@@ -48,8 +50,9 @@ these into exponents. Those exponents are not results.
   - all gates passed, reproduced by an independent check.
   - Frozen verdict: "no growth seen by this instrument".
 - **Not shown.** "Cell-limited": no control in which the right answer grows
-  with N. The first two designs did not reach a run: an LP search covered
-  only 0.64 of its target, and a reviewed design had four defects.
+  with N. The first two designs did not reach a main run. The first one's
+  pilot ran: its LP search covered only 0.64 of its target. The second's
+  review found five items, two of them defects in the gate.
 
 **Route D, how far positions move given the order**
 ([route_d/RECORD.md](route_d/RECORD.md)).
@@ -107,6 +110,10 @@ the Gram-Fourier noise law): not run; optional.
   - It is stationary for the conditional law given the order. But it can
     under-report: in 1+1 it showed 0.57, 0.76, 0.87 and 1.00 of the exact
     collective motion at lags `N^2/4`, `N^2/2`, `N^2` and `2 N^2`.
+  - The same curve is also the record's one positive control. It shows the
+    chain reaching the full collective motion by `2 N^2`, a lag the 3+1
+    runs reached at N <= 256. How fast collective modes relax in 3+1 is
+    not known.
   - Collective long-range modes are the slowest, and they are what U2 is
     about.
   - So every "not seen" is one-sided. A plateau is not evidence that
@@ -135,6 +142,7 @@ the Gram-Fourier noise law): not run; optional.
 | D, posterior spread of `u` differences | central set only, one-sided; transport draft not frozen |
 | D1, Gram-Fourier noise law at finite n | not run, optional |
 | Route C Section 6 finite-N test (referee's sketch) | not drafted |
+| writing argument 3's regularised statistic (AUDIT.md Section 3) | not done |
 
 ## 5. Lever check
 
@@ -162,49 +170,55 @@ is left if it fails, its cost, and an honest estimate of its chance.
 - **Lower bound (constructive).**
   - Link cones replaced by inscribed polyhedral cones, and critical rows by
     plain tangents. This is a convex region inside the true cell.
-  - Every solution is an order-preserving configuration. In 1+1 the
-    slack review found that such an inner model certified 0.99 to 1.00 of
-    the exact slack.
-- **What it can show.** For each configuration and mode, a bracket on how
-  far events can move together along that mode near the truth with the
-  order unchanged.
-  - Along a smooth mode, the per-event extent of a typically rigid cell is
-    of the order of the typical spread. A ball gives about one SD; a cube
-    about 1.7.
-  - That is unlike a single event's extent, where a maximum and a typical
-    spread differ by `sqrt(N)` (the slack review).
-  - So a bracket separates "rigid at a few cells" from "soft at the count
-    scale".
-- **Why it can reach large N.**
-  - It needs no chain. The rows grow only as about `2.6 sqrt(N)` per
-    event: 76k at N = 1024, with interior-point solves of 9 to 12 s.
-    Scaling as `N^1.5` gives about 215k at 2048 and 610k at 4096.
-  - The curvature loosening relative to the walls falls like `1/N` for a
-    box of fixed cell count. On rough estimates it is comparable to the
-    walls at N = 1024 and about a third of them at N = 4096.
-  - There the count scale is 8 to 16 cells. So the method is most
-    informative exactly where chains cannot go.
-- **If it fails.**
-  - Most likely, the bracket is too wide: the loosening or the inner model
-    is weak, and the method cannot separate the two cases at the sizes it
-    reaches. That would be recorded, and nothing else is lost.
-  - Failure does not touch the earlier readings.
-  - A success says nothing about components of the cell far from the
-    truth, nor about modes outside the chosen set.
+  - Every solution is an order-preserving configuration. In 1+1, where the
+    cones are polyhedral and such a model is exact, the slack review found
+    it certified 0.99 to 1.00 of the exact single-event slack. That says
+    nothing about 3+1 curvature.
+- **What it can show (corrected after the rebuttal).**
+  - **Upper side.** A valid, rigorous bound inside the box: nothing in the
+    box moves further along the mode with the order kept.
+  - **Lower side: it cannot show softness.**
+    - The cell is curved. Straight steps along exactly free generators
+      keep the order only to 1.0 to 5.7 / N, so a convex inner region
+      cannot follow a curved soft direction far.
+    - Along a smooth mode, maximum and typical spread need not agree. The
+      ball and cube are the favourable cases. The exactly known 1+1 cell
+      (simplices) is the counterexample in shape.
+  - **What it separates.** "Bounded within the box" from "not bounded".
+    The box sits below the count scale, so this is not "rigid" against
+    "soft at the count scale".
+- **Why it can reach large N, and how far that helps.**
+  - It needs no chain. Rows grow as about `2.6 sqrt(N)` per event: 76k at
+    N = 1024. Scaling as `N^1.5` gives about 215k at 2048 and 610k at 4096.
+  - The 9 to 12 s solves at N = 1024 were timed on 3 to 4 programmes with a
+    random or one-event objective.
+  - The rebuttal re-estimated the curvature loosening for central walls,
+    whose pair separations are about 0.35 to 0.5, with the full Hessian of
+    the light-cone margin. It comes to about 1 to 2.3 walls at N = 2048 and
+    0.5 to 1.2 at 4096.
+  - Its net separation in a rigid world is therefore a factor of 2 to 4,
+    the same factor that sank the far-start draft. Enlarging the box does
+    not help.
+- **If it fails.** The bracket is too wide and it stops; nothing else is
+  lost. Even a success says nothing about components of the cell far from
+  the truth, freedom reached through large non-smooth rearrangements, or
+  modes outside the chosen set. It removes the chain's slowness, not its
+  locality.
+- **Value even on success.**
+  - At N = 4096 a five-cell bound (0.015) is about the wavelength at
+    `alpha = 2`. It therefore bears on phase coherence for no `alpha`
+    below 2.
+  - Its steering would only confirm a prior that already points the
+    cell-like way.
 - **Cost.**
-  - One to two sessions to build: the rows, the loosening, the pin, the
-    modes and both programmes. Then an independent review.
-  - CPU: at N = 4096, about 20 modes × 2 directions × 2 bounds per
-    configuration at minutes each, so about two hours per configuration
-    on one worker. Twelve configurations per size over a few sizes is
-    several hours. Memory, at perhaps 1 to 2 GB per interior-point solve,
-    may limit the worker count.
-  - No GPU. No new dependency: HiGHS ships with SciPy 1.18, which is
-    installed. A cone solver would make the inner bound tighter but is not
-    required.
-- **Chance.** Moderate. The physics of the loosening favours large N. The
-  open risks are the inner model's tightness in 3+1, which has not been
-  tried, and solver behaviour at 600k rows.
+  - One to two sessions to build, then a review.
+  - At N = 4096, interior-point solves of about 5 to 10 minutes put a
+    configuration at 6 to 13 hours on one worker. Memory may limit the
+    worker count.
+  - No GPU. No new dependency: HiGHS is in SciPy 1.18.
+- **Chance.** Low as a two-sided lever. As a one-sided rigidity check it
+  is feasible, but its result would add little to what the record already
+  says.
 
 ### L2. A collective-move sampler, validated where the answer is exact
 
@@ -250,7 +264,7 @@ is left if it fails, its cost, and an honest estimate of its chance.
 It would turn the conditional stop into a computed one. It is cheap, but it
 cannot steer U1/U2 or move the bracket.
 
-### L6. Stop
+### L6. Stop the U1/U2 numerics
 
 The record is coherent as it stands:
 - the bracket holds;
@@ -258,32 +272,76 @@ The record is coherent as it stands:
 - the per-event channel is closed;
 - the open question is named.
 
-Stopping costs nothing more and loses the one lever that could make the
-steering two-sided.
+Stopping costs nothing more. On the rebuttal's assessment it loses no
+lever that could make the steering two-sided at reachable sizes.
 
-### Recommendation: L1, behind a small feasibility check
+### L7. Write the regularised statistic into argument 3 (not a U1/U2 lever)
 
-L1 is the only candidate that can give a two-sided reading, and it avoids
-the caveat of Section 3 by not using a chain. It also reaches the sizes
-where cell and count scales separate by a factor of 8 to 16.
+- **What it is.** The upper bound 2 rests on a draft whose regularised
+  statistic is described but not written down. AUDIT.md: "Existence is
+  therefore not in doubt; what is missing is the text". Its Section 4
+  supplies one explicit choice, which no referee has checked.
+  - Both referees of argument 3 named this interface as the least-trusted
+    step: the cutoff must act on all 18 raw moments, so that the noise
+    bound, the wave-side bound and the signal bound hold for one object.
+- **What it can show.** The fully written upper bound moves from 3 to 2,
+  so the bracket rests on written proofs at both ends.
+- **If it fails.** A referee finds that no single regularised object
+  carries all three bounds. That would reopen the upper 2, and it is worth
+  knowing.
+- **Cost.** One analytic session to write it into the draft's text,
+  following AUDIT.md Section 4, then an independent review. No CPU.
+- **Chance.** High. Existence is not in doubt, and the work is to write and
+  check it.
 
-**Proposed feasibility check (not run).**
-- One configuration at N = 2048.
-- Three smooth modes, a box of five cell widths.
-- Both programmes, recording the solve times and the ratio of upper to
-  lower bound.
-- About ten minutes of CPU.
+### Recommendation: L7, then stop the U1/U2 numerics (L6)
 
-**Rule, stated now.** If the ratio exceeds 3 for most modes, the bracket
-cannot separate the cases at that size: L1 stops and is recorded, and
-stopping (L6) becomes the recommendation.
+This replaces the first recommendation (L1); see Section 6.
 
-Either outcome of a full L1 would steer the proof work:
-- soft modes found constructively would give a re-embedding coupling the
-  freedom it needs for a lower bound toward 2;
-- a rigid bracket would point at statistics below 2 that use the partners'
-  mutual relations.
+- **First.** Write the regularised statistic into argument 3 and have it
+  reviewed in a fresh context. It is needed whatever U1 and U2 turn out to
+  be. It completes the one part of the proved bracket that is still only
+  described.
+- **Then.** Stop the numerical work on U1/U2.
+  - The readings stay as recorded: one-sided, pointing the cell-like way.
+  - No lever found here makes them two-sided at a cost worth paying:
+    - L1 can only return "bounded in the box" or "stop", by a factor of 2
+      to 4;
+    - L2 stays one-sided and small-N;
+    - L3 and L4 need the localisation they would assume.
+- **Optional, cheap.** L5 (Route C's Section 6 finite-N test), to turn the
+  conditional stop into a computed one.
+- **If the user's goal is U2 steering** rather than finishing the bracket,
+  a reduced L1 is the best steering lever, still one-sided. It would take
+  the rebuttal's changes: upper bound only, a threshold in cell units, a
+  calibration against the chain at N = 256, a released-generator control,
+  and a feasibility check at N = 2048 and 4096.
+
+Nothing here was run, drafted, frozen or approved.
 
 ## 6. Rebuttal
 
-Not yet written.
+[lever_rebuttal.md](lever_rebuttal.md): a fresh-context AI desk review,
+told to run nothing and to argue against L1. Its verdict was to replace L1.
+
+- L1's inner bound cannot follow curved soft directions, so it cannot show
+  softness.
+- Its rigid-side separation at N = 2048 to 4096 is a factor of 2 to 4 once
+  the loosening is taken over central walls with the full Hessian.
+- A five-cell box at N = 4096 is about the wavelength at `alpha = 2`, so a
+  rigid result bears on phase coherence for no `alpha` below 2.
+- "Either outcome steers" overclaimed, and the claim about a re-embedding
+  coupling was wrong: a coupling needs probability mass and freedom at
+  amplitude `lambda^2`, below the cell scale.
+- It proposed L7 first and L6 after, which this document adopts.
+
+**Corrections it made to the status sections, now applied:**
+- the 1+1 curve is also the positive control;
+- the first Route A design's pilot did run;
+- the second design's review found five items, not four defects;
+- the 1+1 inner-model figure came from polyhedral cones;
+- the LP timings came from a random objective.
+
+**One claim of the rebuttal is not right.** The N = 512 extension ran
+`N^2 + 1` sweeps per order in 6966 s, so `2 N^2` sweeps at N = 1024 is about
+31 hours per order (Section 3), not 62.
