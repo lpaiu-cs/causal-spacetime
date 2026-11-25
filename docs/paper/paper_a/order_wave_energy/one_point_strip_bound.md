@@ -21,7 +21,7 @@ between the wave and reference one-point laws.**
   The route differs from the earlier sketch: the transverse integral is
   done exactly in polar coordinates (Step 3), so no estimate of how far the
   section endpoints move is needed. Section 4 lists deterministic checks
-  over a wider grid than before.
+  over a wider grid than before. All of them pass.
 - **Authorship and review.** AI-written. Awaiting a fresh-context AI review.
 - **What it is not.** It is not human-reviewed. It concerns the one-point
   laws only, not the order law. It uses the exact causal relation of the
@@ -241,6 +241,16 @@ most `e_- + e_+ <= 2 C_E lambda^2` everywhere on the window.
 `lambda^2` is the true order, rather than an overestimate, is suggested by
 the numerics (Section 4), not proved. Argument 1 needs only the upper bound.
 
+**Remark 4 (the TV does not depend on the phase at all; added after the
+run).** Let `R` be the rotation of the y-plane by `phi/2`. Since
+`R T(theta) R^T = T(theta + phi)`, every `E_lambda(u_1, u_2)` at phase
+`phi` equals `R E R^T` with `E` at phase 0. So the wave diamond at phase
+`phi` is the image of the one at phase 0 under `(u, v, y) -> (u, v, R y)`.
+`D_0` and the density `a^2` are invariant under that map, so the TV is the
+same for every phase. Uniformity in the phase is therefore automatic. The
+8-phase grid of Section 4 confirms this numerically: it is a test of the
+code, not of the bound.
+
 ## 4. Deterministic checks
 
 Script: [independent_audit/one_point_bound/checks.py](independent_audit/one_point_bound/checks.py).
@@ -278,4 +288,43 @@ lambda = 1/8, phase 0.3) was run first to debug the script.
 This makes 840 cases. The earlier computations covered three values of
 q, one phase, and `lambda` from 1/8 to 1/128.
 
-**Results.** To be filled in after the run.
+**Results** (full run after commit `c4c3b78`; output:
+[checks_output.txt](independent_audit/one_point_bound/checks_output.txt)).
+**All 11 checks pass, and no case fails.**
+- **K5, the main check.** The bound holds in all 840 cases. The largest
+  ratio `TV / (C_1(q,t) lambda^2)` is 0.187, at q = 0.25 and the smallest
+  `lambda`. So the constant is at most about 5 to 20 times too large on
+  this grid, and never too small.
+- **K1.** `e / (t m)` and the ratio in (2) both reach 1.000000. These two
+  inequalities are attained, on short segments and in the extreme
+  direction. `e / (t lambda (4 f_max - 2))` reaches 0.942.
+- **K2.** Agreement to `1.2e-6`.
+- **K3.** Largest relative difference `1.03e-6`. It passes only through
+  the absolute term `1e-12 V_0`, in cases where `V_lam - V_0` is itself
+  tiny.
+- **K4.** `4.4e-16`.
+- **K6.** Largest change `3.9e-6`.
+- **K7.** Agreement within `3.7e-4`.
+- **The phase.** In every `(q, lambda)` the 8 phases give the same TV to
+  the printed digits, as Remark 4 requires.
+
+`TV / lambda^2`, the same for every phase:
+
+| q | `lambda = 1` | 1/8 | 1/64 | 1/1024 | `C_1^0` | largest `TV/(C_1(q,t) lambda^2)` |
+|---|---|---|---|---|---|---|
+| 0.25 | 0.398 | 1.645 | 1.623 | 1.620 | 8.64 | 0.187 |
+| 1 | 0.634 | 3.440 | 3.283 | 3.269 | 21.2 | 0.154 |
+| 4 | 0.811 | 7.083 | 8.047 | 8.064 | 82.1 | 0.098 |
+| 9 | 0.917 | 16.07 | 53.01 | 81.44 | 1027 | 0.078 |
+| 9.8 | 0.947 | 22.54 | 120.1 | 765.7 | 14130 | 0.054 |
+
+- **q = 0.25, 1 and 4.** `TV / lambda^2` settles to within `1e-4` by
+  `lambda = 1/1024`.
+- **q = 9 and 9.8.** It is still rising at `lambda = 1/1024`. Close to
+  `pi^2` the distance from the window's ends to the pole of `f` is small
+  (0.024 at q = 9, 0.0018 at q = 9.8). The `lambda^2` regime starts only
+  once `lambda` is well below that distance. The bound holds throughout,
+  and the proof does not need the regime to have started.
+- **What this does not show.** These are checks at grid points. The
+  statement for every `lambda` and every q rests on the proof of
+  Section 3, not on the grid.

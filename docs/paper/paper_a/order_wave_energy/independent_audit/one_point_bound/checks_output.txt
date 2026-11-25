@@ -1,0 +1,129 @@
+INFO constants: q, f_max, C_E, W/Vhat, C_1^0 = C_E W/Vhat (lam -> 0), t_1, C_1(q) (lam <= 1)
+INFO q=0.25: f_max=1.0652 C_E=2.2608 W/Vhat=3.81974 C_1^0=8.63567 t_1=0.707107 C_1=50.3324
+INFO q=1.0: f_max=1.29845 C_E=6.38757 W/Vhat=3.31462 C_1^0=21.1724 t_1=0.894427 C_1=379.922
+INFO q=4.0: f_max=3.42552 C_E=46.8083 W/Vhat=1.75375 C_1^0=82.0899 t_1=0.970143 C_1=5416.69
+INFO q=9.0: f_max=199.85 C_E=4784.4 W/Vhat=0.214701 C_1^0=1027.22 t_1=0.986394 C_1=149966
+INFO q=9.8: f_max=32479.9 C_E=813414 W/Vhat=0.0173716 C_1^0=14130.3 t_1=0.987484 C_1=2.2438e+06
+PASS K2 polar reduction q=1.0 lam=0.25 phi=0.3 | max rel diff 7.39e-07
+PASS K2 polar reduction q=4.0 lam=0.5 phi=1.1 | max rel diff 1.20e-06
+INFO q=0.25 lam=2^-0/2: TV/lam^2 min 0.39828 max 0.39828; max TV/(C_1(q,t) lam^2) 0.00791; nu=384
+INFO q=0.25 lam=2^-1/2: TV/lam^2 min 0.57718 max 0.57718; max TV/(C_1(q,t) lam^2) 0.0179; nu=384
+INFO q=0.25 lam=2^-2/2: TV/lam^2 min 0.79709 max 0.79709; max TV/(C_1(q,t) lam^2) 0.0353; nu=384
+INFO q=0.25 lam=2^-3/2: TV/lam^2 min 1.0582 max 1.0582; max TV/(C_1(q,t) lam^2) 0.0613; nu=384
+INFO q=0.25 lam=2^-4/2: TV/lam^2 min 1.3391 max 1.3391; max TV/(C_1(q,t) lam^2) 0.0945; nu=384
+INFO q=0.25 lam=2^-5/2: TV/lam^2 min 1.5694 max 1.5694; max TV/(C_1(q,t) lam^2) 0.128; nu=408
+INFO q=0.25 lam=2^-6/2: TV/lam^2 min 1.6445 max 1.6445; max TV/(C_1(q,t) lam^2) 0.148; nu=576
+INFO q=0.25 lam=2^-7/2: TV/lam^2 min 1.6371 max 1.6371; max TV/(C_1(q,t) lam^2) 0.159; nu=816
+INFO q=0.25 lam=2^-8/2: TV/lam^2 min 1.6372 max 1.6372; max TV/(C_1(q,t) lam^2) 0.167; nu=1152
+INFO q=0.25 lam=2^-9/2: TV/lam^2 min 1.6324 max 1.6324; max TV/(C_1(q,t) lam^2) 0.173; nu=1632
+INFO q=0.25 lam=2^-10/2: TV/lam^2 min 1.6286 max 1.6286; max TV/(C_1(q,t) lam^2) 0.177; nu=2304
+INFO q=0.25 lam=2^-11/2: TV/lam^2 min 1.6252 max 1.6252; max TV/(C_1(q,t) lam^2) 0.18; nu=3264
+INFO q=0.25 lam=2^-12/2: TV/lam^2 min 1.623 max 1.623; max TV/(C_1(q,t) lam^2) 0.182; nu=4608
+INFO q=0.25 lam=2^-13/2: TV/lam^2 min 1.6216 max 1.6216; max TV/(C_1(q,t) lam^2) 0.184; nu=6528
+INFO q=0.25 lam=2^-14/2: TV/lam^2 min 1.6209 max 1.6209; max TV/(C_1(q,t) lam^2) 0.185; nu=9216
+INFO q=0.25 lam=2^-15/2: TV/lam^2 min 1.6204 max 1.6204; max TV/(C_1(q,t) lam^2) 0.186; nu=13044
+INFO q=0.25 lam=2^-16/2: TV/lam^2 min 1.6201 max 1.6201; max TV/(C_1(q,t) lam^2) 0.186; nu=18432
+INFO q=0.25 lam=2^-17/2: TV/lam^2 min 1.62 max 1.62; max TV/(C_1(q,t) lam^2) 0.187; nu=26076
+INFO q=0.25 lam=2^-18/2: TV/lam^2 min 1.6199 max 1.6199; max TV/(C_1(q,t) lam^2) 0.187; nu=36864
+INFO q=0.25 lam=2^-19/2: TV/lam^2 min 1.6199 max 1.6199; max TV/(C_1(q,t) lam^2) 0.187; nu=52140
+INFO q=0.25 lam=2^-20/2: TV/lam^2 min 1.6198 max 1.6198; max TV/(C_1(q,t) lam^2) 0.187; nu=73728
+INFO q=1.0 lam=2^-0/2: TV/lam^2 min 0.63365 max 0.63365; max TV/(C_1(q,t) lam^2) 0.00167; nu=384
+INFO q=1.0 lam=2^-1/2: TV/lam^2 min 1.0401 max 1.0401; max TV/(C_1(q,t) lam^2) 0.00496; nu=384
+INFO q=1.0 lam=2^-2/2: TV/lam^2 min 1.5941 max 1.5941; max TV/(C_1(q,t) lam^2) 0.0129; nu=384
+INFO q=1.0 lam=2^-3/2: TV/lam^2 min 2.2643 max 2.2643; max TV/(C_1(q,t) lam^2) 0.0287; nu=384
+INFO q=1.0 lam=2^-4/2: TV/lam^2 min 2.9429 max 2.9429; max TV/(C_1(q,t) lam^2) 0.0531; nu=384
+INFO q=1.0 lam=2^-5/2: TV/lam^2 min 3.398 max 3.398; max TV/(C_1(q,t) lam^2) 0.0802; nu=408
+INFO q=1.0 lam=2^-6/2: TV/lam^2 min 3.4396 max 3.4396; max TV/(C_1(q,t) lam^2) 0.099; nu=576
+INFO q=1.0 lam=2^-7/2: TV/lam^2 min 3.3934 max 3.3934; max TV/(C_1(q,t) lam^2) 0.113; nu=816
+INFO q=1.0 lam=2^-8/2: TV/lam^2 min 3.358 max 3.358; max TV/(C_1(q,t) lam^2) 0.124; nu=1152
+INFO q=1.0 lam=2^-9/2: TV/lam^2 min 3.329 max 3.329; max TV/(C_1(q,t) lam^2) 0.132; nu=1632
+INFO q=1.0 lam=2^-10/2: TV/lam^2 min 3.3088 max 3.3088; max TV/(C_1(q,t) lam^2) 0.138; nu=2304
+INFO q=1.0 lam=2^-11/2: TV/lam^2 min 3.2926 max 3.2926; max TV/(C_1(q,t) lam^2) 0.142; nu=3264
+INFO q=1.0 lam=2^-12/2: TV/lam^2 min 3.2828 max 3.2828; max TV/(C_1(q,t) lam^2) 0.146; nu=4608
+INFO q=1.0 lam=2^-13/2: TV/lam^2 min 3.2768 max 3.2768; max TV/(C_1(q,t) lam^2) 0.148; nu=6528
+INFO q=1.0 lam=2^-14/2: TV/lam^2 min 3.2735 max 3.2735; max TV/(C_1(q,t) lam^2) 0.15; nu=9216
+INFO q=1.0 lam=2^-15/2: TV/lam^2 min 3.2716 max 3.2716; max TV/(C_1(q,t) lam^2) 0.151; nu=13044
+INFO q=1.0 lam=2^-16/2: TV/lam^2 min 3.2705 max 3.2705; max TV/(C_1(q,t) lam^2) 0.152; nu=18432
+INFO q=1.0 lam=2^-17/2: TV/lam^2 min 3.2699 max 3.2699; max TV/(C_1(q,t) lam^2) 0.153; nu=26076
+INFO q=1.0 lam=2^-18/2: TV/lam^2 min 3.2696 max 3.2696; max TV/(C_1(q,t) lam^2) 0.153; nu=36864
+INFO q=1.0 lam=2^-19/2: TV/lam^2 min 3.2694 max 3.2694; max TV/(C_1(q,t) lam^2) 0.154; nu=52140
+INFO q=1.0 lam=2^-20/2: TV/lam^2 min 3.2693 max 3.2693; max TV/(C_1(q,t) lam^2) 0.154; nu=73728
+INFO q=4.0 lam=2^-0/2: TV/lam^2 min 0.8113 max 0.8113; max TV/(C_1(q,t) lam^2) 0.00015; nu=384
+INFO q=4.0 lam=2^-1/2: TV/lam^2 min 1.4756 max 1.4756; max TV/(C_1(q,t) lam^2) 0.000529; nu=384
+INFO q=4.0 lam=2^-2/2: TV/lam^2 min 2.5632 max 2.5632; max TV/(C_1(q,t) lam^2) 0.00174; nu=384
+INFO q=4.0 lam=2^-3/2: TV/lam^2 min 4.1487 max 4.1487; max TV/(C_1(q,t) lam^2) 0.00511; nu=384
+INFO q=4.0 lam=2^-4/2: TV/lam^2 min 5.9759 max 5.9759; max TV/(C_1(q,t) lam^2) 0.0125; nu=384
+INFO q=4.0 lam=2^-5/2: TV/lam^2 min 7.0594 max 7.0594; max TV/(C_1(q,t) lam^2) 0.023; nu=408
+INFO q=4.0 lam=2^-6/2: TV/lam^2 min 7.0825 max 7.0825; max TV/(C_1(q,t) lam^2) 0.033; nu=576
+INFO q=4.0 lam=2^-7/2: TV/lam^2 min 7.6308 max 7.6308; max TV/(C_1(q,t) lam^2) 0.0465; nu=816
+INFO q=4.0 lam=2^-8/2: TV/lam^2 min 7.7029 max 7.7029; max TV/(C_1(q,t) lam^2) 0.0572; nu=1152
+INFO q=4.0 lam=2^-9/2: TV/lam^2 min 7.869 max 7.869; max TV/(C_1(q,t) lam^2) 0.0674; nu=1632
+INFO q=4.0 lam=2^-10/2: TV/lam^2 min 7.9841 max 7.9841; max TV/(C_1(q,t) lam^2) 0.0758; nu=2304
+INFO q=4.0 lam=2^-11/2: TV/lam^2 min 8.0228 max 8.0228; max TV/(C_1(q,t) lam^2) 0.0819; nu=3264
+INFO q=4.0 lam=2^-12/2: TV/lam^2 min 8.047 max 8.047; max TV/(C_1(q,t) lam^2) 0.0865; nu=4608
+INFO q=4.0 lam=2^-13/2: TV/lam^2 min 8.0546 max 8.0546; max TV/(C_1(q,t) lam^2) 0.0898; nu=6528
+INFO q=4.0 lam=2^-14/2: TV/lam^2 min 8.0606 max 8.0606; max TV/(C_1(q,t) lam^2) 0.0922; nu=9216
+INFO q=4.0 lam=2^-15/2: TV/lam^2 min 8.0634 max 8.0634; max TV/(C_1(q,t) lam^2) 0.094; nu=13044
+INFO q=4.0 lam=2^-16/2: TV/lam^2 min 8.0638 max 8.0638; max TV/(C_1(q,t) lam^2) 0.0952; nu=18432
+INFO q=4.0 lam=2^-17/2: TV/lam^2 min 8.0637 max 8.0637; max TV/(C_1(q,t) lam^2) 0.0961; nu=26076
+INFO q=4.0 lam=2^-18/2: TV/lam^2 min 8.0637 max 8.0637; max TV/(C_1(q,t) lam^2) 0.0967; nu=36864
+INFO q=4.0 lam=2^-19/2: TV/lam^2 min 8.0637 max 8.0637; max TV/(C_1(q,t) lam^2) 0.0972; nu=52140
+INFO q=4.0 lam=2^-20/2: TV/lam^2 min 8.0637 max 8.0637; max TV/(C_1(q,t) lam^2) 0.0975; nu=73728
+INFO q=9.0 lam=2^-0/2: TV/lam^2 min 0.91691 max 0.91691; max TV/(C_1(q,t) lam^2) 6.11e-06; nu=1020
+INFO q=9.0 lam=2^-1/2: TV/lam^2 min 1.7623 max 1.7623; max TV/(C_1(q,t) lam^2) 2.32e-05; nu=1020
+INFO q=9.0 lam=2^-2/2: TV/lam^2 min 3.3117 max 3.3117; max TV/(C_1(q,t) lam^2) 8.49e-05; nu=1020
+INFO q=9.0 lam=2^-3/2: TV/lam^2 min 5.9519 max 5.9519; max TV/(C_1(q,t) lam^2) 0.00029; nu=1020
+INFO q=9.0 lam=2^-4/2: TV/lam^2 min 9.5699 max 9.5699; max TV/(C_1(q,t) lam^2) 0.000854; nu=1020
+INFO q=9.0 lam=2^-5/2: TV/lam^2 min 11.889 max 11.889; max TV/(C_1(q,t) lam^2) 0.00182; nu=1020
+INFO q=9.0 lam=2^-6/2: TV/lam^2 min 16.072 max 16.072; max TV/(C_1(q,t) lam^2) 0.00391; nu=1020
+INFO q=9.0 lam=2^-7/2: TV/lam^2 min 22.317 max 22.317; max TV/(C_1(q,t) lam^2) 0.00786; nu=1020
+INFO q=9.0 lam=2^-8/2: TV/lam^2 min 27.822 max 27.822; max TV/(C_1(q,t) lam^2) 0.013; nu=1152
+INFO q=9.0 lam=2^-9/2: TV/lam^2 min 33.427 max 33.427; max TV/(C_1(q,t) lam^2) 0.0193; nu=1632
+INFO q=9.0 lam=2^-10/2: TV/lam^2 min 38.35 max 38.35; max TV/(C_1(q,t) lam^2) 0.0257; nu=2304
+INFO q=9.0 lam=2^-11/2: TV/lam^2 min 45.383 max 45.383; max TV/(C_1(q,t) lam^2) 0.0339; nu=3264
+INFO q=9.0 lam=2^-12/2: TV/lam^2 min 53.007 max 53.007; max TV/(C_1(q,t) lam^2) 0.0428; nu=4608
+INFO q=9.0 lam=2^-13/2: TV/lam^2 min 60.25 max 60.25; max TV/(C_1(q,t) lam^2) 0.0514; nu=6528
+INFO q=9.0 lam=2^-14/2: TV/lam^2 min 66.659 max 66.659; max TV/(C_1(q,t) lam^2) 0.0591; nu=9216
+INFO q=9.0 lam=2^-15/2: TV/lam^2 min 72.112 max 72.112; max TV/(C_1(q,t) lam^2) 0.0657; nu=13044
+INFO q=9.0 lam=2^-16/2: TV/lam^2 min 75.906 max 75.906; max TV/(C_1(q,t) lam^2) 0.0705; nu=18432
+INFO q=9.0 lam=2^-17/2: TV/lam^2 min 78.446 max 78.446; max TV/(C_1(q,t) lam^2) 0.0739; nu=26076
+INFO q=9.0 lam=2^-18/2: TV/lam^2 min 80.022 max 80.022; max TV/(C_1(q,t) lam^2) 0.0761; nu=36864
+INFO q=9.0 lam=2^-19/2: TV/lam^2 min 80.945 max 80.945; max TV/(C_1(q,t) lam^2) 0.0775; nu=52140
+INFO q=9.0 lam=2^-20/2: TV/lam^2 min 81.441 max 81.441; max TV/(C_1(q,t) lam^2) 0.0784; nu=73728
+INFO q=9.8 lam=2^-0/2: TV/lam^2 min 0.94663 max 0.94663; max TV/(C_1(q,t) lam^2) 4.22e-07; nu=13548
+INFO q=9.8 lam=2^-1/2: TV/lam^2 min 1.8455 max 1.8455; max TV/(C_1(q,t) lam^2) 1.62e-06; nu=13548
+INFO q=9.8 lam=2^-2/2: TV/lam^2 min 3.5416 max 3.5416; max TV/(C_1(q,t) lam^2) 6.09e-06; nu=13548
+INFO q=9.8 lam=2^-3/2: TV/lam^2 min 6.5648 max 6.5648; max TV/(C_1(q,t) lam^2) 2.16e-05; nu=13548
+INFO q=9.8 lam=2^-4/2: TV/lam^2 min 10.983 max 10.983; max TV/(C_1(q,t) lam^2) 6.63e-05; nu=13548
+INFO q=9.8 lam=2^-5/2: TV/lam^2 min 14.068 max 14.068; max TV/(C_1(q,t) lam^2) 0.000147; nu=13548
+INFO q=9.8 lam=2^-6/2: TV/lam^2 min 22.539 max 22.539; max TV/(C_1(q,t) lam^2) 0.000379; nu=13548
+INFO q=9.8 lam=2^-7/2: TV/lam^2 min 30.074 max 30.074; max TV/(C_1(q,t) lam^2) 0.00074; nu=13548
+INFO q=9.8 lam=2^-8/2: TV/lam^2 min 43.248 max 43.248; max TV/(C_1(q,t) lam^2) 0.00143; nu=13548
+INFO q=9.8 lam=2^-9/2: TV/lam^2 min 55.421 max 55.421; max TV/(C_1(q,t) lam^2) 0.00227; nu=13548
+INFO q=9.8 lam=2^-10/2: TV/lam^2 min 67.041 max 67.041; max TV/(C_1(q,t) lam^2) 0.00322; nu=13548
+INFO q=9.8 lam=2^-11/2: TV/lam^2 min 90.613 max 90.613; max TV/(C_1(q,t) lam^2) 0.00487; nu=13548
+INFO q=9.8 lam=2^-12/2: TV/lam^2 min 120.06 max 120.06; max TV/(C_1(q,t) lam^2) 0.00699; nu=13548
+INFO q=9.8 lam=2^-13/2: TV/lam^2 min 161.72 max 161.72; max TV/(C_1(q,t) lam^2) 0.00997; nu=13548
+INFO q=9.8 lam=2^-14/2: TV/lam^2 min 211.74 max 211.74; max TV/(C_1(q,t) lam^2) 0.0136; nu=13548
+INFO q=9.8 lam=2^-15/2: TV/lam^2 min 275.91 max 275.91; max TV/(C_1(q,t) lam^2) 0.0182; nu=13548
+INFO q=9.8 lam=2^-16/2: TV/lam^2 min 354.04 max 354.04; max TV/(C_1(q,t) lam^2) 0.0239; nu=18432
+INFO q=9.8 lam=2^-17/2: TV/lam^2 min 445.56 max 445.56; max TV/(C_1(q,t) lam^2) 0.0305; nu=26076
+INFO q=9.8 lam=2^-18/2: TV/lam^2 min 547.94 max 547.94; max TV/(C_1(q,t) lam^2) 0.0378; nu=36864
+INFO q=9.8 lam=2^-19/2: TV/lam^2 min 656.41 max 656.41; max TV/(C_1(q,t) lam^2) 0.0457; nu=52140
+INFO q=9.8 lam=2^-20/2: TV/lam^2 min 765.7 max 765.7; max TV/(C_1(q,t) lam^2) 0.0535; nu=73728
+PASS K1 e <= t m at every node | max e/(t m) = 1.000000
+PASS K1 e <= t lam (4 f_max - 2) at every node | max ratio = 0.9421
+PASS K1 |dA| <= e/(m(m-e)) at every node | max ratio = 1.000000
+PASS K1 A >= 1/(m+e) at every node | max ratio = 1.000000000000
+PASS K3 theta grid vs closed form for V_lam - V_0 | max rel diff 1.03e-06
+PASS K4 V_0, W, Vhat vs closed forms | max rel diff 4.44e-16
+PASS K5 TV <= B <= C_1(q,t) lam^2 <= C_1(q) lam^2 in all 840 cases | failures []
+PASS K6 doubling panels and theta grid changes TV < 1e-3 | max rel change 3.85e-06
+INFO K7 q=0.25 lam=0.125: TV/lam^2 = 1.64447 (referee R8: 1.644)
+INFO K7 q=0.25 lam=0.015625: TV/lam^2 = 1.62300 (referee R8: 1.623)
+INFO K7 q=1.0 lam=0.125: TV/lam^2 = 3.43957 (referee R8: 3.44)
+INFO K7 q=1.0 lam=0.015625: TV/lam^2 = 3.28282 (referee R8: 3.283)
+INFO K7 q=4.0 lam=0.125: TV/lam^2 = 7.08253 (referee R8: 7.08)
+INFO K7 q=4.0 lam=0.015625: TV/lam^2 = 8.04702 (referee R8: 8.05)
+PASS K7 agreement with the referee's R8 values (1 percent) | max rel diff 3.70e-04
+SUMMARY pass=11 failed=0
