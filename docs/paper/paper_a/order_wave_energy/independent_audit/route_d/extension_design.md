@@ -1,11 +1,15 @@
-# Route D, first measurement: extension to N = 512. DRAFT
+# Route D, first measurement: extension to N = 512
 
-2026-11-25. **Draft. Not frozen. Not implemented. Not run.** It becomes a
-design only when the user approves it; freezing is then a separate commit.
-Generator coordinates throughout: a diagnostic of the background order law,
-not an observer and not a wave test. AI-written; not reviewed. It adds one
-size to the measurement of [design.md](design.md) and changes nothing in
-its estimator, which was checked independently
+2026-11-25. **Frozen with the commit that adds this file under this name.**
+The user approved freezing and running the draft in this session
+("동결하고 실행"); the draft is in the history at `1c8fed6` and its text is
+unchanged apart from this paragraph and Section 6. Implemented in
+[drift_extension.py](drift_extension.py) and
+[analyse_extension.py](analyse_extension.py). Generator coordinates
+throughout: a diagnostic of the background order law, not an observer and
+not a wave test. AI-written; this design was not reviewed before the
+freeze. It adds one size to the measurement of [design.md](design.md) and
+changes nothing in its estimator, which was checked independently
 ([checker_report.md](checker_report.md)).
 
 ## 1. Why
@@ -95,3 +99,19 @@ folder beside the existing one, which is not modified.
 The estimate uses the 29 ms per sweep seen at N = 512 under the same load
 in Route A. A run that would take more than twice the estimate is stopped
 and reported, not shortened.
+
+## 6. What was seen before this freeze
+
+Everything in the Route A and Route D records, and one development check
+of the new code:
+
+- the schedule at N = 512 by arithmetic: lags of 1, 2, 4, 8, 16, 32, 64 and
+  256 times N, last stored state at `N^2`;
+- fit recovery at N = 512 on three configurations: 0.999, order matrices
+  identical, every fit succeeded;
+- 3+1, to see that the code path runs: two orders at N = 40 with the
+  extension schedule, analysed together with the existing records. Printed:
+  32 state pairs, the list of sizes, 5 seconds per order. No displacement,
+  residual or summary value from that run was printed or read.
+
+No chain at N = 512 with stored states has been run.
