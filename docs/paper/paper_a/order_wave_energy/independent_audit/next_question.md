@@ -27,7 +27,10 @@ written out in every step. Its index count, its tip estimates and the
 expansion behind (11) are still at outline level, and the referee reports
 supply them. The numerical work on U1 and U2 is stopped, with its readings
 left as recorded ([STATUS_AND_LEVERS.md](STATUS_AND_LEVERS.md) Section 7).
-Question Q is unchanged.
+Later the same day the audit's corrections to the lower bound were written
+into [../quantized_order_bound_r2.md](../quantized_order_bound_r2.md) and
+reviewed ([AUDIT.md](AUDIT.md) Section 11). Its one-point bound is still
+imported. Question Q is unchanged.
 
 **Question Q.** Is `alpha_low = alpha_high = 2`? Equivalently: can the
 necessary condition be raised from 4/3 to 2, or is there an order-only test

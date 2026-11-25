@@ -114,7 +114,34 @@ check(
     violations["first"] == 0 and violations["second"] == 0,
     f"{tested} pairs, violations {violations['first']}, {violations['second']}",
 )
-check("Lemma 2.4: a wave relation has Delta T >= 0", violations["time"] == 0)
+
+#    Lemma 2.4 needs Delta v of both signs (the grid above stays near the
+#    null cone, where Delta v > 0, so the check there cannot fail).
+#    Added after review (finding M9).
+related = 0
+for q in (0.25, 1.0, 9.0):
+    lam = 1 / 8
+    s = 2 * lam * math.sqrt(q)
+    t = s / math.sqrt(1 + s * s)
+    for u1, u2 in ((-0.5, 0.5), (0.1, 0.1 + 1e-4), (-0.45, -0.4)):
+        b = b_exact(u1, u2, q)
+        e = t * abs(oscillatory(u1, u2, lam, q))
+        for psi in np.linspace(0, math.pi, 5):
+            cs, sn = math.cos(psi), math.sin(psi)
+            rot = np.array([[cs, -sn], [sn, cs]])
+            inv = np.linalg.inv(b * np.eye(2) + e * rot @ np.diag([1.0, -1.0]) @ rot.T)
+            for dv in np.linspace(-1.0, 1.0, 81):
+                for r in (0.0, 1e-3, 0.1, 1.0):
+                    for ang in (0.0, 1.0, 2.5):
+                        dy = r * np.array([math.cos(ang), math.sin(ang)])
+                        if 2 * dv >= dy @ inv @ dy:
+                            related += 1
+                            violations["time"] += (b + dv) / math.sqrt(2) < 0 or dv < 0
+check(
+    "Lemma 2.4: a wave relation has Delta v >= 0 and Delta T >= 0",
+    violations["time"] == 0 and related > 0,
+    f"{related} related pairs among Delta v in [-1, 1]",
+)
 
 # 4. Lemmas 4.1 and 4.2 on the cyclic triangle (uniform densities, m = 3,
 #    Lambda = m + 1 = 4). At tau = -eps (1,1,1), p = 9/2 eps^2 - 4 eps^3 and,

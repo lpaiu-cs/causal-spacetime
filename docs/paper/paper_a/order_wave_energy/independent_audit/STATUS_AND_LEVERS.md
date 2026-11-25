@@ -368,8 +368,9 @@ session that started this one).
     reports supplying them: the index count, the tip estimates, the
     expansion behind (11), and the certificate, which is corrected by hand,
     not re-certified.
-  - The text of argument 1 (the lower end 4/3) has not been revised since
-    the audit.
+  - The text of argument 1 (the lower end 4/3) had not been revised since
+    the audit. That was done later the same day; see the end of this
+    section.
   - So Section 1's sentence "The fully written upper bound is 3" should now
     read as follows. The upper 2 has its statistic and wave-side chain
     written, and the rest of it is at the same outline level as the other
@@ -395,3 +396,33 @@ session that started this one).
   - D1.
 - Routes B, the rigidity theorem (L4) and the lower bound remain open
   analytic questions. Stopping the numerics does not close them.
+
+**Argument 1 written out (later on 2026-11-26, at the user's request).**
+- The audit's items for the lower bound are now in the text, in
+  [../quantized_order_bound_r2.md](../quantized_order_bound_r2.md):
+  - the constant link;
+  - the sandwich, with its hypothesis and the common orientation;
+  - the smoothing lemma, with its constant;
+  - the Hellinger convention;
+  - `K = 1`;
+  - (8) for every N and `lambda`.
+- **Review.** A fresh-context AI referee
+  ([argument1_revision/review.md](argument1_revision/review.md)) found no
+  false step in the mathematics. It graded the revision ERROR for two
+  false statements about what the document contained:
+  - a claimed step that was not written;
+  - an incomplete change map.
+
+  With those fixed, its grade is CORRECT WITH MINOR FIXES. All findings
+  are applied. See also [AUDIT.md](AUDIT.md) Section 11.
+- **So both ends of the bracket now have their audited corrections in the
+  text.** Still imported at the lower end:
+  - the model;
+  - the background relation;
+  - the wave's causal relation;
+  - the one-point bound. The referee trusts this one least: every
+    `alpha > 1` depends on it, and it is confirmed only numerically.
+
+  At the upper end, the steps listed above are still at outline level.
+- Argument 2 (the earlier upper bound 3) is not revised. No proof or
+  bracket moved.

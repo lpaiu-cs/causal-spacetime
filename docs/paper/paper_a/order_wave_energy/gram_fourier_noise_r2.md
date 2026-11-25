@@ -794,7 +794,10 @@ This algebraic control is not a noise-rate or finite-data-power test.
   not newly written out: `quantized_order_bound.md` has not been revised
   since the audit, so the audit's items for argument 1 are still missing
   from its text. Among them is linking the constants, without which the
-  claim fails at `L = 1`.
+  claim fails at `L = 1`. (Pointer added later on 2026-11-26: those items
+  are now written into
+  [quantized_order_bound_r2.md](quantized_order_bound_r2.md); see
+  AUDIT.md Section 11.)
 - **What it does not change.**
   - All statements are asymptotic. The constants put any finite-N test out
     of reach (AUDIT.md Section 5).

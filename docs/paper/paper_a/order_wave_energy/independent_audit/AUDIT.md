@@ -352,4 +352,58 @@ to 9 above are unchanged.
   - The source documents of arguments 1 and 2 have not been revised. Their
     items in Section 3 are still missing from their text, including the
     constant link of argument 1, without which its claim fails at `L = 1`.
+    (Later the same day, argument 1 was revised: see Section 11.)
+  - The review is AI-level. No human has checked it.
+
+## 11. Addendum, 2026-11-26: argument 1's corrections written out
+
+Added at the user's request, after Section 10. Sections 1 to 10 are
+otherwise unchanged.
+
+- **What was done.** Section 3's items 1 to 6 for argument 1 were carried
+  into a revision,
+  [quantized_order_bound_r2.md](../quantized_order_bound_r2.md). The
+  frozen original is not edited; its Sections 1 to 5 are byte-identical to
+  the `5dda03d` freeze.
+  - The constant link: `h >= c0 delta / (L - 1 - sqrt 3)` with
+    `c0 = 2 sqrt 2 C_E` and a fixed `L > 1 + sqrt 3`.
+  - The sandwich (4) is proved for every ordered pair, and (3) is stated
+    on the crossing set.
+  - `T` is shown to be a common time function, which fixes the orientation
+    of an edge.
+  - The smoothing lemma is written as Lemmas 4.1 to 4.3, with the constant
+    `Lambda = (m+1) prod R + max_j R'_j prod_(l != j) R_l`.
+  - The Hellinger convention is fixed.
+  - `K = 1` is included, and (8) is shown for every `N >= 1` and
+    `0 < lambda <= 1`.
+  - The strict-separation sentence now names its dependency on
+    `coordinate_oracle_barrier.md`.
+- **Review.** A fresh-context AI referee:
+  [argument1_revision/review.md](argument1_revision/review.md).
+  - **Verdict: ERROR (E1, E2)**, both in the revision's account of itself,
+    not in its mathematics. No false step was found in Sections 2 to 5,
+    and no inequality changes.
+    - E1: a sentence claimed that the step from (8) to (1) was written; it
+      was not.
+    - E2: the change map was incomplete.
+  - With these fixed, the referee's grade is CORRECT WITH MINOR FIXES
+    (M1 to M12).
+  - All findings were applied; r2 Section 9 lists them.
+  - Deterministic checks:
+    [argument1_revision/checks.py](argument1_revision/checks.py) and the
+    referee's [ref_checks.py](argument1_revision/ref_checks.py). No order
+    was sampled.
+- **What this does not change.**
+  - The bracket `4/3 <= alpha_low <= alpha_high <= 2` is this audit's
+    statement (Section 2). It is not strengthened.
+  - Still imported, not written in r2:
+    - the model definitions;
+    - the background relation (2) with its `a^4` density;
+    - the exact causal relation of the wave;
+    - the one-point bound `TV(mu_lam, mu_0) <= C_1 lambda^2`.
+
+    The referee trusts this last one least: every `alpha > 1` depends on
+    it, and it was confirmed only numerically, at three values of q.
+  - Argument 2's source document has not been revised. Its items in
+    Section 3 are still missing from its text.
   - The review is AI-level. No human has checked it.

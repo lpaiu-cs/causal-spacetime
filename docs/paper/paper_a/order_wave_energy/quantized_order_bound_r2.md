@@ -2,8 +2,10 @@
 
 2026-11-26. **Revision of [quantized_order_bound.md](quantized_order_bound.md).**
 - **The original is unchanged.** Its Sections 1 to 5 (the proof) were
-  frozen at `5dda03d` and have not changed since. Later commits added
-  records only. SHA-256 of the original as it stands:
+  frozen at `5dda03d` and are byte-identical to that freeze. The later
+  commits `ac2cd7d` and `9205b3a` added its Section 7, edited one preamble
+  sentence, and replaced the bracket paragraph of its Section 6. SHA-256 of
+  the original as it stands:
   `39217a16c9770ff9b56b326984262b1424f4aaa4e1a2bd934238d658bed0564b`.
 - **What this revision does.** It carries the independent audit's findings
   for argument 1 into the text ([AUDIT.md](independent_audit/AUDIT.md)
@@ -22,8 +24,10 @@
   Section 0 maps every change. The remaining text is the original's.
 - **Authorship and review.** AI-written. The original derivation is by one
   AI author. It was audited by an AI referee, whose re-derivations this
-  revision follows and cites. This revision is reviewed in
-  [independent_audit/argument1_revision/](independent_audit/argument1_revision/).
+  revision follows and cites. A second AI referee, in a fresh context,
+  reviewed this revision:
+  [independent_audit/argument1_revision/review.md](independent_audit/argument1_revision/review.md).
+  Section 9 lists the corrections made after it.
 - **What it is not.** It is not a human-reviewed or published theorem. It
   is asymptotic only. It covers one family: the exact circular vacuum plane
   wave with fixed `0 < q < pi^2` and fixed-N i.i.d. physical-volume
@@ -76,13 +80,19 @@ that exponent from 4 to 3, still leaving a gap.
 | where | change | audit item / finding |
 |---|---|---|
 | preamble | replaced. The original's status sentence is summarised under "Status". The statement is extended to `K >= 1` and given in the quantitative form (8) for all `N, lambda`. The strict-separation sentence names its dependency on `coordinate_oracle_barrier.md` | items 5, 6; F5, F8, F9 |
-| Section 1 | `f_max` and the phase-uniformity stated; the one-point bound's source cited | notation |
-| Section 2 | rewritten: Lemma 2.1 (operator bound with `C_E`), Lemma 2.2 (the sandwich (4) with `c0 = 2 sqrt 2 C_E`, proved for every ordered pair), Corollary 2.3 ((3) with its hypothesis, the crossing set), Lemma 2.4 (`T` is a common time function) | items 1, 2; F1, F3 |
-| Section 3 | `L` fixed with `L > 1 + sqrt 3`, and `h >= h_min = c0 delta / (L - 1 - sqrt 3)`; the non-edge argument written; the orientation argument written via Lemma 2.4; the uniform bound and the tree count written with their constants | items 1, 2; F2, F3 |
+| Section 1 | `rho_min`, `rho_max`, `rho'_max` and `f_max` defined; the phase-uniformity stated; the one-point constant renamed `C_1` and its source cited | notation |
+| Section 2 | rewritten: Lemma 2.1 (operator bound with `C_E`), Lemma 2.2 (the sandwich (4) with `c0 = 2 sqrt 2 C_E`, proved for every ordered pair), Corollary 2.3 ((3) with its hypothesis, the crossing set), Lemma 2.4 (`T` is a common time function); `b` is the signed `Delta m` | items 1, 2; F1, F3 |
+| Section 3 | `L` fixed with `L > 1 + sqrt 3`, and `h >= h_min = c0 delta / (L - 1 - sqrt 3)`; the non-edge argument written, with the explicit `(1 + sqrt 3) h` shift replacing "the null-margin functions are uniformly Lipschitz"; the orientation argument written via Lemma 2.4 | items 1, 2; F2, F3 |
+| Section 3 | the cubes stated to be half-open on one aligned grid, so that T-intervals coincide or are disjoint (the orientation argument needs this) | item 2; F3 |
+| Section 3 | the discard rule changed from "time orientation not fixed throughout its two cubes" to "every edge between cubes with the same T-interval", which contains it | item 2; F3 |
+| Section 3 | the boundary-layer reason rewritten (cubes within `2h` of the boundary); the conditional density bounds made explicit; the uniform bound and the tree count written with their constants | item 1 |
 | Section 4 | rewritten: Lemma 4.1 (Lipschitz gradient, with the constant `Lambda`), Lemma 4.2 (`sqrt p` Lipschitz across zeros), Lemma 4.3 (component Hellinger bound). The lemma's Lipschitz constant is renamed `Lambda` so that it does not clash with the edge constant `L` | item 3; F4 |
 | Section 5 | the Hellinger convention stated; "components with an edge <= uncertain pairs" stated; (7) with its range of `h`; (8) shown for every `N >= 1`, `0 < lambda <= 1`; the chosen `h` is not the minimiser; `K = 1` | items 4, 5; F5, F6, F9 |
-| Sections 6, 7 | unchanged original text (see the note at their head) | |
+| Section 5 | the original's "Under (1), h tends to zero ... This proves (1)" replaced by the paragraphs "(1) follows from (8)" and "(1) is exactly what (7) delivers"; a new "Exponents" paragraph with the formula for K and a table of examples | item 5; F5, F9 |
+| Sections 6, 7 | the original's text, unchanged apart from an italic note at their head | |
 | Section 8 | new: status, scope, constants, and what remains | F7, F8 |
+| Section 9 | new: the review, and the corrections made after it | review |
+| (after review) preamble, Sections 0, 2, 4, 5, 6, 8 | the corrections of Section 9 | review |
 
 Deterministic checks of the new constants:
 [independent_audit/argument1_revision/checks.py](independent_audit/argument1_revision/checks.py).
@@ -122,10 +132,11 @@ argument **both models use exactly the same reference product measure**.
 ## 2. A uniform causal-boundary sandwich, including short segments
 
 The exact wave relation is imported from the coordinate-oracle derivation
-(re-derived in the referee report, Section 3.1). For `u1 < u2` put
-`b = m(u1,u2) > 0`, `Delta v = v2 - v1`, `Delta y = y2 - y1` and
-`E = E_lambda(u1,u2)`, a symmetric trace-free 2x2 matrix with eigenvalues
-`+/- e`. Then
+(re-derived in the referee report, Section 3.1). Put
+`b = m(u1,u2) = m(u2) - m(u1)`, the signed `Delta m`, so that `b > 0`
+exactly when `u1 < u2`. Put `Delta v = v2 - v1`, `Delta y = y2 - y1`, and,
+for `u1 < u2`, `E = E_lambda(u1,u2)`, a symmetric trace-free 2x2 matrix
+with eigenvalues `+/- e`. Then
 
 - `X <_lam Y` iff `2 Delta v >= Delta y^T (bI+E)^-1 Delta y`, when `u1 < u2`;
 - `X <_lam Y` iff `Delta y = 0` and `Delta v >= 0`, when `u1 = u2`;
@@ -191,10 +202,14 @@ definite and `|Delta y|^2/(b+e) <= Q <= |Delta y|^2/(b-e)`.
 
 The reverse orientation follows by exchanging the endpoints. []
 
-The smallest valid `c0` is the supremum of `|g| / delta` on the wave null
-cone. The referee measured it below `c0` (2.96, 7.16 and 36.6 against
-6.39, 18.1 and 132 at q = 0.25, 1 and 4). `c0` is a valid constant, not
-the sharp one.
+The smallest valid `c0` is the supremum of `|g| / delta` over wave-null
+pairs in D and `lambda` in `(0, 1]`.
+- The audit referee's sampled lower bounds of it lie below `c0`: 2.96, 7.16
+  and 36.6, against 6.39, 18.1 and 132 at q = 0.25, 1 and 4.
+- This revision's referee found `|g| <= 0.407 c0 delta` on the wave null
+  cone of its grid.
+
+`c0` is a valid constant, not the sharp one.
 
 **Corollary 2.3 (the original's (3), with its hypothesis).** Label the pair
 so that `Delta T >= 0`. On the **crossing set**, where the two relations
@@ -310,7 +325,8 @@ at most `L h`.
 
 This section writes the original's sketch as three lemmas. The proof of
 Lemma 4.1 is the referee's slicing argument (report, Section 3.5), written
-out here. The original's sketch reached the same constant structure.
+out here. The original gave the structure of this argument without a
+constant.
 
 **Lemma 4.1 (Lipschitz gradient).** Let `k >= 2`, and let
 `rho(s) = prod_i rho_i(s_i)` on `[0,1]^k`, with `0 <= rho_i <= R_i` and each
@@ -483,37 +499,52 @@ N^{K+1}h^K=\frac{N\delta}{\sqrt h}=(N^{3K+1}\delta^{2K})^{1/(2K+1)},
 \qquad Nh=(N\delta^2)^{1/(2K+1)},
 \]
 
-and `N^2 h^4 <= (N h)^3`, which is at most `N h` when `N h <= 1`. When
-`N h > 1`, (8) is trivial (see below). Substituting `delta = lambda^2`
-turns (7) into (8) whenever this h lies in (3a).
+and `N^2 h^4 <= (N h)^3` (since `h <= 1 <= N`), which is at most `N h`
+when `N h <= 1`. When `N h > 1`, the second term of (8) exceeds
+`C_K >= 1`, so (8) is trivial. Substituting `delta = lambda^2` turns (7)
+into (8) whenever this h lies in (3a).
 
 **(8) holds for every `N >= 1` and `0 < lambda <= 1`,** after enlarging
 `C_K` (finding F5). TV is at most 1, so it is enough that the right side
-of (8) is at least 1 whenever h leaves (3a).
-- **If `h > 1`,** then `N h > 1`, so the second term of (8) exceeds `C_K`.
-- **If `h < h_min = c1 delta`,** with `c1 = c0/(L - 1 - sqrt 3)`, then
-  `N^(2K) > c1^-(2K+1) delta^(1-2K)`. Hence
+of (8) is at least 1 whenever h leaves (3a). Since `N >= 1` and
+`delta <= 1`, `h <= 1` always holds, so only `h < h_min` needs care.
 
-  \[
-  N^{3K+1}\delta^{2K}>c_1^{-(2K+1)(3K+1)/(2K)}\,\delta^{-(2K+1)(K-1)/(2K)}
-  \ge c_1^{-(2K+1)(3K+1)/(2K)},
-  \]
+Suppose `h < h_min = c1 delta`, with `c1 = c0/(L - 1 - sqrt 3)`. Then
+`N^(2K) > c1^-(2K+1) delta^(1-2K)`. Hence
 
-  since `delta <= 1` and `K >= 1`. So the third term of (8) is at least
-  `C_K c1^-((3K+1)/(2K))`.
+\[
+N^{3K+1}\delta^{2K}>c_1^{-(2K+1)(3K+1)/(2K)}\,\delta^{-(2K+1)(K-1)/(2K)}
+\ge c_1^{-(2K+1)(3K+1)/(2K)},
+\]
 
-Taking `C_K >= max(1, c1^((3K+1)/(2K)))` together with the constants of (7)
-covers both cases.
+since `delta <= 1` and `K >= 1`. So the third term of (8) is at least
+`C_K c1^-((3K+1)/(2K))`. Taking `C_K >= max(1, c1^((3K+1)/(2K)))`,
+together with the constants of (7), covers this case.
+
+**(1) follows from (8).** Let `N >= 1` and `0 < lambda <= 1` vary so that
+`N^(3K+1) lambda^(4K) -> 0`.
+- The third term of (8) tends to zero.
+- Since `(N lambda^2)^(2K) = N^(2K) lambda^(4K) <= N^(3K+1) lambda^(4K)`,
+  also `N lambda^2 -> 0`.
+- `N lambda^4 <= N lambda^2`, so the second term tends to zero as well.
+
+So the right side of (8) tends to zero, and with it TV. This proves (1).
+
+**(1) is exactly what (7) delivers.** For every h,
+`(N^(K+1) h^K) (N delta / sqrt h)^(2K) = N^(3K+1) delta^(2K)`. So one of
+these two terms of (7) is at least a fixed positive constant times
+`(N^(3K+1) delta^(2K))^(1/(2K+1))`, and
+the right side of (7) can tend to zero, for any choice of h, only under
+(1).
 
 **This h is not the minimiser of (7).** It balances the tree term against
 the Hellinger term. When `N h` dominates, a smaller h gives a better rate:
-up to a factor 1840 on the referee's grid. This costs rate only. The
-condition under which the right side of (7), minimised over h, tends to
-zero is exactly (1) (referee report, Section 3.8, checks X1 to X4).
+up to a factor 1840 on the audit referee's grid. This costs rate only, not
+the condition (1).
 
 **K = 1.** Then `M = 0`, and components on good marks have one vertex, so
 `U = 0` and the last term of (7) is absent. (8) with `K = 1` reads
-`TV <= C_1 [N lambda^2 + (N lambda^4)^(1/3) + (N lambda)^(4/3)]`, which
+`TV <= C_K [N lambda^2 + (N lambda^4)^(1/3) + (N lambda)^(4/3)]`, which
 returns the earlier condition `N lambda -> 0`.
 
 **Exponents.** At `N = lambda^-alpha`, the third term of (8) decays with
@@ -533,11 +564,23 @@ These are necessary-resource bounds, not detection tests.
 
 ## 6. Core lemma check and what remains
 
-*Sections 6 and 7 are the original's text, unchanged. "This proof" in them
-means the frozen original at `5dda03d`, and the check they describe
-exercised the original's lemma. Lemma 4.1 here is covered by the referee's
-exact tests (report, Section 3.5) and by
-[checks.py](independent_audit/argument1_revision/checks.py).*
+*Sections 6 and 7 are the original's text, unchanged, and partly stale.*
+- *"This proof" in them means the frozen original at `5dda03d`. The check
+  they describe exercised the original's lemma.*
+- *Section 6's bracket sentence is the state on 2026-09-24. The current
+  statement is AUDIT.md Section 2's
+  `4/3 <= alpha_low <= alpha_high <= 2`.*
+- *"Sections 1-5 here" in Section 7 means the original's Sections 1 to 5.*
+- *How Lemma 4.1 here was tested:*
+  - *by the audit referee, with exact rationals for uniform densities up to
+    k = 5 (report, Section 3.5);*
+  - *by this revision's referee, with exact piecewise polynomials for
+    non-uniform densities at k = 3
+    ([ref_checks.py](independent_audit/argument1_revision/ref_checks.py),
+    R5);*
+  - *by the author's
+    [checks.py](independent_audit/argument1_revision/checks.py), only for
+    step (ii) at k = 2 and for Lemma 4.2's ratio on the uniform triangle.*
 
 Before running its small deterministic check, freeze this proof and
 `experiments/positive_control/order_wave_cluster_check.py` in Git.
@@ -616,31 +659,110 @@ not a retroactive change to that design or its frozen numerical predictions.
   - `K = 1`, and the remark that the chosen h is not the minimiser;
   - the strict separation's dependency.
 
-  Also written: the sandwich (4) for every ordered pair with an explicit
-  `c0`; the tree count with its constants; and the validity of (8) for
-  every `N >= 1` and `0 < lambda <= 1`.
+  Also written:
+  - the sandwich (4) for every ordered pair, with an explicit `c0`;
+  - the tree count with its constants;
+  - the validity of (8) for every `N >= 1` and `0 < lambda <= 1`;
+  - the step from (8) to (1);
+  - why (1) is exactly what (7) delivers (Section 5).
 - **What is imported or cited, not derived here:**
+  - the model itself: `P_{N,lambda}`, `P_{N,0}`, the effective background,
+    the diamond and its tips, and the unlabelled order
+    ([full_order_resolution_probe.md](full_order_resolution_probe.md));
+  - the background relation (2) and the `a^4` density in the `(T, z)`
+    chart, asserted in Section 1 and derived in the audit referee's report,
+    Section 3.1;
   - the exact causal relation of the wave in the Rosen chart, and the form
     of `E_lambda` (from `coordinate_oracle_barrier.md`, re-derived in the
-    referee report, Section 3.1);
-  - the one-point bound `TV(mu_lam, mu_0) <= C_1 lambda^2` (the domain-strip
-    bound, re-derived in the referee report, Section 3.3);
-  - that the vanishing condition of (7), minimised over h, is exactly (1)
-    (the referee's algebra, Section 3.8). The direction used here, that
-    (1) implies (8) tends to zero, is written above.
+    same report, Section 3.1);
+  - the one-point bound `TV(mu_lam, mu_0) <= C_1 lambda^2`, uniform in
+    phase and in `lambda <= 1`. This is the domain-strip bound, re-derived
+    in that report, Section 3.3. Every `alpha > 1` depends on it. This
+    revision's referee names it the step it trusts least, since it is
+    neither written here nor given a constant.
 - **The separation of protocols** in the preamble rests on `kappa(q) > 0`
   and the oracle-side statements of `coordinate_oracle_barrier.md`, which
   the audit did not audit. The order-only bound (1) does not depend on
   them.
-- **Constants (finding F7).** All statements are asymptotic.
-  - `C_K` contains `(K+1)^(K-1)` and `2^(M+1)`, with `M = K(K-1)/2`.
+- **Constants (finding F7).** (8) is stated for every N, but `C_K` is not
+  evaluated, and the bound has no content at reachable sizes.
+  - `C_K` contains the tree coefficient `(K+1)^(K-1)/(K+1)!`. Through
+    `sqrt(C_H)` it also contains `2^((M+1)/2)`, with `M = K(K-1)/2`: about
+    7.0e13 at K = 14.
   - `c0 = 2 sqrt 2 C_E` is 6.39, 18.1, 132 and 13532 at q = 0.25, 1, 4
     and 9.
-  - `alpha = 1.3` needs `K >= 14`, with a main-term exponent margin of at
-    most 0.0035.
-
-  No finite-N statement is made.
+  - `alpha = 1.3` needs `K >= 14`. At K = 14 the main-term exponent is
+    0.00345. It grows with K toward `(4 - 3 alpha)/2 = 0.05`: 0.0171 at
+    K = 20 and 0.0366 at K = 50. `C_K` grows with K too.
 - **What it does not change.** The bracket `4/3 <= alpha_low <= alpha_high <= 2`
   is the audit's statement (AUDIT.md Section 2), not something new here.
   Nothing is proved at `alpha = 4/3`. Whether 4/3 is the true boundary is
   open.
+
+## 9. Review and the corrections made after it
+
+[independent_audit/argument1_revision/review.md](independent_audit/argument1_revision/review.md).
+An AI referee in a fresh context was given this revision as committed at
+`a032f0e`, together with:
+- the frozen original;
+- AUDIT.md;
+- the audit referee's report;
+- `coordinate_oracle_barrier.md`;
+- the author's checks.
+
+It ran only short deterministic checks.
+
+**Verdict: ERROR (E1, E2)**, both in the revision's account of itself.
+Neither touches an inequality: the referee found no false step in
+Sections 2 to 5, and the proof of (8) does not change. With E1 and E2
+fixed, its grade is CORRECT WITH MINOR FIXES. In more detail:
+- AUDIT.md's items 1 to 6 for argument 1 are all addressed.
+- The SHA-256 recorded for the original is right.
+- The original's Sections 1 to 5 are byte-identical to the freeze.
+
+Corrected after the review, in the text above:
+
+- **E1.** Section 8 said that "(1) implies (8) tends to zero" was written.
+  It was not: the revision had dropped the original's "Under (1) ... This
+  proves (1)" without replacing it. Section 5 now has "(1) follows from
+  (8)". It also has "(1) is exactly what (7) delivers", which replaces a
+  citation.
+- **E2.** Section 0 did not list every change. The missing rows are added:
+  - the density constants and `C_1`;
+  - the half-open aligned grid, which the orientation argument needs;
+  - the changed discard rule;
+  - the boundary-layer reason;
+  - the removed "uniformly Lipschitz" sentence;
+  - the replaced closing sentences of Section 5;
+  - the Exponents paragraph.
+- **M1, M2, M10.** Section 8's constants are restated:
+  - the Hellinger factor is `2^((M+1)/2)`, not `2^(M+1)`;
+  - the tree coefficient is `(K+1)^(K-1)/(K+1)!`;
+  - the `alpha = 1.3` margin is 0.00345 at K = 14, growing with K;
+  - "no finite-N statement" becomes "`C_K` is not evaluated; no content at
+    reachable sizes".
+- **M3.** The `K = 1` display uses `C_K`, not `C_1`.
+- **M4.** The preamble says what the later commits to the original changed.
+- **M5.** The preamble points to the review record.
+- **M6.** Section 8 lists two further imports: the model definitions, and
+  the background relation (2) with its `a^4` density.
+- **M7.** `b` is the signed `Delta m` throughout Lemma 2.2.
+- **M8.** The sharp-constant remark says over which set the supremum runs,
+  and that the quoted values are sampled lower bounds.
+- **M9.** The note at the head of Section 6 says what each check of
+  Lemma 4.1 covers. "The same constant structure" now reads "without a
+  constant". The author's Lemma 2.4 check, which could not fail on its
+  grid, now ranges over negative `Delta v`.
+- **M11.** The same note says which sentences of Sections 6 and 7 are
+  stale.
+- **M12.** The vacuous case `h > 1` is removed: `h <= 1` always holds.
+
+**The step the referee trusts least** is the imported one-point bound
+`TV(mu_lam, mu_0) <= C_1 lambda^2`, uniform in phase and in `lambda <= 1`.
+Every `alpha > 1` depends on it.
+- This revision neither writes it nor gives its constant.
+- The referee confirmed it numerically only at three values of q and one
+  phase, with TV/lambda^2 from 1.6 to 8.1.
+
+Among the written steps, it trusts least Lemma 4.1 for general k. It
+re-derived the lemma in full but tested it numerically only at k = 3.
