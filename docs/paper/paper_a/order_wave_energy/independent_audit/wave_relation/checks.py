@@ -38,6 +38,17 @@ debug the script):
   W6  Chart. On random pairs, the x-chart relation with M and the y-chart
       relation with mI + E classify every pair the same way.
 
+Run history.
+  Run 1 (script at 3bb1512, output checks_output_run1.txt): 18 pass, 3 fail,
+  all in W1. The u step of the finite differences was lam/40 (1e-3 for the
+  background) whatever the distance to the pole of f at u = pi/(2 sqrt q).
+  At q = 9, lam = 1, u = 0.45 the nested stencil reached u = 0.55, past the
+  pole at 0.524 (|R|/scale = 1.06); near the pole elsewhere the truncation
+  error exceeded the tolerance. Diagnosis: halving the step cut the error
+  about 16-fold (fourth-order truncation), converging to the predicted values.
+  Run 2: the u step is min(lam/80, d/200) for the wave and min(1e-3, d/200)
+  for the background, d = distance from u to the pole. The rule was chosen
+  by trying d/100 and d/200 on the W1 cases. No tolerance was changed.
 Run: python checks.py
 """
 
@@ -154,7 +165,9 @@ for q in (0.25, 1.0, 4.0, 9.0):
     for lam in (1.0, 1 / 8, 1 / 64):
         for phi in (0.0, 1.1):
             for u in (-0.4, 0.1, 0.45):
-                hs = [lam / 40, 1e-2, 1e-2, 1e-2]
+                # run 2: the u step stays well inside the pole of f (see Run history)
+                pole = math.pi / (2 * math.sqrt(q))
+                hs = [min(lam / 80, (pole - abs(u)) / 200), 1e-2, 1e-2, 1e-2]
                 p = np.array([u, 0.3, -0.2, 0.7])
                 fam = Family(q, lam, phi)
                 scale = 2 * q + fam.s**2 / (2 * lam**2) + math.sqrt(q) / lam
@@ -182,7 +195,9 @@ bg_worst = 0.0
 for q in (0.25, 1.0, 4.0, 9.0):
     fam = Family(q, 1.0, 0.0, background=True)
     for u in (-0.4, 0.1, 0.45):
-        rc = ricci(fam, np.array([u, 0.1, 0.2, -0.3]), [1e-3, 1e-2, 1e-2, 1e-2])
+        pole = math.pi / (2 * math.sqrt(q))
+        h_u = min(1e-3, (pole - abs(u)) / 200)  # run 2, see Run history
+        rc = ricci(fam, np.array([u, 0.1, 0.2, -0.3]), [h_u, 1e-2, 1e-2, 1e-2])
         rest = rc.copy()
         rest[0, 0] = 0.0
         bg_worst = max(
