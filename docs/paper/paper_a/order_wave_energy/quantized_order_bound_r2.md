@@ -93,6 +93,7 @@ that exponent from 4 to 3, still leaving a gap.
 | Section 8 | new: status, scope, constants, and what remains | F7, F8 |
 | Section 9 | new: the review, and the corrections made after it | review |
 | (after review) preamble, Sections 0, 2, 4, 5, 6, 8 | the corrections of Section 9 | review |
+| (later) Sections 1, 8, 9 | pointers to the companion proof of the one-point bound, [one_point_strip_bound.md](one_point_strip_bound.md); no inequality changed | the referee's least-trusted step |
 
 Deterministic checks of the new constants:
 [independent_audit/argument1_revision/checks.py](independent_audit/argument1_revision/checks.py).
@@ -124,7 +125,10 @@ in the wave's phase.
 Write `delta=lambda^2`. The normalized wave and reference one-point laws
 differ by at most `C_1 delta` in TV, by the existing domain-strip bound
 ([coordinate_oracle_barrier.md](coordinate_oracle_barrier.md) Section 1;
-re-derived with an explicit constant in the referee report, Section 3.3).
+sketched with an explicit constant in the referee report, Section 3.3).
+It is now proved, with `C_1(q)` explicit and uniform in phase and in
+`0 < lambda <= 1`, in [one_point_strip_bound.md](one_point_strip_bound.md)
+Proposition 1.
 Replacing the wave sampling locations by N iid reference locations therefore
 costs at most `C_1 N delta` after applying any order map. For the remaining
 argument **both models use exactly the same reference product measure**.
@@ -676,10 +680,18 @@ not a retroactive change to that design or its frozen numerical predictions.
     of `E_lambda` (from `coordinate_oracle_barrier.md`, re-derived in the
     same report, Section 3.1);
   - the one-point bound `TV(mu_lam, mu_0) <= C_1 lambda^2`, uniform in
-    phase and in `lambda <= 1`. This is the domain-strip bound, re-derived
-    in that report, Section 3.3. Every `alpha > 1` depends on it. This
-    revision's referee names it the step it trusts least, since it is
-    neither written here nor given a constant.
+    phase and in `lambda <= 1`. Every `alpha > 1` depends on it, and this
+    revision's referee named it the step it trusts least.
+    - **Status since review:** it is proved in a companion note,
+      [one_point_strip_bound.md](one_point_strip_bound.md) (Proposition 1),
+      with `C_1(q)` explicit. For example, `C_1 = 379.9` at q = 1.
+    - **Its review:** a further fresh-context AI review,
+      [independent_audit/one_point_bound/review.md](independent_audit/one_point_bound/review.md),
+      grades it CORRECT WITH MINOR FIXES.
+    - **What it still rests on:** the model definitions and the exact
+      wave relation in the form `mI + E` with eigenvalues `+/- t |G|`,
+      both listed above. That review's referee names the exact relation
+      as the step it now trusts least.
 - **The separation of protocols** in the preamble rests on `kappa(q) > 0`
   and the oracle-side statements of `coordinate_oracle_barrier.md`, which
   the audit did not audit. The order-only bound (1) does not depend on
@@ -766,3 +778,17 @@ Every `alpha > 1` depends on it.
 
 Among the written steps, it trusts least Lemma 4.1 for general k. It
 re-derived the lemma in full but tested it numerically only at k = 3.
+
+**Later the same day: the least-trusted step written out.** The one-point
+bound is now proved in
+[one_point_strip_bound.md](one_point_strip_bound.md) (Proposition 1).
+- **The constant:** `C_1(q) = (1+t_1)/(1-t_1) C_E W / Vhat`, with
+  `t_1 = 2 sqrt(q)/sqrt(1+4q)`. It is 50.33, 379.9 and 5417 at q = 0.25,
+  1 and 4.
+- **Deterministic checks:** 840 cases, from `lambda = 1` to 1/1024, with
+  q up to 9.8. TV never exceeded 0.187 of the bound.
+- **Review:** a fresh-context AI referee graded it CORRECT WITH MINOR
+  FIXES
+  ([independent_audit/one_point_bound/review.md](independent_audit/one_point_bound/review.md)).
+- **Effect here:** Sections 1 and 8 now point to the note. No inequality
+  of this revision changed.

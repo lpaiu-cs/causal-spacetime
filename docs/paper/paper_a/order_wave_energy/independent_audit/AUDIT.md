@@ -404,6 +404,50 @@ otherwise unchanged.
 
     The referee trusts this last one least: every `alpha > 1` depends on
     it, and it was confirmed only numerically, at three values of q.
+    (It has since been proved: see Section 12.)
   - Argument 2's source document has not been revised. Its items in
     Section 3 are still missing from its text.
   - The review is AI-level. No human has checked it.
+
+## 12. Addendum, 2026-11-26: the one-point bound written out
+
+Added at the user's request, after Section 11. Sections 1 to 11 are
+otherwise unchanged.
+
+- **What was done.** Section 11 named the one-point bound
+  `TV(mu_lam, mu_0) <= C_1 lambda^2` as the step the argument-1 referee
+  trusted least. It is now proved in
+  [one_point_strip_bound.md](../one_point_strip_bound.md), Proposition 1.
+  - `C_1(q) = (1+t_1)/(1-t_1) C_E W / Vhat`, with
+    `t_1 = 2 sqrt(q)/sqrt(1+4q)` and `W`, `Vhat` in closed form. The
+    values are 50.33, 379.9, 5417, 1.50e5 and 2.24e6 at q = 0.25, 1, 4, 9
+    and 9.8.
+  - The bound is uniform in phase and in `0 < lambda <= 1`. In fact the
+    TV does not depend on the phase at all, because a phase shift is a
+    rotation of the transverse plane.
+  - The route is an exact polar reduction of the transverse integral, not
+    Section 3.3's estimate of how far the section endpoints move.
+- **Deterministic checks.**
+  [one_point_bound/checks.py](one_point_bound/checks.py): 840 cases, with
+  q up to 9.8 and `lambda` from 1 to 1/1024. All pass, and TV is at most
+  0.187 of the bound. No sampling. The criteria were committed
+  (`c4c3b78`) before the full run.
+- **Review.** A fresh-context AI referee:
+  [one_point_bound/review.md](one_point_bound/review.md).
+  - **Proof:** CORRECT WITH MINOR FIXES. Every step was re-derived, and
+    the statement fits r2's use of `C_1`.
+  - **Checks:** CORRECT WITH MINOR FIXES. The numbers were reproduced by
+    a different method. But several checks cannot fail on their own (K5,
+    part of K1, the phase grid), and K7 is not independent.
+  - All findings are recorded in the note; no inequality or constant
+    changed.
+  - A sharper constant, smaller by the factor `1 + t`, is recorded as
+    Remark 5.
+- **What this does not change.**
+  - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2).
+  - Still imported at the lower end: the model definitions, the
+    background relation with its density, and the exact wave relation in
+    the form `mI + E`. The new referee trusts the last of these least. It
+    was re-derived once, in Section 3.1 of the first referee's report.
+  - All results are asymptotic. All review is AI-level; no human has
+    checked it.

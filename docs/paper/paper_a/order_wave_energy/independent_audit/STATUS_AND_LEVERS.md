@@ -426,3 +426,32 @@ session that started this one).
   At the upper end, the steps listed above are still at outline level.
 - Argument 2 (the earlier upper bound 3) is not revised. No proof or
   bracket moved.
+
+**The one-point bound written out (later on 2026-11-26, at the user's
+request).** The step the argument-1 referee trusted least is now proved,
+in [../one_point_strip_bound.md](../one_point_strip_bound.md).
+- **The bound:** `TV(mu_lam, mu_0) <= C_1(q) lambda^2`, with `C_1(q)`
+  explicit, uniform in phase and in `0 < lambda <= 1`. For example,
+  `C_1 = 379.9` at q = 1.
+- **The proof:** the transverse integral is done exactly in polar
+  coordinates.
+- **Deterministic checks:**
+  - 840 cases, q up to 9.8, `lambda` from 1 to 1/1024;
+  - TV was never more than 0.187 of the bound;
+  - no sampling.
+- **Review:** a fresh-context AI referee
+  ([one_point_bound/review.md](one_point_bound/review.md)).
+  - It graded the proof CORRECT WITH MINOR FIXES and the checks the same.
+  - It reproduced the numbers by a different method.
+  - It found several checks weaker than first described. The note now
+    says so.
+  - No inequality or constant changed.
+- **The lower end's imports are now:**
+  - the model;
+  - the background relation;
+  - the wave's exact causal relation, in the form `mI + E`.
+
+  The new referee trusts this last one least. It has been re-derived only
+  once, in the first audit.
+- **Unchanged:** the bracket `4/3 <= alpha_low <= alpha_high <= 2`. All
+  review is AI-level.
