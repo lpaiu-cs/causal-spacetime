@@ -117,4 +117,45 @@ Two things follow that do not depend on running it.
   N = 512. The longest lag at N = 512 is `N^2/2`, and chain reach is still
   untested.
 
+## 5. U2 transport measurement: drafted, reviewed, not to be frozen as written
+
+[transport_design_draft.md](transport_design_draft.md),
+[transport_referee_report.md](transport_referee_report.md). The user chose
+it as the next draft after Route C's first step showed that both routes
+turn on U2 ([../route_c/RECORD.md](../route_c/RECORD.md)). The idea: the
+same chain and group fit, fitted over all interior events, with the
+correlation of residuals of event pairs read against their separation, up
+to the diamond's scale. Nothing was implemented or run.
+
+What the review found:
+
+- **The drafted descriptions would mislabel.** Cell-scale correlation
+  between nearby events reads as "growing with d". The outward drift of
+  the interior set with N reads as "count-scale transport found". Transport
+  shows only in how the near and mid-range covariance changes with N.
+- **C2's gate cannot fail when it should, and C3 passes almost surely.**
+- **The existing record already answers part of the question.** Inside the
+  central set, a transport of the heuristic's size (variance of a
+  `u`-difference equal to `|du| / N`) would leave a wave-coordinate
+  count-scale coefficient of about 0.29. The extension bounds that
+  coefficient at 0.11 to 0.13 at lags up to `N^2/2` (N = 512) and `2 N^2`
+  (N <= 256), and could tell 0.16 from zero. Confirmed by the referee and
+  rechecked here without a chain.
+
+So, by this instrument and one-sided: **no transport of the heuristic's
+size is seen inside the central set.** This does not show that positions
+are pinned against each other at the cell scale, and it does not trigger
+Route D's "toward 4/3" branch, which needs a two-sided statement.
+
+What a revised measurement could still add:
+
+- separations beyond the central set, where loose outer cells and the
+  composition of the event set confound;
+- a near-null stratum of pairs for Route C;
+- lag `2 N^2` at N = 512.
+
+On the referee's projection, its sensitivity for the full residual would be
+no better than the central bound. The six must-fix items are listed in the
+report. No revision has been written.
+
 Nothing is to be frozen or run without the user's approval.

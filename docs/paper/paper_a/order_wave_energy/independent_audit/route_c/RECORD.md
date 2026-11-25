@@ -123,3 +123,22 @@ measurement, but it cannot move the bracket.
 
 Neither has been drafted in full. Drafting, freezing and running each need
 the user's approval.
+
+## 4. Outcome of the transport draft (2026-11-26)
+
+The user chose the U2 transport measurement as the next draft. It was
+written ([../route_d/transport_design_draft.md](../route_d/transport_design_draft.md))
+and reviewed
+([../route_d/transport_referee_report.md](../route_d/transport_referee_report.md)).
+It is **not to be frozen as written**. Its descriptions would label
+cell-scale correlation and the composition of the event set as transport,
+and its readout control could not fail. Details are in
+[../route_d/RECORD.md](../route_d/RECORD.md) Section 5.
+
+The review also showed that the existing record already speaks to U2 inside
+the central set. A transport of the heuristic's size is not seen there by
+this instrument, at the lags reached. That is one-sided: it does not move
+either route's branch. Its bearing on Route C's joint candidate is the
+heuristic's "U2 none" case: count-like resolution, about `alpha > 8/3`.
+That case is not supported at the central scale. The cell-like case, which
+would make the relevant row 4/3, is not shown either.

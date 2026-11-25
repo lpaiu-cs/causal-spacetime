@@ -1,16 +1,17 @@
-# Route D, U2 transport measurement. DRAFT
+# Route D, U2 transport measurement. DRAFT, NOT TO BE FROZEN AS WRITTEN
 
 2026-11-26. **Draft. Not frozen. Not implemented. Not run.** The user chose
 this measurement as the next draft ("U2 수송 측정", relayed by the session
-that started this one). Freezing and running need the user's explicit
-approval; freezing is then a separate commit. AI-written. An independent
-review is recorded in Section 11 when it exists. Generator coordinates
-throughout: a diagnostic of the background order law, not an observer and
-not a wave test.
+that started this one). AI-written. **An independent AI review found it
+unfit to freeze as written** ([transport_referee_report.md](transport_referee_report.md);
+summary in Section 11). The text below is the reviewed draft, committed at
+`7131252` and unchanged apart from this paragraph and Section 11.
+Generator coordinates throughout: a diagnostic of the background order law,
+not an observer and not a wave test.
 
-**At approval, the user is asked to confirm the items in Section 10.**
-Among them is the expected cost: **about 7 hours of wall time at about 75%
-CPU** (Section 5).
+The cost estimate of the reviewed draft was about 6 to 7 hours of wall time
+at about 75% CPU (Section 5). The referee found it consistent, at about
+6.3 to 6.5 hours.
 
 ## 1. The question
 
@@ -332,6 +333,45 @@ have not been confirmed by the user:
 5. **The cost:** about 6 to 7 hours of wall time at about 75% CPU, with
    12 orders at N = 512. No GPU.
 
-## 11. Review
+## 11. Review: not to be frozen as written
 
-Not yet reviewed.
+[transport_referee_report.md](transport_referee_report.md). An AI referee
+in a fresh context. It ran no 3+1 chain. It ran checks without a chain,
+and the 1+1 chain at N = 32 with 16 orders. Its findings:
+
+- **Both positive descriptions can appear with no transport.**
+  - A cell-scale correlation over 0.2 chart units gives
+    `Y = 1.17 to 1.22`: "growing with d" at every size.
+  - The interior set drifts outward with N: the share of events beyond
+    scale 0.9 goes from 3.5% to 8.7%. That alone gives a positive B on
+    `S_far`, a spurious `kappa` of 0.56 to 1.79 depending on how loose the
+    outer cells are.
+  - What separates transport from both is how the near and mid-range
+    covariance changes with N, read together with S.
+- **C2's gate cannot fail when it should.** It is on total S, of which the
+  field is 2 to 8% at `kappa = 0.3`.
+- **C3 passes almost surely and says little.** "Growing with d" is vacuous
+  in 1+1. The bins as written leave the far bin nearly empty. The
+  premise that the order fixes the ranks is wrong but harmless: the chain
+  stays in its starting realizer.
+- **The sensitivity was quoted at break-even, not at 90% power.** With
+  interior spreads it is no better than the existing central bound for the
+  full residual. The heuristic's scale in the far bin is about `0.62 N`,
+  not `1.7 N`, because U2's separation is along `u`.
+- **The existing record already excludes the heuristic inside the central
+  set at those lags.** A transport of the heuristic's size would leave a
+  central wave-coordinate coefficient of about 0.29. The extension bounds
+  it at 0.11 to 0.13, and could tell 0.16 from zero. The session that
+  wrote this draft rechecked this without a chain and agrees.
+- **What is left for a transport measurement:**
+  - separations beyond the central set, where loose outer cells and
+    composition confound;
+  - lag `2 N^2` at N = 512.
+- The fit itself is benign, and the cost table is consistent.
+
+The referee lists six must-fix items (M1 to M6) and three should-fix items.
+No revision has been written. Whether a revision is worth writing is the
+user's decision. On the referee's projection, a revision would add little
+sensitivity beyond the central bound for the full residual. It would add
+mainly the larger separations, a near-null stratum for Route C, and the
+longer lag at N = 512.

@@ -1,0 +1,30 @@
+N=128 kappa=1.0 draws=48
+  near: S rec/exp mean 0.9563 sd 0.1468 | I rec/exp 0.9744 sd 0.1234 | field share of expected S 0.058 | field part (with-noise)/exp mean 1.029 sd 0.916 | field only, group: 1.030 sd 0.190; no group: 1.031 sd 0.186
+  far: S rec/exp mean 0.9852 sd 0.1534 | I rec/exp 0.9815 sd 0.1339 | field share of expected S 0.194 | field part (with-noise)/exp mean 1.055 sd 0.553 | field only, group: 1.106 sd 0.429; no group: 1.073 sd 0.409
+  Y per draw mean 1.1262 sd 0.1443; fits ok True
+  elapsed 1s
+N=128 kappa=0.3 draws=48
+  near: S rec/exp mean 0.9782 sd 0.1369 | I rec/exp 0.9959 sd 0.1246 | field share of expected S 0.006 | field part (with-noise)/exp mean 0.487 sd 3.287 | field only, group: 1.006 sd 0.179; no group: 1.010 sd 0.187
+  far: S rec/exp mean 0.9897 sd 0.1379 | I rec/exp 0.9840 sd 0.1230 | field share of expected S 0.021 | field part (with-noise)/exp mean 0.897 sd 1.566 | field only, group: 1.012 sd 0.351; no group: 1.017 sd 0.366
+  Y per draw mean 1.0118 sd 0.0867; fits ok True
+  elapsed 2s
+N=256 kappa=1.0 draws=24
+  near: S rec/exp mean 1.0015 sd 0.0790 | I rec/exp 1.0018 sd 0.1118 | field share of expected S 0.112 | field part (with-noise)/exp mean 1.032 sd 0.322 | field only, group: 1.018 sd 0.118; no group: 1.018 sd 0.123
+  far: S rec/exp mean 0.9961 sd 0.1331 | I rec/exp 1.0034 sd 0.1164 | field share of expected S 0.326 | field part (with-noise)/exp mean 0.969 sd 0.314 | field only, group: 1.004 sd 0.286; no group: 0.978 sd 0.285
+  Y per draw mean 1.2244 sd 0.1122; fits ok True
+  elapsed 2s
+N=256 kappa=0.3 draws=24
+  near: S rec/exp mean 0.9456 sd 0.0794 | I rec/exp 0.9640 sd 0.0818 | field share of expected S 0.011 | field part (with-noise)/exp mean 1.235 sd 0.957 | field only, group: 1.011 sd 0.109; no group: 1.014 sd 0.107
+  far: S rec/exp mean 0.9827 sd 0.0709 | I rec/exp 0.9808 sd 0.0709 | field share of expected S 0.042 | field part (with-noise)/exp mean 1.067 sd 0.727 | field only, group: 1.079 sd 0.352; no group: 1.077 sd 0.357
+  Y per draw mean 1.0360 sd 0.0361; fits ok True
+  elapsed 3s
+N=512 kappa=1.0 draws=9
+  near: S rec/exp mean 1.0035 sd 0.0350 | I rec/exp 1.0310 sd 0.0865 | field share of expected S 0.202 | field part (with-noise)/exp mean 0.967 sd 0.080 | field only, group: 1.006 sd 0.057; no group: 1.002 sd 0.060
+  far: S rec/exp mean 1.0700 sd 0.1209 | I rec/exp 1.0575 sd 0.1008 | field share of expected S 0.499 | field part (with-noise)/exp mean 1.117 sd 0.245 | field only, group: 1.129 sd 0.260; no group: 1.109 sd 0.261
+  Y per draw mean 1.5202 sd 0.1491; fits ok True
+  elapsed 4s
+N=512 kappa=0.3 draws=9
+  near: S rec/exp mean 0.9984 sd 0.0479 | I rec/exp 0.9900 sd 0.0387 | field share of expected S 0.022 | field part (with-noise)/exp mean 0.903 sd 0.417 | field only, group: 0.980 sd 0.097; no group: 0.974 sd 0.090
+  far: S rec/exp mean 1.0001 sd 0.0520 | I rec/exp 0.9965 sd 0.0435 | field share of expected S 0.081 | field part (with-noise)/exp mean 0.975 sd 0.495 | field only, group: 0.937 sd 0.254; no group: 0.904 sd 0.226
+  Y per draw mean 1.0424 sd 0.0396; fits ok True
+  elapsed 4s

@@ -1,0 +1,2 @@
+N=32, 200000 draws: sum S / sum E = 0.9998 (SE 0.0010); far 0.9996; per-pair ratio range 0.993..1.007; all-event MSD/(1/(3(N+1))) 0.988
+N=64, 50000 draws: sum S / sum E = 0.9952 (SE 0.0020); far 0.9943; per-pair ratio range 0.984..1.011; all-event MSD/(1/(3(N+1))) 0.978
