@@ -1,0 +1,6 @@
+(A) 600 PL causal curves (1007 pause segments, 373 zero-velocity segments): 0 violate Theorem 2; du<0 endpoints: 0; min 2dv/act = 1.002001
+(B) min over PL curves of 2*dv_needed / (dx^T M^-1 dx):
+   q, lam, beta = 1.0 0.25 0.2406 K=1,2,4,8,16: ['1.57613', '1.40911', '1.20904', '1.10249', '1.05047']
+   q, lam, beta = 9.0 0.125 0.3466 K=1,2,4,8,16: ['7.33983', '5.96447', '2.62471', '1.64230', '1.28629']
+   q, lam, beta = 4.0 0.0625 1.3 K=1,2,4,8,16: ['78.71206', '72.25383', '47.07075', '14.11696', '5.70950']
+(C) direct M vs c m I - s J: 2.6e-15; eig(E) vs +-t|G| (rel to m): 2.9e-15; trace/asym of E: 4.7e-15

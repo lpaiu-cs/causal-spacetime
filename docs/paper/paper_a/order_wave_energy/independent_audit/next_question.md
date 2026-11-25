@@ -31,7 +31,10 @@ Later the same day the audit's corrections to the lower bound were written
 into [../quantized_order_bound_r2.md](../quantized_order_bound_r2.md) and
 reviewed ([AUDIT.md](AUDIT.md) Section 11). Its one-point bound has since
 been proved in [../one_point_strip_bound.md](../one_point_strip_bound.md)
-(AUDIT.md Section 12). Question Q is unchanged.
+(AUDIT.md Section 12). So has the wave's exact causal relation, in
+[../wave_causal_relation.md](../wave_causal_relation.md) (AUDIT.md
+Section 13). The lower end now rests only on the model's definitions.
+Question Q is unchanged.
 
 **Question Q.** Is `alpha_low = alpha_high = 2`? Equivalently: can the
 necessary condition be raised from 4/3 to 2, or is there an order-only test

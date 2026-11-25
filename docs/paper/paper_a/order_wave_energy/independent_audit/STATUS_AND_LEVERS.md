@@ -455,3 +455,27 @@ in [../one_point_strip_bound.md](../one_point_strip_bound.md).
   once, in the first audit.
 - **Unchanged:** the bracket `4/3 <= alpha_low <= alpha_high <= 2`. All
   review is AI-level.
+
+**The causal relations written out (later on 2026-11-26, at the user's
+request).** The step the one-point referee trusted least, the wave's exact
+causal relation, is now proved in
+[../wave_causal_relation.md](../wave_causal_relation.md). The same note
+proves the background relation and its density.
+- **What is proved:**
+  - Theorem 2: the relation of any Rosen plane wave;
+  - Lemma 3: the form `mI + E`;
+  - Lemma 4: the vacuum condition;
+  - Lemma 5: the background's global conformal chart.
+- **Checks:**
+  - Run 1 failed three curvature checks through a finite-difference step
+    that ignored the pole of `f`. The failed output is kept.
+  - Run 2 used a pole-aware step, with the same tolerances: 21 of 21
+    pass.
+- **Review:** a fresh-context AI referee
+  ([wave_relation/review.md](wave_relation/review.md)) graded the
+  mathematics and the checks CORRECT WITH MINOR FIXES. All 13 findings
+  are applied.
+- **So the lower end now rests only on the model's definitions.** Those
+  are the sampling model, the order map, the order being `J^+`, the time
+  orientation and the coupling's `y` identification.
+- **Unchanged:** the bracket. All review is AI-level.

@@ -49,6 +49,11 @@ Run history.
   Run 2: the u step is min(lam/80, d/200) for the wave and min(1e-3, d/200)
   for the background, d = distance from u to the pole. The rule was chosen
   by trying d/100 and d/200 on the W1 cases. No tolerance was changed.
+  Correction after review (wave_relation/review.md, finding F8; comment only,
+  outputs unaffected): run 1 did not fail by crossing the pole. The metric is
+  entire; gamma^-1 is evaluated only at Christoffel centres, all at u <= 0.50.
+  It failed through truncation error of the outer finite difference near the
+  pole (reach 2h = 0.05 against a distance of 0.074 at the worst case).
 Run: python checks.py
 """
 

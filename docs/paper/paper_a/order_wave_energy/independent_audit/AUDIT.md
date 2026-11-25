@@ -449,5 +449,60 @@ otherwise unchanged.
     background relation with its density, and the exact wave relation in
     the form `mI + E`. The new referee trusts the last of these least. It
     was re-derived once, in Section 3.1 of the first referee's report.
+    (It has since been proved, together with the background relation and
+    density: see Section 13.)
+  - All results are asymptotic. All review is AI-level; no human has
+    checked it.
+
+## 13. Addendum, 2026-11-26: the causal relations written out
+
+Added at the user's request, after Section 12. Sections 1 to 12 are
+otherwise unchanged.
+
+- **What was done.** Section 12 named the wave's exact causal relation as
+  the step its referee trusted least. It is now proved in
+  [wave_causal_relation.md](../wave_causal_relation.md).
+  - **Theorem 2:** the causal relation `J^+` of any Rosen plane wave
+    `-2 du dv + gamma(u) dx dx`. The time orientation is stated, curves
+    may pause in `u`, and the proof is by a function that does not
+    decrease along every causal curve.
+  - **Lemma 3:** the circular family in the form `mI + E`, with
+    eigenvalues `+/- t |G|` and volume density `a^2`.
+  - **Lemma 4:** the Ricci tensor, and the vacuum condition
+    `sinh(2 beta) = 2 lambda sqrt q`.
+  - **Lemma 5 and Remark 5.1:** the background's global conformal chart.
+    It gives the relation (2) and the `a^4` density.
+- **Deterministic checks.**
+  [wave_relation/checks.py](wave_relation/checks.py). The curvature and
+  geodesics are recomputed from finite differences of the metric.
+  - **Run 1** (criteria committed at `3bb1512` before it) **failed three
+    curvature checks.** The finite-difference step ignored the pole of
+    `f`, and truncation error near it exceeded the tolerance. The failed
+    output is kept.
+  - **Run 2** used a pole-aware step, with no tolerance changed: 21 of 21
+    pass.
+  - No orders were sampled.
+- **Review.** A fresh-context AI referee:
+  [wave_relation/review.md](wave_relation/review.md).
+  - **Mathematics:** CORRECT WITH MINOR FIXES. Every step was re-derived,
+    and none was false.
+  - **Checks:** CORRECT WITH MINOR FIXES.
+    - The note had misdescribed run 1's mechanism as "crossing the pole".
+    - Several checks cannot fail on the mathematics.
+    - No check in the script that could fail tests the "only if"
+      direction. The referee's own test on piecewise-linear causal curves
+      covers it.
+  - All 13 findings are applied; no statement changed.
+- **What this changes.** The lower end's imports are now only the
+  model's definitions, listed in the note's Section 7:
+  - the sampling model;
+  - the order map;
+  - that the order is `J^+`;
+  - the time orientation;
+  - the coupling's `y` identification.
+- **What this does not change.**
+  - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2).
+  - The upper end still has outline-level steps (Section 10).
+  - Argument 2's document is not revised.
   - All results are asymptotic. All review is AI-level; no human has
     checked it.

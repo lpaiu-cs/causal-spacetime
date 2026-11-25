@@ -39,7 +39,8 @@ between the wave and reference one-point laws.**
   Section 5 lists the corrections.
 - **What it is not.** It is not human-reviewed. It concerns the one-point
   laws only, not the order law. It uses the exact causal relation of the
-  wave, which remains imported (Section 1).
+  wave. That relation was imported when this note was written, and has since
+  been proved in [wave_causal_relation.md](wave_causal_relation.md).
 
 ## 1. Setting, and what is imported
 
@@ -81,7 +82,11 @@ density proportional to `a(u)^2` in `du dv d^2y` on `D_lam` and `D_0`
 (the physical factor `c` cancels on normalising). Write
 `vol_a(S) = integral_S a^2 du dv d^2y`.
 
-**Imported, not proved here.**
+**Imported, not proved here.** (Status since review: the causal relation,
+the matrix form of `E_lambda` and the volume density are now proved in
+[wave_causal_relation.md](wave_causal_relation.md) (Theorem 2, Lemma 3).
+That note was itself reviewed by a fresh-context AI referee. The model's
+one-point laws remain a definition.)
 - The model's one-point laws as just stated
   ([full_order_resolution_probe.md](full_order_resolution_probe.md),
   [coordinate_oracle_barrier.md](coordinate_oracle_barrier.md) Section 1).
@@ -497,6 +502,18 @@ derivation. This note has not re-derived it.
 - **Its status:** re-derived once, in the audit referee's report
   Section 3.1, and not by this note's referee.
 - **The note's own steps:** the referee found none it distrusts.
+
+**Later the same day: that step is proved.** The exact wave relation in the
+form `mI + E`, with `e = t |G|` and `t = tanh(2 beta)`, is now proved
+in [wave_causal_relation.md](wave_causal_relation.md).
+- **What it proves:** Theorem 2 gives the relation of any Rosen plane
+  wave. Lemma 3 gives the circular family's form and the volume density.
+  Lemma 4 gives the vacuum condition.
+- **Its review:** a fresh-context AI referee graded it CORRECT WITH MINOR
+  FIXES
+  ([independent_audit/wave_relation/review.md](independent_audit/wave_relation/review.md)).
+- **What remains here:** this note's imports are now only the model's
+  definitions.
 
 **Not checked by the referee:**
 - the exact wave relation and the vacuum condition;

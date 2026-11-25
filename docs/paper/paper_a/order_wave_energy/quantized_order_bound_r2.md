@@ -94,6 +94,7 @@ that exponent from 4 to 3, still leaving a gap.
 | Section 9 | new: the review, and the corrections made after it | review |
 | (after review) preamble, Sections 0, 2, 4, 5, 6, 8 | the corrections of Section 9 | review |
 | (later) Sections 1, 8, 9 | pointers to the companion proof of the one-point bound, [one_point_strip_bound.md](one_point_strip_bound.md); no inequality changed | the referee's least-trusted step |
+| (later) Sections 2, 8, 9 | pointers to the companion proof of the causal relations, [wave_causal_relation.md](wave_causal_relation.md); no inequality changed | the next least-trusted step |
 
 Deterministic checks of the new constants:
 [independent_audit/argument1_revision/checks.py](independent_audit/argument1_revision/checks.py).
@@ -136,7 +137,9 @@ argument **both models use exactly the same reference product measure**.
 ## 2. A uniform causal-boundary sandwich, including short segments
 
 The exact wave relation is imported from the coordinate-oracle derivation
-(re-derived in the referee report, Section 3.1). Put
+(re-derived in the referee report, Section 3.1). It is now proved in
+[wave_causal_relation.md](wave_causal_relation.md) (Theorem 2 and
+Lemma 3). Put
 `b = m(u1,u2) = m(u2) - m(u1)`, the signed `Delta m`, so that `b > 0`
 exactly when `u1 < u2`. Put `Delta v = v2 - v1`, `Delta y = y2 - y1`, and,
 for `u1 < u2`, `E = E_lambda(u1,u2)`, a symmetric trace-free 2x2 matrix
@@ -675,10 +678,13 @@ not a retroactive change to that design or its frozen numerical predictions.
     ([full_order_resolution_probe.md](full_order_resolution_probe.md));
   - the background relation (2) and the `a^4` density in the `(T, z)`
     chart, asserted in Section 1 and derived in the audit referee's report,
-    Section 3.1;
+    Section 3.1. **Since proved** in
+    [wave_causal_relation.md](wave_causal_relation.md) Lemma 5 and
+    Remark 5.1;
   - the exact causal relation of the wave in the Rosen chart, and the form
     of `E_lambda` (from `coordinate_oracle_barrier.md`, re-derived in the
-    same report, Section 3.1);
+    same report, Section 3.1). **Since proved** in the same note, as
+    Theorem 2 and Lemma 3, with the vacuum condition as Lemma 4;
   - the one-point bound `TV(mu_lam, mu_0) <= C_1 lambda^2`, uniform in
     phase and in `lambda <= 1`. Every `alpha > 1` depends on it, and this
     revision's referee named it the step it trusts least.
@@ -690,8 +696,9 @@ not a retroactive change to that design or its frozen numerical predictions.
       grades it CORRECT WITH MINOR FIXES.
     - **What it still rests on:** the model definitions and the exact
       wave relation in the form `mI + E` with eigenvalues `+/- t |G|`,
-      both listed above. That review's referee names the exact relation
-      as the step it now trusts least.
+      both listed above. That review's referee named the exact relation
+      as the step it then trusted least. It is now proved too (see the
+      previous bullet).
 - **The separation of protocols** in the preamble rests on `kappa(q) > 0`
   and the oracle-side statements of `coordinate_oracle_barrier.md`, which
   the audit did not audit. The order-only bound (1) does not depend on
@@ -792,3 +799,26 @@ bound is now proved in
   ([independent_audit/one_point_bound/review.md](independent_audit/one_point_bound/review.md)).
 - **Effect here:** Sections 1 and 8 now point to the note. No inequality
   of this revision changed.
+
+**Later still: the causal relations proved.** That review's referee named
+the imported exact wave relation as the step it trusted least. It is now
+proved in [wave_causal_relation.md](wave_causal_relation.md), together with
+the background relation (2) and the `a^4` density.
+- **Theorem 2:** the relation of any Rosen plane wave, with the time
+  orientation and curves that pause in `u`.
+- **Lemma 3:** the form `mI + E` and the volume density.
+- **Lemma 4:** the vacuum condition.
+- **Lemma 5 and Remark 5.1:** the background's global conformal chart.
+- **Review:** a fresh-context AI referee graded it CORRECT WITH MINOR
+  FIXES
+  ([independent_audit/wave_relation/review.md](independent_audit/wave_relation/review.md)).
+- **Effect here:** Sections 2 and 8 now point to the note. The lower
+  bound's imports are now only the model's definitions, listed in that
+  note's Section 7:
+  - the sampling model;
+  - the order map;
+  - that the order is `J^+`;
+  - the time orientation;
+  - the `y` identification in the coupling.
+
+  No inequality of this revision changed.
