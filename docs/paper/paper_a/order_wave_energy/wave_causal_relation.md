@@ -33,7 +33,9 @@ background's conformal chart.**
   - Lemma 4 derives the Ricci tensor and the vacuum condition.
   - Lemma 5 proves the background relation and density through a global
     conformal chart.
-  - Section 6 lists deterministic checks.
+  - Section 8 lists deterministic checks. The first run failed three
+    curvature checks through a finite-difference step that crossed the
+    pole of `f`. After the step was fixed, all 21 pass.
 - **Authorship and review.** AI-written. Awaiting a fresh-context AI review.
 - **What it is not.** It is not human-reviewed. The results are standard
   in plane-wave geometry. The note's job is to write them in this
@@ -342,4 +344,52 @@ No sampling of orders. Seeded random draws are used only to test
 inequalities. The criteria are in the script's docstring and were fixed
 before the full run.
 
-**Results.** To be filled in after the run.
+**How the checks are built.** The curvature (W1) and geodesic (W3) checks
+do not use Lemma 4's Christoffel symbols. They take fourth-order finite
+differences of the 4x4 metric in all four coordinates and apply the
+generic formulas.
+
+**Run 1 failed** (script at `3bb1512`; output
+[checks_output_run1.txt](independent_audit/wave_relation/checks_output_run1.txt)).
+- **What failed.** 18 checks passed and 3 failed, all in W1 (Ricci).
+- **The cause.** The step in `u` was `lambda/40`, regardless of the pole
+  of `f` at `u = pi/(2 sqrt q)`.
+  - At q = 9, `lambda = 1`, `u = 0.45`, the nested stencil reached
+    `u = 0.55`, past the pole at 0.524, giving `|R|/scale = 1.06`.
+  - Near the pole elsewhere, the truncation error exceeded the tolerance.
+- **The diagnosis.** Halving the step cut the error about 16-fold, the
+  signature of fourth-order truncation. The values converged to the
+  predicted ones: 0 for the vacuum and `2q` for the background. The
+  defect was in the check, not in the formula.
+
+**Run 2 passed** (step rule fixed at `3d3f9ca`; output
+[checks_output.txt](independent_audit/wave_relation/checks_output.txt)).
+- **The change.** The step in `u` became `min(lambda/80, d/200)`, with
+  `d` the distance from `u` to the pole. The rule was chosen by trying
+  `d/100` and `d/200` on the W1 cases. No tolerance was changed.
+- **All 21 checks pass:**
+  - **W1:** the vacuum Ricci tensor is below `2.4e-8` of the scale. The
+    positive control (`s -> 1.1 s`) reproduces
+    `R_uu = 2q - s^2/(2 lambda^2)` to `2.2e-8`. The background has
+    `R_uu = 2q` to `5e-8`.
+  - **W2:** the family algebra agrees to `1e-13` or better.
+  - **W3:** 12 numerically integrated null geodesics end on
+    `2 Delta v = Delta x^T M^-1 Delta x` to `4.9e-8`, and `u` stays
+    affine.
+  - **W4:** 1600 random fixed-endpoint paths never beat the bound; the
+    smallest ratio is 1.0106.
+  - **W5:** the conformal chart holds to `2e-15`. Theorem 2 and the
+    Minkowski relation classify 78,904 random pairs identically.
+    Case-(b) pairs and near-null pairs are included.
+  - **W6:** the x-chart and y-chart relations agree on 300 near-null
+    pairs.
+
+**What the checks do not test.**
+- **W4's second part, "the optimal path attains it", cannot fail.** On a
+  common quadrature it is the identity `p^T M p = Delta x^T M^-1 Delta x`.
+- **W6 repeats W2's identity** on pairs chosen near the boundary.
+- **W4's first part probes the inequality only along smooth
+  perturbations**, eight sine modes. It does not probe curves that pause
+  in `u`. Theorem 2 covers those, and the checks do not.
+- **Every check is at grid points or random draws.** The statements rest
+  on the proofs of Sections 2 to 6.
