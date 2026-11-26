@@ -491,7 +491,10 @@ level is now proved in
 - the anchor selection.
 
 - **Checks:** 31 of 31 pass, with the criteria committed before the run.
-  The guard constants are re-certified in exact arithmetic.
+  G1, G9 and G10 had already been run in full while debugging, before the
+  criteria were committed. (This caveat was added after the review by
+  the session that started this audit session.) The guard constants are re-certified in exact
+  arithmetic.
 - **Review:** a fresh-context AI referee
   ([argument3_lemmas/review.md](argument3_lemmas/review.md)) graded it
   CORRECT WITH MINOR FIXES.
@@ -518,7 +521,10 @@ geometry, the uniform bias bound and the assembly.
   at `r = 1024, 2048` can ever be evaluated. The audit record's item 4 had
   listed fewer (AUDIT.md Section 15).
 - **So all three arguments are now revised in text.** Their imports are
-  the model's definitions, the background calibration's certificate and,
-  for argument 2, the implementation's enclosures (H-enc).
+  the model's definitions and the background calibration with its
+  certificate. Argument 2's result holds for the exact test. Its hypothesis
+  (H-enc) on the implementation is needed only to quote the code's output
+  as certified. (Corrected after the review by the session that started this audit session: this
+  sentence first listed (H-enc) as an import.)
 - **Unchanged:** the bracket. Nothing shows that 2 is sharp. All review is
   AI-level.

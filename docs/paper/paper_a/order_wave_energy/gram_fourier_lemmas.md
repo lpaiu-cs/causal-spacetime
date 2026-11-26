@@ -1236,5 +1236,8 @@ Second was F12's uniformity, now written out.
   - every statement is asymptotic, with constants far from any reachable
     size;
   - nothing here shows that 2 is necessary;
-  - argument 2's source document is still unrevised;
+  - argument 2's source document is still unrevised. (Pointer added later
+    on 2026-11-26, after the review by the session that started this audit session: it has since been
+    revised, in [local_null_challenge_r2.md](local_null_challenge_r2.md);
+    see AUDIT.md Section 15.)
   - the review is AI-level. No human has checked it.

@@ -540,7 +540,11 @@ otherwise unchanged.
   [argument3_lemmas/checks.py](argument3_lemmas/checks.py), with the
   criteria committed at `14c309f` before the run: 31 of 31 pass. G9
   re-certifies the guard constants used by (11) in exact rational
-  arithmetic. No order was sampled.
+  arithmetic. No order was sampled. (Caveat added later, after the review
+  by the session that started this audit session: G1, G9 and G10 had been run in full while debugging,
+  before the criteria were committed. The note's Section 8 and the
+  script's docstring record this. G9's criteria are the lower bounds the
+  proof needs.)
 - **Review.** A fresh-context AI referee:
   [argument3_lemmas/review.md](argument3_lemmas/review.md). Verdict:
   **CORRECT WITH MINOR FIXES.**
@@ -570,8 +574,11 @@ otherwise unchanged.
 
 ## 15. Addendum, 2026-11-26: argument 2 revised
 
-Added at the user's request, after Section 14. Sections 1 to 14 are
-otherwise unchanged.
+Added at the user's request, after Section 14. The wording of Sections 1
+to 14 is not changed. Marked additions were made in three places:
+- pointers to this section, at the end of Section 3's item 4 for argument 2
+  and at the end of Section 14's line on argument 2;
+- a caveat on the checks in Section 14, after the review by the session that started this audit session.
 
 - **What was done.** Section 3's items 1 to 5 for argument 2 were carried
   into a revision, [local_null_challenge_r2.md](../local_null_challenge_r2.md).
@@ -597,13 +604,18 @@ otherwise unchanged.
     - the witness geometry with explicit constants (Lemmas 3.1 to 3.5);
     - the passage from a population witness to a certified rejection
       (Lemmas 4.2, 4.3 and Theorem 4.4).
-  - **The implementation** enters only through a stated hypothesis,
-    (H-enc), which no referee has reviewed.
+  - **The implementation is not an import of the result.** The result
+    holds for the exact test. A stated hypothesis, (H-enc), carries the
+    theorem over to the code's output. It matters only when the frozen
+    outputs of the original's Section 5 are quoted as certified. No referee
+    has checked the code against it.
 - **A correction to item 4 of Section 3.** On the coverage event, ten of
   the twelve frozen witnesses are skipped at every reference count: all six
   `q = 0.25` rows and the `q = 1` rows with `r <= 512`. Item 4 listed only
-  `r = 1024, 2048` at `q = 0.25`. The audit referee's report, Section 6.2,
-  had `r <= 2048`; its script checked only those two rows. So of the ten
+  `r = 1024, 2048` at `q = 0.25`, following the wording of finding 4 in
+  the audit referee's report (its findings table). The same report's
+  Section 6.2 has the full list, `r <= 2048`; its script computed only
+  those two rows at `q = 0.25`. So of the ten
   population witnesses with a positive decrease, the test as specified could
   certify at most two, even with unlimited references. The asymptotic claim
   is unaffected.
@@ -617,16 +629,22 @@ otherwise unchanged.
   are applied. The main ones:
   - **F1:** (H-enc) lacked soundness and no-spurious-skip clauses;
   - **F2:** a constant slip in Lemma 4.2(ii);
-  - **F3:** the bias constant on the whole compact set is about `1.4e5`,
-    ten times the figure first quoted;
+  - **F3:** the bias constant on the whole compact set is about `2.5e5`,
+    ten times the figure first quoted. That is the limit of the log
+    slope; the ratio is `1.4e5` at `lambda = 1/2560` and still rising;
   - **F5:** a status sentence named this section before it existed.
 
   Its own scripts reproduce the witness table independently and test the
   witness slack on adversarial pairs down to `lambda = 1/32768`.
-- **The step it trusts least** is the bias bound feeding the theorem. The
-  bound is subtracted at the two points separately, and with the measured
-  constant that term exceeds the witness signal until `lambda` is about
-  `3e-5`.
+- **The step it trusts least** is the bias bound feeding the theorem.
+  - The bound is subtracted at the two points separately.
+  - With the measured constant, that term exceeds the witness signal until
+    `lambda` is about `3e-5` (`q = 0.25`) or `4e-5` (`q = 1`).
+  - These values are extrapolated from checks at `lambda >= 1/2560` and one
+    `u`. The referee also took the companion note's Corollary K2(ii) as
+    given.
+  - They mark where the proof's guarantee begins, not how the test
+    behaves.
 - **What this does not change.**
   - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2).
     Argument 2 gives exponent 3, which is not the bracket's upper end;
@@ -635,3 +653,16 @@ otherwise unchanged.
   - local_null_results.md is not edited. Section 6 of the revision says what
     it should add.
   - All review is AI-level. No human has checked it.
+- **Corrected after the review by the session that started this audit session** (later the same day,
+  approved by the user). That session reviewed the revision at `faf6262`.
+  It found that none of its points changes the result or the bracket. The
+  corrections are wording and records only:
+  - the provenance of item 4's list, and the account of what was added to
+    the earlier sections;
+  - the implementation's hypothesis separated from the result's imports;
+  - the bias constant, with the extrapolation caveat and the distinction
+    between the proof's guarantee and the test's behaviour;
+  - a caveat on Section 14's checks: G1, G9 and G10 ran before the criteria
+    were committed.
+
+  The revision's Section 9 lists them.

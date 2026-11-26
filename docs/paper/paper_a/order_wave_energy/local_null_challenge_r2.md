@@ -80,6 +80,7 @@ observer.
 | Section 6 | new: which of the frozen witnesses the test, as specified, can ever evaluate. On the coverage event, ten of 12 are skipped at every reference count, including the `q = 0.25` rows at `r <= 512`, which the audit record's item 4 omits | item 4 |
 | Sections 7 to 9 | new: deterministic checks, status and imports, review | |
 | (after review) preamble, Sections 0 to 2, 4, 6, 7, 9 | the corrections of Section 9: (H-enc) in three clauses, Lemma 4.2(ii)'s constant, Lemma 4.1's range and constant, notation, and reporting | review |
+| (later) Sections 4, 6, 8, 9 | corrections after the review by the session that started this audit session: (H-enc) separated from the imports of (1), the bias constant and its extrapolation caveat, and the account of the audit record (Section 9) | parent review |
 
 Deterministic checks:
 [independent_audit/argument2_revision/checks.py](independent_audit/argument2_revision/checks.py).
@@ -694,14 +695,28 @@ needed.
 
 **The constant is large.** The audit referee measured
 `sup |bias| / (lambda^4 log(1/lambda))` up to about `2.6e4` at interior
-`u`, and about `4e4` at `u = -0.2` (finding 2). On all of `K` it is about
-ten times larger. This revision's referee found
-`|F bias| / (lambda^4 log(1/lambda))` of `1.37e5` (`q = 0.25`) and
-`1.42e5` (`q = 1`) at `lambda = 1/2560`, at
-`(u, eta, zeta) = (-0.3, 0.6, 0.4)`, with a stable slope of about `2.5e5`
-per unit of `log(1/lambda)` (review finding F3, script r4). So the
-two-point bias term of Theorem 4.4 falls below the witness signal
-`g_1 lambda^2` only at roughly `lambda < 3e-5`.
+`u`, and about `4e4` at `u = -0.2` (finding 2). On all of `K` the constant
+`C_b` is about `2.5e5`, ten times the first figure.
+- This revision's referee fitted `bias / lambda^4 = A + B log(1/lambda)`
+  at `(u, eta, zeta) = (-0.3, 0.6, 0.4)` (review finding F3, script r4).
+  It found `B` about `2.4e5` (`q = 0.25`) and `2.5e5` (`q = 1`), with `A`
+  negative.
+- So the ratio `|F bias| / (lambda^4 log(1/lambda))` is still rising
+  towards `B`. It is `1.37e5` and `1.42e5` at `lambda = 1/2560`; those
+  values are not the constant.
+- The two-point bias term of Theorem 4.4 falls below the witness signal
+  `g_1 lambda^2` at about `lambda = 3e-5` for `q = 0.25` and `4e-5` for
+  `q = 1`. Depending on the form taken for the constant, the range is
+  `2.5e-5` to `3.4e-5`, and `3.4e-5` to `4.6e-5`.
+- **These are extrapolations.** The single-log law was checked only for
+  `lambda >= 1/2560`, at one `u`.
+- **They mark where the proof's guarantee begins, not how the test
+  behaves.** On the frozen rows, the actual difference of the two points'
+  biases is 0.9 to 3.1 times `lambda^4 log(1/lambda)` at `r = 2048`
+  (check N10).
+
+(Corrected after the review by the session that started this audit session. The text first quoted the
+value `1.4e5` at `lambda = 1/2560` as the constant.)
 
 **Lemma 4.2 (increments and the domain).** There are `C_theta`, `r_0 > 0`
 and a compact `K_theta` inside `D_F`, depending on `q` only, such that for
@@ -753,7 +768,14 @@ after review, finding F1.)
   central difference has width `o(lambda^2)` on such pairs.
 
 The power needs all three. Exact evaluation with the exact suprema
-satisfies all three, with `L' = Lbar` and `H' = Hbar`. The original's
+satisfies all three, with `L' = Lbar` and `H' = Hbar`.
+
+**(1) does not depend on (H-enc).** (1) is a statement about the total
+variation between two laws, so one test suffices, and the exact test
+satisfies all three clauses. (H-enc) is the condition for carrying
+Theorem 4.4 over to the code's output. It matters only when the frozen
+outputs of Section 5 are quoted as certified. (This paragraph was added
+after the review by the session that started this audit session.) The original's
 rational-interval implementation
 (`experiments/positive_control/order_wave_local_null.py`, precision
 `40 + bit_length(N)` bits, derivative enclosures over `R`) is designed to
@@ -764,7 +786,8 @@ loose at finite size: `local_null_results.md` records a Hessian bound near
 `1.5e12` before the eight-band refinement.
 
 **Lemma 4.3 (box sizes and the width (8)).** Let `lambda -> 0` with
-`rho_N = N lambda^3 / log N -> infinity`, and assume (H-enc). On the event
+`rho_N = N lambda^3 / log N -> infinity`. Take the exact test, or an
+implementation satisfying (H-enc). On the event
 of Lemma 2.3, for all large `N`, every observed pair of probes `(X, Y)`
 with `(X~, Y~)` in `W_lam` satisfies:
 - `R` lies in `K_theta`, so the pair is evaluated, by (H-enc)(ii);
@@ -814,9 +837,10 @@ and `1e26` with the implemented enclosures, against `lambda^-3 = 8.6e9`
 - (a) **Level.** Under the background, for every `N >= 4`, the exact test,
   and any implementation satisfying (H-enc)(i), rejects with probability at
   most `N^-2`.
-- (b) **Power.** Assume (H-enc)(i) to (iii). Under the wave, if `lambda -> 0` and
-  `N lambda^3 / log N -> infinity`, the test rejects with probability
-  tending to one, uniformly in the phase.
+- (b) **Power.** Under the wave, if `lambda -> 0` and
+  `N lambda^3 / log N -> infinity`, the exact test, and any implementation
+  satisfying (H-enc)(i) to (iii), rejects with probability tending to one,
+  uniformly in the phase.
 
 Hence `TV(P_(N,lam), P_(N,0)) >= Pr_lam(reject) - Pr_0(reject) -> 1`, which
 is (1). The test is randomised only through the split, which is independent
@@ -852,7 +876,8 @@ of the order, so it is a test on the order's law.
   estimated `lambda` below about `1/1000` at `q = 1` and `1/4000` at
   `q = 0.25`, and `N` around `1e24` or more (report Section 4). On the
   set `W_lam` above, the window needs `lambda` near `2^-17` (check N9,
-  Section 6), and the bias bound needs `lambda < 3e-5` (after Lemma 4.1).
+  Section 6), and the bias bound needs `lambda` below about `3e-5`
+  (`q = 0.25`) or `4e-5` (`q = 1`), by extrapolation (after Lemma 4.1).
 
 The test needs no frequency-dependent threshold or phase estimate.
 
@@ -928,12 +953,21 @@ limit range `[a_X/p_Y^2, a_Y/p_X^2]` of Remark 2.6 for all 12 rows.
   witnesses, not of pairs this test could certify.
 - **A correction to the audit record.** AUDIT.md Section 3, argument 2,
   item 4 lists the skipped `q = 0.25` witnesses as those at
-  `r = 1024, 2048`. The referee's report, Section 6.2, says `r <= 2048`,
-  and the computation agrees with the report. The audit referee's script
-  checked only `r = 1024, 2048` at `q = 0.25`. AUDIT.md's earlier sections
-  are not edited. Its Section 15, written with the corrections after review,
-  records this. (At `cfe4b8e` this sentence named a section not yet
-  written: review finding F5.)
+  `r = 1024, 2048`.
+  - That item follows the wording of finding 4 in the audit referee's
+    report (its findings table).
+  - The same report's Section 6.2 has the full list, `r <= 2048`, and the
+    computation agrees with it.
+  - The audit referee's script s6 X4 computed only `(0.25, 1024)`,
+    `(0.25, 2048)` and `(1, 2048)`.
+  - AUDIT.md's earlier wording is not changed. Its Section 15, written with
+    the corrections after review, records the correction. Pointers to
+    Section 15 were added at the end of item 4 and at the end of
+    Section 14's line on argument 2.
+  - (At `cfe4b8e` this sentence named a section not yet written: review
+    finding F5. After the review by the session that started this audit session, it was corrected
+    again: it had said that the earlier sections were not edited, and it
+    did not say where item 4's wording came from.)
 - The three rows the referee computed (s6 X4) are reproduced to `4.3e-7`.
 - This does not affect (1). The witness set of Section 3 enters the window
   as `lambda -> 0` (Lemma 4.3). Check N9 shows how far away that is: on
@@ -942,8 +976,8 @@ limit range `[a_X/p_Y^2, a_Y/p_X^2]` of Remark 2.6 for all 12 rows.
   `lambda = 2^-11` only 41.5% (`q = 1`) and 0.1% (`q = 0.25`) are.
 
 **What local_null_results.md should say.** Add, when it is next revised:
-"The test as specified evaluates only the `q = 1` witnesses at `r = 1024`
-and `2048`. On its coverage event, its rectangular domain puts the other
+"The test as specified can evaluate only the `q = 1` witnesses at
+`r = 1024` and `2048`, given enough references. On its coverage event, its rectangular domain puts the other
 ten outside the calibration window at every reference count
 (local_null_challenge_r2.md
 Section 6). The asymptotic claim is unaffected."
@@ -1034,7 +1068,14 @@ The run took about 5 seconds on CPU.
   ([null_coordinate_challenge.md](null_coordinate_challenge.md) Section 2;
   re-derived by the audit referee, report Section 3a; the pair-fraction
   formula is re-derived in [GFL] Remark K1).
-- (H-enc), for the implementation.
+
+These two, with the reviewed imports above, are all that (1) uses.
+
+**Not an import of (1): the hypothesis (H-enc) on the implementation.** (1)
+holds for the exact test. (H-enc) is needed only to carry Theorem 4.4 over
+to the code's output, for example when the frozen outputs of Section 5 are
+quoted as certified. No referee has checked the code against it. (Separated
+from the imports after the review by the session that started this audit session.)
 
 **What this revision does not change.**
 - The bracket `4/3 <= alpha_low <= alpha_high <= 2`. Exponent 3 is not the
@@ -1091,7 +1132,7 @@ The run took about 5 seconds on CPU.
 |---|---|---|
 | F1 | minor | (H-enc) now has three clauses: (i) soundness, (ii) no spurious skip, (iii) bounded and tight. The level (preamble, Proposition 2.5, Theorem 4.4(a)) is stated for the exact test or a sound implementation. |
 | F2 | minor (constant slip) | Lemma 4.2(ii) is restated for sets within `r_0` of `theta_lam(xi_X)`, with `K_theta` the closed `2 r_0`-neighbourhood. Lemma 4.3 and Theorem 4.4 are unaffected. |
-| F3 | minor (practicality) | After Lemma 4.1: the bias constant on all of `K` (about `1.4e5`) and its consequence, `lambda < 3e-5`. "What is used where" says so too. |
+| F3 | minor (practicality) | After Lemma 4.1: the bias constant on all of `K`, about `2.5e5` (the limit of the log slope; `1.4e5` at `lambda = 1/2560` and still rising), and its consequence, `lambda` below about `3e-5` (`q = 0.25`) or `4e-5` (`q = 1`), by extrapolation. "What is used where" says so too. (This row first said `1.4e5`; corrected after the review by the session that started this audit session.) |
 | F4 | minor (scope) | Lemma 4.1 holds for `lambda < lambda_b`, and Lemma 4.2 for `lambda < min(lambda_3, lambda_b)`. |
 | F5 | minor (false status sentence) | Section 6's sentence about AUDIT.md Section 15 is now true: that section was written with these corrections. A note records that it was not true at `cfe4b8e`. |
 | F6 | minor | Section 7, N8: the least slack is 0.0098 at `q = 0.25`, and the referee's adversarial minima are added. N8 itself is not changed after its run. |
@@ -1107,12 +1148,38 @@ statements are unchanged, apart from the conditions on the implementation
 
 **The referee's least-trusted step** is Lemma 4.1 feeding Theorem 4.4.
 - The theorem subtracts the bias bound at the two points separately.
-- With the constant measured on `K`, that term exceeds the witness signal
-  `g_1 lambda^2` until `lambda` is about `3e-5`.
+- With the constant measured on `K`, about `2.5e5`, that term exceeds the
+  witness signal `g_1 lambda^2` until `lambda` is about `3e-5`
+  (`q = 0.25`) or `4e-5` (`q = 1`).
+- The referee states two caveats: it took [GFL] Corollary K2(ii) as given,
+  and it checked the single-log law only down to `lambda = 1/2560`, at one
+  `u`. So these values are extrapolations. They mark where the proof's
+  guarantee begins, not how the test behaves. (These caveats were added
+  after the review by the session that started this audit session.)
 - Check N10 suggests that the difference of the two biases is far smaller
   than either bias. A bound on that difference would bring "eventually"
   closer, but no such bound is proved here.
 - The referee trusts the asymptotic logic.
+
+**Corrected after the review by the session that started this audit session.** Later the same day,
+the session that had started the audit session reviewed this revision at
+`faf6262`, and the user approved its corrections. It judged all three of
+its points to leave (1) and the bracket unchanged. The corrections are
+wording and records only; no inequality and no part of the test changes.
+- **The audit record (Section 6).** The earlier wording of AUDIT.md is not
+  changed, but pointers were added in two places. Item 4 followed the
+  wording of finding 4 of the audit referee's report; the same report's
+  Section 6.2 had the full list. The sentence for local_null_results.md
+  now says "can evaluate only ..., given enough references".
+- **(H-enc) (Sections 4 and 8).** (1) holds for the exact test, so (H-enc)
+  is not an import of (1). Theorem 4.4(b) is stated for the exact test and
+  for any implementation satisfying (H-enc). (H-enc) is the condition for
+  carrying the theorem over to the code's output.
+- **The bias constant (after Lemma 4.1, F3 row, least-trusted step).** It
+  is about `2.5e5`, the limit of the log slope. `1.4e5` is its value at
+  `lambda = 1/2560`, and it is still rising. The crossover is about `3e-5`
+  (`q = 0.25`) and `4e-5` (`q = 1`), by extrapolation. It marks where the
+  proof's guarantee begins, not how the test behaves.
 
 **The review did not cover:**
 - the proofs of the imports ([GFL] E, F, K, K2; [WCR] Theorem 2 and
