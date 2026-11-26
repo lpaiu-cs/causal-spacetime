@@ -53,6 +53,7 @@ The scan cap is the only binding requirement for the `2/K` (Section 7).
 | Section 6 | "outer good set" replaced by "three-quarter set, where `chi_anc = 1`"; the left side of (11) and "together with (R3)" added | items 1, 2 |
 | Section 7 | "and regularized calibration being realized" dropped, since (1a) is now written; the guard paragraph rewritten, with the "retain a failure" rule kept | |
 | (after review) Sections 1, 3, 4, 5, 6, 7, 8 | the corrections of Section 9 | review |
+| (later) Sections 1, 8, 9 | pointers to [gram_fourier_lemmas.md](gram_fourier_lemmas.md), which proves the outline steps | |
 
 Deterministic checks of the new numbers:
 [independent_audit/argument3_revision/checks.py](independent_audit/argument3_revision/checks.py).
@@ -298,7 +299,10 @@ probability tending to one. There is `lambda_0 > 0` such that, for
 population moments for **every** probe, tips included, with anchors in a
 compact interior set, is taken from audit report 3b (Sections 3.2 and 3.4,
 `O(lambda^1.5)` near the tips). (8) itself is stated in Section 4 only for
-active probes.
+active probes. (Pointer added later on 2026-11-26: this closeness, at
+`O(lambda^1.5)` for every probe and `O(lambda^2)` on a compact interior
+set, is now proved in [gram_fourier_lemmas.md](gram_fourier_lemmas.md),
+Lemma I(d) to (f) and Remark I1.)
 
 **(R4) Fixed and computable.** The cutoffs are fixed functions of the raw
 moments with fixed numerical constants: `tau`, `psi`, `b_flat(q)` and `w`.
@@ -778,7 +782,11 @@ This algebraic control is not a noise-rate or finite-data-power test.
   [independent_audit/argument3_revision/](independent_audit/argument3_revision/)
   graded this CORRECT WITH MINOR FIXES, which are applied (Section 9).
 - **What is still at outline level**, as audited, with the referee reports
-  filling in the steps:
+  filling in the steps. (Pointer added later on 2026-11-26: every item
+  below except the certificate is now proved in
+  [gram_fourier_lemmas.md](gram_fourier_lemmas.md), and the certificate's
+  constants used by (11) are re-certified there in exact arithmetic. See
+  Section 9.)
   - the index-counting proof of (5);
   - the tip estimates (6) to (9);
   - the uniform closeness of wave and background moments for every probe,
@@ -869,3 +877,28 @@ The referee's least-trusted remaining step is the coupling uniform in X.
 - The "every probe" extension rests on a citation.
 - (8) at the tips is still the original's sketch. Its proof is in audit
   report 3b, Section 3.2.
+
+**Later the same day: the outline steps proved.** At the user's request the
+steps listed in Section 8 were written as proofs in
+[gram_fourier_lemmas.md](gram_fourier_lemmas.md) (AUDIT.md Section 14).
+- The index count of (5), with the U-statistic moment and tail bounds:
+  Proposition D and Lemma A.
+- The tip estimates: (6) and (7) are Lemmas E and F; (8) is Lemma I,
+  uniform over endpoints in a compact interior set; (9) is Lemma J, for
+  `p = 2, 4`.
+- The closeness of moments for every probe: Lemma I(c) to (f) and
+  Remark I1.
+- The expansion behind (11): Lemma K (exact interval volumes), Corollary K2
+  and Proposition L. The two assertions of Section 6 are proved: the
+  anchor-phase terms are `O(lambda^4)`, and the calibration errors are
+  `O(lambda^4 log(1/lambda))`.
+- The anchor selection: Lemma M.
+- The guard constants used by (11) are re-certified in exact arithmetic
+  (that note's G9). r2's `|ell_2| <= 1.0094` is the certificate's 1.009434
+  rounded down; with 1.009434 the corrected bound is 0.01069785, so
+  0.0106978 stands.
+
+A fresh-context AI referee graded that note CORRECT WITH MINOR FIXES, with
+one gap and one positive-part slip, both repaired there. The least-trusted
+step above, the coupling uniform in X, is now Lemma I and Lemma I(f). No
+statement of this revision changes. The bracket is unchanged.

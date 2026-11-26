@@ -502,7 +502,65 @@ otherwise unchanged.
   - the coupling's `y` identification.
 - **What this does not change.**
   - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2).
-  - The upper end still has outline-level steps (Section 10).
+  - The upper end still has outline-level steps (Section 10). (They have
+    since been written out: see Section 14.)
   - Argument 2's document is not revised.
   - All results are asymptotic. All review is AI-level; no human has
     checked it.
+
+## 14. Addendum, 2026-11-26: argument 3's outline steps written out
+
+Added at the user's request, after Section 13. Sections 1 to 13 are
+otherwise unchanged.
+
+- **What was done.** Section 10 listed the steps of argument 3 that its
+  revision still left at outline level. They are now proved in
+  [gram_fourier_lemmas.md](../gram_fourier_lemmas.md).
+  - **The noise bound (5)** (Proposition D, with Lemmas A to C): the
+    index count, including repeated indices and the order-two kernel, the
+    remainder, and uniformity over anchor triples.
+  - **The canonical map at the tips:** (6) and (7) (Lemmas E and F), with
+    explicit constants.
+  - **The kernel coupling:** (8), uniform over endpoints in a compact
+    interior set (Lemmas G to I), and (9) for `p = 2, 4` (Lemma J).
+  - **Closeness of moments for every probe:** Lemma I(c) to (f) and
+    Remark I1. (R3) had cited this.
+  - **The expansion behind (11):**
+    - exact interval volumes and pair fractions in any Rosen plane wave
+      (Lemma K);
+    - wave moments within `O(lambda^4 log(1/lambda))` of the background
+      ones (Corollary K2);
+    - the signal bound itself (Proposition L). The anchor-phase terms are
+      `O(lambda^4)`, and the calibration errors are
+      `O(lambda^4 log(1/lambda))`.
+  - **The anchor selection** (Lemma M).
+- **Deterministic checks.**
+  [argument3_lemmas/checks.py](argument3_lemmas/checks.py), with the
+  criteria committed at `14c309f` before the run: 31 of 31 pass. G9
+  re-certifies the guard constants used by (11) in exact rational
+  arithmetic. No order was sampled.
+- **Review.** A fresh-context AI referee:
+  [argument3_lemmas/review.md](argument3_lemmas/review.md). Verdict:
+  **CORRECT WITH MINOR FIXES.**
+  - **One GAP (F1).** The anchors were placed in the compact interior set
+    by the very lemma that assumes they are there. It is repaired by a new
+    Lemma I(f), which locates a point from its wave state.
+  - **One statement false as stated (F2).** A missing positive part in the
+    `b` formula, with no effect downstream.
+  - **Ten minor findings.**
+  - All are applied.
+  - The referee's independent check of the signal's core term converges
+    to the predicted coefficient: relative error 0.0009 at `1/lambda = 512`.
+- **What this changes.** Argument 3's steps are written out, subject to its
+  imports:
+  - the model's definitions;
+  - the background calibration and its certificate;
+  - r2's own reviewed parts.
+
+  Both ends of the bracket are now written as proofs with AI-level review.
+- **What this does not change.**
+  - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2). Nothing
+    shows that 2 is necessary.
+  - The constants put every finite-N test out of reach (Section 5).
+  - Argument 2's document is not revised.
+  - All review is AI-level. No human has checked it.

@@ -34,6 +34,9 @@ been proved in [../one_point_strip_bound.md](../one_point_strip_bound.md)
 (AUDIT.md Section 12). So has the wave's exact causal relation, in
 [../wave_causal_relation.md](../wave_causal_relation.md) (AUDIT.md
 Section 13). The lower end now rests only on the model's definitions.
+Later still, the upper end's outline steps were written out in
+[../gram_fourier_lemmas.md](../gram_fourier_lemmas.md) (AUDIT.md
+Section 14), so both ends are now written as proofs with AI-level review.
 Question Q is unchanged.
 
 **Question Q.** Is `alpha_low = alpha_high = 2`? Equivalently: can the

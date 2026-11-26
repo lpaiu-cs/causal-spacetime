@@ -1,0 +1,9 @@
+(i) ny=401: grid vol = 0.23938141, pi kappa^2 Lambda = 0.23938141, rel diff = 1.72e-09
+(i) ny=801: grid vol = 0.23938141, pi kappa^2 Lambda = 0.23938141, rel diff = 1.54e-10
+(ii) ny=301: pair measure = 0.0028477130, pi^2 kappa^4 Lambda_2/6 = 0.0028477130, rel diff = 9.00e-13
+(ii) ny=601: pair measure = 0.0028477130, pi^2 kappa^4 Lambda_2/6 = 0.0028477130, rel diff = 3.62e-14
+pair fraction Lambda_2/(3 Lambda^2) = 0.099391 (flat value 0.1)
+
+real	0m32.689s
+user	0m0.015s
+sys	0m0.015s

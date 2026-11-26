@@ -58,6 +58,10 @@ Before the full run (debugging, recorded here): G1, G9 and G10 were run in
 full and passed; the helpers behind G2 to G8 were run on single small cases
 (lam = 1/32) and not compared with any criterion.
 
+Correction after review (argument3_lemmas/review.md, finding F9; comment
+only, outputs unaffected): the quantity G5 prints as "tv" is the L1 upper
+bound (pi/Z_0) int a^2 W_0 |det T - 1| on TV, not TV itself.
+
 Run: python checks.py   (system Python 3.11 with numpy and mpmath)
 """
 

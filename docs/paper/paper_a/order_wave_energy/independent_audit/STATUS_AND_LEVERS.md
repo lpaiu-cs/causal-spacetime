@@ -479,3 +479,26 @@ proves the background relation and its density.
   are the sampling model, the order map, the order being `J^+`, the time
   orientation and the coupling's `y` identification.
 - **Unchanged:** the bracket. All review is AI-level.
+
+**Argument 3's outline steps written out (later on 2026-11-26, at the
+user's request).** Everything argument 3's revision still left at outline
+level is now proved in
+[../gram_fourier_lemmas.md](../gram_fourier_lemmas.md):
+- the noise bound (5);
+- the tip estimates (6) to (9);
+- the closeness of moments for every probe;
+- the expansion behind (11), through exact interval volumes;
+- the anchor selection.
+
+- **Checks:** 31 of 31 pass, with the criteria committed before the run.
+  The guard constants are re-certified in exact arithmetic.
+- **Review:** a fresh-context AI referee
+  ([argument3_lemmas/review.md](argument3_lemmas/review.md)) graded it
+  CORRECT WITH MINOR FIXES.
+  - One gap: the anchors' placement, now Lemma I(f).
+  - One positive-part slip in the `b` formula.
+  - All 12 findings are applied.
+- **So both ends of the bracket are now written as proofs,** subject to
+  the model's definitions and the background calibration's certificate.
+- **Unchanged:** the bracket itself. Nothing shows that 2 is sharp. All
+  review is AI-level.

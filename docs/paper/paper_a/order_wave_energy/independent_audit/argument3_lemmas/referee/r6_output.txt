@@ -1,0 +1,8 @@
+lam=1/32 phi=0.37: pairs=6000 mismatches=620 orientation flips=0; max |gt|/(c0 lam^2 + sqrt2(dX+dR)) = 0.1958 (<=1); H(2) empirical C (l0=0.07) = 5.412
+lam=1/32 phi=2.1: pairs=6000 mismatches=626 orientation flips=0; max |gt|/(c0 lam^2 + sqrt2(dX+dR)) = 0.1867 (<=1); H(2) empirical C (l0=0.07) = 2.808
+lam=1/128 phi=0.37: pairs=6000 mismatches=852 orientation flips=0; max |gt|/(c0 lam^2 + sqrt2(dX+dR)) = 0.2665 (<=1); H(2) empirical C (l0=0.07) = 2.867
+lam=1/128 phi=2.1: pairs=6000 mismatches=883 orientation flips=0; max |gt|/(c0 lam^2 + sqrt2(dX+dR)) = 0.2871 (<=1); H(2) empirical C (l0=0.07) = 2.880
+
+real	0m7.022s
+user	0m0.015s
+sys	0m0.000s

@@ -21,7 +21,7 @@ outline level.**
   It also re-checks the anchor-guard constants that (11) uses, in exact
   rational arithmetic (Section 8, G9).
 - **Authorship and review.** AI-written. Reviewed by a fresh-context AI
-  referee (Section 9). No human has checked it.
+  referee, and corrected after it (Section 9). No human has checked it.
 - **What it is not.**
   - It adds no statistic and changes no statement of r2.
   - It is asymptotic, for one family: the exact circular vacuum plane wave,
@@ -38,9 +38,9 @@ outline level.**
 | index count of (5) | Lemmas B, C; Proposition D |
 | U-statistic moment and Hoeffding bounds | Lemma A |
 | tip estimates (6), (7) | Lemmas E, F |
-| (8), uniform in the fixed endpoint | Lemmas G, H, I |
-| closeness of moments for every probe (cited in r2 (R3) and Section 5) | Lemma I(c), (d) |
-| (9) | Lemma J |
+| (8), uniform over fixed endpoints in a compact interior set `K_(s_0)` | Lemmas G, H, I(a), (b), (d) |
+| closeness of moments for every probe (cited in r2 (R3) and Section 5) | Lemma I(c), (e), (f); Remark I1 |
+| (9), for `p = 2, 4` (the only cases r2 uses; r2 states every `p >= 2`) | Lemma J |
 | population expansion behind (11), with "anchor-phase terms vanish" and "calibration errors are `o(lambda^2)`" | Lemma K, Corollary K2, Proposition L |
 | anchor selection (r2 Section 6) | Lemma M |
 | anchor-guard constants used by (11) | Section 8, G9 |
@@ -318,7 +318,13 @@ outside `supp A_reg`.
 - Its sup and `d_u` bounds are uniform over anchor triples:
   - a non-zero coefficient needs `mu_0,anc` in `supp chi_anc`, that is,
     the anchors in the closed outer set, which is compact;
-  - for triples outside it, every `T_k` vanishes identically.
+  - for triples outside it, every `T_k` vanishes identically;
+  - on the support, `b_0(A_i, x) = alpha(u_x - u_A) kappa_0^2 / gamma >= b_flat/2`
+    with `kappa_0 <= 1`, so `u_x - u_(A_i) >= alpha^-1(gamma b_flat/2) > 0`
+    uniformly;
+  - `mu_0` and `d_u mu_0` are jointly continuous in (anchors, `x`) on the
+    compact set {anchors in the outer set, `x` in `K_w` with that gap}, so
+    they are bounded there. (Added after review, finding F12.)
 
 *Step 5: the index count.* Expand each factor `eps_(alpha_l)(x)` into its
 Hoeffding parts: one slot for an average or `h_1` part, two slots for an
@@ -548,14 +554,20 @@ One can take `C_S = 4 (2/Z_0) pi M (M + 1)/(2 sqrt 2)`.
 
 *Proof.*
 - (1) Let `gt'` be `gt` at the physical points `(xi_X, xi_R)`, in the common
-  chart.
+  chart. Always `|gt - gt'| <= sqrt 2 (d(X) + d(R))`.
+  - **No orientation flip.** `Psi_lam` preserves `u`, and both relations
+    point from smaller to larger `u` when `u_X != u_R`. So the two pairs
+    can be related only in the same orientation, and only the presence of
+    the relation can differ. The slice `u_X = u_R` is a null set.
   - If the wave relation of `(xi_X, xi_R)` differs from the background
     relation of the same physical points, then `|gt'| <= c_0 lambda^2`, by
-    [QOB] Corollary 2.3 (both orientations, via Lemma 2.4).
+    [QOB] Corollary 2.3 (both orientations, via Lemma 2.4). Hence
+    `|gt| <= |gt'| + sqrt 2 (d(X) + d(R))`.
   - If the background relations of `(xi_X, xi_R)` and of `(X, R)` differ,
     then `gt'` and `gt` lie on opposite sides of 0. So
     `|gt| <= |gt - gt'| <= sqrt 2 (d(X) + d(R))`.
-  - A mismatch is one of these two cases.
+  - A mismatch is one of these two cases. (The orientation sentence and
+    the explicit step were added after review, finding F5.)
 - (2) Only `R <= X` is possible, under both relations. Put
   `Delta m = m(u_R, u_X) >= l_0`.
   - **Matrix part.** Since `|beta| <= C_E lambda^2 <= lambda/4 <= Delta m / 2`,
@@ -573,7 +585,9 @@ One can take `C_S = 4 (2/Z_0) pi M (M + 1)/(2 sqrt 2)`.
 
 **Lemma I (mismatch probabilities and closeness of moments).** Fix
 `s_0 in (0, 1/4]` and put `K_(s_0) = {X in D_0 : s(X) >= s_0}`. For
-`lambda <= lambda_1`, with constants depending on `s_0`:
+`lambda <= min(lambda_1, s_0)` (so that Lemma H(2) applies with
+`l_0 = s_0/2`; added after review, finding F6), with constants depending on
+`s_0`:
 - (a) `sup_(X in K_(s_0)) nu_lam{R : mismatch(X, R)} <= C lambda^2`;
 - (b) `(nu_lam x nu_lam){(R, R') : mismatch(R, R')} <= C lambda^2`;
 - (c) `sup_(X in D_0) nu_lam{R : mismatch(X, R)} <= C lambda^(3/2)`.
@@ -590,6 +604,21 @@ probes or anchors at canonical positions. Then:
   `K_(s_0)`.
 - (e) For every `X in D_0`, the probe coordinates satisfy
   `|mu_lam,probe(X) - mu_0,probe(X)| <= C lambda^(3/2)`.
+- (f) **Locating a point from its wave state.** Let `K` be a compact subset
+  of `D_Sigma`. There are `lambda_K > 0` and `C_K` such that, for
+  `lambda < lambda_K`: if `mu_lam,probe(X)` lies in `K`, then `X` is in the
+  interior of `D_0`, and its canonical state `(u, m, v~, |z|^2)(X)` lies
+  within `C_K lambda^(3/2)` of `Sigma(mu_lam,probe(X))`. Consequently:
+  - **anchors:** if the wave anchor numbers `iota_lam` lie in the outer
+    box, each canonical anchor `u_i` is within `0.002 + C lambda^(3/2)` of
+    its frozen value. So the anchors are in `K_(0.14)` for small `lambda`,
+    and (d) applies to them;
+  - **probes:** if `(w o Sigma)(mu_lam,probe(X)) != 0`, the canonical
+    state of `X` is within `C lambda^(3/2)` of `supp w`. So `X` is in the
+    neighbourhood `N` of Remark I1 for small `lambda`.
+
+  (Added after review, finding F1. As committed, Proposition L and (R3)
+  applied (d) to the anchors before showing that they are in `K_(s_0)`.)
 
 *Proof.*
 - (a) **Interior references.** Take `s(R) >= s_0/2`. Then `d(X)` and
@@ -617,9 +646,24 @@ probes or anchors at canonical positions. Then:
   union bound with (a) and (b), and add `TV(nu_lam, mu_0) = O(lambda^4 log(1/lambda))`
   (Lemma F). A moment differs by at most the disagreement probability of
   its kernel.
-- (e) The same, with (c) in place of (a). []
+- (e) The same, with (c) in place of (a).
+- (f) Fix a closed neighbourhood `K'` of `K` inside `D_Sigma` on which
+  `Sigma` is Lipschitz.
+  - By (e), `mu_0,probe(X)` is within `C lambda^(3/2)` of
+    `mu_lam,probe(X)`, so it is in `K'` for small `lambda`.
+  - Points of `K'` have `p, f > 0`, so `X` is interior. `Sigma` inverts the
+    background population map, so `Sigma(mu_0,probe(X))` is the canonical
+    state of `X`.
+  - The Lipschitz bound gives the distance.
+  - **For the anchors,** take `K` to be the set of `(p, f, a)` whose
+    `Sigma` state lies in the closed anchor box. That set is compact in
+    `D_Sigma`: anchor states there have `eta >= 0.126` and `zeta >= 0.638`
+    (argument-3 revision review, item 1).
+  - **For the probes,** take `K = supp(w o Sigma)`. []
 
 **Lemma J (moment form, (9)).** Let `X` and the anchors be in `K_(s_0)`.
+Only `p = 2` and `p = 4` are proved; r2 states (9) for every `p >= 2` but
+uses only these two (scope noted after review, finding F7).
 Let `eps_lam(X)` and `eps_0(X)` be the centred errors built from the
 coupled reference lists. If `n lambda^2 >= 1`, then for `p = 2, 4`,
 
@@ -657,7 +701,9 @@ active set. Each of those inputs is now proved:
 - (7) is Lemma F;
 - (8) is Lemma I(d);
 - (9) is Lemma J;
-- (R3)'s two bullets are Lemma I(d) and (e), and Remark I1 below;
+- (R3)'s two bullets are Lemma I(d), (e) and (f), and Remark I1 below;
+  (f) places the anchors and every probe with non-zero weight in
+  `K_(0.14)`;
 - T4's law change is Lemma F, by Minkowski's integral inequality:
   `|| int G(x)(nu_lam - mu_0)(dx) ||_2 <= sup_x ||G(x)||_2 * 2 TV`.
 
@@ -736,8 +782,8 @@ For `P_1 <= P_2` with `u_1 < u_2`, write `kappa = kappa(P_1, P_2)` and
 - `a(w)^2 m(s, w) m(w, t)/m(s, t) = sin(k(w - s)) sin(k(t - w)) / (k sin(k(t - s)))`.
 - So `Lambda_0(s, t) = (1 - k l cot(k l)) / (2q) = alpha(l)`, with
   `l = t - s`.
-- Hence `b_0(A, X) = kappa_0^2 alpha(u_X - u_A) / alpha(1)`, which is r2's
-  identity, and `p_0 = eta^2 alpha(u + 1/2)/gamma`, which is (2) of
+- Hence `b_0(A, X) = (kappa_0)_+^2 alpha(u_X - u_A) / alpha(1)`, which is
+  r2's identity (positive part added after review, F2), and `p_0 = eta^2 alpha(u + 1/2)/gamma`, which is (2) of
   null_coordinate_challenge.md.
 - `Lambda_(2,0)/(3 Lambda_0^2)` equals that document's
   `p_0(q l^2) = C_1 C_3 / (3 C_2^2)` (check G1, to 1e-10). The flat limit
@@ -751,7 +797,10 @@ For `P_1 <= P_2` with `u_1 < u_2`, write `kappa = kappa(P_1, P_2)` and
   - `f_lam(X) = zeta^2 Lambda_lam(u, 1/2) / Lambda_lam(-1/2, 1/2)`.
   - `a_lam(X) = p_lam(X)^2 Lambda_(2,lam)(-1/2, u) / (3 Lambda_lam(-1/2, u)^2)`.
   - For `A` with `u_X - u_A >= l_0`:
-    `b_lam(A, X) = kappa_lam(xi_A, xi_X)^2 Lambda_lam(u_A, u_X) / Lambda_lam(-1/2, 1/2)`.
+    `b_lam(A, X) = (kappa_lam(xi_A, xi_X))_+^2 Lambda_lam(u_A, u_X) / Lambda_lam(-1/2, 1/2)`.
+    The positive part matters: an unrelated pair has `b = 0`, since Lemma K
+    needs `P_1 <= P_2`. (Corrected after review, finding F2. Every use below
+    has pair slack at least 0.1.)
 
   The background has the same forms with `lambda = 0`, at the canonical
   points. Here `eta` and `zeta` are the same for both, by Lemma E(i).
@@ -765,7 +814,9 @@ For `P_1 <= P_2` with `u_1 < u_2`, write `kappa = kappa(P_1, P_2)` and
 
 - (iii) **Consequence.** The probe coordinates `(p, f, a)` of
   `mu_lam(X)` and `mu_0(X)` differ by `O(lambda^4 log(1/lambda))`,
-  uniformly on `K_(s_0)`. So the calibrated states agree to the same order:
+  uniformly on `K_(s_0)`. On compact subsets of the interior of `D_0` that
+  lie in `K_(s_0)`, in particular on `N` and at the anchors, the calibrated
+  states agree to the same order:
   `Sigma(mu_lam,probe(X)) = (u, m(u), v~, |z|^2) + O(lambda^4 log(1/lambda))`.
   Also
   `eta^(0)_AX = kappa_lam(xi_A, xi_X)(1 + O(lambda^4 log(1/lambda)))`.
@@ -797,8 +848,11 @@ For `P_1 <= P_2` with `u_1 < u_2`, write `kappa = kappa(P_1, P_2)` and
       contribute `O(lambda^2 Phi)`, `O(lambda^4)` and `O(lambda^4)`.
   - `Lambda_0(s, t) = alpha(t - s) >= alpha(l_0) > 0`, so the relative
     errors are of the same order.
-- (iii) `c_lam` cancels in every ratio, and `Sigma` is Lipschitz on a
-  neighbourhood of the compact probe region.
+- (iii) `c_lam` cancels in every ratio. On a compact subset of the
+  interior, the background `(p, f, a)` lie in a compact subset of
+  `D_Sigma`, and `Sigma` is Lipschitz on a neighbourhood of it. (The
+  restriction to the interior was added after review, finding F3: `Sigma`
+  is undefined where `eta = 0` or `zeta = 0`.)
   - The background calibration returns `(u, m, v~, |z|^2)` at the canonical
     point. Indeed `v = 1 - sigma + sigma eta - (1 - sigma) zeta = v~` and
     `R^2 = 2 W_0 (1 - eta - zeta) = |z|^2` (r2 Section 1.2).
@@ -821,8 +875,10 @@ Explicitly, `c_q = (sqrt q / 4) 0.0101 int W f du`, with
 
 *Proof.* Write `z_i`, `u_i`, `m_i = m(u_i)` for the canonical anchors.
 - **The anchors and the probes are in `K_(0.14)`.**
-  - `iota_lam` is in the three-quarter box. By Lemma I(d) and the
-    smoothness of `iota`, the canonical anchor numbers
+  - `iota_lam` is in the three-quarter box. By Lemma I(f) the canonical
+    anchors are in `K_(0.14)`, and every probe with non-zero weight is in
+    `N`. Then, by Lemma I(d) and the smoothness of `iota`, the canonical
+    anchor numbers
     `iota^0 = (u_i, v~_i, |z_i|^2, z_i . z_j)` differ from `iota_lam` by
     `O(lambda^2)`. So for small `lambda` they lie in the outer box, where
     the certificate bounds of Section 8 (G9) hold.
@@ -957,14 +1013,17 @@ not need it (r2 (R2)).
   `L_iota` be a Lipschitz constant of `iota` on a closed
   `eta_1`-neighbourhood of `Omega`.
 - **Pilot accuracy.** Put
-  `eta = min(eta_1, tol_min / (8 L_iota))`. By Lemma A(iii), a triple's 12
+  `eta = min(eta_1, tol_min / (8 L_iota))`. By Lemma A(iii), a triple's
   pilot raw moments are all within `eta` of their population values with
-  probability at least `1 - 24 exp(-2 floor(n'/2) eta^2)`.
+  probability at least `1 - 30 exp(-2 floor(n'/2) eta^2)`.
+  - There are 15 of them: `p, f, a` for each anchor, and `b` for all six
+    ordered pairs, so that whichever labelling is accepted is covered.
+  - The factor was 24 before review, finding F4.
 - (b) If a triple is accepted and its pilot moments are `eta`-accurate,
   then its population moments lie within `eta` of `Omega`. So `iota_lam`
   is within `L_iota eta <= tol/8` of `iota_hat`, which is in the half box.
   A union bound over `ceil(log m)` triples gives a failure probability of
-  at most `24 ceil(log m) exp(-2 floor(n'/2) eta^2) -> 0`.
+  at most `30 ceil(log m) exp(-2 floor(n'/2) eta^2) -> 0`.
 - (a) **Good positions have positive probability.** Let `U'` be the set of
   canonical triples with `iota_0` in the one-eighth box. It contains a
   neighbourhood of the frozen positions, where `iota_0 = iota*`, so
@@ -976,7 +1035,7 @@ not need it (r2 (R2)).
     `iota_lam`, so in the half box, and the triple is accepted.
   - The positions of different triples are independent, but the pilot
     references are shared. So bound the two causes separately:
-    `Pr(none) <= (1 - 3 p_1/2)^(ceil(log m)) + 24 ceil(log m) exp(-2 floor(n'/2) eta^2)`,
+    `Pr(none) <= (1 - 3 p_1/2)^(ceil(log m)) + 30 ceil(log m) exp(-2 floor(n'/2) eta^2)`,
     which tends to 0. []
 
 As r2 says, this gives no practical sample size. The probability `p_1` is
@@ -1042,7 +1101,7 @@ had passed (the script's docstring says so).
 | G2 | composition identity to `6.7e-16`; slice length to `1.7e-16`; slice area to relative `1.4e-8` |
 | G3 | the `Lambda` bound holds; deviation over `lambda^4 (1 + log(1/lambda))` at most 6.4. For `Lambda_2`: 0.42, 0.50, 0.56 at `1/lambda` = 32, 64, 128 |
 | G4 | `zeta` preserved to `6e-16`; `det T` closed form to `1e-15`; the four bounds hold with largest ratios 0.19, 0.11, 0.033, 0.073 |
-| G5 | (7) holds. TV over `lambda^4 log(1/lambda)` is about 10.5 at `q = 0.25` and about 41 at `q = 1`, matching audit report 3b's `TV ~ 40 lambda^4 log(1/lambda)` |
+| G5 | (7) holds. The quantity computed is the L1 upper bound `(pi/Z_0) int a^2 W_0 |det T - 1|` on TV, not TV itself (relabelled after review, finding F9). Over `lambda^4 log(1/lambda)` it is about 10.5 at `q = 0.25` and about 41 at `q = 1`. The referee's exact TV at `lambda = 1/512` gives 8.07 and 30.9 |
 | G6 | `Delta` residual over `lambda^4` at most 8.1; `beta_L` residual over `lambda^3` at most 4.1 |
 | G7 | angular-bookkeeping residual over `lambda^4` at most 2.3 |
 | G8 | relative difference from the main term 0.194, 0.0151, 0.0047 at `1/lambda` = 64, 128, 256, for both `delta = 0` and `delta = 1/8` |
@@ -1059,10 +1118,23 @@ The certified G9 values are:
 - anchor-pair slack `>= 0.0289167`;
 - active-probe slack `>= 0.1001972`.
 
-They agree with the author's certificate. Two details:
-- **`ell`.** The certificate's `|ell| <= 1.009434` is what holds. r2's
-  "1.0094" is rounded down by `3.4e-5`. That moves the `Im D_A` bound by
-  under `1e-8`, so nothing changes.
+**Comparison with the author's certificate** (rewritten after review,
+finding F10):
+- **Values that agree:** `|ell| <= 1.009434`, `|D_A| <= 0.0423907`, the
+  anchor-pair slack and the active-probe slack. `a_3x` agrees with the
+  value audit report 3b quotes (0.079626).
+- **`a_3y`.** The certificate records 0.0793741; G9 gets 0.0793745. Both
+  are valid lower bounds. G9's is computed as
+  `(G_23 - |G_12| G_13 / G_11) / sqrt(G_22)` with outward bounds; the
+  certificate used a slightly cruder enclosure.
+- **`Im D_A` and the grid coefficient** differ by input, not by error:
+  - G9 uses the rational bound on `sec^2(1/2)` (about 1.2985) where the
+    certificate used 1.30;
+  - G9 uses the corrected `|a_2x a_2y| <= 2.00626e-5`, where the
+    certificate used `2e-5`.
+- **`ell`.** r2's "1.0094" is the certificate's 1.009434 rounded down by
+  `3.4e-5`. With 1.009434, r2's chain gives 0.01069785 (referee r5), so
+  r2's 0.0106978 stands.
 - **The bound 0.0106978 that Proposition L quotes** is r2's corrected value.
   G9's sharper 0.0107107 is not needed.
 
@@ -1079,22 +1151,90 @@ They agree with the author's certificate. Two details:
 
 ## 9. Review
 
-Pending.
+[independent_audit/argument3_lemmas/review.md](independent_audit/argument3_lemmas/review.md).
+
+**The referee.**
+- A fresh-context AI referee, given the note at `6257276`, its sources and
+  its checks as claims to test.
+- Only short deterministic checks. Its eight scripts are archived in
+  [referee/](independent_audit/argument3_lemmas/referee/), with outputs.
+
+**Verdict: CORRECT WITH MINOR FIXES.**
+- Every numbered result is true, and every result the note relies on
+  holds.
+- One finding is a GAP (F1).
+- One statement is false as stated (F2), with no effect downstream.
+- The rest are minor: constants, scope, wording and the note's account of
+  itself.
+
+**What the referee's own checks found.**
+- **The signal (Proposition L).** It used the exact map and slacks,
+  including `delta ell`, and took the calibration as exact.
+  - The relative error against the Step 5 main term is 0.19, 0.015,
+    0.0047 and 0.0009 at `1/lambda` = 64, 128, 256 and 512. The same holds
+    in a rotated and in a reflected frame.
+  - It reproduces the challenge's limit (4), 0.017294 + 0.008246i.
+  - The actual coefficient is 0.0184, against the certified floor 0.0102.
+- **Lemma K** by direct quadrature, independent of the composition
+  identity: (i) to `1.5e-10`, (ii) to `4e-14`.
+- **Lemma E** down to `s = 1e-10` and `q = 0.01`.
+  - The one tight bound is `eps <= e(s)`, which reaches 0.993 of `e(s)`; it
+    comes from [QOB] Lemma 2.1.
+  - The other constants are generous.
+- **Lemma F:** the exact TV lies below (7) with ratio at most 0.026.
+- **Lemma H:** 24,000 seeded near-cone pairs gave 2,981 mismatches, all
+  within the bound.
+- **The `Lambda_2` deviation** has rate `lambda^4 log(1/lambda)` (slopes
+  near -1 per unit `log(1/lambda)`).
+
+**Corrected after the review**, in the text above:
+
+| finding | grade | correction |
+|---|---|---|
+| F1 | GAP | Lemma I(f) added: a point's canonical state is located from its wave state. With it, the canonical anchors are in `K_(0.14)` before Lemma I(d) is applied to them, and every probe with non-zero weight is in `N`. Proposition L and the (R3) line of Section 5 now cite it. |
+| F2 | false as stated | `b = (kappa)_+^2 Lambda / Lambda(-1/2, 1/2)`, in Corollary K2(i) and Remark K1. |
+| F3 | minor | Corollary K2(iii) restricted to compact subsets of the interior, which is all that is used. |
+| F4 | minor | Lemma M: 15 pilot moments, factor 30 instead of 24. |
+| F5 | minor | Lemma H(1): no orientation flip, and the explicit step `|gt| <= |gt'| + sqrt 2 (d_X + d_R)`. |
+| F6 | minor | Lemma I stated for `lambda <= min(lambda_1, s_0)`. |
+| F7 | minor (scope) | Section 0 map; Lemma J proves `p = 2, 4` only. |
+| F8 | minor (overclaim) | The preamble said "reviewed" while Section 9 was pending. It now says reviewed and corrected. |
+| F9 | minor | The G5 row now says that the quantity is the L1 bound on TV, and gives the referee's exact TV. The script's label is corrected in its docstring only; outputs are unaffected. |
+| F10 | minor | Section 8 now says which certificate values agree and why the others differ. |
+| F11 | minor (wording) | Section 0: (8) is uniform over endpoints in `K_(s_0)`. |
+| F12 | minor | Proposition D, Step 4: joint continuity, and the uniform lower bound on `u_x - u_A`. |
+
+No inequality of r2 changes, and no statement of this note's lemmas
+changes except F2's positive part and F6's range of `lambda`.
+
+**The referee's least-trusted step** was F1, now written as Lemma I(f).
+Second was F12's uniformity, now written out.
+
+**The review did not cover:**
+- r2's own T1 to T4 bounds, (R1) to (R4) and the scan, beyond reading them;
+- the imported [WCR] and [QOB] results;
+- the certificate that `Sigma` inverts the background map;
+- the fully calibrated population signal (its r4 takes the calibration as
+  exact; Corollary K2 is checked separately);
+- `q` outside {0.01, 0.25, 1}, and `lambda` below 1/512.
 
 ## 10. What is now written, and what remains
 
-- **Written here:** every step that r2 Section 8 listed as outline level,
-  except the parts named below.
+- **Written here:** every step that r2 Section 8 listed as outline level.
+  (9) is written for `p = 2, 4`, the cases r2 uses.
 - **Still imported:**
   - the definitions of [WCR] Section 7;
   - the background calibration's inverse and its certificate (in
     null_coordinate_challenge.md);
-  - r2's own reviewed parts.
+  - r2's own reviewed parts: (R1) to (R4), the bounds on T1 to T4, and the
+    scan.
 - **Re-checked, not re-derived:** the anchor-guard constants are
-  re-certified in exact arithmetic by G9 (an independent computation). The
-  author's certificate file is not edited.
+  re-certified in exact arithmetic by G9, an independent computation, and
+  by the referee's r5. The author's certificate file is not edited.
 - **Unchanged:**
   - the bracket `4/3 <= alpha_low <= alpha_high <= 2`;
-  - every statement is asymptotic;
+  - every statement is asymptotic, with constants far from any reachable
+    size;
   - nothing here shows that 2 is necessary;
-  - argument 2's source document is still unrevised.
+  - argument 2's source document is still unrevised;
+  - the review is AI-level. No human has checked it.

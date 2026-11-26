@@ -1,0 +1,64 @@
+lam=1/64 phi=0.37 theta=0.000 refl=False |dell|/lam^2=17.33:
+  delta=+0.000: |E_num|/lam^2=7.363767e-07 |E_pred|/lam^2=8.421632e-07 rel diff=1.951e-01 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=7.357096e-07 |E_pred|/lam^2=8.421384e-07 rel diff=1.953e-01 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=7.370390e-07 |E_pred|/lam^2=8.421671e-07 rel diff=1.949e-01 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.013775+0.009520j, predicted limit = 0.017294+0.008246j
+lam=1/64 phi=2.1 theta=0.393 refl=False |dell|/lam^2=15.92:
+  delta=+0.000: |E_num|/lam^2=8.734779e-07 |E_pred|/lam^2=8.421632e-07 rel diff=1.868e-01 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.733249e-07 |E_pred|/lam^2=8.421384e-07 rel diff=1.870e-01 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.736081e-07 |E_pred|/lam^2=8.421671e-07 rel diff=1.866e-01 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.000025+0.019862j, predicted limit = 0.003454+0.018846j
+lam=1/64 phi=0.37 theta=0.300 refl=True |dell|/lam^2=15.97:
+  delta=+0.000: |E_num|/lam^2=6.845664e-07 |E_pred|/lam^2=8.421632e-07 rel diff=1.872e-01 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=6.843807e-07 |E_pred|/lam^2=8.421671e-07 rel diff=1.874e-01 |int W f D_A e|/int W f=0.018376
+  delta=-0.125: |E_num|/lam^2=6.847495e-07 |E_pred|/lam^2=8.421384e-07 rel diff=1.869e-01 |int W f D_A e|/int W f=0.018375
+  challenge (4): E/(lam^2 E w) = -0.014863+0.004627j, predicted limit = -0.018276+0.005752j
+lam=1/128 phi=0.37 theta=0.000 refl=False |dell|/lam^2=0.14:
+  delta=+0.000: |E_num|/lam^2=8.371739e-07 |E_pred|/lam^2=8.424714e-07 rel diff=1.511e-02 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.373764e-07 |E_pred|/lam^2=8.424467e-07 rel diff=1.514e-02 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.369500e-07 |E_pred|/lam^2=8.424754e-07 rel diff=1.508e-02 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.017295+0.007956j, predicted limit = 0.017294+0.008246j
+lam=1/128 phi=2.1 theta=0.393 refl=False |dell|/lam^2=0.18:
+  delta=+0.000: |E_num|/lam^2=8.359758e-07 |E_pred|/lam^2=8.424714e-07 rel diff=9.627e-03 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.360235e-07 |E_pred|/lam^2=8.424467e-07 rel diff=9.601e-03 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.359078e-07 |E_pred|/lam^2=8.424754e-07 rel diff=9.654e-03 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.003319+0.018718j, predicted limit = 0.003454+0.018846j
+lam=1/128 phi=0.37 theta=0.300 refl=True |dell|/lam^2=0.18:
+  delta=+0.000: |E_num|/lam^2=8.497566e-07 |E_pred|/lam^2=8.424714e-07 rel diff=1.363e-02 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.501282e-07 |E_pred|/lam^2=8.424754e-07 rel diff=1.389e-02 |int W f D_A e|/int W f=0.018376
+  delta=-0.125: |E_num|/lam^2=8.493615e-07 |E_pred|/lam^2=8.424467e-07 rel diff=1.337e-02 |int W f D_A e|/int W f=0.018375
+  challenge (4): E/(lam^2 E w) = -0.018370+0.005994j, predicted limit = -0.018276+0.005752j
+lam=1/256 phi=0.37 theta=0.000 refl=False |dell|/lam^2=3.38:
+  delta=+0.000: |E_num|/lam^2=8.406589e-07 |E_pred|/lam^2=8.425486e-07 rel diff=4.683e-03 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.406208e-07 |E_pred|/lam^2=8.425238e-07 rel diff=4.665e-03 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.406763e-07 |E_pred|/lam^2=8.425525e-07 rel diff=4.701e-03 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.017221+0.008298j, predicted limit = 0.017294+0.008246j
+lam=1/256 phi=2.1 theta=0.393 refl=False |dell|/lam^2=2.73:
+  delta=+0.000: |E_num|/lam^2=8.423134e-07 |E_pred|/lam^2=8.425486e-07 rel diff=2.649e-03 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.422782e-07 |E_pred|/lam^2=8.425238e-07 rel diff=2.656e-03 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.423279e-07 |E_pred|/lam^2=8.425525e-07 rel diff=2.641e-03 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.003403+0.018849j, predicted limit = 0.003454+0.018846j
+lam=1/256 phi=0.37 theta=0.300 refl=True |dell|/lam^2=4.06:
+  delta=+0.000: |E_num|/lam^2=8.393393e-07 |E_pred|/lam^2=8.425486e-07 rel diff=4.563e-03 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.393566e-07 |E_pred|/lam^2=8.425525e-07 rel diff=4.533e-03 |int W f D_A e|/int W f=0.018376
+  delta=-0.125: |E_num|/lam^2=8.393014e-07 |E_pred|/lam^2=8.425238e-07 rel diff=4.592e-03 |int W f D_A e|/int W f=0.018375
+  challenge (4): E/(lam^2 E w) = -0.018220+0.005684j, predicted limit = -0.018276+0.005752j
+lam=1/512 phi=0.37 theta=0.000 refl=False |dell|/lam^2=11.28:
+  delta=+0.000: |E_num|/lam^2=8.428767e-07 |E_pred|/lam^2=8.425679e-07 rel diff=8.893e-04 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.428543e-07 |E_pred|/lam^2=8.425431e-07 rel diff=8.938e-04 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.428781e-07 |E_pred|/lam^2=8.425718e-07 rel diff=8.848e-04 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.017294+0.008263j, predicted limit = 0.017294+0.008246j
+lam=1/512 phi=2.1 theta=0.393 refl=False |dell|/lam^2=15.85:
+  delta=+0.000: |E_num|/lam^2=8.428644e-07 |E_pred|/lam^2=8.425679e-07 rel diff=5.457e-04 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.428461e-07 |E_pred|/lam^2=8.425431e-07 rel diff=5.510e-04 |int W f D_A e|/int W f=0.018375
+  delta=-0.125: |E_num|/lam^2=8.428619e-07 |E_pred|/lam^2=8.425718e-07 rel diff=5.404e-04 |int W f D_A e|/int W f=0.018376
+  challenge (4): E/(lam^2 E w) = 0.003447+0.018854j, predicted limit = 0.003454+0.018846j
+lam=1/512 phi=0.37 theta=0.300 refl=True |dell|/lam^2=11.18:
+  delta=+0.000: |E_num|/lam^2=8.424167e-07 |E_pred|/lam^2=8.425679e-07 rel diff=5.962e-04 |int W f D_A e|/int W f=0.018376
+  delta=+0.125: |E_num|/lam^2=8.424217e-07 |E_pred|/lam^2=8.425718e-07 rel diff=5.937e-04 |int W f D_A e|/int W f=0.018376
+  delta=-0.125: |E_num|/lam^2=8.423909e-07 |E_pred|/lam^2=8.425431e-07 rel diff=5.988e-04 |int W f D_A e|/int W f=0.018375
+  challenge (4): E/(lam^2 E w) = -0.018276+0.005741j, predicted limit = -0.018276+0.005752j
+
+real	0m19.638s
+user	0m0.016s
+sys	0m0.000s
