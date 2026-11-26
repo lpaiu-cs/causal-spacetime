@@ -1,0 +1,58 @@
+[PASS] N1 window: p0(1) = 0.0959192 (width 4.081%), p0(0.25) = 0.0990315 (width 0.969%)
+[PASS] N1 fast series: max |fast - mpmath| = 5.55e-17
+[INFO] N2 row: q=0.25, r=64: [0.074560, 0.132767] vs (0.099031, 0.1) -> SKIPPED
+[INFO] N2 row: q=0.25, r=128: [0.085922, 0.115252] vs (0.099031, 0.1) -> SKIPPED
+[INFO] N2 row: q=0.25, r=256: [0.092414, 0.107175] vs (0.099031, 0.1) -> SKIPPED
+[INFO] N2 row: q=0.25, r=512: [0.095890, 0.103299] vs (0.099031, 0.1) -> SKIPPED
+[INFO] N2 row: q=0.25, r=1024: [0.097688, 0.101401] vs (0.099031, 0.1) -> SKIPPED
+[INFO] N2 row: q=0.25, r=2048: [0.098604, 0.100462] vs (0.099031, 0.1) -> SKIPPED
+[INFO] N2 row: q=1.0, r=64: [0.072984, 0.131380] vs (0.095919, 0.1) -> SKIPPED
+[INFO] N2 row: q=1.0, r=128: [0.084392, 0.113799] vs (0.095919, 0.1) -> SKIPPED
+[INFO] N2 row: q=1.0, r=256: [0.090916, 0.105712] vs (0.095919, 0.1) -> SKIPPED
+[INFO] N2 row: q=1.0, r=512: [0.094410, 0.101836] vs (0.095919, 0.1) -> SKIPPED
+[INFO] N2 row: q=1.0, r=1024: [0.096219, 0.099940] vs (0.095919, 0.1) -> evaluated
+[INFO] N2 row: q=1.0, r=2048: [0.097139, 0.099002] vs (0.095919, 0.1) -> evaluated
+[PASS] N2 nestedness of the 12 rows: p up, f down, a up in every row
+[PASS] N2 reproduces the referee's X4: max endpoint difference 4.34e-07
+[INFO] N2 skipped at every reference count: [(0.25, 64), (0.25, 128), (0.25, 256), (0.25, 512), (0.25, 1024), (0.25, 2048), (1.0, 64), (1.0, 128), (1.0, 256), (1.0, 512)]
+[PASS] N3 32N^4 <= 2^B <= 64N^4: 3094 values of N, both B
+[PASS] N3 B <= 6 + 4 log2 N: both B
+[PASS] N3 union bound (3/4) N^-2: both B
+[PASS] N3 implementation's B: least B, plus one iff N = 2^j
+[PASS] N4 Lemma 2.1 exact binomial: worst failure / 4e^-B = 0.121
+[PASS] N5 averaging identity: n = 2..7, exact
+[PASS] N5 E e^(sU) <= E e^(sV): largest ratio 0.9608
+[PASS] N6 Lemma 2.4 on 20000 boxes: largest lhs/rhs = 0.739
+[PASS] N7a Lemma 3.1 q=0.25: max residual/lam^3: 1/256: 148.1, 1/1024: 133.2, 1/4096: 104.1; min |l|/c_L = 1.008 (c_L = 5.3796)
+[PASS] N7a Lemma 3.1 q=1.0: max residual/lam^3: 1/256: 280.7, 1/1024: 249.5, 1/4096: 196.1; min |l|/c_L = 1.008 (c_L = 9.4020)
+[PASS] N7b sign of (5') q=0.25: max |dv + z Phi z/2|/lam^4: 1/256: 0.08, 1/1024: 0.02
+[PASS] N7b sign of (5') q=1.0: max |dv + z Phi z/2|/lam^4: 1/256: 0.32, 1/1024: 0.07
+[INFO] N8 constants q=0.25: c_L = 5.37960, g1 = 0.003362, g2 = 0.006725, c' = 0.06294, floor (3/64) c_L rho1^2 = 0.002522
+[INFO] N8 q=0.25: lam=1/512: related 632/632, min kappa/lam^2 = 0.009844, both in K: True
+[PASS] N8 Lemma 3.3 q=0.25: lam=1/2048: related 632/632, min kappa/lam^2 = 0.010059, both in K: True
+[PASS] N8 Lemma 3.3 q=0.25: lam=1/8192: related 632/632, min kappa/lam^2 = 0.010124, both in K: True
+[INFO] N8 constants q=1.0: c_L = 9.40195, g1 = 0.005876, g2 = 0.011752, c' = 0.08320, floor (3/64) c_L rho1^2 = 0.004407
+[INFO] N8 q=1.0: lam=1/512: related 632/632, min kappa/lam^2 = 0.017739, both in K: True
+[PASS] N8 Lemma 3.3 q=1.0: lam=1/2048: related 632/632, min kappa/lam^2 = 0.018169, both in K: True
+[PASS] N8 Lemma 3.3 q=1.0: lam=1/8192: related 632/632, min kappa/lam^2 = 0.017110, both in K: True
+[PASS] N9 c_0(K) inside the window q=0.25: [0.099384, 0.099962] in (0.099031, 0.1); margins 3.52e-04, 3.81e-05
+[PASS] N9 increments q=0.25: max |Delta theta_0|/lam: 2^-11: 3.061, 2^-14: 2.861, 2^-17: 2.948, 2^-20: 2.873
+[PASS] N9 limit boxes in the window q=0.25: fraction inside: 2^-11: 0.001, 2^-14: 0.618, 2^-17: 0.997, 2^-20: 1.000
+[PASS] N9 c_0(K) inside the window q=1.0: [0.097453, 0.099847] in (0.095919, 0.1); margins 1.53e-03, 1.53e-04
+[PASS] N9 increments q=1.0: max |Delta theta_0|/lam: 2^-11: 3.174, 2^-14: 2.821, 2^-17: 2.947, 2^-20: 2.878
+[PASS] N9 limit boxes in the window q=1.0: fraction inside: 2^-11: 0.415, 2^-14: 0.934, 2^-17: 1.000, 2^-20: 1.000
+[INFO] N10: q=0.25, r=64: 368.3
+[INFO] N10: q=0.25, r=128: 269.0
+[INFO] N10: q=0.25, r=256: 208.9
+[INFO] N10: q=0.25, r=512: 37.6
+[INFO] N10: q=0.25, r=1024: 6.6
+[INFO] N10: q=0.25, r=2048: 3.1
+[INFO] N10: q=1.0, r=64: 354.9
+[INFO] N10: q=1.0, r=128: 263.3
+[INFO] N10: q=1.0, r=256: 209.6
+[INFO] N10: q=1.0, r=512: 32.8
+[INFO] N10: q=1.0, r=1024: 2.0
+[INFO] N10: q=1.0, r=2048: 0.9
+
+26 PASS, 0 FAIL
+exit 0

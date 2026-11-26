@@ -74,7 +74,7 @@ observer.
 | Section 4 | Lemmas 4.2, 4.3 and Theorem 4.4: increments `O(lambda)`, the domain `R` eventually inside `D_F`, the width (8), and the assembly. One power of `log N`, through the Bernstein term only | item 5; findings 2, 4, 7 |
 | Section 4 | the implementation's enclosures stated as a hypothesis, (H-enc), which the audit did not review | referee Section 5, item 4 |
 | Section 5 | the original's Section 5, unchanged apart from an italic note at its head | |
-| Section 6 | new: which of the frozen witnesses the test, as specified, can ever evaluate | item 4 |
+| Section 6 | new: which of the frozen witnesses the test, as specified, can ever evaluate. Ten of 12 are skipped at every reference count, including the `q = 0.25` rows at `r <= 512`, which the audit record's item 4 omits | item 4 |
 | Sections 7 to 9 | new: deterministic checks, status and imports, review | |
 
 Deterministic checks:
@@ -852,7 +852,40 @@ the archived population moments
 ([local_null_evidence/rows.jsonl](local_null_evidence/rows.jsonl)), the
 limit range `[a_X/p_Y^2, a_Y/p_X^2]` of Remark 2.6 for all 12 rows.
 
-*Result: recorded here after the run (Section 7).*
+| `r = 1/lambda` | `q = 0.25`, window `(0.099031, 0.1)` | `q = 1`, window `(0.095919, 0.1)` |
+|---:|---|---|
+| 64 | `[0.074560, 0.132767]` skipped | `[0.072984, 0.131380]` skipped |
+| 128 | `[0.085922, 0.115252]` skipped | `[0.084392, 0.113799]` skipped |
+| 256 | `[0.092414, 0.107175]` skipped | `[0.090916, 0.105712]` skipped |
+| 512 | `[0.095890, 0.103299]` skipped | `[0.094410, 0.101836]` skipped |
+| 1024 | `[0.097688, 0.101401]` skipped | `[0.096219, 0.099940]` evaluated |
+| 2048 | `[0.098604, 0.100462]` skipped | `[0.097139, 0.099002]` evaluated |
+
+- **Ten of the 12 rows are skipped at every reference count.** They are all
+  six `q = 0.25` rows and the `q = 1` rows with `r <= 512`. Only the `q = 1`
+  rows at `r = 1024` and `2048` can ever be evaluated.
+- So of the ten witnesses with a positive population decrease, the test as
+  specified could certify at most two, even with unlimited references. The
+  "10 of 12" count of local_null_results.md is a count of population
+  witnesses, not of pairs this test could certify.
+- **A correction to the audit record.** AUDIT.md Section 3, argument 2,
+  item 4 lists the skipped `q = 0.25` witnesses as those at
+  `r = 1024, 2048`. The referee's report, Section 6.2, says `r <= 2048`,
+  and the computation agrees with the report. The referee's script checked
+  only `r = 1024, 2048` at `q = 0.25`. AUDIT.md is not edited; its new
+  Section 15 records this.
+- The three rows the referee computed (s6 X4) are reproduced to `4.3e-7`.
+- This does not affect (1). The witness set of Section 3 enters the window
+  as `lambda -> 0` (Lemma 4.3). Check N9 shows how far away that is: on
+  `W_lam`, all sampled limit boxes are inside the window only at
+  `lambda = 2^-17` (`q = 1`) and `2^-20` (`q = 0.25`), and at
+  `lambda = 2^-11` only 41.5% (`q = 1`) and 0.1% (`q = 0.25`) are.
+
+**What local_null_results.md should say.** Add, when it is next revised:
+"The test as specified evaluates only the `q = 1` witnesses at `r = 1024`
+and `2048`. Its rectangular domain puts the other ten outside the
+calibration window at every reference count (local_null_challenge_r2.md
+Section 6). The asymptotic claim is unaffected."
 
 ## 7. Deterministic checks
 
@@ -873,7 +906,34 @@ in the script's docstring and were committed before the run.
 | N9 | Lemma 4.2: increments over `lambda`, `c_0(K)` inside the window, and the scale of `lambda` at which the limit boxes enter the window |
 | N10 | information only: the archived rows' `|decrease - margin| / (lambda^4 log(1/lambda))` |
 
-*Results: recorded here after the run.*
+**Results.** One full run, after the criteria were committed at `5ffcdd9`:
+**26 of 26 pass**
+([checks_output.txt](independent_audit/argument2_revision/checks_output.txt)).
+The run took about 5 seconds on CPU.
+- **N1.** `p0(1) = 0.0959192` and `p0(0.25) = 0.0990315`: window widths
+  4.081% and 0.969%.
+- **N2.** All 12 rows have the nested signs. Section 6 gives the ranges.
+- **N3.** 3094 values of `N`, both choices of `B`.
+- **N4.** The worst exact failure probability is 0.121 of `4 e^-B`.
+- **N5.** The identity is exact for `n = 2` to 7. The largest
+  `E e^(sU) / E e^(sV)` is 0.961.
+- **N6.** The largest ratio of the two sides of (4) is 0.739.
+- **N7.** The residual of (5) over `lambda^3` is at most 148 (`q = 0.25`)
+  and 281 (`q = 1`), and decreases from `1/256` to `1/4096`. On
+  `[pi/2, 3 pi/2]`, `min |l| / c_L = 1.008`, the factor `1/c_lam` the bound
+  gives away. The sign of (5') holds: `|dv + z^T Phi z/2| / lambda^4` is
+  at most 0.32.
+- **N8.** All 632 sampled pairs are related at every `lambda`, including
+  `1/512`, with both points in `K`. The least `kappa/lambda^2` is 0.0101
+  (`q = 0.25`) and 0.0171 (`q = 1`), against floors 0.0025 and 0.0044.
+- **N9.** `|Delta theta_0|_inf / lambda` is between 2.8 and 3.2 at every
+  `lambda`. `c_0(K)` lies inside the window with margins `3.5e-4` and
+  `3.8e-5` at `q = 0.25`, and `1.5e-3` and `1.5e-4` at `q = 1`. The
+  fractions of limit boxes inside the window are in Section 6.
+- **N10** (information). `|decrease - margin| / (lambda^4 log(1/lambda))`
+  falls from about 360 at `r = 64` to 3.1 (`q = 0.25`) and 0.9 (`q = 1`) at
+  `r = 2048`. That is consistent with Lemma 4.1. Its bound's constant is
+  far larger (finding 2).
 
 ## 8. Status, imports and what remains
 
