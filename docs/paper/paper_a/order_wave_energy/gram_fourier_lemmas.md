@@ -1030,7 +1030,52 @@ full run.
   generators never decrease. Lemma A and Lemma J: the fourth-moment
   identity, in exact arithmetic.
 
-**Results.** Pending the run.
+**Results.** The run at `14c309f`, from a clean worktree:
+[checks_output.txt](independent_audit/argument3_lemmas/checks_output.txt).
+**31 pass, 0 fail.** System Python 3.11 with NumPy and mpmath, CPU, under a
+minute. Before it, G1, G9 and G10 had been run in full while debugging, and
+had passed (the script's docstring says so).
+
+| check | result |
+|---|---|
+| G1 | `Lambda_0 = alpha` to `3.5e-13`; pair fraction equals `p_0` to `1.2e-15`; flat value `0.099999997` |
+| G2 | composition identity to `6.7e-16`; slice length to `1.7e-16`; slice area to relative `1.4e-8` |
+| G3 | the `Lambda` bound holds; deviation over `lambda^4 (1 + log(1/lambda))` at most 6.4. For `Lambda_2`: 0.42, 0.50, 0.56 at `1/lambda` = 32, 64, 128 |
+| G4 | `zeta` preserved to `6e-16`; `det T` closed form to `1e-15`; the four bounds hold with largest ratios 0.19, 0.11, 0.033, 0.073 |
+| G5 | (7) holds. TV over `lambda^4 log(1/lambda)` is about 10.5 at `q = 0.25` and about 41 at `q = 1`, matching audit report 3b's `TV ~ 40 lambda^4 log(1/lambda)` |
+| G6 | `Delta` residual over `lambda^4` at most 8.1; `beta_L` residual over `lambda^3` at most 4.1 |
+| G7 | angular-bookkeeping residual over `lambda^4` at most 2.3 |
+| G8 | relative difference from the main term 0.194, 0.0151, 0.0047 at `1/lambda` = 64, 128, 256, for both `delta = 0` and `delta = 1/8` |
+| G9 | all ten bounds hold (values below) |
+| G10 | no decrease in 4830 switch-ons; the fourth-moment identity is exact |
+
+The certified G9 values are:
+- `a_3x >= 0.0796257` and `a_3y >= 0.0793745`;
+- `|ell_1|, |ell_2| <= 1.0094340`;
+- `|a_2x a_2y| <= 2.00626e-5`;
+- `Im D_A >= 0.0107107`, using `sec^2(1/2)` in place of 1.30;
+- `|D_A| <= 0.0423907`;
+- grid coefficient `>= 0.0101808`;
+- anchor-pair slack `>= 0.0289167`;
+- active-probe slack `>= 0.1001972`.
+
+They agree with the author's certificate. Two details:
+- **`ell`.** The certificate's `|ell| <= 1.009434` is what holds. r2's
+  "1.0094" is rounded down by `3.4e-5`. That moves the `Im D_A` bound by
+  under `1e-8`, so nothing changes.
+- **The bound 0.0106978 that Proposition L quotes** is r2's corrected value.
+  G9's sharper 0.0107107 is not needed.
+
+**What the checks do not test.**
+- G1 to G8 are numerical, at finitely many `q`, `lambda`, phases and
+  points. They test the identities and the size of the remainders, not the
+  proofs' uniformity statements.
+- G8 tests the core term of (11): the exact angle-averaged
+  `sum ell^0 Delta` at one `(v~, |z|)`. It does not include the
+  calibration, the law change or the `delta ell` term, which the proof
+  bounds separately.
+- No check exercises Proposition D, Lemma I or Lemma M on data, since
+  nothing is sampled. Their content is the proofs.
 
 ## 9. Review
 
