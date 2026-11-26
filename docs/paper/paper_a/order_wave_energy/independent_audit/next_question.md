@@ -37,6 +37,9 @@ Section 13). The lower end now rests only on the model's definitions.
 Later still, the upper end's outline steps were written out in
 [../gram_fourier_lemmas.md](../gram_fourier_lemmas.md) (AUDIT.md
 Section 14), so both ends are now written as proofs with AI-level review.
+Argument 2, whose sufficient exponent 3 is weaker than argument 3's 2, was revised the same
+day ([../local_null_challenge_r2.md](../local_null_challenge_r2.md),
+AUDIT.md Section 15).
 Question Q is unchanged.
 
 **Question Q.** Is `alpha_low = alpha_high = 2`? Equivalently: can the

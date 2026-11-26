@@ -101,7 +101,9 @@ These are the corrections to make when they are next revised.
    `r = 1024, 2048` and the `q = 1` witnesses at `r <= 512` at any reference
    count. This does not affect the asymptotic claim. It does mean the "10 of
    12" population witnesses in `local_null_results.md` are not all certifiable
-   even with unlimited data, and that file should say so.
+   even with unlimited data, and that file should say so. (Section 15: the
+   `q = 0.25` witnesses at `r <= 512` are skipped too. Only the `q = 1`
+   witnesses at `r = 1024, 2048` can ever be evaluated.)
 5. Exactly one power of `log N` is needed, through the Bernstein term.
 
 ### Argument 3 (Gram-Fourier draft)
@@ -562,5 +564,74 @@ otherwise unchanged.
   - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2). Nothing
     shows that 2 is necessary.
   - The constants put every finite-N test out of reach (Section 5).
-  - Argument 2's document is not revised.
+  - Argument 2's document is not revised. (It has since been revised: see
+    Section 15.)
+  - All review is AI-level. No human has checked it.
+
+## 15. Addendum, 2026-11-26: argument 2 revised
+
+Added at the user's request, after Section 14. Sections 1 to 14 are
+otherwise unchanged.
+
+- **What was done.** Section 3's items 1 to 5 for argument 2 were carried
+  into a revision, [local_null_challenge_r2.md](../local_null_challenge_r2.md).
+  The frozen original is not edited: it was frozen at `7dec69a`, and no
+  later commit touched it. Its sketched steps are written as lemmas with
+  proofs.
+  - **Item 1:** `lambda -> 0` is in the statement. The result is split into
+    a level, which holds for every `N >= 4`, and an asymptotic power
+    (Theorem 4.4).
+  - **Item 2:** the uniform bias bound is Lemma 4.1. It is derived from the
+    exact interval volumes of [gram_fourier_lemmas.md](../gram_fourier_lemmas.md),
+    Corollary K2.
+  - **Item 3:** `B_N` is any integer with `32 N^4 <= 2^B_N <= 64 N^4`. That
+    covers the least such integer and the implementation's choice, which is
+    one more when `N` is a power of two.
+  - **Item 4:** Remark 2.6 and Section 6. The test itself is not changed.
+  - **Item 5:** one power of `log N`, through the Bernstein term only
+    (Lemma 4.3).
+  - **Also written out:**
+    - the confidence and union bounds, with Hoeffding's (1963) averaging
+      argument in place of the unconsulted 2022 citation (Lemmas 2.1 to
+      2.4, Proposition 2.5);
+    - the witness geometry with explicit constants (Lemmas 3.1 to 3.5);
+    - the passage from a population witness to a certified rejection
+      (Lemmas 4.2, 4.3 and Theorem 4.4).
+  - **The implementation** enters only through a stated hypothesis,
+    (H-enc), which no referee has reviewed.
+- **A correction to item 4 of Section 3.** On the coverage event, ten of
+  the twelve frozen witnesses are skipped at every reference count: all six
+  `q = 0.25` rows and the `q = 1` rows with `r <= 512`. Item 4 listed only
+  `r = 1024, 2048` at `q = 0.25`. The audit referee's report, Section 6.2,
+  had `r <= 2048`; its script checked only those two rows. So of the ten
+  population witnesses with a positive decrease, the test as specified could
+  certify at most two, even with unlimited references. The asymptotic claim
+  is unaffected.
+- **Deterministic checks.**
+  [argument2_revision/checks.py](argument2_revision/checks.py), with the
+  criteria committed at `5ffcdd9` before the run: 26 of 26 pass. No order
+  was sampled.
+- **Review.** A fresh-context AI referee:
+  [argument2_revision/review.md](argument2_revision/review.md). Verdict:
+  **CORRECT WITH MINOR FIXES.** It found ten minor findings and no gap. All
+  are applied. The main ones:
+  - **F1:** (H-enc) lacked soundness and no-spurious-skip clauses;
+  - **F2:** a constant slip in Lemma 4.2(ii);
+  - **F3:** the bias constant on the whole compact set is about `1.4e5`,
+    ten times the figure first quoted;
+  - **F5:** a status sentence named this section before it existed.
+
+  Its own scripts reproduce the witness table independently and test the
+  witness slack on adversarial pairs down to `lambda = 1/32768`.
+- **The step it trusts least** is the bias bound feeding the theorem. The
+  bound is subtracted at the two points separately, and with the measured
+  constant that term exceeds the witness signal until `lambda` is about
+  `3e-5`.
+- **What this does not change.**
+  - The bracket `4/3 <= alpha_low <= alpha_high <= 2` (Section 2).
+    Argument 2 gives exponent 3, which is not the bracket's upper end;
+    argument 3 gives 2.
+  - The constants put every finite-N test out of reach (Section 5).
+  - local_null_results.md is not edited. Section 6 of the revision says what
+    it should add.
   - All review is AI-level. No human has checked it.

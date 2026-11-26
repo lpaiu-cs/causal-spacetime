@@ -502,3 +502,23 @@ level is now proved in
   the model's definitions and the background calibration's certificate.
 - **Unchanged:** the bracket itself. Nothing shows that 2 is sharp. All
   review is AI-level.
+
+**Argument 2 revised (later on 2026-11-26, at the user's request).** The
+audit's five items for argument 2 are carried into
+[../local_null_challenge_r2.md](../local_null_challenge_r2.md), and its
+sketched steps are written as lemmas: the confidence bounds, the witness
+geometry, the uniform bias bound and the assembly.
+
+- **Checks:** 26 of 26 pass, with the criteria committed before the run.
+- **Review:** a fresh-context AI referee
+  ([argument2_revision/review.md](argument2_revision/review.md)) graded it
+  CORRECT WITH MINOR FIXES. All ten findings are applied.
+- **New fact:** ten of the twelve frozen witnesses are outside the test's
+  calibration window at every reference count. Only the `q = 1` witnesses
+  at `r = 1024, 2048` can ever be evaluated. The audit record's item 4 had
+  listed fewer (AUDIT.md Section 15).
+- **So all three arguments are now revised in text.** Their imports are
+  the model's definitions, the background calibration's certificate and,
+  for argument 2, the implementation's enclosures (H-enc).
+- **Unchanged:** the bracket. Nothing shows that 2 is sharp. All review is
+  AI-level.

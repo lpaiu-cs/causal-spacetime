@@ -1,0 +1,23 @@
+[INFO] q=0.25 lam=1/40 (u grid): max |theta bias|/(lam^4(1+L)) = 2.515e+00; max |F bias|/(lam^4(1+L)) = 1.775e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 2.257e+04
+[INFO] q=0.25 lam=1/80 (u grid): max |theta bias|/(lam^4(1+L)) = 2.985e+00; max |F bias|/(lam^4(1+L)) = 4.546e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 5.584e+04
+[INFO] q=0.25 lam=1/160 (u grid): max |theta bias|/(lam^4(1+L)) = 3.255e+00; max |F bias|/(lam^4(1+L)) = 6.543e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 7.832e+04
+[INFO] q=0.25 lam=1/320 (u grid): max |theta bias|/(lam^4(1+L)) = 3.500e+00; max |F bias|/(lam^4(1+L)) = 8.364e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 9.814e+04
+[INFO] q=0.25 lam=1/640 (u = -0.3 only): max |theta bias|/(lam^4(1+L)) = 2.306e+00; max |F bias|/(lam^4(1+L)) = 9.906e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.144e+05
+[INFO] q=0.25 lam=1/1280 (u = -0.3 only): max |theta bias|/(lam^4(1+L)) = 2.487e+00; max |F bias|/(lam^4(1+L)) = 1.104e+05 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.259e+05
+[INFO] q=0.25 lam=1/2560 (u = -0.3 only): max |theta bias|/(lam^4(1+L)) = 2.575e+00; max |F bias|/(lam^4(1+L)) = 1.213e+05 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.367e+05
+[PASS] Q0 q=0.25 background quadrature: max rel err 1.7e-15
+[PASS] B2 q=0.25 theta bias at u=-0.3 is lam^4 (A + B log(1/lam)): bias/lam^4: 6.956, 8.622, 12.12, 14.76, 17.21, 20.28, 22.78; slopes per unit log: 2.403, 5.049, 3.808, 3.53, 4.434, 3.606
+[PASS] B2 q=0.25 F bias at u=-0.3 is lam^4 (A + B log(1/lam)): bias/lam^4: 8.325e+04, 2.447e+05, 3.975e+05, 5.661e+05, 7.392e+05, 9.007e+05, 1.073e+06; slopes per unit log: 2.329e+05, 2.204e+05, 2.433e+05, 2.496e+05, 2.33e+05, 2.485e+05
+[INFO] q=1.0 lam=1/40 (u grid): max |theta bias|/(lam^4(1+L)) = 9.590e+00; max |F bias|/(lam^4(1+L)) = 1.840e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 2.339e+04
+[INFO] q=1.0 lam=1/80 (u grid): max |theta bias|/(lam^4(1+L)) = 1.144e+01; max |F bias|/(lam^4(1+L)) = 4.729e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 5.809e+04
+[INFO] q=1.0 lam=1/160 (u grid): max |theta bias|/(lam^4(1+L)) = 1.248e+01; max |F bias|/(lam^4(1+L)) = 6.813e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 8.156e+04
+[INFO] q=1.0 lam=1/320 (u grid): max |theta bias|/(lam^4(1+L)) = 1.333e+01; max |F bias|/(lam^4(1+L)) = 8.712e+04 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.022e+05
+[INFO] q=1.0 lam=1/640 (u = -0.3 only): max |theta bias|/(lam^4(1+L)) = 8.761e+00; max |F bias|/(lam^4(1+L)) = 1.032e+05 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.192e+05
+[INFO] q=1.0 lam=1/1280 (u = -0.3 only): max |theta bias|/(lam^4(1+L)) = 9.450e+00; max |F bias|/(lam^4(1+L)) = 1.150e+05 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.311e+05
+[INFO] q=1.0 lam=1/2560 (u = -0.3 only): max |theta bias|/(lam^4(1+L)) = 9.782e+00; max |F bias|/(lam^4(1+L)) = 1.263e+05 at (u, eta, zeta) = (-0.3, 0.6, 0.4); max |F bias|/(lam^4 L) = 1.424e+05
+[PASS] Q0 q=1.0 background quadrature: max rel err 1.6e-15
+[PASS] B2 q=1.0 theta bias at u=-0.3 is lam^4 (A + B log(1/lam)): bias/lam^4: 27.92, 32.75, 46.09, 56.08, 65.37, 77.06, 86.55; slopes per unit log: 6.97, 19.25, 14.41, 13.39, 16.87, 13.69
+[PASS] B2 q=1.0 F bias at u=-0.3 is lam^4 (A + B log(1/lam)): bias/lam^4: 8.627e+04, 2.545e+05, 4.139e+05, 5.897e+05, 7.699e+05, 9.38e+05, 1.118e+06; slopes per unit log: 2.428e+05, 2.299e+05, 2.535e+05, 2.601e+05, 2.426e+05, 2.589e+05
+
+6 PASS, 0 FAIL
+exit 0

@@ -25,8 +25,9 @@
   AI author. The audit's AI referee graded it CORRECT with `lambda -> 0`
   added. This revision follows and cites that referee's re-derivations, and
   imports lemmas from three companion notes that were each reviewed by a
-  fresh-context AI referee (Section 8). A fresh-context AI referee reviews
-  this revision (Section 9). No human has checked any of it.
+  fresh-context AI referee (Section 8). A fresh-context AI referee reviewed
+  this revision and graded it CORRECT WITH MINOR FIXES. It was corrected
+  after the review (Section 9). No human has checked any of it.
 - **What it is not.** It is not a human-reviewed or published theorem. It
   is asymptotic. It covers one family: the exact circular vacuum plane
   wave with fixed known `0 < q <= 1`, and fixed-N i.i.d. physical-volume
@@ -48,7 +49,9 @@ physical-volume protocol, the result is
 every expansion below is a small-`lambda` expansion. Precisely
 (Theorem 4.4):
 - **(level)** under the background, for **every** `N >= 4`, the test
-  rejects with probability at most `N^-2`. This part is not asymptotic;
+  rejects with probability at most `N^-2`. This part is not asymptotic. It
+  holds for the exact test, and for any implementation whose enclosures are
+  sound ((H-enc)(i), Section 4);
 - **(power)** under the wave, `lambda -> 0` and `N lambda^3 / log N -> infinity`
   make the rejection probability tend to one, uniformly in the phase.
 
@@ -64,18 +67,19 @@ observer.
 |---|---|---|
 | preamble, (1) | `lambda -> 0` added; the result split into a non-asymptotic level and an asymptotic power (Theorem 4.4) | item 1; finding 1 |
 | Section 1 | rewritten: the model and its imports; Lemma 1.1 (`a = p^2 c`); Lemma 1.2 (nested kernels); the calibration and its domain `D_F` stated | finding 8 (notation) |
-| Section 2 | `B` is now any integer with `32 N^4 <= 2^B <= 64 N^4`. That is the least such `B`, or the implementation's `bit_length(32 N^4)`, which is one more when `N` is a power of two | item 3; finding 3 |
+| Section 2 | `B_N` is now any integer with `32 N^4 <= 2^B_N <= 64 N^4`. That is the least such `B_N`, or the implementation's `bit_length(32 N^4)`, which is one more when `N` is a power of two | item 3; finding 3 |
 | Section 2 | the 2022 citation replaced by Hoeffding (1963) Section 5, written out as Lemma 2.2 | finding 6 |
 | Section 2 | written as Lemmas 2.1 to 2.4 and Proposition 2.5; the level holds for every `N >= 4`, skipped pairs included | |
 | Section 2 | Remark 2.6: the rectangular domain `R` forces `c = a/p^2` into a window 4.1% wide at `q = 1` and 1.0% at `q = 0.25`. The test is not changed | item 4; finding 4 |
 | Section 3 | rewritten: Lemma 3.1 (the leading matrix (5)), with `u` in a compact subset of the open interval and `tau` in any compact subset of `(0, 2 pi)`; Lemma 3.2 (the slack of a short pair); Lemma 3.3 (the witness set, explicit constants); Lemma 3.4 (the masses (6)); Lemma 3.5 (the count (7)) | finding 5 |
 | Section 3 | the matrix of the original's (4), `F_lambda`, renamed `Phi_lam`; the reference count `M` renamed `n_R`; the boxes renamed `box_b`, `box_d` | finding 8 |
-| Section 4 | the imported bias expansion replaced by Lemma 4.1, which proves the uniform bound from the companion note's exact interval volumes | item 2; finding 2 |
+| Section 4 | the imported bias expansion replaced by Lemma 4.1, which derives the uniform bound from the companion note's exact interval volumes, importing [GFL] Corollary K2(ii) | item 2; finding 2 |
 | Section 4 | Lemmas 4.2, 4.3 and Theorem 4.4: increments `O(lambda)`, the domain `R` eventually inside `D_F`, the width (8), and the assembly. One power of `log N`, through the Bernstein term only | item 5; findings 2, 4, 7 |
 | Section 4 | the implementation's enclosures stated as a hypothesis, (H-enc), which the audit did not review | referee Section 5, item 4 |
 | Section 5 | the original's Section 5, unchanged apart from an italic note at its head | |
-| Section 6 | new: which of the frozen witnesses the test, as specified, can ever evaluate. Ten of 12 are skipped at every reference count, including the `q = 0.25` rows at `r <= 512`, which the audit record's item 4 omits | item 4 |
+| Section 6 | new: which of the frozen witnesses the test, as specified, can ever evaluate. On the coverage event, ten of 12 are skipped at every reference count, including the `q = 0.25` rows at `r <= 512`, which the audit record's item 4 omits | item 4 |
 | Sections 7 to 9 | new: deterministic checks, status and imports, review | |
+| (after review) preamble, Sections 0 to 2, 4, 6, 7, 9 | the corrections of Section 9: (H-enc) in three clauses, Lemma 4.2(ii)'s constant, Lemma 4.1's range and constant, notation, and reporting | review |
 
 Deterministic checks:
 [independent_audit/argument2_revision/checks.py](independent_audit/argument2_revision/checks.py).
@@ -90,7 +94,7 @@ Notation and imports follow
   `f_max = sec^2(k/2)`.
 - `m(s, t) = int_s^t f`, `m(u) = m(-1/2, u)`, `M = m(1/2)`, `t(u) = m(u)/M`.
 - The wave in the `y` chart: `M_lam(s, t) = m(s, t) I - B(s, t)`, where
-  `B` is the symmetric trace-free matrix with complex representative
+  `B(s, t)` is the symmetric trace-free matrix with complex representative
   `beta(s, t) = (2 lambda k / c_lam) e^(i phi) int_s^t f(w) e^(iw/lambda) dw`
   and `c_lam = sqrt(1 + 4 q lambda^2)`. [QOB] Lemma 2.1 gives
   `|beta(s, t)| <= C_E lambda min(t - s, lambda)`, with
@@ -108,6 +112,21 @@ Notation and imports follow
 - **Standing smallness.** `lambda <= lambda_1 = 1/(4 C_E)`. Then
   `c_lam <= sqrt(65/64) < 1.008`, because
   `4 q lambda_1^2 = 1/(16 (4 f_max - 2)^2) <= 1/64`.
+
+**Notation** (completed after review, finding F9). Some symbols stay
+overloaded, for continuity with the original and with [GFL]; the form of
+each use separates them.
+- `f(u) = a(u)^-2` is a function of `u`. The future fraction always
+  carries a subscript or sits in an argument list: `f_X`, `f_0`,
+  `F(p, f, a)`.
+- `c_X` is a pair probability, `c_lam = sqrt(1 + 4 q lambda^2)`, and
+  `c_L`, `c_W`, `c'` are constants.
+- The wave matrix always has arguments or a subscript: `B(s, t)`, `B_L`,
+  `B_tot`. The confidence integer of Section 2 is `B_N`.
+- `s(X)` and `s_0` are tip distances. The past segment length in the
+  calibration is `l_p`.
+- The reference count is `n_R`; `M = m(1/2)`.
+- The original's matrix `F_lambda` is `Phi_lam`; `F` is the calibration.
 
 ### 1.2 Moments
 
@@ -163,18 +182,20 @@ Let `p0(z)` be the isotropic pair probability of
 
 \[
 \mathcal F(p,f,a)=V(p,f,a/p^2;q),\qquad
-V=1-t(s)+t(s)\sqrt{p\gamma/\alpha(s)}-(1-t(s))\sqrt{f\gamma/\alpha(1-s)},
+V=1-t(l_p)+t(l_p)\sqrt{p\gamma/\alpha(l_p)}-(1-t(l_p))\sqrt{f\gamma/\alpha(1-l_p)},
 \tag{2}
 \]
 
-where `s = (p0^-1(c)/q)^(1/2)` and `c = a/p^2`. Here `s` is the past
-segment length `u + 1/2`, `t(s)` stands for `t(u)` at `u = s - 1/2`, and
-`1 - t(s) = t(1 - s)` by the symmetry of `f`.
+where `l_p = (p0^-1(c)/q)^(1/2)` and `c = a/p^2`. Here `l_p` is the past
+segment length `u + 1/2` (the original writes `s`), `t(l_p)` stands for
+`t(u)` at `u = l_p - 1/2`, and `1 - t(l_p) = t(1 - l_p)` by the symmetry of
+`f`.
 - **Domain.** `D_F = {p > 0, f > 0, p0(q) < a/p^2 < 1/10}`. It is open.
-  `p0` is strictly decreasing on `[0, 1]` (the certificate of
-  null_coordinate_challenge.md Section 2, also re-derived by the audit
-  referee, report Section 3a), and `q <= 1`. So `p0^-1` is smooth on
-  `(p0(q), 1/10)`, and `F` is `C^infinity` on `D_F`.
+  The certificate of null_coordinate_challenge.md Section 2 (also
+  re-derived by the audit referee, report Section 3a) gives
+  `d log p0 / dz <= -1/50` on `[0, 1]`, so `p0' < 0` there, and `q <= 1`.
+  So `p0^-1` is smooth on `(p0(q), 1/10)`, and `F` is `C^infinity` on
+  `D_F`.
 - **Background identity** (imported, re-derived by the audit referee and in
   [GFL] Remark K1 and the proof of Corollary K2(iii)). For `X` in the
   interior of `D_0`, the background moments `theta_0(X) = (p_X, f_X, a_X)`
@@ -182,24 +203,25 @@ segment length `u + 1/2`, `t(s)` stands for `t(u)` at `u = s - 1/2`, and
 - **Background monotonicity.** If `X <_0 Y`, then `v_Y >= v_X`. This is
   [WCR] Theorem 2 with `lambda = 0`.
 
-`q <= 1` is used only through the certificate. Sections 3 and 4 do not use
-it.
+`q <= 1` is used only through the certificate: here, and in Lemma 4.2,
+which needs `p0` decreasing on `[0, q]`. (Corrected after review, finding
+F8: the text first said that Sections 3 and 4 do not use it.)
 
 ## 2. Simultaneous difference confidence bounds
 
-The rule is the original's, with `B` fixed as follows.
-- Choose an integer `B` with `32 N^4 <= 2^B <= 64 N^4`. The least `B` with
-  `2^B >= 32 N^4` qualifies, and so does the implementation's
+The rule is the original's, with `B_N` fixed as follows.
+- Choose an integer `B_N` with `32 N^4 <= 2^B_N <= 64 N^4`. The least `B_N` with
+  `2^B_N >= 32 N^4` qualifies, and so does the implementation's
   `bit_length(32 N^4)`, which is one more than the least when `N` is a power
-  of two (check N3). Either way `B <= 6 + 4 log_2 N`.
+  of two (check N3). Either way `B_N <= 6 + 4 log_2 N`.
 - For a mean with effective sample size `kk`, the Hoeffding radius is
-  `r_H = sqrt(B/(2 kk))`. Here `kk = n_R` for `p` and `f`, and
+  `r_H = sqrt(B_N/(2 kk))`. Here `kk = n_R` for `p` and `f`, and
   `kk = floor(n_R/2)` for `a`.
 - For a non-negative quantity with empirical mean `d_hat`, put
   `d_U = min(1, d_hat + r_H)` and
 
 \[
-r_D=\min\Big(r_H,\ \sqrt{2d_UB/kk}+2B/(3kk)\Big).
+r_D=\min\Big(r_H,\ \sqrt{2d_U B_N/kk}+2B_N/(3kk)\Big).
 \tag{3}
 \]
 
@@ -209,20 +231,20 @@ r_D=\min\Big(r_H,\ \sqrt{2d_UB/kk}+2B/(3kk)\Big).
 **Lemma 2.1 (the radius (3)).** Let `xi_1, ..., xi_kk` be i.i.d. with
 values in `[0, 1]`, mean `d` and variance `sigma^2 <= d`. Let `H` be the
 Hoeffding event `|xi_bar - d| <= r_H` and `Bn` the Bernstein event
-`|xi_bar - d| <= sqrt(2 sigma^2 B/kk) + 2B/(3kk)`. Then
-`Pr(not H) <= 2 e^-B`, `Pr(not Bn) <= 2 e^-B`, and on `H ∩ Bn`,
+`|xi_bar - d| <= sqrt(2 sigma^2 B_N/kk) + 2B_N/(3kk)`. Then
+`Pr(not H) <= 2 e^-B_N`, `Pr(not Bn) <= 2 e^-B_N`, and on `H ∩ Bn`,
 `|xi_bar - d| <= r_D`.
 
 *Proof.*
-- Hoeffding: `Pr(|xi_bar - d| > r) <= 2 exp(-2 kk r^2)`, which is `2 e^-B`
+- Hoeffding: `Pr(|xi_bar - d| > r) <= 2 exp(-2 kk r^2)`, which is `2 e^-B_N`
   at `r = r_H`.
 - Bernstein, with `|xi - d| <= 1`:
   `Pr(|xi_bar - d| >= r) <= 2 exp(-kk r^2 / (2 sigma^2 + 2r/3))`. The
-  exponent equals `B` at
-  `r* = B/(3kk) + sqrt(B^2/(9kk^2) + 2 sigma^2 B/kk)`, and
-  `r* <= sqrt(2 sigma^2 B/kk) + 2B/(3kk)`.
+  exponent equals `B_N` at
+  `r* = B_N/(3kk) + sqrt(B_N^2/(9kk^2) + 2 sigma^2 B_N/kk)`, and
+  `r* <= sqrt(2 sigma^2 B_N/kk) + 2B_N/(3kk)`.
 - On `H`, `d <= d_hat + r_H` and `d <= 1`, so `sigma^2 <= d <= d_U`. On
-  `Bn` the deviation is then at most `sqrt(2 d_U B/kk) + 2B/(3kk)`, and on
+  `Bn` the deviation is then at most `sqrt(2 d_U B_N/kk) + 2B_N/(3kk)`, and on
   `H` it is at most `r_H`. []
 
 The Bernstein event is defined with the **true** variance, so it is a
@@ -266,7 +288,7 @@ increment of every observed probe pair.
 - There are at most `6P <= 6N` events for the probes and
   `6 binom(P, 2) <= 3N^2` for the pairs, since a strict order relates each
   unordered pair in at most one orientation. Each fails with probability at
-  most `2 e^-B <= 2^(1-B) <= 1/(16 N^4)`.
+  most `2 e^-B_N <= 2^(1-B_N) <= 1/(16 N^4)`.
 - The union bound gives failure at most
   `(6N + 3N^2)/(16 N^4) <= (3/4) N^-2` for `N >= 1`. Dependence among the
   events, reuse of references, and later selection of a pair do not
@@ -322,7 +344,8 @@ is negative for any observed `X < Y`.
 
 **Proposition 2.5 (level).** Under the background, for every `N >= 4`, the
 test rejects with probability at most `(3/4) N^-2 <= N^-2`. This needs the
-enclosures to be valid. It does not need them to be tight.
+enclosures to be sound ((H-enc)(i), Section 4). It does not need them to be
+tight.
 
 *Proof.* `N >= 4` makes `n_R >= 2` and `floor(n_R/2) >= 1`. On the event
 of Lemma 2.3, take any observed pair `X <_0 Y` that is not skipped. Then
@@ -334,7 +357,8 @@ harmless because the coverage event does not depend on it. []
 
 ### Executable derivative certification
 
-*This subsection is the original's text, unchanged.*
+*This subsection is the original's text, unchanged. Its `s` is `l_p` of
+Section 1.3.*
 
 The new source reuses the rational intervals, alternating-series calibration,
 and inverse monotonicity certificate. For c=a/p^2, write
@@ -363,9 +387,10 @@ The constants may be large; no finite-N 90%-power price is claimed.
 - With unlimited references the boxes shrink to points, and `R` tends to
   the box with corners `theta_X` and `theta_Y`. Its `c` range is then
   `[a_X/p_Y^2, a_Y/p_X^2]`, which is wider than the window allows unless
-  `p_Y/p_X` is close to one. A pair whose limit range leaves the window is
-  skipped at **every** reference count. Section 6 applies this to the
-  frozen witnesses.
+  `p_Y/p_X` is close to one. On the coverage event of Lemma 2.3, where
+  `R` contains `theta_X` and `theta_Y` and hence the limit box, a pair whose
+  limit range leaves the window is skipped at **every** reference count.
+  Section 6 applies this to the frozen witnesses.
 - Asymptotically it is harmless: for the witness pairs of Section 3, `R`
   shrinks like `lambda` around a point at fixed distance from the boundary
   of `D_F` (Lemma 4.3).
@@ -569,7 +594,8 @@ c_W\lambda^6\le\pi_\lambda\le C_W\lambda^6,
 *Proof.*
 - **The density.** By [GFL] Lemma F, `X~` has density `a^2 det T / Z_lam`
   on `D_0` in `(u, v~, z)`. With `|det T - 1| <= 4 e^2 <= 1/4`, also
-  `Z_lam` is within a factor `5/4` of `Z_0 = pi gamma`. So on `K` the
+  `Z_lam` lies in `[(3/4) Z_0, (5/4) Z_0]`, with `Z_0 = pi gamma`. So on
+  `K` the
   density lies between `d_- = (3/5) cos^2(0.3 k) / Z_0` and
   `d_+ = (5/3)/Z_0`.
 - **The volume of `W_lam`.** Use `(u_1, eta_0, z_1)` for `X`, since
@@ -629,8 +655,9 @@ this quantitative.
 
 ## 4. Remove the remaining population coordinates
 
-**Lemma 4.1 (the uniform bias bound; audit item 2).** There is `C_b`,
-depending on `q` only, such that for `lambda <= lambda_1`, every phase and
+**Lemma 4.1 (the uniform bias bound; audit item 2).** There are `C_b` and
+`lambda_b <= lambda_1`, depending on `q` only, such that for
+`lambda < lambda_b`, every phase and
 every canonical `X~` in `K`, with physical point `xi = Psi_lam^-1(X~)`,
 
 \[
@@ -650,7 +677,10 @@ every canonical `X~` in `K`, with physical point `xi = Psi_lam^-1(X~)`,
   least `l_0 = 0.2`.
 - `theta_0(K)` is a compact subset of `D_F` (Lemma 4.2), `F` is Lipschitz
   on a neighbourhood of it, and `F(theta_0(X~)) = v~(X~)` by the background
-  identity, since `v = v~` in the background. []
+  identity, since `v = v~` in the background. The moment bound puts
+  `theta_lam(xi)` in that neighbourhood once `lambda < lambda_b`. (The range
+  `lambda < lambda_b` replaces `lambda <= lambda_1` after review, finding
+  F4. Only small `lambda` is used.) []
 
 **The form the audit asked for.** The audit's item 2 states the bound on
 the scalar kernel of the chain hierarchy:
@@ -660,52 +690,76 @@ same estimate: `rho(s, t) = |beta(s, t)|^2 / m(s, t)^2 <= C_E^2 lambda^2 min(1, 
 and `|r - 1| <= rho_1 + rho_2 + rho` for the factor `r` it multiplies.
 Only this upper bound is used. The sharp logarithmic coefficient of
 [full_order_chain_asymptotics.md](full_order_chain_asymptotics.md) is not
-needed. The constant is large: the referee measured
-`sup |bias| / (lambda^4 log(1/lambda))` up to about `2.6e4` (finding 2).
+needed.
+
+**The constant is large.** The audit referee measured
+`sup |bias| / (lambda^4 log(1/lambda))` up to about `2.6e4` at interior
+`u`, and about `4e4` at `u = -0.2` (finding 2). On all of `K` it is about
+ten times larger. This revision's referee found
+`|F bias| / (lambda^4 log(1/lambda))` of `1.37e5` (`q = 0.25`) and
+`1.42e5` (`q = 1`) at `lambda = 1/2560`, at
+`(u, eta, zeta) = (-0.3, 0.6, 0.4)`, with a stable slope of about `2.5e5`
+per unit of `log(1/lambda)` (review finding F3, script r4). So the
+two-point bias term of Theorem 4.4 falls below the witness signal
+`g_1 lambda^2` only at roughly `lambda < 3e-5`.
 
 **Lemma 4.2 (increments and the domain).** There are `C_theta`, `r_0 > 0`
 and a compact `K_theta` inside `D_F`, depending on `q` only, such that for
-`lambda < lambda_3` and every `(X~, Y~)` in `W_lam`:
+`lambda < min(lambda_3, lambda_b)` and every `(X~, Y~)` in `W_lam`:
 - (i) `|theta_lam(xi_Y) - theta_lam(xi_X)|_inf <= C_theta lambda`;
-- (ii) every box of half-width at most `r_0` that contains a point within
-  `r_0` of `theta_lam(xi_X)` lies in `K_theta`;
+- (ii) every set within sup-distance `r_0` of `theta_lam(xi_X)` lies in
+  `K_theta`;
 - (iii) `F` is `C^infinity` on a neighbourhood of `K_theta`. Put
   `Lbar = max |grad F|` and `Hbar = max |Hess F|` there.
 
 *Proof.*
-- **`theta_0(K)` is a compact subset of `D_F`.** On `K`, `s = u + 1/2` is
-  in `[0.2, 0.8]`, so `c_0 = p0(q s^2)` lies in
+- **`theta_0(K)` is a compact subset of `D_F`.** On `K`, `l_p = u + 1/2`
+  is in `[0.2, 0.8]`, so `c_0 = p0(q l_p^2)` lies in
   `[p0(0.64 q), p0(0.04 q)]`. That is strictly inside `(p0(q), 1/10)`,
   because `p0` is strictly decreasing. Also `p_0 >= (1/4)^2 alpha(0.2)/gamma`
   and `f_0 >= (2/5)^2 alpha(0.2)/gamma`. `theta_0` is continuous, so
   `theta_0(K)` is compact, at some distance `r_* > 0` from the complement of
-  `D_F`. Take `r_0 = r_*/4` and `K_theta` the closed `3 r_0`-neighbourhood
+  `D_F`. Take `r_0 = r_*/4` and `K_theta` the closed `2 r_0`-neighbourhood
   of `theta_0(K)`.
-- (i) `theta_0 = (eta^2 alpha(s)/gamma, zeta^2 alpha(1 - s)/gamma, p_0^2 p0(q s^2))`
+- (i) `theta_0 = (eta^2 alpha(l_p)/gamma, zeta^2 alpha(1 - l_p)/gamma, p_0^2 p0(q l_p^2))`
   is smooth on a neighbourhood of `K`. The canonical coordinates of `X~`
   and `Y~` differ by `|Delta u| <= (3 pi/2) lambda`,
   `|Delta v~| <= g_2 lambda^2` and `|Delta z| <= c' lambda^(3/2)`, so
   `|Delta eta|, |Delta zeta| <= C lambda`. Hence
   `|theta_0(Y~) - theta_0(X~)| <= C lambda`. Add Lemma 4.1 at both points.
 - (ii) By Lemma 4.1, `theta_lam(xi_X)` is within `r_0` of `theta_0(K)` for
-  small `lambda`. A box of half-width `r_0` containing a point within
-  `r_0` of it stays within `3 r_0`.
+  small `lambda`, so a set within `r_0` of it lies within `2 r_0` of
+  `theta_0(K)`. (Corrected after review, finding F2. The first statement,
+  for boxes of half-width `r_0` containing a point within `r_0` of
+  `theta_lam(xi_X)`, reached `4 r_0 = r_*` and could touch the boundary of
+  `D_F`. Lemma 4.3 uses (ii) only for `R`, which lies within `r_0` of
+  `theta_lam(xi_X)`.)
 - (iii) Section 1.3. []
 
 **Hypothesis (H-enc) on the implementation.** The mathematical test
 evaluates `F(theta_hat_Y) - F(theta_hat_X)` and bounds `L_i`, `H_ij` on `R`.
-The theorem needs:
-- the derivative bounds used on any `R` inside `K_theta` are at most fixed
-  constants `L'`, `H'`;
-- the enclosure of the central difference has width `o(lambda^2)` on such
-  pairs.
+An implementation must satisfy three clauses. (The first two were added
+after review, finding F1.)
+- (i) **Soundness.** Every enclosure contains the true value, and the
+  derivative bounds dominate the true suprema of `|d_i F|` and
+  `|d_i d_j F|` on `R`. The level (Proposition 2.5) needs only this.
+- (ii) **No spurious skip.** A pair whose `R` lies in `K_theta` is
+  evaluated. This is a real condition: the implementation also returns no
+  interval when an enclosure of `p0(q)` or of `s` fails, or when the
+  calibration of an endpoint fails (`derivative_boxes`,
+  `difference_interval`, `calibrated`).
+- (iii) **Bounded and tight.** The derivative bounds used on any `R` inside
+  `K_theta` are at most fixed constants `L'`, `H'`, and the enclosure of the
+  central difference has width `o(lambda^2)` on such pairs.
 
-The exact suprema satisfy the first with `L' = Lbar`, `H' = Hbar`, and
-exact evaluation satisfies the second. The original's rational-interval
-implementation (`experiments/positive_control/order_wave_local_null.py`,
-precision `40 + bit_length(N)` bits, derivative enclosures over `R`) is
-designed to satisfy both, but the audit did not review its rounding or
-enclosure logic (referee report Section 5, item 4). Its enclosures are very
+The power needs all three. Exact evaluation with the exact suprema
+satisfies all three, with `L' = Lbar` and `H' = Hbar`. The original's
+rational-interval implementation
+(`experiments/positive_control/order_wave_local_null.py`, precision
+`40 + bit_length(N)` bits, derivative enclosures over `R`) is designed to
+satisfy them, but neither the audit nor this revision's referee reviewed
+its rounding, enclosure or skip logic (referee report Section 5, item 4;
+review Section 7). Its enclosures are very
 loose at finite size: `local_null_results.md` records a Hessian bound near
 `1.5e12` before the eight-band refinement.
 
@@ -713,7 +767,7 @@ loose at finite size: `local_null_results.md` records a Hessian bound near
 `rho_N = N lambda^3 / log N -> infinity`, and assume (H-enc). On the event
 of Lemma 2.3, for all large `N`, every observed pair of probes `(X, Y)`
 with `(X~, Y~)` in `W_lam` satisfies:
-- `R` lies in `K_theta`, so the pair is evaluated;
+- `R` lies in `K_theta`, so the pair is evaluated, by (H-enc)(ii);
 - the radius in (4) is at most
 
 \[
@@ -724,27 +778,27 @@ C\left(\sqrt{\frac{\lambda\log N}{N}}+\frac{\log N}{N}
 
 *Proof.*
 - `kk >= floor(floor(N/2)/2) >= N/5` for `N >= 20`, and
-  `B <= 6 + 4 log_2 N`. So every `r_H <= C epsilon_N`, with
+  `B_N <= 6 + 4 log_2 N`. So every `r_H <= C epsilon_N`, with
   `epsilon_N = sqrt(log N / N) = lambda^(3/2) rho_N^(-1/2) = o(lambda^(3/2))`.
 - **Individual boxes.** Their radii are at most `r_H`, so
   `e_b_i <= C epsilon_N`.
 - **Increments.** Each true increment is at most `C_theta lambda`
   (Lemma 4.2(i)). On the coverage event `d_hat <= d + r_H`, so
   `d_U <= C_theta lambda + 2 r_H <= 2 C_theta lambda` for large `N`. Then
-  `e_d_i <= r_D <= sqrt(4 C_theta lambda B/kk) + 2B/(3kk) <= C (sqrt(lambda log N/N) + log N/N)`,
+  `e_d_i <= r_D <= sqrt(4 C_theta lambda B_N/kk) + 2B_N/(3kk) <= C (sqrt(lambda log N/N) + log N/N)`,
   and `D_j <= |d_j| + 2 e_d_j <= 3 C_theta lambda`.
 - **The domain.** `box_b` lies within `2 r_H` of `theta_X`, and
   `hull(0, box_d)` within `|d_i| + 2 r_D` of `0`, in each coordinate. So
   `R` lies within `C_theta lambda + 4 r_H` of `theta_lam(xi_X)`, which is
   less than `r_0` for small `lambda`. By Lemma 4.2(ii), `R` is inside `K_theta`, hence inside `D_F`.
-- **The radius.** By (H-enc),
+- **The radius.** By (H-enc)(iii),
   `sum L_i e_d_i + sum H_ij e_b_i D_j <= 3 L' max_i e_d_i + 9 H' max_i e_b_i max_j D_j`.
   By the three bullets above this is at most (8).
 - **Each term is `o(lambda^2)`.** Divided by `lambda^2`, the three terms
   are `rho_N^(-1/2)`, `lambda / rho_N` and `(lambda/rho_N)^(1/2)`. []
 
-**One power of `log N` (audit item 5).** `B ~ 4 log_2 N` enters (8) through
-the Bernstein term `sqrt(2 d_U B/kk)` with `d_U ~ lambda`. Requiring it to
+**One power of `log N` (audit item 5).** `B_N ~ 4 log_2 N` enters (8) through
+the Bernstein term `sqrt(2 d_U B_N/kk)` with `d_U ~ lambda`. Requiring it to
 be `o(lambda^2)` is exactly `N lambda^3 / log N -> infinity`. The witness
 count needs only `N lambda^3 -> infinity`, and the bias needs nothing.
 
@@ -757,9 +811,10 @@ and `1e26` with the implemented enclosures, against `lambda^-3 = 8.6e9`
 (AUDIT.md Section 5).
 
 **Theorem 4.4.** Fix known `0 < q <= 1`.
-- (a) **Level.** Under the background, for every `N >= 4`, the test rejects
-  with probability at most `N^-2`.
-- (b) **Power.** Assume (H-enc). Under the wave, if `lambda -> 0` and
+- (a) **Level.** Under the background, for every `N >= 4`, the exact test,
+  and any implementation satisfying (H-enc)(i), rejects with probability at
+  most `N^-2`.
+- (b) **Power.** Assume (H-enc)(i) to (iii). Under the wave, if `lambda -> 0` and
   `N lambda^3 / log N -> infinity`, the test rejects with probability
   tending to one, uniformly in the phase.
 
@@ -775,7 +830,7 @@ of the order, so it is a test on the order's law.
   - It is observed (Lemma 3.3(ii)) and evaluated (Lemma 4.3).
   - By (4), the upper endpoint is at most
     `F(theta_Y) - F(theta_X) + 2 x (8) + o(lambda^2)`, the last term from
-    (H-enc).
+    (H-enc)(iii).
   - By Lemma 4.1 at both points and Lemma 3.3(iii),
     `F(theta_Y) - F(theta_X) <= (v~_2 - v~_1) + 2 C_b lambda^4 (1 + log(1/lambda)) <= -g_1 lambda^2 + o(lambda^2)`.
   - So for large `N` the upper endpoint is negative, and the test rejects.
@@ -785,17 +840,19 @@ of the order, so it is a test on the order's law.
   transverse plane. []
 
 **What is used where.**
-- Known `q` is essential: `t`, `alpha`, `gamma` and `p0(q s^2)` all depend
-  on it.
-- `q <= 1` is used only for the certified inverse (Section 1.3).
+- Known `q` is essential: `t`, `alpha`, `gamma` and `p0(q l_p^2)` all
+  depend on it.
+- `q <= 1` is used only for the certified inverse (Section 1.3 and
+  Lemma 4.2).
 - Both endpoints of a witness pair must be probes, because the increment
   bounds need references independent of both. The split costs constant
   factors only.
 - The constants are not uniform as `q -> 0` (Remark 2.6).
 - "Eventually" is far away. For the original's witness geometry the referee
   estimated `lambda` below about `1/1000` at `q = 1` and `1/4000` at
-  `q = 0.25`, and `N` around `1e24` or more (report Section 4). Check N9
-  gives the corresponding scale for the window on the set `W_lam` above.
+  `q = 0.25`, and `N` around `1e24` or more (report Section 4). On the
+  set `W_lam` above, the window needs `lambda` near `2^-17` (check N9,
+  Section 6), and the bias bound needs `lambda < 3e-5` (after Lemma 4.1).
 
 The test needs no frequency-dependent threshold or phase estimate.
 
@@ -861,7 +918,8 @@ limit range `[a_X/p_Y^2, a_Y/p_X^2]` of Remark 2.6 for all 12 rows.
 | 1024 | `[0.097688, 0.101401]` skipped | `[0.096219, 0.099940]` evaluated |
 | 2048 | `[0.098604, 0.100462]` skipped | `[0.097139, 0.099002]` evaluated |
 
-- **Ten of the 12 rows are skipped at every reference count.** They are all
+- **On the coverage event, ten of the 12 rows are skipped at every
+  reference count.** They are all
   six `q = 0.25` rows and the `q = 1` rows with `r <= 512`. Only the `q = 1`
   rows at `r = 1024` and `2048` can ever be evaluated.
 - So of the ten witnesses with a positive population decrease, the test as
@@ -871,9 +929,11 @@ limit range `[a_X/p_Y^2, a_Y/p_X^2]` of Remark 2.6 for all 12 rows.
 - **A correction to the audit record.** AUDIT.md Section 3, argument 2,
   item 4 lists the skipped `q = 0.25` witnesses as those at
   `r = 1024, 2048`. The referee's report, Section 6.2, says `r <= 2048`,
-  and the computation agrees with the report. The referee's script checked
-  only `r = 1024, 2048` at `q = 0.25`. AUDIT.md is not edited; its new
-  Section 15 records this.
+  and the computation agrees with the report. The audit referee's script
+  checked only `r = 1024, 2048` at `q = 0.25`. AUDIT.md's earlier sections
+  are not edited. Its Section 15, written with the corrections after review,
+  records this. (At `cfe4b8e` this sentence named a section not yet
+  written: review finding F5.)
 - The three rows the referee computed (s6 X4) are reproduced to `4.3e-7`.
 - This does not affect (1). The witness set of Section 3 enters the window
   as `lambda -> 0` (Lemma 4.3). Check N9 shows how far away that is: on
@@ -883,8 +943,9 @@ limit range `[a_X/p_Y^2, a_Y/p_X^2]` of Remark 2.6 for all 12 rows.
 
 **What local_null_results.md should say.** Add, when it is next revised:
 "The test as specified evaluates only the `q = 1` witnesses at `r = 1024`
-and `2048`. Its rectangular domain puts the other ten outside the
-calibration window at every reference count (local_null_challenge_r2.md
+and `2048`. On its coverage event, its rectangular domain puts the other
+ten outside the calibration window at every reference count
+(local_null_challenge_r2.md
 Section 6). The asymptotic claim is unaffected."
 
 ## 7. Deterministic checks
@@ -897,7 +958,7 @@ in the script's docstring and were committed before the run.
 |---|---|
 | N1 | `p0(1)`, `p0(0.25)` and the window widths of Remark 2.6 |
 | N2 | the limit `c` range of the 12 frozen witnesses (Section 6); the nestedness signs of their increments |
-| N3 | `B`: `32 N^4 <= 2^B <= 64 N^4`, `B <= 6 + 4 log_2 N`, and the union bound of Lemma 2.3, for the least `B` and the implementation's `B` |
+| N3 | `B_N`: `32 N^4 <= 2^B_N <= 64 N^4`, `B_N <= 6 + 4 log_2 N`, and the union bound of Lemma 2.3, for the least `B_N` and the implementation's `B_N` |
 | N4 | Lemma 2.1 by exact binomial enumeration |
 | N5 | Lemma 2.2: the averaging identity, and `E e^(sU) <= E e^(sV)`, by exact enumeration |
 | N6 | Lemma 2.4 on seeded boxes, with an explicit function whose derivative bounds are exact |
@@ -913,8 +974,8 @@ The run took about 5 seconds on CPU.
 - **N1.** `p0(1) = 0.0959192` and `p0(0.25) = 0.0990315`: window widths
   4.081% and 0.969%.
 - **N2.** All 12 rows have the nested signs. Section 6 gives the ranges.
-- **N3.** 3094 values of `N`, both choices of `B`.
-- **N4.** The worst exact failure probability is 0.121 of `4 e^-B`.
+- **N3.** 3094 values of `N`, both choices of `B_N`.
+- **N4.** The worst exact failure probability is 0.121 of `4 e^-B_N`.
 - **N5.** The identity is exact for `n = 2` to 7. The largest
   `E e^(sU) / E e^(sV)` is 0.961.
 - **N6.** The largest ratio of the two sides of (4) is 0.739.
@@ -924,8 +985,15 @@ The run took about 5 seconds on CPU.
   gives away. The sign of (5') holds: `|dv + z^T Phi z/2| / lambda^4` is
   at most 0.32.
 - **N8.** All 632 sampled pairs are related at every `lambda`, including
-  `1/512`, with both points in `K`. The least `kappa/lambda^2` is 0.0101
-  (`q = 0.25`) and 0.0171 (`q = 1`), against floors 0.0025 and 0.0044.
+  `1/512`, with both points in `K`. Over all three `lambda` the least
+  `kappa/lambda^2` is 0.0098 (`q = 0.25`, at `1/512`) and 0.0171 (`q = 1`),
+  against floors 0.0025 and 0.0044. (Corrected after review, finding F6:
+  the text first gave 0.0101 for `q = 0.25`.) N8's samples miss the binding
+  corner. The referee's adversarial pairs (script r3: `u_1` near 0,
+  `tau = pi/2`, `|z_1| = rho_1`, offset `pi/6`, worst direction of `w`)
+  reach 0.00557 and 0.00974. That is still above the floors, and about 1.1
+  times the leading-order floor `(3/32) c_L rho_1^2` (0.00504 and
+  0.00881).
 - **N9.** `|Delta theta_0|_inf / lambda` is between 2.8 and 3.2 at every
   `lambda`. `c_0(K)` lies inside the window with margins `3.5e-4` and
   `3.8e-5` at `q = 0.25`, and `1.5e-3` and `1.5e-4` at `q = 1`. The
@@ -933,7 +1001,20 @@ The run took about 5 seconds on CPU.
 - **N10** (information). `|decrease - margin| / (lambda^4 log(1/lambda))`
   falls from about 360 at `r = 64` to 3.1 (`q = 0.25`) and 0.9 (`q = 1`) at
   `r = 2048`. That is consistent with Lemma 4.1. Its bound's constant is
-  far larger (finding 2).
+  far larger (Lemma 4.1).
+
+**What the checks do not cover** (added after review, finding F10).
+- Section 6's central claim is printed by N2 but not gated. The referee's
+  r1 reproduces it independently, with `p0` computed by quadrature.
+- No check touches Lemmas 3.4, 3.5, 4.2(ii), 4.3 or Theorem 4.4. They were
+  checked by hand, by the author and the referee.
+- N10 measures the difference of the two points' biases on the frozen rows,
+  not Lemma 4.1's bound. The referee's r4 measures the bias on `K`.
+- N9 uses background moments only.
+- Some checks can catch only code errors: N1's series agreement, N3
+  (arithmetic), N5(b) (Jensen's inequality on one kernel) and N9(ii)
+  (monotonicity of `p0`). N6 tests Lemma 2.4 on a synthetic function, with
+  no negative control; the audit referee's s2 F3 is one.
 
 ## 8. Status, imports and what remains
 
@@ -965,5 +1046,81 @@ The run took about 5 seconds on CPU.
 
 ## 9. Review
 
-*Pending: a fresh-context AI referee reviews this revision after the
-checks run.*
+[independent_audit/argument2_revision/review.md](independent_audit/argument2_revision/review.md).
+
+**The referee.**
+- A fresh-context AI referee. It was given this revision at `cfe4b8e`, its
+  imports, the frozen original, the audit's items for argument 2 and the
+  audit referee's report, as claims to test. It was told not to read the
+  other reviews.
+- Only short deterministic checks. Its five scripts are archived in
+  [referee/](independent_audit/argument2_revision/referee/), with outputs.
+
+**Verdict: CORRECT WITH MINOR FIXES.**
+- Every numbered result is correct as stated, or after a minor fix.
+- Each import is used within its stated hypotheses. In particular, `K`
+  lies in `K_(0.2)`, every interval used has length at least 0.2, and `p`,
+  `f`, `a` are exactly the forms of [GFL] Corollary K2(i).
+- No step needs a new idea. All ten findings are MINOR.
+- All five audit items are addressed. Section 6 is correct, and the audit
+  record's item 4 does omit the `q = 0.25` rows at `r <= 512`.
+
+**What the referee's own checks found.**
+- **r1:** `p0` computed from [GFL] Remark K1's interval kernel by
+  quadrature, not from the series: `p0(1) = 0.09591918` and
+  `p0(0.25) = 0.09903149`. The Section 6 table is reproduced to `4.8e-7`.
+- **r2:** the exact laws of complete U-statistics in 384 cases. The `r_D`
+  failure probability is at most 0.080 of `4 e^-B_N`. The negative control
+  with `kk = C(n, 2)` violates its bound by a factor of 29.7.
+- **r3:** an independent canonical map, and adversarial witness pairs down
+  to `lambda = 1/32768`. All are related and in `K`. The least
+  `kappa/lambda^2` is 0.00557 (`q = 0.25`) and 0.00974 (`q = 1`), and
+  `|kappa - leading| / lambda^3` stays at most 5.5.
+- **r4:** the bias on `K`, wave against background, from exact interval
+  volumes. It behaves as `lambda^4 (A + B log(1/lambda))` with stable
+  slopes; the constants are in finding F3. The criterion of its first
+  version failed for `F` at both `q`, by a factor of 2.04, before the
+  asymptotic regime. That output is kept, and the script's docstring
+  explains the change.
+- **r5:** exact counts behind N9's fractions: 2000 of 2000 at `2^-17` for
+  `q = 1`, and 1994 of 2000 for `q = 0.25`.
+
+**Corrected after the review**, in the text above:
+
+| finding | grade | correction |
+|---|---|---|
+| F1 | minor | (H-enc) now has three clauses: (i) soundness, (ii) no spurious skip, (iii) bounded and tight. The level (preamble, Proposition 2.5, Theorem 4.4(a)) is stated for the exact test or a sound implementation. |
+| F2 | minor (constant slip) | Lemma 4.2(ii) is restated for sets within `r_0` of `theta_lam(xi_X)`, with `K_theta` the closed `2 r_0`-neighbourhood. Lemma 4.3 and Theorem 4.4 are unaffected. |
+| F3 | minor (practicality) | After Lemma 4.1: the bias constant on all of `K` (about `1.4e5`) and its consequence, `lambda < 3e-5`. "What is used where" says so too. |
+| F4 | minor (scope) | Lemma 4.1 holds for `lambda < lambda_b`, and Lemma 4.2 for `lambda < min(lambda_3, lambda_b)`. |
+| F5 | minor (false status sentence) | Section 6's sentence about AUDIT.md Section 15 is now true: that section was written with these corrections. A note records that it was not true at `cfe4b8e`. |
+| F6 | minor | Section 7, N8: the least slack is 0.0098 at `q = 0.25`, and the referee's adversarial minima are added. N8 itself is not changed after its run. |
+| F7 | minor (wording) | "On the coverage event" is added in Remark 2.6, Section 6 and Section 0. |
+| F8 | minor (wording) | Section 1.3: `p0' < 0` comes from the certificate, and `q <= 1` is also used in Lemma 4.2. |
+| F9 | minor | A notation paragraph in Section 1.1. The confidence integer is now `B_N` and the past segment length `l_p`. The `Z_lam` range and the Section 0 wording on Lemma 4.1 are fixed. |
+| F10 | minor | Section 7: what the checks do not cover. |
+
+No inequality of the proof changes, except Lemma 4.2(ii)'s constant (F2) and
+Lemma 4.1's range of `lambda` (F4). The test, (1), and the level and power
+statements are unchanged, apart from the conditions on the implementation
+(F1).
+
+**The referee's least-trusted step** is Lemma 4.1 feeding Theorem 4.4.
+- The theorem subtracts the bias bound at the two points separately.
+- With the constant measured on `K`, that term exceeds the witness signal
+  `g_1 lambda^2` until `lambda` is about `3e-5`.
+- Check N10 suggests that the difference of the two biases is far smaller
+  than either bias. A bound on that difference would bring "eventually"
+  closer, but no such bound is proved here.
+- The referee trusts the asymptotic logic.
+
+**The review did not cover:**
+- the proofs of the imports ([GFL] E, F, K, K2; [WCR] Theorem 2 and
+  Lemma 3; [QOB] Lemma 2.1), only their statements;
+- the `p0` certificate itself, beyond monotonicity on a grid;
+- the implementation's soundness, rounding, precision and skips;
+- Lemmas 3.4 and 3.5 numerically, which were checked by hand only;
+- phase uniformity numerically (phase 0.37 only, plus the analytic
+  argument);
+- geometry beyond `lambda = 1/32768`, and the bias beyond `1/2560`;
+- local_null_results.md and the provenance of Section 5.

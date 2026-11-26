@@ -1,0 +1,15 @@
+[PASS] S0 constants q=1.0: c_L, g1, g2, c' = 9.402, 0.0058762, 0.011752, 0.083203
+[PASS] S0 constants q=0.25: c_L, g1, g2, c' = 5.3796, 0.0033623, 0.0067245, 0.062937
+[INFO] S2 q=0.25 lam=1/512: related 17280/17280, min kappa/lam^2 = 0.005537 (floor 0.002522, leading-order floor 0.005043), both in K: True; slack err 4.5e-16; max A/bound 0.751; max |kappa - lead|/lam^3 = 2.83
+[PASS] S1+S2+S3a q=0.25: lam=1/2048: related 17280/17280, min kappa/lam^2 = 0.005569 (floor 0.002522, leading-order floor 0.005043), both in K: True; slack err 4.5e-16; max A/bound 0.750; max |kappa - lead|/lam^3 = 1.80
+[PASS] S1+S2+S3a q=0.25: lam=1/8192: related 17280/17280, min kappa/lam^2 = 0.005570 (floor 0.002522, leading-order floor 0.005043), both in K: True; slack err 4.5e-16; max A/bound 0.750; max |kappa - lead|/lam^3 = 1.53
+[PASS] S1+S2+S3a q=0.25: lam=1/32768: related 17280/17280, min kappa/lam^2 = 0.005571 (floor 0.002522, leading-order floor 0.005043), both in K: True; slack err 4.5e-16; max A/bound 0.750; max |kappa - lead|/lam^3 = 2.40
+[PASS] S3b q=0.25 residual O(lam^3): 1/512: 2.83, 1/2048: 1.80, 1/8192: 1.53, 1/32768: 2.40
+[INFO] S2 q=1.0 lam=1/512: related 17280/17280, min kappa/lam^2 = 0.009665 (floor 0.004407, leading-order floor 0.008814), both in K: True; slack err 4.4e-16; max A/bound 0.753; max |kappa - lead|/lam^3 = 5.46
+[PASS] S1+S2+S3a q=1.0: lam=1/2048: related 17280/17280, min kappa/lam^2 = 0.009733 (floor 0.004407, leading-order floor 0.008814), both in K: True; slack err 4.4e-16; max A/bound 0.751; max |kappa - lead|/lam^3 = 3.45
+[PASS] S1+S2+S3a q=1.0: lam=1/8192: related 17280/17280, min kappa/lam^2 = 0.009734 (floor 0.004407, leading-order floor 0.008814), both in K: True; slack err 4.4e-16; max A/bound 0.750; max |kappa - lead|/lam^3 = 3.01
+[PASS] S1+S2+S3a q=1.0: lam=1/32768: related 17280/17280, min kappa/lam^2 = 0.009736 (floor 0.004407, leading-order floor 0.008814), both in K: True; slack err 4.4e-16; max A/bound 0.750; max |kappa - lead|/lam^3 = 4.57
+[PASS] S3b q=1.0 residual O(lam^3): 1/512: 5.46, 1/2048: 3.45, 1/8192: 3.01, 1/32768: 4.57
+
+10 PASS, 0 FAIL
+exit 0
