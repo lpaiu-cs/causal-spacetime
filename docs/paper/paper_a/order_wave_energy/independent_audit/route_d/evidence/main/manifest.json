@@ -1,0 +1,26 @@
+{
+  "stage": "main",
+  "status": "complete",
+  "code_version": "265d73a347176a56077f65d7d82027c12234bcd8",
+  "worktree_clean_at_start": true,
+  "utc_started": "2026-11-24T15:24:02Z",
+  "device": "cpu",
+  "workers": 12,
+  "threads_per_worker": 1,
+  "runner_priority_class": 16384,
+  "logical_processors": 16,
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "tasks": 36,
+  "files": {
+    "drift_probe.py": "554481dfba46da85cfced9d3d9aa5235a54124a5aa2b1a16e2f25537417d5dd0",
+    "analyse_drift.py": "17d4d94fd109098855036f07d6768d158dc864ba197faaead7103177e1cb9c44",
+    "design.md": "233098f14392d5e60ef29cb5fed6fed0c0b4be19e5a0267d1e98927baf2e9894"
+  },
+  "utc_finished": "2026-11-24T16:49:09Z",
+  "worker_priority_classes": [
+    16384
+  ],
+  "records_sha256": "eb36653fe5d7fa9efe0e80c3191a0add1ca5bd9a9fcff2f6ad4503103b0fafd7"
+}

@@ -1,0 +1,33 @@
+[PASS] G1 Lambda_0 = alpha: max rel err 3.53e-13
+[PASS] G1 pair fraction = p0: max abs err 1.24e-15
+[PASS] G1 flat limit 1/10: c = 0.099999997
+[PASS] G2 composition identity: max err 6.7e-16
+[PASS] G2 slice length: max err 1.7e-16
+[PASS] G2 slice area: max rel err 1.43e-08
+[PASS] G3 Lambda bound: max dev/(lam^4(1+log)) = 6.388
+[PASS] G3 Lambda_2 rate: dev/(lam^4(1+log)) = 0.417, 0.504, 0.562
+[PASS] G4 zeta preserved: max err 6.1e-16
+[PASS] G4 det T closed form: max rel err 1.1e-15
+[PASS] G4 |det T - 1| <= 4e^2: max ratio 0.193
+[PASS] G4 ||T - I|| <= 4e: max ratio 0.109
+[PASS] G4 |delta v| bound: max ratio 0.0327
+[PASS] G4 |delta y| bound: max ratio 0.073
+[PASS] G5 TV bound (7): tv/(lam^4 log) = 10.44, 10.44, 10.50, 10.50, 10.73, 10.73, 41.37, 41.37, 40.80, 40.80, 41.42, 41.42
+[PASS] G6 Delta first order: max resid/lam^4 = 8.076
+[PASS] G6 beta_L expansion: max resid/lam^3 = 4.108
+[PASS] G7 angular bookkeeping: max resid/lam^4 = 2.348
+[PASS] G8 Fourier coefficient: delta=0.0: 1.94e-01, 1.51e-02, 4.69e-03; delta=0.125: 1.95e-01, 1.51e-02, 4.67e-03
+[PASS] G9 a_3x: 0.0796256819 >= 0.079625
+[PASS] G9 a_3y: 0.0793745067 >= 0.079374
+[PASS] G9 |ell_1|: 1.0094339623 <= 1.009434
+[PASS] G9 |ell_2|: 1.0094339623 <= 1.009434
+[PASS] G9 |a_2x a_2y|: 0.0000200626 <= 2.0063e-05
+[PASS] G9 Im D_A: 0.0107107124 >= 0.0106978
+[PASS] G9 |D_A|: 0.0423907069 <= 0.0424
+[PASS] G9 grid coefficient: 0.0101808286 >= 0.0101
+[PASS] G9 anchor-pair slack: 0.0289166667 >= 0.0289166
+[PASS] G9 active-probe slack: 0.1001972267 >= 0.100197
+[PASS] G10 monotone past indicators: violations 0, switches on 4830
+[PASS] G10 fourth-moment identity: n = 1..5 exact
+
+31 pass, 0 fail

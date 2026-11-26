@@ -1,0 +1,60 @@
+PASS  proof1 K=2: tree term equals (N^(3K+1) delta^(2K))^(1/(2K+1))  1
+PASS  proof1 K=2: Hellinger term equals the same  1
+PASS  proof1 K=2: N h equals (N delta^2)^(1/(2K+1))  1
+PASS  proof1 K=3: tree term equals (N^(3K+1) delta^(2K))^(1/(2K+1))  1
+PASS  proof1 K=3: Hellinger term equals the same  1
+PASS  proof1 K=3: N h equals (N delta^2)^(1/(2K+1))  1
+PASS  proof1 K=4: tree term equals (N^(3K+1) delta^(2K))^(1/(2K+1))  1
+PASS  proof1 K=4: Hellinger term equals the same  1
+PASS  proof1 K=4: N h equals (N delta^2)^(1/(2K+1))  1
+PASS  proof1 K=7: tree term equals (N^(3K+1) delta^(2K))^(1/(2K+1))  1
+PASS  proof1 K=7: Hellinger term equals the same  1
+PASS  proof1 K=7: N h equals (N delta^2)^(1/(2K+1))  1
+PASS  proof1: critical exponent 4K/(3K+1) -> 4/3
+PASS  proof1: 4K/(3K+1) is increasing in K
+PASS  proof1: K=2,3,4 give 8/7, 6/5, 16/13
+PASS  proof1: K=1 gives exponent 1 (no gain over the coupling bound)
+PASS  proof1 K=2: h -> 0 for all alpha>0
+PASS  proof1 K=2: h/delta -> infinity on alpha<4K/(3K+1)  exponent at the edge -2/7
+PASS  proof1 K=2: N h -> 0 for alpha<4
+PASS  proof1 K=3: h -> 0 for all alpha>0
+PASS  proof1 K=3: h/delta -> infinity on alpha<4K/(3K+1)  exponent at the edge -2/5
+PASS  proof1 K=3: N h -> 0 for alpha<4
+PASS  proof1 K=4: h -> 0 for all alpha>0
+PASS  proof1 K=4: h/delta -> infinity on alpha<4K/(3K+1)  exponent at the edge -6/13
+PASS  proof1 K=4: N h -> 0 for alpha<4
+PASS  proof1 K=7: h -> 0 for all alpha>0
+PASS  proof1 K=7: h/delta -> infinity on alpha<4K/(3K+1)  exponent at the edge -6/11
+PASS  proof1 K=7: N h -> 0 for alpha<4
+PASS  proof2: E W = N^2 lambda^6 diverges iff alpha > 3
+PASS  proof2: sqrt(lambda/N) << lambda^2 iff alpha > 3
+PASS  proof2: 1/N << lambda^2 iff alpha > 2
+PASS  proof2: lambda sqrt(1/N) << lambda^2 iff alpha > 2
+PASS  proof2: N^3 lambda^12 / (N^2 lambda^6)^2 = 1/N
+PASS  proof2: both regimes give lambda^-3 at h = lambda
+PASS  proof3: 1/(omega sqrt n) << lambda^2 iff alpha > 2
+PASS  proof3: 1/n << lambda^2 iff alpha > 2
+PASS  proof3: remainder << lambda^2 iff alpha > 2 + 2/(K+1)  [2*(K + 2)/(K + 1)]
+PASS  proof3: 1/lambda inside the scan cap iff alpha > 2 + 2/K  [2 + 2/K]
+PASS  proof3: the cap condition is the binding one
+PASS  proof3: order-k Taylor term << lambda^2 iff alpha > 2
+PASS  proof3: exp(-L/8) <= N^-2 at N=1e+03  9.422e-07 vs 1.000e-06
+PASS  proof3: exp(-L/8) <= N^-2 at N=1e+06  8.878e-13 vs 1.000e-12
+PASS  proof3: exp(-L/8) <= N^-2 at N=1e+12  8.932e-25 vs 1.000e-24
+PASS  proof3 toy: Fourier coefficient of the Brownian-bridge kernel is 1/omega^2  1/(4*pi**2*j**2)
+PASS  proof3 toy: integral of x(1-x) is 1/6
+PASS  D1: 90% power multiplier is 3.2415  3.2415
+PASS  D1: SE cap 0.0308  0.0308
+PASS  D1: 90% power needs R >= 55  R = 54.7
+PASS  D1: break-even is about R = 20 for the same allowance  R = 20.0
+PASS  D1: break-even with no bias allowance is about R = 9  R = 8.9
+PASS  D1: power/break-even ratio is 2.74 at fixed margin  2.735
+PASS  heuristic: cell-limited, phase known: N (N delta)^2 -> alpha = 4/3  [4/3]
+PASS  heuristic: cell-limited, d_c = N lambda^2: N^2 d_c (N delta)^4 -> alpha = 10/7  [10/7]
+PASS  heuristic: cell-limited, per event: N (N delta)^4 -> alpha = 8/5  [8/5]
+PASS  heuristic: count-limited, phase known: N^(3/2) (sqrt(N) delta)^2 -> alpha = 8/5  [8/5]
+PASS  heuristic: count-limited, per event: sqrt(N) (N^(3/4) delta)^2 -> alpha = 2  [2]
+PASS  heuristic: window exists iff alpha > 2
+PASS  units: alpha=2 is lambda ~ l^2, alpha=4/3 is lambda ~ l^3
+
+ALL PASS

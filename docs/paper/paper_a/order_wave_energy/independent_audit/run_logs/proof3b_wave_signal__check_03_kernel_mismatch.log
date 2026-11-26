@@ -1,0 +1,35 @@
+       r   past/lam^2  future/lam^2  interval/lam^2  tip-part/lam^2   pair/lam^2 (se)   ancestor/lam^2 (se)
+   32.00       1.2280        0.1702          1.2231         0.09273       0.7920 (0.0063)        0.1017 (0.0021)
+   34.24       1.3079        0.1674          1.1766         0.07562
+   38.08       1.5225        0.1491          1.2140         0.05403
+   41.92       1.7797        0.1516          1.2854         0.06054       0.8243 (0.0068)        0.0939 (0.0021)
+   45.76       2.0218        0.1755          1.4754         0.04639
+   50.24       1.7555        0.1621          1.4786         0.04116
+  128.00       1.2366        0.1696          1.0569         0.01056       0.8188 (0.0083)        0.1010 (0.0028)
+  136.96       1.7361        0.1556          1.5407         0.00953
+  152.32       1.2587        0.1592          1.4152         0.00787
+  167.68       1.7865        0.1528          1.3004         0.00692       0.8244 (0.0089)        0.0963 (0.0030)
+  183.04       1.3079        0.1554          1.4632         0.00603
+  200.96       1.7506        0.1621          1.4913         0.00543
+  512.00       1.8575        0.1496          1.5658         0.00131       0.8238 (0.0095)        0.1119 (0.0031)
+  547.84       1.9331        0.1714          1.4427         0.00116
+  609.28       1.7434        0.1615          1.7061         0.00101
+  670.72       1.7573        0.1542          1.2983         0.00088       0.7941 (0.0103)        0.0943 (0.0027)
+  732.16       1.8526        0.1501          1.7974         0.00077
+  803.84       1.8101        0.1652          1.4827         0.00067
+envelopes at scales (32, 128, 512):
+  past      2.02179 1.78652 1.93314
+  future    0.17552 0.16959 0.17138
+  interval  1.47856 1.54071 1.79737
+  pair      0.82432 0.82435 0.82382
+  ancestor  0.10165 0.10096 0.11194
+  tip       0.09273 0.01056 0.00131
+PASS (8) past kernel 1{R<X}: envelope of Pr/lam^2 bounded across scales | envelopes 2.0218 1.7865 1.9331
+PASS (8) future kernel 1{X<R}: envelope of Pr/lam^2 bounded across scales | envelopes 0.1755 0.1696 0.1714
+PASS (8) anchor-interval kernel 1{A<R<X}, anchors fixed: envelope bounded | envelopes 1.4786 1.5407 1.7974
+PASS (8) reference-pair comparability 1{R~R'}: Pr/lam^2 bounded | envelopes 0.8243 0.8244 0.8238
+PASS (8) ancestor-pair kernel at fixed X: Pr/lam^2 bounded | envelopes 0.1017 0.1010 0.1119
+PASS tip region (s < 4 lam) contributes o(lam^2) to the one-sided kernels | envelopes 0.09273 0.01056 0.00131
+PASS (9) L^4 norm of centred mismatch mean <= sqrt(2) lam/sqrt(n) whenever n lam^2 >= 1
+PASS (9) the restriction n lam^2 >= 1 is needed (bound fails at n lam^2 = 1e-4)
+SUMMARY failed=0

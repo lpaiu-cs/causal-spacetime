@@ -1,0 +1,25 @@
+q=8.8063 lam=0.00444 phi=2.926: TV/lam^2=61.47 TV/bound=0.3033 TV/(C1t lam^2)=0.07097 max e/(t m)=0.999999889 ok=True
+q=3.1531 lam=0.06137 phi=2.412: TV/lam^2=6.4982 TV/bound=0.2277 TV/(C1t lam^2)=0.06935 max e/(t m)=0.999999890 ok=True
+q=3.6441 lam=0.04360 phi=5.338: TV/lam^2=7.2966 TV/bound=0.2428 TV/(C1t lam^2)=0.07221 max e/(t m)=0.999999890 ok=True
+q=5.5757 lam=0.87602 phi=4.434: TV/lam^2=1.075 TV/bound=0.0122 TV/(C1t lam^2)=0.000108 max e/(t m)=0.999999994 ok=True
+q=8.0098 lam=0.15375 phi=3.497: TV/lam^2=10.817 TV/bound=0.1046 TV/(C1t lam^2)=0.005217 max e/(t m)=0.999999901 ok=True
+q=4.4864 lam=0.05436 phi=0.084: TV/lam^2=8.684 TV/bound=0.2231 TV/(C1t lam^2)=0.05676 max e/(t m)=0.999999890 ok=True
+q=5.1297 lam=0.01176 phi=4.803: TV/lam^2=10.77 TV/bound=0.2880 TV/(C1t lam^2)=0.08016 max e/(t m)=0.999999889 ok=True
+q=5.3688 lam=0.00988 phi=4.172: TV/lam^2=11.554 TV/bound=0.2921 TV/(C1t lam^2)=0.0803 max e/(t m)=0.999999889 ok=True
+q=4.6643 lam=0.25689 phi=1.337: TV/lam^2=6.2632 TV/bound=0.0958 TV/(C1t lam^2)=0.008976 max e/(t m)=0.999999933 ok=True
+q=3.4199 lam=0.05776 phi=5.082: TV/lam^2=6.9236 TV/bound=0.2293 TV/(C1t lam^2)=0.06762 max e/(t m)=0.999999890 ok=True
+q=7.3043 lam=0.04853 phi=5.029: TV/lam^2=16.586 TV/bound=0.2088 TV/(C1t lam^2)=0.0342 max e/(t m)=0.999999889 ok=True
+q=2.3393 lam=0.00561 phi=1.729: TV/lam^2=5.2951 TV/bound=0.3080 TV/(C1t lam^2)=0.1161 max e/(t m)=0.999999889 ok=True
+q=4.3735 lam=0.01447 phi=1.539: TV/lam^2=8.8301 TV/bound=0.2849 TV/(C1t lam^2)=0.0839 max e/(t m)=0.999999890 ok=True
+q=6.5143 lam=0.50331 phi=2.514: TV/lam^2=2.8902 TV/bound=0.0289 TV/(C1t lam^2)=0.0005038 max e/(t m)=0.999999983 ok=True
+q=7.5760 lam=0.68269 phi=0.854: TV/lam^2=1.78 TV/bound=0.0150 TV/(C1t lam^2)=9.153e-05 max e/(t m)=0.999999992 ok=True
+q=7.4552 lam=0.06445 phi=2.311: TV/lam^2=15.976 TV/bound=0.1908 TV/(C1t lam^2)=0.0257 max e/(t m)=0.999999891 ok=True
+q=5.0557 lam=0.00486 phi=3.402: TV/lam^2=10.625 TV/bound=0.3051 TV/(C1t lam^2)=0.08638 max e/(t m)=0.999999889 ok=True
+q=5.9940 lam=0.68037 phi=5.050: TV/lam^2=1.7008 TV/bound=0.0181 TV/(C1t lam^2)=0.0002225 max e/(t m)=0.999999990 ok=True
+q=9.1616 lam=0.01779 phi=4.702: TV/lam^2=57.189 TV/bound=0.2722 TV/(C1t lam^2)=0.03588 max e/(t m)=0.999999889 ok=True
+q=5.4245 lam=0.60469 phi=0.876: TV/lam^2=2.037 TV/bound=0.0241 TV/(C1t lam^2)=0.0004513 max e/(t m)=0.999999988 ok=True
+q=8.2464 lam=0.11075 phi=6.025: TV/lam^2=15.279 TV/bound=0.1444 TV/(C1t lam^2)=0.009112 max e/(t m)=0.999999891 ok=True
+q=8.5483 lam=0.16619 phi=5.125: TV/lam^2=11.346 TV/bound=0.0971 TV/(C1t lam^2)=0.003155 max e/(t m)=0.999999961 ok=True
+q=7.5211 lam=0.00496 phi=2.176: TV/lam^2=25.899 TV/bound=0.3022 TV/(C1t lam^2)=0.07598 max e/(t m)=0.999999889 ok=True
+q=2.5792 lam=0.94872 phi=4.650: TV/lam^2=0.83432 TV/bound=0.0204 TV/(C1t lam^2)=0.000438 max e/(t m)=0.999999995 ok=True
+random cases violating Prop 1 chain: 0; max TV/(C1(q,t) lam^2) = 0.1161

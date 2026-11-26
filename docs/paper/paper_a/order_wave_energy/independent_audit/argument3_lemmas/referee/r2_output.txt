@@ -1,0 +1,43 @@
+(a,b) q=0.25 lam=1/32 phi=0.37: TV=2.052e-05 bound=8.019e-04 ok=True  TV/(lam^4 log(1/lam))=6.21  Z0 check 2.2e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/32 phi=2.1: TV=2.052e-05 bound=8.019e-04 ok=True  TV/(lam^4 log(1/lam))=6.21  Z0 check 2.2e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/64 phi=0.37: TV=1.690e-06 bound=6.074e-05 ok=True  TV/(lam^4 log(1/lam))=6.82  Z0 check 6.7e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/64 phi=2.1: TV=1.690e-06 bound=6.074e-05 ok=True  TV/(lam^4 log(1/lam))=6.82  Z0 check 6.7e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/128 phi=0.37: TV=1.322e-07 bound=4.459e-06 ok=True  TV/(lam^4 log(1/lam))=7.31  Z0 check 4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/128 phi=2.1: TV=1.322e-07 bound=4.459e-06 ok=True  TV/(lam^4 log(1/lam))=7.31  Z0 check 4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/256 phi=0.37: TV=9.990e-09 bound=3.202e-07 ok=True  TV/(lam^4 log(1/lam))=7.74  Z0 check 4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/256 phi=2.1: TV=9.990e-09 bound=3.202e-07 ok=True  TV/(lam^4 log(1/lam))=7.74  Z0 check 4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/512 phi=0.37: TV=7.326e-10 bound=2.260e-08 ok=True  TV/(lam^4 log(1/lam))=8.07  Z0 check 4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=0.25 lam=1/512 phi=2.1: TV=7.326e-10 bound=2.260e-08 ok=True  TV/(lam^4 log(1/lam))=8.07  Z0 check 4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/32 phi=0.37: TV=7.922e-05 bound=7.392e-03 ok=True  TV/(lam^4 log(1/lam))=23.97  Z0 check -2.2e-16  sup density*Z0=1.0001 (<=2)
+(a,b) q=1.0 lam=1/32 phi=2.1: TV=7.922e-05 bound=7.392e-03 ok=True  TV/(lam^4 log(1/lam))=23.97  Z0 check -2.2e-16  sup density*Z0=1.0001 (<=2)
+(a,b) q=1.0 lam=1/64 phi=0.37: TV=6.514e-06 bound=5.598e-04 ok=True  TV/(lam^4 log(1/lam))=26.28  Z0 check -4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/64 phi=2.1: TV=6.514e-06 bound=5.598e-04 ok=True  TV/(lam^4 log(1/lam))=26.28  Z0 check -4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/128 phi=0.37: TV=5.079e-07 bound=4.110e-05 ok=True  TV/(lam^4 log(1/lam))=28.10  Z0 check -4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/128 phi=2.1: TV=5.079e-07 bound=4.110e-05 ok=True  TV/(lam^4 log(1/lam))=28.10  Z0 check -4.4e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/256 phi=0.37: TV=3.831e-08 bound=2.951e-06 ok=True  TV/(lam^4 log(1/lam))=29.67  Z0 check -2.2e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/256 phi=2.1: TV=3.831e-08 bound=2.951e-06 ok=True  TV/(lam^4 log(1/lam))=29.67  Z0 check -2.2e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/512 phi=0.37: TV=2.804e-09 bound=2.083e-07 ok=True  TV/(lam^4 log(1/lam))=30.88  Z0 check -2.2e-16  sup density*Z0=1.0000 (<=2)
+(a,b) q=1.0 lam=1/512 phi=2.1: TV=2.804e-09 bound=2.083e-07 ok=True  TV/(lam^4 log(1/lam))=30.88  Z0 check -2.2e-16  sup density*Z0=1.0000 (<=2)
+(c) q=0.25 phi=0.37 lam=1/32: [-0.500,-0.490] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.169] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.194] dev/bound=0.033 dev/lam^4=0.874; [-0.500,0.200] dev/bound=0.086 dev/lam^4=5.067; [-0.250,0.200] dev/bound=0.083 dev/lam^4=4.282; [-0.500,0.500] dev/bound=0.095 dev/lam^4=6.133
+(c) q=0.25 phi=0.37 lam=1/64: [-0.500,-0.495] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.184] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.147] dev/bound=0.033 dev/lam^4=0.875; [-0.500,0.200] dev/bound=0.096 dev/lam^4=6.743; [-0.250,0.200] dev/bound=0.088 dev/lam^4=5.571; [-0.500,0.500] dev/bound=0.098 dev/lam^4=7.444
+(c) q=0.25 phi=0.37 lam=1/128: [-0.500,-0.497] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.192] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.123] dev/bound=0.034 dev/lam^4=0.875; [-0.500,0.200] dev/bound=0.098 dev/lam^4=8.000; [-0.250,0.200] dev/bound=0.097 dev/lam^4=7.192; [-0.500,0.500] dev/bound=0.099 dev/lam^4=8.634
+(c) q=0.25 phi=0.37 lam=1/256: [-0.500,-0.499] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.196] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.112] dev/bound=0.034 dev/lam^4=0.875; [-0.500,0.200] dev/bound=0.099 dev/lam^4=9.225; [-0.250,0.200] dev/bound=0.098 dev/lam^4=8.408; [-0.500,0.500] dev/bound=0.103 dev/lam^4=10.142
+(c) q=0.25 phi=2.1 lam=1/32: [-0.500,-0.490] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.169] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.194] dev/bound=0.033 dev/lam^4=0.874; [-0.500,0.200] dev/bound=0.086 dev/lam^4=5.067; [-0.250,0.200] dev/bound=0.083 dev/lam^4=4.282; [-0.500,0.500] dev/bound=0.095 dev/lam^4=6.133
+(c) q=0.25 phi=2.1 lam=1/64: [-0.500,-0.495] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.184] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.147] dev/bound=0.033 dev/lam^4=0.875; [-0.500,0.200] dev/bound=0.096 dev/lam^4=6.743; [-0.250,0.200] dev/bound=0.088 dev/lam^4=5.571; [-0.500,0.500] dev/bound=0.098 dev/lam^4=7.444
+(c) q=0.25 phi=2.1 lam=1/128: [-0.500,-0.497] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.192] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.123] dev/bound=0.034 dev/lam^4=0.875; [-0.500,0.200] dev/bound=0.098 dev/lam^4=8.000; [-0.250,0.200] dev/bound=0.097 dev/lam^4=7.192; [-0.500,0.500] dev/bound=0.099 dev/lam^4=8.634
+(c) q=0.25 phi=2.1 lam=1/256: [-0.500,-0.499] dev/bound=0.010 dev/lam^4=0.009; [-0.200,-0.196] dev/bound=0.011 dev/lam^4=0.086; [0.100,0.112] dev/bound=0.034 dev/lam^4=0.875; [-0.500,0.200] dev/bound=0.099 dev/lam^4=9.225; [-0.250,0.200] dev/bound=0.098 dev/lam^4=8.408; [-0.500,0.500] dev/bound=0.103 dev/lam^4=10.142
+(c) q=1.0 phi=0.37 lam=1/32: [-0.500,-0.490] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.169] dev/bound=0.004 dev/lam^4=0.343; [0.100,0.194] dev/bound=0.014 dev/lam^4=3.491; [-0.500,0.200] dev/bound=0.036 dev/lam^4=20.531; [-0.250,0.200] dev/bound=0.034 dev/lam^4=17.186; [-0.500,0.500] dev/bound=0.041 dev/lam^4=25.659
+(c) q=1.0 phi=0.37 lam=1/64: [-0.500,-0.495] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.184] dev/bound=0.004 dev/lam^4=0.344; [0.100,0.147] dev/bound=0.014 dev/lam^4=3.497; [-0.500,0.200] dev/bound=0.040 dev/lam^4=27.472; [-0.250,0.200] dev/bound=0.036 dev/lam^4=22.393; [-0.500,0.500] dev/bound=0.042 dev/lam^4=30.909
+(c) q=1.0 phi=0.37 lam=1/128: [-0.500,-0.497] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.192] dev/bound=0.004 dev/lam^4=0.344; [0.100,0.123] dev/bound=0.014 dev/lam^4=3.499; [-0.500,0.200] dev/bound=0.041 dev/lam^4=32.447; [-0.250,0.200] dev/bound=0.040 dev/lam^4=28.950; [-0.500,0.500] dev/bound=0.042 dev/lam^4=35.424
+(c) q=1.0 phi=0.37 lam=1/256: [-0.500,-0.499] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.196] dev/bound=0.004 dev/lam^4=0.344; [0.100,0.112] dev/bound=0.014 dev/lam^4=3.499; [-0.500,0.200] dev/bound=0.041 dev/lam^4=37.259; [-0.250,0.200] dev/bound=0.041 dev/lam^4=33.779; [-0.500,0.500] dev/bound=0.043 dev/lam^4=41.664
+(c) q=1.0 phi=2.1 lam=1/32: [-0.500,-0.490] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.169] dev/bound=0.004 dev/lam^4=0.343; [0.100,0.194] dev/bound=0.014 dev/lam^4=3.491; [-0.500,0.200] dev/bound=0.036 dev/lam^4=20.531; [-0.250,0.200] dev/bound=0.034 dev/lam^4=17.186; [-0.500,0.500] dev/bound=0.041 dev/lam^4=25.659
+(c) q=1.0 phi=2.1 lam=1/64: [-0.500,-0.495] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.184] dev/bound=0.004 dev/lam^4=0.344; [0.100,0.147] dev/bound=0.014 dev/lam^4=3.497; [-0.500,0.200] dev/bound=0.040 dev/lam^4=27.472; [-0.250,0.200] dev/bound=0.036 dev/lam^4=22.393; [-0.500,0.500] dev/bound=0.042 dev/lam^4=30.909
+(c) q=1.0 phi=2.1 lam=1/128: [-0.500,-0.497] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.192] dev/bound=0.004 dev/lam^4=0.344; [0.100,0.123] dev/bound=0.014 dev/lam^4=3.499; [-0.500,0.200] dev/bound=0.041 dev/lam^4=32.447; [-0.250,0.200] dev/bound=0.040 dev/lam^4=28.950; [-0.500,0.500] dev/bound=0.042 dev/lam^4=35.424
+(c) q=1.0 phi=2.1 lam=1/256: [-0.500,-0.499] dev/bound=0.004 dev/lam^4=0.037; [-0.200,-0.196] dev/bound=0.004 dev/lam^4=0.344; [0.100,0.112] dev/bound=0.014 dev/lam^4=3.499; [-0.500,0.200] dev/bound=0.041 dev/lam^4=37.259; [-0.250,0.200] dev/bound=0.041 dev/lam^4=33.779; [-0.500,0.500] dev/bound=0.043 dev/lam^4=41.664
+(d) q=0.01: max |Lambda_0/alpha - 1| = 3.6e-12; max |pair fraction - p0| = 7.2e-13
+(d) q=0.25: max |Lambda_0/alpha - 1| = 1.1e-14; max |pair fraction - p0| = 1.5e-15
+(d) q=1.0: max |Lambda_0/alpha - 1| = 5.0e-15; max |pair fraction - p0| = 8.5e-16
+
+real	0m25.747s
+user	0m0.046s
+sys	0m0.031s

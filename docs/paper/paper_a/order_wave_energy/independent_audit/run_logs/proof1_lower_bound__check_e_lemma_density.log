@@ -1,0 +1,12 @@
+=== check (e2): smoothing lemma with non-uniform product densities ===
+PASS F1 k=2 linear densities: C^1 at tau=0, flat at tau=+-1, |p''| <= L_rho | max |p''|/L_rho = 0.5000 over 39x39x201 grid
+PASS F2 k=3 Gauss-Legendre evaluator equals exact Lasserre volume at kappa=0 | max abs diff 1.11e-16
+PASS F3 second differences bounded by L_rho |d|^2, k=3 chain | max quotient/L_rho = 0.2350 over 480 tests
+PASS F4 sqrt(p) Lipschitz with sqrt(L_rho/2), k=3 chain | max slope/sqrt(L_rho/2) = 0.4288; zero-set crossings 20
+PASS F3 second differences bounded by L_rho |d|^2, k=3 star | max quotient/L_rho = 0.2119 over 480 tests
+PASS F4 sqrt(p) Lipschitz with sqrt(L_rho/2), k=3 star | max slope/sqrt(L_rho/2) = 0.4547; zero-set crossings 20
+PASS F3 second differences bounded by L_rho |d|^2, k=3 vee | max quotient/L_rho = 0.2203 over 476 tests
+PASS F4 sqrt(p) Lipschitz with sqrt(L_rho/2), k=3 vee | max slope/sqrt(L_rho/2) = 0.4117; zero-set crossings 20
+PASS F3 second differences bounded by L_rho |d|^2, k=3 triangle | max quotient/L_rho = 0.2148 over 928 tests
+PASS F4 sqrt(p) Lipschitz with sqrt(L_rho/2), k=3 triangle | max slope/sqrt(L_rho/2) = 0.4626; zero-set crossings 40
+SUMMARY checks=10 fails=0 -> ALL PASS

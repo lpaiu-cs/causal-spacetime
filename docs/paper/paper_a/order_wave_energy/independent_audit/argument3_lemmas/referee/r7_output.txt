@@ -1,0 +1,12 @@
+(a) tuple count <= B_(2r) n^r for n<=5, r<=3: True
+(b) degenerate-pair survivor count <= B_(2r) n^r (r factors, <= r distinct indices): True
+(c) n=2: E(U-EU)^4=1.233e-02  route 8(E lin^4 + E deg^4)=2.844e-01  holds=True  E deg^4 * n^4 = 0.561  Hoeffding representation exact=True
+(c) n=3: E(U-EU)^4=2.075e-03  route 8(E lin^4 + E deg^4)=5.789e-02  holds=True  E deg^4 * n^4 = 0.568  Hoeffding representation exact=True
+(c) n=4: E(U-EU)^4=5.181e-04  route 8(E lin^4 + E deg^4)=1.557e-02  holds=True  E deg^4 * n^4 = 0.466  Hoeffding representation exact=True
+(c) n=5: E(U-EU)^4=2.361e-04  route 8(E lin^4 + E deg^4)=5.817e-03  holds=True  E deg^4 * n^4 = 0.404
+(d) Lemma J fourth-norm bound: max lhs/rhs = 0.6908 (<= 1)
+(e) one labelling uses 12 raw moments (union-bound factor 2*12 = 24); certifying every labelling of an unordered triple needs 15 (factor 30)
+
+real	0m0.132s
+user	0m0.000s
+sys	0m0.030s

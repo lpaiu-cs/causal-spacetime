@@ -1,0 +1,20 @@
+{
+  "pilot_size": 96,
+  "pilot_orders": 8,
+  "order_mean_U": [
+    32.375,
+    35.0,
+    30.125,
+    36.0,
+    36.625,
+    39.625,
+    47.0,
+    26.75
+  ],
+  "relative_sd_between_orders": 0.17402322939744636,
+  "target_se_of_D": 0.04627464433308367,
+  "target_se_of_log_mean_per_size": 0.0717221917527644,
+  "orders_per_size": 12,
+  "rule": "ceil((relative_sd / target_se_log)^2), clipped to [12, 48]",
+  "pilot_code_version": "228cc846108a88c96b3b71535640e2e5d079fa63"
+}

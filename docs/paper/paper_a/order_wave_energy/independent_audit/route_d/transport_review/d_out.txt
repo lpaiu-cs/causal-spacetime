@@ -1,0 +1,18 @@
+formula check N=32: MC/exact all pairs 0.9822; far(d>=0.5) 0.9757; max rel dev per pair 0.065
+chains: 16 orders at N=32, 8192 sweeps, 87s total
+mean interior events 23.625
+lag 0.25N^2 [all, bins as 3+1] pairs/bin [142.5 238.4 110.1   5. ] F_near 0.744 sd 0.158 (n=16) F_far 0.533 sd 0.256 (n=11) X_near 0.551 sd 0.105 (n=16) X_far 0.894 sd 0.304 (n=11) Y 1.664 sd 0.622 (n=11)
+lag 0.25N^2 [interior, bins as 3+1] pairs/bin [ 94.3 137.6  37.9   0.8] F_near 0.747 sd 0.171 (n=16) F_far 0.608 sd 0.228 (n=3) X_near 0.525 sd 0.121 (n=16) X_far 1.192 sd 0.279 (n=3) Y 2.401 sd 0.284 (n=3)
+lag 0.25N^2 [all, bins/1.48] pairs/bin [ 73.2 156.8 156.9 109.1] F_near 0.758 sd 0.151 (n=16) F_far 0.666 sd 0.210 (n=16) X_near 0.457 sd 0.097 (n=16) X_far 0.855 sd 0.187 (n=16) Y 1.947 sd 0.570 (n=16)
+lag 0.50N^2 [all, bins as 3+1] pairs/bin [142.5 238.4 110.1   5. ] F_near 0.726 sd 0.230 (n=16) F_far 0.800 sd 0.318 (n=11) X_near 0.436 sd 0.098 (n=16) X_far 1.101 sd 0.264 (n=11) Y 2.666 sd 0.872 (n=11)
+lag 0.50N^2 [interior, bins as 3+1] pairs/bin [ 94.3 137.6  37.9   0.8] F_near 0.739 sd 0.266 (n=16) F_far 1.299 sd 0.579 (n=3) X_near 0.417 sd 0.122 (n=16) X_far 1.065 sd 0.511 (n=3) Y 2.845 sd 0.631 (n=3)
+lag 0.50N^2 [all, bins/1.48] pairs/bin [ 73.2 156.8 156.9 109.1] F_near 0.771 sd 0.240 (n=16) F_far 0.757 sd 0.210 (n=16) X_near 0.374 sd 0.087 (n=16) X_far 0.800 sd 0.183 (n=16) Y 2.242 sd 0.690 (n=16)
+lag 1.00N^2 [all, bins as 3+1] pairs/bin [142.5 238.4 110.1   5. ] F_near 0.882 sd 0.188 (n=16) F_far 1.176 sd 0.896 (n=11) X_near 0.325 sd 0.103 (n=16) X_far 0.927 sd 0.291 (n=11) Y 2.936 sd 0.998 (n=11)
+lag 1.00N^2 [interior, bins as 3+1] pairs/bin [ 94.3 137.6  37.9   0.8] F_near 0.881 sd 0.196 (n=16) F_far 1.355 sd 0.725 (n=3) X_near 0.293 sd 0.102 (n=16) X_far 0.813 sd 0.512 (n=3) Y 2.722 sd 1.474 (n=3)
+lag 1.00N^2 [all, bins/1.48] pairs/bin [ 73.2 156.8 156.9 109.1] F_near 0.903 sd 0.184 (n=16) F_far 0.979 sd 0.441 (n=16) X_near 0.262 sd 0.080 (n=16) X_far 0.659 sd 0.248 (n=16) Y 2.586 sd 0.987 (n=16)
+lag 2.00N^2 [all, bins as 3+1] pairs/bin [142.5 238.4 110.1   5. ] F_near 1.038 sd 0.340 (n=16) F_far 1.031 sd 0.608 (n=11) X_near 0.370 sd 0.167 (n=16) X_far 0.849 sd 0.377 (n=11) Y 2.584 sd 1.195 (n=11)
+lag 2.00N^2 [interior, bins as 3+1] pairs/bin [ 94.3 137.6  37.9   0.8] F_near 1.021 sd 0.369 (n=16) F_far 1.141 sd 1.119 (n=3) X_near 0.339 sd 0.165 (n=16) X_far 0.759 sd 0.613 (n=3) Y 2.328 sd 1.928 (n=3)
+lag 2.00N^2 [all, bins/1.48] pairs/bin [ 73.2 156.8 156.9 109.1] F_near 1.061 sd 0.366 (n=16) F_far 0.997 sd 0.388 (n=16) X_near 0.299 sd 0.137 (n=16) X_far 0.673 sd 0.292 (n=16) Y 2.402 sd 1.018 (n=16)
+lag 4.00N^2 [all, bins as 3+1] pairs/bin [142.5 238.4 110.1   5. ] F_near 1.085 sd 0.315 (n=16) F_far 1.001 sd 0.662 (n=11) X_near 0.390 sd 0.147 (n=16) X_far 0.948 sd 0.337 (n=11) Y 2.935 sd 1.253 (n=11)
+lag 4.00N^2 [interior, bins as 3+1] pairs/bin [ 94.3 137.6  37.9   0.8] F_near 1.074 sd 0.337 (n=16) F_far 1.793 sd 1.308 (n=3) X_near 0.363 sd 0.161 (n=16) X_far 1.076 sd 0.501 (n=3) Y 3.982 sd 1.545 (n=3)
+lag 4.00N^2 [all, bins/1.48] pairs/bin [ 73.2 156.8 156.9 109.1] F_near 1.081 sd 0.308 (n=16) F_far 1.050 sd 0.419 (n=16) X_near 0.312 sd 0.121 (n=16) X_far 0.739 sd 0.200 (n=16) Y 2.551 sd 0.789 (n=16)

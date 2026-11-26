@@ -1,0 +1,80 @@
+{
+  "stage": "pilot",
+  "code_version": "228cc846108a88c96b3b71535640e2e5d079fa63",
+  "rows_sha256": "5fda87077a85a9905de922d2ab2ce1e2e58c1d80b8def6cabb7074dd4e1ca691",
+  "candidates": 3125,
+  "events": 64,
+  "by_size": {
+    "96": {
+      "orders": 8,
+      "events": 64,
+      "mean_F": 48.828125,
+      "mean_S": 15.28125,
+      "mean_R": 23.109375,
+      "mean_U": 35.4375,
+      "certified_by_joint_only_at_start": 501,
+      "completeness": {
+        "independent_certificates": 2187,
+        "also_found_at_start": 1398,
+        "wilson95": [
+          0.6188774217793144,
+          0.6590979641306146
+        ]
+      },
+      "participation_from_far_lags": 25.797381799655064,
+      "wall_overlap_fraction_by_lag": {
+        "1": 0.6394052551242912,
+        "2": 0.6403339355803377,
+        "3": 0.6289795028347143,
+        "4": 0.6256432621020496,
+        "5": 0.6127889228085477,
+        "6": 0.6306149149585695,
+        "7": 0.6235826428259921,
+        "8": 0.5936546009594418
+      },
+      "scaled_margin_quantiles_all": [
+        12.526680514375819,
+        28.32066027453572,
+        50.30603530840998,
+        73.31118337895745
+      ],
+      "scaled_margin_quantiles_certified": [
+        9.025894673408935,
+        19.490167975245374,
+        38.41785167822378,
+        65.20175698805924
+      ],
+      "chain_rms_displacement_times_n": [
+        31.001729893010072,
+        33.60960117963536,
+        33.918635949527356,
+        35.20988420338723,
+        36.80654835415934,
+        36.70956065883412,
+        37.32056442647177,
+        36.91745813052287
+      ],
+      "mean_seconds_per_order": 439.575
+    }
+  },
+  "sizing": {
+    "pilot_size": 96,
+    "pilot_orders": 8,
+    "order_mean_U": [
+      32.375,
+      35.0,
+      30.125,
+      36.0,
+      36.625,
+      39.625,
+      47.0,
+      26.75
+    ],
+    "relative_sd_between_orders": 0.17402322939744636,
+    "target_se_of_D": 0.04627464433308367,
+    "target_se_of_log_mean_per_size": 0.0717221917527644,
+    "orders_per_size": 12,
+    "rule": "ceil((relative_sd / target_se_log)^2), clipped to [12, 48]",
+    "pilot_code_version": "228cc846108a88c96b3b71535640e2e5d079fa63"
+  }
+}
