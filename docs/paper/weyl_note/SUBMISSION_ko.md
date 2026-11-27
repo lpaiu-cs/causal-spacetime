@@ -1,4 +1,11 @@
-# GRG 재투고 준비 기록 (2026-11-12)
+# Weyl curvature note 투고 준비 기록 (2026-11-28 갱신)
+
+> **현황 (2026-11-28).** 2026-11-17 GRG 데스크 거절 이후 후속 반영 사항을 모두 정합화한 상태다.
+>
+> - **다섯 창 $h=T/3$ 연결 시험 반영 (`d3b2a54` / 병합 `9ca2404`):** 기존 $T/2$ 마디 배치(`0.998 [0.977, 1.018]`, 64반복)에 더해, 옆 창이 파동 마루의 $\pm 0.44$를 싣고 $O(3)$ 순서 연결의 옳고 그름을 직접 가르는 $h=T/3$ 사전등록 시험(96반복, $1.61\times10^{10}$ 사건) 결과(`1.011 [0.991, 1.031]`, 옆 창 기여 $-0.194$, 중심만/항등/반전/Haar 연결 대조군 전원 탈락, 오라클 손잡이 `384/384` 일치, 최대 각도 오차 $0.054^\circ$)를 초록·서론·5.4절·표~\ref{windowtable}·계산비용·한계·결론·자료가용성·커버레터에 반영했다.
+> - **각주 1 및 O'Neill 검증:** 각주 1은 이미 독립 유도 및 평면파/Schwarzschild 수치 적분 검산(`17 E^2 + 3 B^2 / 10080`) 문장으로 교체되어 있다(Wang 식 (79) 미재현 관련 불일치는 `docs/paper/paper_a/window_response/volume_discrepancy_derivation.md`에 별도 보존). O'Neill *Semi-Riemannian Geometry* (1983)의 제5장(볼록·정규 근방) 및 제14장 보조정리 14.2(인과 미래/과거 특성) 인용 번호를 대조 확인했다(단 `note.tex` 본문은 단일 소스 제출 요건에 맞춰 `appendix_convergence.tex`를 포함하지 않음).
+> - **단일 소스 / ASCII / 패키지 검증:** `build_submission.py`로 단일 `main.tex`, `Fig1.pdf`, `manuscript.pdf`, `manuscript_source.zip`, `abstract.txt`, `cover_letter.pdf`를 빌드·검증한다.
+> - **재투고처 안내:** *General Relativity and Gravitation* (2026-11-17 데스크 거절) 외에 *Classical and Quantum Gravity* (CQG), *Physical Review D* (PRD), 또는 *Journal of Mathematical Physics* / *Foundations of Physics* 투고 시 학술지 형식과 공개 브랜치/커밋 URL(`tree/...`)만 최종 확인하면 된다. `cover_letter.md`는 특정 학술지명 없이 `"Dear Editors"` 형태로 범용 작성되었다.
 
 > **2026-11-21 현황.** 아래는 GRG 투고를 준비하던 2026-11-12의 기록이다. 이
 > 원고는 2026-11-17 GRG에서 데스크 거절됐다. 지금 원고는 그때와 다르다.
