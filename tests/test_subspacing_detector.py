@@ -930,3 +930,56 @@ def test_calibrate_progressive_n_ref_triggers_multistart_escalation():
     # Large n_ref raises rms * sqrt(n_ref) >= 0.35 even with 4x4 anchors -> multi-start.
     escalated = calibrate_progressive(pf, cross, q=None, n_ref=4_500_000, starts=1)
     assert escalated.rms < 1e-12
+
+
+def test_huber_whittle_w4_tail_and_scale_invariance():
+    rng = np.random.default_rng(77)
+    n_pts = 1800
+    u = rng.uniform(-0.35, 0.35, n_pts)
+    v = u + rng.uniform(0.3, 0.6, n_pts)
+    pts = np.column_stack((u, v, rng.normal(0, 0.08, (n_pts, 2))))
+    early = np.array(
+        [
+            [-0.30, 0.10, 0.05, 0.02],
+            [-0.28, 0.12, -0.04, 0.05],
+            [-0.32, 0.08, 0.02, -0.05],
+            [-0.25, 0.14, -0.05, -0.02],
+            [-0.27, 0.11, 0.06, 0.01],
+        ]
+    )
+    late = np.array(
+        [
+            [0.30, 0.90, 0.04, -0.02],
+            [0.28, 0.88, -0.05, 0.04],
+            [0.32, 0.92, 0.01, 0.05],
+            [0.26, 0.86, -0.03, -0.05],
+            [0.27, 0.89, 0.05, -0.01],
+        ]
+    )
+    model = BackgroundModel(4.0)
+    cal = Calibration(4.0, early, late, 0.0, 1.0, 0)
+    shear = model.shear_response(pts, early, late)
+    jac = np.empty((n_pts, shear.shape[1], 4))
+    jac[:, 0, :] = model.interval(PAST, pts, True)[2]
+    jac[:, 1, :] = model.interval(pts, FUTURE, True)[1]
+    for idx, anchor in enumerate(early):
+        jac[:, idx + 2, :] = model.interval(anchor, pts, True)[2]
+    for idx, anchor in enumerate(late):
+        jac[:, idx + 2 + len(early), :] = model.interval(pts, anchor, True)[1]
+    perp = tangent_project(shear, jac)
+    # Smooth quadratic + low-mode u warp plus white shot noise induces steep low-w tail.
+    drift = 0.06 * np.cos(24.0 * u) + 0.05 * np.sin(28.0 * u)
+    amp = drift + rng.normal(0, 0.03, n_pts)
+    res = perp * amp[:, None]
+    freqs = np.arange(24.0, 257.0, 4.0)
+    spec = spectrum(pts, res, jac, cal, freqs)
+    assert spec["c2_steep_estimate"] > 0.0
+    assert spec["c_ref_estimate"] > 0.0
+    assert spec["whitened_peak_z"] < 3.5
+    scaled = spectrum(pts, 3.7 * res, jac, cal, freqs)
+    np.testing.assert_allclose(
+        scaled["whitened_amplitude"], spec["whitened_amplitude"], atol=1e-9, rtol=1e-9
+    )
+    assert scaled["c2_steep_estimate"] == pytest.approx(
+        3.7 * spec["c2_steep_estimate"], rel=1e-9
+    )

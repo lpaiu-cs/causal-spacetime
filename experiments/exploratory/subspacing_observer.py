@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.optimize import least_squares, minimize_scalar
+from scipy.optimize import least_squares, minimize, minimize_scalar
 from scipy.signal import czt, fftconvolve
 from scipy.special import zeta
 
@@ -987,15 +987,19 @@ def spectrum(points, residual, jac, calibration, frequencies):
     var_shot = float(np.sum(np.abs(z) ** 2))
     pwr = 0.5 * (amplitude_pos**2 + amplitude_neg**2)
     if var_shot <= 1e-28 and float(np.max(pwr)) <= 1e-28:
-        c_ref_sq = 0.0
+        c1_abs = 0.0
+        c2_abs = 0.0
     else:
         a0 = max(var_shot, 1e-30)
-        inv_w2 = 1.0 / np.maximum(frequencies**2, 1.0)
+        w2 = np.maximum(frequencies**2, 1.0)
+        inv_w2 = 1.0 / w2
+        inv_w4 = inv_w2**2
         rel_pwr = pwr / a0
-        rel_hi = max(float(np.max(frequencies**2 * rel_pwr)) * 4.0, 1e6, 1e10)
+        hi1 = max(float(np.max(w2 * rel_pwr)) * 4.0, 1e10)
+        hi2 = max(float(np.max((w2**2) * rel_pwr)) * 4.0, 1e14)
 
-        def whittle_obj(rel_c1):
-            rel_mu = 1.0 + rel_c1 * inv_w2
+        def whittle_value(rc1, rc2):
+            rel_mu = 1.0 + rc1 * inv_w2 + rc2 * inv_w4
             ratio = rel_pwr / rel_mu
             excess = np.where(
                 ratio <= 4.5,
@@ -1004,20 +1008,94 @@ def spectrum(points, residual, jac, calibration, frequencies):
             )
             return float(np.sum(np.log(rel_mu) + excess))
 
-        opt = minimize_scalar(
-            lambda lc: whittle_obj(float(np.exp(lc))),
-            bounds=(float(np.log(1e-8)), float(np.log(rel_hi))),
+        def whittle_log_obj_grad(theta):
+            rc1 = float(np.exp(theta[0]))
+            rc2 = float(np.exp(theta[1]))
+            rel_mu = 1.0 + rc1 * inv_w2 + rc2 * inv_w4
+            ratio = rel_pwr / rel_mu
+            over = ratio > 4.5
+            psi = np.where(
+                over,
+                4.5 + 2.0 * np.sqrt(np.maximum(ratio - 4.5 + 1e-12, 0.0)) - 2e-6,
+                ratio,
+            )
+            dpsi = np.where(
+                over,
+                1.0 / np.sqrt(np.maximum(ratio - 4.5 + 1e-12, 1e-24)),
+                1.0,
+            )
+            val = float(np.sum(np.log(rel_mu) + psi))
+            common = (1.0 - ratio * dpsi) / rel_mu
+            grad = np.array(
+                [
+                    float(np.sum(common * inv_w2) * rc1),
+                    float(np.sum(common * inv_w4) * rc2),
+                ]
+            )
+            return val, grad
+
+        best_val = whittle_value(0.0, 0.0)
+        best_c1, best_c2 = 0.0, 0.0
+        opt1 = minimize_scalar(
+            lambda lc: whittle_value(float(np.exp(lc)), 0.0),
+            bounds=(float(np.log(1e-8)), float(np.log(hi1))),
             method="bounded",
             options={"xatol": 1e-12},
         )
-        rel_cand = float(np.exp(opt.x))
-        c_ref_sq = a0 * rel_cand if whittle_obj(rel_cand) < whittle_obj(0.0) else 0.0
+        c1_only = float(np.exp(opt1.x))
+        if whittle_value(c1_only, 0.0) < best_val:
+            best_val, best_c1, best_c2 = whittle_value(c1_only, 0.0), c1_only, 0.0
+
+        opt2 = minimize_scalar(
+            lambda lc: whittle_value(0.0, float(np.exp(lc))),
+            bounds=(float(np.log(1e-8)), float(np.log(hi2))),
+            method="bounded",
+            options={"xatol": 1e-12},
+        )
+        c2_only = float(np.exp(opt2.x))
+        if whittle_value(0.0, c2_only) < best_val:
+            best_val, best_c1, best_c2 = whittle_value(0.0, c2_only), 0.0, c2_only
+
+        lo1, uhi1 = float(np.log(1e-8)), float(np.log(hi1))
+        lo2, uhi2 = float(np.log(1e-8)), float(np.log(hi2))
+        s1_med = float(
+            np.log(np.clip(np.median(w2 * np.maximum(rel_pwr - 1.0, 1e-3)), 1e-6, hi1))
+        )
+        s2_med = float(
+            np.log(
+                np.clip(np.median((w2**2) * np.maximum(rel_pwr - 1.0, 1e-3)), 1e-6, hi2)
+            )
+        )
+        starts_2d = (
+            (s1_med, s2_med),
+            (max(lo1, float(np.log(max(c1_only, 1e-6))) - 4.0), s2_med + 2.0),
+            (s1_med - 4.0, max(lo2, float(np.log(max(c2_only, 1e-6))))),
+            (float(np.log(max(c1_only, 1e-6))), max(lo2, s2_med - 4.0)),
+        )
+        for st1, st2 in starts_2d:
+            x0 = np.array([np.clip(st1, lo1, uhi1), np.clip(st2, lo2, uhi2)])
+            fit2 = minimize(
+                whittle_log_obj_grad,
+                x0,
+                jac=True,
+                method="L-BFGS-B",
+                bounds=[(lo1, uhi1), (lo2, uhi2)],
+                options={"ftol": 1e-13, "gtol": 1e-11},
+            )
+            cand1, cand2 = float(np.exp(fit2.x[0])), float(np.exp(fit2.x[1]))
+            cand_v = whittle_value(cand1, cand2)
+            if cand_v < best_val:
+                best_val, best_c1, best_c2 = cand_v, cand1, cand2
+
+        c1_abs = a0 * best_c1
+        c2_abs = a0 * best_c2
+    inv_w2 = 1.0 / np.maximum(frequencies**2, 1.0)
     sigma_bg = np.sqrt(
-        np.maximum(var_shot + c_ref_sq / np.maximum(frequencies**2, 1), 1e-30)
+        np.maximum(var_shot + c1_abs * inv_w2 + c2_abs * (inv_w2**2), 1e-30)
     )
     whitened = (
         amplitude.copy()
-        if var_shot <= 1e-28 and c_ref_sq <= 1e-28
+        if var_shot <= 1e-28 and c1_abs <= 1e-28 and c2_abs <= 1e-28
         else amplitude / sigma_bg
     )
     w_peak = int(np.argmax(whitened))
@@ -1051,7 +1129,11 @@ def spectrum(points, residual, jac, calibration, frequencies):
         "whitened_peak_z": float(whitened[w_peak]),
         "whitened_snr": float(whitened[w_peak] / max(w_floor, 1e-30)),
         "shot_sd": float(np.sqrt(var_shot)),
-        "c_ref_estimate": float(np.sqrt(c_ref_sq)),
+        "c_ref_estimate": float(
+            np.sqrt(c1_abs + c2_abs / max(float(np.min(frequencies) ** 2), 1.0))
+        ),
+        "c1_estimate": float(np.sqrt(c1_abs)),
+        "c2_steep_estimate": float(np.sqrt(c2_abs)),
         "score": score,
         "score_neg": score_neg,
         "amplitude_pos": amplitude_pos,
