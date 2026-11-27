@@ -899,3 +899,34 @@ def test_huber_whittle_spectrum_avoids_zero_c_ref_and_is_scale_invariant():
         spec["whitened_peak_z"], abs=1e-10
     )
     assert scaled["whitened_snr"] == pytest.approx(spec["whitened_snr"], abs=1e-10)
+
+
+def test_calibrate_progressive_n_ref_triggers_multistart_escalation():
+    pf = np.array(
+        [
+            [0.0005207062, 0.4157238007],
+            [0.0012936592, 0.2977190018],
+            [0.0006451607, 0.3661980629],
+            [0.0007896423, 0.334145546],
+            [0.4924387932, 0.0001168251],
+            [0.3676896095, 0.0009322166],
+            [0.2675991058, 0.001970768],
+            [0.3140354156, 0.001203537],
+        ]
+    )
+    cross = np.array(
+        [
+            [0.1905422211, 0.1313233376, 0.0894527435, 0.107688427],
+            [0.1318621635, 0.0857362747, 0.0540194511, 0.0689635277],
+            [0.1637330055, 0.1121683121, 0.0714731216, 0.0866923332],
+            [0.1486663818, 0.1001653671, 0.0677642822, 0.0880713463],
+        ]
+    )
+    direct = calibrate(pf, cross, q=None, starts=1)
+    assert 1e-4 < direct.rms < 2e-4
+    # Below both thresholds when n_ref is omitted: stays at single-start fit.
+    unescalated = calibrate_progressive(pf, cross, q=None, starts=1)
+    assert unescalated.rms == pytest.approx(direct.rms, abs=1e-12)
+    # Large n_ref raises rms * sqrt(n_ref) >= 0.35 even with 4x4 anchors -> multi-start.
+    escalated = calibrate_progressive(pf, cross, q=None, n_ref=4_500_000, starts=1)
+    assert escalated.rms < 1e-12

@@ -648,52 +648,87 @@ def _polish_outer_anchors(pf_sub, opp_counts, opp_anchors, opp_sign, qq):
 
 
 def calibrate_progressive(pf, cross, q=None, n_ref=None, core=5, **kwargs):
-    """Run calibration, escalating to hierarchical core->ring fit on high RMS."""
+    """Run calibration, escalating to multi-start and core->ring fits on high RMS."""
     pf, cross = np.asarray(pf), np.asarray(cross)
-    cal = calibrate(pf, cross, q=q, **kwargs)
-    bad = (cal.rms * np.sqrt(n_ref) >= 0.35) if n_ref is not None else (cal.rms > 2e-4)
+
+    def is_bad(candidate):
+        if n_ref is not None:
+            return float(candidate.rms * np.sqrt(n_ref)) >= 0.35
+        return float(candidate.rms) > 2e-4
+
+    best = calibrate(pf, cross, q=q, **kwargs)
+    total_evals = best.evaluations
+    if not is_bad(best):
+        return best
+
+    starts_req = int(kwargs.get("starts", 1))
+    max_nfev_req = max(int(kwargs.get("max_nfev", 180)), 300)
+    if starts_req < 4:
+        multi_kw = {
+            **kwargs,
+            "starts": 4,
+            "max_nfev": max_nfev_req,
+        }
+        multi = calibrate(pf, cross, q=q, **multi_kw)
+        total_evals += multi.evaluations
+        if multi.rms < best.rms:
+            best = Calibration(
+                multi.q,
+                multi.early,
+                multi.late,
+                multi.rms,
+                multi.condition,
+                total_evals,
+            )
+        if not is_bad(best):
+            return best
+
     na, nb = cross.shape
-    if not bad or min(na, nb) <= core:
-        return cal
-    sub_idx = np.r_[:core, na : na + core]
-    c0 = calibrate(
-        pf[sub_idx],
-        cross[:core, :core],
-        q=q,
-        starts=max(int(kwargs.get("starts", 1)), 4),
-        max_nfev=max(int(kwargs.get("max_nfev", 180)), 300),
-    )
-    ee = _polish_outer_anchors(pf[core:na], cross[core:na, :core], c0.late, -1.0, c0.q)
-    el = _polish_outer_anchors(
-        pf[na + core :], cross[:core, core:].T, c0.early, +1.0, c0.q
-    )
-    pts0 = _gauge(np.vstack((c0.early, ee, c0.late, el)))
-    inv_w, pack, unpack, equations, lo, hi = _calibration_system(pf, cross, q)
-    z0 = pack(pts0, c0.q)
-    fit = least_squares(
-        equations,
-        np.clip(z0, lo + 1e-8, hi - 1e-8),
-        jac=lambda z: equations(z, True),
-        bounds=(lo, hi),
-        max_nfev=300,
-        ftol=1e-14,
-        xtol=1e-14,
-        gtol=1e-15,
-    )
-    rms = float(np.sqrt(np.mean((fit.fun / inv_w) ** 2)))
-    if rms < cal.rms:
-        pts, qq = unpack(fit.x)
-        pts = _gauge(pts)
-        singular = np.linalg.svd(fit.jac, compute_uv=False)
-        return Calibration(
-            qq,
-            pts[:na],
-            pts[na:],
-            rms,
-            float(singular[0] / max(singular[-1], 1e-30)),
-            c0.evaluations + cal.evaluations + fit.nfev,
+    for c in dict.fromkeys((core, 4)):
+        if min(na, nb) <= c:
+            continue
+        sub_idx = np.r_[:c, na : na + c]
+        c0 = calibrate(
+            pf[sub_idx],
+            cross[:c, :c],
+            q=q,
+            starts=max(starts_req, 4),
+            max_nfev=max_nfev_req,
         )
-    return cal
+        ee = _polish_outer_anchors(pf[c:na], cross[c:na, :c], c0.late, -1.0, c0.q)
+        el = _polish_outer_anchors(pf[na + c :], cross[:c, c:].T, c0.early, +1.0, c0.q)
+        pts0 = _gauge(np.vstack((c0.early, ee, c0.late, el)))
+        inv_w, pack, unpack, equations, lo, hi = _calibration_system(pf, cross, q)
+        z0 = pack(pts0, c0.q)
+        fit = least_squares(
+            equations,
+            np.clip(z0, lo + 1e-8, hi - 1e-8),
+            jac=lambda z, eq=equations: eq(z, True),
+            bounds=(lo, hi),
+            max_nfev=300,
+            ftol=1e-14,
+            xtol=1e-14,
+            gtol=1e-15,
+        )
+        total_evals += c0.evaluations + fit.nfev
+        rms = float(np.sqrt(np.mean((fit.fun / inv_w) ** 2)))
+        if rms < best.rms:
+            pts, qq = unpack(fit.x)
+            pts = _gauge(pts)
+            singular = np.linalg.svd(fit.jac, compute_uv=False)
+            best = Calibration(
+                qq,
+                pts[:na],
+                pts[na:],
+                rms,
+                float(singular[0] / max(singular[-1], 1e-30)),
+                total_evals,
+            )
+            if not is_bad(best):
+                return best
+    return Calibration(
+        best.q, best.early, best.late, best.rms, best.condition, total_evals
+    )
 
 
 def linear_probe_initialization(mu, calibration, grid=33):
