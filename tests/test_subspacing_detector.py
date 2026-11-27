@@ -15,9 +15,11 @@ from subspacing_observer import (  # noqa: E402
     PAST,
     BackgroundModel,
     Calibration,
+    _interval_dq,
     anchor_theta_jacobian,
     bump_window,
     calibrate,
+    calibrate_progressive,
     flat_gram_initialization,
     neyman_orthogonalize,
     observe,
@@ -651,3 +653,249 @@ def test_campaign_collects_both_modes_and_preserves_history(monkeypatch):
             r["status"] == "not_run_budget"
             for r in skipped["stage2"] + skipped["stage3"]
         )
+
+
+@pytest.mark.parametrize("q", [0.0, 0.05, 0.25, 1.0, 4.0, 7.5])
+def test_interval_dq_matches_finite_differences(q):
+    rng = np.random.default_rng(701)
+    u1 = rng.uniform(-0.42, -0.05, 12)
+    v1 = u1 + rng.uniform(0.05, 0.25, 12)
+    first = np.column_stack((u1, v1, rng.normal(0, 0.08, (12, 2))))
+    u2 = rng.uniform(0.05, 0.42, 12)
+    v2 = rng.uniform(0.65, 0.96, 12)
+    second = np.column_stack((u2, v2, rng.normal(0, 0.08, (12, 2))))
+    analytic = _interval_dq(BackgroundModel(q), first, second)
+    h = 1e-5 if q == 0.0 else 1e-6
+    if q == 0.0:
+        fd = (
+            -3.0 * BackgroundModel(0.0).interval(first, second)
+            + 4.0 * BackgroundModel(h).interval(first, second)
+            - BackgroundModel(2.0 * h).interval(first, second)
+        ) / (2.0 * h)
+    else:
+        fd = (
+            BackgroundModel(q + h).interval(first, second)
+            - BackgroundModel(q - h).interval(first, second)
+        ) / (2.0 * h)
+    np.testing.assert_allclose(analytic, fd, atol=1e-9, rtol=1e-9)
+
+
+def test_calibrate_progressive_recovers_core_outer_trap():
+    early = np.array(
+        [
+            [
+                -0.2814036682282163,
+                0.1150514357009205,
+                0.03183286962884017,
+                0.04694602907491351,
+            ],
+            [
+                -0.20880779233937058,
+                0.1463540660558268,
+                0.07200862774744361,
+                0.08689443975150364,
+            ],
+            [
+                -0.24348055078681452,
+                0.10476979326651027,
+                0.03624893351146877,
+                0.1204386786383423,
+            ],
+            [
+                -0.31391832959620136,
+                0.173328005745471,
+                0.04068051927614124,
+                -0.20804917653116461,
+            ],
+            [
+                -0.43470592174545275,
+                0.590042117582285,
+                0.07367198172057185,
+                -0.20017773072439976,
+            ],
+            [
+                -0.21749787862204167,
+                0.227765563768188,
+                -0.2938651717323229,
+                -0.13083534141105332,
+            ],
+            [
+                -0.33953524749705066,
+                0.34445397836746294,
+                0.30787872324080146,
+                0.13513900805566917,
+            ],
+            [
+                -0.3092477047724013,
+                0.312491185055621,
+                -0.13053111854069713,
+                0.20084247325346202,
+            ],
+            [
+                -0.35949684338704924,
+                0.4265110546980238,
+                0.04968711364577901,
+                -0.20654807140134868,
+            ],
+            [
+                -0.10971334084699236,
+                0.3110085068202186,
+                -0.10532636544891008,
+                0.05890112453428114,
+            ],
+        ]
+    )
+    late = np.array(
+        [
+            [
+                0.3070655171603819,
+                0.8288849625057595,
+                -0.04860443949216915,
+                0.03252197192624918,
+            ],
+            [
+                0.26155706438365645,
+                0.8029519166231333,
+                0.04235056298083538,
+                -0.01216845688109135,
+            ],
+            [
+                0.2505487783706285,
+                0.883441053530188,
+                -0.00520460141751119,
+                -0.11504124808732855,
+            ],
+            [
+                0.2414222836469424,
+                0.7669710292740713,
+                0.07881353482742637,
+                -0.06304542472650634,
+            ],
+            [
+                -0.03547457112285696,
+                0.9218172197202953,
+                -0.16684725286047938,
+                0.1312060341900859,
+            ],
+            [
+                0.3258421852310549,
+                0.6486670358483027,
+                0.2962231767484797,
+                -0.2604615333242417,
+            ],
+            [
+                0.10349873585239633,
+                0.8713628808136454,
+                -0.1478639566619421,
+                -0.16589321142956984,
+            ],
+            [
+                0.16374360169615598,
+                0.8239013988558893,
+                -0.07723935726195275,
+                0.25724752884754826,
+            ],
+            [
+                0.2480480279228474,
+                0.8186727672961132,
+                -0.2960421789775721,
+                0.04368262383329786,
+            ],
+            [
+                0.1181538706954256,
+                0.7021025876964837,
+                -0.02829683698165466,
+                -0.2916139351149544,
+            ],
+        ]
+    )
+    model = BackgroundModel(4.0)
+    all_anchors = np.vstack((early, late))
+    pf = np.column_stack(
+        (model.interval(PAST, all_anchors), model.interval(all_anchors, FUTURE))
+    )
+    cross = model.interval(early[:, None], late[None])
+    direct = calibrate(pf, cross, q=None, starts=1)
+    assert direct.rms > 2e-4
+    progressive = calibrate_progressive(pf, cross, q=None, starts=1)
+    assert progressive.rms < 1e-12
+    assert progressive.q == pytest.approx(4.0, abs=1e-9)
+
+
+def test_fused_gpu_counts_matches_cpu_and_gemm():
+    cp = pytest.importorskip("cupy")
+    if cp.cuda.runtime.getDeviceCount() == 0:
+        pytest.skip("no CUDA device")
+    geometry = WaveGeometry(4.0, "circular_wave", 1 / 64)
+    points = geometry.sprinkle(900, np.random.default_rng(702), "gpu")
+    cpu = OrderOracle(geometry, points, "cpu")
+    gpu = OrderOracle(geometry, points, "gpu")
+    refs = np.arange(28, 388)
+    probes = np.arange(388, 900)  # 512 probes -> triggers fused CUDA kernel
+    early14, late14 = np.arange(14), np.arange(14, 28)
+    for early, late in (((), ()), (early14, late14)):
+        fused = gpu.counts(refs, probes, early, late)
+        gemm = np.vstack(
+            [
+                gpu.counts(refs, probes[a:b], early, late)
+                for a, b in ((0, 255), (255, 510), (510, 512))
+            ]
+        )
+        reference = order_counts(cpu.query, refs, probes, early, late)
+        np.testing.assert_allclose(fused, reference, atol=1e-14, rtol=0)
+        np.testing.assert_allclose(fused, gemm, atol=1e-14, rtol=0)
+
+
+def test_huber_whittle_spectrum_avoids_zero_c_ref_and_is_scale_invariant():
+    rng = np.random.default_rng(42)
+    n_pts = 1500
+    u = rng.uniform(-0.35, 0.35, n_pts)
+    v = u + rng.uniform(0.3, 0.6, n_pts)
+    pts = np.column_stack((u, v, rng.normal(0, 0.08, (n_pts, 2))))
+    early = np.array(
+        [
+            [-0.30, 0.10, 0.05, 0.02],
+            [-0.28, 0.12, -0.04, 0.05],
+            [-0.32, 0.08, 0.02, -0.05],
+            [-0.25, 0.14, -0.05, -0.02],
+            [-0.27, 0.11, 0.06, 0.01],
+        ]
+    )
+    late = np.array(
+        [
+            [0.30, 0.90, 0.04, -0.02],
+            [0.28, 0.88, -0.05, 0.04],
+            [0.32, 0.92, 0.01, 0.05],
+            [0.26, 0.86, -0.03, -0.05],
+            [0.27, 0.89, 0.05, -0.01],
+        ]
+    )
+    model = BackgroundModel(1.0)
+    cal = Calibration(1.0, early, late, 0.0, 1.0, 0)
+    shear = model.shear_response(pts, early, late)
+    jac = np.empty((n_pts, shear.shape[1], 4))
+    jac[:, 0, :] = model.interval(PAST, pts, True)[2]
+    jac[:, 1, :] = model.interval(pts, FUTURE, True)[1]
+    for idx, anchor in enumerate(early):
+        jac[:, idx + 2, :] = model.interval(anchor, pts, True)[2]
+    for idx, anchor in enumerate(late):
+        jac[:, idx + 2 + len(early), :] = model.interval(pts, anchor, True)[1]
+    perp = tangent_project(shear, jac)
+    freqs = np.linspace(10.0, 120.0, 111)
+    srng = np.random.default_rng(0)
+    amp = 0.04 * np.cos(8.0 * u) + srng.normal(0, 0.04, n_pts)
+    res = perp * amp[:, None]
+    spec = spectrum(pts, res, jac, cal, freqs)
+    pwr = 0.5 * (spec["amplitude_pos"] ** 2 + spec["amplitude_neg"] ** 2)
+    naive_med = float(np.median(freqs**2 * np.maximum(pwr - spec["shot_sd"] ** 2, 0.0)))
+    assert naive_med == 0.0
+    assert spec["c_ref_estimate"] > 0.0
+    assert np.isfinite(spec["whitened_peak_z"]) and np.isfinite(spec["whitened_snr"])
+    scaled = spectrum(pts, 2.5 * res, jac, cal, freqs)
+    np.testing.assert_allclose(
+        scaled["whitened_amplitude"], spec["whitened_amplitude"], atol=1e-10, rtol=1e-10
+    )
+    assert scaled["whitened_peak_z"] == pytest.approx(
+        spec["whitened_peak_z"], abs=1e-10
+    )
+    assert scaled["whitened_snr"] == pytest.approx(spec["whitened_snr"], abs=1e-10)

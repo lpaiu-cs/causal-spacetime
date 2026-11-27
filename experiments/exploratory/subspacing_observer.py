@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.optimize import least_squares
+from scipy.optimize import least_squares, minimize_scalar
 from scipy.signal import czt, fftconvolve
 from scipy.special import zeta
 
@@ -20,6 +20,59 @@ FUTURE = np.array([0.5, 1.0, 0.0, 0.0])
 # alpha(L) = L^2 sum_n zeta(2n) (q L^2)^(n-1) / pi^(2n).
 _ALPHA_POWERS = 2 * np.arange(1, 13)
 _ALPHA_SERIES = zeta(_ALPHA_POWERS) / np.pi**_ALPHA_POWERS
+
+
+def _alpha_q(model, length):
+    """Analytic d/dq of unnormalized alpha(length)."""
+    length = np.asarray(length)
+    x2 = model.q * length**2
+    powers = np.arange(1, len(_ALPHA_SERIES))
+    series = length**4 * np.polynomial.polynomial.polyval(
+        x2, powers * _ALPHA_SERIES[1:]
+    )
+    if model.q == 0:
+        return series
+    return np.where(
+        x2 < 0.25,
+        series,
+        (length * model.alpha_prime(length) - 2 * model.alpha(length)) / (2 * model.q),
+    )
+
+
+def _m_q(model, u):
+    """Analytic d/dq of m(u) = tan(sqrt(q)*u)/sqrt(q)."""
+    u = np.asarray(u)
+    x2 = model.q * u**2
+    series = u**3 * np.polynomial.polynomial.polyval(
+        x2, [1 / 3, 4 / 15, 17 / 105, 248 / 2835, 1382 / 31185]
+    )
+    if model.q == 0:
+        return series
+    return np.where(
+        x2 < 1e-4,
+        series,
+        (u / np.cos(model.k * u) ** 2 - model.m(u)) / (2 * model.q),
+    )
+
+
+def _interval_dq(model, first, second):
+    """Analytic d/dq of normalized interval probability model.interval."""
+    first, second = np.broadcast_arrays(first, second)
+    length = np.maximum(second[..., 0] - first[..., 0], 0.0)
+    dm = model.m(second[..., 0]) - model.m(first[..., 0])
+    safe = np.where(length > 0, dm, 1.0)
+    radius = np.sum((second[..., 2:] - first[..., 2:]) ** 2, axis=-1)
+    kap = np.where(
+        length > 0,
+        np.maximum(second[..., 1] - first[..., 1] - radius / (2 * safe), 0.0),
+        0.0,
+    )
+    dq = _m_q(model, second[..., 0]) - _m_q(model, first[..., 0])
+    alpha = model.alpha(length)
+    return (
+        _alpha_q(model, length) / model.gamma
+        - alpha * _alpha_q(model, 1.0) / model.gamma**2
+    ) * kap**2 + (alpha / model.gamma) * kap * radius * dq / safe**2
 
 
 class BackgroundModel:
@@ -354,15 +407,9 @@ class Calibration:
     evaluations: int
 
 
-def calibrate(pf, cross, q=None, orientations=64, starts=16, max_nfev=180):
-    """Joint exact-background fit; q=None never receives a truth q initializer."""
-    pf, cross = np.asarray(pf), np.asarray(cross)
+def _calibration_system(pf, cross, q):
+    """Shared weighted equations, exact Jacobian, bounds, and pack/unpack."""
     na, nb = cross.shape
-    if pf.shape != (na + nb, 2) or min(na, nb) < 4:
-        raise ValueError("at least four anchors per side and matching counts required")
-    if np.any(pf <= 0) or np.any(cross <= 0):
-        raise ValueError("calibration requires positive interval counts")
-    t, spatial = flat_gram_initialization(pf, cross)
     target = np.r_[pf.ravel(), cross.ravel()]
     inv_w = np.minimum(1 / np.sqrt(np.maximum(target * (1 - target), 1e-6)), 100.0)
     keep = np.arange(4 * (na + nb)) != 3
@@ -394,27 +441,41 @@ def calibrate(pf, cross, q=None, orientations=64, starts=16, max_nfev=180):
         _, df, _ = model.interval(points, FUTURE, True)
         _, da, db = model.interval(points[:na, None], points[None, na:], True)
         full = np.zeros((len(target), 4 * (na + nb)))
-        for i in range(na + nb):
-            full[2 * i, 4 * i : 4 * i + 4] = dp[i]
-            full[2 * i + 1, 4 * i : 4 * i + 4] = df[i]
-        for i in range(na):
-            for j in range(nb):
-                row = 2 * (na + nb) + i * nb + j
-                full[row, 4 * i : 4 * i + 4] = da[i, j]
-                full[row, 4 * (na + j) : 4 * (na + j) + 4] = db[i, j]
+        idx_a = np.arange(na + nb)
+        cols_a = 4 * idx_a[:, None] + np.arange(4)
+        full[2 * idx_a[:, None], cols_a] = dp
+        full[2 * idx_a[:, None] + 1, cols_a] = df
+        rows_c = 2 * (na + nb) + np.arange(na * nb)
+        ci = np.repeat(np.arange(na), nb)
+        cj = np.tile(np.arange(nb), na)
+        full[rows_c[:, None], 4 * ci[:, None] + np.arange(4)] = da.reshape(-1, 4)
+        full[rows_c[:, None], 4 * (na + cj)[:, None] + np.arange(4)] = db.reshape(-1, 4)
         result = full[:, keep] * inv_w[:, None]
         if q is None:
-            step = 1e-5
-            low, high = z.copy(), z.copy()
-            low[-1], high[-1] = max(0, qq - step), min(np.pi**2 - 1e-5, qq + step)
-            dq = (equations(high) - equations(low)) / (high[-1] - low[-1])
-            result = np.column_stack((result, dq))
+            dqp = np.column_stack(
+                (_interval_dq(model, PAST, points), _interval_dq(model, points, FUTURE))
+            ).ravel()
+            dqc = _interval_dq(model, points[:na, None], points[None, na:]).ravel()
+            result = np.column_stack((result, np.r_[dqp, dqc] * inv_w))
         return result
 
     lo = np.tile([-0.4999, -0.5, -2, -2], na + nb)[keep]
     hi = np.tile([0.4999, 1.5, 2, 2], na + nb)[keep]
     if q is None:
         lo, hi = np.r_[lo, 0], np.r_[hi, np.pi**2 - 1e-4]
+    return inv_w, pack, unpack, equations, lo, hi
+
+
+def calibrate(pf, cross, q=None, orientations=64, starts=16, max_nfev=180):
+    """Joint exact-background fit; q=None never receives a truth q initializer."""
+    pf, cross = np.asarray(pf), np.asarray(cross)
+    na, nb = cross.shape
+    if pf.shape != (na + nb, 2) or min(na, nb) < 4:
+        raise ValueError("at least four anchors per side and matching counts required")
+    if np.any(pf <= 0) or np.any(cross <= 0):
+        raise ValueError("calibration requires positive interval counts")
+    t, spatial = flat_gram_initialization(pf, cross)
+    inv_w, pack, unpack, equations, lo, hi = _calibration_system(pf, cross, q)
     guesses = [0.05, 0.5, 1.5, 4.0, 7.0] if q is None else [q]
     buckets = {guess: [] for guess in guesses}
     for i in range(orientations):
@@ -503,6 +564,136 @@ def calibrate(pf, cross, q=None, orientations=64, starts=16, max_nfev=180):
         float(singular[0] / max(singular[-1], 1e-30)),
         evaluations,
     )
+
+
+def _polish_outer_anchors(pf_sub, opp_counts, opp_anchors, opp_sign, qq):
+    """Initialize outer anchors via lifted 1D u-grid against core and run damped GN."""
+    model = BackgroundModel(qq)
+    all_a = np.vstack((PAST, FUTURE, opp_anchors))
+    sgn = np.r_[1, -1, np.full(len(opp_anchors), opp_sign)]
+    mu = np.column_stack((pf_sub, opp_counts))
+    best = np.full(len(mu), np.inf)
+    points = np.empty((len(mu), 4))
+    u_lo = (
+        -0.49 if opp_sign < 0 else min(0.47, float(np.max(opp_anchors[:, 0])) + 0.005)
+    )
+    u_hi = (
+        max(-0.47, float(np.min(opp_anchors[:, 0])) - 0.005) if opp_sign < 0 else 0.49
+    )
+    if u_lo >= u_hi:
+        u_lo, u_hi = (-0.49, 0.0) if opp_sign < 0 else (0.0, 0.49)
+    for u in np.linspace(u_lo, u_hi, 65):
+        length = sgn * (u - all_a[:, 0])
+        dm = sgn * (model.m(u) - model.m(all_a[:, 0]))
+        safe = np.where(length > 0, dm, 1.0)
+        kap = np.where(
+            length > 0,
+            np.sqrt(
+                np.maximum(
+                    model.gamma
+                    * mu
+                    / np.maximum(model.alpha(np.maximum(length, 0)), 1e-30),
+                    0.0,
+                )
+            ),
+            0.0,
+        )
+        mat = np.column_stack((sgn, all_a[:, 2:] / safe[:, None], -0.5 / safe))
+        con = sgn * all_a[:, 1] + np.sum(all_a[:, 2:] ** 2, axis=1) / (2 * safe)
+        valid = length > 1e-4
+        if np.count_nonzero(valid) < 4:
+            continue
+        lifted = (kap[:, valid] + con[valid]) @ np.linalg.pinv(mat[valid]).T
+        cand = np.column_stack(
+            (np.full(len(mu), u), np.clip(lifted[:, 0], 1e-4, 1 - 1e-4), lifted[:, 1:3])
+        )
+        rad = np.sum((cand[:, None, 2:] - all_a[:, 2:]) ** 2, axis=-1)
+        mar = sgn * (cand[:, 1:2] - all_a[:, 1]) - rad / (2 * safe)
+        pred = np.where(
+            length > 0,
+            model.alpha(np.maximum(length, 0)) / model.gamma * np.maximum(mar, 0) ** 2,
+            0.0,
+        )
+        loss = np.sum((mu[:, valid] - pred[:, valid]) ** 2, axis=1)
+        good = loss < best
+        points[good], best[good] = cand[good], loss[good]
+    inv_w = np.minimum(1 / np.sqrt(np.maximum(mu * (1 - mu), 1e-6)), 100.0)
+    early_a = opp_anchors if opp_sign > 0 else np.empty((0, 4))
+    late_a = opp_anchors if opp_sign < 0 else np.empty((0, 4))
+    for _ in range(25):
+        pred, jac = model.moments(points, early_a, late_a, True)
+        res = (mu - pred) * inv_w
+        jw = jac * inv_w[..., None]
+        gram = np.einsum("nki,nkj->nij", jw, jw)
+        rhs = np.einsum("nki,nk->ni", jw, res)
+        damp = 1e-10 + 1e-7 * np.trace(gram, axis1=1, axis2=2)
+        d = np.linalg.solve(gram + damp[:, None, None] * np.eye(4), rhs[..., None])[
+            ..., 0
+        ]
+        d /= np.maximum(1, np.max(np.abs(d), axis=1) / 0.15)[:, None]
+        loss = np.sum(res**2, axis=1)
+        for st in (1.0, 0.5, 0.25, 0.125):
+            pend = np.flatnonzero(np.any(d != 0, axis=1))
+            if not len(pend):
+                break
+            prop = points[pend] + st * d[pend]
+            prop[:, 0] = np.clip(prop[:, 0], -0.499, 0.499)
+            prop[:, 1] = np.clip(prop[:, 1], 0.001, 0.999)
+            npd = model.moments(prop, early_a, late_a)
+            good = np.sum(((mu[pend] - npd) * inv_w[pend]) ** 2, axis=1) < loss[pend]
+            acc = pend[good]
+            points[acc] = prop[good]
+            d[acc] = 0
+    return points
+
+
+def calibrate_progressive(pf, cross, q=None, n_ref=None, core=5, **kwargs):
+    """Run calibration, escalating to hierarchical core->ring fit on high RMS."""
+    pf, cross = np.asarray(pf), np.asarray(cross)
+    cal = calibrate(pf, cross, q=q, **kwargs)
+    bad = (cal.rms * np.sqrt(n_ref) >= 0.35) if n_ref is not None else (cal.rms > 2e-4)
+    na, nb = cross.shape
+    if not bad or min(na, nb) <= core:
+        return cal
+    sub_idx = np.r_[:core, na : na + core]
+    c0 = calibrate(
+        pf[sub_idx],
+        cross[:core, :core],
+        q=q,
+        starts=max(int(kwargs.get("starts", 1)), 4),
+        max_nfev=max(int(kwargs.get("max_nfev", 180)), 300),
+    )
+    ee = _polish_outer_anchors(pf[core:na], cross[core:na, :core], c0.late, -1.0, c0.q)
+    el = _polish_outer_anchors(
+        pf[na + core :], cross[:core, core:].T, c0.early, +1.0, c0.q
+    )
+    pts0 = _gauge(np.vstack((c0.early, ee, c0.late, el)))
+    inv_w, pack, unpack, equations, lo, hi = _calibration_system(pf, cross, q)
+    z0 = pack(pts0, c0.q)
+    fit = least_squares(
+        equations,
+        np.clip(z0, lo + 1e-8, hi - 1e-8),
+        jac=lambda z: equations(z, True),
+        bounds=(lo, hi),
+        max_nfev=300,
+        ftol=1e-14,
+        xtol=1e-14,
+        gtol=1e-15,
+    )
+    rms = float(np.sqrt(np.mean((fit.fun / inv_w) ** 2)))
+    if rms < cal.rms:
+        pts, qq = unpack(fit.x)
+        pts = _gauge(pts)
+        singular = np.linalg.svd(fit.jac, compute_uv=False)
+        return Calibration(
+            qq,
+            pts[:na],
+            pts[na:],
+            rms,
+            float(singular[0] / max(singular[-1], 1e-30)),
+            c0.evaluations + cal.evaluations + fit.nfev,
+        )
+    return cal
 
 
 def linear_probe_initialization(mu, calibration, grid=33):
@@ -597,33 +788,11 @@ def anchor_theta_jacobian(model, points, early, late, free_q=False):
         sign = np.r_[1, -1, np.ones(len(early)), -np.ones(len(late))]
         length = np.maximum(sign * (points[:, :1] - all_anchors[:, 0]), 0)
 
-        def alpha_q(length):
-            x2 = model.q * length**2
-            powers = np.arange(1, len(_ALPHA_SERIES))
-            series = length**4 * np.polynomial.polynomial.polyval(
-                x2, powers * _ALPHA_SERIES[1:]
-            )
-            if model.q == 0:
-                return series
-            return np.where(
-                x2 < 0.25,
-                series,
-                (length * model.alpha_prime(length) - 2 * model.alpha(length))
-                / (2 * model.q),
-            )
+        def alpha_q(val):
+            return _alpha_q(model, val)
 
-        def m_q(u):
-            x2 = model.q * u**2
-            series = u**3 * np.polynomial.polynomial.polyval(
-                x2, [1 / 3, 4 / 15, 17 / 105, 248 / 2835, 1382 / 31185]
-            )
-            if model.q == 0:
-                return series
-            return np.where(
-                x2 < 1e-4,
-                series,
-                (u / np.cos(model.k * u) ** 2 - model.m(u)) / (2 * model.q),
-            )
+        def m_q(val):
+            return _m_q(model, val)
 
         dm = sign * (model.m(points[:, :1]) - model.m(all_anchors[:, 0]))
         safe = np.where(length > 0, dm, 1)
@@ -659,12 +828,14 @@ def neyman_orthogonalize(points, residual, jac, calibration, free_q=False):
     nuisance -= u @ (u.swapaxes(1, 2) @ nuisance)
     weights = np.repeat(bump_window(points), residual.shape[1])
     design = nuisance.reshape(-1, nuisance.shape[-1])
-    normal = design.T @ (weights[:, None] * design)
-    # Machine-scale ridge stabilizes gauge remnants without a fitted hyperparameter.
-    ridge = np.finfo(float).eps * max(float(np.trace(normal)), 1e-30)
-    step = np.linalg.solve(
-        normal + ridge * np.eye(len(normal)), -design.T @ (weights * r.ravel())
-    )
+    sqrt_w = np.sqrt(weights)
+    u_n, s_n, vt_n = np.linalg.svd(sqrt_w[:, None] * design, full_matrices=False)
+    if len(s_n) and s_n[0] > 0:
+        keep = s_n > s_n[0] * 1e-7
+        proj = u_n[:, keep].T @ (sqrt_w * r.ravel())
+        step = vt_n[keep].T @ (-proj / s_n[keep])
+    else:
+        step = np.zeros(design.shape[1])
     return r + nuisance @ step, float(np.linalg.norm(step))
 
 
@@ -780,9 +951,32 @@ def spectrum(points, residual, jac, calibration, frequencies):
     z = weights * num / denom
     var_shot = float(np.sum(np.abs(z) ** 2))
     pwr = 0.5 * (amplitude_pos**2 + amplitude_neg**2)
-    c_ref_sq = max(
-        0.0, float(np.median(frequencies**2 * np.maximum(pwr - var_shot, 0)))
-    )
+    if var_shot <= 1e-28 and float(np.max(pwr)) <= 1e-28:
+        c_ref_sq = 0.0
+    else:
+        a0 = max(var_shot, 1e-30)
+        inv_w2 = 1.0 / np.maximum(frequencies**2, 1.0)
+        rel_pwr = pwr / a0
+        rel_hi = max(float(np.max(frequencies**2 * rel_pwr)) * 4.0, 1e6, 1e10)
+
+        def whittle_obj(rel_c1):
+            rel_mu = 1.0 + rel_c1 * inv_w2
+            ratio = rel_pwr / rel_mu
+            excess = np.where(
+                ratio <= 4.5,
+                ratio,
+                4.5 + 2.0 * np.sqrt(np.maximum(ratio - 4.5 + 1e-12, 0.0)) - 2e-6,
+            )
+            return float(np.sum(np.log(rel_mu) + excess))
+
+        opt = minimize_scalar(
+            lambda lc: whittle_obj(float(np.exp(lc))),
+            bounds=(float(np.log(1e-8)), float(np.log(rel_hi))),
+            method="bounded",
+            options={"xatol": 1e-12},
+        )
+        rel_cand = float(np.exp(opt.x))
+        c_ref_sq = a0 * rel_cand if whittle_obj(rel_cand) < whittle_obj(0.0) else 0.0
     sigma_bg = np.sqrt(
         np.maximum(var_shot + c_ref_sq / np.maximum(frequencies**2, 1), 1e-30)
     )
@@ -876,7 +1070,9 @@ def observe(
     late_counts = order_counts(
         query, references, late, early=early, count_query=count_query
     )
-    calibration = calibrate(counts, late_counts[:, 2:].T, q=q, starts=1)
+    calibration = calibrate_progressive(
+        counts, late_counts[:, 2:].T, q=q, n_ref=len(references), starts=1
+    )
     ring_early, ring_late = early, late
     early, late = early[:core], late[:core]
     calibration = Calibration(

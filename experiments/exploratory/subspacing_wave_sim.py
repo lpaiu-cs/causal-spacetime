@@ -330,6 +330,121 @@ class OrderOracle:
             }""",
                 "relation",
             )
+            fused_mod = cp.RawModule(
+                code=r"""
+            extern "C" __global__ void build_anchor_masks(
+                const double* d, const long long* refs,
+                const long long* early, const long long* late,
+                unsigned int* ar_mask, unsigned int* rb_mask,
+                long long n_ref, int n_early, int n_late) {
+                long long ridx = (long long)blockIdx.x * blockDim.x + threadIdx.x;
+                if (ridx >= n_ref) return;
+                const double* y = d + 7 * refs[ridx];
+                unsigned int am = 0U, bm = 0U;
+                for (int e = 0; e < n_early; ++e) {
+                    const double* x = d + 7 * early[e];
+                    double du = y[0]-x[0], dv = y[1]-x[1];
+                    double dx = y[2]-x[2], dy = y[3]-x[3];
+                    double m = y[4]-x[4], re = y[5]-x[5], im = y[6]-x[6];
+                    double det = m * m - re * re - im * im;
+                    double num = (m+re)*dx*dx + 2.0*im*dx*dy + (m-re)*dy*dy;
+                    double gap = dv - num / (2.0 * det);
+                    bool eq = (du == 0.0 && dx == 0.0 && dy == 0.0);
+                    if ((du > 0.0 && gap >= 0.0) || (eq && dv > 0.0)) am |= (1U << e);
+                }
+                for (int l = 0; l < n_late; ++l) {
+                    const double* x = d + 7 * late[l];
+                    double du = x[0]-y[0], dv = x[1]-y[1];
+                    double dx = x[2]-y[2], dy = x[3]-y[3];
+                    double m = x[4]-y[4], re = x[5]-y[5], im = x[6]-y[6];
+                    double det = m * m - re * re - im * im;
+                    double num = (m+re)*dx*dx + 2.0*im*dx*dy + (m-re)*dy*dy;
+                    double gap = dv - num / (2.0 * det);
+                    bool eq = (du == 0.0 && dx == 0.0 && dy == 0.0);
+                    if ((du > 0.0 && gap >= 0.0) || (eq && dv > 0.0)) bm |= (1U << l);
+                }
+                ar_mask[ridx] = am;
+                rb_mask[ridx] = bm;
+            }
+
+            extern "C" __global__ void fused_counts_split(
+                const double* d, const long long* refs, const long long* probes,
+                const unsigned int* ar_mask, const unsigned int* rb_mask,
+                unsigned long long* out,
+                long long n_ref, long long n_probe,
+                int n_early, int n_late, int split_r) {
+                __shared__ double sx[128 * 7];
+                __shared__ unsigned int s_ar[128];
+                __shared__ unsigned int s_rb[128];
+                long long pid = (long long)blockIdx.x * blockDim.x + threadIdx.x;
+                bool active = pid < n_probe;
+                double py0 = 0, py1 = 0, py2 = 0, py3 = 0;
+                double py4 = 0, py5 = 0, py6 = 0;
+                if (active) {
+                    const double* ptr = d + 7 * probes[pid];
+                    py0 = ptr[0]; py1 = ptr[1]; py2 = ptr[2]; py3 = ptr[3];
+                    py4 = ptr[4]; py5 = ptr[5]; py6 = ptr[6];
+                }
+                long long chunk = (n_ref + split_r - 1) / split_r;
+                long long r_start = (long long)blockIdx.y * chunk;
+                long long r_stop = r_start + chunk;
+                if (r_stop > n_ref) r_stop = n_ref;
+
+                unsigned long long acc[30];
+                int total_cols = 2 + n_early + n_late;
+                for (int c = 0; c < total_cols; ++c) acc[c] = 0ULL;
+
+                for (long long r0 = r_start; r0 < r_stop; r0 += 128) {
+                    long long rid_idx = r0 + threadIdx.x;
+                    if (rid_idx < r_stop) {
+                        const double* rx = d + 7 * refs[rid_idx];
+                        #pragma unroll
+                        for (int k = 0; k < 7; ++k) sx[threadIdx.x * 7 + k] = rx[k];
+                        s_ar[threadIdx.x] = ar_mask[rid_idx];
+                        s_rb[threadIdx.x] = rb_mask[rid_idx];
+                    }
+                    __syncthreads();
+                    if (active) {
+                        int r_end = (r_stop - r0) < 128 ? (int)(r_stop - r0) : 128;
+                        for (int r = 0; r < r_end; ++r) {
+                            const double* rx = sx + r * 7;
+                            double du = py0 - rx[0];
+                            double dv = py1 - rx[1];
+                            double dx = py2 - rx[2];
+                            double dy = py3 - rx[3];
+                            double m  = py4 - rx[4];
+                            double re = py5 - rx[5];
+                            double im = py6 - rx[6];
+                            double det = m * m - re * re - im * im;
+                            double num = (m+re)*dx*dx + 2.0*im*dx*dy + (m-re)*dy*dy;
+                            double gap = dv - num / (2.0 * det);
+                            bool eq = (du == 0.0 && dx == 0.0 && dy == 0.0);
+                            if ((du > 0.0 && gap >= 0.0) || (eq && dv > 0.0)) {
+                                unsigned int am = s_ar[r];
+                                acc[0] += 1ULL;
+                                for (int e = 0; e < n_early; ++e)
+                                    acc[2 + e] += (am >> e) & 1U;
+                            }
+                            if ((du < 0.0 && gap <= 0.0) || (eq && dv < 0.0)) {
+                                unsigned int bm = s_rb[r];
+                                acc[1] += 1ULL;
+                                for (int l = 0; l < n_late; ++l)
+                                    acc[2 + n_early + l] += (bm >> l) & 1U;
+                            }
+                        }
+                    }
+                    __syncthreads();
+                }
+                if (active) {
+                    unsigned long long* o = out + pid * total_cols;
+                    for (int c = 0; c < total_cols; ++c) {
+                        if (acc[c]) atomicAdd(o + c, acc[c]);
+                    }
+                }
+            }"""
+            )
+            self._mask_kernel = fused_mod.get_function("build_anchor_masks")
+            self._fused_counts_kernel = fused_mod.get_function("fused_counts_split")
         else:
             beta = geometry.factor * geometry.primitive(points[:, 0])
             self._data = np.column_stack(
@@ -406,6 +521,49 @@ class OrderOracle:
             or np.intersect1d(references, probes, assume_unique=True).size
         ):
             raise ValueError("references must be nonempty and disjoint from probes")
+        if len(probes) >= 256 and len(early) <= 14 and len(late) <= 14:
+            split_r = 16
+            d_refs = cp.asarray(references, dtype=cp.int64)
+            d_probes = cp.asarray(probes, dtype=cp.int64)
+            d_early = cp.asarray(early, dtype=cp.int64) if len(early) else d_refs[:1]
+            d_late = cp.asarray(late, dtype=cp.int64) if len(late) else d_refs[:1]
+            ar_mask = cp.empty(len(references), dtype=cp.uint32)
+            rb_mask = cp.empty(len(references), dtype=cp.uint32)
+            self._mask_kernel(
+                ((len(references) + 255) // 256,),
+                (256,),
+                (
+                    self._data,
+                    d_refs,
+                    d_early,
+                    d_late,
+                    ar_mask,
+                    rb_mask,
+                    np.int64(len(references)),
+                    np.int32(len(early)),
+                    np.int32(len(late)),
+                ),
+            )
+            cols = 2 + len(early) + len(late)
+            out = cp.zeros((len(probes), cols), dtype=cp.uint64)
+            self._fused_counts_kernel(
+                ((len(probes) + 127) // 128, split_r),
+                (128, 1),
+                (
+                    self._data,
+                    d_refs,
+                    d_probes,
+                    ar_mask,
+                    rb_mask,
+                    out,
+                    np.int64(len(references)),
+                    np.int64(len(probes)),
+                    np.int32(len(early)),
+                    np.int32(len(late)),
+                    np.int32(split_r),
+                ),
+            )
+            return cp.asnumpy(out).astype(np.float64) / len(references)
         result = cp.zeros((len(probes), 2 + len(early) + len(late)), dtype=cp.float64)
         for offset in range(0, len(references), 8192):
             rr = references[offset : offset + 8192]
