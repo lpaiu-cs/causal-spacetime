@@ -290,8 +290,9 @@ outer band. We use the union of the selections with caps of 64 and 128
 landmarks, which keeps every landmark of the smaller one. The first and
 second landmarks of the rotation gauge of Sect.~\ref{estimator} are the two
 highest-ranked landmarks of the past band that survive the pruning. Only an
-exactly collinear pair is rejected; in the 40 fits reported below the angle
-between their spatial vectors ranged from $23.5^\circ$ to $87.7^\circ$. In
+exactly collinear pair is rejected; across the 40 accuracy, benchmark and
+Schwarzschild fits reported below the angle between their spatial vectors
+ranged from $23.5^\circ$ to $87.7^\circ$. In
 the accuracy test, the benchmark and the
 Schwarzschild test below this gave 104--131 landmarks and
 $2.8$--$4.5\times10^3$ clocks, a clock
@@ -774,9 +775,10 @@ and the full-tensor systematic norm of the corrected average (4.4\% vs.
 3.5\% noise floor at $T/2$; 4.3\% vs.\ 3.4\% noise floor at $T/3$)
 remains unresolved above statistical scatter. Independent checks on both
 campaigns recomputed every estimate, counterfactual and link, re-derived
-all landmarks (320 windows at $T/2$; 480 at $T/3$), re-decided 5,999 order
-bits in archived replicates via an independent ODE solver (0
-disagreements), and refitted archived $N=2^{25}$ windows from scratch.
+all landmarks (320 windows at $T/2$; 480 at $T/3$), re-decided 5,998 ($T/2$)
+and 5,999 ($T/3$) order bits (11,997 in total) in archived replicates via an
+independent ODE solver (0 disagreements), and refitted archived $N=2^{25}$
+windows from scratch.
 
 \begin{table}[t]
 \centering\small
@@ -794,6 +796,7 @@ Spacing & Estimate & windows & mean $a$ [95\% interval] & sd & continuum\\
 $T/2$ & one window & 1 & 0.887 [0.869, 0.905] & 0.073 & 0.883, 0.888\\
 $T/2$ & five-point, minimal norm & 5 & 0.998 [0.977, 1.018] & 0.082 & 0.996, 0.996\\
 $T/2$ & five-point, plane wave & 5 & 0.996 [0.976, 1.017] & 0.081 & 0.994, 0.994\\
+$T/2$ & three-point, minimal norm & 3 & 0.974 [0.954, 0.994] & 0.079 & ---\\
 $T/2$ & three-point, plane wave & 3 & 0.973 [0.953, 0.992] & 0.078 & 0.970, 0.971\\
 \midrule
 $T/3$ & one window (control) & 1 & 0.892 [0.877, 0.907] & 0.076 & 0.883, 0.888\\
@@ -802,6 +805,7 @@ $T/3$ & identity / flipped links & 5 & 1.205 / 1.145 & 0.116 / 0.102 & ---\\
 $T/3$ & five-point, minimal norm & 5 & 1.011 [0.991, 1.031] & 0.100 & 1.003, 1.002\\
 $T/3$ & five-point, plane wave & 5 & 1.011 [0.991, 1.031] & 0.099 & 1.001, 1.001\\
 $T/3$ & three-point, minimal norm & 3 & 0.991 [0.972, 1.009] & 0.091 & ---\\
+$T/3$ & three-point, plane wave & 3 & 0.990 [0.971, 1.008] & 0.090 & ---\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1126,7 +1130,8 @@ and the records of the checks are public. They are in the directories
 \nolinkurl{experiments/positive_control},
 \nolinkurl{docs/paper/paper_a/intrinsic_weyl} and
 \nolinkurl{docs/paper/weyl_note} of the repository
-\url{https://github.com/lpaiu-cs/causal-spacetime/tree/9ca2404b6fd6}. The
+\url{https://github.com/lpaiu-cs/causal-spacetime} (with five-window test data
+merged at \texttt{9ca2404b6fd6}). The
 accuracy test corresponds to commit \texttt{0ff9802}, the benchmark to
 commits \texttt{c14d4a2} (run) and \texttt{a54ac97} (check), the
 Schwarzschild test to commit \texttt{7224c69} (run and check), with its
@@ -1135,21 +1140,23 @@ record in \texttt{c74240a}, the orbit test to commit \texttt{f5d309a}
 calibration test to commits
 \texttt{cfb8e8b} (protocol and run) and \texttt{f4854be} (check), with its
 record in \texttt{c076fec}. The sixth-degree jet and its continuum check are
-in commit \texttt{b5e14e1}, the post hoc refit in \texttt{d7c5d1d}, with
-its record in \texttt{fbb5613}, and the landmark design study in commits
+in commit \texttt{b5e14e1}, the post hoc refits in \texttt{d7c5d1d},
+\texttt{07a4a39} and \texttt{9752a32}, with their
+record in \texttt{fbb5613}, and the landmark design study in commits
 \texttt{5de89e4} (harness), \texttt{65713dd} and \texttt{0a0577f} (runs),
 with its record in \texttt{8e57669}. The multi-window and frame-link studies
 are in commits \texttt{d4ebd51} and \texttt{c9f1606}, with their records in
 \texttt{bba7b8a} and \texttt{556778e}, the $T/2$ five-window test in commit
 \texttt{1ca7af2} (protocol, run and check), with its record in
 \texttt{02c21e2}, continuum calculation in \texttt{fd4e06e}/\texttt{46243eb},
+power aid in \texttt{6b4e1a4},
 and post hoc decomposition in \texttt{c87fdab}/\texttt{d4121a2}, and the
 $T/3$ five-window link test in commit \texttt{d3b2a54} (protocol, run and
 check, merged in \texttt{9ca2404}). All order archives
 can be regenerated from the recorded seeds; those of the accuracy,
 benchmark, Schwarzschild, orbit and calibration tests, about 95\,GiB, and of
-two replicates of the five-window test, 12\,GiB, are available from the
-author on reasonable request.
+two kept replicates from each five-window test (four in total, 24.8\,GiB),
+are available from the author on reasonable request.
 \paragraph{Author contribution} J.K. is the sole author: J.K. conceived
 and directed the study, examined the results and wrote the manuscript, with
 the assistance of the AI tools described below.
@@ -1197,8 +1204,8 @@ content.
 \bibitem{ghosh} Ghosh, A.: Sample-complexity bounds and an exact bulk-sector channel obstruction for curvature estimation on finite causal sets. Preprint, Zenodo (2026). \doi{10.5281/zenodo.21931074}
 \bibitem{szekeres} Szekeres, P.: The gravitational compass. J. Math. Phys. \textbf{6}, 1387--1391 (1965). \doi{10.1063/1.1704788}
 \bibitem{puetzfeld} Puetzfeld, D., Obukhov, Y.N., L\"ammerzahl, C.: Gravitational clock compass in general relativity. Phys. Rev. D \textbf{98}, 024032 (2018). \doi{10.1103/PhysRevD.98.024032}
-\bibitem{brewin} Brewin, L.: Riemann normal coordinate expansions using Cadabra. Class. Quantum Grav. \textbf{26}, 175017 (2009). \doi{10.1088/0264-9381/26/17/175017}
 \bibitem{wang} Wang, J.: Geometry of small causal diamonds. Phys. Rev. D \textbf{100}, 064020 (2019). \doi{10.1103/PhysRevD.100.064020}
+\bibitem{brewin} Brewin, L.: Riemann normal coordinate expansions using Cadabra. Class. Quantum Grav. \textbf{26}, 175017 (2009). \doi{10.1088/0264-9381/26/17/175017}
 \bibitem{clough} Clough, J.R., Evans, T.S.: Embedding graphs in Lorentzian spacetime. PLoS ONE \textbf{12}, e0187301 (2017). \doi{10.1371/journal.pone.0187301}
 \bibitem{harte} Harte, A.I., Drivas, T.D.: Caustics and wave propagation in curved spacetimes. Phys. Rev. D \textbf{85}, 124039 (2012). \doi{10.1103/PhysRevD.85.124039}
 \bibitem{numpy} Harris, C.R., Millman, K.J., van der Walt, S.J., et al.: Array programming with NumPy. Nature \textbf{585}, 357--362 (2020). \doi{10.1038/s41586-020-2649-2}
