@@ -1,0 +1,6 @@
+r=512 with the coarse u rule: 0.017393029+0.008219749i
+PASS coarse probe-u rule reproduces the fine-rule r=512 value | rel diff 6.54e-08
+r=1024: S/(lam^2 Ew) = 0.017292658+0.008251771i, limit 0.017294334+0.008246250i, rel err 0.000301
+PASS r=1024 agrees with boxed limit (4) to 0.1% | rel err 0.000301
+PASS error keeps falling beyond the author's last rung (0.00533 at r=512)
+SUMMARY failed=0

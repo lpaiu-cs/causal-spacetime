@@ -1,0 +1,1582 @@
+{
+  "audited_folder": "E:\\lab\\causal-spacetime\\.claude\\worktrees\\sweet-chaplygin-7c96b0\\outputs\\intrinsic_weyl_schwarzschild_orbit_v1",
+  "audit_code_version": "f5d309a82f5070079c3dfd72c2bbebe91667fb91",
+  "audit_worktree_clean": true,
+  "run_code_version": "f5d309a82f5070079c3dfd72c2bbebe91667fb91",
+  "run_stamp_is_ancestor_of_head": true,
+  "summary_sha256": "338499f2444cfea5a04a3c16bb3651a53b5510e55b7c4d415c62563b82478e39",
+  "manifest_sha256": "25cc954ff431bc7f7ff2e8f67ed9f324a928256ac4b06e7fab91a90d73cfb4b8",
+  "thresholds": {
+    "field_chi2_10": 29.588298445074415,
+    "magnetic_chi2_5": 20.515005652432876,
+    "normal_975": 1.959963984540054
+  },
+  "truth": {
+    "orbit": {
+      "areal_electric": [
+        [
+          -0.12500000000004172,
+          0.0,
+          -6.609847005953907e-15
+        ],
+        [
+          0.0,
+          0.04166666666666665,
+          0.0
+        ],
+        [
+          -4.195470592815605e-31,
+          0.0,
+          0.0833333333332766
+        ]
+      ],
+      "areal_magnetic": [
+        [
+          -8.390941185631213e-31,
+          0.0,
+          0.0833333333332199
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.08333333333336196,
+          0.0,
+          2.162434592083711e-15
+        ]
+      ],
+      "orthonormality_error_of_areal_frame": 2.220446049250313e-16,
+      "difference_from_generator_closed_form": 1.1345091532888318e-13,
+      "invariant": 0.010416666666681769,
+      "electric_dot_magnetic": -3.7061770115522247e-16
+    },
+    "rest": {
+      "areal_electric": [
+        [
+          -0.08333333333340513,
+          0.0,
+          -2.832791573980246e-15
+        ],
+        [
+          0.0,
+          0.04166666666666666,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.04166666666666666
+        ]
+      ],
+      "areal_magnetic": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "orthonormality_error_of_areal_frame": 1.1102230246251565e-16,
+      "difference_from_generator_closed_form": 7.1803674117632e-14,
+      "invariant": 0.010416666666678632,
+      "electric_dot_magnetic": 0.0
+    },
+    "flat": {
+      "areal_electric": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "areal_magnetic": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "orthonormality_error_of_areal_frame": 0.0,
+      "difference_from_generator_closed_form": 0.0,
+      "invariant": 0.0,
+      "electric_dot_magnetic": 0.0
+    }
+  },
+  "rows": [
+    {
+      "case": 0,
+      "kind": "orbit",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 59.398372754283635,
+      "q_magnetic": 16.429831648244935,
+      "invariant": 0.008346289399396906,
+      "invariant_se": 0.021995429231046717,
+      "invariant_interval_95": [
+        -0.03476395971795419,
+        0.051456538516748
+      ],
+      "electric_dot_magnetic": -0.007745993144722866,
+      "electric_dot_magnetic_se": 0.011468331370570859,
+      "variance_times_N": 2758.847727363526,
+      "radius_95": 0.22938113890763911,
+      "error_mod_reflection": 0.11473032150027516,
+      "error_with_independent_truth": 0.11545441035016027,
+      "truth_vectors_differ_by": 0.0016170321936826903,
+      "landmark_coordinate_rms_residual": 0.0006749251779971728,
+      "electric_eigenvalues": [
+        -0.15105221905587896,
+        0.042271269237439645,
+        0.10878094981843932
+      ],
+      "magnetic_eigenvalues": [
+        -0.14239729436841014,
+        0.026327073173895408,
+        0.11607022119451471
+      ],
+      "electric_norm": 0.19088459374200728,
+      "magnetic_norm": 0.18558663872566597,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3241.5929983525157,
+        "fit_degrees_of_freedom": 3320,
+        "fit_chi2_z": -0.9622120839400284,
+        "noncentrality_of_the_truth": 35.211120003470896,
+        "magnetic_noncentrality_of_the_truth": 6.146733217496248,
+        "q_about_the_truth": 8.378535135820401
+      },
+      "relative_error": 0.587054081557737,
+      "relative_radius": 1.173701355205989
+    },
+    {
+      "case": 0,
+      "kind": "orbit",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 154.4613547802104,
+      "q_magnetic": 51.5302232584607,
+      "invariant": -0.005855625373552645,
+      "invariant_se": 0.009363718722824347,
+      "invariant_interval_95": [
+        -0.02420817683165176,
+        0.012496926084546467
+      ],
+      "electric_dot_magnetic": 0.0074849245001836024,
+      "electric_dot_magnetic_se": 0.004475189993687335,
+      "variance_times_N": 2790.527788935547,
+      "radius_95": 0.11718165008868416,
+      "error_mod_reflection": 0.08013896678242725,
+      "error_with_independent_truth": 0.08011974880053865,
+      "truth_vectors_differ_by": 0.00024768921745869883,
+      "landmark_coordinate_rms_residual": 0.0003700270244944403,
+      "electric_eigenvalues": [
+        -0.11530674850538401,
+        0.031578168262768734,
+        0.08372858024261522
+      ],
+      "magnetic_eigenvalues": [
+        -0.12138658873155991,
+        0.0029607621441433453,
+        0.1184258265874166
+      ],
+      "electric_norm": 0.14595650760127024,
+      "magnetic_norm": 0.16961175206710155,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3316.250656560908,
+        "fit_degrees_of_freedom": 3320,
+        "fit_chi2_z": -0.04601200770507341,
+        "noncentrality_of_the_truth": 140.70602010909772,
+        "magnetic_noncentrality_of_the_truth": 24.48565459739111,
+        "q_about_the_truth": 12.982261260399769
+      },
+      "relative_error": 0.4100564430243577,
+      "relative_radius": 0.5995970818234619
+    },
+    {
+      "case": 0,
+      "kind": "orbit",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 538.1167875093746,
+      "q_magnetic": 93.65030846906069,
+      "invariant": 0.010902272281315881,
+      "invariant_se": 0.0035268755188064722,
+      "invariant_interval_95": [
+        0.003989723286499177,
+        0.017814821276132584
+      ],
+      "electric_dot_magnetic": 0.0014956752700927614,
+      "electric_dot_magnetic_se": 0.002052408276841437,
+      "variance_times_N": 2789.433591563355,
+      "radius_95": 0.060181642229749005,
+      "error_mod_reflection": 0.020675307939367865,
+      "error_with_independent_truth": 0.020585497844475668,
+      "truth_vectors_differ_by": 0.0003407066808695138,
+      "landmark_coordinate_rms_residual": 0.0001851517964897955,
+      "electric_eigenvalues": [
+        -0.12157838041183489,
+        0.036300361146202956,
+        0.08527801926563194
+      ],
+      "magnetic_eigenvalues": [
+        -0.0843571816193745,
+        0.009036433128641315,
+        0.07532074849073317
+      ],
+      "electric_norm": 0.1528769419264367,
+      "magnetic_norm": 0.11345045776750672,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3308.547323750313,
+        "fit_degrees_of_freedom": 3320,
+        "fit_chi2_z": -0.14054744154670104,
+        "noncentrality_of_the_truth": 562.1721197188574,
+        "magnetic_noncentrality_of_the_truth": 97.97944535301603,
+        "q_about_the_truth": 4.361478097158461
+      },
+      "relative_error": 0.10579177112512388,
+      "relative_radius": 0.30793846163620214
+    },
+    {
+      "case": 0,
+      "kind": "orbit",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 2309.0215015629906,
+      "q_magnetic": 398.2340431323831,
+      "invariant": 0.011667569837051922,
+      "invariant_se": 0.0018089180907595673,
+      "invariant_interval_95": [
+        0.008122155528180214,
+        0.01521298414592363
+      ],
+      "electric_dot_magnetic": -0.00016693321590017805,
+      "electric_dot_magnetic_se": 0.0010601634652461361,
+      "variance_times_N": 2789.7321318848003,
+      "radius_95": 0.03217145060523089,
+      "error_mod_reflection": 0.011830514811680556,
+      "error_with_independent_truth": 0.011812795146124246,
+      "truth_vectors_differ_by": 4.336610024418098e-05,
+      "landmark_coordinate_rms_residual": 0.00011210318974051415,
+      "electric_eigenvalues": [
+        -0.12629201240956614,
+        0.03788534456405783,
+        0.08840666784550837
+      ],
+      "magnetic_eigenvalues": [
+        -0.07960482713125416,
+        -0.005629881180611601,
+        0.08523470831186576
+      ],
+      "electric_norm": 0.15874731698753666,
+      "magnetic_norm": 0.11676292033738066,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3339.927845193888,
+        "fit_degrees_of_freedom": 3320,
+        "fit_chi2_z": 0.2445548618050048,
+        "noncentrality_of_the_truth": 2248.241870922049,
+        "magnetic_noncentrality_of_the_truth": 392.0371719365537,
+        "q_about_the_truth": 7.043201908056243
+      },
+      "relative_error": 0.06053458158495333,
+      "relative_radius": 0.1646154315656531
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 33.525292912361955,
+      "q_magnetic": 19.009756161493787,
+      "invariant": -0.03113406501906775,
+      "invariant_se": 0.027384104546775458,
+      "invariant_interval_95": [
+        -0.0848059236796272,
+        0.022537793641491687
+      ],
+      "electric_dot_magnetic": -0.009459510225990767,
+      "electric_dot_magnetic_se": 0.011072683601193626,
+      "variance_times_N": 3636.2758419113443,
+      "radius_95": 0.2623584668571495,
+      "error_mod_reflection": 0.19282944634912805,
+      "error_with_independent_truth": 0.1934313023438207,
+      "truth_vectors_differ_by": 0.0013575235987675943,
+      "landmark_coordinate_rms_residual": 0.0007914806728510655,
+      "electric_eigenvalues": [
+        -0.07307371957817688,
+        -0.013618206428269847,
+        0.08669192600644672
+      ],
+      "magnetic_eigenvalues": [
+        -0.14993634448165333,
+        -0.023747362118240755,
+        0.17368370659989413
+      ],
+      "electric_norm": 0.11419594596140546,
+      "magnetic_norm": 0.23067482424914507,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3240.3552451928203,
+        "fit_degrees_of_freedom": 3306,
+        "fit_chi2_z": -0.80729750089094,
+        "noncentrality_of_the_truth": 28.061105954030538,
+        "magnetic_noncentrality_of_the_truth": 4.412321675850407,
+        "q_about_the_truth": 16.934430914852683
+      },
+      "relative_error": 0.9866730263063264,
+      "relative_radius": 1.342440313821926
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 107.61105362990163,
+      "q_magnetic": 26.693889350636425,
+      "invariant": 0.0023787051511725086,
+      "invariant_se": 0.009194946272933045,
+      "invariant_interval_95": [
+        -0.015643058383557062,
+        0.020400468685902076
+      ],
+      "electric_dot_magnetic": 0.009492156101701643,
+      "electric_dot_magnetic_se": 0.004738485540145313,
+      "variance_times_N": 3651.1070234423523,
+      "radius_95": 0.13283987874707007,
+      "error_mod_reflection": 0.09271754056315658,
+      "error_with_independent_truth": 0.09288654356783706,
+      "truth_vectors_differ_by": 0.00044205927463871635,
+      "landmark_coordinate_rms_residual": 0.00042088565572012725,
+      "electric_eigenvalues": [
+        -0.1056360762587854,
+        0.015662850289095896,
+        0.08997322596968953
+      ],
+      "magnetic_eigenvalues": [
+        -0.08791701115157174,
+        -0.01852475568038473,
+        0.10644176683195647
+      ],
+      "electric_norm": 0.1396405631538464,
+      "magnetic_norm": 0.1392925595613496,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3296.8684748154496,
+        "fit_degrees_of_freedom": 3306,
+        "fit_chi2_z": -0.11229926111330242,
+        "noncentrality_of_the_truth": 111.70300540420013,
+        "magnetic_noncentrality_of_the_truth": 17.50926858746502,
+        "q_about_the_truth": 14.74447152180248
+      },
+      "relative_error": 0.4744187056031702,
+      "relative_radius": 0.6797173754273436
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 409.6392611483016,
+      "q_magnetic": 75.34129066242052,
+      "invariant": 0.008792513997509705,
+      "invariant_se": 0.004227772964734974,
+      "invariant_interval_95": [
+        0.0005062312518170284,
+        0.017078796743202382
+      ],
+      "electric_dot_magnetic": -0.0004567060918430738,
+      "electric_dot_magnetic_se": 0.0023141093324032976,
+      "variance_times_N": 3657.6026930828075,
+      "radius_95": 0.0683598731216744,
+      "error_mod_reflection": 0.02344573361961062,
+      "error_with_independent_truth": 0.023466361071803072,
+      "truth_vectors_differ_by": 0.00025339735550816586,
+      "landmark_coordinate_rms_residual": 0.00021317681030522443,
+      "electric_eigenvalues": [
+        -0.12064340046197494,
+        0.04461266865018487,
+        0.07603073181179003
+      ],
+      "magnetic_eigenvalues": [
+        -0.07878769393734146,
+        -0.009563902642226091,
+        0.08835159657956754
+      ],
+      "electric_norm": 0.14941817981409083,
+      "magnetic_norm": 0.11876436152260833,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3242.906897090613,
+        "fit_degrees_of_freedom": 3306,
+        "fit_chi2_z": -0.7759173516881255,
+        "noncentrality_of_the_truth": 447.24741938720564,
+        "magnetic_noncentrality_of_the_truth": 69.9320005395716,
+        "q_about_the_truth": 5.440713112157706
+      },
+      "relative_error": 0.11996753287643196,
+      "relative_radius": 0.34978497406853115
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 1802.6433339812972,
+      "q_magnetic": 299.5634646468755,
+      "invariant": 0.010421007431644544,
+      "invariant_se": 0.0021680635351454714,
+      "invariant_interval_95": [
+        0.00617168098656483,
+        0.014670333876724258
+      ],
+      "electric_dot_magnetic": 0.0002647447213875229,
+      "electric_dot_magnetic_se": 0.0012055583785405748,
+      "variance_times_N": 3662.7408888313016,
+      "radius_95": 0.036293521322474355,
+      "error_mod_reflection": 0.01495990512109432,
+      "error_with_independent_truth": 0.014952067745189132,
+      "truth_vectors_differ_by": 6.200382200447218e-05,
+      "landmark_coordinate_rms_residual": 0.00011613464724695603,
+      "electric_eigenvalues": [
+        -0.1263122743158315,
+        0.04331629558937702,
+        0.08299597872645448
+      ],
+      "magnetic_eigenvalues": [
+        -0.08553787233338937,
+        0.0011378372946007284,
+        0.0844000350387886
+      ],
+      "electric_norm": 0.15722412216700793,
+      "magnetic_norm": 0.12017232706235224,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3204.4736866801227,
+        "fit_degrees_of_freedom": 3306,
+        "fit_chi2_z": -1.248567981685008,
+        "noncentrality_of_the_truth": 1787.0793695188324,
+        "magnetic_noncentrality_of_the_truth": 279.73407482001903,
+        "q_about_the_truth": 8.038751507777594
+      },
+      "relative_error": 0.07654709972231577,
+      "relative_radius": 0.1857073138804917
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 19.27449542500865,
+      "q_magnetic": 9.260885975468462,
+      "invariant": -0.00704108677786555,
+      "invariant_se": 0.021971658046576654,
+      "invariant_interval_95": [
+        -0.05010474522978547,
+        0.036022571674054364
+      ],
+      "electric_dot_magnetic": 0.004113185816071952,
+      "electric_dot_magnetic_se": 0.008905763283640521,
+      "variance_times_N": 3605.2606252721425,
+      "radius_95": 0.26001513140674337,
+      "error_mod_reflection": 0.1748936875864235,
+      "error_with_independent_truth": 0.17487191707059072,
+      "truth_vectors_differ_by": 0.0005294596047074644,
+      "landmark_coordinate_rms_residual": 0.0008309435730110786,
+      "electric_eigenvalues": [
+        -0.0845424598705003,
+        0.02847037116717827,
+        0.05607208870332205
+      ],
+      "magnetic_eigenvalues": [
+        -0.10778243032607401,
+        -0.016997248119615227,
+        0.12477967844568927
+      ],
+      "electric_norm": 0.1053663546247343,
+      "magnetic_norm": 0.1657586404494329,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2814.653206380429,
+        "fit_degrees_of_freedom": 2781,
+        "fit_chi2_z": 0.45124349739149094,
+        "noncentrality_of_the_truth": 8.81437566120013,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 12.366103716049453
+      },
+      "relative_error": 1.713601175280896,
+      "relative_radius": 2.547617589395489
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 39.067114434416006,
+      "q_magnetic": 6.840511135500281,
+      "invariant": 0.006590177708366166,
+      "invariant_se": 0.005461796311507646,
+      "invariant_interval_95": [
+        -0.00411474635308253,
+        0.01729510176981486
+      ],
+      "electric_dot_magnetic": 0.0004851453156837345,
+      "electric_dot_magnetic_se": 0.003067330327868934,
+      "variance_times_N": 3627.06809303279,
+      "radius_95": 0.13076280916509508,
+      "error_mod_reflection": 0.07554129598030643,
+      "error_with_independent_truth": 0.07550915376094908,
+      "truth_vectors_differ_by": 0.00010901406519369057,
+      "landmark_coordinate_rms_residual": 0.0004409234393272262,
+      "electric_eigenvalues": [
+        -0.07539350598447887,
+        0.024401358954639463,
+        0.050992147029839334
+      ],
+      "magnetic_eigenvalues": [
+        -0.047270681631596354,
+        -0.001738825013956763,
+        0.04900950664555311
+      ],
+      "electric_norm": 0.09423272320259858,
+      "magnetic_norm": 0.06811367407492724,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2852.2127329964237,
+        "fit_degrees_of_freedom": 2781,
+        "fit_chi2_z": 0.9548654096389602,
+        "noncentrality_of_the_truth": 35.072153350019384,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 10.616708013403715
+      },
+      "relative_error": 0.7401505186408097,
+      "relative_radius": 1.2812086391489224
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 142.59928278300714,
+      "q_magnetic": 4.97193711634141,
+      "invariant": 0.008401067042419752,
+      "invariant_se": 0.0018324375606694097,
+      "invariant_interval_95": [
+        0.004809555419589278,
+        0.011992578665250225
+      ],
+      "electric_dot_magnetic": -0.00044544065508854815,
+      "electric_dot_magnetic_se": 0.0013490234028435185,
+      "variance_times_N": 3630.2785717577726,
+      "radius_95": 0.06622277066260036,
+      "error_mod_reflection": 0.03276388251788544,
+      "error_with_independent_truth": 0.03274903840009462,
+      "truth_vectors_differ_by": 5.817369530135047e-05,
+      "landmark_coordinate_rms_residual": 0.00021886292420419314,
+      "electric_eigenvalues": [
+        -0.07608212402408268,
+        0.03457309315323989,
+        0.04150903087084283
+      ],
+      "magnetic_eigenvalues": [
+        -0.023615498055604978,
+        0.006561056716884904,
+        0.017054441338720076
+      ],
+      "electric_norm": 0.09331017098920723,
+      "magnetic_norm": 0.02985955764964222,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2658.97552672291,
+        "fit_degrees_of_freedom": 2781,
+        "fit_chi2_z": -1.6361813928354376,
+        "noncentrality_of_the_truth": 139.8780631468559,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 7.363457110018099
+      },
+      "relative_error": 0.32101917664506946,
+      "relative_radius": 0.6488479899065167
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 569.8027762852143,
+      "q_magnetic": 3.7767573528414715,
+      "invariant": 0.009072696222133244,
+      "invariant_se": 0.0007987094422832215,
+      "invariant_interval_95": [
+        0.007507254481146057,
+        0.010638137963120431
+      ],
+      "electric_dot_magnetic": 5.7998559484431057e-05,
+      "electric_dot_magnetic_se": 0.0006695785463923902,
+      "variance_times_N": 3631.225453536816,
+      "radius_95": 0.03408051717186876,
+      "error_mod_reflection": 0.017604127035153506,
+      "error_with_independent_truth": 0.017613244018027756,
+      "truth_vectors_differ_by": 1.8685532757614234e-05,
+      "landmark_coordinate_rms_residual": 0.00011104954554496658,
+      "electric_eigenvalues": [
+        -0.0778201349035902,
+        0.0363811542274124,
+        0.041438980676177795
+      ],
+      "magnetic_eigenvalues": [
+        -0.009540611219077677,
+        0.0006333159857875346,
+        0.008907295233290147
+      ],
+      "electric_norm": 0.09537688870377549,
+      "magnetic_norm": 0.013067679975590095,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2714.0749068727364,
+        "fit_degrees_of_freedom": 2781,
+        "fit_chi2_z": -0.8973740197177854,
+        "noncentrality_of_the_truth": 559.2183307744217,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 11.237167001896395
+      },
+      "relative_error": 0.17248451441294313,
+      "relative_radius": 0.3339195089647622
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 25.92503263253176,
+      "q_magnetic": 5.1617552967892575,
+      "invariant": 0.017918505530586284,
+      "invariant_se": 0.01626944911126089,
+      "invariant_interval_95": [
+        -0.013969028775792251,
+        0.04980603983696482
+      ],
+      "electric_dot_magnetic": 0.005393853280185201,
+      "electric_dot_magnetic_se": 0.009030688468793239,
+      "variance_times_N": 2841.889893451295,
+      "radius_95": 0.23103718383945995,
+      "error_mod_reflection": 0.13424753979477075,
+      "error_with_independent_truth": 0.1344048568579147,
+      "truth_vectors_differ_by": 0.0007304787705698468,
+      "landmark_coordinate_rms_residual": 0.0008510940265638961,
+      "electric_eigenvalues": [
+        -0.10892022036285065,
+        0.0051227362367044504,
+        0.10379748412614623
+      ],
+      "magnetic_eigenvalues": [
+        -0.07214966378408164,
+        -0.003811786478195165,
+        0.07596145026227678
+      ],
+      "electric_norm": 0.15054492532583216,
+      "magnetic_norm": 0.10483437235115078,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3334.9873425808355,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": -0.559551073223268,
+        "noncentrality_of_the_truth": 9.495471492294586,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 11.223749977652878
+      },
+      "relative_error": 1.3153518868839145,
+      "relative_radius": 2.263692848063774
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 65.3305632942338,
+      "q_magnetic": 4.413352071553228,
+      "invariant": 0.015112388469720094,
+      "invariant_se": 0.005298593283700733,
+      "invariant_interval_95": [
+        0.004727336464940836,
+        0.025497440474499353
+      ],
+      "electric_dot_magnetic": 0.0002482334217835079,
+      "electric_dot_magnetic_se": 0.003250310730924791,
+      "variance_times_N": 2878.7303061062253,
+      "radius_95": 0.11717576531722723,
+      "error_mod_reflection": 0.059763474675870384,
+      "error_with_independent_truth": 0.059934759726098776,
+      "truth_vectors_differ_by": 0.0005869025297117567,
+      "landmark_coordinate_rms_residual": 0.00042410006045701126,
+      "electric_eigenvalues": [
+        -0.10349182306701278,
+        0.045561605457064405,
+        0.05793021760994837
+      ],
+      "magnetic_eigenvalues": [
+        -0.03769265864291423,
+        0.0033309960279508744,
+        0.03436166261496335
+      ],
+      "electric_norm": 0.1270524594248181,
+      "magnetic_norm": 0.051113167655449154,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3465.033996590535,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": 1.0219212629064478,
+        "noncentrality_of_the_truth": 37.94828891860597,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 8.08057697339827
+      },
+      "relative_error": 0.5855600728461706,
+      "relative_radius": 1.1480833409886084
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 170.2478223066579,
+      "q_magnetic": 8.75902373643258,
+      "invariant": 0.009725391299291128,
+      "invariant_se": 0.001995857619750077,
+      "invariant_interval_95": [
+        0.005813582246311139,
+        0.013637200352271117
+      ],
+      "electric_dot_magnetic": -0.000865428685678778,
+      "electric_dot_magnetic_se": 0.0013080988433251217,
+      "variance_times_N": 2886.7184571865446,
+      "radius_95": 0.05950706648649004,
+      "error_mod_reflection": 0.04181282737505598,
+      "error_with_independent_truth": 0.041764753275997935,
+      "truth_vectors_differ_by": 0.000169455325986251,
+      "landmark_coordinate_rms_residual": 0.00021074645430887122,
+      "electric_eigenvalues": [
+        -0.08339248106908789,
+        0.03070191904294796,
+        0.05269056202613993
+      ],
+      "magnetic_eigenvalues": [
+        -0.02879452123029239,
+        0.007270167214140574,
+        0.02152435401615182
+      ],
+      "electric_norm": 0.10331122426149257,
+      "magnetic_norm": 0.03667802611940771,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3431.076195628621,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": 0.6089669794916619,
+        "noncentrality_of_the_truth": 151.90325029195674,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 13.934824858380342
+      },
+      "relative_error": 0.4096803670876179,
+      "relative_radius": 0.583047795926761
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 578.3521904821459,
+      "q_magnetic": 7.704574813986614,
+      "invariant": 0.00931229530164581,
+      "invariant_se": 0.000843611367861781,
+      "invariant_interval_95": [
+        0.007658847403688149,
+        0.010965743199603473
+      ],
+      "electric_dot_magnetic": 0.0007581863330400097,
+      "electric_dot_magnetic_se": 0.0005859912390198911,
+      "variance_times_N": 2887.345595331961,
+      "radius_95": 0.030661973999880767,
+      "error_mod_reflection": 0.02018306027361866,
+      "error_with_independent_truth": 0.02017734254916511,
+      "truth_vectors_differ_by": 5.2099734293295083e-05,
+      "landmark_coordinate_rms_residual": 9.962119331718196e-05,
+      "electric_eigenvalues": [
+        -0.07940342393957633,
+        0.03391495841928632,
+        0.04548846552029004
+      ],
+      "magnetic_eigenvalues": [
+        -0.009157514569972233,
+        -0.005056732551230268,
+        0.014214247121202502
+      ],
+      "electric_norm": 0.09759266690331106,
+      "magnetic_norm": 0.017648666760311935,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3488.9316049872787,
+        "fit_degrees_of_freedom": 3381,
+        "fit_chi2_z": 1.3125354802956355,
+        "noncentrality_of_the_truth": 607.2755989370023,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 12.2562840344225
+      },
+      "relative_error": 0.19775279647270064,
+      "relative_radius": 0.3004247632245972
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 13.862685594610827,
+      "q_magnetic": 3.0236735836907864,
+      "invariant": 0.012801470128983687,
+      "invariant_se": 0.018425752239768698,
+      "invariant_interval_95": [
+        -0.0233123406490212,
+        0.04891528090698857
+      ],
+      "electric_dot_magnetic": -0.009315725060183213,
+      "electric_dot_magnetic_se": 0.008714374422818184,
+      "variance_times_N": 4362.052280911608,
+      "radius_95": 0.2847106115441854,
+      "error_mod_reflection": 0.1525536436079404,
+      "error_with_independent_truth": 0.1525536436079404,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0010303245622699502,
+      "electric_eigenvalues": [
+        -0.05992609866294811,
+        -0.0306858343327721,
+        0.09061193299572015
+      ],
+      "magnetic_eigenvalues": [
+        -0.08364643447589144,
+        0.03768528016837311,
+        0.045961154307518313
+      ],
+      "electric_norm": 0.11288613790399869,
+      "magnetic_norm": 0.10261254332282135,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2248.578328447718,
+        "fit_degrees_of_freedom": 2243,
+        "fit_chi2_z": 0.08328646838478383,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 13.862685594610832
+      }
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 16.852491955152058,
+      "q_magnetic": 5.5538409733910665,
+      "invariant": 0.001303250450265747,
+      "invariant_se": 0.005982247463519137,
+      "invariant_interval_95": [
+        -0.010421739124837851,
+        0.013028240025369345
+      ],
+      "electric_dot_magnetic": -0.0015120312231145542,
+      "electric_dot_magnetic_se": 0.0024672602538629114,
+      "variance_times_N": 4397.835722827062,
+      "radius_95": 0.14336779422396642,
+      "error_mod_reflection": 0.09764855145032514,
+      "error_with_independent_truth": 0.09764855145032514,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0004046118377221972,
+      "electric_eigenvalues": [
+        -0.04144674407731926,
+        -0.006639776835700948,
+        0.048086520913020216
+      ],
+      "magnetic_eigenvalues": [
+        -0.04058151016601151,
+        -0.018379119656632418,
+        0.05896062982264393
+      ],
+      "electric_norm": 0.06382971662601238,
+      "magnetic_norm": 0.07389862566915407,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2174.8242530098605,
+        "fit_degrees_of_freedom": 2243,
+        "fit_chi2_z": -1.0178886470240336,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 16.852491955152058
+      }
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 13.864797466167836,
+      "q_magnetic": 10.110033469674182,
+      "invariant": -0.0013529777772400735,
+      "invariant_se": 0.00165880082339516,
+      "invariant_interval_95": [
+        -0.004604167648619974,
+        0.0018982120941398268
+      ],
+      "electric_dot_magnetic": 0.0007023977534097577,
+      "electric_dot_magnetic_se": 0.0005650372932710829,
+      "variance_times_N": 4398.19607475959,
+      "radius_95": 0.07173139522473461,
+      "error_mod_reflection": 0.051009781562228934,
+      "error_with_independent_truth": 0.051009781562228934,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.00020864874642488696,
+      "electric_eigenvalues": [
+        -0.013343141511088953,
+        0.003331870127053305,
+        0.01001127138403565
+      ],
+      "magnetic_eigenvalues": [
+        -0.02885702052639187,
+        -0.00863162878541023,
+        0.037488649311802104
+      ],
+      "electric_norm": 0.01701077125392339,
+      "magnetic_norm": 0.04808982716098077,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2256.3047166979945,
+        "fit_degrees_of_freedom": 2243,
+        "fit_chi2_z": 0.1986442492624021,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 13.864797466167834
+      }
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 9.398683550025517,
+      "q_magnetic": 6.762499918201682,
+      "invariant": -0.00014785154950564455,
+      "invariant_se": 0.0003427091872381248,
+      "invariant_interval_95": [
+        -0.0008195492136633632,
+        0.000523846114652074
+      ],
+      "electric_dot_magnetic": 9.914056453440828e-05,
+      "electric_dot_magnetic_se": 0.00012042000769976294,
+      "variance_times_N": 4409.9273993020515,
+      "radius_95": 0.03580805143686317,
+      "error_mod_reflection": 0.020371995669641582,
+      "error_with_independent_truth": 0.020371995669641582,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 9.649710169346495e-05,
+      "electric_eigenvalues": [
+        -0.005653997304148928,
+        0.0018828884842512089,
+        0.0037711088198977187
+      ],
+      "magnetic_eigenvalues": [
+        -0.011959615710643684,
+        -0.0027016488010671888,
+        0.014661264511710875
+      ],
+      "electric_norm": 0.007052249023606549,
+      "magnetic_norm": 0.019112404120699623,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2255.1665985529066,
+        "fit_degrees_of_freedom": 2243,
+        "fit_chi2_z": 0.1816517322750256,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 9.398683550025517
+      }
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 11.419793276232298,
+      "q_magnetic": 4.987010070688685,
+      "invariant": 0.004219697495309556,
+      "invariant_se": 0.01735533887941584,
+      "invariant_interval_95": [
+        -0.029796141647833233,
+        0.03823553663845235
+      ],
+      "electric_dot_magnetic": -0.005208106973062064,
+      "electric_dot_magnetic_se": 0.007844798691930168,
+      "variance_times_N": 3265.41531818374,
+      "radius_95": 0.24680621704648747,
+      "error_mod_reflection": 0.15504479919460656,
+      "error_with_independent_truth": 0.15504479919460656,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0008617761727391062,
+      "electric_eigenvalues": [
+        -0.07923125969037116,
+        0.015490495485292228,
+        0.06374076420507893
+      ],
+      "magnetic_eigenvalues": [
+        -0.09406456869033454,
+        0.03738235820561774,
+        0.05668221048471678
+      ],
+      "electric_norm": 0.10286123168594845,
+      "magnetic_norm": 0.11601058905697147,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3227.8175517995096,
+        "fit_degrees_of_freedom": 3122,
+        "fit_chi2_z": 1.3391408623942682,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 11.419793276232296
+      }
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 19.740386945362985,
+      "q_magnetic": 3.546990711201225,
+      "invariant": 0.005279442079353373,
+      "invariant_se": 0.004561830556007268,
+      "invariant_interval_95": [
+        -0.003661581513995203,
+        0.01422046567270195
+      ],
+      "electric_dot_magnetic": 0.000450729786650072,
+      "electric_dot_magnetic_se": 0.002441779211742467,
+      "variance_times_N": 3324.239198304005,
+      "radius_95": 0.12474143973801416,
+      "error_mod_reflection": 0.08957512487907839,
+      "error_with_independent_truth": 0.08957512487907839,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.0004604796237625195,
+      "electric_eigenvalues": [
+        -0.057499245709698416,
+        0.008974780679456134,
+        0.0485244650302423
+      ],
+      "magnetic_eigenvalues": [
+        -0.02527392086021007,
+        -0.013094467160784901,
+        0.03836838802099497
+      ],
+      "electric_norm": 0.07577158868533654,
+      "magnetic_norm": 0.04777414934044003,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3157.9968077229037,
+        "fit_degrees_of_freedom": 3122,
+        "fit_chi2_z": 0.4555463183350011,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 19.74038694536299
+      }
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 21.754853700298103,
+      "q_magnetic": 10.534595696339517,
+      "invariant": -0.000326802875854324,
+      "invariant_se": 0.0013931105643587977,
+      "invariant_interval_95": [
+        -0.0030572494084798365,
+        0.0024036436567711882
+      ],
+      "electric_dot_magnetic": -8.248554984154916e-05,
+      "electric_dot_magnetic_se": 0.0006084395850436426,
+      "variance_times_N": 3323.169737030845,
+      "radius_95": 0.06251258096796418,
+      "error_mod_reflection": 0.05222319960257797,
+      "error_with_independent_truth": 0.05222319960257797,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 0.00017680708968366467,
+      "electric_eigenvalues": [
+        -0.02132457481743943,
+        -0.0013828079122504375,
+        0.02270738272968987
+      ],
+      "magnetic_eigenvalues": [
+        -0.02983350914665888,
+        0.00042658039518960893,
+        0.029406928751469268
+      ],
+      "electric_norm": 0.03118132260343315,
+      "magnetic_norm": 0.041892573296842595,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3348.240358347927,
+        "fit_degrees_of_freedom": 3122,
+        "fit_chi2_z": 2.8631139488131265,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 21.754853700298096
+      }
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 12.996633152359863,
+      "q_magnetic": 5.72512743561227,
+      "invariant": 2.9984605030330215e-05,
+      "invariant_se": 0.00027061487308727015,
+      "invariant_interval_95": [
+        -0.0005004107999015967,
+        0.0005603800099622572
+      ],
+      "electric_dot_magnetic": 7.456342580551017e-05,
+      "electric_dot_magnetic_se": 0.00012398749611602038,
+      "variance_times_N": 3331.3224454789647,
+      "radius_95": 0.031158908132378205,
+      "error_mod_reflection": 0.01949434507199685,
+      "error_with_independent_truth": 0.01949434507199685,
+      "truth_vectors_differ_by": 0.0,
+      "landmark_coordinate_rms_residual": 9.318616763026852e-05,
+      "electric_eigenvalues": [
+        -0.008935856492765504,
+        0.0007240059439976856,
+        0.008211850548767816
+      ],
+      "magnetic_eigenvalues": [
+        -0.009806173005092199,
+        -0.0017293994935132782,
+        0.01153557249860548
+      ],
+      "electric_norm": 0.012157639791568992,
+      "magnetic_norm": 0.015238808499503697,
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_statistics_reproduced": true,
+      "evaluation_recorded": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3238.059932064602,
+        "fit_degrees_of_freedom": 3122,
+        "fit_chi2_z": 1.4687600957625968,
+        "noncentrality_of_the_truth": 0.0,
+        "magnetic_noncentrality_of_the_truth": 0.0,
+        "q_about_the_truth": 12.99663315235986
+      }
+    }
+  ],
+  "level_verdicts": {
+    "1048576": {
+      "field": "DETECTED",
+      "magnetic": "NOT_DETECTED",
+      "unequal_norms": "NOT_RESOLVED"
+    },
+    "4194304": {
+      "field": "DETECTED",
+      "magnetic": "MAGNETIC_DETECTED",
+      "unequal_norms": "NOT_RESOLVED"
+    },
+    "16777216": {
+      "field": "DETECTED",
+      "magnetic": "MAGNETIC_DETECTED",
+      "unequal_norms": "UNEQUAL"
+    },
+    "67108864": {
+      "field": "DETECTED",
+      "magnetic": "MAGNETIC_DETECTED",
+      "unequal_norms": "UNEQUAL"
+    }
+  },
+  "level_verdicts_match_run": true,
+  "primary_claim": "SUPPORTED",
+  "primary_claim_matches_run": true,
+  "consistency_label": {
+    "1048576": "CONSISTENT",
+    "4194304": "CONSISTENT",
+    "16777216": "CONSISTENT",
+    "67108864": "CONSISTENT"
+  },
+  "cases": [
+    {
+      "case": 0,
+      "kind": "orbit",
+      "landmarks_including_tips": 133,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 4.6629367034256575e-15,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_bound_difference_from_generator": 4.407804172767982e-07,
+        "largest_difference_beyond_independent_error_bound": -9.950628391534591e-13,
+        "largest_boundary_height_by_independent_solver": 2.6405264641482518e-09,
+        "largest_boundary_height_beyond_independent_error_bound": 0.0,
+        "proper_volume_over_flat": 1.0000455099235845,
+        "moment_z_scores": [
+          -0.7628621424455025,
+          -0.6240621131150569,
+          1.321822611256763,
+          -0.6489688463611399,
+          -0.5127802006042391,
+          0.38882450464591695
+        ]
+      },
+      "independent_pairs_checked": 1996,
+      "independent_pairs_inside_the_error_bound": 0,
+      "independent_bits_match": 1996,
+      "largest_margin_difference_between_solvers": 1.3219013217380393e-08,
+      "smallest_margin_checked": 5.141987473589182e-07
+    },
+    {
+      "case": 1,
+      "kind": "orbit",
+      "landmarks_including_tips": 131,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 4.6629367034256575e-15,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_bound_difference_from_generator": 4.407804172767982e-07,
+        "largest_difference_beyond_independent_error_bound": -9.950628391534591e-13,
+        "largest_boundary_height_by_independent_solver": 2.6405264641482518e-09,
+        "largest_boundary_height_beyond_independent_error_bound": 0.0,
+        "proper_volume_over_flat": 1.0000455099235845,
+        "moment_z_scores": [
+          0.1356487681550512,
+          -0.5686407246020806,
+          -0.8826951877386321,
+          0.11167959172977197,
+          -1.0558240300756403,
+          -1.344174025757137
+        ]
+      },
+      "independent_pairs_checked": 1998,
+      "independent_pairs_inside_the_error_bound": 0,
+      "independent_bits_match": 1998,
+      "largest_margin_difference_between_solvers": 1.535934801566441e-08,
+      "smallest_margin_checked": 2.9283196760765406e-06
+    },
+    {
+      "case": 2,
+      "kind": "rest",
+      "landmarks_including_tips": 120,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 2.1906365610391276e-12,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_bound_difference_from_generator": 1.7628565274208086e-10,
+        "largest_difference_beyond_independent_error_bound": -9.950577756026551e-13,
+        "largest_boundary_height_by_independent_solver": 1.5915269102606544e-11,
+        "largest_boundary_height_beyond_independent_error_bound": 0.0,
+        "proper_volume_over_flat": 1.000017839275467,
+        "moment_z_scores": [
+          1.9166902565529562,
+          -0.331759991724374,
+          0.9087963832304519,
+          2.0257133969974985,
+          1.2357731816026887,
+          -0.5042473050372578
+        ]
+      },
+      "independent_pairs_checked": 1997,
+      "independent_pairs_inside_the_error_bound": 0,
+      "independent_bits_match": 1997,
+      "largest_margin_difference_between_solvers": 9.076935425511579e-09,
+      "smallest_margin_checked": 1.253374462661938e-06
+    },
+    {
+      "case": 3,
+      "kind": "rest",
+      "landmarks_including_tips": 133,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 2.1906365610391276e-12,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_bound_difference_from_generator": 1.7628565274208086e-10,
+        "largest_difference_beyond_independent_error_bound": -9.950577756026551e-13,
+        "largest_boundary_height_by_independent_solver": 1.5915269102606544e-11,
+        "largest_boundary_height_beyond_independent_error_bound": 0.0,
+        "proper_volume_over_flat": 1.000017839275467,
+        "moment_z_scores": [
+          -1.1870285873448927,
+          -1.9437684433572324,
+          0.5331100593241258,
+          -1.0980409430726537,
+          -0.15422239498334306,
+          -1.95016061077126
+        ]
+      },
+      "independent_pairs_checked": 1998,
+      "independent_pairs_inside_the_error_bound": 0,
+      "independent_bits_match": 1998,
+      "largest_margin_difference_between_solvers": 4.294194388965167e-08,
+      "smallest_margin_checked": 7.49463880445056e-06
+    },
+    {
+      "case": 4,
+      "kind": "flat",
+      "landmarks_including_tips": 112,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 3.3306690738754696e-16,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_bound_difference_from_generator": 8.881784197001252e-16,
+        "largest_difference_beyond_independent_error_bound": 8.881784197001252e-16,
+        "largest_boundary_height_by_independent_solver": 1.9984014443252818e-15,
+        "largest_boundary_height_beyond_independent_error_bound": 1.9984014443252818e-15,
+        "proper_volume_over_flat": 1.0000000001982186,
+        "moment_z_scores": [
+          -1.8937947721315551,
+          0.18510225608312797,
+          -0.9955830337221957,
+          -2.0295133750705063,
+          0.5524227469669917,
+          -0.3485344426340625
+        ]
+      },
+      "closed_form_pairs_checked": 458752,
+      "closed_form_bits_match": true
+    },
+    {
+      "case": 5,
+      "kind": "flat",
+      "landmarks_including_tips": 120,
+      "truth_file_labelled": true,
+      "tips_at_half_unit_time_in_normal_coordinates": 3.3306690738754696e-16,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "measure": {
+        "events": 1048576,
+        "largest_bound_difference_from_generator": 8.881784197001252e-16,
+        "largest_difference_beyond_independent_error_bound": 8.881784197001252e-16,
+        "largest_boundary_height_by_independent_solver": 1.9984014443252818e-15,
+        "largest_boundary_height_beyond_independent_error_bound": 1.9984014443252818e-15,
+        "proper_volume_over_flat": 1.0000000001982186,
+        "moment_z_scores": [
+          0.1530864152840658,
+          0.34082135836546407,
+          1.171269323960159,
+          0.19409654070602678,
+          1.8538873020926068,
+          1.6228699896845593
+        ]
+      },
+      "closed_form_pairs_checked": 491520,
+      "closed_form_bits_match": true
+    }
+  ],
+  "posthoc_power_if_unbiased": {
+    "0": {
+      "field": {
+        "noncentrality_per_event": 3.350141452136709e-05,
+        "events_for_power_50": 612719.3865458692,
+        "events_for_power_90": 1047788.8226454454
+      },
+      "magnetic": {
+        "noncentrality_per_event": 5.8418090930067555e-06,
+        "events_for_power_50": 2820655.029103764,
+        "events_for_power_90": 4999438.671718602
+      }
+    },
+    "1": {
+      "field": {
+        "noncentrality_per_event": 2.6629557751399762e-05,
+        "events_for_power_50": 770833.9111591867,
+        "events_for_power_90": 1318174.6390983567
+      },
+      "magnetic": {
+        "noncentrality_per_event": 4.168362540304944e-06,
+        "events_for_power_50": 3953045.83944566,
+        "events_for_power_90": 7006532.183795782
+      }
+    }
+  },
+  "refits": [
+    {
+      "case": 0,
+      "measurement_n": 4194304,
+      "q_old": 154.4613547802104,
+      "q_new": 154.4613547802104,
+      "raw_fields_identical": true,
+      "raw_differences_beyond_1e-8": 0,
+      "gauge_aligned": {
+        "axis_signs_applied": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "coordinates_max_difference": 0.0,
+        "coefficients_relative_difference": 7.172445641423305e-17,
+        "covariance_relative_difference": 2.745372589789004e-16,
+        "invariant_lists_differing": [],
+        "scalar_fields_differing": []
+      },
+      "agrees_after_gauge_alignment": true
+    },
+    {
+      "case": 1,
+      "measurement_n": 16777216,
+      "q_old": 409.6392611483016,
+      "q_new": 409.6392611483016,
+      "raw_fields_identical": true,
+      "raw_differences_beyond_1e-8": 0,
+      "gauge_aligned": {
+        "axis_signs_applied": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "coordinates_max_difference": 0.0,
+        "coefficients_relative_difference": 4.037303219217868e-17,
+        "covariance_relative_difference": 2.0354270217462794e-16,
+        "invariant_lists_differing": [],
+        "scalar_fields_differing": []
+      },
+      "agrees_after_gauge_alignment": true
+    }
+  ],
+  "passed": true
+}

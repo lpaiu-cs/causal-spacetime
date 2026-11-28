@@ -31,6 +31,9 @@ experiments = [
   # gate (the same reasoning as numba above).
   "gmpy2>=2.2",
 ]
+# Optional acceleration for the independent high-count precision experiment.
+# The CPU estimator and frozen CPU generator do not depend on this extra.
+gpu = ["cupy-cuda13x==14.2.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

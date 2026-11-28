@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "code_version": "80e5ad018c3732b0ce384f3a80ab6b2fb086cc98",
+  "utc_started": "2026-09-24T08:34:27Z",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "files": {
+    "experiments/positive_control/order_wave_cone_constraints.py": "25f17d3f4c9fa707f9ff05dd391851df97560b7912c65f4db5bd5b513b2ff820",
+    "docs/paper/paper_a/order_wave_energy/cone_constraint_challenge.md": "bf5660a00b5d729dc290869d0c89a241d107852efb8b6fea4ffecb5e03368d8b",
+    "experiments/positive_control/order_wave_null_coordinate.py": "1018d7e6d4a2f8e05d503065f61ecdbbec2a65c7a7f62cc577e857f30bcc9221",
+    "experiments/positive_control/order_wave_resolution.py": "0974a003a282e7ce496f7eb2fff61ffa69b62c1b2af46ded0c434e1791e48b93",
+    "experiments/positive_control/order_wave_energy.py": "bf2bd0ea0c149966029e1c63b45e2dcec64c30897948f41ee1417266de7555e5"
+  },
+  "scope": "known-coordinate linear obstruction; not an order-only test or a new resolution bound",
+  "elapsed_seconds": 5.971542119979858,
+  "rows_sha256": "d6326b7520f8543d4fb945d992d19800c78ae321ef131e4dec2dbc06ab098ba9"
+}

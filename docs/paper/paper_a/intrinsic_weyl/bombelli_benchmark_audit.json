@@ -1,0 +1,867 @@
+{
+  "audited_folder": "E:\\lab\\causal-spacetime\\.claude\\worktrees\\fervent-engelbart-fa5233\\outputs\\intrinsic_weyl_bombelli_benchmark_v1",
+  "audit_code_version": "a54ac9754a4399cf98e41dee304779cabb2132bd",
+  "audit_worktree_clean": true,
+  "run_code_version": "c14d4a28dea56ac3ed72da2934be029c6bb52a8b",
+  "run_stamp_is_ancestor_of_head": true,
+  "summary_sha256": "afe6bf6f343534f5171494349e3cca84375b2b226fe960b52d1e24a02605eb8b",
+  "manifest_sha256": "6a2ebff75dc6ad9db0c1229ac16d44487ca82422549fe503de0746fa19c4d92c",
+  "threshold_chi2_10": 29.588298445074415,
+  "rows": [
+    {
+      "case": 0,
+      "kind": "wave",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 11.022039545334145,
+      "nominal_p_value": 0.35580349689251956,
+      "variance_times_N": 2628.9322968746196,
+      "radius_95": 0.2216595652141576,
+      "error_mod_reflection": 0.17629603350402862,
+      "continuum_bias_mod_reflection": 0.011916465160599497,
+      "continuum_tidal_norm": 0.08719497661060648,
+      "estimate_tidal_norm": 0.1493624333656198,
+      "electric_eigenvalues": [
+        -0.03770197832414839,
+        0.008050422588314603,
+        0.029651555735833786
+      ],
+      "magnetic_eigenvalues": [
+        -0.10022550716488567,
+        0.0007369252843214534,
+        0.09948858188056424
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 1.9535150956913185,
+          "events_for_expected_snr_one": 274768.1376556301,
+          "posthoc_matched_mirror_realized_z": 0.25611179872421314
+        },
+        "magnetic": {
+          "expected_snr": 1.5276494720938658,
+          "events_for_expected_snr_one": 449316.62146258546,
+          "posthoc_matched_mirror_realized_z": -0.04925466933350982
+        },
+        "full": {
+          "expected_snr": 2.411791829507732,
+          "events_for_expected_snr_one": 180268.67813371934,
+          "posthoc_matched_mirror_realized_z": 0.12005271639329129
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3162.1955026167493,
+        "fit_degrees_of_freedom": 3094,
+        "flat_minus_curved_chi2": 25.83056372097826,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 4.837680307198914,
+        "expected_q": 14.837680307198914,
+        "expected_q_sd": 6.273015321900279,
+        "q_about_continuum_refit": 15.565833932347044,
+        "continuum_refit_chi2": 0.005342100530865757
+      }
+    },
+    {
+      "case": 0,
+      "kind": "wave",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 16.237431771219235,
+      "nominal_p_value": 0.09303437968061178,
+      "variance_times_N": 2647.892632420086,
+      "radius_95": 0.1113727545517351,
+      "error_mod_reflection": 0.08509922649269616,
+      "continuum_bias_mod_reflection": 0.011922337382273432,
+      "continuum_tidal_norm": 0.08718971660866315,
+      "estimate_tidal_norm": 0.08200739938639301,
+      "electric_eigenvalues": [
+        -0.030288062262339956,
+        -0.006420740684362693,
+        0.036708802946702646
+      ],
+      "magnetic_eigenvalues": [
+        -0.04811722870182954,
+        0.0023079457763621144,
+        0.04580928292546742
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 3.901350804387357,
+          "events_for_expected_snr_one": 275568.7067532003,
+          "posthoc_matched_mirror_realized_z": 1.4991113760402623
+        },
+        "magnetic": {
+          "expected_snr": 3.0434852016945215,
+          "events_for_expected_snr_one": 452811.5705910254,
+          "posthoc_matched_mirror_realized_z": 1.7456454688300347
+        },
+        "full": {
+          "expected_snr": 4.800790354240591,
+          "events_for_expected_snr_one": 181984.50941517806,
+          "posthoc_matched_mirror_realized_z": 2.2730764977006173
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 2987.959956266052,
+        "fit_degrees_of_freedom": 3094,
+        "flat_minus_curved_chi2": 38.69556783333519,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 19.160217305704727,
+        "expected_q": 29.160217305704727,
+        "expected_q_sd": 9.830608792074829,
+        "q_about_continuum_refit": 16.149721315974272,
+        "continuum_refit_chi2": 0.021169862316906395
+      }
+    },
+    {
+      "case": 0,
+      "kind": "wave",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 75.59563381039536,
+      "nominal_p_value": 3.6426985123449115e-12,
+      "variance_times_N": 2661.7242589347966,
+      "radius_95": 0.05668493252590077,
+      "error_mod_reflection": 0.02882854259898349,
+      "continuum_bias_mod_reflection": 0.011924943902124684,
+      "continuum_tidal_norm": 0.08718782432210315,
+      "estimate_tidal_norm": 0.08292245317954888,
+      "electric_eigenvalues": [
+        -0.04396935570040412,
+        -0.002558608336748675,
+        0.04652796403715279
+      ],
+      "magnetic_eigenvalues": [
+        -0.039373794254191886,
+        0.004753920605564849,
+        0.03461987364862705
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 7.802576188800733,
+          "events_for_expected_snr_one": 275577.56590355554,
+          "posthoc_matched_mirror_realized_z": 6.969235678795564
+        },
+        "magnetic": {
+          "expected_snr": 6.068800973571741,
+          "events_for_expected_snr_one": 455526.98143362877,
+          "posthoc_matched_mirror_realized_z": 4.503386618200838
+        },
+        "full": {
+          "expected_snr": 9.593910126723058,
+          "events_for_expected_snr_one": 182275.62848546516,
+          "posthoc_matched_mirror_realized_z": 7.773866673252688
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3006.1842876740047,
+        "fit_degrees_of_freedom": 3094,
+        "flat_minus_curved_chi2": 96.96778054611013,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 76.61644474909484,
+        "expected_q": 86.61644474909484,
+        "expected_q_sd": 18.068364037631614,
+        "q_about_continuum_refit": 5.30195438145981,
+        "continuum_refit_chi2": 0.08455413275270236
+      }
+    },
+    {
+      "case": 0,
+      "kind": "wave",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 347.11813139697506,
+      "nominal_p_value": 1.6289210729260566e-68,
+      "variance_times_N": 2663.088571945384,
+      "radius_95": 0.029372233627904615,
+      "error_mod_reflection": 0.013030179235998637,
+      "continuum_bias_mod_reflection": 0.011925050841807823,
+      "continuum_tidal_norm": 0.08718703624973753,
+      "estimate_tidal_norm": 0.09157457566900143,
+      "electric_eigenvalues": [
+        -0.04545889208732353,
+        0.0003323339592561565,
+        0.04512655812806736
+      ],
+      "magnetic_eigenvalues": [
+        -0.04453913992567036,
+        -0.0032967444648131943,
+        0.04783588439048354
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 15.598595429386789,
+          "events_for_expected_snr_one": 275809.295435455,
+          "posthoc_matched_mirror_realized_z": 14.209097868817437
+        },
+        "magnetic": {
+          "expected_snr": 12.12671874626329,
+          "events_for_expected_snr_one": 456344.9795022155,
+          "posthoc_matched_mirror_realized_z": 11.544833091523232
+        },
+        "full": {
+          "expected_snr": 19.18517711102633,
+          "events_for_expected_snr_one": 182325.85618265113,
+          "posthoc_matched_mirror_realized_z": 17.68360268068147
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3082.9398451844036,
+        "fit_degrees_of_freedom": 3094,
+        "flat_minus_curved_chi2": 377.7719417928588,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 306.13543413912095,
+        "expected_q": 316.13543413912095,
+        "expected_q_sd": 35.2780631066458,
+        "q_about_continuum_refit": 5.7927995859598465,
+        "continuum_refit_chi2": 0.33784105690122546
+      }
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 15.69679643058623,
+      "nominal_p_value": 0.10864715968966068,
+      "variance_times_N": 3096.50340557201,
+      "radius_95": 0.24060723904368492,
+      "error_mod_reflection": 0.10976232666254787,
+      "continuum_bias_mod_reflection": 0.01146602285322921,
+      "continuum_tidal_norm": 0.08770275625641151,
+      "estimate_tidal_norm": 0.1641682410045914,
+      "electric_eigenvalues": [
+        -0.06987781823579178,
+        -0.014102974465760762,
+        0.08398079270155255
+      ],
+      "magnetic_eigenvalues": [
+        -0.09048130451056319,
+        0.009629314575517906,
+        0.08085198993504529
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 2.019922182624775,
+          "events_for_expected_snr_one": 256998.5281358089,
+          "posthoc_matched_mirror_realized_z": 2.0551218146674026
+        },
+        "magnetic": {
+          "expected_snr": 1.325695696842813,
+          "events_for_expected_snr_one": 596639.7995608422,
+          "posthoc_matched_mirror_realized_z": 2.005586307313675
+        },
+        "full": {
+          "expected_snr": 2.1784547944239354,
+          "events_for_expected_snr_one": 220954.47858734557,
+          "posthoc_matched_mirror_realized_z": 2.755728773649299
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3600.0931125927045,
+        "fit_degrees_of_freedom": 3543,
+        "flat_minus_curved_chi2": 35.30129273845478,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 4.424889113593728,
+        "expected_q": 14.424889113593728,
+        "expected_q_sd": 6.139996453938301,
+        "q_about_continuum_refit": 8.681733034282864,
+        "continuum_refit_chi2": 0.004856577203963587
+      }
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 29.983266011944487,
+      "nominal_p_value": 0.0008620567160984676,
+      "variance_times_N": 3115.0206187606263,
+      "radius_95": 0.12151510547106545,
+      "error_mod_reflection": 0.07476538166645735,
+      "continuum_bias_mod_reflection": 0.011472989926181128,
+      "continuum_tidal_norm": 0.08769752732550384,
+      "estimate_tidal_norm": 0.12409247137382563,
+      "electric_eigenvalues": [
+        -0.04837366632684197,
+        0.0031730703340906493,
+        0.045200595992751336
+      ],
+      "magnetic_eigenvalues": [
+        -0.07679382270130755,
+        0.005534845098679556,
+        0.07125897760262799
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 4.030822595370591,
+          "events_for_expected_snr_one": 258150.24158627054,
+          "posthoc_matched_mirror_realized_z": 3.306999859641718
+        },
+        "magnetic": {
+          "expected_snr": 2.6440152195626783,
+          "events_for_expected_snr_one": 599973.4095769866,
+          "posthoc_matched_mirror_realized_z": 3.1394491841737757
+        },
+        "full": {
+          "expected_snr": 4.350512024085865,
+          "events_for_expected_snr_one": 221604.7974134465,
+          "posthoc_matched_mirror_realized_z": 4.365735173695251
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3483.204993961671,
+        "fit_degrees_of_freedom": 3543,
+        "flat_minus_curved_chi2": 49.68254766124028,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 17.560209455877967,
+        "expected_q": 27.560209455877967,
+        "expected_q_sd": 9.499517767945479,
+        "q_about_continuum_refit": 11.318172333097953,
+        "continuum_refit_chi2": 0.019174625250024935
+      }
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 97.0307807923281,
+      "nominal_p_value": 2.1373417007231958e-16,
+      "variance_times_N": 3119.2949370533165,
+      "radius_95": 0.06187870974999595,
+      "error_mod_reflection": 0.04940505705559783,
+      "continuum_bias_mod_reflection": 0.011477517736317675,
+      "continuum_tidal_norm": 0.0876940065094236,
+      "estimate_tidal_norm": 0.11498363570626982,
+      "electric_eigenvalues": [
+        -0.04122605167816708,
+        0.007211237364684165,
+        0.0340148143134829
+      ],
+      "magnetic_eigenvalues": [
+        -0.0663801145419304,
+        -0.009839933411412594,
+        0.07622004795334296
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 8.057050734826248,
+          "events_for_expected_snr_one": 258444.74092929007,
+          "posthoc_matched_mirror_realized_z": 6.070699414145041
+        },
+        "magnetic": {
+          "expected_snr": 5.287363509493695,
+          "events_for_expected_snr_one": 600124.7762384516,
+          "posthoc_matched_mirror_realized_z": 7.156980753582388
+        },
+        "full": {
+          "expected_snr": 8.693346245989359,
+          "events_for_expected_snr_one": 221996.4047619159,
+          "posthoc_matched_mirror_realized_z": 9.157186563912532
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3596.1706446215885,
+        "fit_degrees_of_freedom": 3543,
+        "flat_minus_curved_chi2": 123.2109170672984,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 69.96979647562758,
+        "expected_q": 79.96979647562758,
+        "expected_q_sd": 17.317020121906374,
+        "q_about_continuum_refit": 17.277121539621,
+        "continuum_refit_chi2": 0.07657124911658554
+      }
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 313.69681413570487,
+      "nominal_p_value": 1.969959719510465e-61,
+      "variance_times_N": 3128.5512397681614,
+      "radius_95": 0.031791975111311564,
+      "error_mod_reflection": 0.024585151751549496,
+      "continuum_bias_mod_reflection": 0.011478915702543354,
+      "continuum_tidal_norm": 0.0876934208574409,
+      "estimate_tidal_norm": 0.09710775677096833,
+      "electric_eigenvalues": [
+        -0.0428606817819758,
+        0.0026038222572578643,
+        0.04025685952471794
+      ],
+      "magnetic_eigenvalues": [
+        -0.050404798749879326,
+        -0.007619225718965541,
+        0.058024024468844866
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "patterns": {
+        "electric": {
+          "expected_snr": 16.115177107970258,
+          "events_for_expected_snr_one": 258410.2413036371,
+          "posthoc_matched_mirror_realized_z": 13.454381321715164
+        },
+        "magnetic": {
+          "expected_snr": 10.565423594815721,
+          "events_for_expected_snr_one": 601182.1258960336,
+          "posthoc_matched_mirror_realized_z": 11.322086416208593
+        },
+        "full": {
+          "expected_snr": 17.38323704265923,
+          "events_for_expected_snr_one": 222084.67066611923,
+          "posthoc_matched_mirror_realized_z": 16.5664239610829
+        }
+      },
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3373.8624227308715,
+        "fit_degrees_of_freedom": 3543,
+        "flat_minus_curved_chi2": 356.3843933272519,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 279.8856837862405,
+        "expected_q": 289.8856837862405,
+        "expected_q_sd": 33.75711384500995,
+        "q_about_continuum_refit": 16.27059537337411,
+        "continuum_refit_chi2": 0.30637452818191174
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 10.624260265725358,
+      "nominal_p_value": 0.3875305250325673,
+      "variance_times_N": 3402.5640980282833,
+      "radius_95": 0.25161486653455567,
+      "error_mod_reflection": 0.14253713330913417,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.14253713330913417,
+      "electric_eigenvalues": [
+        -0.02920831663960732,
+        -0.0189255364908357,
+        0.04813385313044301
+      ],
+      "magnetic_eigenvalues": [
+        -0.10386982857754679,
+        0.03453875193433603,
+        0.06933107664321073
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3256.6340364237058,
+        "fit_degrees_of_freedom": 3184,
+        "flat_minus_curved_chi2": 36.0771412277536,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 10.624260265725361,
+        "continuum_refit_chi2": 1.5872225451071412e-21
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 17.778418073444676,
+      "nominal_p_value": 0.058818443284559346,
+      "variance_times_N": 3428.080672689234,
+      "radius_95": 0.12654551632142766,
+      "error_mod_reflection": 0.08462983051574646,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.08462983051574646,
+      "electric_eigenvalues": [
+        -0.02639458085727028,
+        -0.011915599305248407,
+        0.038310180162518685
+      ],
+      "magnetic_eigenvalues": [
+        -0.046892797664939014,
+        -0.004459525219044668,
+        0.05135232288398364
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3265.8353037711527,
+        "fit_degrees_of_freedom": 3184,
+        "flat_minus_curved_chi2": 51.168407003477114,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 17.77841807344467,
+        "continuum_refit_chi2": 6.475775467317281e-21
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 11.458790869023929,
+      "nominal_p_value": 0.32290775630110874,
+      "variance_times_N": 3444.8240707734694,
+      "radius_95": 0.06328699608720677,
+      "error_mod_reflection": 0.035553620778964595,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.035553620778964595,
+      "electric_eigenvalues": [
+        -0.014725523727041837,
+        0.0028290465840903637,
+        0.01189647714295148
+      ],
+      "magnetic_eigenvalues": [
+        -0.022870106633221497,
+        0.00391419690431807,
+        0.018955909728903427
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3174.975758203755,
+        "fit_degrees_of_freedom": 3184,
+        "flat_minus_curved_chi2": 29.526351090743447,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 11.458790869023927,
+        "continuum_refit_chi2": 2.3083184895678693e-20
+      }
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 10.819030283197545,
+      "nominal_p_value": 0.37179004033024,
+      "variance_times_N": 3445.6605271237154,
+      "radius_95": 0.031616501525535814,
+      "error_mod_reflection": 0.016267904085715913,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.016267904085715913,
+      "electric_eigenvalues": [
+        -0.00682724023829684,
+        2.3384583386598875e-05,
+        0.006803855654910242
+      ],
+      "magnetic_eigenvalues": [
+        -0.009327452039840443,
+        0.00012288616776989146,
+        0.009204565872070549
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3224.4855181010885,
+        "fit_degrees_of_freedom": 3184,
+        "flat_minus_curved_chi2": 45.07491993820622,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 10.819030283197543,
+        "continuum_refit_chi2": 1.0217898252337424e-19
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 1048576,
+      "valid_fit": true,
+      "q": 4.360803355366722,
+      "nominal_p_value": 0.9296062600093784,
+      "variance_times_N": 3495.450715708906,
+      "radius_95": 0.254068876620611,
+      "error_mod_reflection": 0.0975627121714786,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.0975627121714786,
+      "electric_eigenvalues": [
+        -0.04231033616079452,
+        0.0005169774642979864,
+        0.041793358696496544
+      ],
+      "magnetic_eigenvalues": [
+        -0.05937322544290024,
+        0.011064095247400806,
+        0.04830913019549944
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3990.372478843429,
+        "fit_degrees_of_freedom": 3908,
+        "flat_minus_curved_chi2": 25.673406100441298,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 4.360803355366721,
+        "continuum_refit_chi2": 2.6328992224100378e-21
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 4194304,
+      "valid_fit": true,
+      "q": 9.841998174486715,
+      "nominal_p_value": 0.4544631053409847,
+      "variance_times_N": 3530.5272410577886,
+      "radius_95": 0.127979554888968,
+      "error_mod_reflection": 0.06418209556705079,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.06418209556705079,
+      "electric_eigenvalues": [
+        -0.02718400240495968,
+        -0.012982513764627342,
+        0.04016651616958704
+      ],
+      "magnetic_eigenvalues": [
+        -0.028144500198282258,
+        -0.0002509370925785902,
+        0.028395437290860852
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3881.933847245851,
+        "fit_degrees_of_freedom": 3908,
+        "flat_minus_curved_chi2": 35.67215738441428,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 9.841998174486715,
+        "continuum_refit_chi2": 1.1045799469150057e-20
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 16777216,
+      "valid_fit": true,
+      "q": 10.873345648912899,
+      "nominal_p_value": 0.36747038290123923,
+      "variance_times_N": 3540.0849550296543,
+      "radius_95": 0.06424083873107961,
+      "error_mod_reflection": 0.04019517372057618,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.04019517372057618,
+      "electric_eigenvalues": [
+        -0.011773264786293982,
+        -0.0026151128930104912,
+        0.014388377679304468
+      ],
+      "magnetic_eigenvalues": [
+        -0.022359084774681015,
+        -0.004840523016264315,
+        0.027199607790945338
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3706.613328095936,
+        "fit_degrees_of_freedom": 3908,
+        "flat_minus_curved_chi2": 30.019407958759075,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 10.873345648912899,
+        "continuum_refit_chi2": 4.0037644012597067e-20
+      }
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "measurement_n": 67108864,
+      "valid_fit": true,
+      "q": 13.472294988349521,
+      "nominal_p_value": 0.19845029471449624,
+      "variance_times_N": 3548.4672406835816,
+      "radius_95": 0.03222119762956505,
+      "error_mod_reflection": 0.023197246212160773,
+      "continuum_bias_mod_reflection": 0.0,
+      "continuum_tidal_norm": 0.0,
+      "estimate_tidal_norm": 0.023197246212160773,
+      "electric_eigenvalues": [
+        -0.004338898242650998,
+        -0.0017110212764129499,
+        0.006049919519063947
+      ],
+      "magnetic_eigenvalues": [
+        -0.014569594767083211,
+        -0.0016970575572963663,
+        0.016266652324379575
+      ],
+      "blind_boundary_kept": true,
+      "archive_hash_matches": true,
+      "recorded_values_reproduced": true,
+      "posthoc": {
+        "fit_chi2": 3818.9801473243747,
+        "fit_degrees_of_freedom": 3908,
+        "flat_minus_curved_chi2": 39.3953991342496,
+        "added_curvature_parameters": 34,
+        "continuum_noncentrality": 0.0,
+        "expected_q": 10.0,
+        "expected_q_sd": 4.47213595499958,
+        "q_about_continuum_refit": 13.472294988349521,
+        "continuum_refit_chi2": 1.7301170664011463e-19
+      }
+    }
+  ],
+  "level_verdicts": {
+    "1048576": "NOT_DETECTED",
+    "4194304": "MIXED",
+    "16777216": "DETECTED",
+    "67108864": "DETECTED"
+  },
+  "level_verdicts_match_run": true,
+  "cases": [
+    {
+      "case": 0,
+      "kind": "wave",
+      "landmarks_including_tips": 124,
+      "truth_file_labelled": true,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "first_chunk_pairs_decided_differently_from_flat": 86,
+      "independent_pairs_checked": 1998,
+      "independent_bits_match": 1998,
+      "independent_pairs_decided_differently_from_flat": 86,
+      "smallest_independent_margin": 3.394034427270376e-06
+    },
+    {
+      "case": 1,
+      "kind": "wave",
+      "landmarks_including_tips": 130,
+      "truth_file_labelled": true,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "first_chunk_pairs_decided_differently_from_flat": 83,
+      "independent_pairs_checked": 2000,
+      "independent_bits_match": 2000,
+      "independent_pairs_decided_differently_from_flat": 83,
+      "smallest_independent_margin": 3.211904067212945e-06
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "landmarks_including_tips": 132,
+      "truth_file_labelled": true,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "first_chunk_pairs_decided_differently_from_flat": 0,
+      "closed_form_pairs_checked": 540672,
+      "closed_form_bits_match": true
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "landmarks_including_tips": 133,
+      "truth_file_labelled": true,
+      "nested_prefixes_bit_exact": true,
+      "tips_see_every_event": true,
+      "cpu_replay_of_first_4096_events_bit_exact": true,
+      "first_chunk_pairs_decided_differently_from_flat": 0,
+      "closed_form_pairs_checked": 544768,
+      "closed_form_bits_match": true
+    }
+  ],
+  "truth_invariants": {
+    "0": {
+      "electric_eigenvalue_error": 1.3877787807814457e-17,
+      "magnetic_eigenvalue_error": 2.0816681711721685e-17,
+      "anticommutator_norm": 8.091899523451286e-19
+    },
+    "1": {
+      "electric_eigenvalue_error": 2.0816681711721685e-17,
+      "magnetic_eigenvalue_error": 2.0816681711721685e-17,
+      "anticommutator_norm": 5.370611418657493e-19
+    }
+  },
+  "posthoc_power_from_continuum_refit": {
+    "0": {
+      "noncentrality_per_event": 4.561773451255574e-06,
+      "events_for_power_50": 4499777.635450335,
+      "events_for_power_90": 7694903.759115596
+    },
+    "1": {
+      "noncentrality_per_event": 4.170621689949043e-06,
+      "events_for_power_50": 4921800.076813421,
+      "events_for_power_90": 8416588.76970189
+    }
+  },
+  "posthoc_density_rho_H4": {
+    "this_run_by_level": {
+      "1048576": 8010530.573161308,
+      "4194304": 32042122.29264523,
+      "16777216": 128168489.17058092,
+      "67108864": 512673956.6823237
+    },
+    "ibrahim_bombelli_eq20": {
+      "m=11,A=0.3": 36206549591.66245,
+      "m=11,A=0.32": 30517083854.129345,
+      "m=5,A=0.3": 1271285035941.7688,
+      "m=5,A=0.32": 1073359187540.9061,
+      "m=4,A=0.3": 3475922488395.3013,
+      "m=4,A=0.32": 2935879690094.0664
+    }
+  },
+  "refits": [
+    {
+      "case": 1,
+      "measurement_n": 4194304,
+      "q": 29.983266011944487,
+      "fields_identical": true,
+      "differences_beyond_1e-8": {}
+    }
+  ],
+  "passed": true
+}

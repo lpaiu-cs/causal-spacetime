@@ -1,0 +1,3682 @@
+{
+ "diagnostic": "multi-window bias correction and bias bounds; deterministic continuum; oracle frame alignment; no criterion",
+ "code_version": "d4ebd51",
+ "worktree_clean": true,
+ "python": "3.14.0",
+ "numpy": "2.5.3",
+ "benchmark_amplitude": "0.0493480220054467930941724549993807556765684970362039531320668",
+ "reference_n": 16777216,
+ "selfcheck": {
+  "half_cycle_series_max_difference": 0.0,
+  "shifted_profile_max_error": 8.881784197001252e-16,
+  "window_isometry_action_max_difference": 2.983724378680108e-16,
+  "weyl_rotation_inverse_error": 2.220446049250313e-16,
+  "weyl_rotation_norm_change": 8.881784197001252e-16,
+  "second_rotation_leaves_vacuum_space": 5.377642775528102e-16,
+  "unit_truth_tidal_norm": 1.9999999999999984,
+  "unit_truth_pnd": [
+   -2.3456201059644033e-17,
+   -3.1500102256875756e-17,
+   -1.0
+  ],
+  "unit_truth_pnd_residual": 4.2559553950902485e-33,
+  "plane_wave_bianchi_residual_matched": 1.2257056630280356e-15,
+  "plane_wave_bianchi_residual_mismatched": 0.8904657730251583,
+  "plane_wave_regularity_norm_over_curvature": 2.000000000000001
+ },
+ "cache_checks": {
+  "0": {
+   "selected_ids_equal": true,
+   "clock_mask_equal": true,
+   "tip_count_equals_n": true
+  },
+  "1": {
+   "selected_ids_equal": true,
+   "clock_mask_equal": true,
+   "tip_count_equals_n": true
+  }
+ },
+ "fit_seconds": 83.0,
+ "cases": [
+  {
+   "case": 0,
+   "landmarks": 122,
+   "clocks": 3613,
+   "alias": {
+    "evaluated_at": "window-0 fifth-degree inferred coordinates",
+    "packed_columns_vs_sixth_degree_model_max_relative": 1.1795820496084646e-15,
+    "inferred_vs_truth_coordinates_relative_difference": 3.209162476104462e-05,
+    "linearized_covariance_vs_fit_relative_difference": 0.0017100787411726364,
+    "quadratic_validation": {
+     "continuum_relative_bias": 0.12782044390336808,
+     "first_order_prediction": 0.12781052068107746,
+     "difference_relative_to_truth": 6.244664368119911e-05,
+     "cosine": 0.9999998836640727
+    }
+   },
+   "time_time_slice_rank": 10,
+   "windows": [
+    {
+     "wavelength": 2.0,
+     "shift": -1.0,
+     "centre_amplitude_over_benchmark": -1.0,
+     "relative_bias_order_5": 0.12080940161205611,
+     "relative_radius_95_order_5": 0.5455358745982528,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 9.3
+    },
+    {
+     "wavelength": 2.0,
+     "shift": -0.5,
+     "centre_amplitude_over_benchmark": 6.123233995736766e-17,
+     "relative_bias_order_5": 0.0007578746063194876,
+     "relative_radius_95_order_5": 0.5456464485104542,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 9.5
+    },
+    {
+     "wavelength": 2.0,
+     "shift": -0.25,
+     "centre_amplitude_over_benchmark": 0.7071067811865476,
+     "relative_bias_order_5": 0.08539970417500355,
+     "relative_radius_95_order_5": 0.5457525204673562,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 9.4
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 0.0,
+     "centre_amplitude_over_benchmark": 1.0,
+     "relative_bias_order_5": 0.12082494310301074,
+     "relative_radius_95_order_5": 0.5458085339210528,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 9.4
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 0.25,
+     "centre_amplitude_over_benchmark": 0.7071067811865476,
+     "relative_bias_order_5": 0.08546420050006052,
+     "relative_radius_95_order_5": 0.5457761004760237,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 9.4
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 0.5,
+     "centre_amplitude_over_benchmark": 6.123233995736766e-17,
+     "relative_bias_order_5": 0.0007568607978816516,
+     "relative_radius_95_order_5": 0.5456808287863626,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.0
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 1.0,
+     "centre_amplitude_over_benchmark": -1.0,
+     "relative_bias_order_5": 0.12080940161205611,
+     "relative_radius_95_order_5": 0.5455358745982528,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.2
+    },
+    {
+     "wavelength": 3.0,
+     "shift": -1.0,
+     "centre_amplitude_over_benchmark": -0.4999999999999998,
+     "relative_bias_order_5": 0.02764240529739722,
+     "relative_radius_95_order_5": 0.5455774118377832,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.3
+    },
+    {
+     "wavelength": 3.0,
+     "shift": -0.5,
+     "centre_amplitude_over_benchmark": 0.5000000000000001,
+     "relative_bias_order_5": 0.02766632811927895,
+     "relative_radius_95_order_5": 0.5457332952777345,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 3.6
+    },
+    {
+     "wavelength": 3.0,
+     "shift": 0.0,
+     "centre_amplitude_over_benchmark": 1.0,
+     "relative_bias_order_5": 0.05540165511593678,
+     "relative_radius_95_order_5": 0.5458288861889634,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 6.3
+    },
+    {
+     "wavelength": 3.0,
+     "shift": 0.5,
+     "centre_amplitude_over_benchmark": 0.5000000000000001,
+     "relative_bias_order_5": 0.02772854521155024,
+     "relative_radius_95_order_5": 0.545753936196303,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 6.6
+    },
+    {
+     "wavelength": 3.0,
+     "shift": 1.0,
+     "centre_amplitude_over_benchmark": -0.4999999999999998,
+     "relative_bias_order_5": 0.027760336627417156,
+     "relative_radius_95_order_5": 0.545599100134743,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.0
+    },
+    {
+     "wavelength": 4.0,
+     "shift": -1.0,
+     "centre_amplitude_over_benchmark": 6.123233995736766e-17,
+     "relative_bias_order_5": 0.00010535872794358581,
+     "relative_radius_95_order_5": 0.5456539485306676,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.0
+    },
+    {
+     "wavelength": 4.0,
+     "shift": -0.5,
+     "centre_amplitude_over_benchmark": 0.7071067811865476,
+     "relative_bias_order_5": 0.022241139591408575,
+     "relative_radius_95_order_5": 0.5457771185242778,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 4.5
+    },
+    {
+     "wavelength": 4.0,
+     "shift": 0.0,
+     "centre_amplitude_over_benchmark": 1.0,
+     "relative_bias_order_5": 0.03150685608719142,
+     "relative_radius_95_order_5": 0.5458364331729483,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 4.8
+    },
+    {
+     "wavelength": 4.0,
+     "shift": 0.5,
+     "centre_amplitude_over_benchmark": 0.7071067811865476,
+     "relative_bias_order_5": 0.022313124314630468,
+     "relative_radius_95_order_5": 0.5457898882608003,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 5.3
+    },
+    {
+     "wavelength": 4.0,
+     "shift": 1.0,
+     "centre_amplitude_over_benchmark": 6.123233995736766e-17,
+     "relative_bias_order_5": 0.00010499515902442314,
+     "relative_radius_95_order_5": 0.545672684030268,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 5.4
+    },
+    {
+     "wavelength": 6.0,
+     "shift": -1.0,
+     "centre_amplitude_over_benchmark": 0.5000000000000001,
+     "relative_bias_order_5": 0.007032945650281074,
+     "relative_radius_95_order_5": 0.5457444562697613,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 4.7
+    },
+    {
+     "wavelength": 6.0,
+     "shift": -0.5,
+     "centre_amplitude_over_benchmark": 0.8660254037844388,
+     "relative_bias_order_5": 0.012198592311021444,
+     "relative_radius_95_order_5": 0.5458136918589331,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 4.2
+    },
+    {
+     "wavelength": 6.0,
+     "shift": 0.0,
+     "centre_amplitude_over_benchmark": 1.0,
+     "relative_bias_order_5": 0.01411313838965152,
+     "relative_radius_95_order_5": 0.5458419636061839,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 4.5
+    },
+    {
+     "wavelength": 6.0,
+     "shift": 0.5,
+     "centre_amplitude_over_benchmark": 0.8660254037844388,
+     "relative_bias_order_5": 0.012245397009869027,
+     "relative_radius_95_order_5": 0.5458197475983427,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 4.5
+    },
+    {
+     "wavelength": 6.0,
+     "shift": 1.0,
+     "centre_amplitude_over_benchmark": 0.5000000000000001,
+     "relative_bias_order_5": 0.007078296981374319,
+     "relative_radius_95_order_5": 0.5457551543693989,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 5.5
+    }
+   ],
+   "sixth_degree": [
+    {
+     "wavelength": 2.0,
+     "relative_bias": 0.004379059260910747,
+     "relative_radius_95": 3.324518114175875,
+     "radius_ratio_to_single": 6.090996947762532,
+     "events_ratio_to_single": 37.10024381765248,
+     "optimizer_success": true
+    },
+    {
+     "wavelength": 3.0,
+     "relative_bias": 0.00100935182977921,
+     "relative_radius_95": 3.324526795075921,
+     "radius_ratio_to_single": 6.090785737427948,
+     "events_ratio_to_single": 37.09767089925572,
+     "optimizer_success": true
+    },
+    {
+     "wavelength": 4.0,
+     "relative_bias": 0.0003832801249025834,
+     "relative_radius_95": 3.324530700013617,
+     "radius_ratio_to_single": 6.090708677484414,
+     "events_ratio_to_single": 37.09673219398393,
+     "optimizer_success": true
+    },
+    {
+     "wavelength": 6.0,
+     "relative_bias": 0.00011715856571720186,
+     "relative_radius_95": 3.3245337818725065,
+     "radius_ratio_to_single": 6.090652612907394,
+     "events_ratio_to_single": 37.09604925111566,
+     "optimizer_success": true
+    }
+   ],
+   "principal_null_direction": [
+    {
+     "wavelength": 2.0,
+     "direction": [
+      0.001974876117514033,
+      -0.0007549532811234191,
+      -0.9999977649524341
+     ],
+     "residual": 0.001126805162494889,
+     "angle_to_truth_deg": 0.12113819443209499
+    },
+    {
+     "wavelength": 3.0,
+     "direction": [
+      0.0008795486529206884,
+      -0.00032985035107995235,
+      -0.9999995587963592
+     ],
+     "residual": 0.00021500420272154108,
+     "angle_to_truth_deg": 0.05382167259230925
+    },
+    {
+     "wavelength": 4.0,
+     "direction": [
+      0.0004951692304865955,
+      -0.00018442949860071408,
+      -0.9999998603965868
+     ],
+     "residual": 6.719808203564938e-05,
+     "angle_to_truth_deg": 0.03027510468611407
+    },
+    {
+     "wavelength": 6.0,
+     "direction": [
+      0.00022022663275306095,
+      -8.164191756761733e-05,
+      -0.9999999724174132
+     ],
+     "residual": 1.3152765550273133e-05,
+     "angle_to_truth_deg": 0.013457213040974381
+    }
+   ],
+   "corrections": [
+    {
+     "correction": "single_window",
+     "h": 0.0,
+     "operator": "none",
+     "windows": 1,
+     "shifts": [
+      0.0
+     ],
+     "relative_bias": 0.12082494310301074,
+     "relative_radius_95": 0.5458085339210528,
+     "radius_ratio_to_single": 1.0,
+     "events_ratio_to_single": 1.0,
+     "events_for_radius_10pct": 499804934.3698931,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.25,
+      0.0,
+      0.25
+     ],
+     "relative_bias": 0.016112253013932543,
+     "relative_radius_95": 0.7061393308370021,
+     "radius_ratio_to_single": 1.293749157354033,
+     "events_ratio_to_single": 5.021360646462811,
+     "events_for_radius_10pct": 2509700828.352909,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.25,
+      0.0,
+      0.25
+     ],
+     "relative_bias": 0.016111458297497272,
+     "relative_radius_95": 0.7061453363172697,
+     "radius_ratio_to_single": 1.2937601602605364,
+     "events_ratio_to_single": 5.021446056832106,
+     "events_for_radius_10pct": 2509743516.8769293,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.25,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.25,
+      0.0,
+      0.25
+     ],
+     "relative_bias": 0.014887232844793834,
+     "relative_radius_95": 0.7214834325802344,
+     "radius_ratio_to_single": 1.3218617660613414,
+     "events_ratio_to_single": 5.241955585724425,
+     "events_for_radius_10pct": 2619955267.4928913,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.011007918289981546,
+     "relative_radius_95": 0.7704079558861475,
+     "radius_ratio_to_single": 1.4114985530760893,
+     "events_ratio_to_single": 9.961640826679469,
+     "events_for_radius_10pct": 4978877239.594977,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.25,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.00351295422270697,
+     "relative_radius_95": 0.9747139502678834,
+     "radius_ratio_to_single": 1.7858166182664867,
+     "events_ratio_to_single": 15.945704970383755,
+     "events_for_radius_10pct": 7969742026.2043295,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.01100714064581969,
+     "relative_radius_95": 0.7704157213540581,
+     "radius_ratio_to_single": 1.4115127805339394,
+     "events_ratio_to_single": 9.961841648053264,
+     "events_for_radius_10pct": 4978977611.108528,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.25,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.003514038291579391,
+     "relative_radius_95": 0.9747352167997383,
+     "radius_ratio_to_single": 1.785855581621827,
+     "events_ratio_to_single": 15.946400792049168,
+     "events_for_radius_10pct": 7970089801.306144,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.25,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.010013381504930958,
+     "relative_radius_95": 0.7768249226889117,
+     "radius_ratio_to_single": 1.4232553622939024,
+     "events_ratio_to_single": 10.128279131491738,
+     "events_for_radius_10pct": 5062163886.595184,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.25,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.005772345246712187,
+     "relative_radius_95": 0.9812350793290089,
+     "radius_ratio_to_single": 1.7977642677733168,
+     "events_ratio_to_single": 16.159781812412646,
+     "events_for_radius_10pct": 8076738688.184692,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.031439663140027295,
+     "relative_radius_95": 0.5703635698073771,
+     "radius_ratio_to_single": 1.0449883692911919,
+     "events_ratio_to_single": 3.2760020758615935,
+     "events_for_radius_10pct": 1637362002.5216367,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.031438937661626164,
+     "relative_radius_95": 0.5703649636044175,
+     "radius_ratio_to_single": 1.0449909229285093,
+     "events_ratio_to_single": 3.276018087008933,
+     "events_for_radius_10pct": 1637370004.9720821,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.030163621473930886,
+     "relative_radius_95": 0.5868861340460267,
+     "radius_ratio_to_single": 1.075260091354518,
+     "events_ratio_to_single": 3.468552792179179,
+     "events_for_radius_10pct": 1733599800.653624,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.01654877586415467,
+     "relative_radius_95": 0.5776539986381776,
+     "radius_ratio_to_single": 1.0583454869940363,
+     "events_ratio_to_single": 5.600475849203219,
+     "events_for_radius_10pct": 2799145464.2511854,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.006070379699990316,
+     "relative_radius_95": 0.5815688731189014,
+     "radius_ratio_to_single": 1.0655181019998876,
+     "events_ratio_to_single": 5.676644128447215,
+     "events_for_radius_10pct": 2837214746.0597982,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.01654798197535893,
+     "relative_radius_95": 0.5776558063959347,
+     "radius_ratio_to_single": 1.0583487990671256,
+     "events_ratio_to_single": 5.600510902434136,
+     "events_for_radius_10pct": 2799162984.0289636,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.006069123770895189,
+     "relative_radius_95": 0.5815711755584166,
+     "radius_ratio_to_single": 1.0655223204013455,
+     "events_ratio_to_single": 5.676689076367339,
+     "events_for_radius_10pct": 2837237211.2520657,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.015314256904271928,
+     "relative_radius_95": 0.597559938498288,
+     "radius_ratio_to_single": 1.0948160414522223,
+     "events_ratio_to_single": 5.993110823105571,
+     "events_for_radius_10pct": 2995386361.613776,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0053907324859914585,
+     "relative_radius_95": 0.6024793894203299,
+     "radius_ratio_to_single": 1.1038291854694124,
+     "events_ratio_to_single": 6.092194353470333,
+     "events_for_radius_10pct": 3044908799.0048723,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.07612944534114914,
+     "relative_radius_95": 0.551496010526481,
+     "radius_ratio_to_single": 1.0104202779032598,
+     "events_ratio_to_single": 3.0628474139943025,
+     "events_for_radius_10pct": 1530826250.7364192,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.07612906827619183,
+     "relative_radius_95": 0.5514963175913336,
+     "radius_ratio_to_single": 1.0104208404903823,
+     "events_ratio_to_single": 3.0628508246918713,
+     "events_for_radius_10pct": 1530827955.4198942,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.0754258539811926,
+     "relative_radius_95": 0.5559257904838085,
+     "radius_ratio_to_single": 1.0185362740484727,
+     "events_ratio_to_single": 3.1122484246576363,
+     "events_for_radius_10pct": 1555517119.628813,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12781052068107746
+    },
+    {
+     "correction": "single_window",
+     "h": 0.0,
+     "operator": "none",
+     "windows": 1,
+     "shifts": [
+      0.0
+     ],
+     "relative_bias": 0.05540165511593678,
+     "relative_radius_95": 0.5458288861889634,
+     "radius_ratio_to_single": 1.0,
+     "events_ratio_to_single": 1.0,
+     "events_for_radius_10pct": 499842208.8093584,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.006868429583548991,
+     "relative_radius_95": 0.5703825357517726,
+     "radius_ratio_to_single": 1.0449841519642638,
+     "events_ratio_to_single": 3.2759756335694146,
+     "events_for_radius_10pct": 1637470896.6889734,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.006868229671890049,
+     "relative_radius_95": 0.5703831569194378,
+     "radius_ratio_to_single": 1.0449852899906322,
+     "events_ratio_to_single": 3.275982768890417,
+     "events_for_radius_10pct": 1637474463.223584,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.006397225197174377,
+     "relative_radius_95": 0.5869083112695844,
+     "radius_ratio_to_single": 1.0752606285963389,
+     "events_ratio_to_single": 3.468556258228181,
+     "events_for_radius_10pct": 1733730821.492298,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.002826095190711141,
+     "relative_radius_95": 0.5776716738986121,
+     "radius_ratio_to_single": 1.0583384069904738,
+     "events_ratio_to_single": 5.600400918555668,
+     "events_for_radius_10pct": 2799316765.348825,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0001711975411435345,
+     "relative_radius_95": 0.5815845063181895,
+     "radius_ratio_to_single": 1.0655070133405282,
+     "events_ratio_to_single": 5.676525977389263,
+     "events_for_radius_10pct": 2837367282.901951,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.002825894449103104,
+     "relative_radius_95": 0.5776724788490779,
+     "radius_ratio_to_single": 1.0583398817208995,
+     "events_ratio_to_single": 5.600416526205039,
+     "events_for_radius_10pct": 2799324566.710761,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.00017097353595905762,
+     "relative_radius_95": 0.5815855299072256,
+     "radius_ratio_to_single": 1.0655088886334303,
+     "events_ratio_to_single": 5.6765459587842395,
+     "events_for_radius_10pct": 2837377270.4465513,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0025945766435811844,
+     "relative_radius_95": 0.5975826290229874,
+     "radius_ratio_to_single": 1.0948167899199586,
+     "events_ratio_to_single": 5.993119017453213,
+     "events_for_radius_10pct": 2995613847.3411865,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0014416912853950194,
+     "relative_radius_95": 0.6025022532850697,
+     "radius_ratio_to_single": 1.1038299154370628,
+     "events_ratio_to_single": 6.092202411068966,
+     "events_for_radius_10pct": 3045139909.662411,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.01900070565436123,
+     "relative_radius_95": 0.551516348374204,
+     "radius_ratio_to_single": 1.0104198629445045,
+     "events_ratio_to_single": 3.0628448982983736,
+     "events_for_radius_10pct": 1530939159.2059345,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.019000550919117017,
+     "relative_radius_95": 0.5515164855054945,
+     "radius_ratio_to_single": 1.0104201141794502,
+     "events_ratio_to_single": 3.0628464214152396,
+     "events_for_radius_10pct": 1530939920.524032,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.018570981639589035,
+     "relative_radius_95": 0.5559465720940088,
+     "radius_ratio_to_single": 1.0185363694759508,
+     "events_ratio_to_single": 3.112249007835752,
+     "events_for_radius_10pct": 1555633418.4413564,
+     "wavelength": 3.0,
+     "first_order_prediction_single": 0.05680467585825664
+    },
+    {
+     "correction": "single_window",
+     "h": 0.0,
+     "operator": "none",
+     "windows": 1,
+     "shifts": [
+      0.0
+     ],
+     "relative_bias": 0.03150685608719142,
+     "relative_radius_95": 0.5458364331729483,
+     "radius_ratio_to_single": 1.0,
+     "events_ratio_to_single": 1.0,
+     "events_for_radius_10pct": 499856031.1896664,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.0022524061484688624,
+     "relative_radius_95": 0.5703895923312573,
+     "radius_ratio_to_single": 1.0449826315469297,
+     "events_ratio_to_single": 3.275966100704239,
+     "events_for_radius_10pct": 1637511413.4099073,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.002252335223852256,
+     "relative_radius_95": 0.5703899421352535,
+     "radius_ratio_to_single": 1.0449832724055734,
+     "events_ratio_to_single": 3.2759701188223826,
+     "events_for_radius_10pct": 1637513421.8904955,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.002054771860776838,
+     "relative_radius_95": 0.586916565834068,
+     "radius_ratio_to_single": 1.0752608843318152,
+     "events_ratio_to_single": 3.468557908122112,
+     "events_for_radius_10pct": 1733779589.9054499,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0008251969623780923,
+     "relative_radius_95": 0.577678261576515,
+     "radius_ratio_to_single": 1.058335842879652,
+     "events_ratio_to_single": 5.600373781618918,
+     "events_for_radius_10pct": 2799380611.6586947,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.00019688617781678423,
+     "relative_radius_95": 0.5815903404906566,
+     "radius_ratio_to_single": 1.0655029696531448,
+     "events_ratio_to_single": 5.6764828916983525,
+     "events_for_radius_10pct": 2837424209.360378,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0008251279557806364,
+     "relative_radius_95": 0.5776787147407243,
+     "radius_ratio_to_single": 1.0583366730994428,
+     "events_ratio_to_single": 5.600382568135984,
+     "events_for_radius_10pct": 2799385003.652243,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.00019693008817279223,
+     "relative_radius_95": 0.5815909164214516,
+     "radius_ratio_to_single": 1.0655040247875402,
+     "events_ratio_to_single": 5.676494134192236,
+     "events_for_radius_10pct": 2837429828.988752,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0009027547500936944,
+     "relative_radius_95": 0.5975910966018243,
+     "radius_ratio_to_single": 1.094817165516098,
+     "events_ratio_to_single": 5.993123129543516,
+     "events_for_radius_10pct": 2995698741.964615,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0008911653200333943,
+     "relative_radius_95": 0.6025107994927212,
+     "radius_ratio_to_single": 1.1038303104655818,
+     "events_ratio_to_single": 6.092206771512714,
+     "events_for_radius_10pct": 3045226297.995155,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.006536260825650263,
+     "relative_radius_95": 0.5515238922791137,
+     "radius_ratio_to_single": 1.0104197132336956,
+     "events_ratio_to_single": 3.062843990673791,
+     "events_for_radius_10pct": 1530981041.331321,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.006536198657688147,
+     "relative_radius_95": 0.5515239695591255,
+     "radius_ratio_to_single": 1.0104198548145928,
+     "events_ratio_to_single": 3.062844849010628,
+     "events_for_radius_10pct": 1530981470.3761654,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.006284040159629134,
+     "relative_radius_95": 0.5559542884117898,
+     "radius_ratio_to_single": 1.0185364234117287,
+     "events_ratio_to_single": 3.1122493374490685,
+     "events_for_radius_10pct": 1555676601.8899605,
+     "wavelength": 4.0,
+     "first_order_prediction_single": 0.031952630170269364
+    },
+    {
+     "correction": "single_window",
+     "h": 0.0,
+     "operator": "none",
+     "windows": 1,
+     "shifts": [
+      0.0
+     ],
+     "relative_bias": 0.01411313838965152,
+     "relative_radius_95": 0.5458419636061839,
+     "radius_ratio_to_single": 1.0,
+     "events_ratio_to_single": 1.0,
+     "events_for_radius_10pct": 499866160.35747004,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.00045677098099130236,
+     "relative_radius_95": 0.5703947722247386,
+     "radius_ratio_to_single": 1.0449815335859174,
+     "events_ratio_to_single": 3.275959216606727,
+     "events_for_radius_10pct": 1637541155.0928705,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.00045675575898186075,
+     "relative_radius_95": 0.570394927841907,
+     "radius_ratio_to_single": 1.0449818186815656,
+     "events_ratio_to_single": 3.2759610041250973,
+     "events_for_radius_10pct": 1637542048.612815,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.00045007747903825606,
+     "relative_radius_95": 0.5869226266011356,
+     "radius_ratio_to_single": 1.075261093382316,
+     "events_ratio_to_single": 3.4685592568252,
+     "events_for_radius_10pct": 1733815397.6815732,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0001521220914896482,
+     "relative_radius_95": 0.5776831021376122,
+     "radius_ratio_to_single": 1.058333987957,
+     "events_ratio_to_single": 5.600354150324836,
+     "events_for_radius_10pct": 2799427525.7648983,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 6.619719696619986e-05,
+     "relative_radius_95": 0.5815946309808018,
+     "radius_ratio_to_single": 1.0655000343660146,
+     "events_ratio_to_single": 5.676451616169892,
+     "events_for_radius_10pct": 2837466073.829799,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.00015210753207967054,
+     "relative_radius_95": 0.5776833036991952,
+     "radius_ratio_to_single": 1.0583343572242905,
+     "events_ratio_to_single": 5.60035805840676,
+     "events_for_radius_10pct": 2799429479.282804,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 6.62076148944945e-05,
+     "relative_radius_95": 0.5815948870535808,
+     "radius_ratio_to_single": 1.0655005034995662,
+     "events_ratio_to_single": 5.676456614789145,
+     "events_for_radius_10pct": 2837468572.4704127,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.00033066510747730067,
+     "relative_radius_95": 0.5975973224724379,
+     "radius_ratio_to_single": 1.0948174788986993,
+     "events_ratio_to_single": 5.993126560510519,
+     "events_for_radius_10pct": 2995761162.338765,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.0003839097447829839,
+     "relative_radius_95": 0.6025170888315877,
+     "radius_ratio_to_single": 1.103830648803495,
+     "events_ratio_to_single": 6.092210506189724,
+     "events_for_radius_10pct": 3045289873.818497,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.0013714822443134187,
+     "relative_radius_95": 0.5515294219163904,
+     "radius_ratio_to_single": 1.0104196062036557,
+     "events_ratio_to_single": 3.0628433418022514,
+     "events_for_radius_10pct": 1531011741.0431337,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.0013714677459425552,
+     "relative_radius_95": 0.5515294563118891,
+     "radius_ratio_to_single": 1.0104196692173133,
+     "events_ratio_to_single": 3.0628437238236748,
+     "events_for_radius_10pct": 1531011932.002716,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.001273696343308029,
+     "relative_radius_95": 0.5559599485074062,
+     "radius_ratio_to_single": 1.0185364731476054,
+     "events_ratio_to_single": 3.1122496413958882,
+     "events_for_radius_10pct": 1555708278.3184762,
+     "wavelength": 6.0,
+     "first_order_prediction_single": 0.01420116896456416
+    }
+   ],
+   "misaligned_side_windows": [
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.031440336549412626,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.031442073713079666,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.031447048675979694,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.031439627240682895,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.0314410727856623,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.03144547907955452,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.03016430229967046,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.030165813634520193,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.030169687337304678,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.006087457629841815,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.00615233613877839,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.006548555931681182,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.006085212091113784,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.0061494859358868425,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.006627243603305529,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0054432510474511225,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.00557815360043269,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.00645039390203171,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.007016574896643402,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.007869076827507529,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.015308318319777048,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0070527790035660376,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.008121461029871718,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.01605594892679705,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.006551234048824202,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.007653227778666565,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.015883184279944236,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0025945868664447357,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.007437328142965183,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.022877672769575426,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0022683964969043126,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.00732021350881337,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.02315919187902624,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.002763324949598266,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.007532290552647243,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.025435690809097185,
+     "wavelength": 3.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.00306696793891884,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.006501170211915271,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.021363033893575575,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0032438110111972407,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.007233324114483442,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.022749415225966366,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0028997710964143034,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.006889914875623778,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.022455523581876663,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.003650111522384774,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.01036907550549821,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.033252147959325316,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0032742254214073283,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.01042954105378604,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.033323415746617915,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.003444998697239389,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.010928691798690483,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.03626694161746145,
+     "wavelength": 4.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0026347103782719135,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.007795705952310223,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.026989746865861437,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.002948512343778355,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.00877204237064535,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.028745611694828553,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.0025699481265631335,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.008364073924116255,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.028260135254369448,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.004530521952863533,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.013194065856912868,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.04148949345216584,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.004081548025113306,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.012881063685886299,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.041375338496790114,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.004085275941868356,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.014283074320601828,
+     "wavelength": 6.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.04514348173240312,
+     "wavelength": 6.0
+    }
+   ],
+   "bounds": {
+    "plane_wave_first_order_per_unit_f2_over_f": {
+     "directions": 2000,
+     "worst": 0.013442926054833933,
+     "best": 0.012655311814263574,
+     "median": 0.013091073199731365,
+     "quantiles_10_50_90": [
+      0.012770030846044216,
+      0.013091073199731365,
+      0.013320867565565745
+     ],
+     "benchmark_direction_benchmark_polarization": 0.01294991323735026,
+     "linear_polarizations_bias_to_tensor_cosine_min_max": [
+      0.9577708173062339,
+      0.9756455713583982
+     ],
+     "linear_polarizations_bias_projection_on_tensor_min_max": [
+      0.012077911684833771,
+      0.013088699470760485
+     ],
+     "rotation_check_pnd_max_error": 1.079973691494802e-15
+    },
+    "plane_wave_worst_at_wavelength_2": 0.13267636215430778,
+    "plane_wave_benchmark_at_wavelength_2": 0.12781052068107746,
+    "general_operator_norm": 0.009500312200347456,
+    "general_bound_at_plane_wave_regularity_wavelength_2": 0.18752864620854434,
+    "regularity_norm": "sum over ordered (e, f) in the observer frame of the full-tidal norm squared of D_ef; a plane wave has |D| = 2 |f''/f| |C|",
+    "worldline_undetermined_operator_norm": 0.0010847722541494256
+   },
+   "displacements": {
+    "greedy_path": [
+     {
+      "directions": [
+       "t"
+      ],
+      "residual": 0.11418280065677758,
+      "rank": 10
+     },
+     {
+      "directions": [
+       "t",
+       "y"
+      ],
+      "residual": 0.08761725289241498,
+      "rank": 20
+     },
+     {
+      "directions": [
+       "t",
+       "y",
+       "y+z"
+      ],
+      "residual": 0.066288896120226,
+      "rank": 30
+     },
+     {
+      "directions": [
+       "t",
+       "y",
+       "y+z",
+       "t-z"
+      ],
+      "residual": 0.030909984489470355,
+      "rank": 40
+     },
+     {
+      "directions": [
+       "t",
+       "y",
+       "y+z",
+       "t-z",
+       "t-x"
+      ],
+      "residual": 4.592964626761283e-15,
+      "rank": 42
+     }
+    ],
+    "windows_needed": 11
+   },
+   "mixed_geometry": {
+    "side_windows_from_case": 1,
+    "rows": [
+     {
+      "correction": "single_window",
+      "h": 0.0,
+      "operator": "none",
+      "windows": 1,
+      "shifts": [
+       0.0
+      ],
+      "relative_bias": 0.12082494310301074,
+      "relative_radius_95": 0.5458085339210528,
+      "radius_ratio_to_single": 1.0,
+      "events_ratio_to_single": 1.0,
+      "events_for_radius_10pct": 499804934.3698931
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_oracle_k",
+      "windows": 3,
+      "shifts": [
+       -0.25,
+       0.0,
+       0.25
+      ],
+      "relative_bias": 0.01739160282149313,
+      "relative_radius_95": 0.7012358171745393,
+      "radius_ratio_to_single": 1.284765212696304,
+      "events_ratio_to_single": 4.951864955263738,
+      "events_for_radius_10pct": 2474966538.9741664
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_estimated_k",
+      "windows": 3,
+      "shifts": [
+       -0.25,
+       0.0,
+       0.25
+      ],
+      "relative_bias": 0.017390776805408646,
+      "relative_radius_95": 0.7012416850508069,
+      "radius_ratio_to_single": 1.2847759634924218,
+      "events_ratio_to_single": 4.951947829103642,
+      "events_for_radius_10pct": 2475007959.728281
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.25,
+      "operator": "minimum_norm_time_time",
+      "windows": 3,
+      "shifts": [
+       -0.25,
+       0.0,
+       0.25
+      ],
+      "relative_bias": 0.016219300686945173,
+      "relative_radius_95": 0.7204897608120526,
+      "radius_ratio_to_single": 1.3200412159848463,
+      "events_ratio_to_single": 5.227526435696254,
+      "events_for_radius_10pct": 2612743507.110047
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.012733261655954228,
+      "relative_radius_95": 0.7618927764878768,
+      "radius_ratio_to_single": 1.3958975155893754,
+      "events_ratio_to_single": 9.742649370142951,
+      "events_for_radius_10pct": 4869424229.033176
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.25,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.00204928464224587,
+      "relative_radius_95": 0.9532156178554153,
+      "radius_ratio_to_single": 1.7464285708535496,
+      "events_ratio_to_single": 15.250063765467859,
+      "events_for_radius_10pct": 7622057119.436348
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.012732435667959882,
+      "relative_radius_95": 0.7619004412547745,
+      "radius_ratio_to_single": 1.3959115585484376,
+      "events_ratio_to_single": 9.742845396445642,
+      "events_for_radius_10pct": 4869522203.9465275
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.25,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.0020496436411784886,
+      "relative_radius_95": 0.9532387727223545,
+      "radius_ratio_to_single": 1.7464709939112706,
+      "events_ratio_to_single": 15.250804662867106,
+      "events_for_radius_10pct": 7622427423.612351
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.25,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.011769449461193715,
+      "relative_radius_95": 0.772496210545678,
+      "radius_ratio_to_single": 1.4153245369692478,
+      "events_ratio_to_single": 10.015717724736078,
+      "events_for_radius_10pct": 5005905140.079089
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.25,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.004702689781443914,
+      "relative_radius_95": 0.9566414419840111,
+      "radius_ratio_to_single": 1.7527051750392426,
+      "events_ratio_to_single": 15.35987715304671,
+      "events_for_radius_10pct": 7676942392.408131
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_oracle_k",
+      "windows": 3,
+      "shifts": [
+       -0.5,
+       0.0,
+       0.5
+      ],
+      "relative_bias": 0.03143821762339077,
+      "relative_radius_95": 0.5702894429523923,
+      "radius_ratio_to_single": 1.0448525581955823,
+      "events_ratio_to_single": 3.275150605103558,
+      "events_for_radius_10pct": 1636936433.235299
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_estimated_k",
+      "windows": 3,
+      "shifts": [
+       -0.5,
+       0.0,
+       0.5
+      ],
+      "relative_bias": 0.031437492169516745,
+      "relative_radius_95": 0.570290817393902,
+      "radius_ratio_to_single": 1.0448550763707742,
+      "events_ratio_to_single": 3.2751663918533294,
+      "events_for_radius_10pct": 1636944323.5307329
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.5,
+      "operator": "minimum_norm_time_time",
+      "windows": 3,
+      "shifts": [
+       -0.5,
+       0.0,
+       0.5
+      ],
+      "relative_bias": 0.030162321437821042,
+      "relative_radius_95": 0.586906925021492,
+      "radius_ratio_to_single": 1.0752981834219246,
+      "events_ratio_to_single": 3.4687985498114733,
+      "events_for_radius_10pct": 1733722631.5309033
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.016583829729956836,
+      "relative_radius_95": 0.5774846412892926,
+      "radius_ratio_to_single": 1.0580351998908493,
+      "events_ratio_to_single": 5.597192421040347,
+      "events_for_radius_10pct": 2797504390.653734
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.5,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.006130673620819919,
+      "relative_radius_95": 0.581256178800222,
+      "radius_ratio_to_single": 1.0649452008830196,
+      "events_ratio_to_single": 5.670541404418875,
+      "events_for_radius_10pct": 2834164574.477337
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.016583035253147565,
+      "relative_radius_95": 0.5774864159826705,
+      "radius_ratio_to_single": 1.0580384513852246,
+      "events_ratio_to_single": 5.597226823048222,
+      "events_for_radius_10pct": 2797521584.947021
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.5,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.006129419619170667,
+      "relative_radius_95": 0.5812584329998703,
+      "radius_ratio_to_single": 1.0649493309020799,
+      "events_ratio_to_single": 5.670585386943938,
+      "events_for_radius_10pct": 2834186557.16039
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.5,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.015350355081854257,
+      "relative_radius_95": 0.5975923144163214,
+      "radius_ratio_to_single": 1.0948753588062419,
+      "events_ratio_to_single": 5.993760256605485,
+      "events_for_radius_10pct": 2995710951.6815763
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.5,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.0054493251711563795,
+      "relative_radius_95": 0.6025041366951392,
+      "radius_ratio_to_single": 1.1038745260481528,
+      "events_ratio_to_single": 6.09269484629017,
+      "events_for_radius_10pct": 3045158947.785844
+     },
+     {
+      "correction": "three_point_first",
+      "h": 1.0,
+      "operator": "plane_wave_oracle_k",
+      "windows": 3,
+      "shifts": [
+       -1.0,
+       0.0,
+       1.0
+      ],
+      "relative_bias": 0.07601834861794929,
+      "relative_radius_95": 0.5514937249586975,
+      "radius_ratio_to_single": 1.0104160904132495,
+      "events_ratio_to_single": 3.062822027297988,
+      "events_for_radius_10pct": 1530813562.340333
+     },
+     {
+      "correction": "three_point_first",
+      "h": 1.0,
+      "operator": "plane_wave_estimated_k",
+      "windows": 3,
+      "shifts": [
+       -1.0,
+       0.0,
+       1.0
+      ],
+      "relative_bias": 0.07601797341861857,
+      "relative_radius_95": 0.5514940307614209,
+      "radius_ratio_to_single": 1.010416650687969,
+      "events_ratio_to_single": 3.0628254239624795,
+      "events_for_radius_10pct": 1530815260.0100074
+     },
+     {
+      "correction": "three_point_first",
+      "h": 1.0,
+      "operator": "minimum_norm_time_time",
+      "windows": 3,
+      "shifts": [
+       -1.0,
+       0.0,
+       1.0
+      ],
+      "relative_bias": 0.07530866439941009,
+      "relative_radius_95": 0.5559274664562144,
+      "radius_ratio_to_single": 1.0185393446717805,
+      "events_ratio_to_single": 3.1122671899332603,
+      "events_for_radius_10pct": 1555526498.6061645
+     }
+    ]
+   }
+  },
+  {
+   "case": 1,
+   "landmarks": 128,
+   "clocks": 4086,
+   "alias": {
+    "evaluated_at": "window-0 fifth-degree inferred coordinates",
+    "packed_columns_vs_sixth_degree_model_max_relative": 1.2693621245544813e-15,
+    "inferred_vs_truth_coordinates_relative_difference": 2.7122510063760812e-05,
+    "linearized_covariance_vs_fit_relative_difference": 0.0017674953301613353,
+    "quadratic_validation": {
+     "continuum_relative_bias": 0.12289206124057236,
+     "first_order_prediction": 0.12289731031254382,
+     "difference_relative_to_truth": 6.0135501868787806e-05,
+     "cosine": 0.9999998811924395
+    }
+   },
+   "time_time_slice_rank": 10,
+   "windows": [
+    {
+     "wavelength": 2.0,
+     "shift": -1.0,
+     "centre_amplitude_over_benchmark": -1.0,
+     "relative_bias_order_5": 0.11629778461742718,
+     "relative_radius_95_order_5": 0.5913048079204652,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.5
+    },
+    {
+     "wavelength": 2.0,
+     "shift": -0.5,
+     "centre_amplitude_over_benchmark": 6.123233995736766e-17,
+     "relative_bias_order_5": 0.0006414973151115958,
+     "relative_radius_95_order_5": 0.5913529147394199,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.5
+    },
+    {
+     "wavelength": 2.0,
+     "shift": -0.25,
+     "centre_amplitude_over_benchmark": 0.7071067811865476,
+     "relative_bias_order_5": 0.08220098681364375,
+     "relative_radius_95_order_5": 0.5913765016636366,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 5.2
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 0.0,
+     "centre_amplitude_over_benchmark": 1.0,
+     "relative_bias_order_5": 0.11629156823196984,
+     "relative_radius_95_order_5": 0.5913819408041032,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 6.0
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 0.25,
+     "centre_amplitude_over_benchmark": 0.7071067811865476,
+     "relative_bias_order_5": 0.0822653573897844,
+     "relative_radius_95_order_5": 0.5913685637854191,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 7.6
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 0.5,
+     "centre_amplitude_over_benchmark": 6.123233995736766e-17,
+     "relative_bias_order_5": 0.0006264225577403648,
+     "relative_radius_95_order_5": 0.5913413921754783,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 8.6
+    },
+    {
+     "wavelength": 2.0,
+     "shift": 1.0,
+     "centre_amplitude_over_benchmark": -1.0,
+     "relative_bias_order_5": 0.11629778461742718,
+     "relative_radius_95_order_5": 0.5913048079204652,
+     "optimizer_success": true,
+     "function_evaluations": 4,
+     "seconds": 8.6
+    }
+   ],
+   "sixth_degree": [
+    {
+     "wavelength": 2.0,
+     "relative_bias": 0.004723732642331754,
+     "relative_radius_95": 2.845161769368434,
+     "radius_ratio_to_single": 4.8110393183462135,
+     "events_ratio_to_single": 23.146099322673198,
+     "optimizer_success": true
+    }
+   ],
+   "principal_null_direction": [
+    {
+     "wavelength": 2.0,
+     "direction": [
+      0.002762633875603237,
+      0.0031379587345787695,
+      -0.9999912604963352
+     ],
+     "residual": 0.0012131017102195692,
+     "angle_to_truth_deg": 0.23954181228439803
+    }
+   ],
+   "corrections": [
+    {
+     "correction": "single_window",
+     "h": 0.0,
+     "operator": "none",
+     "windows": 1,
+     "shifts": [
+      0.0
+     ],
+     "relative_bias": 0.11629156823196984,
+     "relative_radius_95": 0.5913819408041032,
+     "radius_ratio_to_single": 1.0,
+     "events_ratio_to_single": 1.0,
+     "events_for_radius_10pct": 586753937.0918696,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.25,
+      0.0,
+      0.25
+     ],
+     "relative_bias": 0.015099085266738279,
+     "relative_radius_95": 0.7030804959045328,
+     "radius_ratio_to_single": 1.1888771830748717,
+     "events_ratio_to_single": 4.240286869308125,
+     "events_for_radius_10pct": 2488005014.965501,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.25,
+      0.0,
+      0.25
+     ],
+     "relative_bias": 0.015088881814476785,
+     "relative_radius_95": 0.703132343204274,
+     "radius_ratio_to_single": 1.188964854503713,
+     "events_ratio_to_single": 4.2409122757351065,
+     "events_for_radius_10pct": 2488371974.648814,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.25,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.25,
+      0.0,
+      0.25
+     ],
+     "relative_bias": 0.014454698689654665,
+     "relative_radius_95": 0.767387991381298,
+     "radius_ratio_to_single": 1.2976182369347953,
+     "events_ratio_to_single": 5.051439266477299,
+     "events_for_radius_10pct": 2963951877.5860214,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.010165887049739598,
+     "relative_radius_95": 0.7405086251611629,
+     "radius_ratio_to_single": 1.252166449577902,
+     "events_ratio_to_single": 7.839604087242642,
+     "events_for_radius_10pct": 4599918563.431131,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.25,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.0034630658965331554,
+     "relative_radius_95": 0.8732824070823362,
+     "radius_ratio_to_single": 1.4766808839223806,
+     "events_ratio_to_single": 10.902932164708917,
+     "events_for_radius_10pct": 6397338373.488536,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.25,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.01015585015817799,
+     "relative_radius_95": 0.7405558891381459,
+     "radius_ratio_to_single": 1.2522463708161438,
+     "events_ratio_to_single": 7.840604866111015,
+     "events_for_radius_10pct": 4600505774.37231,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.25,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.0034685463806552524,
+     "relative_radius_95": 0.8732799610700936,
+     "radius_ratio_to_single": 1.476676747826782,
+     "events_ratio_to_single": 10.902871087861408,
+     "events_for_radius_10pct": 6397302536.407794,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.25,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.009832737770342638,
+     "relative_radius_95": 0.8154557796153186,
+     "radius_ratio_to_single": 1.378898683491318,
+     "events_ratio_to_single": 9.50680789667045,
+     "events_for_radius_10pct": 5578156962.547462,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.25,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+     ],
+     "relative_bias": 0.005716033259416302,
+     "relative_radius_95": 0.9014181026959499,
+     "radius_ratio_to_single": 1.524257067218336,
+     "events_ratio_to_single": 11.616798034825212,
+     "events_for_radius_10pct": 6816201983.334787,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.029913075855893423,
+     "relative_radius_95": 0.6162748630830537,
+     "radius_ratio_to_single": 1.0420928008811081,
+     "events_ratio_to_single": 3.2578722169446985,
+     "events_for_radius_10pct": 1911569349.8345199,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.02990382011095019,
+     "relative_radius_95": 0.6162927816798984,
+     "radius_ratio_to_single": 1.0421231004144695,
+     "events_ratio_to_single": 3.2580616692524,
+     "events_for_radius_10pct": 1911680511.7219543,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -0.5,
+      0.0,
+      0.5
+     ],
+     "relative_bias": 0.029086692242956357,
+     "relative_radius_95": 0.6337452596295519,
+     "radius_ratio_to_single": 1.0716344478964763,
+     "events_ratio_to_single": 3.445201169755157,
+     "events_for_radius_10pct": 2021485350.4273531,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.015522567468104135,
+     "relative_radius_95": 0.6228038643886228,
+     "radius_ratio_to_single": 1.0531330455268808,
+     "events_ratio_to_single": 5.545446057903616,
+     "events_for_radius_10pct": 3253812307.4055343,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.005734625663888961,
+     "relative_radius_95": 0.624929368337636,
+     "radius_ratio_to_single": 1.0567271761594856,
+     "events_ratio_to_single": 5.583361624170004,
+     "events_for_radius_10pct": 3276059415.1894035,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.015512367606665618,
+     "relative_radius_95": 0.6228260734997102,
+     "radius_ratio_to_single": 1.0531706001249417,
+     "events_ratio_to_single": 5.545841564837649,
+     "events_for_radius_10pct": 3254044372.656226,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.005720025460563301,
+     "relative_radius_95": 0.6249529496660239,
+     "radius_ratio_to_single": 1.0567670511146723,
+     "events_ratio_to_single": 5.583783001608001,
+     "events_for_radius_10pct": 3276306660.060152,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.014862573440815664,
+     "relative_radius_95": 0.6446871881311679,
+     "radius_ratio_to_single": 1.0901367519856717,
+     "events_ratio_to_single": 5.94199069014935,
+     "events_for_radius_10pct": 3486486431.6083665,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "windows": 5,
+     "shifts": [
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0
+     ],
+     "relative_bias": 0.00588638765074249,
+     "relative_radius_95": 0.6493686855728081,
+     "radius_ratio_to_single": 1.0980529515153272,
+     "events_ratio_to_single": 6.028601421657608,
+     "events_for_radius_10pct": 3537305619.3152432,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_oracle_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.07310090715996986,
+     "relative_radius_95": 0.5974750341254355,
+     "radius_ratio_to_single": 1.0103031440443504,
+     "events_ratio_to_single": 3.0621373285976983,
+     "events_for_radius_10pct": 1796721133.4706795,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "plane_wave_estimated_k",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.07309611732890157,
+     "relative_radius_95": 0.5974796114258956,
+     "radius_ratio_to_single": 1.0103108840515174,
+     "events_ratio_to_single": 3.062184247298876,
+     "events_for_radius_10pct": 1796748663.203318,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    },
+    {
+     "correction": "three_point_first",
+     "h": 1.0,
+     "operator": "minimum_norm_time_time",
+     "windows": 3,
+     "shifts": [
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "relative_bias": 0.07260860213491174,
+     "relative_radius_95": 0.6018438820447243,
+     "radius_ratio_to_single": 1.0176906674329553,
+     "events_ratio_to_single": 3.1070828837404028,
+     "events_for_radius_10pct": 1823093114.9054403,
+     "wavelength": 2.0,
+     "first_order_prediction_single": 0.12289731031254382
+    }
+   ],
+   "misaligned_side_windows": [
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.02991379012588351,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.02991482817031829,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.029919246458606382,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.02990453360013326,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.0299059401548792,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.02991041728938514,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.029087372820187564,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.029088778939199596,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "three_point_first",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.029093550564378384,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.005754588551586672,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.005837850624752214,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_oracle_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.006421379225426354,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.005739785621778323,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.0057945357347460365,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "plane_wave_estimated_k",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.006511911714953755,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 1,
+     "worst_relative_bias": 0.006002820656930086,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 3,
+     "worst_relative_bias": 0.006260955296174595,
+     "wavelength": 2.0
+    },
+    {
+     "correction": "five_point_second",
+     "h": 0.5,
+     "operator": "minimum_norm_time_time",
+     "angle_deg": 10,
+     "worst_relative_bias": 0.007206756690735612,
+     "wavelength": 2.0
+    }
+   ],
+   "bounds": {
+    "plane_wave_first_order_per_unit_f2_over_f": {
+     "directions": 2000,
+     "worst": 0.013121399502798193,
+     "best": 0.01242297096259454,
+     "median": 0.012732642377846656,
+     "quantiles_10_50_90": [
+      0.012493803059527808,
+      0.012732642377846656,
+      0.013006063468279754
+     ],
+     "benchmark_direction_benchmark_polarization": 0.012452100947326626,
+     "linear_polarizations_bias_to_tensor_cosine_min_max": [
+      0.955082721791919,
+      0.9784068047831783
+     ],
+     "linear_polarizations_bias_projection_on_tensor_min_max": [
+      0.011845111146246357,
+      0.01279714870782112
+     ],
+     "rotation_check_pnd_max_error": 1.079973691494802e-15
+    },
+    "plane_wave_worst_at_wavelength_2": 0.12950302228126875,
+    "plane_wave_benchmark_at_wavelength_2": 0.12289731031254383,
+    "general_operator_norm": 0.009319366360808353,
+    "general_bound_at_plane_wave_regularity_wavelength_2": 0.18395691849999646,
+    "regularity_norm": "sum over ordered (e, f) in the observer frame of the full-tidal norm squared of D_ef; a plane wave has |D| = 2 |f''/f| |C|",
+    "worldline_undetermined_operator_norm": 0.0008792722295495259
+   },
+   "displacements": {
+    "greedy_path": [
+     {
+      "directions": [
+       "t"
+      ],
+      "residual": 0.09434892840431898,
+      "rank": 10
+     },
+     {
+      "directions": [
+       "t",
+       "y-z"
+      ],
+      "residual": 0.07425520696876636,
+      "rank": 20
+     },
+     {
+      "directions": [
+       "t",
+       "y-z",
+       "t-x"
+      ],
+      "residual": 0.05094889261359188,
+      "rank": 30
+     },
+     {
+      "directions": [
+       "t",
+       "y-z",
+       "t-x",
+       "t+z"
+      ],
+      "residual": 0.024633633704574415,
+      "rank": 40
+     },
+     {
+      "directions": [
+       "t",
+       "y-z",
+       "t-x",
+       "t+z",
+       "x+z"
+      ],
+      "residual": 3.277308132288361e-15,
+      "rank": 42
+     }
+    ],
+    "windows_needed": 11
+   },
+   "mixed_geometry": {
+    "side_windows_from_case": 0,
+    "rows": [
+     {
+      "correction": "single_window",
+      "h": 0.0,
+      "operator": "none",
+      "windows": 1,
+      "shifts": [
+       0.0
+      ],
+      "relative_bias": 0.11629156823196984,
+      "relative_radius_95": 0.5913819408041032,
+      "radius_ratio_to_single": 1.0,
+      "events_ratio_to_single": 1.0,
+      "events_for_radius_10pct": 586753937.0918696
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_oracle_k",
+      "windows": 3,
+      "shifts": [
+       -0.25,
+       0.0,
+       0.25
+      ],
+      "relative_bias": 0.013977230569322732,
+      "relative_radius_95": 0.7025359294521284,
+      "radius_ratio_to_single": 1.1879563459392906,
+      "events_ratio_to_single": 4.233720839572294,
+      "events_for_radius_10pct": 2484152371.1669397
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_estimated_k",
+      "windows": 3,
+      "shifts": [
+       -0.25,
+       0.0,
+       0.25
+      ],
+      "relative_bias": 0.013968443580577163,
+      "relative_radius_95": 0.7025857598992423,
+      "radius_ratio_to_single": 1.1880406069619491,
+      "events_ratio_to_single": 4.2343214513715495,
+      "events_for_radius_10pct": 2484504782.504816
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.25,
+      "operator": "minimum_norm_time_time",
+      "windows": 3,
+      "shifts": [
+       -0.25,
+       0.0,
+       0.25
+      ],
+      "relative_bias": 0.013624221268172526,
+      "relative_radius_95": 0.764823945712167,
+      "radius_ratio_to_single": 1.2932825521730245,
+      "events_ratio_to_single": 5.017739279265515,
+      "events_for_radius_10pct": 2944178277.4095607
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.008720569885860077,
+      "relative_radius_95": 0.7401726346112756,
+      "radius_ratio_to_single": 1.25159830481949,
+      "events_ratio_to_single": 7.832491583135106,
+      "events_for_radius_10pct": 4595745273.643454
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.25,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.006141175314462802,
+      "relative_radius_95": 0.8804735668053981,
+      "radius_ratio_to_single": 1.4888408083754068,
+      "events_ratio_to_single": 11.083234763419673,
+      "events_for_radius_10pct": 6503131633.149971
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.25,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.008714160877167523,
+      "relative_radius_95": 0.7402159293151898,
+      "radius_ratio_to_single": 1.2516715141972659,
+      "events_ratio_to_single": 7.833407897264381,
+      "events_for_radius_10pct": 4596282924.56642
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.25,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.0061575716628866775,
+      "relative_radius_95": 0.8804746504092369,
+      "radius_ratio_to_single": 1.4888426407002784,
+      "events_ratio_to_single": 11.083262043836893,
+      "events_for_radius_10pct": 6503147640.042177
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.25,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.009145783956530358,
+      "relative_radius_95": 0.8111914175224458,
+      "radius_ratio_to_single": 1.3716878408892013,
+      "events_ratio_to_single": 9.407637664216393,
+      "events_for_radius_10pct": 5519968438.2127285
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.25,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -0.5,
+       -0.25,
+       0.0,
+       0.25,
+       0.5
+      ],
+      "relative_bias": 0.009020945346131478,
+      "relative_radius_95": 0.8943364503790643,
+      "radius_ratio_to_single": 1.5122823148150806,
+      "events_ratio_to_single": 11.434988998512292,
+      "events_for_radius_10pct": 6709524815.479302
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_oracle_k",
+      "windows": 3,
+      "shifts": [
+       -0.5,
+       0.0,
+       0.5
+      ],
+      "relative_bias": 0.02991448268277688,
+      "relative_radius_95": 0.6162126911590909,
+      "radius_ratio_to_single": 1.041987670981676,
+      "events_ratio_to_single": 3.2572149194334523,
+      "events_for_radius_10pct": 1911183677.9319553
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_estimated_k",
+      "windows": 3,
+      "shifts": [
+       -0.5,
+       0.0,
+       0.5
+      ],
+      "relative_bias": 0.02990522741531475,
+      "relative_radius_95": 0.616230503998103,
+      "radius_ratio_to_single": 1.0420177916833462,
+      "events_ratio_to_single": 3.2574032345539123,
+      "events_for_radius_10pct": 1911294172.5702982
+     },
+     {
+      "correction": "three_point_first",
+      "h": 0.5,
+      "operator": "minimum_norm_time_time",
+      "windows": 3,
+      "shifts": [
+       -0.5,
+       0.0,
+       0.5
+      ],
+      "relative_bias": 0.02908806422952428,
+      "relative_radius_95": 0.6335478315055975,
+      "radius_ratio_to_single": 1.0713006059064996,
+      "events_ratio_to_single": 3.4430549646468993,
+      "events_for_radius_10pct": 2020226056.1302762
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.015490783545717911,
+      "relative_radius_95": 0.6226952246076974,
+      "radius_ratio_to_single": 1.0529493405919996,
+      "events_ratio_to_single": 5.543511569265634,
+      "events_for_radius_10pct": 3252677238.5809383
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.5,
+      "operator": "plane_wave_oracle_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.005680531216547952,
+      "relative_radius_95": 0.6248117465801885,
+      "radius_ratio_to_single": 1.0565282831102867,
+      "events_ratio_to_single": 5.581260065059851,
+      "events_for_radius_10pct": 3274826317.1074915
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.5,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.01548062011972004,
+      "relative_radius_95": 0.6227172459642567,
+      "radius_ratio_to_single": 1.0529865777056817,
+      "events_ratio_to_single": 5.543903664141618,
+      "events_for_radius_10pct": 3252907301.7931366
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.5,
+      "operator": "plane_wave_estimated_k",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.00566604867404142,
+      "relative_radius_95": 0.6248350978069683,
+      "radius_ratio_to_single": 1.0565677689741062,
+      "events_ratio_to_single": 5.581677252174602,
+      "events_for_radius_10pct": 3275071103.289576
+     },
+     {
+      "correction": "five_point_first",
+      "h": 0.5,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.01483748756439013,
+      "relative_radius_95": 0.6443412387607792,
+      "radius_ratio_to_single": 1.0895517673141442,
+      "events_ratio_to_single": 5.935615268286875,
+      "events_for_radius_10pct": 3482745627.7299366
+     },
+     {
+      "correction": "five_point_second",
+      "h": 0.5,
+      "operator": "minimum_norm_time_time",
+      "windows": 5,
+      "shifts": [
+       -1.0,
+       -0.5,
+       0.0,
+       0.5,
+       1.0
+      ],
+      "relative_bias": 0.005866072138948652,
+      "relative_radius_95": 0.6489481633186798,
+      "radius_ratio_to_single": 1.0973418674846642,
+      "events_ratio_to_single": 6.020795870673652,
+      "events_for_radius_10pct": 3532725681.544236
+     },
+     {
+      "correction": "three_point_first",
+      "h": 1.0,
+      "operator": "plane_wave_oracle_k",
+      "windows": 3,
+      "shifts": [
+       -1.0,
+       0.0,
+       1.0
+      ],
+      "relative_bias": 0.07320318951546412,
+      "relative_radius_95": 0.59747094439484,
+      "radius_ratio_to_single": 1.0102962284956785,
+      "events_ratio_to_single": 3.0620954079377767,
+      "events_for_radius_10pct": 1796696536.3584247
+     },
+     {
+      "correction": "three_point_first",
+      "h": 1.0,
+      "operator": "plane_wave_estimated_k",
+      "windows": 3,
+      "shifts": [
+       -1.0,
+       0.0,
+       1.0
+      ],
+      "relative_bias": 0.07319841276271319,
+      "relative_radius_95": 0.5974755148737684,
+      "radius_ratio_to_single": 1.0103039569679448,
+      "events_ratio_to_single": 3.0621422563952607,
+      "events_for_radius_10pct": 1796724024.8753004
+     },
+     {
+      "correction": "three_point_first",
+      "h": 1.0,
+      "operator": "minimum_norm_time_time",
+      "windows": 3,
+      "shifts": [
+       -1.0,
+       0.0,
+       1.0
+      ],
+      "relative_bias": 0.07271428931110882,
+      "relative_radius_95": 0.6018308587870189,
+      "radius_ratio_to_single": 1.0176686456957214,
+      "events_ratio_to_single": 3.1069484172964907,
+      "events_for_radius_10pct": 1823014216.1900687
+     }
+    ]
+   }
+  }
+ ]
+}

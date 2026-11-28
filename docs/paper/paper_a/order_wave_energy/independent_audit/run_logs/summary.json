@@ -1,0 +1,289 @@
+{
+  "code_version": "f05d673ec41b5db9e28b2c898cf65b79218992cc",
+  "code_version_short": "f05d673",
+  "worktree_clean_at_start": true,
+  "run_date": "2026-11-24",
+  "device": "cpu",
+  "interpreters": {
+    "system": "3.11.9; numpy 2.4.6; sympy 1.14.0; mpmath 1.3.0; scipy absent",
+    "scipy": "3.14.0; numpy 2.5.3; sympy absent; mpmath absent; scipy 1.18.1"
+  },
+  "totals": {
+    "scripts": 27,
+    "pass": 565,
+    "fail": 0,
+    "nonzero_exit": 0
+  },
+  "rows": [
+    {
+      "folder": ".",
+      "script": "orchestrator_checks.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 58,
+      "fail": 0,
+      "seconds": 1.4,
+      "log": "run_logs/orchestrator_checks.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_a_exact_family.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 19,
+      "fail": 0,
+      "seconds": 13.4,
+      "log": "run_logs/proof1_lower_bound__check_a_exact_family.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_b_sandwich.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 82,
+      "fail": 0,
+      "seconds": 25.6,
+      "log": "run_logs/proof1_lower_bound__check_b_sandwich.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_c_one_point_law.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 45,
+      "fail": 0,
+      "seconds": 16.0,
+      "log": "run_logs/proof1_lower_bound__check_c_one_point_law.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_d_bad_marks.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 23,
+      "fail": 0,
+      "seconds": 6.5,
+      "log": "run_logs/proof1_lower_bound__check_d_bad_marks.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_e_lemma_density.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 10,
+      "fail": 0,
+      "seconds": 2.1,
+      "log": "run_logs/proof1_lower_bound__check_e_lemma_density.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_e_smoothing_lemma.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 48,
+      "fail": 0,
+      "seconds": 72.6,
+      "log": "run_logs/proof1_lower_bound__check_e_smoothing_lemma.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_e_wave_pair_component.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 56,
+      "fail": 0,
+      "seconds": 34.5,
+      "log": "run_logs/proof1_lower_bound__check_e_wave_pair_component.log"
+    },
+    {
+      "folder": "proof1_lower_bound",
+      "script": "check_f_assembly_exponents.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 18,
+      "fail": 0,
+      "seconds": 1.9,
+      "log": "run_logs/proof1_lower_bound__check_f_assembly_exponents.log"
+    },
+    {
+      "folder": "proof2_shared_reference",
+      "script": "s1_background_calibration.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 12,
+      "fail": 0,
+      "seconds": 21.3,
+      "log": "run_logs/proof2_shared_reference__s1_background_calibration.log"
+    },
+    {
+      "folder": "proof2_shared_reference",
+      "script": "s2_confidence_bounds.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 22,
+      "fail": 0,
+      "seconds": 2.2,
+      "log": "run_logs/proof2_shared_reference__s2_confidence_bounds.log"
+    },
+    {
+      "folder": "proof2_shared_reference",
+      "script": "s3_leading_matrix_and_margin.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 27,
+      "fail": 0,
+      "seconds": 11.8,
+      "log": "run_logs/proof2_shared_reference__s3_leading_matrix_and_margin.log"
+    },
+    {
+      "folder": "proof2_shared_reference",
+      "script": "s4_population_witness.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 18,
+      "fail": 0,
+      "seconds": 52.0,
+      "log": "run_logs/proof2_shared_reference__s4_population_witness.log"
+    },
+    {
+      "folder": "proof2_shared_reference",
+      "script": "s5_strong_wave_montecarlo.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 6,
+      "fail": 0,
+      "seconds": 89.4,
+      "log": "run_logs/proof2_shared_reference__s5_strong_wave_montecarlo.log"
+    },
+    {
+      "folder": "proof2_shared_reference",
+      "script": "s6_author_routine_crosscheck.py",
+      "interpreter": "scipy",
+      "exit_code": 0,
+      "pass": 4,
+      "fail": 0,
+      "seconds": 72.1,
+      "log": "run_logs/proof2_shared_reference__s6_author_routine_crosscheck.log"
+    },
+    {
+      "folder": "proof3a_null_noise",
+      "script": "s1_background_identity.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 15,
+      "fail": 0,
+      "seconds": 38.5,
+      "log": "run_logs/proof3a_null_noise__s1_background_identity.log"
+    },
+    {
+      "folder": "proof3a_null_noise",
+      "script": "s2_elementary_ecdf.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 12,
+      "fail": 0,
+      "seconds": 7.4,
+      "log": "run_logs/proof3a_null_noise__s2_elementary_ecdf.log"
+    },
+    {
+      "folder": "proof3a_null_noise",
+      "script": "s3_toy_validation.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 10,
+      "fail": 0,
+      "seconds": 29.1,
+      "log": "run_logs/proof3a_null_noise__s3_toy_validation.log"
+    },
+    {
+      "folder": "proof3a_null_noise",
+      "script": "s4_toy_taylor_orders.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 11,
+      "fail": 0,
+      "seconds": 75.4,
+      "log": "run_logs/proof3a_null_noise__s4_toy_taylor_orders.log"
+    },
+    {
+      "folder": "proof3a_null_noise",
+      "script": "s5_toy_full_statistic.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 7,
+      "fail": 0,
+      "seconds": 72.8,
+      "log": "run_logs/proof3a_null_noise__s5_toy_full_statistic.log"
+    },
+    {
+      "folder": "proof3a_null_noise",
+      "script": "s6_scan_logic.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 9,
+      "fail": 0,
+      "seconds": 2.5,
+      "log": "run_logs/proof3a_null_noise__s6_scan_logic.log"
+    },
+    {
+      "folder": "proof3b_wave_signal",
+      "script": "check_01_primitive_and_B.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 6,
+      "fail": 0,
+      "seconds": 1.2,
+      "log": "run_logs/proof3b_wave_signal__check_01_primitive_and_B.log"
+    },
+    {
+      "folder": "proof3b_wave_signal",
+      "script": "check_02_canonical_density.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 8,
+      "fail": 0,
+      "seconds": 1.1,
+      "log": "run_logs/proof3b_wave_signal__check_02_canonical_density.log"
+    },
+    {
+      "folder": "proof3b_wave_signal",
+      "script": "check_03_kernel_mismatch.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 8,
+      "fail": 0,
+      "seconds": 83.5,
+      "log": "run_logs/proof3b_wave_signal__check_03_kernel_mismatch.log"
+    },
+    {
+      "folder": "proof3b_wave_signal",
+      "script": "check_04_population_signal.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 19,
+      "fail": 0,
+      "seconds": 81.5,
+      "log": "run_logs/proof3b_wave_signal__check_04_population_signal.log"
+    },
+    {
+      "folder": "proof3b_wave_signal",
+      "script": "check_04b_population_r1024.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 3,
+      "fail": 0,
+      "seconds": 98.1,
+      "log": "run_logs/proof3b_wave_signal__check_04b_population_r1024.log"
+    },
+    {
+      "folder": "proof3b_wave_signal",
+      "script": "check_05_anchor_neighbourhood.py",
+      "interpreter": "system",
+      "exit_code": 0,
+      "pass": 9,
+      "fail": 0,
+      "seconds": 0.7,
+      "log": "run_logs/proof3b_wave_signal__check_05_anchor_neighbourhood.log"
+    }
+  ]
+}

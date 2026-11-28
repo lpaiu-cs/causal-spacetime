@@ -1,0 +1,243 @@
+{
+  "code_version": "f597c3aa5a9cd74099a95ddcd3d2ff39263c2127",
+  "scope": "Post-result diagnosis on selected failures; oracle paths labelled separately; no independent validation or changed coverage verdict",
+  "selfcheck": {
+    "derivatives": {
+      "maximum_complex_step_jacobian_error": 1.734723475976807e-18,
+      "pair_symmetry_and_flat_zero": "passed",
+      "electric_and_magnetic_volume_weights": "passed"
+    },
+    "constant_wave_physical_scaling": [
+      {
+        "scale": 1,
+        "world_before": 1.3671490364464134e-05,
+        "world_after": 2.5360273771616347e-07,
+        "volume_before": 0.00038859579473959904,
+        "volume_after": 1.7387396861883743e-06
+      },
+      {
+        "scale": 0.5,
+        "world_before": 8.637803432520741e-07,
+        "world_after": 4.190061288682748e-09,
+        "volume_before": 2.4196825697764268e-05,
+        "volume_after": 8.134215267057733e-09
+      },
+      {
+        "scale": 0.25,
+        "world_before": 5.4162240248345483e-08,
+        "world_after": 6.637969898719245e-11,
+        "volume_before": 1.5119429273569018e-06,
+        "volume_after": 5.311648000867873e-11
+      },
+      {
+        "scale": 0.125,
+        "world_before": 3.3880095395844023e-09,
+        "world_after": 1.0408922395189884e-12,
+        "volume_before": 9.449492793800474e-08,
+        "volume_after": 8.254119959801088e-13
+      }
+    ]
+  },
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_square_diagnostic.py": "4913442567a0b7baa5f373c0c119c469262d5c3b659f8ce9d63459a5b12dde19",
+    "experiments/positive_control/intrinsic_weyl_square.py": "5a0d2f88a55945b7b9e4c26a4a951ca5f1fa40c66c50b675773655a7b795a2d0",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "4a5438a06484a7e730e5c95db273f100baf412f6138c237efa72060c12fde272",
+    "experiments/positive_control/intrinsic_weyl.py": "09c8a92505bde9ba3809371a8188ae2d8056a60804ae005d44bfc627cfd1014f",
+    "experiments/positive_control/intrinsic_weyl_gradient_diagnostic.py": "03173cc21d53ad1292fdcf8383b767017d5d0c11bb39dcd58de2a0a1c81bdc2a",
+    "experiments/positive_control/rotating_plane_wave.py": "b85ad0c2ea90ae438eae81073aad332f5bb6b60eac32066b823e7fe2b03125cc",
+    "docs/paper/paper_a/intrinsic_weyl/square_correction.md": "06b62a75a7aeb6424f9d52684d76611e482b50ac23ac8ed1fb5421e84580bd3c",
+    "docs/paper/paper_a/window_response/vacuum_generalization_derivation.md": "dc8ad5610ebc92fda74f5b4200ddc7d65faf54f3c48bba54719fbe12d3490829"
+  },
+  "input_sha256": {
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\case_27.npz": "7e7d406d41006bc1b0d280b63f65a83b220ec523ab95e43ac01ba2b9e2618655",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\truth_27.npz": "a1da5de679a377c52599173b311a8416f15dce50ca07670fbd6e9d20b834b1e5",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\case_27_full.json": "8e154317a3eac53297bc22e51d76e8069f742bcb12d5ad40c5a8033060ec1399",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\case_29.npz": "c2d432aaf758dfebe7f70221734331b53c356df29264a1f2e37a30d34ea2fbf7",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\truth_29.npz": "0c51b56178685f0a60dd07cb28316b464e32c2ed7393836ec269b1ff4ba2c544",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\case_29_full.json": "380596d4e4e1db8c4ac96443565b09af66d1d591eb6ea3d6af81582f95044dbc",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\case_49.npz": "cf8ceb2c53f07586a48054374c7c13fa66a8ca7c7a7bb306be466fbf326f54a2",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\truth_49.npz": "72a4575554b19d075f0b91749427ee0f7b18b23317a3207c16deb4650dda06a3",
+    "E:\\lab\\causal-spacetime\\outputs\\intrinsic_weyl_jet_coverage_v1\\case_49_full.json": "5b8b89a322ea9d494544401afd84905d67117937c85cd0665ce3c35adfeb8651"
+  },
+  "cases": [
+    {
+      "case": 27,
+      "original": {
+        "truth_coefficients_xy_positive": [
+          -0.6514838471956205,
+          -0.28463703773794247,
+          0.10733219180718294,
+          -0.23827835751923393,
+          0.4173610079183782,
+          0.08473025163148176,
+          0.3033498809199781,
+          -0.5186893736681486,
+          -0.46530645419896544,
+          -0.0587688971443272
+        ],
+        "truth_norm": 1.5,
+        "full_tidal_error_mod_reflection": 0.41725147024751347,
+        "relative_full_tidal_error": 0.27816764683167566,
+        "continuum_bias_mod_reflection": 0.031787393075677774,
+        "relative_continuum_bias": 0.02119159538378518,
+        "bias_condition_met": false,
+        "nominal_ball_contains_truth": true,
+        "confidence_radius": 1.1846606883013024,
+        "largest_tidal_variance": 0.06971063290612624,
+        "quadrature_relative_change": 2.886579864025407e-15
+      },
+      "variants": {
+        "oracle_exact_proper_time": {
+          "relative_tensor_error": 0.016348026293420095,
+          "largest_tidal_variance": 0.06915393580926711
+        },
+        "oracle_exact_fifth_polynomial": {
+          "relative_tensor_error": 5.4460241902434115e-14,
+          "largest_tidal_variance": 0.0691580606107061
+        },
+        "oracle_subtract_square_world": {
+          "relative_tensor_error": 0.018548853660669152,
+          "largest_tidal_variance": 0.06948230592943117
+        },
+        "oracle_subtract_square_volume": {
+          "relative_tensor_error": 0.017105358795483513,
+          "largest_tidal_variance": 0.06914747132669564
+        },
+        "oracle_subtract_both": {
+          "relative_tensor_error": 0.012367759184254,
+          "largest_tidal_variance": 0.06915966606232342
+        },
+        "blind_square_continuum": {
+          "relative_tensor_error": 0.01253023463857617,
+          "largest_tidal_variance": 0.06843667051383112
+        },
+        "blind_square_finite": {
+          "relative_tensor_error": 0.27967668050442096,
+          "largest_tidal_variance": 0.06866055465471542
+        }
+      }
+    },
+    {
+      "case": 29,
+      "original": {
+        "truth_coefficients_xy_positive": [
+          0.06760236484200417,
+          -0.30907799295409827,
+          0.2700462907609595,
+          -0.5472149273296838,
+          0.2629394140267525,
+          0.49801835315869425,
+          0.5360984894173061,
+          -0.3425698306592015,
+          -0.1075308635585302,
+          0.4063816443892809
+        ],
+        "truth_norm": 1.5,
+        "full_tidal_error_mod_reflection": 0.7474347035849057,
+        "relative_full_tidal_error": 0.49828980238993714,
+        "continuum_bias_mod_reflection": 0.04004872754136879,
+        "relative_continuum_bias": 0.02669915169424586,
+        "bias_condition_met": false,
+        "nominal_ball_contains_truth": true,
+        "confidence_radius": 1.570729901970566,
+        "largest_tidal_variance": 0.12384129405901273,
+        "quadrature_relative_change": 2.7755575615628914e-15
+      },
+      "variants": {
+        "oracle_exact_proper_time": {
+          "relative_tensor_error": 0.01960359649873922,
+          "largest_tidal_variance": 0.12437267966669617
+        },
+        "oracle_exact_fifth_polynomial": {
+          "relative_tensor_error": 9.104814485201031e-14,
+          "largest_tidal_variance": 0.12438750694291147
+        },
+        "oracle_subtract_square_world": {
+          "relative_tensor_error": 0.02517981862252074,
+          "largest_tidal_variance": 0.1250400078864421
+        },
+        "oracle_subtract_square_volume": {
+          "relative_tensor_error": 0.020528568281095075,
+          "largest_tidal_variance": 0.12435930229886816
+        },
+        "oracle_subtract_both": {
+          "relative_tensor_error": 0.01303053559503123,
+          "largest_tidal_variance": 0.12438009975214626
+        },
+        "blind_square_continuum": {
+          "relative_tensor_error": 0.01306885307168463,
+          "largest_tidal_variance": 0.12176127590975176
+        },
+        "blind_square_finite": {
+          "relative_tensor_error": 0.5127140353547115,
+          "largest_tidal_variance": 0.1203306249203582
+        }
+      }
+    },
+    {
+      "case": 49,
+      "original": {
+        "truth_coefficients_xy_positive": [
+          0.5926058554385794,
+          0.5734458366860817,
+          -0.05103869679156558,
+          -0.4560424698305591,
+          -0.10828596504173049,
+          -0.4580851836668398,
+          -0.45396885077373095,
+          -0.1098801927730871,
+          -0.5829628551635988,
+          0.0510617680212763
+        ],
+        "truth_norm": 1.5,
+        "full_tidal_error_mod_reflection": 0.8369529178665805,
+        "relative_full_tidal_error": 0.5579686119110537,
+        "continuum_bias_mod_reflection": 0.031861093045459914,
+        "relative_continuum_bias": 0.021240728696973275,
+        "bias_condition_met": false,
+        "nominal_ball_contains_truth": true,
+        "confidence_radius": 1.1316668577437345,
+        "largest_tidal_variance": 0.06264435198291324,
+        "quadrature_relative_change": 2.7755575615628914e-15
+      },
+      "variants": {
+        "oracle_exact_proper_time": {
+          "relative_tensor_error": 0.013015149594899597,
+          "largest_tidal_variance": 0.06197327738131417
+        },
+        "oracle_exact_fifth_polynomial": {
+          "relative_tensor_error": 8.961807723112832e-14,
+          "largest_tidal_variance": 0.06197805942108508
+        },
+        "oracle_subtract_square_world": {
+          "relative_tensor_error": 0.02386347402663559,
+          "largest_tidal_variance": 0.06233675885821753
+        },
+        "oracle_subtract_square_volume": {
+          "relative_tensor_error": 0.01357881326163819,
+          "largest_tidal_variance": 0.061967303077600705
+        },
+        "oracle_subtract_both": {
+          "relative_tensor_error": 0.013112337515874308,
+          "largest_tidal_variance": 0.06199228645109053
+        },
+        "blind_square_continuum": {
+          "relative_tensor_error": 0.013156965936058336,
+          "largest_tidal_variance": 0.06161752922485411
+        },
+        "blind_square_finite": {
+          "relative_tensor_error": 0.5348322307384111,
+          "largest_tidal_variance": 0.061615325133393066
+        }
+      }
+    }
+  ],
+  "raw_output_sha256": "9a1691096ec24b1cf6ab79c02ee8d388191759a2e75661b2d5bfc705f6f03d27",
+  "verification": {
+    "historical_source_hashes": 8,
+    "input_hashes": 9,
+    "pure_case_29_all_saved_fields_exact": true,
+    "pure_replay_imported_truth_modules": false,
+    "all_21_fits_full_rank": true
+  }
+}

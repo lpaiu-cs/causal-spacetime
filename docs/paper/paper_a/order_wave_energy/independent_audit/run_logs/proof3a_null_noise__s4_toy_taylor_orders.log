@@ -1,0 +1,44 @@
+valid mask (rows n=[4000, 16000, 64000], cols omega=[16, 32, 64, 128, 256]):
+[[1 1 1 1 0]
+ [1 1 1 1 1]
+ [1 1 1 1 1]]
+deterministic sigma_1(omega)*omega at omega=16..256 : 0.02217 0.01950 0.01694 0.01585 0.01556
+deterministic sigma_1(omega)*omega at 512,1024,2048 : 0.01551 0.01551 0.01553
+PASS T0 first-order term is exactly C/omega at large omega (deterministic) :: omega^2 sigma_1^2 changes by -8.06e-04, 2.27e-03 between octaves; sigma_inf = 0.01553
+rms |a_1| * omega*sqrt(n)  (rows n, cols omega; rel SE of rms in brackets)
+  n=  4000 0.02264[0.04] 0.01992[0.03] 0.01641[0.03] 0.01471[0.03] 0.01545[0.03]*
+  n= 16000 0.02058[0.04] 0.01949[0.03] 0.01748[0.03] 0.01561[0.03] 0.01523[0.04]
+  n= 64000 0.02242[0.04] 0.01991[0.04] 0.01678[0.03] 0.01680[0.03] 0.01573[0.03]
+  fitted L2 exponents for a_1: omega^(-1.140 +- 0.010)  n^(-0.480 +- 0.009)   [claim (4): omega^(<=-1) n^(-0.5)]
+rms |a_2| * n  (rows n, cols omega; rel SE of rms in brackets)
+  n=  4000 0.01554[0.07] 0.01321[0.06] 0.01262[0.06] 0.01280[0.07] 0.01298[0.05]*
+  n= 16000 0.01306[0.06] 0.01219[0.05] 0.01298[0.05] 0.01178[0.05] 0.01093[0.05]
+  n= 64000 0.01335[0.05] 0.01304[0.06] 0.01181[0.05] 0.01307[0.06] 0.01213[0.05]
+  fitted L2 exponents for a_2: omega^(-0.051 +- 0.014)  n^(-1.009 +- 0.022)   [claim (4): omega^(<=0) n^(-1.0)]
+rms |a_3| * n^1.5/omega  (rows n, cols omega; rel SE of rms in brackets)
+  n=  4000 0.01182[0.07] 0.00921[0.08] 0.00765[0.13] 0.00616[0.12] 0.00383[0.06]*
+  n= 16000 0.01274[0.08] 0.00858[0.06] 0.00756[0.08] 0.00635[0.08] 0.00522[0.07]
+  n= 64000 0.01173[0.07] 0.00920[0.11] 0.00706[0.09] 0.00770[0.08] 0.00632[0.09]
+  fitted L2 exponents for a_3: omega^(0.733 +- 0.018)  n^(-1.476 +- 0.034)   [claim (4): omega^(<=1) n^(-1.5)]
+PASS T1 simulated n*E|a_1|^2 equals the deterministic influence-function variance :: ratio range 0.861..1.124, worst |z| = 2.52 over 15 points
+PASS T2 k=1 n-exponent = -1/2 :: -0.480 +- 0.009
+PASS T2 k=1 omega-exponent <= -1 (bound (3)) :: -1.140 +- 0.010
+PASS T3 k=2 n-exponent = -1 :: -1.009 +- 0.022
+PASS T3 k=2 omega-exponent <= 0 :: -0.051 +- 0.014
+PASS T4 k=3 n-exponent = -3/2 :: -1.476 +- 0.034
+PASS T4 k=3 omega-exponent <= +1 :: 0.733 +- 0.018
+rms|G(1)-a_1-a_2-a_3| / rms|G(1)| (rows n, cols omega):
+  n=  4000 0.0095 0.0454 0.2573 1.1465 2.8943
+  n= 16000 0.0019 0.0057 0.0275 0.1741 0.9638
+  n= 64000 0.0002 0.0008 0.0039 0.0288 0.1729
+PASS T5 statistic = a_1+a_2+a_3 up to <2% where omega*sd(u_hat) <= 0.2 (6 points) :: max relative residual 0.0095
+  fitted L2 exponents for the K=3 remainder G(1)-a_1-a_2-a_3 (9 points with omega*sd(u_hat)<=0.5): omega^(1.107 +- 0.038) n^(-1.865 +- 0.048)   [claim: omega^(<=3) n^(-2)]
+PASS T6 K=3 remainder n-exponent = -(K+1)/2 = -2 :: -1.865 +- 0.048
+PASS T6 K=3 remainder omega-exponent <= K = 3 :: 1.107 +- 0.038
+INFO fixed-effects fits (n-slope with one intercept per omega; omega-slope with one intercept per n):
+INFO   a_1                  omega^(-1.140 +- 0.011)  n^(-0.486 +- 0.009)
+INFO   a_2                  omega^(-0.047 +- 0.014)  n^(-1.010 +- 0.023)
+INFO   a_3                  omega^(0.739 +- 0.018)  n^(-1.481 +- 0.035)
+INFO   K=3 remainder        omega^(1.118 +- 0.037)  n^(-1.912 +- 0.050)
+INFO   full statistic G(1)  omega^(-1.177 +- 0.030)  n^(-0.497 +- 0.018)
+SUMMARY failures=0

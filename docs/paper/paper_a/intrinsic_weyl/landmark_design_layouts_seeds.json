@@ -1,0 +1,7 @@
+[
+ {"name": "present"},
+ {"name": "cap96", "maximum": 96},
+ {"name": "present_s16k", "selection_n": 16384},
+ {"name": "strata3_s16k", "selection_n": 16384, "end_strata": 3},
+ {"name": "cap96_s16k", "selection_n": 16384, "maximum": 96}
+]

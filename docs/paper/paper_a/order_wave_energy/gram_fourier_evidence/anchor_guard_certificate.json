@@ -1,0 +1,17 @@
+{
+  "code_version": "f1072f0b6be60249b41b796b91e20e897e4dc827",
+  "scope": "rational anchor bounds; not finite-order noise or power",
+  "files": {
+    "experiments/positive_control/order_wave_gram_fourier.py": "1af338ec9859dd52c080bb231f8eca1345af7560f1c3a6eb503ed3642864d66e",
+    "docs/paper/paper_a/order_wave_energy/gram_fourier_noise.md": "f932f3f69156c32c2500ee3adb494a7887b41876d88376ad4efd902ee4547b2b"
+  },
+  "passed": true,
+  "m_derivative_upper": 1.2984464104095248,
+  "third_anchor_coordinate_lower": 0.0793741191050273,
+  "ell_magnitude_upper": 1.009433962264151,
+  "D_imaginary_lower": 0.01069797423346495,
+  "D_absolute_upper": 0.042390706889430904,
+  "grid_coefficient_lower": 0.010168090397347063,
+  "anchor_pair_slack_lower": 0.028916666666666667,
+  "active_probe_slack_lower": 0.1001972267437538
+}

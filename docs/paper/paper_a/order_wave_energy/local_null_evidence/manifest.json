@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "code_version": "7dec69a787164b3f9b0c9ee70754879f6b15fc3d",
+  "utc_started": "2026-09-24T07:57:47Z",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "files": {
+    "experiments/positive_control/order_wave_local_null.py": "41774e293191ee4905d975157dcf375740394f355ff83bca66c73060132af342",
+    "docs/paper/paper_a/order_wave_energy/local_null_challenge.md": "3ed347fa4eb357170e70688618d1908484297de02d97c0ecaffe6a515ef3dbc7",
+    "experiments/positive_control/order_wave_null_coordinate.py": "1018d7e6d4a2f8e05d503065f61ecdbbec2a65c7a7f62cc577e857f30bcc9221",
+    "experiments/positive_control/order_wave_resolution.py": "0974a003a282e7ce496f7eb2fff61ffa69b62c1b2af46ded0c434e1791e48b93",
+    "experiments/positive_control/order_wave_energy.py": "bf2bd0ea0c149966029e1c63b45e2dcec64c30897948f41ee1417266de7555e5"
+  },
+  "scope": "short-separation population witnesses; not finite-N power",
+  "elapsed_seconds": 17.60289430618286,
+  "rows_sha256": "108d77a2ccf2fa720223b7e86a7cbcc8ad1a916107c945fb29aedc9a84377c83"
+}

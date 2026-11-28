@@ -1,0 +1,136 @@
+{
+  "stage": "control",
+  "code_version": "741ddfc6631e90a80a122b8053bda4a085926643",
+  "rows_sha256": "488734de3c1e43b69cb61ee686dc1d5e34f8e0b24789c39bc3c24fd37f9ac4f2",
+  "candidates": 1711,
+  "events": 192,
+  "by_size": {
+    "32": {
+      "orders": 8,
+      "events": 64,
+      "mean_F": 7.90625,
+      "mean_S": 3.859375,
+      "mean_R": 3.859375,
+      "mean_U": 3.859375,
+      "certified_by_joint_only_at_start": 0,
+      "completeness": {
+        "independent_certificates": 247,
+        "also_found_at_start": 247,
+        "wilson95": [
+          0.9846857098566234,
+          0.9999999999999999
+        ]
+      },
+      "participation_from_far_lags": null,
+      "wall_overlap_fraction_by_lag": {
+        "1": 1.0,
+        "2": 1.0
+      },
+      "scaled_margin_quantiles_all": [
+        0.48454873075914673,
+        1.3744414511571534,
+        2.9992328583758585,
+        5.46162594532478
+      ],
+      "scaled_margin_quantiles_certified": [
+        0.26593290414195536,
+        0.5604599904433947,
+        1.2705981509319493,
+        1.9692746690888363
+      ],
+      "chain_rms_displacement_times_n": [
+        0.9842354399750728,
+        1.1358574184131174
+      ],
+      "mean_seconds_per_order": 5.1625
+    },
+    "64": {
+      "orders": 8,
+      "events": 64,
+      "mean_F": 8.59375,
+      "mean_S": 3.875,
+      "mean_R": 3.875,
+      "mean_U": 3.875,
+      "certified_by_joint_only_at_start": 0,
+      "completeness": {
+        "independent_certificates": 248,
+        "also_found_at_start": 248,
+        "wilson95": [
+          0.9847465191062658,
+          0.9999999999999999
+        ]
+      },
+      "participation_from_far_lags": null,
+      "wall_overlap_fraction_by_lag": {
+        "1": 1.0,
+        "2": 1.0
+      },
+      "scaled_margin_quantiles_all": [
+        0.5791650704128379,
+        1.6500466995848626,
+        3.363968243180034,
+        6.406550012188899
+      ],
+      "scaled_margin_quantiles_certified": [
+        0.27970271598971586,
+        0.6338945824958628,
+        1.383529288042915,
+        2.292721212035085
+      ],
+      "chain_rms_displacement_times_n": [
+        0.9972609253300785,
+        1.2231334730328687
+      ],
+      "mean_seconds_per_order": 7.362500000000001
+    },
+    "128": {
+      "orders": 8,
+      "events": 64,
+      "mean_F": 10.234375,
+      "mean_S": 3.984375,
+      "mean_R": 3.984375,
+      "mean_U": 3.984375,
+      "certified_by_joint_only_at_start": 0,
+      "completeness": {
+        "independent_certificates": 255,
+        "also_found_at_start": 255,
+        "wilson95": [
+          0.9851590278547393,
+          1.0000000000000002
+        ]
+      },
+      "participation_from_far_lags": null,
+      "wall_overlap_fraction_by_lag": {
+        "1": 1.0,
+        "2": 1.0
+      },
+      "scaled_margin_quantiles_all": [
+        0.7380909723612419,
+        2.0345790571873152,
+        4.326601775748053,
+        7.301868023459378
+      ],
+      "scaled_margin_quantiles_certified": [
+        0.24694132163248383,
+        0.6729250157674471,
+        1.3570149337300137,
+        2.302717359162406
+      ],
+      "chain_rms_displacement_times_n": [
+        0.9894309697289343,
+        1.207089721764061
+      ],
+      "mean_seconds_per_order": 13.225000000000001
+    }
+  },
+  "control": {
+    "known_realisable": 750,
+    "found_at_start": 750,
+    "wilson95": [
+      0.9949041554612866,
+      1.0
+    ],
+    "certified_outside_the_rule": 0,
+    "gate_sensitivity_pass": true
+  }
+}

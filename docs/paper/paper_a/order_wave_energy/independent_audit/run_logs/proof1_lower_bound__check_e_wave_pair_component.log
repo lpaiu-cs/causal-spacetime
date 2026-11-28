@@ -1,0 +1,58 @@
+=== check (e3): two-event component in the exact wave family ===
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e1 s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=1.811e-01 eps/delta=4.44 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e1 s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=1.525e-01 eps/delta=3.74 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e1 s/hc=+0.00 | p0=0.000e+00 p_lam=9.984e-06 |dsqrt|=3.160e-03 bound=1.519e-01 eps/delta=3.72 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e1 s/hc=+0.05 | p0=1.240e-03 p_lam=1.404e-03 |dsqrt|=2.253e-03 bound=1.489e-01 eps/delta=3.65 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e1 s/hc=+0.20 | p0=1.974e-02 p_lam=2.042e-02 |dsqrt|=2.403e-03 bound=1.400e-01 eps/delta=3.43 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e1 s/hc=+1.00 | p0=5.004e-01 p_lam=5.040e-01 |dsqrt|=2.531e-03 bound=9.146e-02 eps/delta=2.24 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e2 s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=1.810e-01 eps/delta=4.43 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e2 s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=1.524e-01 eps/delta=3.73 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e2 s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=1.518e-01 eps/delta=3.72 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e2 s/hc=+0.05 | p0=1.268e-03 p_lam=1.104e-03 |dsqrt|=2.379e-03 bound=1.489e-01 eps/delta=3.65 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e2 s/hc=+0.20 | p0=2.019e-02 p_lam=1.953e-02 |dsqrt|=2.346e-03 bound=1.400e-01 eps/delta=3.43 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy along e2 s/hc=+1.00 | p0=4.995e-01 p_lam=4.960e-01 |dsqrt|=2.522e-03 bound=9.149e-02 eps/delta=2.24 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy diagonal s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=7.435e-02 eps/delta=1.82 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy diagonal s/hc=-0.01 | p0=0.000e+00 p_lam=6.594e-05 |dsqrt|=8.121e-03 bound=8.071e-02 eps/delta=1.98 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy diagonal s/hc=+0.00 | p0=0.000e+00 p_lam=2.278e-04 |dsqrt|=1.509e-02 bound=8.108e-02 eps/delta=1.99 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy diagonal s/hc=+0.05 | p0=1.227e-03 p_lam=2.506e-03 |dsqrt|=1.503e-02 bound=8.440e-02 eps/delta=2.07 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy diagonal s/hc=+0.20 | p0=1.978e-02 p_lam=2.423e-02 |dsqrt|=1.502e-02 bound=9.351e-02 eps/delta=2.29 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/64 hc=0.006 dy diagonal s/hc=+1.00 | p0=4.981e-01 p_lam=5.193e-01 |dsqrt|=1.487e-02 bound=1.418e-01 eps/delta=3.48 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e1 s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=6.643e-02 eps/delta=10.83 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e1 s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=6.007e-02 eps/delta=9.79 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e1 s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=5.992e-02 eps/delta=9.77 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e1 s/hc=+0.05 | p0=1.161e-03 p_lam=1.207e-03 |dsqrt|=6.668e-04 bound=5.909e-02 eps/delta=9.63 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e1 s/hc=+0.20 | p0=1.991e-02 p_lam=2.017e-02 |dsqrt|=9.023e-04 bound=5.644e-02 eps/delta=9.20 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e1 s/hc=+1.00 | p0=4.984e-01 p_lam=4.994e-01 |dsqrt|=7.518e-04 bound=3.829e-02 eps/delta=6.24 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e2 s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=6.642e-02 eps/delta=10.83 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e2 s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=6.004e-02 eps/delta=9.79 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e2 s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=5.992e-02 eps/delta=9.77 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e2 s/hc=+0.05 | p0=1.279e-03 p_lam=1.229e-03 |dsqrt|=7.043e-04 bound=5.908e-02 eps/delta=9.63 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e2 s/hc=+0.20 | p0=2.005e-02 p_lam=1.982e-02 |dsqrt|=8.269e-04 bound=5.643e-02 eps/delta=9.20 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy along e2 s/hc=+1.00 | p0=4.996e-01 p_lam=4.986e-01 |dsqrt|=7.219e-04 bound=3.831e-02 eps/delta=6.24 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy diagonal s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=4.871e-02 eps/delta=7.94 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy diagonal s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.666e-02 eps/delta=5.98 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy diagonal s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.640e-02 eps/delta=5.94 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy diagonal s/hc=+0.05 | p0=1.095e-03 p_lam=8.548e-04 |dsqrt|=3.846e-03 bound=3.504e-02 eps/delta=5.72 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy diagonal s/hc=+0.20 | p0=2.013e-02 p_lam=1.895e-02 |dsqrt|=4.195e-03 bound=3.085e-02 eps/delta=5.03 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=1 lam=1/128 hc=0.010 dy diagonal s/hc=+1.00 | p0=5.000e-01 p_lam=4.939e-01 |dsqrt|=4.338e-03 bound=5.002e-02 eps/delta=8.16 (c0=18.1) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e1 s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.915e-02 eps/delta=23.29 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e1 s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.922e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e1 s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.922e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e1 s/hc=+0.05 | p0=1.142e-03 p_lam=1.202e-03 |dsqrt|=8.728e-04 bound=3.923e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e1 s/hc=+0.20 | p0=1.947e-02 p_lam=1.971e-02 |dsqrt|=8.586e-04 bound=3.926e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e1 s/hc=+1.00 | p0=4.931e-01 p_lam=4.937e-01 |dsqrt|=4.500e-04 bound=3.993e-02 eps/delta=23.65 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e2 s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.915e-02 eps/delta=23.29 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e2 s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.922e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e2 s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.922e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e2 s/hc=+0.05 | p0=1.221e-03 p_lam=1.177e-03 |dsqrt|=6.402e-04 bound=3.923e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e2 s/hc=+0.20 | p0=1.899e-02 p_lam=1.880e-02 |dsqrt|=6.909e-04 bound=3.926e-02 eps/delta=23.30 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy along e2 s/hc=+1.00 | p0=4.933e-01 p_lam=4.927e-01 |dsqrt|=3.932e-04 bound=3.995e-02 eps/delta=23.66 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy diagonal s/hc=-0.50 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.784e-02 eps/delta=22.73 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy diagonal s/hc=-0.01 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.792e-02 eps/delta=22.74 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy diagonal s/hc=+0.00 | p0=0.000e+00 p_lam=0.000e+00 |dsqrt|=0.000e+00 bound=3.792e-02 eps/delta=22.74 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy diagonal s/hc=+0.05 | p0=1.211e-03 p_lam=1.066e-03 |dsqrt|=2.154e-03 bound=3.792e-02 eps/delta=22.74 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy diagonal s/hc=+0.20 | p0=1.942e-02 p_lam=1.887e-02 |dsqrt|=1.985e-03 bound=3.793e-02 eps/delta=22.74 (c0=132.4) sandwich violations=0
+PASS G1/G2 q=4 lam=1/128 hc=0.040 dy diagonal s/hc=+1.00 | p0=4.962e-01 p_lam=4.944e-01 |dsqrt|=1.289e-03 bound=3.838e-02 eps/delta=22.95 (c0=132.4) sandwich violations=0
+PASS G3 a zero-reference-probability relation becomes possible in the wave and stays under the sqrt bound
+PASS G4 max |sqrt p_lam - sqrt p_0| hc/delta relative to sqrt(L hc^2/2) c0 | max ratio 0.0392
+SUMMARY checks=56 fails=0 -> ALL PASS

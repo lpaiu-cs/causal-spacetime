@@ -1,0 +1,20 @@
+{
+  "scope": "post-run eight-band enclosure; synthetic moments, not sampled power",
+  "code_version": "9c44b7d4c3dde132a35a0a46ae7522feee835523",
+  "files": {
+    "experiments/positive_control/order_wave_local_null.py": "6fe55dda95ee3d3e510d46861f366c970f0bf25c73e06b27c72a5ff229ee035b",
+    "docs/paper/paper_a/order_wave_energy/local_null_results.md": "3360518b13635f97a6413768c16b3b8ce1748d676c0c49d9af424b0f9f9da154"
+  },
+  "raw_sha256": "108d77a2ccf2fa720223b7e86a7cbcc8ad1a916107c945fb29aedc9a84377c83",
+  "reference_count": 1000000000000000000000000000000,
+  "bands": 8,
+  "original_difference_interval": [
+    -8.705234025605792e-08,
+    9.763044096146444e-09
+  ],
+  "difference_interval": [
+    -3.8790612399727065e-08,
+    -3.849868376018441e-08
+  ],
+  "negative_upper_endpoint": true
+}

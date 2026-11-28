@@ -1,0 +1,26 @@
+=== check (d): cubes, uncertain pairs, bad marks ===
+PASS D0 reference domain = Minkowski diamond between the two tips in the (T,Z,y) chart | 200000 samples inside; 400000 box points: memberships agree, 38950 inside
+PASS D1 non-edges deterministic and shared by both kernels q=1.00 lam=1/16 hc=0.05566 | pairs=2937900 edges=770809 violations=0 wave/background disagreements=7194 (all on edges)
+PASS D2 orientation fixed off the O(hc)-coincidence set q=1.00 lam=1/16 hc=0.05566 | reverse-true=0 ambiguous=25093 (bound on mean 127216.63) ambiguous-but-far=0
+PASS D1 non-edges deterministic and shared by both kernels q=1.00 lam=1/32 hc=0.01391 | pairs=2937900 edges=179429 violations=0 wave/background disagreements=1905 (all on edges)
+PASS D2 orientation fixed off the O(hc)-coincidence set q=1.00 lam=1/32 hc=0.01391 | reverse-true=0 ambiguous=172 (bound on mean 496.94) ambiguous-but-far=0
+PASS D1 non-edges deterministic and shared by both kernels q=1.00 lam=1/64 hc=0.00348 | pairs=2937900 edges=43514 violations=0 wave/background disagreements=464 (all on edges)
+PASS D2 orientation fixed off the O(hc)-coincidence set q=1.00 lam=1/64 hc=0.00348 | reverse-true=0 ambiguous=0 (bound on mean 1.94) ambiguous-but-far=0
+PASS D1 non-edges deterministic and shared by both kernels q=0.25 lam=1/32 hc=0.00492 | pairs=2937900 edges=65969 violations=0 wave/background disagreements=937 (all on edges)
+PASS D2 orientation fixed off the O(hc)-coincidence set q=0.25 lam=1/32 hc=0.00492 | reverse-true=0 ambiguous=4 (bound on mean 8.23) ambiguous-but-far=0
+PASS D1 non-edges deterministic and shared by both kernels q=4.00 lam=1/64 hc=0.02549 | pairs=2937900 edges=255086 violations=0 wave/background disagreements=797 (all on edges)
+PASS D2 orientation fixed off the O(hc)-coincidence set q=4.00 lam=1/64 hc=0.02549 | reverse-true=0 ambiguous=532 (bound on mean 4184.11) ambiguous-but-far=0
+PASS D1n negative control: L = 1 < 1 + sqrt 3 breaks non-edge determinism (test has power) | violations with L=1: 154
+PASS D3 uncertain-cube probability <= C_unc hc uniformly in the first event q=1 hc=0.0040 N=1600 | max_x fraction=0.0750 mean fraction=0.0168 bound C_unc*hc=0.2586 (C_unc=64.6)
+PASS D4 tree counts <= (number of labelled trees) C(N,k) (C_unc hc)^(k-1) q=1 hc=0.0040 N=1600 | 3-trees 7.818e+05 <= 1.366e+08 ; 4-trees 3.752e+07 <= 7.523e+10
+INFO D5 baseline U/(N^2 hc) = 2.0972 at hc=0.0040
+PASS D3 uncertain-cube probability <= C_unc hc uniformly in the first event q=1 hc=0.0020 N=1600 | max_x fraction=0.0419 mean fraction=0.0085 bound C_unc*hc=0.1293 (C_unc=64.6)
+PASS D4 tree counts <= (number of labelled trees) C(N,k) (C_unc hc)^(k-1) q=1 hc=0.0020 N=1600 | 3-trees 2.002e+05 <= 3.416e+07 ; 4-trees 4.858e+06 <= 9.404e+09
+PASS D5 U/(N^2 hc) stable under halving hc q=1 hc=0.0020 N=1600 | ratio 2.1231 vs 2.0972
+PASS D3 uncertain-cube probability <= C_unc hc uniformly in the first event q=1 hc=0.0010 N=1600 | max_x fraction=0.0213 mean fraction=0.0044 bound C_unc*hc=0.0646 (C_unc=64.6)
+PASS D4 tree counts <= (number of labelled trees) C(N,k) (C_unc hc)^(k-1) q=1 hc=0.0010 N=1600 | 3-trees 5.328e+04 <= 8.541e+06 ; 4-trees 6.622e+05 <= 1.175e+09
+PASS D5 U/(N^2 hc) stable under halving hc q=1 hc=0.0010 N=1600 | ratio 2.2060 vs 2.1231
+PASS D6 boundary-cube probability is O(hc) hc=0.020 | P(cube not inside D)=0.1239, /hc=6.20
+PASS D6 boundary-cube probability is O(hc) hc=0.010 | P(cube not inside D)=0.0635, /hc=6.35
+PASS D6 boundary-cube probability is O(hc) hc=0.005 | P(cube not inside D)=0.0318, /hc=6.35
+SUMMARY checks=23 fails=0 -> ALL PASS

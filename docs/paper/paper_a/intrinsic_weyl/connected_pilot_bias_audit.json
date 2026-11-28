@@ -1,0 +1,743 @@
+{
+  "kind": "Post-pilot continuum bias diagnostic on previously selected landmarks",
+  "scope": "No frozen accuracy verdict or independent coverage certification",
+  "selfcheck": "inverse exponential map and tidal normalization independently checked",
+  "audit_code_version": "112539dd7f68344ad17ab078a38a8ca82648075c",
+  "original_pilot_code_version": "efa8624b0cf20e841e00579d3e1152ce67d09c57",
+  "original_summary_sha256": "b1c3ac4ce9c756df7f80a14ae12c376b3df8a3f1d84c4c0595dc4a26d10b7388",
+  "cases": [
+    {
+      "case": 0,
+      "amplitude": 0.0,
+      "quadrature_relative_change": 2.7755575615628914e-15,
+      "continuum_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "continuum_eigen_bias": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "continuum_magnetic_eigenvalues": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.21115137565648387,
+        -0.11501728683742816,
+        0.3261686624939121
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.11385426272089906,
+          -0.02905163262187444,
+          0.14290589534277348
+        ],
+        "nominal_eigen_se": [
+          0.07055388026949845,
+          0.08157945430870714,
+          0.07850195018319343
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.25213732701866715,
+            0.02442880157686904
+          ],
+          [
+            -0.18894442494537136,
+            0.1308411597016225
+          ],
+          [
+            -0.010955099732443158,
+            0.2967668904179901
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 7.70897070546023,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_magnetic_uncertainty": {
+        "eigenvalues": [
+          -0.21115137565648387,
+          -0.1150172868374281,
+          0.3261686624939121
+        ],
+        "nominal_eigen_se": [
+          0.18292745556813556,
+          0.19127766655116019,
+          0.17493938021269778
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.5696826003535805,
+            0.14737984904061277
+          ],
+          [
+            -0.4899146243245638,
+            0.25988005064970765
+          ],
+          [
+            -0.016706222200734533,
+            0.6690435471885587
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 7.70897070546023,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.4454534336241801,
+        "relative_full_tidal_error": null,
+        "aligned_truth_coefficients": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_parity": -1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      },
+      "continuum_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.0,
+        "relative_full_tidal_error": null,
+        "aligned_truth_coefficients": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_parity": -1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      }
+    },
+    {
+      "case": 1,
+      "amplitude": 0.0,
+      "quadrature_relative_change": 2.7755575615628914e-15,
+      "continuum_eigenvalues": [
+        -3.176621154489148e-14,
+        8.830008797951075e-15,
+        2.2936202746940424e-14
+      ],
+      "continuum_eigen_bias": [
+        -3.176621154489148e-14,
+        8.830008797951075e-15,
+        2.2936202746940424e-14
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -1.5606971133600652e-14,
+        -1.111344304336947e-15,
+        1.67183154379376e-14
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.29324105323366983,
+        -0.15956911729974657,
+        0.4528101705334164
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.21264327181650658,
+          0.019213058424627866,
+          0.19343021339187882
+        ],
+        "nominal_eigen_se": [
+          0.09948933216247638,
+          0.07540805836305958,
+          0.08771690179519706
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.40763877970090273,
+            -0.017647763932110427
+          ],
+          [
+            -0.12858402011106335,
+            0.16701013696031908
+          ],
+          [
+            0.021508245037855783,
+            0.3653521817459019
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 11.808029903019511,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_magnetic_uncertainty": {
+        "eigenvalues": [
+          -0.2932410532336698,
+          -0.15956911729974657,
+          0.45281017053341643
+        ],
+        "nominal_eigen_se": [
+          0.1778116098765313,
+          0.17182903304155595,
+          0.1879506298545396
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.6417454046247577,
+            0.05526329815741815
+          ],
+          [
+            -0.49634783355953915,
+            0.17720959896004604
+          ],
+          [
+            0.08443370514690013,
+            0.8211866359199327
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 11.808029903019511,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.6320531774713253,
+        "relative_full_tidal_error": null,
+        "aligned_truth_coefficients": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      },
+      "continuum_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 4.623251402363554e-14,
+        "relative_full_tidal_error": null,
+        "aligned_truth_coefficients": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      }
+    },
+    {
+      "case": 2,
+      "amplitude": 0.25,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "continuum_eigenvalues": [
+        -0.25002364870071486,
+        -0.00011169306073738425,
+        0.25013534176145225
+      ],
+      "continuum_eigen_bias": [
+        -2.3648700714862247e-05,
+        -0.00011169306073738425,
+        0.00013534176145224563
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.2500392160032977,
+        0.00029618280593952283,
+        0.24974303319735813
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.40732594710924563,
+        -0.2307612519797361,
+        0.6380871990889818
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.4206173986778047,
+          0.0565513279000283,
+          0.3640660707777765
+        ],
+        "nominal_eigen_se": [
+          0.0718070105016579,
+          0.077579227621204,
+          0.07213744718326598
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.5613565530985436,
+            -0.27987824425706576
+          ],
+          [
+            -0.09550116418596653,
+            0.20860381998602312
+          ],
+          [
+            0.2226792723619148,
+            0.5054528691936382
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 56.66752049305704,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_magnetic_uncertainty": {
+        "eigenvalues": [
+          -0.4073259471092456,
+          -0.23076125197973604,
+          0.6380871990889817
+        ],
+        "nominal_eigen_se": [
+          0.18458917873185518,
+          0.17925200134319066,
+          0.16989414814851267
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.7691140893595086,
+            -0.04553780485898251
+          ],
+          [
+            -0.5820887187691152,
+            0.12056621480964305
+          ],
+          [
+            0.30510078753378456,
+            0.9710736106441789
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 56.66752049305704,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.5580621694543673,
+        "relative_full_tidal_error": 1.1161243389087345,
+        "aligned_truth_coefficients": [
+          0.028501911049227717,
+          0.16809623696719858,
+          0.1410852644583425,
+          0.052522913275874654,
+          -0.12473432531381559,
+          -0.08947431343797453,
+          0.08030776983056831,
+          -0.02711478291389453,
+          0.12138864437029948,
+          0.1593396132033458
+        ],
+        "alignment_parity": -1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      },
+      "continuum_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.0012146975465629664,
+        "relative_full_tidal_error": 0.0024293950931259327,
+        "aligned_truth_coefficients": [
+          0.029825054051908217,
+          0.16558110469071824,
+          0.14104611374584947,
+          -0.049047169532691004,
+          0.12973896205690022,
+          0.0878308832040435,
+          -0.08608025739455358,
+          0.023881071517702857,
+          0.12208437766536273,
+          0.15601448446319782
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      }
+    },
+    {
+      "case": 3,
+      "amplitude": 0.25,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "continuum_eigenvalues": [
+        -0.24980896959503465,
+        9.355189474796806e-05,
+        0.24971541770028666
+      ],
+      "continuum_eigen_bias": [
+        0.00019103040496534773,
+        9.355189474796806e-05,
+        -0.0002845822997133429
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.24965021654317168,
+        2.864449786668422e-05,
+        0.2496215720453049
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.26538827923120567,
+        -0.16258887994051394,
+        0.42797715917171975
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.20011069532633977,
+          -0.05182172289464099,
+          0.25193241822098084
+        ],
+        "nominal_eigen_se": [
+          0.0749858357168695,
+          0.07211950864716718,
+          0.0717286454992414
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.3470802326820412,
+            -0.05314115797063834
+          ],
+          [
+            -0.19317336242581365,
+            0.08952991663653168
+          ],
+          [
+            0.11134685638262665,
+            0.392517980059335
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 19.24169089832175,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_magnetic_uncertainty": {
+        "eigenvalues": [
+          -0.2653882792312058,
+          -0.16258887994051394,
+          0.4279771591717199
+        ],
+        "nominal_eigen_se": [
+          0.1601443425688268,
+          0.16704927218079338,
+          0.18162289527787814
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.5792654229939509,
+            0.04848886453153939
+          ],
+          [
+            -0.4899994370584977,
+            0.16482167717746984
+          ],
+          [
+            0.07200282565918892,
+            0.7839514926842509
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 19.24169089832175,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.34550288714670135,
+        "relative_full_tidal_error": 0.6910057742934027,
+        "aligned_truth_coefficients": [
+          0.004331388176126881,
+          -0.232948987986934,
+          -0.023636860348253397,
+          -0.04759498612234213,
+          -0.06620446895047938,
+          -0.01051371694250182,
+          -0.07142919039464354,
+          -0.047190069168806664,
+          0.02247896622483468,
+          0.23517251594131092
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      },
+      "continuum_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.0012106717846161272,
+        "relative_full_tidal_error": 0.0024213435692322545,
+        "aligned_truth_coefficients": [
+          0.005018456377692276,
+          -0.23326000605024935,
+          -0.022152160878017378,
+          -0.04805107946844796,
+          -0.06398714744658332,
+          -0.010123628972949826,
+          -0.06900914388267546,
+          -0.04777701754851314,
+          0.020968502680224523,
+          0.2358210161434427
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      }
+    },
+    {
+      "case": 4,
+      "amplitude": 0.75,
+      "quadrature_relative_change": 2.7755575615628914e-15,
+      "continuum_eigenvalues": [
+        -0.7506400671067386,
+        -0.004086541368466482,
+        0.754726608475205
+      ],
+      "continuum_eigen_bias": [
+        -0.0006400671067385844,
+        -0.004086541368466482,
+        0.0047266084752050075
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.7506537342372248,
+        0.0009416982356268421,
+        0.7497120360015979
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.6879405943422108,
+        -0.06260342084154975,
+        0.7505440151837606
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.6354269617963375,
+          0.03660884343173677,
+          0.5988181183646005
+        ],
+        "nominal_eigen_se": [
+          0.0640727176019098,
+          0.07192896952293808,
+          0.07295587389419707
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -0.7610071806876864,
+            -0.5098467429049887
+          ],
+          [
+            -0.10436934627830106,
+            0.1775870331417746
+          ],
+          [
+            0.45582723307132833,
+            0.7418090036578727
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 140.68625926223422,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_magnetic_uncertainty": {
+        "eigenvalues": [
+          -0.687940594342211,
+          -0.06260342084154961,
+          0.7505440151837605
+        ],
+        "nominal_eigen_se": [
+          0.16415148236194393,
+          0.15611115515299326,
+          0.16486425005456398
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -1.009671587780483,
+            -0.36620960090393895
+          ],
+          [
+            -0.36857566252636087,
+            0.2433688208432616
+          ],
+          [
+            0.4274160227386094,
+            1.0736720076289115
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 140.68625926223422,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.45981207957600245,
+        "relative_full_tidal_error": 0.30654138638400164,
+        "aligned_truth_coefficients": [
+          -0.005319980663467707,
+          -0.3266986709124859,
+          0.353322862592898,
+          -0.5565869764301606,
+          0.15116745443144577,
+          0.5795147946522662,
+          0.4862767252307564,
+          -0.26285828151017904,
+          -0.17240225165996187,
+          0.4161551313012525
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      },
+      "continuum_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.009247216228088152,
+        "relative_full_tidal_error": 0.006164810818725434,
+        "aligned_truth_coefficients": [
+          -0.003273656988159544,
+          -0.32178904131144154,
+          0.3521373804830762,
+          0.5591944750570064,
+          -0.15262806864343798,
+          -0.582270680784504,
+          -0.48980956457761726,
+          0.26290802106416883,
+          -0.16896786456812576,
+          0.41361627938442647
+        ],
+        "alignment_parity": -1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      }
+    },
+    {
+      "case": 5,
+      "amplitude": 0.75,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "continuum_eigenvalues": [
+        -0.7479620743136303,
+        -0.003938828440650691,
+        0.7519009027542807
+      ],
+      "continuum_eigen_bias": [
+        0.002037925686369735,
+        -0.003938828440650691,
+        0.0019009027542806756
+      ],
+      "continuum_magnetic_eigenvalues": [
+        -0.7510475190624277,
+        0.0017545470567682604,
+        0.7492929720056591
+      ],
+      "finite_magnetic_eigenvalues": [
+        -0.6582512888551147,
+        0.1401936168214974,
+        0.518057672033617
+      ],
+      "continuum_optimizer_success": true,
+      "continuum_projected_curvature_rank": 10,
+      "finite_order_uncertainty": {
+        "eigenvalues": [
+          -0.8603785608454662,
+          0.013144590223371055,
+          0.8472339706220949
+        ],
+        "nominal_eigen_se": [
+          0.0723896917596784,
+          0.07292707513114012,
+          0.07588544983140327
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -1.0022597495463916,
+            -0.7184973721445406
+          ],
+          [
+            -0.1297898505315102,
+            0.15607903097825232
+          ],
+          [
+            0.6985012220019234,
+            0.9959667192422664
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 198.00081991307172,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_magnetic_uncertainty": {
+        "eigenvalues": [
+          -0.6582512888551146,
+          0.14019361682149736,
+          0.5180576720336171
+        ],
+        "nominal_eigen_se": [
+          0.18009790892140265,
+          0.18931920570908659,
+          0.16859336427029462
+        ],
+        "nominal_marginal_95_intervals": [
+          [
+            -1.0112367040320387,
+            -0.3052658736781905
+          ],
+          [
+            -0.23086520795004215,
+            0.5112524415930368
+          ],
+          [
+            0.18762075003139767,
+            0.8484945940358365
+          ]
+        ],
+        "scope": "Delta-method approximation; not valid at degenerate flat eigenvalues",
+        "full_tensor_flat_wald": 198.00081991307172,
+        "nominal_flat_chi2_95_df10": 18.307038053275146
+      },
+      "finite_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.46794368950235077,
+        "relative_full_tidal_error": 0.3119624596682338,
+        "aligned_truth_coefficients": [
+          -0.15388816563551452,
+          0.4148323492957123,
+          0.2323033234657386,
+          0.25340032265575585,
+          -0.4297885614584004,
+          0.10997248897308373,
+          -0.3781969037504517,
+          0.29630893968456873,
+          -0.20485406774092596,
+          -0.48581655182619077
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      },
+      "continuum_full_tensor_error": {
+        "electric_magnetic_frobenius_error": 0.007080815884398234,
+        "relative_full_tidal_error": 0.004720543922932156,
+        "aligned_truth_coefficients": [
+          -0.15529725213513673,
+          0.39634629661194065,
+          -0.2354365941461235,
+          -0.24980785494630445,
+          -0.4493401068539326,
+          0.10819167009328311,
+          -0.3982525418261797,
+          -0.2937789509903315,
+          0.20961889526989486,
+          -0.4678201732858403
+        ],
+        "alignment_parity": 1,
+        "scope": "Oracle coordinate alignment for evaluation only; not a confidence bound"
+      }
+    }
+  ],
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_joint_audit.py": "08266e1624b63825b2bca19b798bcdaae7b7bfcf7db427ec934d44129df62581",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "fc9d647ebd4e46462e31291131286d480b00452f2b258ada6df13de28623033c",
+    "experiments/positive_control/intrinsic_weyl_joint_pilot.py": "9923e18a19dcdfa2c584ad71cc3f5ab44df78eb8ce2a45b7ac4ea1e4d3a11e8d",
+    "experiments/positive_control/intrinsic_weyl.py": "9f6bd6cf1d5d557993c70e2053b02e5591e52dacd76a57e5d0931bc5f75f35e0",
+    "experiments/positive_control/window_response.py": "cc7b00f8c5571856ea7c6084e797c2a904feb10ca15eac87b129cc9b406cd61e"
+  }
+}

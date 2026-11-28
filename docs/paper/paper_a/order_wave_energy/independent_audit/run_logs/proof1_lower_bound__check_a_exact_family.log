@@ -1,0 +1,21 @@
+=== check (a): exact family, causal relation, background chart ===
+PASS A1a R_uu = 2q - sinh(2b)^2/(2 lam^2) for free constant beta (8 random points, 40 digits) | max dev 1.2e-39
+PASS A1b all other Ricci components vanish (free beta and vacuum beta) | max |R_ab| 0.0
+PASS A1c R_uu = 0 at sinh(2 beta) = 2 lam sqrt(q): exactly vacuum | max |R_uu| 4.19e-36
+PASS A1d symbolic, general gamma(u): R_uu = -tr(g^-1 g'')/2 + tr[(g^-1 g')^2]/4, other components 0 | residual 0
+PASS A1e symbolic, circular family: R_uu = 2q - sinh(2b)^2/(2 lam^2) | residual 0
+PASS A1e2 R(theta) diag(e^{2b},e^{-2b}) R^T = cosh(2b) I + sinh(2b) T(2 theta)
+PASS A1e3 that R_uu vanishes at sinh(2 beta) = 2 lam sqrt(q) | 0
+PASS A1f a = cos(sqrt(q) u) solves a'' = -q a
+PASS A2 gamma^-1 = a^-2 [cosh(2b) I - sinh(2b) T(u/lam+phi)]  (so M = c m I - s J) | residual entries ['0', '0', '0', '0']
+PASS A2b det(R D R^T) = 1, so det(gamma) = a^4 and the volume density is a^2 | residual 0
+PASS A3a x' = gamma^-1 p, v' = p^T gamma^-1 p/2 solves the geodesic equation (general gamma)
+PASS A3b that curve is null
+PASS A4 int x'^T gamma x' du >= dx^T M^-1 dx on 40 random perturbed paths (equality on gamma^-1 p) | min relative excess 3.137e-06
+PASS A5a Ricci[g0] = 2q du du only (null dust) | 2*q
+PASS A5b m'(u) = a^-2 and m(-1/2) = 0
+PASS A5c g0 = a^2 (-dT^2 + dZ^2 + dy^2): background is conformally flat in (T,Z,y)
+PASS A5d volume density in (T,Z,y) is a(u(m))^4 | density^2 - a^8 = 0
+PASS A5e Delta T^2 - Delta Z^2 = 2 Delta m Delta v
+PASS A5f eq.(2) equals {dm>=0, dv>=0, 2 dm dv >= |dy|^2} on 2e5 random displacements | mismatches 0
+SUMMARY checks=19 fails=0 -> ALL PASS

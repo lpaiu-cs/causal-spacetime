@@ -1,0 +1,10 @@
+lam=1/32: dev1/lam^4=-20.53137  dev2/lam^4=-1.86242  (h/2 refinement dev2/lam^4=-1.86242)  dev2/(lam^4(1+log))=0.4170
+lam=1/64: dev1/lam^4=-27.47206  dev2/lam^4=-2.60079  (h/2 refinement dev2/lam^4=-2.60079)  dev2/(lam^4(1+log))=0.5041
+lam=1/128: dev1/lam^4=-32.44737  dev2/lam^4=-3.29055  (h/2 refinement dev2/lam^4=nan)  dev2/(lam^4(1+log))=0.5623
+lam=1/256: dev1/lam^4=-37.25941  dev2/lam^4=-3.97544  (h/2 refinement dev2/lam^4=nan)  dev2/(lam^4(1+log))=0.6074
+Lambda: successive slopes d(dev/lam^4)/d log(1/lam) = -10.0133, -7.1779, -6.9423  (constant slope => lam^4 log; growing slope => worse)
+Lambda_2: successive slopes d(dev/lam^4)/d log(1/lam) = -1.0652, -0.9951, -0.9881  (constant slope => lam^4 log; growing slope => worse)
+
+real	0m26.991s
+user	0m0.000s
+sys	0m0.030s

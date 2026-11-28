@@ -1,0 +1,85 @@
+=== check (b): operator bound and uniform sandwich (4) ===
+PASS B0 helper Mtilde = b I + E matches direct trapezoid of gamma^-1/c from the definition | max abs diff 4.50e-10
+INFO B3 table: sup over wave-null pairs of |background margin| / delta, by decade of u-separation
+PASS B1 oscillatory bound q=0.25 lam=1/4 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=0.25 lam=1/4 | C_E=2.261 max e/(lam min) 1.9604
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=0.25 lam=1/4 | c0=6.39 sup|g|/delta=1.6247 [1e-7:5.62e-06 1e-6:5.72e-05 1e-5:0.000562 1e-4:0.00566 1e-3:0.0549 1e-2:0.472 1e-1:1.62]
+PASS B1 oscillatory bound q=0.25 lam=1/16 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=0.25 lam=1/16 | C_E=2.261 max e/(lam min) 2.1165
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=0.25 lam=1/16 | c0=6.39 sup|g|/delta=2.3017 [1e-7:2.38e-05 1e-6:0.000235 1e-5:0.00236 1e-4:0.0233 1e-3:0.229 1e-2:1.79 1e-1:2.3]
+PASS B1 oscillatory bound q=0.25 lam=1/64 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=0.25 lam=1/64 | C_E=2.261 max e/(lam min) 2.1168
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=0.25 lam=1/64 | c0=6.39 sup|g|/delta=2.8134 [1e-7:9.55e-05 1e-6:0.000958 1e-5:0.00934 1e-4:0.0927 1e-3:0.872 1e-2:2.81 1e-1:2.43]
+PASS B1 oscillatory bound q=0.25 lam=1/256 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=0.25 lam=1/256 | C_E=2.261 max e/(lam min) 2.1287
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=0.25 lam=1/256 | c0=6.39 sup|g|/delta=2.9250 [1e-7:0.000371 1e-6:0.00379 1e-5:0.0375 1e-4:0.37 1e-3:2.73 1e-2:2.92 1e-1:2.6]
+PASS B1 oscillatory bound q=0.25 lam=1/1024 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=0.25 lam=1/1024 | C_E=2.261 max e/(lam min) 2.1295
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=0.25 lam=1/1024 | c0=6.39 sup|g|/delta=2.9298 [1e-7:0.0015 1e-6:0.0151 1e-5:0.148 1e-4:1.41 1e-3:2.93 1e-2:2.86 1e-1:2.53]
+PASS B1 oscillatory bound q=0.25 lam=1/4096 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=0.25 lam=1/4096 | C_E=2.261 max e/(lam min) 2.1300
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=0.25 lam=1/4096 | c0=6.39 sup|g|/delta=2.9594 [1e-7:0.00615 1e-6:0.0605 1e-5:0.589 1e-4:2.95 1e-3:2.96 1e-2:2.88 1e-1:2.52]
+PASS B1 oscillatory bound q=1.00 lam=1/4 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=1.00 lam=1/4 | C_E=6.388 max e/(lam min) 3.7466
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=1.00 lam=1/4 | c0=18.07 sup|g|/delta=3.1427 [1e-7:1.25e-05 1e-6:0.000127 1e-5:0.00121 1e-4:0.0125 1e-3:0.114 1e-2:1.03 1e-1:3.14]
+PASS B1 oscillatory bound q=1.00 lam=1/16 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=1.00 lam=1/16 | C_E=6.388 max e/(lam min) 5.0338
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=1.00 lam=1/16 | c0=18.07 sup|g|/delta=4.8799 [1e-7:5.64e-05 1e-6:0.000557 1e-5:0.00541 1e-4:0.0573 1e-3:0.513 1e-2:3.98 1e-1:4.88]
+PASS B1 oscillatory bound q=1.00 lam=1/64 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=1.00 lam=1/64 | C_E=6.388 max e/(lam min) 5.0433
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=1.00 lam=1/64 | c0=18.07 sup|g|/delta=6.5581 [1e-7:0.000226 1e-6:0.00228 1e-5:0.0231 1e-4:0.217 1e-3:2.04 1e-2:6.56 1e-1:4.93]
+PASS B1 oscillatory bound q=1.00 lam=1/256 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=1.00 lam=1/256 | C_E=6.388 max e/(lam min) 5.1765
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=1.00 lam=1/256 | c0=18.07 sup|g|/delta=7.0280 [1e-7:0.000918 1e-6:0.00912 1e-5:0.0887 1e-4:0.865 1e-3:6.54 1e-2:7.03 1e-1:5.42]
+PASS B1 oscillatory bound q=1.00 lam=1/1024 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=1.00 lam=1/1024 | C_E=6.388 max e/(lam min) 5.1853
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=1.00 lam=1/1024 | c0=18.07 sup|g|/delta=7.1579 [1e-7:0.00348 1e-6:0.0348 1e-5:0.37 1e-4:3.53 1e-3:7.16 1e-2:6.55 1e-1:5.84]
+PASS B1 oscillatory bound q=1.00 lam=1/4096 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=1.00 lam=1/4096 | C_E=6.388 max e/(lam min) 5.1893
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=1.00 lam=1/4096 | c0=18.07 sup|g|/delta=6.9825 [1e-7:0.0143 1e-6:0.146 1e-5:1.4 1e-4:6.98 1e-3:6.96 1e-2:6.87 1e-1:5.24]
+PASS B1 oscillatory bound q=4.00 lam=1/4 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=4.00 lam=1/4 | C_E=46.808 max e/(lam min) 9.6885
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=4.00 lam=1/4 | c0=132.39 sup|g|/delta=6.5418 [1e-7:5.09e-05 1e-6:0.000514 1e-5:0.0052 1e-4:0.0479 1e-3:0.415 1e-2:3.38 1e-1:6.54]
+PASS B1 oscillatory bound q=4.00 lam=1/16 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=4.00 lam=1/16 | C_E=46.808 max e/(lam min) 21.4693
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=4.00 lam=1/16 | c0=132.39 sup|g|/delta=15.6866 [1e-7:0.000275 1e-6:0.00275 1e-5:0.0274 1e-4:0.277 1e-3:2.36 1e-2:12.9 1e-1:15.7]
+PASS B1 oscillatory bound q=4.00 lam=1/64 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=4.00 lam=1/64 | C_E=46.808 max e/(lam min) 23.8799
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=4.00 lam=1/64 | c0=132.39 sup|g|/delta=26.1180 [1e-7:0.00114 1e-6:0.0113 1e-5:0.119 1e-4:1.12 1e-3:8.7 1e-2:26.1 1e-1:17.6]
+PASS B1 oscillatory bound q=4.00 lam=1/256 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=4.00 lam=1/256 | C_E=46.808 max e/(lam min) 26.8727
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=4.00 lam=1/256 | c0=132.39 sup|g|/delta=33.5200 [1e-7:0.00465 1e-6:0.0448 1e-5:0.445 1e-4:4.34 1e-3:31.3 1e-2:33.5 1e-1:22.1]
+PASS B1 oscillatory bound q=4.00 lam=1/1024 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=4.00 lam=1/1024 | C_E=46.808 max e/(lam min) 27.0771
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=4.00 lam=1/1024 | c0=132.39 sup|g|/delta=35.3264 [1e-7:0.0172 1e-6:0.188 1e-5:1.76 1e-4:16.8 1e-3:35.3 1e-2:31.5 1e-1:21.4]
+PASS B1 oscillatory bound q=4.00 lam=1/4096 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=4.00 lam=1/4096 | C_E=46.808 max e/(lam min) 27.2540
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=4.00 lam=1/4096 | c0=132.39 sup|g|/delta=36.5936 [1e-7:0.0713 1e-6:0.678 1e-5:7.11 1e-4:36.6 1e-3:34.3 1e-2:31.1 1e-1:17.8]
+PASS B1 oscillatory bound q=9.00 lam=1/4 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=9.00 lam=1/4 | C_E=4784.401 max e/(lam min) 664.9121
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=9.00 lam=1/4 | c0=13532.33 sup|g|/delta=16.4529 [1e-7:0.00297 1e-6:0.0276 1e-5:0.297 1e-4:2.97 1e-3:10.2 1e-2:16 1e-1:16.5]
+PASS B1 oscillatory bound q=9.00 lam=1/16 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=9.00 lam=1/16 | C_E=4784.401 max e/(lam min) 1122.1090
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=9.00 lam=1/16 | c0=13532.33 sup|g|/delta=78.7395 [1e-7:0.0206 1e-6:0.213 1e-5:1.69 1e-4:13.6 1e-3:46 1e-2:75 1e-1:78.7]
+PASS B1 oscillatory bound q=9.00 lam=1/64 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=9.00 lam=1/64 | C_E=4784.401 max e/(lam min) 1434.4408
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=9.00 lam=1/64 | c0=13532.33 sup|g|/delta=312.3614 [1e-7:0.0685 1e-6:0.834 1e-5:5.9 1e-4:39.2 1e-3:199 1e-2:312 1e-1:151]
+PASS B1 oscillatory bound q=9.00 lam=1/256 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=9.00 lam=1/256 | C_E=4784.401 max e/(lam min) 1753.4250
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=9.00 lam=1/256 | c0=13532.33 sup|g|/delta=613.4407 [1e-7:0.307 1e-6:3.36 1e-5:27.5 1e-4:201 1e-3:613 1e-2:493 1e-1:224]
+PASS B1 oscillatory bound q=9.00 lam=1/1024 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=9.00 lam=1/1024 | C_E=4784.401 max e/(lam min) 2120.4863
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=9.00 lam=1/1024 | c0=13532.33 sup|g|/delta=1603.0140 [1e-7:1.44 1e-6:10.8 1e-5:118 1e-4:817 1e-3:1.6e+03 1e-2:600 1e-1:209]
+PASS B1 oscillatory bound q=9.00 lam=1/4096 | max |I|/bound 1.0000
+PASS B2 e <= C_E lam min(ell,lam), e/b <= tanh(2b) q=9.00 lam=1/4096 | C_E=4784.401 max e/(lam min) 2292.9521
+PASS B3 wave-null margin <= 2 sqrt2 e and <= c0 delta q=9.00 lam=1/4096 | c0=13532.33 sup|g|/delta=2141.4103 [1e-7:5.89 1e-6:58.7 1e-5:404 1e-4:2.14e+03 1e-3:1.07e+03 1e-2:527 1e-1:231]
+PASS B4 no pair violates (4), either orientation, T is a time function q=0.25 lam=1/8 | pairs=1124250 disagreements=4278 (frac/lam^2=0.244) max|g|/delta on disagreements=1.772 vs c0=6.39
+PASS B4 no pair violates (4), either orientation, T is a time function q=0.25 lam=1/32 | pairs=1124250 disagreements=349 (frac/lam^2=0.318) max|g|/delta on disagreements=2.231 vs c0=6.39
+PASS B4 no pair violates (4), either orientation, T is a time function q=0.25 lam=1/128 | pairs=1124250 disagreements=23 (frac/lam^2=0.335) max|g|/delta on disagreements=2.005 vs c0=6.39
+PASS B4 no pair violates (4), either orientation, T is a time function q=1.00 lam=1/8 | pairs=1124250 disagreements=8548 (frac/lam^2=0.487) max|g|/delta on disagreements=3.327 vs c0=18.07
+PASS B4 no pair violates (4), either orientation, T is a time function q=1.00 lam=1/32 | pairs=1124250 disagreements=694 (frac/lam^2=0.632) max|g|/delta on disagreements=4.631 vs c0=18.07
+PASS B4 no pair violates (4), either orientation, T is a time function q=1.00 lam=1/128 | pairs=1124250 disagreements=44 (frac/lam^2=0.641) max|g|/delta on disagreements=4.060 vs c0=18.07
+PASS B4 no pair violates (4), either orientation, T is a time function q=4.00 lam=1/8 | pairs=1124250 disagreements=15416 (frac/lam^2=0.878) max|g|/delta on disagreements=8.715 vs c0=132.39
+PASS B4 no pair violates (4), either orientation, T is a time function q=4.00 lam=1/32 | pairs=1124250 disagreements=1325 (frac/lam^2=1.207) max|g|/delta on disagreements=14.036 vs c0=132.39
+PASS B4 no pair violates (4), either orientation, T is a time function q=4.00 lam=1/128 | pairs=1124250 disagreements=84 (frac/lam^2=1.224) max|g|/delta on disagreements=11.240 vs c0=132.39
+SUMMARY checks=82 fails=0 -> ALL PASS

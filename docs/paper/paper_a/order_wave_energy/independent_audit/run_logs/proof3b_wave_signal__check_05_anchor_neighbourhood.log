@@ -1,0 +1,22 @@
+admissible sampled anchor triples: 68425
+PASS sum ell_i a_i = 0 on every sampled triple | max residual 3.1e-17
+sampled min Im D_A = 0.013780 (certificate lower bound 0.010698)
+sampled max |D_A|  = 0.025991 (certificate upper bound 0.042391)
+PASS certificate lower bound on Im D_A holds on the scan
+PASS certificate upper bound on |D_A| holds on the scan
+PASS frequency-offset coefficient bound holds on the scan | sampled min 0.013465
+max |a_2x a_2y| on the scan = 2.004332e-05; exact supremum 2.006260e-05; text claims <= 2.0e-05
+NOTE (MINOR) the identity |a_2x a_2y| = |G12| is not exact: the supremum exceeds 0.00002 by a factor 1.0031; effect on the Im D_A bound 1.8e-07
+PASS referee finding reproduced: sup |a_2x a_2y| exceeds 0.00002, by less than 0.4%
+PASS corrected step: Im D_A lower bound still clears 0.01 with |a_2x a_2y| <= 2.0063e-5
+pair (1,2): spacelike g_ij <= -0.002796, window starts at -0.000020
+pair (1,3): spacelike g_ij <= -0.028796, window starts at 0.006380
+pair (2,3): spacelike g_ij <= 0.000404, window starts at 0.006380
+PASS no non-timelike anchor pair can pass the Gram window (exact rational, all q >= 0)
+sampled min anchor-pair slack 0.03484 (certificate 0.02892); min probe slack 0.10133 (certificate 0.10020)
+PASS certificate slack lower bounds hold on the scan (q = 1)
+INFO one-point normalisation Z = 0.5622; fraction of the Gram box compatible with rank two = 0.344
+INFO probability of the quarter-tolerance neighbourhood per candidate triple ~ 7.2e-38
+INFO with ceil(log m) disjoint triples, Pr(no admissible triple) ~ m^(-7.2e-38): tends to zero, but only for log m >> 1.4e+37
+PASS the small neighbourhood has positive probability (limit statement is valid)
+SUMMARY failed=0

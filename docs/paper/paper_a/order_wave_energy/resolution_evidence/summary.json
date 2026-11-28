@@ -1,0 +1,58 @@
+{
+  "code_version": "e5cfddfdd7bab2d744756fc00cef05ed4b219f6f",
+  "raw_sha256": "33aa0c4531b92a4f61e1533feb23334ac04fd7b2695d3cb8d67c6b3cec7b1fdc",
+  "elapsed_seconds": 11.097285032272339,
+  "all_pair_changes_negative": true,
+  "by_q": [
+    {
+      "q": 0.25,
+      "predicted_A": 3.5624206976224184,
+      "scaled_coefficient_range": [
+        1.7104015062880051,
+        2.6330800124699216
+      ],
+      "bounded_scale_remainder_range": [
+        6.227977937501125,
+        6.441698756931011
+      ]
+    },
+    {
+      "q": 1.0,
+      "predicted_A": 13.776151589983748,
+      "scaled_coefficient_range": [
+        6.613605210615816,
+        10.194719560944774
+      ],
+      "bounded_scale_remainder_range": [
+        23.750273347529742,
+        24.824595132954485
+      ]
+    },
+    {
+      "q": 4.0,
+      "predicted_A": 45.62520459337086,
+      "scaled_coefficient_range": [
+        20.505415055977988,
+        33.635595205833674
+      ],
+      "bounded_scale_remainder_range": [
+        74.79507548687806,
+        87.05855647051541
+      ]
+    }
+  ],
+  "refinements": [
+    {
+      "q": 1.0,
+      "r": 128,
+      "absolute_change": 1.5617169965001163e-21,
+      "relative_change": 9.769962616701378e-15
+    },
+    {
+      "q": 1.0,
+      "r": 1024,
+      "absolute_change": 1.797825362595721e-23,
+      "relative_change": 2.7977620220553945e-13
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[PASS] U1 Hoeffding for U, kk = floor(n/2): 384 cases; worst / 2e^-B = 0.161
+[PASS] U2 Bernstein for U, true variance: worst / 2e^-B = 0.095
+[PASS] U3 radius r_D of (3) for U: worst / 4e^-B = 0.080
+[PASS] U4 negative control kk = C(n,2) violates: worst / 4e^-B = 29.67
+[INFO] U4 kk = n (information): worst / 4e^-B = 0.580
+[PASS] K1 count 6P + 6C(P,2) <= 6N + 3N^2: N = 4..20000
+[PASS] K1 union bound <= (3/4) N^-2 with least B: N = 4..20000
+[PASS] K2 floor(floor(N/2)/2) >= N/5 for N >= 20: fails only at N = [6, 7, 11]
+[PASS] K3 Bernstein root: max |exponent - B|/B = 4.4e-16; max r*/bound = 1.0000
+
+8 PASS, 0 FAIL
+exit 0

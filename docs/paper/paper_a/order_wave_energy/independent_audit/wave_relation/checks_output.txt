@@ -1,0 +1,22 @@
+PASS W1 Ricci = 0 for the vacuum family (all components) | max |R|/scale = 2.44e-08
+PASS W1 positive control s -> 1.1 s: R_uu = 2q - s^2/(2 lam^2), rest 0 | max err/scale = 2.20e-08
+PASS W1 background R_uu = 2q, other components 0 | max rel err = 5.13e-08
+PASS W2 gamma^-1 closed form | 7.3e-15
+PASS W2 det gamma = a^4 | 7.1e-15
+PASS W2 sqrt|det g| = a^2 | 3.6e-15
+PASS W2 M = c m I - s J (quadrature of the numerical inverse) | 6.8e-15
+PASS W2 eigenvalues of E are +-t|G| | 1.5e-13
+PASS W2 x-chart action = y-chart action | 1.3e-14
+PASS W2 R(phi/2) T(psi) R(phi/2)^T = T(psi + phi) | 1.7e-15
+PASS W3 null geodesics end on 2 Delta v = Delta x^T M^-1 Delta x | max rel diff 4.9e-08
+PASS W3 u stays an affine parameter | max dev 6.8e-15
+PASS W4 random fixed-endpoint paths never beat Delta x^T M^-1 Delta x | min ratio 1.010615
+PASS W4 the optimal path attains it | max dev 2.2e-15
+PASS W4 identity behind F' >= 0 | max rel err 3.7e-15
+PASS W4 Lemma 1: future causal vectors have w^u, w^v >= 0
+PASS W5 g_0 = Phi^*(a^2 eta) | 1.9e-15
+PASS W5 m(u) closed form against quadrature | 2.6e-15
+PASS W5 |d(T,Z)/d(u,v)| = a^-2, so density a^4 in (T,Z,x) | 3.3e-16
+PASS W5 Theorem 2 (gamma = a^2 I) and Delta T >= |Delta z| agree on random pairs | 0 mismatches in 78904 pairs
+PASS W6 x-chart and y-chart relations agree on near-null random pairs | 0 mismatches in 300 pairs
+SUMMARY pass=21 failed=0

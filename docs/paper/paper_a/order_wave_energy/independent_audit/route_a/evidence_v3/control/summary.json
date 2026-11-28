@@ -1,0 +1,43 @@
+{
+  "stage": "control",
+  "code_version": "8ff268e4d7b5ae30fc13b9b2872f78b9bf4b5d58",
+  "workers": 12,
+  "runner_priority_class": 16384,
+  "worker_priority_classes": [
+    16384
+  ],
+  "hits_outside_candidates": 0,
+  "skipped_moves": 0,
+  "seconds_per_order": {
+    "64": 2.55,
+    "128": 12.575,
+    "256": 44.650000000000006
+  },
+  "classes": {
+    "four": {
+      "events": 1408,
+      "participation": 3.9827887459266775,
+      "ci95": [
+        3.9744395473721594,
+        3.98968254471229
+      ]
+    },
+    "shared": {
+      "events": 68,
+      "participation": 2.656358852786498,
+      "ci95": [
+        2.6465743568448996,
+        2.6783323946539364
+      ]
+    },
+    "edge": {
+      "events": 60,
+      "participation": 2.9295488101728724,
+      "ci95": [
+        2.890197810947497,
+        3.005389537997957
+      ]
+    }
+  },
+  "gate_pass": true
+}

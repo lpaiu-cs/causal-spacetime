@@ -1,0 +1,1139 @@
+{
+  "engineering_only": false,
+  "code_version": "7224c691ea2a74fbeb4b13624145cf1f33097561",
+  "worktree_clean_at_start": true,
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_schwarzschild.py": "49ed4c6a9ae20bb7f4b1584dc37625e9978d84a2de4d837c4a979f5ffe6f023c",
+    "experiments/positive_control/schwarzschild_diamond.py": "8d4ed553dd99269fecccafb3765146f1c962ff212ad07d8330376565bfee2fb1",
+    "experiments/positive_control/intrinsic_weyl_bombelli_benchmark.py": "eee5b270c48481e259f58a4e9e885f217d5fe9cd4996f1e0b895f1365c0c928c",
+    "experiments/positive_control/replay_intrinsic_weyl_threads.py": "9b97dfc26492e9ffcbf1fc72e7e4a5fe839b1a2ddaa9184c670a9986c1ded201",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "a54430e00da111be4c1943073468e71af425b7aa41a73fb7c2eafbdf4df023b9",
+    "experiments/positive_control/intrinsic_weyl.py": "bc89c2f135d1bbbfbf40a01616a5b042a6c18d7b42c55899f6e1cfb4c8af9f18",
+    "experiments/positive_control/intrinsic_weyl_square.py": "5a0d2f88a55945b7b9e4c26a4a951ca5f1fa40c66c50b675773655a7b795a2d0",
+    "experiments/positive_control/intrinsic_weyl_gpu_counts.py": "62f82a6262acfa713ec6faa3372c6e6cc82819f7cf232ce646d666e5b25b2306",
+    "experiments/positive_control/intrinsic_weyl_high_count.py": "014cf02e1bebd9287433f1adcbcca07e75d1347f602be1fe6c60d27c995d304e",
+    "docs/paper/paper_a/intrinsic_weyl/schwarzschild_protocol.md": "db140d493b11ab3187f63322e6f9dd14ca1b5cea54a323a40c3e83cd840f119c"
+  },
+  "selfcheck": {
+    "generator": {
+      "index_derivative_error": 1.3877787807814457e-17,
+      "radial_closed_form_error": 2.6645352591003757e-15,
+      "mode_refinement_error": 1.7763568394002505e-15,
+      "bouguer_invariant_spread": 3.258031622266344e-09,
+      "symmetry_error": 8.881784197001252e-16,
+      "triangle_inequality_margin": 0.001187435452797203,
+      "independent_ray_integration_error": 9.54458734270247e-13,
+      "geodesic_first_integral_error": 5.417888360170764e-14,
+      "tidal_tensor_relative_error_from_released_particles": 1.1549586730663641e-05,
+      "tip_normal_coordinate_error": 2.1906365610391276e-12,
+      "sampled_events_inside_tips_interval": true,
+      "sampler_moment_z_scores": [
+        1.5989161591748273,
+        -0.9409250405191878,
+        1.618917942598309,
+        1.4832487428358043
+      ],
+      "interval_volume_over_flat": 1.0000178392810177,
+      "small_interval_volume_excess_over_curvature_square_law": 1.000430616534098,
+      "flat_interval_volume_error": 4.9960036108132044e-15,
+      "surrogate_bits_equal_direct_solver": true,
+      "surrogate_margins_resolved_directly": 32,
+      "order_antisymmetric_and_transitive": true,
+      "flat_limit_error": 8.881784197001252e-16,
+      "tidal_norm": 0.10206207261596575
+    },
+    "gpu_relation_bits": {
+      "curved": {
+        "pairs": 262144,
+        "related": 35260,
+        "resolved_by_the_direct_solver": 0
+      },
+      "flat": {
+        "pairs": 262144,
+        "related": 35042,
+        "resolved_by_the_direct_solver": 0
+      }
+    },
+    "jet_inverse": {
+      "shared_interval_moments_exact": true,
+      "maximum_jacobian_error": 3.4040068974553004e-12,
+      "exact_flat_weyl_rank": 10,
+      "exact_flat_full_nuisance_rank": 213,
+      "exact_flat_coefficient_norm": 0.0
+    },
+    "gpu_second_moment": {
+      "direct_and_grouped_second_moments_bit_exact": true,
+      "cases": 3
+    },
+    "verdict": {
+      "threshold_chi2_10": 29.58829844507442,
+      "strict_exceedance_required": true,
+      "control_exceedance_invalidates": true,
+      "failure_cannot_disappear": true,
+      "all_four_required": true
+    }
+  },
+  "geometry": {
+    "mass": 1.0,
+    "apex_areal_radius": 6.0,
+    "tip_proper_time": 3.0,
+    "apex_isotropic_radius": 4.949489742783178,
+    "tip_coordinate_half_time": 1.8387212286859531,
+    "tip_isotropic_radius": 4.917860423315897,
+    "true_tidal_eigenvalues": [
+      -0.08333333333333333,
+      0.041666666666666664,
+      0.041666666666666664
+    ],
+    "true_full_tidal_norm": 0.10206207261596574
+  },
+  "cases": [
+    {
+      "case": 0,
+      "kind": "curved",
+      "seed": 2026111200
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "seed": 2026111201
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111202
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111203
+    }
+  ],
+  "measurement_levels": [
+    1048576,
+    4194304,
+    16777216,
+    67108864
+  ],
+  "selection_n": 4096,
+  "sampling_chunk": 4096,
+  "classification_batch": 65536,
+  "false_positive_level_per_test": 0.001,
+  "threshold_chi2_10": 29.58829844507442,
+  "worker_thread_environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": null,
+    "OPENBLAS_DEFAULT_NUM_THREADS": null,
+    "GOTO_NUM_THREADS": null
+  },
+  "runtime": {
+    "python": "3.14.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "cupy": "14.2.0",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "scope": "Existence gate on one Schwarzschild interval; no accuracy, generality or superiority claim",
+  "results": [
+    {
+      "case": 0,
+      "kind": "curved",
+      "seed": 2026111200,
+      "measurement_n": 1048576,
+      "archive_sha256": "b7685163596e5d1bfec8dc45a4a77dff811b1330b644fda61e133a1cda4cdc97",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 49.02662460001011,
+      "wall_seconds": 49.112950100010494,
+      "process_cpu_seconds": 48.21875,
+      "peak_working_set_bytes": 4041572352,
+      "detection": {
+        "q": 32.13989799744118,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.0003794969771473701,
+        "tidal_norm_estimate": 0.23847332081181555,
+        "largest_tidal_variance": 0.004163258576615596,
+        "variance_times_N": 4365.493025233275,
+        "electric_eigenvalues": [
+          -0.15478968684119332,
+          0.019925203656607157,
+          0.13486448318458613
+        ],
+        "magnetic_norm": 0.11968389624848294
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.01237591038314632,
+          0.014634234986745103,
+          0.03397499290517844,
+          -0.04060906289084408,
+          0.047103345855860325,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.17485744198376993,
+        "relative_full_tidal_error": 1.7132460423541966,
+        "confidence_radius_95": 0.28657511304366534,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 2.5183063235913252,
+          "events_for_expected_snr_one": 165341.8532872834,
+          "expected_snr_matched_reflection": 2.6199200828822766,
+          "realized_z_matched_reflection": 4.616642884581617
+        }
+      },
+      "archive_bytes": 48253424
+    },
+    {
+      "case": 0,
+      "kind": "curved",
+      "seed": 2026111200,
+      "measurement_n": 4194304,
+      "archive_sha256": "abb744fe99cf3bd1fb89daa1d21af0e3e22659346053159a881ad121262e40a6",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 55.79893779999111,
+      "wall_seconds": 55.93300229999295,
+      "process_cpu_seconds": 53.921875,
+      "peak_working_set_bytes": 7262699520,
+      "detection": {
+        "q": 42.00144618518154,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 7.494236659284196e-06,
+        "tidal_norm_estimate": 0.14333690938551125,
+        "largest_tidal_variance": 0.0010531528807137744,
+        "variance_times_N": 4417.243340189307,
+        "electric_eigenvalues": [
+          -0.08383714766358691,
+          0.015065863747850307,
+          0.06877128391573657
+        ],
+        "magnetic_norm": 0.092522065054432
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.01237591038314632,
+          0.014634234986745103,
+          0.03397499290517844,
+          -0.04060906289084408,
+          0.047103345855860325,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.10062327371820357,
+        "relative_full_tidal_error": 0.9859027074320152,
+        "confidence_radius_95": 0.14461180965302362,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 5.018812655388314,
+          "events_for_expected_snr_one": 166516.7537602954,
+          "expected_snr_matched_reflection": 5.233671593531224,
+          "realized_z_matched_reflection": 5.23461609416862
+        }
+      },
+      "archive_bytes": 142625264
+    },
+    {
+      "case": 0,
+      "kind": "curved",
+      "seed": 2026111200,
+      "measurement_n": 16777216,
+      "archive_sha256": "44aea653a6bdc6547510fbc3e0acbbf4d9a57046fa51a8903e1cad8b86af9e1c",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 84.24960999999894,
+      "wall_seconds": 84.6348266999994,
+      "process_cpu_seconds": 82.578125,
+      "peak_working_set_bytes": 13491699712,
+      "detection": {
+        "q": 140.29014079054224,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 3.675151946619962e-25,
+        "tidal_norm_estimate": 0.11915692812596759,
+        "largest_tidal_variance": 0.00026389076236279135,
+        "variance_times_N": 4427.352320565221,
+        "electric_eigenvalues": [
+          -0.09105331669970759,
+          0.03360457635023701,
+          0.057448740349470576
+        ],
+        "magnetic_norm": 0.03844530815301093
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.01237591038314632,
+          0.014634234986745103,
+          0.03397499290517844,
+          -0.04060906289084408,
+          0.047103345855860325,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.049372023967954266,
+        "relative_full_tidal_error": 0.48374506515979687,
+        "confidence_radius_95": 0.07335607440072628,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 10.04307249017689,
+          "events_for_expected_snr_one": 166336.17144368036,
+          "expected_snr_matched_reflection": 10.461528599569164,
+          "realized_z_matched_reflection": 11.136478021206544
+        }
+      },
+      "archive_bytes": 520112624
+    },
+    {
+      "case": 0,
+      "kind": "curved",
+      "seed": 2026111200,
+      "measurement_n": 67108864,
+      "archive_sha256": "bc0f2b6c4e6663270b79f2370b33aacef29a0a3bf7cfd96327f57a2134d65813",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 186.45097479999822,
+      "wall_seconds": 187.83107179999934,
+      "process_cpu_seconds": 184.0625,
+      "peak_working_set_bytes": 21296570368,
+      "detection": {
+        "q": 462.3809981730667,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 4.769327287209491e-93,
+        "tidal_norm_estimate": 0.10498119822638814,
+        "largest_tidal_variance": 6.603724741142e-05,
+        "variance_times_N": 4431.684655467337,
+        "electric_eigenvalues": [
+          -0.0846407701857058,
+          0.038999956086802005,
+          0.04564081409890379
+        ],
+        "magnetic_norm": 0.015903192039196285
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.01237591038314632,
+          0.014634234986745103,
+          0.03397499290517844,
+          -0.04060906289084408,
+          0.047103345855860325,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.01684071539030916,
+        "relative_full_tidal_error": 0.1650046384387724,
+        "confidence_radius_95": 0.0376219699098293,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 20.095237148076084,
+          "events_for_expected_snr_one": 166185.68660767988,
+          "expected_snr_matched_reflection": 20.937979439051595,
+          "realized_z_matched_reflection": 21.260366318706577
+        }
+      },
+      "archive_bytes": 2030062064
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "seed": 2026111201,
+      "measurement_n": 1048576,
+      "archive_sha256": "6af6ba933614cb5d6be5d4e83ee189100b6c995bc8d0254c6a18571529e5459d",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 54.75694459999795,
+      "wall_seconds": 54.83114710000518,
+      "process_cpu_seconds": 53.625,
+      "peak_working_set_bytes": 5745762304,
+      "detection": {
+        "q": 19.272046327869848,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.03694027779225715,
+        "tidal_norm_estimate": 0.19020679195501966,
+        "largest_tidal_variance": 0.003477422682349809,
+        "variance_times_N": 3646.3419665676333,
+        "electric_eigenvalues": [
+          -0.08507399146030223,
+          0.008679082191586477,
+          0.07639490926871577
+        ],
+        "magnetic_norm": 0.1517548386476323
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.015590031114810082,
+          -0.026508915794928062,
+          -0.046736766865173265,
+          0.01988122594982925,
+          0.035632826188915584,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.15917445953797854,
+        "relative_full_tidal_error": 1.559584823805338,
+        "confidence_radius_95": 0.2613429230168488,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 2.8987951230423974,
+          "events_for_expected_snr_one": 124785.71428648735,
+          "expected_snr_matched_reflection": 2.961530638133529,
+          "realized_z_matched_reflection": 3.022009614710734
+        }
+      },
+      "archive_bytes": 50874944
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "seed": 2026111201,
+      "measurement_n": 4194304,
+      "archive_sha256": "945ed492573e974cc90904f8e82352dc03e85d7d1b95e033a276540fd1855968",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 67.44709219998913,
+      "wall_seconds": 67.57638659999066,
+      "process_cpu_seconds": 66.421875,
+      "peak_working_set_bytes": 10378846208,
+      "detection": {
+        "q": 42.11624316909183,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 7.149827185998873e-06,
+        "tidal_norm_estimate": 0.11534047446400465,
+        "largest_tidal_variance": 0.0008786134390373665,
+        "variance_times_N": 3685.1718618081823,
+        "electric_eigenvalues": [
+          -0.08175621566773546,
+          0.024274085924580188,
+          0.057482129743155225
+        ],
+        "magnetic_norm": 0.05221034152339554
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.015590031114810082,
+          -0.026508915794928062,
+          -0.046736766865173265,
+          0.01988122594982925,
+          0.035632826188915584,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.06095073743553164,
+        "relative_full_tidal_error": 0.5971928246536218,
+        "confidence_radius_95": 0.1317680739316854,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 5.815834706437297,
+          "events_for_expected_snr_one": 124004.0287081986,
+          "expected_snr_matched_reflection": 5.938406713562968,
+          "realized_z_matched_reflection": 5.702323973813713
+        }
+      },
+      "archive_bytes": 153111104
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "seed": 2026111201,
+      "measurement_n": 16777216,
+      "archive_sha256": "6ab22c8d646691933d23d7fd5eb841468b524d17868d645fe60f3a9ae0db361b",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 106.20906300000206,
+      "wall_seconds": 106.60918030000175,
+      "process_cpu_seconds": 104.140625,
+      "peak_working_set_bytes": 19101437952,
+      "detection": {
+        "q": 158.43837505834523,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 6.805457852431804e-29,
+        "tidal_norm_estimate": 0.11161406133713256,
+        "largest_tidal_variance": 0.0002203634046012267,
+        "variance_times_N": 3697.0844374901744,
+        "electric_eigenvalues": [
+          -0.08451464116609793,
+          0.03799553246714455,
+          0.04651910869895335
+        ],
+        "magnetic_norm": 0.04131931939333005
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.015590031114810082,
+          -0.026508915794928062,
+          -0.046736766865173265,
+          0.01988122594982925,
+          0.035632826188915584,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.04293600005206531,
+        "relative_full_tidal_error": 0.420685166894688,
+        "confidence_radius_95": 0.06708943205353923,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 11.662698796508437,
+          "events_for_expected_snr_one": 123345.06459976555,
+          "expected_snr_matched_reflection": 11.853667603789772,
+          "realized_z_matched_reflection": 11.966058534975991
+        }
+      },
+      "archive_bytes": 562055744
+    },
+    {
+      "case": 1,
+      "kind": "curved",
+      "seed": 2026111201,
+      "measurement_n": 67108864,
+      "archive_sha256": "c1853e7bd381b2e3af3c248ae4875fa9d011e13b2d270a7898d538143b65c72b",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 221.03583730000537,
+      "wall_seconds": 225.1631536000059,
+      "process_cpu_seconds": 219.28125,
+      "peak_working_set_bytes": 33034612736,
+      "detection": {
+        "q": 534.2548908349627,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 2.0951482345634614e-108,
+        "tidal_norm_estimate": 0.0988260009231721,
+        "largest_tidal_variance": 5.5109481161472994e-05,
+        "variance_times_N": 3698.334676375853,
+        "electric_eigenvalues": [
+          -0.07997398014987142,
+          0.03818541585137898,
+          0.04178856429849245
+        ],
+        "magnetic_norm": 0.012896932487332055
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.015590031114810082,
+          -0.026508915794928062,
+          -0.046736766865173265,
+          0.01988122594982925,
+          0.035632826188915584,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.10206207261596574,
+        "truth_electric_eigenvalues": [
+          -0.08333333333333333,
+          0.041666666666666664,
+          0.041666666666666664
+        ],
+        "full_tidal_error_mod_reflection": 0.014648529882961791,
+        "relative_full_tidal_error": 0.14352569478067112,
+        "confidence_radius_95": 0.034428133048041834,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry",
+        "truth_pattern": {
+          "expected_snr": 23.33310960880279,
+          "events_for_expected_snr_one": 123263.54251373661,
+          "expected_snr_matched_reflection": 23.70647981907011,
+          "realized_z_matched_reflection": 22.722564977721856
+        }
+      },
+      "archive_bytes": 2197834392
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111202,
+      "measurement_n": 1048576,
+      "archive_sha256": "fd66fecf13ec58a152547011c3449b3483c55ba8ef9efc1c0ff5d5f1c81c1aaf",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 66.52441960001306,
+      "wall_seconds": 66.57774430001155,
+      "process_cpu_seconds": 65.03125,
+      "peak_working_set_bytes": 10348933120,
+      "detection": {
+        "q": 6.202180617461371,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.7980004295195409,
+        "tidal_norm_estimate": 0.10679114408909623,
+        "largest_tidal_variance": 0.0027542406166728086,
+        "variance_times_N": 2888.030608868307,
+        "electric_eigenvalues": [
+          -0.04115650376542365,
+          0.004275879935057369,
+          0.03688062383036629
+        ],
+        "magnetic_norm": 0.09127993804954501
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.10679114408909623,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.23131044022507743,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 51137096
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111202,
+      "measurement_n": 4194304,
+      "archive_sha256": "32c8b884e534d67658359db603895eae5b29d7f44d786bf4815dfd588a4253a0",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 84.04842809999536,
+      "wall_seconds": 84.17262749999645,
+      "process_cpu_seconds": 82.046875,
+      "peak_working_set_bytes": 21363617792,
+      "detection": {
+        "q": 10.45146424700216,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.4018162813732394,
+        "tidal_norm_estimate": 0.06767262432967652,
+        "largest_tidal_variance": 0.0006948459884866719,
+        "variance_times_N": 2914.395308893602,
+        "electric_eigenvalues": [
+          -0.034851591134322395,
+          0.012565807895061079,
+          0.022285783239261316
+        ],
+        "magnetic_norm": 0.052061454228907456
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.06767262432967652,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.11646833217313769,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 154159688
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111202,
+      "measurement_n": 16777216,
+      "archive_sha256": "7c04428f8ed51be1c8cae87d39c79b2b8fa36da3eb35be1b1066ef0bd615379f",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 122.28529820000404,
+      "wall_seconds": 122.69599619999644,
+      "process_cpu_seconds": 120.109375,
+      "peak_working_set_bytes": 38323412992,
+      "detection": {
+        "q": 10.097335260465854,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.4319956624249818,
+        "tidal_norm_estimate": 0.030010893595472883,
+        "largest_tidal_variance": 0.00017465138746780513,
+        "variance_times_N": 2930.1640522470598,
+        "electric_eigenvalues": [
+          -0.02052897171895537,
+          0.004184505181871614,
+          0.01634446653708375
+        ],
+        "magnetic_norm": 0.013948597942523297
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.030010893595472883,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.05831156023965285,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 566250056
+    },
+    {
+      "case": 2,
+      "kind": "flat",
+      "seed": 2026111202,
+      "measurement_n": 67108864,
+      "archive_sha256": "9a10adb06ca8d222b3f37f052f9743ea959f44f0be0508c9644e772ab38086d6",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 257.89910580001015,
+      "wall_seconds": 261.9352418000053,
+      "process_cpu_seconds": 246.5,
+      "peak_working_set_bytes": 55609438208,
+      "detection": {
+        "q": 10.565648323537468,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.39234284911362544,
+        "tidal_norm_estimate": 0.015763138343469634,
+        "largest_tidal_variance": 4.373345389812661e-05,
+        "variance_times_N": 2934.9024098996483,
+        "electric_eigenvalues": [
+          -0.008271266858045575,
+          -0.0010421743513901378,
+          0.009313441209435709
+        ],
+        "magnetic_norm": 0.009603976283709195
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.015763138343469634,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.029194560038486705,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 2214611616
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111203,
+      "measurement_n": 1048576,
+      "archive_sha256": "87d9d00ff7941ffdec5c82354e6b4cb833445360f70903b18059e21ab4d37e8a",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 63.88116099999752,
+      "wall_seconds": 63.93535359999805,
+      "process_cpu_seconds": 59.75,
+      "peak_working_set_bytes": 4763455488,
+      "detection": {
+        "q": 9.943085420431274,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.44550073890252173,
+        "tidal_norm_estimate": 0.1322713784155798,
+        "largest_tidal_variance": 0.0025060736642626468,
+        "variance_times_N": 2627.808698577869,
+        "electric_eigenvalues": [
+          -0.031657023874183454,
+          -0.015359992949178263,
+          0.04701701682336171
+        ],
+        "magnetic_norm": 0.1185201296532357
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.1322713784155798,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.22126404624193977,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 50088488
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111203,
+      "measurement_n": 4194304,
+      "archive_sha256": "9efb031a51e0db7c367a0f7074ff6faec789ee9b39439e3cecea61fb04fb37e1",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 85.54777140000078,
+      "wall_seconds": 85.66935779999767,
+      "process_cpu_seconds": 74.125,
+      "peak_working_set_bytes": 8604815360,
+      "detection": {
+        "q": 9.45981211248004,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.4890908487560637,
+        "tidal_norm_estimate": 0.06186131904716258,
+        "largest_tidal_variance": 0.0006328402185849199,
+        "variance_times_N": 2654.324260171604,
+        "electric_eigenvalues": [
+          -0.024315712211988333,
+          -0.000773647405639882,
+          0.025089359617628225
+        ],
+        "magnetic_norm": 0.05104404409475872
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.06186131904716258,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.11109475670752,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 149965352
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111203,
+      "measurement_n": 16777216,
+      "archive_sha256": "e44636ae3a207710ec2068bd3e54e4270f189cbdd26b3b98d8d7e153f6eebb9e",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 133.38459409998904,
+      "wall_seconds": 133.87707599998976,
+      "process_cpu_seconds": 112.953125,
+      "peak_working_set_bytes": 12139712512,
+      "detection": {
+        "q": 13.125091153295735,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.21676170755050228,
+        "tidal_norm_estimate": 0.03641894254134281,
+        "largest_tidal_variance": 0.0001589160407489179,
+        "variance_times_N": 2666.1687415093975,
+        "electric_eigenvalues": [
+          -0.014665151498172128,
+          -0.0015331982665908333,
+          0.01619834976476297
+        ],
+        "magnetic_norm": 0.029095282699073667
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.03641894254134281,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.05578177482423783,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 549472808
+    },
+    {
+      "case": 3,
+      "kind": "flat",
+      "seed": 2026111203,
+      "measurement_n": 67108864,
+      "archive_sha256": "96d141941697e908398e17d21a0294ee9b944e65b8d6e0931b5b4665307a9072",
+      "thread_environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": null,
+        "OPENBLAS_DEFAULT_NUM_THREADS": null,
+        "GOTO_NUM_THREADS": null
+      },
+      "finite_fit_wall_seconds": 252.8290890000062,
+      "wall_seconds": 257.2188545000099,
+      "process_cpu_seconds": 235.40625,
+      "peak_working_set_bytes": 28774772736,
+      "detection": {
+        "q": 11.467225639132472,
+        "threshold": 29.58829844507442,
+        "nominal_p_value": 0.3222929393603899,
+        "tidal_norm_estimate": 0.017950866203546224,
+        "largest_tidal_variance": 3.9768809122946835e-05,
+        "variance_times_N": 2668.8396028737984,
+        "electric_eigenvalues": [
+          -0.007019938441047107,
+          0.000783037523184932,
+          0.006236900917862177
+        ],
+        "magnetic_norm": 0.015278808229687989
+      },
+      "evaluation": {
+        "truth_coefficients_xy_positive": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "truth_norm": 0.0,
+        "truth_electric_eigenvalues": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "full_tidal_error_mod_reflection": 0.017950866203546224,
+        "relative_full_tidal_error": null,
+        "confidence_radius_95": 0.027899390157972628,
+        "nominal_ball_contains_truth": true,
+        "continuum_bias": null,
+        "continuum_bias_note": "Exact interval volumes are not available for this geometry"
+      },
+      "archive_bytes": 2147502720
+    }
+  ],
+  "elapsed_seconds": 4437.984259605408,
+  "level_verdicts": {
+    "1048576": "MIXED",
+    "4194304": "DETECTED",
+    "16777216": "DETECTED",
+    "67108864": "DETECTED"
+  }
+}

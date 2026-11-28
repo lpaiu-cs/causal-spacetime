@@ -1,0 +1,152 @@
+{
+  "prereg_doc": "docs/prereg/subspacing_s2_confirmatory.md",
+  "preflight_code_version": "a133e507376a61e32de684a637d855948089fa44",
+  "gpu_device": "NVIDIA GeForce RTX 5090",
+  "z_th": 2.5,
+  "lock_half_width": 8.0,
+  "max_probes": 65536,
+  "frequencies": [
+    24.0,
+    28.0,
+    32.0,
+    36.0,
+    40.0,
+    44.0,
+    48.0,
+    52.0,
+    56.0,
+    60.0,
+    64.0,
+    68.0,
+    72.0,
+    76.0,
+    80.0,
+    84.0,
+    88.0,
+    92.0,
+    96.0,
+    100.0,
+    104.0,
+    108.0,
+    112.0,
+    116.0,
+    120.0,
+    124.0,
+    128.0,
+    132.0,
+    136.0,
+    140.0,
+    144.0,
+    148.0,
+    152.0,
+    156.0,
+    160.0,
+    164.0,
+    168.0,
+    172.0,
+    176.0,
+    180.0,
+    184.0,
+    188.0,
+    192.0,
+    196.0,
+    200.0,
+    204.0,
+    208.0,
+    212.0,
+    216.0,
+    220.0,
+    224.0,
+    228.0,
+    232.0,
+    236.0,
+    240.0,
+    244.0,
+    248.0,
+    252.0,
+    256.0
+  ],
+  "total_runs": 268,
+  "seed_blocks": [
+    {
+      "label": "N22",
+      "lo": 52000000,
+      "hi": 52000027
+    },
+    {
+      "label": "N23",
+      "lo": 52100000,
+      "hi": 52100027
+    },
+    {
+      "label": "W1",
+      "lo": 52200000,
+      "hi": 52200035
+    },
+    {
+      "label": "W1p_sprinkle",
+      "lo": 52300000,
+      "hi": 52300035
+    },
+    {
+      "label": "W1p_phase",
+      "lo": 52310000,
+      "hi": 52310035
+    },
+    {
+      "label": "W2",
+      "lo": 52400000,
+      "hi": 52400031
+    },
+    {
+      "label": "W3",
+      "lo": 52500000,
+      "hi": 52500027
+    },
+    {
+      "label": "X_null_q1",
+      "lo": 52600000,
+      "hi": 52600015
+    },
+    {
+      "label": "X_sub_q4_r32",
+      "lo": 52610000,
+      "hi": 52610023
+    },
+    {
+      "label": "X_sub_q1_r48",
+      "lo": 52620000,
+      "hi": 52620023
+    },
+    {
+      "label": "X_weyl_r4_pts",
+      "lo": 52630000,
+      "hi": 52630007
+    },
+    {
+      "label": "X_weyl_r4_lm",
+      "lo": 52635000,
+      "hi": 52635007
+    },
+    {
+      "label": "X_weyl_r32_pts",
+      "lo": 52640000,
+      "hi": 52640007
+    },
+    {
+      "label": "X_weyl_r32_lm",
+      "lo": 52645000,
+      "hi": 52645007
+    }
+  ],
+  "source_sha256": {
+    "docs/prereg/subspacing_s2_confirmatory.md": "c37d1d6f9900456e4ae537385e9b678b59279619cc2918f54140bf7eb37669c5",
+    "experiments/exploratory/subspacing_observer.py": "d1e2acc9b8dc6cfa2347ee7feac60bace4e261ba2de8542590674d1772e89951",
+    "experiments/exploratory/subspacing_wave_sim.py": "94fa09f1a7c68292e47f2ecddc97e6414a23991470e70c5e324f09d071a85c19",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "49ddb6bc2b7a4fa737235241221b0c50b94fb6ba02c338d5cf85d2bbd3287985",
+    "experiments/positive_control/seed_windows.py": "5a0b60d8e8d15f9283f2ebbd02aa76b724c683a3b464f1a025eab4e65be2acdf",
+    "experiments/subspacing_s2_confirmatory.py": "98cd315efdbefbea0de69d70b1a37432e18ce31689c6df525dccc2eb6fe02e4f",
+    "experiments/check_subspacing_s2_confirmatory.py": "ecbe79cc891e8ce23765a0a6e762f292870c1ba2c5be92756d5a8fcc50265cfa"
+  },
+  "manifest_sha256": "b32a1f1d7c0102d994fd2e7b9ba48bece77e61d8b951c908fdc6fff0152f9ad3"
+}

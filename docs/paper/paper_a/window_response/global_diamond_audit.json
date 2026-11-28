@@ -1,0 +1,202 @@
+{
+  "kind": "Post-study exact global examples and deterministic diagnostics; not peer review",
+  "date": "2026-09-22",
+  "python": "3.11.9",
+  "sympy": "1.14.0",
+  "mpmath": "1.3.0",
+  "numpy": "2.4.6",
+  "source_sha256_lf": "c88955854f436fe64565cc1f3dc1fbc7a0c4a68a1f3e35d33c10a45a670f0017",
+  "flat_spatial_cylinder": {
+    "large_branch": "pi*C**4/24 - pi*C**3*ell/6 + 2*pi*C*ell**3/3",
+    "ratios": [
+      {
+        "ell_over_C": "1/4",
+        "V_over_Minkowski": "1"
+      },
+      {
+        "ell_over_C": "1/2",
+        "V_over_Minkowski": "1"
+      },
+      {
+        "ell_over_C": "1",
+        "V_over_Minkowski": "13/16"
+      },
+      {
+        "ell_over_C": "2",
+        "V_over_Minkowski": "121/256"
+      },
+      {
+        "ell_over_C": "5",
+        "V_over_Minkowski": "1981/10000"
+      }
+    ]
+  },
+  "plane_wave": {
+    "finite_domain": "0 < z=omega*L < pi",
+    "at_and_above_first_conjugate_span": "infinite volume; proof in note",
+    "dirichlet_mode_energy": "-L*omega**2/2 + pi**2/(2*L)",
+    "precision_agreement_relative": "9.5476938e-59",
+    "rows": [
+      {
+        "z": "0.5",
+        "V_over_V0": "1.0002481406799402879",
+        "quartic_relative_error_percent": "-1.24775962423e-5"
+      },
+      {
+        "z": "1",
+        "V_over_V0": "1.0040004692253274835",
+        "quartic_relative_error_percent": "-0.00320868944398"
+      },
+      {
+        "z": "2",
+        "V_over_V0": "1.0730080233593401995",
+        "quartic_relative_error_percent": "-0.886848901417"
+      },
+      {
+        "z": "3",
+        "V_over_V0": "2.1724690493080381341",
+        "quartic_relative_error_percent": "-39.1738827373"
+      },
+      {
+        "z": "pi-0.01",
+        "V_over_V0": "7.6965363157432162442",
+        "quartic_relative_error_percent": "-82.0484725418"
+      },
+      {
+        "z": "pi-0.001",
+        "V_over_V0": "24.230912251054104494",
+        "quartic_relative_error_percent": "-94.2798188137"
+      }
+    ],
+    "divergence_C": "0.7658687362795358654199",
+    "divergence_checks": [
+      {
+        "pi_minus_z": "0.001",
+        "V_ratio_sqrt_gap_over_C": "1.00049615380880667"
+      },
+      {
+        "pi_minus_z": "0.00001",
+        "V_ratio_sqrt_gap_over_C": "1.00000496396952695"
+      },
+      {
+        "pi_minus_z": "0.0000001",
+        "V_ratio_sqrt_gap_over_C": "1.00000004963995003"
+      }
+    ]
+  },
+  "constant_curvature": {
+    "dS_relative_series": "1 - 2*z**2/3 + 11*z**4/30 + O(z**6)",
+    "AdS_relative_series": "1 + 2*z**2/3 + 11*z**4/30 + O(z**6)",
+    "dS_finite_domain": "all finite ell > 0",
+    "AdS_finite_domain": "sqrt(-kappa)*ell < pi/2, universal cover without boundary points",
+    "AdS_at_and_above_critical": "infinite volume; proof in note",
+    "rows": [
+      {
+        "geometry": "dS",
+        "sqrt_abs_kappa_ell": "0.5",
+        "V_over_V0": "0.853655900239438701"
+      },
+      {
+        "geometry": "dS",
+        "sqrt_abs_kappa_ell": "1",
+        "V_over_V0": "0.575072005160160887"
+      },
+      {
+        "geometry": "dS",
+        "sqrt_abs_kappa_ell": "3",
+        "V_over_V0": "0.0895931616375558141"
+      },
+      {
+        "geometry": "dS",
+        "sqrt_abs_kappa_ell": "5",
+        "V_over_V0": "0.0243647296637103581"
+      },
+      {
+        "geometry": "AdS",
+        "sqrt_abs_kappa_ell": "0.5",
+        "V_over_V0": "1.19289374470654091"
+      },
+      {
+        "geometry": "AdS",
+        "sqrt_abs_kappa_ell": "1",
+        "V_over_V0": "2.38853176008546247"
+      },
+      {
+        "geometry": "AdS",
+        "sqrt_abs_kappa_ell": "1.5",
+        "V_over_V0": "76.465176185100479"
+      }
+    ]
+  },
+  "Kasner_singular_limit": {
+    "exponents": [
+      "-1/3",
+      "2/3",
+      "2/3"
+    ],
+    "singularity": "Kretschmann=64/(27*tau^4); tau=0 is not a spacetime point",
+    "support_primitive": "3*k_perp*tau^(1/3)*2F1(-1/2,1/6;7/6;-(kx*tau/k_perp)^2)",
+    "bound_integral_exact": "-27*sqrt(2)/80 - 76491/630784 + 81*2**(1/4)/154",
+    "analytic_lower_exact": "4*pi*(-27*sqrt(2)/80 - 76491/630784 + 81*2**(1/4)/154)/3",
+    "analytic_upper_exact": "-27*sqrt(2)/10 - 76491/78848 + 324*2**(1/4)/77",
+    "analytic_bounds_decimal": [
+      "0.1128108077001623814320",
+      "0.2154527721560411035143"
+    ],
+    "numeric_refinements_not_certified": [
+      {
+        "angle_intervals": 128,
+        "ray_nodes": 64,
+        "time_nodes_per_piece": 48,
+        "V_0_to_1_approx": 0.14422664449654357,
+        "flat_ball_relative_error": -5.4723746168994225e-05
+      },
+      {
+        "angle_intervals": 256,
+        "ray_nodes": 96,
+        "time_nodes_per_piece": 72,
+        "V_0_to_1_approx": 0.14423520782442548,
+        "flat_ball_relative_error": -1.368106147670023e-05
+      },
+      {
+        "angle_intervals": 512,
+        "ray_nodes": 128,
+        "time_nodes_per_piece": 96,
+        "V_0_to_1_approx": 0.14423734760609666,
+        "flat_ball_relative_error": -3.4202731757915217e-06
+      },
+      {
+        "angle_intervals": 1024,
+        "ray_nodes": 192,
+        "time_nodes_per_piece": 160,
+        "V_0_to_1_approx": 0.1442378821660713,
+        "flat_ball_relative_error": -8.550687816688551e-07
+      }
+    ],
+    "last_refinement_change": 5.345599746464647e-07,
+    "rational_lower_certificates": [
+      {
+        "lower_tip_tau": "0",
+        "upper_tip_tau": "1",
+        "w_partition_intervals": 256,
+        "volume_lower_floor_1e12": 135050608649,
+        "quartic_upper_ceiling_1e12": 131946275815,
+        "strict_disagreement": true,
+        "arithmetic": "Exact Fraction; Machin identity with 12-term alternating bounds; integer sqrt upper enclosure at denominator 10^18"
+      },
+      {
+        "lower_tip_tau": "1/16777216",
+        "upper_tip_tau": "1",
+        "w_partition_intervals": 256,
+        "volume_lower_floor_1e12": 134957218036,
+        "quartic_upper_ceiling_1e12": 131946243857,
+        "strict_disagreement": true,
+        "arithmetic": "Exact Fraction; Machin identity with 12-term alternating bounds; integer sqrt upper enclosure at denominator 10^18"
+      }
+    ],
+    "quartic_extrapolation_at_boundary": "0.13194627581435085946",
+    "scaling": "V(a,b)=b^4*F(a/b); the finite a->0 limit is not a diamond with a singular endpoint"
+  },
+  "numerical_scope": "Precision/refinement agreement is diagnostic, not a certified error bound. Analytic counterexamples and Kasner bounds are proved separately in the note.",
+  "elapsed_seconds": 4.038
+}

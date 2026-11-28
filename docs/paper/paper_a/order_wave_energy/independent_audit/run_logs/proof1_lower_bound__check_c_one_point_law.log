@@ -1,0 +1,47 @@
+=== check (c): one-point law, domain-strip O(lambda^2) bound ===
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=0.25 lam=1/8 | MC 0.53357 exact 0.53254
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=0.25 lam=1/8 | A(symdiff)/lam^2=1.6025 B/lam^2=10.7542 const=20.49
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=0.25 lam=1/8 | TV=2.572e-02 TV/lam^2=1.6460 bound/lam^2=20.194
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=0.25 lam=1/16 | MC 0.53282 exact 0.53254
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=0.25 lam=1/16 | A(symdiff)/lam^2=1.6911 B/lam^2=9.9201 const=17.10
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=0.25 lam=1/16 | TV=6.387e-03 TV/lam^2=1.6351 bound/lam^2=18.628
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=0.25 lam=1/32 | MC 0.53226 exact 0.53254
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=0.25 lam=1/32 | A(symdiff)/lam^2=1.7150 B/lam^2=8.8490 const=15.59
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=0.25 lam=1/32 | TV=1.594e-03 TV/lam^2=1.6326 bound/lam^2=16.617
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=0.25 lam=1/64 | MC 0.53213 exact 0.53254
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=0.25 lam=1/64 | A(symdiff)/lam^2=1.7237 B/lam^2=8.4878 const=14.88
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=0.25 lam=1/64 | TV=3.962e-04 TV/lam^2=1.6227 bound/lam^2=15.938
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=0.25 lam=1/128 | MC 0.53322 exact 0.53254
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=0.25 lam=1/128 | A(symdiff)/lam^2=1.7168 B/lam^2=8.3492 const=14.54
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=0.25 lam=1/128 | TV=9.829e-05 TV/lam^2=1.6104 bound/lam^2=15.678
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=1.00 lam=1/8 | MC 0.56158 exact 0.56220
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=1.00 lam=1/8 | A(symdiff)/lam^2=3.2645 B/lam^2=31.8223 const=81.80
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=1.00 lam=1/8 | TV=5.369e-02 TV/lam^2=3.4360 bound/lam^2=56.603
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=1.00 lam=1/16 | MC 0.56260 exact 0.56220
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=1.00 lam=1/16 | A(symdiff)/lam^2=3.5482 B/lam^2=25.5674 const=57.89
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=1.00 lam=1/16 | TV=1.311e-02 TV/lam^2=3.3571 bound/lam^2=45.477
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=1.00 lam=1/32 | MC 0.56296 exact 0.56220
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=1.00 lam=1/32 | A(symdiff)/lam^2=3.6478 B/lam^2=21.0685 const=48.31
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=1.00 lam=1/32 | TV=3.222e-03 TV/lam^2=3.2998 bound/lam^2=37.475
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=1.00 lam=1/64 | MC 0.56218 exact 0.56220
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=1.00 lam=1/64 | A(symdiff)/lam^2=3.6592 B/lam^2=19.3617 const=44.06
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=1.00 lam=1/64 | TV=7.985e-04 TV/lam^2=3.2707 bound/lam^2=34.439
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=1.00 lam=1/128 | MC 0.56226 exact 0.56220
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=1.00 lam=1/128 | A(symdiff)/lam^2=3.6708 B/lam^2=18.6128 const=42.06
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=1.00 lam=1/128 | TV=1.999e-04 TV/lam^2=3.2757 bound/lam^2=33.107
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=4.00 lam=1/8 | MC 0.75394 exact 0.75214
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=4.00 lam=1/8 | A(symdiff)/lam^2=8.2317 B/lam^2=165.6499 const=1114.32
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=4.00 lam=1/8 | TV=1.105e-01 TV/lam^2=7.0688 bound/lam^2=220.237
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=4.00 lam=1/16 | MC 0.75220 exact 0.75214
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=4.00 lam=1/16 | A(symdiff)/lam^2=10.4116 B/lam^2=117.5615 const=599.46
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=4.00 lam=1/16 | TV=3.007e-02 TV/lam^2=7.6967 bound/lam^2=156.302
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=4.00 lam=1/32 | MC 0.75177 exact 0.75214
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=4.00 lam=1/32 | A(symdiff)/lam^2=11.5224 B/lam^2=89.6607 const=424.20
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=4.00 lam=1/32 | TV=7.802e-03 TV/lam^2=7.9895 bound/lam^2=119.207
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=4.00 lam=1/64 | MC 0.75208 exact 0.75214
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=4.00 lam=1/64 | A(symdiff)/lam^2=11.9809 B/lam^2=77.5551 const=354.02
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=4.00 lam=1/64 | TV=1.967e-03 TV/lam^2=8.0566 bound/lam^2=103.112
+PASS C0 V_0 (MC) vs pi h^2 C2/K q=4.00 lam=1/128 | MC 0.75165 exact 0.75214
+PASS C1 A(symdiff) <= B(lam) <= const*lam^2 q=4.00 lam=1/128 | A(symdiff)/lam^2=12.0601 B/lam^2=71.6174 const=322.85
+PASS C2 TV(mu_lam,mu_0) <= B/V_0 and TV/lam^2 not growing q=4.00 lam=1/128 | TV=4.912e-04 TV/lam^2=8.0475 bound/lam^2=95.218
+SUMMARY checks=45 fails=0 -> ALL PASS

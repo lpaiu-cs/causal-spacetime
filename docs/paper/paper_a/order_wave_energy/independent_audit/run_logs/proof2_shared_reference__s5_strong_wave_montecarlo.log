@@ -1,0 +1,7 @@
+PASS W1 q=1.0, lambda=0.5 (eps=0.707): MC volumes match the wave formulas | p 0.085229 vs MC 0.085245 (z=0.11); f 0.025893 vs MC 0.025840 (z=-0.66); background formula at the same event is off by z=-64.3, 1.0
+PASS W1b sampled exact relation is a strict partial order (500 events) | relations 10347, transitivity violations 0
+PASS W2 q=6.0, lambda=0.3 (eps=0.827): MC volumes match the wave formulas | p 0.060132 vs MC 0.060150 (z=0.13); f 0.018572 vs MC 0.018634 (z=0.79); background formula at the same event is off by z=-13.3, 31.5
+PASS W2b sampled exact relation is a strict partial order (500 events) | relations 8803, transitivity violations 0
+PASS W4 q=1, lambda=1/64: sampled exact relation is a strict partial order (500 events) | relations 11070, transitivity violations 0
+PASS W3 q=6, lambda=0.3: MC pair probability matches Kbar C3/(3 C2^2), not the background | wave formula 0.06744, background p0 0.06249, MC 0.06822 (empirical se 0.00054, 6 x 20000 events)
+SUMMARY s5_strong_wave_montecarlo: 0 FAIL

@@ -1,0 +1,28 @@
+{
+  "stage": "main",
+  "status": "complete",
+  "code_version": "458a5f207c7f77936f440021ba585cf46ad5145b",
+  "worktree_clean_at_start": true,
+  "utc_started": "2026-11-25T09:12:22Z",
+  "device": "cpu",
+  "workers": 12,
+  "threads_per_worker": 1,
+  "runner_priority_class": 16384,
+  "logical_processors": 16,
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "tasks": 12,
+  "files": {
+    "drift_extension.py": "0d7200f075d65bd6a9e94ccd9eb61bd5d02b2e8b3dd3f11a1c64e5731cf6f709",
+    "analyse_extension.py": "ca137837e467e2fcf94910f9e87a3a01217802e0c4fe541f91536611bc1bcb61",
+    "drift_probe.py": "554481dfba46da85cfced9d3d9aa5235a54124a5aa2b1a16e2f25537417d5dd0",
+    "analyse_drift.py": "17d4d94fd109098855036f07d6768d158dc864ba197faaead7103177e1cb9c44",
+    "extension_design.md": "54cc486afdb9f847e21f8369b57d3cc6190195f2d89617b505b6852300d488ed"
+  },
+  "utc_finished": "2026-11-25T11:08:49Z",
+  "worker_priority_classes": [
+    16384
+  ],
+  "records_sha256": "2020e15afdcde34779686440368e44ebf817bd7e941ab6f3e2164d01d697545c"
+}

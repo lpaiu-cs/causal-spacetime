@@ -1,0 +1,11 @@
+PASS V1 dominance counts equal brute force
+PASS V2 population identity: w*H = 0 and u_hat = u on population moments :: max|wH|=1.1e-17 max|u_hat-u|=1.1e-15
+PASS V3 grid moments equal brute-force counts (incl. U-statistic) :: max gap 0.0e+00
+PASS V4 exact cell integration equals brute-force cell evaluation :: rel gap 3.2e-16
+PASS V5 grid quadrature (4200x40) vs exact cells, n=2000, omega<=128 :: worst relative difference 0.0484 (tolerance 0.06)
+PASS V6 n=n_P=1000: E|S_n-Sbar|^2 matches E[int|wH|^2-|Sbar|^2]/n_P :: ratio at omega=8,64: 1.060 1.131 (rel SE 0.10 0.10); n*n_P*E|S_n-Sbar|^2 = 1.294e-04 1.417e-04
+PASS V6 n=n_P=2000: E|S_n-Sbar|^2 matches E[int|wH|^2-|Sbar|^2]/n_P :: ratio at omega=8,64: 1.051 1.109 (rel SE 0.10 0.10); n*n_P*E|S_n-Sbar|^2 = 1.167e-04 1.262e-04
+PASS V6 n=n_P=4000: E|S_n-Sbar|^2 matches E[int|wH|^2-|Sbar|^2]/n_P :: ratio at omega=8,64: 1.019 1.068 (rel SE 0.13 0.12); n*n_P*E|S_n-Sbar|^2 = 1.266e-04 1.363e-04
+PASS V6 probe term exponent at omega=8: E|S_n-Sbar|^2 ~ n^(-2) (n_P=n) :: fitted exponent -2.032 +- 0.118 (L2 norm exponent -1.016 +- 0.059, claim -1)
+PASS V6 probe term exponent at omega=64: E|S_n-Sbar|^2 ~ n^(-2) (n_P=n) :: fitted exponent -2.040 +- 0.112 (L2 norm exponent -1.020 +- 0.056, claim -1)
+SUMMARY failures=0

@@ -1,0 +1,6 @@
+# Minimum environment for the new instrument and its audit.
+# Exact campaign versions are recorded in README.md and the G1 artifact.
+numpy>=2.0
+scipy>=1.15
+matplotlib>=3.8
+pytest>=8

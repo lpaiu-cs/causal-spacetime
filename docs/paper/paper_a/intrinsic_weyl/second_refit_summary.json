@@ -1,0 +1,870 @@
+{
+  "analysis": "post hoc sixth-degree refit of the saved benchmark archives; descriptive, decides nothing",
+  "sources": [
+    {
+      "file": "outputs/intrinsic_weyl_second_refit_v1_level1.json",
+      "code_version": "d7c5d1d",
+      "worktree_clean": true,
+      "levels": [
+        1048576
+      ]
+    },
+    {
+      "file": "outputs/intrinsic_weyl_second_refit_v1_rest.json",
+      "code_version": "07a4a39",
+      "worktree_clean": true,
+      "levels": [
+        4194304,
+        16777216
+      ]
+    },
+    {
+      "file": "outputs/intrinsic_weyl_second_refit_v1_top.json",
+      "code_version": "9752a32",
+      "worktree_clean": false,
+      "levels": [
+        16777216,
+        67108864
+      ]
+    }
+  ],
+  "rerun_agreement_beyond_1e-8": {
+    "n16777216_case0": {},
+    "n16777216_case1": {},
+    "n16777216_case2": {}
+  },
+  "rows": [
+    {
+      "measurement_n": 1048576,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 8.2,
+      "second_derivative_likelihood_ratio": 51.85855141019965,
+      "second_derivative_nominal_p": 0.1416538768817189,
+      "fits": {
+        "order_5": {
+          "q": 11.022039545330632,
+          "tidal_norm_estimate": 0.14936243336559374,
+          "statistical_radius_95": 0.2142391252425611,
+          "radius_95_with_allowance": 0.2216595652141561,
+          "electric_eigenvalues": [
+            -0.037701978324141856,
+            0.008050422588343428,
+            0.029651555735798436
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 509,
+          "nuisance_parameters": 509,
+          "optimizer_success": true,
+          "curved_cost": 1581.0977513083724,
+          "measured_intervals": 3613,
+          "fit_seconds": 62.6,
+          "full_tidal_error": 0.176296033504003,
+          "relative_error": 1.786252278607482,
+          "relative_statistical_radius_95": 2.1706961752075338,
+          "relative_radius_95_with_allowance": 2.2458809513144256
+        },
+        "order_6": {
+          "q": 8.335534996860815,
+          "tidal_norm_estimate": 0.7152476479105201,
+          "statistical_radius_95": 1.2578302275959559,
+          "radius_95_with_allowance": 1.2980971230144553,
+          "electric_eigenvalues": [
+            -0.28603765456625485,
+            -0.11572022238264865,
+            0.4017578769489036
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 551,
+          "nuisance_parameters": 551,
+          "optimizer_success": true,
+          "curved_cost": 1555.1684756032726,
+          "measured_intervals": 3613,
+          "fit_seconds": 70.7,
+          "full_tidal_error": 0.7356152460853396,
+          "relative_error": 7.453340743871618,
+          "relative_statistical_radius_95": 12.744484748113337,
+          "relative_radius_95_with_allowance": 13.152473698653795
+        }
+      },
+      "case": 0
+    },
+    {
+      "measurement_n": 1048576,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 9.8,
+      "second_derivative_likelihood_ratio": 51.305506846032586,
+      "second_derivative_nominal_p": 0.15379075216648647,
+      "fits": {
+        "order_5": {
+          "q": 15.696796430588881,
+          "tidal_norm_estimate": 0.16416824100459967,
+          "statistical_radius_95": 0.2325117294427199,
+          "radius_95_with_allowance": 0.2406072390436856,
+          "electric_eigenvalues": [
+            -0.06987781823580566,
+            -0.014102974465751528,
+            0.08398079270155717
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 533,
+          "nuisance_parameters": 533,
+          "optimizer_success": true,
+          "curved_cost": 1800.046556296348,
+          "measured_intervals": 4086,
+          "fit_seconds": 45.0,
+          "full_tidal_error": 0.10976232666255484,
+          "relative_error": 1.1121248856786985,
+          "relative_statistical_radius_95": 2.3558363637863375,
+          "relative_radius_95_with_allowance": 2.437861025282113
+        },
+        "order_6": {
+          "q": 12.290979809596143,
+          "tidal_norm_estimate": 0.7528505903697226,
+          "statistical_radius_95": 1.118528028110286,
+          "radius_95_with_allowance": 1.1567194284874291,
+          "electric_eigenvalues": [
+            -0.3924308589489396,
+            0.18226803958038298,
+            0.2101628193685565
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 575,
+          "nuisance_parameters": 575,
+          "optimizer_success": true,
+          "curved_cost": 1774.3938028733317,
+          "measured_intervals": 4086,
+          "fit_seconds": 52.9,
+          "full_tidal_error": 0.717965354489719,
+          "relative_error": 7.274509953108895,
+          "relative_statistical_radius_95": 11.333058374526424,
+          "relative_radius_95_with_allowance": 11.72001816364348
+        }
+      },
+      "case": 1
+    },
+    {
+      "measurement_n": 1048576,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 8.7,
+      "second_derivative_likelihood_ratio": 30.742452978047822,
+      "second_derivative_nominal_p": 0.9005411142767928,
+      "fits": {
+        "order_5": {
+          "q": 10.62426026572148,
+          "tidal_norm_estimate": 0.14253713330910503,
+          "statistical_radius_95": 0.2437318265376763,
+          "radius_95_with_allowance": 0.2516148665345494,
+          "electric_eigenvalues": [
+            -0.029208316639604104,
+            -0.018925536490830636,
+            0.048133853130434764
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 541,
+          "nuisance_parameters": 541,
+          "optimizer_success": true,
+          "curved_cost": 1628.3170182118274,
+          "measured_intervals": 3735,
+          "fit_seconds": 47.0,
+          "full_tidal_error": 0.14253713330910503
+        },
+        "order_6": {
+          "q": 9.251927946906406,
+          "tidal_norm_estimate": 0.6935919702487487,
+          "statistical_radius_95": 1.2256039647518482,
+          "radius_95_with_allowance": 1.2647712287314523,
+          "electric_eigenvalues": [
+            -0.4005860802799277,
+            0.010703844483857618,
+            0.38988223579607006
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 583,
+          "nuisance_parameters": 583,
+          "optimizer_success": true,
+          "curved_cost": 1612.9457917228035,
+          "measured_intervals": 3735,
+          "fit_seconds": 56.2,
+          "full_tidal_error": 0.6935919702487487
+        }
+      },
+      "case": 2
+    },
+    {
+      "measurement_n": 1048576,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 11.7,
+      "second_derivative_likelihood_ratio": 36.48863435437215,
+      "second_derivative_nominal_p": 0.7109677378522837,
+      "fits": {
+        "order_5": {
+          "q": 4.360803355369468,
+          "tidal_norm_estimate": 0.09756271217149971,
+          "statistical_radius_95": 0.24703624484476192,
+          "radius_95_with_allowance": 0.25406887662060396,
+          "electric_eigenvalues": [
+            -0.042310336160817,
+            0.0005169774643045006,
+            0.04179335869651252
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 545,
+          "nuisance_parameters": 545,
+          "optimizer_success": true,
+          "curved_cost": 1995.1862394216512,
+          "measured_intervals": 4463,
+          "fit_seconds": 79.4,
+          "full_tidal_error": 0.09756271217149971
+        },
+        "order_6": {
+          "q": 6.035755414309077,
+          "tidal_norm_estimate": 0.5635418606895722,
+          "statistical_radius_95": 1.2922666456154221,
+          "radius_95_with_allowance": 1.3301402886012386,
+          "electric_eigenvalues": [
+            -0.26799555933385694,
+            -0.11087177377320029,
+            0.3788673331070572
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 587,
+          "nuisance_parameters": 587,
+          "optimizer_success": true,
+          "curved_cost": 1976.941922244465,
+          "measured_intervals": 4463,
+          "fit_seconds": 59.1,
+          "full_tidal_error": 0.5635418606895722
+        }
+      },
+      "case": 3
+    },
+    {
+      "measurement_n": 4194304,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 22.4,
+      "second_derivative_likelihood_ratio": 27.27968383875759,
+      "second_derivative_nominal_p": 0.9616148966860385,
+      "fits": {
+        "order_5": {
+          "q": 16.23743177120809,
+          "tidal_norm_estimate": 0.0820073993863651,
+          "statistical_radius_95": 0.10750515147296856,
+          "radius_95_with_allowance": 0.11137275455173047,
+          "electric_eigenvalues": [
+            -0.03028806226231135,
+            -0.0064207406843787215,
+            0.036708802946690065
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 509,
+          "nuisance_parameters": 509,
+          "optimizer_success": true,
+          "curved_cost": 1493.9799781330814,
+          "measured_intervals": 3613,
+          "fit_seconds": 49.6,
+          "full_tidal_error": 0.08509922649269674,
+          "relative_error": 0.8622354355287423,
+          "relative_statistical_radius_95": 1.0892549194889987,
+          "relative_radius_95_with_allowance": 1.1284419316688892
+        },
+        "order_6": {
+          "q": 7.163746952839749,
+          "tidal_norm_estimate": 0.30967376325681933,
+          "statistical_radius_95": 0.6561781440966884,
+          "radius_95_with_allowance": 0.675889407512066,
+          "electric_eigenvalues": [
+            -0.1299850562428584,
+            -0.014553654538401548,
+            0.14453871078125993
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 551,
+          "nuisance_parameters": 551,
+          "optimizer_success": true,
+          "curved_cost": 1480.3401362137026,
+          "measured_intervals": 3613,
+          "fit_seconds": 53.7,
+          "full_tidal_error": 0.2981069811556464,
+          "relative_error": 3.0204552182734172,
+          "relative_statistical_radius_95": 6.648474624010894,
+          "relative_radius_95_with_allowance": 6.848191478044091
+        }
+      },
+      "case": 0
+    },
+    {
+      "measurement_n": 4194304,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 30.4,
+      "second_derivative_likelihood_ratio": 53.31534598587041,
+      "second_derivative_nominal_p": 0.11318540151007797,
+      "fits": {
+        "order_5": {
+          "q": 29.983266011948963,
+          "tidal_norm_estimate": 0.12409247137383604,
+          "statistical_radius_95": 0.11660295393416742,
+          "radius_95_with_allowance": 0.12151510547106545,
+          "electric_eigenvalues": [
+            -0.048373666326838094,
+            0.003173070334081215,
+            0.045200595992756866
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 533,
+          "nuisance_parameters": 533,
+          "optimizer_success": true,
+          "curved_cost": 1741.602496980858,
+          "measured_intervals": 4086,
+          "fit_seconds": 57.7,
+          "full_tidal_error": 0.0747653816664672,
+          "relative_error": 0.7575316965917597,
+          "relative_statistical_radius_95": 1.1814349308802827,
+          "relative_radius_95_with_allowance": 1.2312054316751866
+        },
+        "order_6": {
+          "q": 18.91636949349457,
+          "tidal_norm_estimate": 0.4656654778846636,
+          "statistical_radius_95": 0.56113950376017,
+          "radius_95_with_allowance": 0.5820947074672074,
+          "electric_eigenvalues": [
+            -0.2893698400564787,
+            0.06903082536893258,
+            0.22033901468754616
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 575,
+          "nuisance_parameters": 575,
+          "optimizer_success": true,
+          "curved_cost": 1714.9448239879227,
+          "measured_intervals": 4086,
+          "fit_seconds": 60.2,
+          "full_tidal_error": 0.4540257567619731,
+          "relative_error": 4.600242707923125,
+          "relative_statistical_radius_95": 5.6855318709454465,
+          "relative_radius_95_with_allowance": 5.8978524752517805
+        }
+      },
+      "case": 1
+    },
+    {
+      "measurement_n": 4194304,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 24.0,
+      "second_derivative_likelihood_ratio": 31.11751783803811,
+      "second_derivative_nominal_p": 0.8914715449490653,
+      "fits": {
+        "order_5": {
+          "q": 17.778418073438452,
+          "tidal_norm_estimate": 0.08462983051573984,
+          "statistical_radius_95": 0.12232200938468701,
+          "radius_95_with_allowance": 0.12654551632143043,
+          "electric_eigenvalues": [
+            -0.026394580857241143,
+            -0.011915599305271302,
+            0.03831018016251243
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 541,
+          "nuisance_parameters": 541,
+          "optimizer_success": true,
+          "curved_cost": 1632.9176518856839,
+          "measured_intervals": 3735,
+          "fit_seconds": 41.8,
+          "full_tidal_error": 0.08462983051573984
+        },
+        "order_6": {
+          "q": 9.705306630675638,
+          "tidal_norm_estimate": 0.3739882835329539,
+          "statistical_radius_95": 0.6202729016215216,
+          "radius_95_with_allowance": 0.6405639462165109,
+          "electric_eigenvalues": [
+            -0.2546725024580095,
+            0.05378603593866071,
+            0.20088646651934874
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 583,
+          "nuisance_parameters": 583,
+          "optimizer_success": true,
+          "curved_cost": 1617.3588929666648,
+          "measured_intervals": 3735,
+          "fit_seconds": 43.9,
+          "full_tidal_error": 0.3739882835329539
+        }
+      },
+      "case": 2
+    },
+    {
+      "measurement_n": 4194304,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 38.3,
+      "second_derivative_likelihood_ratio": 55.78769457304543,
+      "second_derivative_nominal_p": 0.07542824639138639,
+      "fits": {
+        "order_5": {
+          "q": 9.841998174485871,
+          "tidal_norm_estimate": 0.0641820955670445,
+          "statistical_radius_95": 0.1241363218798444,
+          "radius_95_with_allowance": 0.12797955488896456,
+          "electric_eigenvalues": [
+            -0.027184002404948192,
+            -0.012982513764635382,
+            0.040166516169583555
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 545,
+          "nuisance_parameters": 545,
+          "optimizer_success": true,
+          "curved_cost": 1940.9669236229117,
+          "measured_intervals": 4463,
+          "fit_seconds": 48.9,
+          "full_tidal_error": 0.0641820955670445
+        },
+        "order_6": {
+          "q": 9.526496025589527,
+          "tidal_norm_estimate": 0.39758875540168903,
+          "statistical_radius_95": 0.6479795549895432,
+          "radius_95_with_allowance": 0.6693176837730378,
+          "electric_eigenvalues": [
+            -0.18490075103783915,
+            -0.033178368219115295,
+            0.21807911925695453
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 587,
+          "nuisance_parameters": 587,
+          "optimizer_success": true,
+          "curved_cost": 1913.073076336389,
+          "measured_intervals": 4463,
+          "fit_seconds": 61.5,
+          "full_tidal_error": 0.39758875540168903
+        }
+      },
+      "case": 3
+    },
+    {
+      "measurement_n": 16777216,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 47.2,
+      "second_derivative_likelihood_ratio": 31.935100000612238,
+      "second_derivative_nominal_p": 0.8699752569299812,
+      "fits": {
+        "order_5": {
+          "q": 75.59563381033725,
+          "tidal_norm_estimate": 0.08292245317951709,
+          "statistical_radius_95": 0.053892784811792445,
+          "radius_95_with_allowance": 0.0566849325259008,
+          "electric_eigenvalues": [
+            -0.04396935570038508,
+            -0.002558608336752394,
+            0.04652796403713746
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 509,
+          "nuisance_parameters": 509,
+          "optimizer_success": true,
+          "curved_cost": 1503.0921438371918,
+          "measured_intervals": 3613,
+          "fit_seconds": 36.4,
+          "full_tidal_error": 0.028828542598984656,
+          "relative_error": 0.29209420588126817,
+          "relative_statistical_radius_95": 0.5460480746912614,
+          "relative_radius_95_with_allowance": 0.5743384458210321
+        },
+        "order_6": {
+          "q": 14.206154777725649,
+          "tidal_norm_estimate": 0.2413423934502548,
+          "statistical_radius_95": 0.32711988799324865,
+          "radius_95_with_allowance": 0.3387211590431161,
+          "electric_eigenvalues": [
+            -0.16128715999370058,
+            0.021334131175712062,
+            0.13995302881798855
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 551,
+          "nuisance_parameters": 551,
+          "optimizer_success": true,
+          "curved_cost": 1487.1245938368857,
+          "measured_intervals": 3613,
+          "fit_seconds": 37.5,
+          "full_tidal_error": 0.20351075467627333,
+          "relative_error": 2.061995054774544,
+          "relative_statistical_radius_95": 3.3144174244424907,
+          "relative_radius_95_with_allowance": 3.4319628758953065
+        }
+      },
+      "case": 0
+    },
+    {
+      "measurement_n": 16777216,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 58.9,
+      "second_derivative_likelihood_ratio": 37.13455354586631,
+      "second_derivative_nominal_p": 0.6841462538487562,
+      "fits": {
+        "order_5": {
+          "q": 97.03078079227501,
+          "tidal_norm_estimate": 0.11498363570624894,
+          "statistical_radius_95": 0.05834146284087079,
+          "radius_95_with_allowance": 0.06187870974999569,
+          "electric_eigenvalues": [
+            -0.041226051678139135,
+            0.00721123736466402,
+            0.03401481431347512
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 533,
+          "nuisance_parameters": 533,
+          "optimizer_success": true,
+          "curved_cost": 1798.0853223106774,
+          "measured_intervals": 4086,
+          "fit_seconds": 38.7,
+          "full_tidal_error": 0.04940505705559445,
+          "relative_error": 0.5005778858790061,
+          "relative_statistical_radius_95": 0.5911226070462494,
+          "relative_radius_95_with_allowance": 0.626962411413023
+        },
+        "order_6": {
+          "q": 3.5660618747857984,
+          "tidal_norm_estimate": 0.10699805757825555,
+          "statistical_radius_95": 0.28069271717859434,
+          "radius_95_with_allowance": 0.2886047738062852,
+          "electric_eigenvalues": [
+            -0.0573368516585932,
+            0.007264521965657214,
+            0.050072329692936
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 575,
+          "nuisance_parameters": 575,
+          "optimizer_success": true,
+          "curved_cost": 1779.5180455377442,
+          "measured_intervals": 4086,
+          "fit_seconds": 39.8,
+          "full_tidal_error": 0.12005650513115694,
+          "relative_error": 1.216426720385122,
+          "relative_statistical_radius_95": 2.8440118344319134,
+          "relative_radius_95_with_allowance": 2.9241777286881976
+        }
+      },
+      "case": 1
+    },
+    {
+      "measurement_n": 16777216,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 51.6,
+      "second_derivative_likelihood_ratio": 31.945158047109544,
+      "second_derivative_nominal_p": 0.8696961429840969,
+      "fits": {
+        "order_5": {
+          "q": 11.458790869025997,
+          "tidal_norm_estimate": 0.03555362077897403,
+          "statistical_radius_95": 0.06131018374988547,
+          "radius_95_with_allowance": 0.06328699608720914,
+          "electric_eigenvalues": [
+            -0.014725523727038503,
+            0.0028290465840933206,
+            0.011896477142945179
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 541,
+          "nuisance_parameters": 541,
+          "optimizer_success": true,
+          "curved_cost": 1587.4878791016663,
+          "measured_intervals": 3735,
+          "fit_seconds": 31.5,
+          "full_tidal_error": 0.03555362077897403
+        },
+        "order_6": {
+          "q": 14.413600549036419,
+          "tidal_norm_estimate": 0.24244186438042364,
+          "statistical_radius_95": 0.310808036231517,
+          "radius_95_with_allowance": 0.32209885052971987,
+          "electric_eigenvalues": [
+            -0.16618133405864915,
+            0.037766088267180725,
+            0.12841524579146846
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 583,
+          "nuisance_parameters": 583,
+          "optimizer_success": true,
+          "curved_cost": 1571.5153000781115,
+          "measured_intervals": 3735,
+          "fit_seconds": 33.6,
+          "full_tidal_error": 0.24244186438042364
+        }
+      },
+      "case": 2
+    },
+    {
+      "measurement_n": 16777216,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 63.7,
+      "second_derivative_likelihood_ratio": 27.950250785087974,
+      "second_derivative_nominal_p": 0.9527991324945488,
+      "fits": {
+        "order_5": {
+          "q": 10.873345648909075,
+          "tidal_norm_estimate": 0.040195173720579375,
+          "statistical_radius_95": 0.06215211848204618,
+          "radius_95_with_allowance": 0.06424083873107934,
+          "electric_eigenvalues": [
+            -0.01177326478629564,
+            -0.0026151128929951346,
+            0.014388377679290782
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 545,
+          "nuisance_parameters": 545,
+          "optimizer_success": true,
+          "curved_cost": 1853.3066640481827,
+          "measured_intervals": 4463,
+          "fit_seconds": 39.5,
+          "full_tidal_error": 0.040195173720579375
+        },
+        "order_6": {
+          "q": 5.833862759810074,
+          "tidal_norm_estimate": 0.17187724873928725,
+          "statistical_radius_95": 0.32440387069034826,
+          "radius_95_with_allowance": 0.33453205680115716,
+          "electric_eigenvalues": [
+            -0.03461610246774592,
+            -0.004024935325740654,
+            0.03864103779348657
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 587,
+          "nuisance_parameters": 587,
+          "optimizer_success": true,
+          "curved_cost": 1839.3315386556387,
+          "measured_intervals": 4463,
+          "fit_seconds": 39.9,
+          "full_tidal_error": 0.17187724873928725
+        }
+      },
+      "case": 3
+    },
+    {
+      "measurement_n": 67108864,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 134.0,
+      "second_derivative_likelihood_ratio": 38.353786126565865,
+      "second_derivative_nominal_p": 0.6317941959056225,
+      "fits": {
+        "order_5": {
+          "q": 347.118131397018,
+          "tidal_norm_estimate": 0.09157457566900844,
+          "statistical_radius_95": 0.02695329744196681,
+          "radius_95_with_allowance": 0.029372233627905083,
+          "electric_eigenvalues": [
+            -0.04545889208734111,
+            0.00033233395927102766,
+            0.04512655812807008
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 509,
+          "nuisance_parameters": 509,
+          "optimizer_success": true,
+          "curved_cost": 1541.4699225919462,
+          "measured_intervals": 3613,
+          "fit_seconds": 33.0,
+          "full_tidal_error": 0.013030179235970133,
+          "relative_error": 0.13202331832603062,
+          "relative_statistical_radius_95": 0.2730939999884072,
+          "relative_radius_95_with_allowance": 0.297602947739862
+        },
+        "order_6": {
+          "q": 16.678085538155347,
+          "tidal_norm_estimate": 0.12846191772347293,
+          "statistical_radius_95": 0.16393881781707734,
+          "radius_95_with_allowance": 0.1699061797668845,
+          "electric_eigenvalues": [
+            -0.099602450496552,
+            0.038731519674784894,
+            0.06087093082176712
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 551,
+          "nuisance_parameters": 551,
+          "optimizer_success": true,
+          "curved_cost": 1522.2930295286633,
+          "measured_intervals": 3613,
+          "fit_seconds": 34.1,
+          "full_tidal_error": 0.10900080262526432,
+          "relative_error": 1.1044090339956618,
+          "relative_statistical_radius_95": 1.6610475066151849,
+          "relative_radius_95_with_allowance": 1.7215095242128557
+        }
+      },
+      "case": 0
+    },
+    {
+      "measurement_n": 67108864,
+      "kind": "wave",
+      "truth_norm": 0.09869604401089359,
+      "clock_read_seconds": 160.5,
+      "second_derivative_likelihood_ratio": 30.045829619684355,
+      "second_derivative_nominal_p": 0.9160673539175335,
+      "fits": {
+        "order_5": {
+          "q": 313.6968141356668,
+          "tidal_norm_estimate": 0.0971077567709688,
+          "statistical_radius_95": 0.02921398047366581,
+          "radius_95_with_allowance": 0.03179197511131141,
+          "electric_eigenvalues": [
+            -0.04286068178196601,
+            0.0026038222572566053,
+            0.04025685952470941
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 533,
+          "nuisance_parameters": 533,
+          "optimizer_success": true,
+          "curved_cost": 1686.9312113656647,
+          "measured_intervals": 4086,
+          "fit_seconds": 38.5,
+          "full_tidal_error": 0.024585151751565767,
+          "relative_error": 0.2490996675495137,
+          "relative_statistical_radius_95": 0.2959995080495963,
+          "relative_radius_95_with_allowance": 0.32212005486058154
+        },
+        "order_6": {
+          "q": 11.152940625254923,
+          "tidal_norm_estimate": 0.10184140639963293,
+          "statistical_radius_95": 0.14044374044770416,
+          "radius_95_with_allowance": 0.1453883352813233,
+          "electric_eigenvalues": [
+            -0.027032710433288018,
+            -0.00853091502300064,
+            0.03556362545628866
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 575,
+          "nuisance_parameters": 575,
+          "optimizer_success": true,
+          "curved_cost": 1671.9082965558225,
+          "measured_intervals": 4086,
+          "fit_seconds": 38.7,
+          "full_tidal_error": 0.09539921547782712,
+          "relative_error": 0.9665961430763873,
+          "relative_statistical_radius_95": 1.4229926017318655,
+          "relative_radius_95_with_allowance": 1.4730918218492735
+        }
+      },
+      "case": 1
+    },
+    {
+      "measurement_n": 67108864,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 149.4,
+      "second_derivative_likelihood_ratio": 35.63481714079944,
+      "second_derivative_nominal_p": 0.745139922477297,
+      "fits": {
+        "order_5": {
+          "q": 10.819030283184212,
+          "tidal_norm_estimate": 0.016267904085723064,
+          "statistical_radius_95": 0.030658813413308967,
+          "radius_95_with_allowance": 0.031616501525534114,
+          "electric_eigenvalues": [
+            -0.006827240238290285,
+            2.338458339056529e-05,
+            0.006803855654899721
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 541,
+          "nuisance_parameters": 541,
+          "optimizer_success": true,
+          "curved_cost": 1612.2427590502823,
+          "measured_intervals": 3735,
+          "fit_seconds": 30.6,
+          "full_tidal_error": 0.016267904085723064
+        },
+        "order_6": {
+          "q": 8.15729673357255,
+          "tidal_norm_estimate": 0.08915661495571903,
+          "statistical_radius_95": 0.15572365801551452,
+          "radius_95_with_allowance": 0.1607212146067642,
+          "electric_eigenvalues": [
+            -0.05396586617080833,
+            0.01071411724221531,
+            0.04325174892859301
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 583,
+          "nuisance_parameters": 583,
+          "optimizer_success": true,
+          "curved_cost": 1594.4253504798826,
+          "measured_intervals": 3735,
+          "fit_seconds": 31.8,
+          "full_tidal_error": 0.08915661495571903
+        }
+      },
+      "case": 2
+    },
+    {
+      "measurement_n": 67108864,
+      "kind": "flat",
+      "truth_norm": 0.0,
+      "clock_read_seconds": 172.1,
+      "second_derivative_likelihood_ratio": 57.06384086558501,
+      "second_derivative_nominal_p": 0.060450914488784986,
+      "fits": {
+        "order_5": {
+          "q": 13.47234184224097,
+          "tidal_norm_estimate": 0.023197288902877252,
+          "statistical_radius_95": 0.03111282874492327,
+          "radius_95_with_allowance": 0.03222119849283756,
+          "electric_eigenvalues": [
+            -0.004338900033997759,
+            -0.0017110246274965103,
+            0.006049924661494267
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 545,
+          "nuisance_parameters": 545,
+          "optimizer_success": true,
+          "curved_cost": 1909.4900736615757,
+          "measured_intervals": 4463,
+          "fit_seconds": 36.2,
+          "full_tidal_error": 0.023197288902877252
+        },
+        "order_6": {
+          "q": 13.16156602238299,
+          "tidal_norm_estimate": 0.11874423395087046,
+          "statistical_radius_95": 0.1623681708338212,
+          "radius_95_with_allowance": 0.16810515868657003,
+          "electric_eigenvalues": [
+            -0.05780251763813948,
+            0.015600380239104376,
+            0.04220213739903512
+          ],
+          "projected_curvature_rank": 10,
+          "nuisance_rank": 587,
+          "nuisance_parameters": 587,
+          "optimizer_success": true,
+          "curved_cost": 1880.9581532287832,
+          "measured_intervals": 4463,
+          "fit_seconds": 38.4,
+          "full_tidal_error": 0.11874423395087046
+        }
+      },
+      "case": 3
+    }
+  ]
+}

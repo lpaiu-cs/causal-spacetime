@@ -1,0 +1,251 @@
+{
+  "code_version": "498e78ee28df050185946c79fc425cbab9023cd6",
+  "primary_audit": {
+    "hashes_and_predata_forecast_verified": true,
+    "independent_recomputed_cells": [
+      {
+        "region": "R+",
+        "N": 300,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "R+",
+        "N": 1200,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "R0",
+        "N": 300,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "R0",
+        "N": 1200,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "R-",
+        "N": 300,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "R-",
+        "N": 1200,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "D",
+        "N": 300,
+        "G3": true,
+        "G4": true
+      },
+      {
+        "region": "D",
+        "N": 1200,
+        "G3": true,
+        "G4": true
+      }
+    ]
+  },
+  "secondary_status": "Descriptive post-confirmation analysis; no primary gate is changed.",
+  "secondary": [
+    {
+      "region": "R+",
+      "N": 300,
+      "A": 0.125,
+      "pilot_orientation_source": {
+        "A": 0.0625,
+        "N": 200
+      },
+      "directions_f_chain3": [
+        1,
+        1
+      ],
+      "AUC_f": 0.9425517578125,
+      "AUC_chain3": 0.94370576171875,
+      "delta_AUC_chain3_minus_f": 0.0011540039062499785,
+      "Rplus_transfer_FPR_TPR": [
+        0.0128125,
+        0.4353125
+      ],
+      "random_label_AUC": 0.50521142578125
+    },
+    {
+      "region": "R+",
+      "N": 1200,
+      "A": 0.125,
+      "pilot_orientation_source": {
+        "A": 0.0625,
+        "N": 800
+      },
+      "directions_f_chain3": [
+        1,
+        1
+      ],
+      "AUC_f": 0.9995568359375,
+      "AUC_chain3": 0.999954345703125,
+      "delta_AUC_chain3_minus_f": 0.00039750976562502593,
+      "Rplus_transfer_FPR_TPR": [
+        0.010625,
+        0.985625
+      ],
+      "random_label_AUC": 0.48698349609375
+    },
+    {
+      "region": "R0",
+      "N": 300,
+      "A": 1.4142135623730951,
+      "pilot_orientation_source": {
+        "A": 2.0,
+        "N": 200
+      },
+      "directions_f_chain3": [
+        1,
+        1
+      ],
+      "AUC_f": 0.96733408203125,
+      "AUC_chain3": 0.99895673828125,
+      "delta_AUC_chain3_minus_f": 0.031622656249999936,
+      "Rplus_transfer_FPR_TPR": [
+        0.0184375,
+        0.746875
+      ],
+      "random_label_AUC": 0.50939013671875
+    },
+    {
+      "region": "R0",
+      "N": 1200,
+      "A": 1.4142135623730951,
+      "pilot_orientation_source": {
+        "A": 2.0,
+        "N": 800
+      },
+      "directions_f_chain3": [
+        1,
+        1
+      ],
+      "AUC_f": 0.999940966796875,
+      "AUC_chain3": 1.0,
+      "delta_AUC_chain3_minus_f": 5.903320312494742e-05,
+      "Rplus_transfer_FPR_TPR": [
+        0.0325,
+        0.9996875
+      ],
+      "random_label_AUC": 0.505097705078125
+    },
+    {
+      "region": "R-",
+      "N": 300,
+      "A": 0.125,
+      "pilot_orientation_source": {
+        "A": 0.0625,
+        "N": 200
+      },
+      "directions_f_chain3": [
+        -1,
+        -1
+      ],
+      "AUC_f": 0.91571875,
+      "AUC_chain3": 0.869367626953125,
+      "delta_AUC_chain3_minus_f": -0.04635112304687505,
+      "Rplus_transfer_FPR_TPR": [
+        0.0071875,
+        0.2025
+      ],
+      "random_label_AUC": 0.49468056640625
+    },
+    {
+      "region": "R-",
+      "N": 1200,
+      "A": 0.125,
+      "pilot_orientation_source": {
+        "A": 0.0625,
+        "N": 800
+      },
+      "directions_f_chain3": [
+        -1,
+        -1
+      ],
+      "AUC_f": 0.997095947265625,
+      "AUC_chain3": 0.9942798828125,
+      "delta_AUC_chain3_minus_f": -0.002816064453124989,
+      "Rplus_transfer_FPR_TPR": [
+        0.0090625,
+        0.9103125
+      ],
+      "random_label_AUC": 0.50322177734375
+    },
+    {
+      "region": "D",
+      "N": 300,
+      "A": 0.015625,
+      "pilot_orientation_source": {
+        "A": 0.015625,
+        "N": 200
+      },
+      "directions_f_chain3": [
+        1,
+        1
+      ],
+      "AUC_f": 0.506511865234375,
+      "AUC_chain3": 0.509919970703125,
+      "delta_AUC_chain3_minus_f": 0.0034081054687500334,
+      "Rplus_transfer_FPR_TPR": [
+        1.0,
+        1.0
+      ],
+      "random_label_AUC": 0.4974966796875
+    },
+    {
+      "region": "D",
+      "N": 1200,
+      "A": 0.015625,
+      "pilot_orientation_source": {
+        "A": 0.015625,
+        "N": 800
+      },
+      "directions_f_chain3": [
+        -1,
+        -1
+      ],
+      "AUC_f": 0.495508349609375,
+      "AUC_chain3": 0.497167236328125,
+      "delta_AUC_chain3_minus_f": 0.0016588867187499745,
+      "Rplus_transfer_FPR_TPR": [
+        1.0,
+        1.0
+      ],
+      "random_label_AUC": 0.494762646484375
+    }
+  ],
+  "incremental_timing": [
+    {
+      "N": 300,
+      "region": "R0",
+      "A": 1,
+      "median_ms_order_f_chain3": [
+        1.9479,
+        0.0375,
+        0.0943
+      ],
+      "repeats": 9
+    },
+    {
+      "N": 1200,
+      "region": "R0",
+      "A": 1,
+      "median_ms_order_f_chain3": [
+        54.2581,
+        0.536,
+        1.3185
+      ],
+      "repeats": 9
+    }
+  ]
+}

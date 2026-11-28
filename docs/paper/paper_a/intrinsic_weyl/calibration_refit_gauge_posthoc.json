@@ -1,0 +1,102 @@
+{
+  "analysis": "post hoc gauge comparison of the check refits; decides nothing",
+  "receipt_passed": false,
+  "rows": [
+    {
+      "replicate": 0,
+      "measurement_n": 1048576,
+      "order_5": {
+        "axis_signs": [
+          -1,
+          -1,
+          1
+        ],
+        "coordinates_max_difference": 1.2524703496552547e-15,
+        "coefficients_max_relative_difference": 2.5090373419584977e-13,
+        "covariance_max_difference": 5.2983604916650995e-17,
+        "framed_coefficients_max_difference_up_to_z": 1.867950238931826e-14,
+        "q_new": 8.999150753264903,
+        "q_stored": 8.999150753265194,
+        "curved_cost_relative_difference": 2.8157359544897175e-14
+      },
+      "order_6": {
+        "axis_signs": [
+          -1,
+          -1,
+          1
+        ],
+        "coordinates_max_difference": 1.1379786002407855e-15,
+        "coefficients_max_relative_difference": 4.817279233053946e-13,
+        "covariance_max_difference": 3.117645031025518e-14,
+        "framed_coefficients_max_difference_up_to_z": 1.7695567233744214e-13,
+        "q_new": 18.973194983980225,
+        "q_stored": 18.973194983968718,
+        "curved_cost_relative_difference": 1.2540820712023431e-14
+      }
+    },
+    {
+      "replicate": 1,
+      "measurement_n": 16777216,
+      "order_5": {
+        "axis_signs": [
+          -1,
+          -1,
+          1
+        ],
+        "coordinates_max_difference": 7.979727989493313e-16,
+        "coefficients_max_relative_difference": 1.230721487190907e-12,
+        "covariance_max_difference": 4.2487172634275705e-18,
+        "framed_coefficients_max_difference_up_to_z": 1.899435470020805e-14,
+        "q_new": 5.9680282160430345,
+        "q_stored": 5.968028216047488,
+        "curved_cost_relative_difference": 9.75656050784309e-14
+      },
+      "order_6": {
+        "axis_signs": [
+          -1,
+          -1,
+          1
+        ],
+        "coordinates_max_difference": 1.1744077932362984e-15,
+        "coefficients_max_relative_difference": 2.2742935800100646e-12,
+        "covariance_max_difference": 1.5736110331454611e-15,
+        "framed_coefficients_max_difference_up_to_z": 2.72032396608779e-13,
+        "q_new": 13.746438368591207,
+        "q_stored": 13.746438368607635,
+        "curved_cost_relative_difference": 5.412434780650855e-14
+      }
+    },
+    {
+      "replicate": 64,
+      "measurement_n": 16777216,
+      "order_5": {
+        "axis_signs": [
+          1,
+          -1,
+          1
+        ],
+        "coordinates_max_difference": 6.106226635438361e-16,
+        "coefficients_max_relative_difference": 1.0671842191245389e-12,
+        "covariance_max_difference": 4.440993742454297e-18,
+        "framed_coefficients_max_difference_up_to_z": 3.4736102882959585e-14,
+        "q_new": 63.882795067993044,
+        "q_stored": 63.88279506796613,
+        "curved_cost_relative_difference": 1.7850060686923985e-13
+      },
+      "order_6": {
+        "axis_signs": [
+          1,
+          -1,
+          1
+        ],
+        "coordinates_max_difference": 1.1900203045200897e-15,
+        "coefficients_max_relative_difference": 2.252486351934624e-12,
+        "covariance_max_difference": 2.073861915530273e-15,
+        "framed_coefficients_max_difference_up_to_z": 1.952544029237835e-13,
+        "q_new": 7.70445089476575,
+        "q_stored": 7.704450894774087,
+        "curved_cost_relative_difference": 1.833212250044108e-14
+      }
+    }
+  ]
+}

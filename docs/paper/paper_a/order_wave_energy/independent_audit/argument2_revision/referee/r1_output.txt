@@ -1,0 +1,24 @@
+[PASS] B Lambda_0 = alpha(l): max rel err 2.2e-15
+[PASS] B flat limit p0(0) = 1/10: p0(1e-8) = 0.099999999962
+[PASS] A p0(1), p0(0.25): p0(1) = 0.09591918, p0(0.25) = 0.09903149; widths 4.081%, 0.969%
+[PASS] C p0 decreasing on grid: max step diff -1.91e-05; max d log p0/dz (finite diff) -0.0381
+[INFO] row q=0.25, r=64: [0.074560, 0.132767] window (0.099031, 0.1) -> SKIPPED (signed margin -3.28e-02); decrease -6.637e-05
+[INFO] row q=0.25, r=128: [0.085922, 0.115252] window (0.099031, 0.1) -> SKIPPED (signed margin -1.53e-02); decrease +1.010e-06
+[INFO] row q=0.25, r=256: [0.092414, 0.107175] window (0.099031, 0.1) -> SKIPPED (signed margin -7.17e-03); decrease +1.152e-06
+[INFO] row q=0.25, r=512: [0.095890, 0.103299] window (0.099031, 0.1) -> SKIPPED (signed margin -3.30e-03); decrease +3.451e-07
+[INFO] row q=0.25, r=1024: [0.097688, 0.101401] window (0.099031, 0.1) -> SKIPPED (signed margin -1.40e-03); decrease +8.777e-08
+[INFO] row q=0.25, r=2048: [0.098604, 0.100462] window (0.099031, 0.1) -> SKIPPED (signed margin -4.62e-04); decrease +2.187e-08
+[INFO] row q=1.0, r=64: [0.072984, 0.131380] window (0.095919, 0.1) -> SKIPPED (signed margin -3.14e-02); decrease -4.380e-05
+[INFO] row q=1.0, r=128: [0.084392, 0.113799] window (0.095919, 0.1) -> SKIPPED (signed margin -1.38e-02); decrease +5.637e-06
+[INFO] row q=1.0, r=256: [0.090916, 0.105712] window (0.095919, 0.1) -> SKIPPED (signed margin -5.71e-03); decrease +2.244e-06
+[INFO] row q=1.0, r=512: [0.094410, 0.101836] window (0.095919, 0.1) -> SKIPPED (signed margin -1.84e-03); decrease +6.123e-07
+[INFO] row q=1.0, r=1024: [0.096219, 0.099940] window (0.095919, 0.1) -> evaluated (signed margin +6.02e-05); decrease +1.551e-07
+[INFO] row q=1.0, r=2048: [0.097139, 0.099002] window (0.095919, 0.1) -> evaluated (signed margin +9.98e-04); decrease +3.864e-08
+[PASS] D nested signs, strict: p up, f down, a up in all 12 rows
+[PASS] D table of Section 6 to 1e-6: max |diff| = 4.83e-07
+[PASS] D only q=1, r=1024 and 2048 evaluable: evaluable: [(1.0, 1024), (1.0, 2048)]
+[PASS] D q=0.25 rows with r <= 512 are skipped (missing from AUDIT item 4): all four skipped
+[PASS] E ten positive decreases, two of them evaluable: positive: 10; non-positive: [(0.25, 64), (1.0, 64)]
+
+9 PASS, 0 FAIL
+exit 0

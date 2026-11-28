@@ -1,0 +1,252 @@
+# Joint cone constraints: test the coordinate-adjustment obstruction first
+
+2026-09-24. Pre-execution diagnostic, not a replacement objective. The target
+is still the sharp finite-order law and an order-only attaining observable.
+The current bracket is necessity below exponent 4/3 and sufficiency at 3.
+
+The proposed next mechanism is to combine many cone constraints so that
+coordinate errors can be eliminated jointly. Before constructing a test,
+check whether the leading wave perturbation survives **arbitrary simultaneous
+infinitesimal adjustments of all event coordinates**. If it does not, a
+linear coordinate-elimination statistic cannot exploit that leading term.
+This diagnostic deliberately uses generator coordinates. Its outputs are
+not an observer and cannot establish a better sufficient region.
+
+## Mathematical quantity
+
+Use background Minkowski coordinates `x=(T,Z,y1,y2)`, with
+`T=(m+v)/sqrt(2)`, `Z=(m-v)/sqrt(2)`. For an oriented pair put
+`F=Delta T-|Delta z|`, `n=Delta z/|Delta z|`. Its differential is the row
+
+\[
+(A\xi)_{ij}=(-1,n)\cdot\xi_i+(1,-n)\cdot\xi_j.
+\]
+
+Let `E_ij=Delta m I-M_lambda(ui,uj)` be the trace-free primitive correction
+already used by the exact circular generator. The first-order change in F is
+
+\[
+b_{ij}=-\frac{\Delta y^T E_{ij}\Delta y}
+ {\Delta m(\Delta T+|\Delta z|)}.
+\]
+
+The exact change in the same normalized null action is
+`-Delta y^T M_lambda^-1 E_ij Delta y/(Delta T+|Delta z|)`.
+On macroscopic longitudinal segments b=O(lambda^2), and their difference
+is O(lambda^4). We fit **all four coordinate changes at every event**, not
+only time shifts, and retain `r=b-A argmin_xi ||b-Axi||_2`.
+At an exact minimizer, `A^T r=0`; this is the linear combination that cancels
+coordinate adjustments. A nonzero residual is only a local linear-algebra
+obstruction. It does not exclude remote nonlinear embeddings, recover the
+coordinates from an order, or provide a sampling distribution for r.
+
+## Frozen campaign
+
+- Fixed q=1, phase 0.37, N in `{128,256,512}`, seeds `{118,819}`, and
+  r=1/lambda in `{32,128,512}`: 18 rows, all retained.
+- Generate each (N,seed) once from the **background** physical-volume law.
+  In the m,v,y chart this has density proportional to a(u(m))^4 on the
+  fixed Minkowski diamond. Reuse the same coordinates for all three rungs.
+  This conditional geometric diagnostic is not a wave-sprinkling campaign.
+- Select oriented pairs with `|F|<=L*4 log(N)/N`, where L=sqrt(2M), and
+  `Delta m>=M/10`, `Delta v>=1/10`. These fixed macroscopic restrictions
+  avoid a short-segment singularity. Record edge count, degrees, and width.
+  The selection uses coordinates and is not claimed order-measurable.
+- Solve the sparse least-squares problem with LSMR, `atol=btol=1e-11`,
+  `conlim=1e12`, `maxiter=20000`. Record the scaled forcing RMS, scaled
+  residual RMS, residual/forcing ratio, stationarity residual, iterations,
+  stopping code, and norm of the fitted coordinate adjustment.
+- Before interpreting each graph, feed `A xi_control` from a fixed random
+  coordinate adjustment. Require relative residual below `1e-7` and a
+  successful LSMR stop in `{1,2,4,5}`. A failure marks that graph's diagnostic
+  numerically unresolved; do not silently increase the iteration cap.
+- At N=128,seed=118,r=512 compare against dense SVD least squares with
+  singular-value cutoff `1e-12`. At N=512,seed=819,r=512 rerun only the
+  linear solve with tolerances `1e-13` and cap 40000. Record differences
+  without treating a numerical agreement as independent researcher review.
+- Self-check the cone Jacobian against central finite differences on a
+  fixed coordinate perturbation; check zero wave forcing at q=0 through
+  direct zero matrices, translation null vectors, and the control projection.
+
+No finite-sample accuracy or power gate is present. Residuals and their
+frequency dependence are diagnostic outputs, not confidence statements about
+the asymptotic exponent. Do not relabel this as a full-order success even
+if all residuals remain large. A usable order-only statistic would still
+need latent-coordinate elimination and a valid likelihood or confidence
+construction, and a sharp boundary still needs matching impossibility.
+
+## Why existing reconstruction results do not settle this
+
+[Dani et al. (2022)](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ICALP.2022.48)
+give quantitative reconstruction results for Euclidean random geometric
+graphs, using graph distances and common-neighbor estimates. Those results
+are not a theorem of 1/N coordinate recovery from four-dimensional causal
+orders. We will not assume such a recovery rate to manufacture the missing
+upper bound. The earlier null-incidence and causal-set embedding references
+are discussed in [the current results](local_null_results.md).
+
+## Post-run signed-information audit, frozen before that audit
+
+The initial campaign found a nonzero least-squares residual in all 18 rows.
+Before using this to motivate an observer, explicitly test the information
+loss from continuous cone margins to the **binary sampled order**. This is
+a post-run diagnostic and will not replace or rerun the primary rows.
+
+On every originally fixed point set and frequency, compare all pairwise
+background and wave causal signs, recording the number of changes. At the
+highest rung r=512, for all six point sets also apply this exact-rational
+certificate, with input binary floats treated as exact coordinates (m,v,y):
+
+For q=1, `cos(u)>=7/8` on the unit patch, hence `f(u)<=64/49`. Its total
+variation on any subinterval is at most `30/49`. Integration by parts gives
+`|integral_s^t f(u) exp(iu/lambda) du|<=158 lambda/49`, while the direct
+bound is Delta m. Therefore
+
+\[
+\|E_{ij}\|\le e_{ij}:=\min(2\lambda\Delta m,316\lambda^2/49).
+\]
+
+Put `A0=|Delta y|^2/(2 Delta m)`, `Fv0=Delta v-A0`. Positive definiteness
+and the inverse norm bound give
+
+\[
+|Fv_\lambda-Fv_0|\le A0\frac{e_{ij}}{\Delta m-e_{ij}}.
+\]
+
+If the absolute background margin exceeds this bound, that pair's causal
+sign cannot change, at **any phase**. Evaluate the comparison using exact
+Fractions. Verify `0<m<131/120<2 tan(1/2)` using the first three positive
+tangent-series terms, so every certified coordinate is inside the u patch.
+If all pairs pass, the full finite orders are provably identical, despite
+the nonzero coordinate-based linear residual. Otherwise retain the number
+of pairs left unresolved by this conservative bound; no assertion of a flip
+follows from failing the bound. Save the audit separately with its own source
+stamp and the primary raw hash. No point-set or frequency reselection.
+
+### Domain check required before interpreting a shared-order example
+
+The signed audit certified identical internal orders at (N,seed)=(128,118)
+and (256,118), r=512. Background coordinates alone do not automatically lie
+inside the wave diamond. Before calling either a configuration admissible
+under both sampling models, check all six original r=512 point sets against
+both wave tips. Use the exact-rational same-phase-independent bound above,
+with m for the past tip and the conservative `131/120-m` for the future tip.
+For either positive segment length d, the wave action is at most
+`|y|^2/[2(d-min(2 lambda d,316 lambda^2/49))]`. The future-tip action bound
+is valid because this expression decreases as the segment length increases.
+Both resulting slacks must be strictly positive at every point. Store this
+as a separate post-run receipt; preserve both earlier outputs unchanged.
+This checks support overlap of these finite configurations, not equality
+of their probabilities under the two sampling laws or any TV boundary.
+
+The first domain bound was inconclusive for seed 118 at all three sizes;
+it proved inclusion for seed 819. The endpoint lower bound `131/120` is
+about 9.4e-4 below the actual M, much coarser than the wave action correction.
+Retain that receipt. A separate precision check will replace **only** this
+endpoint bound by the lower endpoint of the existing exact-rational
+128-bit enclosure `C1(1/4)/C0(1/4)=2 tan(1/2)`. Keep every point, lambda,
+matrix bound, and strict-positive criterion unchanged. Save a new receipt
+and retain any remaining failures. This is a deterministic bound refinement,
+not a new statistical test or a changed sampling gate.
+
+## Completed results and what this route did not establish
+
+The primary source/design freeze was
+`80e5ad018c3732b0ce384f3a80ab6b2fb086cc98`. All 18 rows completed on CPU in
+5.97 seconds. Raw SHA256:
+`d6326b7520f8543d4fb945d992d19800c78ae321ef131e4dec2dbc06ab098ba9`.
+All six coordinate-adjustment controls met the frozen numerical criterion;
+their largest relative residual was `1.345e-9`.
+
+The wave residual/forcing ratios ranged from 0.4477 to 0.6656. Residual RMS
+divided by lambda squared ranged from 0.8756 to 1.0766. The largest normalized
+stationarity residual was `2.96e-9`. The dense SVD check changed the residual
+vector by `5.69e-9` of the forcing norm, and the tighter large solve changed
+it by `2.53e-8`. Thus the measured residual is not explained by the solver's
+failure to remove a pure coordinate adjustment. These are numerical
+projection checks, not a uniform coercivity theorem as N grows. Every
+selected graph had isolated vertices; the small dense matrix had rank 455
+out of 512 columns. There is no demonstrated recovery of all coordinates.
+
+The signed audit was frozen at `df0d7ed`, the first domain check at
+`e8a8087`, and its endpoint precision refinement at `4e61579`. At r=512,
+all six finite point sets had **zero numerical pair-sign changes**, despite
+the large relative projection residuals. The rational bound proved identical
+full orders at N=128 and N=256 for seed 118, at every wave phase. Its smallest
+pair clearance was `3.0843e-5`. At the other four configurations it left
+1, 1, 2, and 3 pairs unresolved; these are neither certified equalities nor
+certified flips. The refined rational endpoint bound certified that all six
+point sets lie in both diamonds; the smallest certified wave-tip slack was
+`1.4289e-4`. The earlier coarse-domain failures remain in their own receipt.
+Sizes with a common seed are nested point sets, not independent replicates.
+
+Consequently there are configurations of positive local measure admissible
+in both sampling models, with the same finite order and a nonzero
+coordinate-based wave-forcing residual. A nonzero residual therefore does
+**not** imply that the observed order is incompatible with the background.
+This is a failure of that proposed inference, not equality of the order
+probability laws or a new lower bound. The existing 4/3-to-3 bracket stands.
+
+The [manifest](cone_constraint_evidence/manifest.json),
+[raw rows](cone_constraint_evidence/rows.jsonl),
+[summary](cone_constraint_evidence/summary.json),
+[signed audit](cone_constraint_evidence/signed_information_audit.json),
+[coarse domain check](cone_constraint_evidence/domain_audit.json), and
+[refined domain check](cone_constraint_evidence/tight_domain_audit.json)
+are byte-identical archived outputs. Each source/design digest was verified
+against its frozen Git object and each stamp verified reachable. No earlier
+raw row or failed bound was overwritten.
+
+## Exact obstruction to simply averaging away the hidden coordinates
+
+There is also an analytic obstruction to the most direct proposed repair.
+Let C0(X) be the sampled background order, and Q the quarter-turn
+`(y1,y2)->(-y2,y1)` applied at every event. The background density, diamond,
+order, and this diagnostic's selected edge set are invariant under Q.
+For any fixed trace-free symmetric 2 by 2 matrix E,
+`Q^T E Q=-E`; hence `b(QX)=-b(X)`. The constraint matrix transforms by a
+right orthogonal coordinate change, so its column space is unchanged.
+Writing Pi_X for its orthogonal projector gives
+
+\[
+\Pi_{QX}=\Pi_X,\qquad r(QX)=-r(X).
+\]
+
+Pad missing selected edges by zero to regard r as a fixed-length vector.
+The reference conditional law of X given C0(X)=C is invariant under Q.
+Since the macroscopic-segment restriction makes r bounded, its conditional
+expectation exists and satisfies
+
+\[
+\boxed{\mathbb E_0[r(X)\mid C_0(X)=C]=0.}
+\]
+
+This holds for every positive-probability labeled order C, every N and every
+fixed wavelength in this construction. Order-measurable linear weights
+cannot change the conclusion. The new self-check verifies the quarter-turn
+matrix transformation and odd forcing separately from the least-squares
+solver. No unproved coordinate-recovery rate is used in this argument.
+
+The same symmetry constrains a likelihood approach. Introduce only as an
+auxiliary contrast path `sinh(2 beta)=2 kappa lambda sqrt(q)` with a(u) fixed.
+Quarter-turn rotation maps the kappa geometry and its volume sampling law to
+the -kappa geometry. Thus, exactly,
+
+\[
+p_{N,\lambda,\kappa}(C)=p_{N,\lambda,-\kappa}(C).
+\]
+
+Whenever an ordinary derivative at kappa=0 exists, the corresponding linear
+order-likelihood score is zero. Evenness alone does not rule out a cusp,
+and no differentiability or uniform second-order expansion is assumed here.
+The auxiliary path is not asserted vacuum at intermediate kappa.
+
+This directs the next attempt toward **even, joint information**, such as a
+properly calibrated likelihood or quadratic conditional correlation. Merely
+squaring the oracle residual and reporting that it is positive is still
+insufficient: it can be positive for background configurations. If a regular
+second-order likelihood expansion is used, its coefficient's joint growth
+with N and frequency must be proved, and orders outside the background
+support must be handled separately. A vanishing linear score does not settle
+the resolution exponent. No boundary-attaining observable has yet been
+constructed from this diagnostic.

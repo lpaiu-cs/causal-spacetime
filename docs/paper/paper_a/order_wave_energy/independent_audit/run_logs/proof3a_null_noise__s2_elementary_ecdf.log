@@ -1,0 +1,13 @@
+PASS A1 diagonal E[X(1-X)] = 1/6 :: 1/6
+PASS A2 symbolic off-diagonal integral = 1/omega^2 for integer j :: integral = 1/(4*pi**2*j**2)
+PASS A3 imaginary (sine) part vanishes :: 0
+PASS A4 general omega: (1-|phi|^2)/omega^2 with phi=sinc :: max gap 5.00e-16
+PASS B Monte Carlo n=5 m=1 j=1 :: stated 3.333333e-02  simulated 3.343825e-02 +- 8.1e-05  z=+1.29
+PASS B Monte Carlo n=20 m=7 j=1 :: stated 2.276060e-03  simulated 2.274251e-03 +- 5.9e-06  z=-0.31
+PASS B Monte Carlo n=20 m=7 j=2 :: stated 1.461872e-03  simulated 1.465368e-03 +- 3.9e-06  z=+0.89
+PASS B Monte Carlo n=50 m=50 j=3 :: stated 1.218304e-04  simulated 1.217407e-04 +- 4.4e-07  z=-0.20
+PASS B Monte Carlo n=64 m=200 j=5 :: stated 2.877311e-05  simulated 2.872396e-05 +- 1.3e-07  z=-0.37
+PASS B' both terms are needed (each alone is rejected at >10 sigma) :: z(first only)=151.8 z(second only)=125.4
+PASS C general omega=4.0 follows the (1-|phi|^2) version :: z(general)=+0.04  z(2 pi j formula)=-66.5
+PASS D independent references per probe give 1/(6nm) only: SMALLER than the shared-reference variance :: independent 1.190476e-03 (MC 1.187648e-03 +- 2.4e-06), shared 2.276060e-03; the common-mode term (1-1/m)/(n omega^2) is what (3) controls
+SUMMARY failures=0

@@ -1,0 +1,21 @@
+=== check (f,g): assembly inequalities, exponent algebra, regime ===
+PASS H1 TV <= H with H^2 = sum (sqrt p - sqrt q)^2 | max TV/H = 0.9986
+PASS H2 H^2 of independent products <= sum of H^2 | max ratio 1.0000
+PASS H3 H^2 jointly convex (mixing over spatial coordinates cannot increase it)
+PASS H4 TV of (marks, order) = E_marks TV(order | marks) for a common mark law
+PASS H5 E sqrt(U) <= sqrt(E U)
+PASS X1 N^{K+1} h^K = N delta h^{-1/2} = (N^{3K+1} delta^{2K})^{1/(2K+1)}
+PASS X2 N h = (N delta^2)^{1/(2K+1)}
+PASS X3 log(N^2 h^4) - log(N h) = log(N h^3) = 3 log(N h) - 2 n
+PASS X4 the stated h is the balance point of N^{K+1}h^K and N delta/sqrt(h)
+PASS R1 main exponent (4K - (3K+1) alpha)/(2K+1): positive iff alpha < 4K/(3K+1) | exponent -(3*K*alpha - 4*K + alpha)/(2*K + 1)
+PASS R2 for K=1..40 and alpha below 4K/(3K+1): all five terms of (7) vanish, h->0, h/delta->infinity | K=1:1 K=2:8/7 K=3:6/5 K=4:16/13
+PASS R3 thresholds 4K/(3K+1) increase strictly to 4/3 (limit not attained)
+PASS R4 K=1 gives alpha < 1 only (N^4 lambda^4 -> 0, i.e. the old N lambda -> 0 bound)
+PASS R5 at alpha = 4/3 the main exponent is -4/(3(2K+1)) < 0 for every K: (8) says nothing | exponent -4/(6*K + 3)
+PASS R6 the side condition h >> delta (alpha < 2 - 1/K) is implied: (2 - 1/K) - 4K/(3K+1) = (2K+1)(K-1)/(K(3K+1)) >= 0
+PASS R7 every fixed alpha < 4/3 is covered by K = floor(alpha/(4-3alpha)) + 1 | alpha=1->K=2 alpha=11/10->K=2 alpha=6/5->K=4 alpha=5/4->K=6 alpha=13/10->K=14 alpha=133/100->K=134
+PASS R8 numeric: (7) evaluated at the stated h is <= 3 x RHS(8), with delta < h < 1
+INFO R8 note: the stated h is NOT the minimiser of (7) when N h dominates (small alpha); max f(h*)/min_h f = 1839.6.  This costs rate, not validity: (8) is still an upper bound.
+PASS R9 min over h of (7) tends to 0 just below alpha = 4K/(3K+1) and grows just above it | K=2 below:1.06e+00->4.38e-01 above:2.57e+00->6.21e+00; K=3 below:9.53e-01->3.64e-01 above:2.44e+00->6.24e+00; K=4 below:9.03e-01->3.25e-01 above:2.36e+00->6.19e+00; K=8 below:9.02e-01->2.71e-01 above:2.27e+00->5.96e+00
+SUMMARY checks=18 fails=0 -> ALL PASS

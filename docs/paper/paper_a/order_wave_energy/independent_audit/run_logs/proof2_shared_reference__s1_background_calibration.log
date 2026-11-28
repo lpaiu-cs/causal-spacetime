@@ -1,0 +1,14 @@
+PASS S1 exact vacuum: R_uu=0 for sinh(2beta)=2 lambda sqrt(q); background R_uu=2q | max|R_uu| wave 3.77e-16, max|R_uu-2q| background 1.1e-16
+PASS S2 C_2, C_3, alpha closed forms and the 0F1 series agree | C2 True, C3 True, alpha True, series True
+PASS S3 Vol = pi eta^2 C2/K and P_2(comparable) = K C3/(3 C2^2) | P_2 = C3*K/(3*C2**2)
+PASS S4 1 - t + t eta - (1-t) zeta = v in the background (any transverse radius)
+PASS S5 t(1-s) = 1 - t(s)
+PASS N1a p0(0) = 1/10 | p0(0)=0.1000000000000000
+PASS N1b d log p0/dz <= -1/50 on [0,1] and the derivative formula is right | max over grid -0.03809524 (author certifies -0.03555); formula error 9.24e-32
+INFO p0 stays strictly decreasing on (0, 9.59]
+PASS N1c alpha(l) strictly increasing on (0,1] for q = 0.25, 1
+PASS N2 F(p,f,a) = V(p,f,a/p^2;q) returns v at 600 random background events | max |F - v| = 2.952e-13
+PASS M1 background p = alpha(s) eta^2/gamma, f = alpha(1-s) zeta^2/gamma (2e6 events) | p formula 0.094944 MC 0.095385 (z=2.13); f formula 0.019977 MC 0.019961 (z=-0.17)
+PASS M2 a_X = p_X^2 c_X with denominator choose(M,2) (150000 references) | a formula 8.865006e-04, MC 9.243533e-04 (ratio 1.0427); ancestors 14370, c_hat 0.1007 vs p0 0.0983
+PASS M3 background pair probability at q=6 matches p0(6), not 1/10 | p0(6) = 0.06249, MC 0.06491
+SUMMARY s1_background_calibration: 0 FAIL

@@ -1,0 +1,26 @@
+A. gauge family s(m) = 2 a0 m + a1 m^2 (first-order identity)
+   |a|~1e-02: max|shift| 2.227e-01, max|shift - pred| 9.245e-04, err/eps^2 9.245
+   |a|~1e-03: max|shift| 2.234e-02, max|shift - pred| 9.245e-06, err/eps^2 9.245
+   |a|~1e-04: max|shift| 2.234e-03, max|shift - pred| 9.245e-08, err/eps^2 9.245
+   det of transverse Jacobian = 0.9999270000 = 1 - |al|^2 = 0.9999270000
+B. first-order area change of sliver cross-sections from P's own shear
+   isolated disk: dA/db (max over phase), absorbed vs unabsorbed
+     r=0.200: absorbed 1.39e-11   unabsorbed 1.125e+00 (= pi|w|^2/2 = 1.147e+00)
+     r=0.100: absorbed 0.00e+00   unabsorbed 1.125e+00 (= pi|w|^2/2 = 1.147e+00)
+     r=0.050: absorbed 8.67e-13   unabsorbed 1.125e+00 (= pi|w|^2/2 = 1.147e+00)
+   lens of two overlapping slivers (|w1-w2| = r): dA/db over phase
+     r=0.2000: lens area 4.913e-02; absorbed 1.732e-02, unabsorbed 7.732e-01; ratio 2.240e-02; ratio/r^2 0.560
+     r=0.1000: lens area 1.228e-02; absorbed 4.330e-03, unabsorbed 7.653e-01; ratio 5.657e-03; ratio/r^2 0.566
+     r=0.0500: lens area 3.071e-03; absorbed 1.082e-03, unabsorbed 7.633e-01; ratio 1.418e-03; ratio/r^2 0.567
+     r=0.0250: lens area 7.677e-04; absorbed 2.706e-04, unabsorbed 7.629e-01; ratio 3.547e-04; ratio/r^2 0.568
+C. boundary channel: d log V / d delta for a critical pair (flat diamond)
+   P=(0.45, 0.5, (0.05+0.02j)), w=(0.3+0.1j), L=0.15: Sp=0.442 Sf=0.353; dlogV/ddelta=+0.162; unabsorbed 2/eps=200; ratio=+8.12e-04
+   P=(0.45, 0.5, (0.05+0.02j)), w=(-0.4+0.2j), L=0.15: Sp=0.398 Sf=0.358; dlogV/ddelta=-0.108; unabsorbed 2/eps=200; ratio=-5.38e-04
+   P=(0.3, 0.4, (-0.1+0.05j)), w=(0.5-0.2j), L=0.2: Sp=0.226 Sf=0.446; dlogV/ddelta=+0.168; unabsorbed 2/eps=200; ratio=+8.39e-04
+   P=(0.6, 0.55, 0.1j), w=(0.1+0.6j), L=0.1: Sp=0.541 Sf=0.201; dlogV/ddelta=-0.334; unabsorbed 2/eps=200; ratio=-1.67e-03
+D. first-order rule with free per-event shears: transitivity
+   mu(Y,Z)=+1.00e-09  mu(Z,W)=+1.00e-09  mu(Y,W)=-7.49e-07   (Y<Z, Z<W but not Y<W if last < 0)
+E. eq. (1) at short separation du in [lam/4, 4 lam]
+   r=   64: max|err|/scale 0.516; max|err|/(lam^3 |om|^2) 3.423; max|first|/(lam |om|^2 d) 0.997
+   r=  256: max|err|/scale 0.504; max|err|/(lam^3 |om|^2) 3.411; max|first|/(lam |om|^2 d) 0.997
+   r= 1024: max|err|/scale 0.501; max|err|/(lam^3 |om|^2) 3.410; max|first|/(lam |om|^2 d) 0.996

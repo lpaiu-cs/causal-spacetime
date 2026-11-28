@@ -1,0 +1,209 @@
+{
+  "code_version": "80e5ad018c3732b0ce384f3a80ab6b2fb086cc98",
+  "raw_sha256": "d6326b7520f8543d4fb945d992d19800c78ae321ef131e4dec2dbc06ab098ba9",
+  "elapsed_seconds": 5.971542119979858,
+  "all_controls_valid": true,
+  "largest_control_residual": 1.344665560130366e-09,
+  "relative_residual_range": [
+    0.44773667653090216,
+    0.6656222146957992
+  ],
+  "scaled_residual_range": [
+    0.8756198237828955,
+    1.0766094306400047
+  ],
+  "largest_stationarity": 2.9586556184439746e-09,
+  "selected_graphs_have_isolated_vertices": true,
+  "rows_at_r512": [
+    {
+      "n": 128,
+      "seed": 118,
+      "r": 512,
+      "edges": 735,
+      "width": 0.22414038229829028,
+      "minimum_degree": 0,
+      "mean_degree": 11.484375,
+      "coordinate_control": {
+        "stop": 1,
+        "iterations": 1016,
+        "relative_residual": 5.387939054811267e-10,
+        "relative_stationarity": 5.386583864815082e-11,
+        "adjustment_norm": 20.866732949066805,
+        "condition_estimate": 12.581845671597828
+      },
+      "control_valid": true,
+      "fit": {
+        "stop": 2,
+        "iterations": 1043,
+        "relative_residual": 0.4487452033479089,
+        "relative_stationarity": 6.378959663565736e-10,
+        "adjustment_norm": 0.0009119785050073808,
+        "condition_estimate": 7.075310695858884
+      },
+      "scaled_forcing_rms": 1.951262804037225,
+      "scaled_residual_rms": 0.8756198237828955,
+      "exact_linear_relative_change": 0.00012357645994266457,
+      "dense_svd": {
+        "rank": 455,
+        "relative_residual": 0.4487452033479088,
+        "residual_vector_relative_change": 5.687733351846333e-09
+      }
+    },
+    {
+      "n": 128,
+      "seed": 819,
+      "r": 512,
+      "edges": 874,
+      "width": 0.22414038229829028,
+      "minimum_degree": 0,
+      "mean_degree": 13.65625,
+      "coordinate_control": {
+        "stop": 1,
+        "iterations": 1267,
+        "relative_residual": 4.626057557715056e-10,
+        "relative_stationarity": 1.20162833711304e-10,
+        "adjustment_norm": 20.75283705980312,
+        "condition_estimate": 4.666253247043204
+      },
+      "control_valid": true,
+      "fit": {
+        "stop": 2,
+        "iterations": 1261,
+        "relative_residual": 0.4950844049676318,
+        "relative_stationarity": 7.337164016573825e-10,
+        "adjustment_norm": 0.0005052560646320657,
+        "condition_estimate": 3.845483903107045
+      },
+      "scaled_forcing_rms": 1.929805094855651,
+      "scaled_residual_rms": 0.9554164070901144,
+      "exact_linear_relative_change": 0.000112595546238364
+    },
+    {
+      "n": 256,
+      "seed": 118,
+      "r": 512,
+      "edges": 2030,
+      "width": 0.12808021845616588,
+      "minimum_degree": 0,
+      "mean_degree": 15.859375,
+      "coordinate_control": {
+        "stop": 1,
+        "iterations": 2505,
+        "relative_residual": 8.782178795672601e-10,
+        "relative_stationarity": 5.973489925513669e-11,
+        "adjustment_norm": 29.82139442015921,
+        "condition_estimate": 4.334970293152615
+      },
+      "control_valid": true,
+      "fit": {
+        "stop": 2,
+        "iterations": 2480,
+        "relative_residual": 0.6119301936456303,
+        "relative_stationarity": 1.567101778877406e-09,
+        "adjustment_norm": 0.0029473528933556463,
+        "condition_estimate": 3.2986519951684548
+      },
+      "scaled_forcing_rms": 1.6795686901669147,
+      "scaled_residual_rms": 1.0277787938149772,
+      "exact_linear_relative_change": 0.00010903795066157848
+    },
+    {
+      "n": 256,
+      "seed": 819,
+      "r": 512,
+      "edges": 2155,
+      "width": 0.12808021845616588,
+      "minimum_degree": 0,
+      "mean_degree": 16.8359375,
+      "coordinate_control": {
+        "stop": 1,
+        "iterations": 1611,
+        "relative_residual": 7.79001951732439e-10,
+        "relative_stationarity": 1.3237747672226092e-10,
+        "adjustment_norm": 30.351486444350126,
+        "condition_estimate": 8.418209067873564
+      },
+      "control_valid": true,
+      "fit": {
+        "stop": 2,
+        "iterations": 1602,
+        "relative_residual": 0.5870423349198899,
+        "relative_stationarity": 1.3436784563998602e-09,
+        "adjustment_norm": 0.0008743320086186831,
+        "condition_estimate": 6.919236448152205
+      },
+      "scaled_forcing_rms": 1.668010931208226,
+      "scaled_residual_rms": 0.9791930317283768,
+      "exact_linear_relative_change": 0.0001095574906658916
+    },
+    {
+      "n": 512,
+      "seed": 118,
+      "r": 512,
+      "edges": 4925,
+      "width": 0.0720451228815933,
+      "minimum_degree": 0,
+      "mean_degree": 19.23828125,
+      "coordinate_control": {
+        "stop": 1,
+        "iterations": 5180,
+        "relative_residual": 1.344665560130366e-09,
+        "relative_stationarity": 5.015534430928192e-12,
+        "adjustment_norm": 44.461240525774215,
+        "condition_estimate": 12.479866109954875
+      },
+      "control_valid": true,
+      "fit": {
+        "stop": 2,
+        "iterations": 5019,
+        "relative_residual": 0.6502442109296062,
+        "relative_stationarity": 2.8167348662312614e-09,
+        "adjustment_norm": 0.0018769158076160349,
+        "condition_estimate": 11.503978587668538
+      },
+      "scaled_forcing_rms": 1.5673696939508628,
+      "scaled_residual_rms": 1.0191730698780572,
+      "exact_linear_relative_change": 0.00010528126809183183
+    },
+    {
+      "n": 512,
+      "seed": 819,
+      "r": 512,
+      "edges": 5690,
+      "width": 0.0720451228815933,
+      "minimum_degree": 0,
+      "mean_degree": 22.2265625,
+      "coordinate_control": {
+        "stop": 1,
+        "iterations": 4191,
+        "relative_residual": 1.2668258444080963e-09,
+        "relative_stationarity": 6.482267738542349e-11,
+        "adjustment_norm": 43.601197755739264,
+        "condition_estimate": 6.7241054201950075
+      },
+      "control_valid": true,
+      "fit": {
+        "stop": 2,
+        "iterations": 4148,
+        "relative_residual": 0.6600287290854966,
+        "relative_stationarity": 2.8713128230342393e-09,
+        "adjustment_norm": 0.0019856080524813602,
+        "condition_estimate": 8.471716914354126
+      },
+      "scaled_forcing_rms": 1.5580774742593866,
+      "scaled_residual_rms": 1.0283758951521633,
+      "exact_linear_relative_change": 0.00010801949829664097,
+      "refinement": {
+        "fit": {
+          "stop": 2,
+          "iterations": 4365,
+          "relative_residual": 0.660028729085496,
+          "relative_stationarity": 3.015834489532764e-11,
+          "adjustment_norm": 0.001985609344184119,
+          "condition_estimate": 13.519550760576664
+        },
+        "residual_vector_relative_change": 2.5316044431187086e-08
+      }
+    }
+  ]
+}

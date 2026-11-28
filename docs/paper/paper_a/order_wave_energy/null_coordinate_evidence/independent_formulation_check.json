@@ -1,0 +1,24 @@
+{
+  "scope": "post-run independent five-state ODE and direct action quadrature",
+  "source_sha256": "1018d7e6d4a2f8e05d503065f61ecdbbec2a65c7a7f62cc577e857f30bcc9221",
+  "raw_sha256": "0924f97d4bb3a44dd0d7c1f405605d006f807e7f48ce307058d10e9a75a11357",
+  "q": 1.0,
+  "r": 2048,
+  "moments": [
+    [
+      0.05082914530315427,
+      0.050871637937577305,
+      0.09903186548312203
+    ],
+    [
+      0.12287639872699083,
+      0.010881042551682723,
+      0.09777437759301695
+    ]
+  ],
+  "population_v_decrease": 4.0812251911326314e-08,
+  "change_from_primary": -3.425038030968608e-14,
+  "relative_change": 8.392173909096655e-07,
+  "minimum_a": 0.8775825618903728,
+  "ode_evaluations": 737297
+}

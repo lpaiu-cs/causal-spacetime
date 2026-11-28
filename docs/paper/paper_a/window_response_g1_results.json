@@ -1,0 +1,367 @@
+{
+  "kind": "G1 instrument and analytic-coefficient validation",
+  "code_version": "f3d4427056f327465fc45758aed281d262cb2850",
+  "python": "3.14.0",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "coefficient_checks": {
+    "R+": {
+      "closed_form": [
+        0.023808726304201097,
+        0.040519277086648944,
+        0.05074242895117617
+      ],
+      "quadratures": [
+        {
+          "order": 24,
+          "values": [
+            0.023808726304201056,
+            0.04051927708664887,
+            0.0507424289511761
+          ],
+          "maximum_absolute_difference": 7.632783294297951e-17
+        },
+        {
+          "order": 40,
+          "values": [
+            0.023808726304200934,
+            0.04051927708664867,
+            0.050742428951175964
+          ],
+          "maximum_absolute_difference": 2.7755575615628914e-16
+        }
+      ]
+    },
+    "R0": {
+      "closed_form": [
+        0.02454196870618546,
+        0.0,
+        0.005727287218222774
+      ],
+      "quadratures": [
+        {
+          "order": 24,
+          "values": [
+            0.02454196870618542,
+            1.651924358680192e-19,
+            0.005727287218222761
+          ],
+          "maximum_absolute_difference": 4.163336342344337e-17
+        },
+        {
+          "order": 40,
+          "values": [
+            0.024541968706185288,
+            1.2742420505698427e-19,
+            0.005727287218222749
+          ],
+          "maximum_absolute_difference": 1.734723475976807e-16
+        }
+      ]
+    },
+    "R-": {
+      "closed_form": [
+        0.023808726304201097,
+        -0.040519277086648944,
+        0.05074242895117617
+      ],
+      "quadratures": [
+        {
+          "order": 24,
+          "values": [
+            0.02380872630420106,
+            -0.04051927708664887,
+            0.0507424289511761
+          ],
+          "maximum_absolute_difference": 7.632783294297951e-17
+        },
+        {
+          "order": 40,
+          "values": [
+            0.023808726304200934,
+            -0.04051927708664867,
+            0.05074242895117597
+          ],
+          "maximum_absolute_difference": 2.7755575615628914e-16
+        }
+      ]
+    }
+  },
+  "predicate_checks": [
+    {
+      "A": 0,
+      "pairs": 256,
+      "max_action_difference": 4.547473508864641e-13,
+      "classification_mismatches": 0
+    },
+    {
+      "A": 0.015625,
+      "pairs": 256,
+      "max_action_difference": 1.1368683772161603e-13,
+      "classification_mismatches": 0
+    },
+    {
+      "A": 0.25,
+      "pairs": 256,
+      "max_action_difference": 1.8189894035458565e-12,
+      "classification_mismatches": 0
+    },
+    {
+      "A": 1,
+      "pairs": 256,
+      "max_action_difference": 1.1368683772161603e-13,
+      "classification_mismatches": 0
+    },
+    {
+      "A": 2,
+      "pairs": 256,
+      "max_action_difference": 4.547473508864641e-13,
+      "classification_mismatches": 0
+    }
+  ],
+  "ode_checks": [
+    {
+      "A": 0,
+      "pairs": 24,
+      "max_scaled_action_difference": 2.6944627631922905e-16,
+      "max_quad_error_estimate": 4.7164840754320294e-12,
+      "max_ode_rms_residual": 9.085288498115493e-15
+    },
+    {
+      "A": 0.25,
+      "pairs": 24,
+      "max_scaled_action_difference": 1.3147386406819848e-13,
+      "max_quad_error_estimate": 9.184987711851828e-13,
+      "max_ode_rms_residual": 9.996557973332551e-11
+    },
+    {
+      "A": 1,
+      "pairs": 24,
+      "max_scaled_action_difference": 3.7432764912534503e-14,
+      "max_quad_error_estimate": 7.625550639689579e-12,
+      "max_ode_rms_residual": 9.993484119529457e-11
+    },
+    {
+      "A": 2,
+      "pairs": 24,
+      "max_scaled_action_difference": 3.099064284813769e-14,
+      "max_quad_error_estimate": 1.4121015763656814e-12,
+      "max_ode_rms_residual": 9.999862971908607e-11
+    }
+  ],
+  "diamond_checks": [
+    {
+      "A": 0,
+      "points": 4096,
+      "membership_failures": 0,
+      "volume": 0.5235987755982988,
+      "volume_quad_error_estimate": 5.813114163347719e-15,
+      "moments_diagnostic_only": {
+        "u_squared": {
+          "analytic_integral": 0.30000000000000004,
+          "sample_mean": 0.3054569195783541,
+          "CI95": [
+            0.2983038433886945,
+            0.3126099957680137
+          ],
+          "standard_error": 0.003648517019852933
+        },
+        "x_squared": {
+          "analytic_integral": 0.06666666666666667,
+          "sample_mean": 0.06602616526696396,
+          "CI95": [
+            0.06361464326662232,
+            0.0684376872673056
+          ],
+          "standard_error": 0.0012300273097489442
+        },
+        "y_squared": {
+          "analytic_integral": 0.06666666666666667,
+          "sample_mean": 0.06682895999202622,
+          "CI95": [
+            0.0643835708889876,
+            0.06927434909506483
+          ],
+          "standard_error": 0.001247301654006822
+        }
+      }
+    },
+    {
+      "A": 1,
+      "points": 4096,
+      "membership_failures": 0,
+      "volume": 0.525693416386499,
+      "volume_quad_error_estimate": 5.836369347661508e-15,
+      "moments_diagnostic_only": {
+        "u_squared": {
+          "analytic_integral": 0.2999469168928883,
+          "sample_mean": 0.29867453172045877,
+          "CI95": [
+            0.2916576329517976,
+            0.30569143048911995
+          ],
+          "standard_error": 0.003579058003192272
+        },
+        "x_squared": {
+          "analytic_integral": 0.062337495096038247,
+          "sample_mean": 0.06342152317263036,
+          "CI95": [
+            0.061131079947159855,
+            0.06571196639810087
+          ],
+          "standard_error": 0.0011682695485917434
+        },
+        "y_squared": {
+          "analytic_integral": 0.07195812718622396,
+          "sample_mean": 0.07268577183250152,
+          "CI95": [
+            0.07004551364787152,
+            0.07532603001713152
+          ],
+          "standard_error": 0.0013466970947903396
+        }
+      }
+    },
+    {
+      "A": 2,
+      "points": 4096,
+      "membership_failures": 0,
+      "volume": 0.5321871128164184,
+      "volume_quad_error_estimate": 5.908463860575734e-15,
+      "moments_diagnostic_only": {
+        "u_squared": {
+          "analytic_integral": 0.29978555762518155,
+          "sample_mean": 0.2941692347091992,
+          "CI95": [
+            0.2872508248946403,
+            0.3010876445237581
+          ],
+          "standard_error": 0.003528822465951791
+        },
+        "x_squared": {
+          "analytic_integral": 0.058729581850308334,
+          "sample_mean": 0.058871573084298516,
+          "CI95": [
+            0.056731378377701654,
+            0.06101176779089538
+          ],
+          "standard_error": 0.0010916333904154004
+        },
+        "y_squared": {
+          "analytic_integral": 0.07857691954328974,
+          "sample_mean": 0.07973953921056363,
+          "CI95": [
+            0.07684160276692156,
+            0.0826374756542057
+          ],
+          "standard_error": 0.0014781291512544759
+        }
+      }
+    }
+  ],
+  "near_cone_checks": [
+    {
+      "A": 0,
+      "shift": -1e-09,
+      "reference": true
+    },
+    {
+      "A": 0,
+      "shift": -1e-14,
+      "reference": true
+    },
+    {
+      "A": 0,
+      "shift": 1e-14,
+      "reference": false
+    },
+    {
+      "A": 0,
+      "shift": 1e-09,
+      "reference": false
+    },
+    {
+      "A": 0.015625,
+      "shift": -1e-09,
+      "reference": true
+    },
+    {
+      "A": 0.015625,
+      "shift": -1e-14,
+      "reference": true
+    },
+    {
+      "A": 0.015625,
+      "shift": 1e-14,
+      "reference": false
+    },
+    {
+      "A": 0.015625,
+      "shift": 1e-09,
+      "reference": false
+    },
+    {
+      "A": 0.25,
+      "shift": -1e-09,
+      "reference": true
+    },
+    {
+      "A": 0.25,
+      "shift": -1e-14,
+      "reference": true
+    },
+    {
+      "A": 0.25,
+      "shift": 1e-14,
+      "reference": false
+    },
+    {
+      "A": 0.25,
+      "shift": 1e-09,
+      "reference": false
+    },
+    {
+      "A": 1,
+      "shift": -1e-09,
+      "reference": true
+    },
+    {
+      "A": 1,
+      "shift": -1e-14,
+      "reference": true
+    },
+    {
+      "A": 1,
+      "shift": 1e-14,
+      "reference": false
+    },
+    {
+      "A": 1,
+      "shift": 1e-09,
+      "reference": false
+    },
+    {
+      "A": 2,
+      "shift": -1e-09,
+      "reference": true
+    },
+    {
+      "A": 2,
+      "shift": -1e-14,
+      "reference": true
+    },
+    {
+      "A": 2,
+      "shift": 1e-14,
+      "reference": false
+    },
+    {
+      "A": 2,
+      "shift": 1e-09,
+      "reference": false
+    }
+  ],
+  "elapsed_seconds": 0.43871359998593107,
+  "instrument_checks": "PASS",
+  "scope": "Deterministic checks passed; sampler moments are diagnostics. No power or physical confirmation verdict."
+}

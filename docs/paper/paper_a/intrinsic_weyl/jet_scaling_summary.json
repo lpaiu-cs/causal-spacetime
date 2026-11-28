@@ -1,0 +1,113 @@
+{
+  "code_version": "6924a08ce91e9694337878bcc6bbdeb684847eb0",
+  "source_sha256_lf": {
+    "experiments/positive_control/intrinsic_weyl_jet_scaling.py": "4d74c271cd47367ebf0c5c6b6f5fc61c4e7f6a838344e6793d823a642dba4199",
+    "experiments/positive_control/intrinsic_weyl_joint.py": "e65b8f6302f6c897708b1999dd66cd588d1c25d110afbeec8d3fcb78d12c50a0",
+    "experiments/positive_control/intrinsic_weyl.py": "09c8a92505bde9ba3809371a8188ae2d8056a60804ae005d44bfc627cfd1014f",
+    "experiments/positive_control/intrinsic_weyl_joint_audit.py": "08266e1624b63825b2bca19b798bcdaae7b7bfcf7db427ec934d44129df62581",
+    "experiments/positive_control/rotating_plane_wave.py": "b85ad0c2ea90ae438eae81073aad332f5bb6b60eac32066b823e7fe2b03125cc",
+    "docs/paper/paper_a/intrinsic_weyl/local_consistency_scope.md": "f1239cb97bd2cd7a1a3564a963248e015c3de3c96524bc5535798ba6f14c3ab0"
+  },
+  "input_sha256": {
+    "outputs/intrinsic_weyl_jet_pilot_v1/case_7.npz": "2b5be8dd6dea9ab86351f921f13b254d70b2ebd9ebd844a7fb6c9b9f7823c68d",
+    "outputs/intrinsic_weyl_jet_pilot_v1/truth_7.npz": "0621e64090b655f3e81659b91cc2a44f2b21144f894a1a900783cf740f5fd2ae"
+  },
+  "scope": "Fixed existing landmarks and weights, continuum-only oracle audit; no new random orders, accuracy or coverage verdict",
+  "cases": [
+    {
+      "scale": 1.0,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "4": {
+        "relative_continuum_bias": 0.03602183184149018,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 253
+      },
+      "5": {
+        "relative_continuum_bias": 0.018331373500858852,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 277
+      }
+    },
+    {
+      "scale": 0.5,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "4": {
+        "relative_continuum_bias": 0.017102292153407292,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 253
+      },
+      "5": {
+        "relative_continuum_bias": 0.004669968251596648,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 277
+      }
+    },
+    {
+      "scale": 0.25,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "4": {
+        "relative_continuum_bias": 0.008747489277505896,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 253
+      },
+      "5": {
+        "relative_continuum_bias": 0.001169339153367165,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 277
+      }
+    },
+    {
+      "scale": 0.125,
+      "quadrature_relative_change": 2.886579864025407e-15,
+      "4": {
+        "relative_continuum_bias": 0.004473539172234263,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 253
+      },
+      "5": {
+        "relative_continuum_bias": 0.00029206531315259407,
+        "coordinate_rank": 253,
+        "projected_curvature_rank": 10,
+        "nuisance_rank": 277
+      }
+    }
+  ],
+  "halving_bias_ratios": {
+    "4": [
+      2.106257542461263,
+      1.9551086729978293,
+      1.9553845268190762
+    ],
+    "5": [
+      3.925374330883601,
+      3.9936815919908804,
+      4.003690615448831
+    ]
+  },
+  "local_log2_slopes": {
+    "4": [
+      1.074681852562497,
+      0.9672488006976769,
+      0.9674523417449299
+    ],
+    "5": [
+      1.9728302386052199,
+      1.997719314262259,
+      2.0013304944528842
+    ]
+  },
+  "raw_output_sha256": "42a18f38611424565a548eb8cd35c5d209548952c16db409957290487b8806bd",
+  "verification": {
+    "historical_source_hashes": 6,
+    "input_hashes": 2,
+    "scale_one_complete_fit_equal_to_pilot": true,
+    "all_fits_complete_full_rank": true
+  }
+}
