@@ -1,0 +1,116 @@
+{
+  "audit_passed": true,
+  "head_commit": "4192369e27bd588b369c062e8938ab153368df25",
+  "preflight_commit": "a133e507376a61e32de684a637d855948089fa44",
+  "campaign_commit": "4192369e27bd588b369c062e8938ab153368df25",
+  "elapsed_seconds": 171.98084769991692,
+  "seed_freshness": "disjoint from S1 (51M), P11-P14, and <1M ranges",
+  "ast_blindness": {
+    "passed": true,
+    "imports": [
+      "__future__",
+      "annotations",
+      "czt",
+      "dataclass",
+      "dataclasses",
+      "fftconvolve",
+      "least_squares",
+      "minimize",
+      "minimize_scalar",
+      "numpy",
+      "scipy.optimize",
+      "scipy.signal",
+      "scipy.special",
+      "zeta"
+    ],
+    "leaks": []
+  },
+  "independent_quad_oracle": {
+    "passed": true,
+    "pairs_checked": 2124,
+    "mismatches": 0,
+    "max_abs_matrix_err": 6.661338147750939e-16
+  },
+  "recomputed_gates": {
+    "verdict": "CONFIRMED",
+    "checks": {
+      "G1": true,
+      "G1b": true,
+      "G2a": true,
+      "G2b": true,
+      "G3a": true,
+      "G3b": true,
+      "G3c": true,
+      "G4a": true,
+      "G4b": true,
+      "G4c": true,
+      "G5a": true,
+      "G5b": true,
+      "G5c": true,
+      "G6a": true,
+      "G6b": true,
+      "G6c": true,
+      "G7a": true,
+      "G7b": true,
+      "G7c": true,
+      "G7d": true
+    },
+    "disagreements": []
+  },
+  "spot_replays": [
+    {
+      "arm": "N22",
+      "seed": 52000000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "N23",
+      "seed": 52100000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "W1",
+      "seed": 52200000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "W1p",
+      "seed": 52300000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "W2",
+      "seed": 52400000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "W3",
+      "seed": 52500000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "X_null_q1",
+      "seed": 52600000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "X_sub_q4_r32",
+      "seed": 52610000,
+      "dz": 0.0,
+      "dq": 0.0
+    },
+    {
+      "arm": "X_sub_q1_r48",
+      "seed": 52620000,
+      "dz": 0.0,
+      "dq": 0.0
+    }
+  ]
+}
