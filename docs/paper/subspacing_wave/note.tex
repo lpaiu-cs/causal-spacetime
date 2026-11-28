@@ -175,7 +175,7 @@ $[-\tfrac12, \tfrac12]$, physical-volume Poisson sprinkling $X_1,\dots,X_N$
 conditioned on $N$ is implemented exactly without rejection by panel Gauss
 inversion of the slice density $\pi\,a(u)^2 \det(M(-1/2,u)^{-1} + M(u,1/2)^{-1})^{-1/2}$.
 
-\subsection{The asymptotic $(4/3, 2)$ resolution bracket and its practical barrier}
+\subsection{The asymptotic \texorpdfstring{$(4/3, 2)$}{(4/3, 2)} resolution bracket and its practical barrier}
 Evaluating \eqref{eq:Elam} by integration by parts shows that the wave's
 eigenvalue bound satisfies $e_\lambda = t|G| \le O(\lambda^2)$ whenever $u_2 - u_1$
 exceeds $O(\lambda)$, and hence single-point diamond marginal laws satisfy
@@ -465,7 +465,8 @@ the 1-parameter $1/\omega^2$ curve under-whitened the $\sim \omega^{-4}$ tapered
 rolloff. \texttt{S1} remains preserved verbatim at \texttt{36e551a}.
 
 \paragraph{Confirmed campaign \texttt{S2} ($20/20$ gates passed).}
-After verifying on $44$ fresh exploratory nulls (\nolinkurl{outputs/exploratory_step2b_w4_pilot.json})
+After verifying on $44$ fresh exploratory nulls (documented in
+\nolinkurl{docs/prereg/subspacing_s2_confirmatory.md})
 that adding $c_2/\omega^4$ eliminated low-frequency peak pile-up ($0/44$ peaks $\le 32$;
 mean $2.008$, SD $0.202$, $q_{95} = 2.277$, $1/44 \ge 2.50$), we froze protocol
 \texttt{S2} at $Z_{\text{th}} = 2.50$ across $268$ completely disjoint realizations in
@@ -566,12 +567,13 @@ numerical simulations; no human participants, animals, or clinical data were inv
 The author declares no competing interests and received no external funding.
 
 \paragraph{AI Use Disclosure.}
+{\emergencystretch 2em
 Large-language-model coding agents participated substantively in refactoring GPU CUDA
 kernels, drafting simulation and test code, compiling numerical tables, and revising prose.
 All mathematical derivations, preregistered hypotheses, statistical gates, clean-room
-audits (\nolinkurl{check_subspacing_confirmatory.py} and
-\nolinkurl{check_subspacing_s2_confirmatory.py}), and final scientific claims were verified
-and approved by the author, who assumes full responsibility for the work.
+audits (\nolinkurl{experiments/check_subspacing_confirmatory.py} and
+\nolinkurl{experiments/check_subspacing_s2_confirmatory.py}), and final scientific claims
+were verified and approved by the author, who assumes full responsibility for the work.\par}
 
 \paragraph{Data and Code Availability.}
 All source code, unit tests, preregistration documents, frozen manifests, and machine-verified
