@@ -19,14 +19,26 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TECTONIC = Path.home() / "AppData/Local/Programs/tectonic/tectonic.exe"
 PLAIN = (
-    (r"\$([^$]*)\$", r"\1"),
+    (r"\\hat\{([a-zA-Z])\}", r"\1_hat"),
+    (r"\\hat\s+([a-zA-Z])", r"\1_hat"),
+    (r"\\alpha", "alpha"),
+    (r"\\lambda", "lambda"),
+    (r"\\omega", "omega"),
+    (r"\\beta", "beta"),
+    (r"\\sigma", "sigma"),
     (r"\\times", " x "),
-    (r"\\le", "<="),
-    (r"\\ge", ">="),
+    (r"\\to", " -> "),
+    (r"\\le", " <= "),
+    (r"\\ge", " >= "),
     (r"\\%", "%"),
     (r"--", "-"),
-    (r"\\[a-zA-Z]+|[{}~]", " "),
+    (r"\$", ""),
+    (r"[{}]", ""),
+    (r"~", " "),
+    (r"\\sim", " ~ "),
+    (r"\\[a-zA-Z]+", " "),
     (r"\s+", " "),
+    (r"\s+([,.;:)\]])", r"\1"),
 )
 
 
@@ -87,7 +99,7 @@ def main(out: str, tectonic: str | Path = TECTONIC) -> None:
                     "-V",
                     "papersize=a4",
                     "-V",
-                    "geometry:margin=25mm",
+                    "geometry:margin=22mm",
                     "-V",
                     "fontsize=11pt",
                     "-V",

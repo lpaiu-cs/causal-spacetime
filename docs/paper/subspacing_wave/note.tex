@@ -24,27 +24,31 @@ finite-density calibration, crossover, and phase-decoherence limits}
 \maketitle
 
 \begin{abstract}
-% [PENDING CONFIRMATORY UPDATE: keep strictly 150-250 words after Step 4]
 In a Poisson sprinkling of $N$ events over a four-dimensional Alexandrov
-interval of unit height, the mean discreteness length scales as $N^{-1/4}$.
-Any gravitational wave whose wavelength satisfies $\lambda = N^{-1/\alpha}$
-with $\alpha < 4$ therefore oscillates faster than the average element spacing.
-Previous asymptotic analyses proved two competing limits for an exact circular
-vacuum plane-wave family: full causal orders are information-theoretically
-indistinguishable from a non-oscillatory background whenever $\alpha < 4/3$,
-whereas a regularized Gram--Fourier existence construction succeeds for every
-fixed $\alpha > 2$, albeit at astrophysically unreachable scales
-($\lambda \sim 10^{-40}$). Meanwhile, local fifth-degree polynomial Weyl jets
-reconstruct long-wavelength curvature reliably at finite $N$ yet collapse
-through oscillatory cancellation once $\lambda$ drops below a small fraction of
-the diamond duration. Here we resolve this gap operationally by introducing a
-blind, strictly order-only anchor-triangulated spectral detector that operates
-without known background focusing $q$ or probe coordinates. Evaluated across
-[PENDING CONFIRMATORY CAMPAIGN SUMMARY], we determine the empirical sub-discreteness
-frontier, verify background null calibration, establish the quantitative
-wavelength crossover against the fifth-degree Weyl jet, and diagnose the
-underlying transition via conformal constraint gap scaling and two-replica phase
-decoherence as $\alpha \to 2^+$.
+interval of unit height, the mean discreteness length scales as $N^{-1/4}$, so
+waves with wavelength $\lambda = N^{-1/\alpha}$ and $\alpha < 4$ oscillate faster
+than the average element spacing. Prior asymptotic theorems showed that circular
+vacuum plane waves are causal-order indistinguishable from non-oscillatory
+controls for fixed $\alpha < 4/3$,
+whereas an uncomputable Gram--Fourier construction succeeds asymptotically for
+$\alpha > 2$ (crossing below noise near $\lambda \sim 10^{-40}$). Meanwhile,
+local fifth-degree Weyl jets reconstruct long-wavelength curvature yet collapse
+once $\lambda$ drops far below the diamond duration $T$. Here we close this
+operational gap with a blind, strictly order-only anchor-triangulated spectral
+detector requiring neither probe coordinates nor background focusing $q$.
+Diagnosing low-frequency null peak pile-up ($36/60$ at $\omega \le 32$) in an
+initial confirmatory campaign ($16/18$ gates passed), we upgraded the
+Huberized Gamma--Whittle background model from $1+c_1/\omega^2$ to
+$1+c_1/\omega^2+c_2/\omega^4$ and executed a second preregistered GPU campaign
+across $268$ fresh held-out realizations up to $N = 2^{23}$. All $20/20$ gates
+confirm: pooled null false positives fall to $1/56$ ($95\%$ CI
+$[0.003,0.094]$), sub-discreteness waves are detected in $130/132$ ($98.5\%$)
+runs down to $\alpha = 3.29$ ($28/28$ at $r=128$, $36/36$ Poisson random phase,
+$132/132$ frequency lock, mean $|\hat{q}-q| \le 0.0173$ upper $95\%$ CI across
+primary arms), and the fifth-degree Weyl jet drops from $0.749$ at $r=4$ to
+$0.012$ at $r=32$ where spectral detection already reaches $24/24$, while
+longitudinal triangulation phase decoherence explains the $\alpha \to 2^+$
+barrier.
 \end{abstract}
 
 \noindent\textbf{Keywords} Causal sets $\cdot$ Gravitational waves $\cdot$
@@ -55,11 +59,12 @@ Neyman orthogonalization $\cdot$ Poisson sprinkling
 A central premise of causal set theory is that the partial order of a
 sprinkled spacetime, supplemented only by event counts for conformal scale,
 encodes the Lorentzian geometry above the discreteness length
-$\ell = \rho^{-1/4}$ \cite{zeeman,hkm,malament,blms,surya}. Recent finite-density
-reconstructions confirm that all ten components of the vacuum Weyl tensor can
-be recovered from causal order relations alone via local fifth-degree polynomial
-expansions of interval clocks, both on exact plane gravitational waves and on
-Schwarzschild geometries \cite{weylnote,madsen,ib}. Because these local jet
+$\ell = \rho^{-1/4}$ \cite{zeeman,hkm,malament,blms,surya}. Building on analytic
+curvature and geodesic-deviation formulations \cite{madsen,ib}, recent
+finite-density reconstructions confirm that all ten components of the vacuum
+Weyl tensor can be recovered from causal order relations alone via local
+fifth-degree polynomial expansions of interval clocks, both on exact plane
+gravitational waves and on Schwarzschild geometries \cite{weylnote}. Because these local jet
 estimators expand the signed squared geodesic interval $\sigma(x,y)$ in a
 fixed Taylor polynomial across an Alexandrov diamond $I(p,q)$ of proper time
 $T$, however, they require curvature to vary mildly on the scale of $T$: when a
@@ -91,18 +96,20 @@ at $q=1$), and its threshold crosses below unity only near $\lambda \sim 10^{-40
 This paper bridges the gap between unexecutable asymptotic existence theorems
 and finite-$N$ local curvature jets. First, we identify why naive finite-$N$
 order statistics fail as $\alpha$ approaches $2$: via sparse conformal-projected
-constraint operators and two-replica independent triangulations, we isolate both
+constraint Hessian spectra and truth-referenced longitudinal triangulations across
+independent realizations, we isolate both
 the $1+1$ vs.\ $3+1$ conformal stiffness hierarchy and the quantitative
 phase-scrambling wall ($\sigma(\hat{u}) \gtrsim \lambda$) near $\alpha \approx 2$.
 Second, we formulate a practical, strictly blind, unknown-$q$ detector that
 replaces uncomputable triple-anchor intersections with hierarchical $10{+}10$
 order-ring calibration, $4\text{D}$ probe triangulation, Neyman $C(\alpha)$
 orthogonalization against all nuisance anchor parameters, spin-2 traceless shear
-matched filtering, and 1-parameter Huberized Whittle background spectral
-whitening. Third, we compare this spectral detector directly against the
-fifth-degree Weyl jet across wavelengths $r = 0.1$ to $128$, exhibiting a clean
-physical crossover, and report a preregistered, held-out, GPU-accelerated
-confirmatory test up to $N = 2^{23}$ events ($\alpha < 4$).
+matched filtering, and two-component ($c_1/\omega^2 + c_2/\omega^4$) Huberized
+Gamma--Whittle background spectral whitening. Third, we compare this spectral
+detector directly against the fifth-degree Weyl jet across wavenumbers $r = 0.1$
+to $128$, exhibiting a clean physical crossover, and report two preregistered,
+held-out, GPU-accelerated confirmatory campaigns (\texttt{S1} and \texttt{S2}) up to
+$N = 2^{23}$ events ($\alpha < 4$).
 
 Throughout this work we use natural units $c=1$, avoid defining spatial or
 temporal intervals through coordinate velocities, and distinguish strictly
@@ -142,13 +149,15 @@ non-oscillatory comparison background $\gamma_0(u) = a(u)^2 I_2$ ($\beta = 0$)
 matches the wave's isotropic transverse focusing $a(u)$ and coarse-grained energy
 density $R_{uu} = 2q$, carrying zero oscillatory shear ($E_\lambda = 0$).
 
-Rescaling transverse coordinates to $y = \sqrt{\cosh(2\beta)}\,x$ preserves the
+Rescaling transverse coordinates to $y = x/\sqrt{\cosh(2\beta)}$ (equivalently
+$x = \sqrt{\cosh(2\beta)}\,y$) preserves the
 diamond endpoints $p_- = (-\tfrac12, 0, 0)$ and $p_+ = (\tfrac12, 1, 0)$ while
 making the exact causal order $X \preceq_\lambda Y$ on $S$ algebraic in a 1D
-integral along $u$: for $u_1 < u_2$,
+integral along $u$: defining $M(u_1,u_2) := m(u_1,u_2) I_2 + E_\lambda(u_1,u_2)$,
+for $u_1 < u_2$,
 \begin{equation}
  X \preceq_\lambda Y \iff \Delta v \ge \tfrac12 \Delta y^T
- \left(m(u_1,u_2) I_2 + E_\lambda(u_1,u_2)\right)^{-1} \Delta y,
+ M(u_1,u_2)^{-1} \Delta y,
  \label{eq:orderlaw}
 \end{equation}
 with $u_1 = u_2$ allowed only along the null generator $y_1 = y_2, \Delta v \ge 0$,
@@ -160,7 +169,8 @@ and
  \qquad T(\psi) = \begin{pmatrix}\cos\psi & \sin\psi\\ \sin\psi & -\cos\psi\end{pmatrix}.
  \label{eq:Elam}
 \end{align}
-Because $y \mapsto \sqrt{-g} \propto a(u)^2$ is smooth and bounded away from zero on
+Because the physical volume density $\sqrt{|\det g|} = \cosh(2\beta)\,a(u)^2$ in $(u,v,y)$
+coordinates is independent of $y$ and bounded away from zero on
 $[-\tfrac12, \tfrac12]$, physical-volume Poisson sprinkling $X_1,\dots,X_N$
 conditioned on $N$ is implemented exactly without rejection by panel Gauss
 inversion of the slice density $\pi\,a(u)^2 \det(M(-1/2,u)^{-1} + M(u,1/2)^{-1})^{-1/2}$.
@@ -204,47 +214,57 @@ conformal transformations preserving the diamond tips $p_\pm$---a
 $2$-dimensional group in $1+1$ dimensions and a $7$-dimensional subgroup of
 the $15$-dimensional conformal group in $3+1$ dimensions (time dilation, three
 spatial rotations, and three special conformal boosts along transverse planes).
-Projecting out these global conformal generators from the linearized cone-margin
-constraint matrix $H$ across background sprinklings of $N \in \{128, 256, 512, 1024\}$
-at smoothing scales $\eta \in \{0.05, N^{-1/4}, N^{-1/2}\}$ reveals a systematic
+Projecting out these global conformal generators from the linearized cone-margin Hessian
+$H = J_c^T J_c$ across background sprinklings of $N \in \{128, 256, 512, 1024\}$ at
+smoothing scales $\eta \in \{0.05, 0.5N^{-1/4}, N^{-1/2}\}$ reveals a systematic
 dimensional gap: in $1+1$ dimensions the log--log scaling slope of the smallest
-post-projection singular value with $N$ is $0.752$ ($\eta=0.05$), $0.468$
-($\eta=N^{-1/4}$), and $0.005$ ($\eta=N^{-1/2}$), whereas in $3+1$ dimensions
-the corresponding slopes steepen to $2.683$, $0.835$, and $0.242$
+post-projection Hessian eigenvalue $\lambda_{\min}^\perp = \sigma_{\min}^2$ with $N$ is
+$0.752$ ($\eta=0.05$), $0.468$ ($\eta=0.5N^{-1/4}$), and $0.005$ ($\eta=N^{-1/2}$), whereas
+in $3+1$ dimensions the corresponding slopes steepen to $2.683$, $0.835$, and $0.242$
 (Fig.~\ref{fig:structure}a). Four-dimensional Alexandrov cones thus carry
 substantially softer local collective deformation modes per event than their
 $1+1$ counterparts once conformal zero modes are factored out.
 
 Second, to test why order-reconstructed Fourier phases fail as $\alpha$
-approaches $2$ from above, we measure independent two-replica blind coordinate
-reconstructions on disjoint reference subsets of $N = 2^{20}$ sprinklings at
-$q=4$ across $r \in \{64, 128, 256, 512, 1024\}$ ($\alpha = 3.33$ down to $2.00$).
-Even at $r = 128$ ($\alpha = 2.86$), where the RMS longitudinal triangulation
-error per event already exceeds the wavelength ($\sigma(\hat{u})/\lambda = 2.31$),
-the bulk phase factor $e^{i(u_1 - u_2)/\lambda}$ retains coherence
-$|\langle e^{i(\hat{u}_1-\hat{u}_2)/\lambda}\rangle| = 0.808$ because shared
-low-order modes shift coordinates smoothly. Between $\alpha = 2.86$ and
-$\alpha = 2.22$ ($r=512$), however, $\sigma(\hat{u})/\lambda$ jumps to $21.79$
-and inter-replica phase coherence collapses through $0.458$ ($\alpha=2.50$) to
-$0.088$ ($\alpha=2.22$) and $0.051$ ($\alpha=2.00$, Fig.~\ref{fig:structure}b).
-A local pair correlator (\texttt{Route~C}) averaging products $z_i \bar{z}_j$ over
-pair separations $|\Delta u| \le \Delta_c$ also yields no significant signal at
-$\alpha \approx 2$ ($N=2^{18}, r=512$), establishing quantitatively that the
-remaining gap below $\alpha \approx 2.5$ is governed by coordinate phase
-scrambling across finite-$N$ triangulation.
+approaches $2$ from above, we measure truth-referenced longitudinal phase coherence
+$|\langle e^{i(\hat{u}-u)/\lambda}\rangle|$ across eight independent $N = 2^{20}$
+wave realizations (four paired runs using known focusing $q=4$ before introducing
+progressive escalation) across $r \in \{64, 128, 256, 512, 1024\}$
+($\alpha = 3.33$ down to $2.00$). Even at $r = 128$ ($\alpha = 2.86$), where the
+aggregate RMS longitudinal triangulation error per event already exceeds the
+wavelength ($\sigma(\hat{u})/\lambda = 2.31$, including one trapped run at $14.11$),
+the bulk factor retains high phase coherence ($0.808$ overall; $0.837$--$0.945$ on
+well-calibrated runs) because shared low-order modes shift coordinates smoothly.
+At $r = 512$ ($\alpha = 2.22$), single-start calibration traps on $3/8$ runs
+($\text{rms} \sim 10^{-3}$) spike the aggregate jitter to $21.79$ (motivating the
+progressive escalation of Sect.~\ref{sec:detector}), while even the $5/8$
+well-calibrated runs fall to coherence $0.028$--$0.307$; at $r = 1024$
+($\alpha = 2.00$, $0/8$ traps), jitter settles to its intrinsic $4.28$ floor
+($2.77$--$6.78$) and phase coherence collapses to $0.051$ (aggregate decay
+$0.726 \to 0.808 \to 0.458 \to 0.088 \to 0.051$, Fig.~\ref{fig:structure}b).
+Truth-aided cross-replica phase-transport scores ($|\text{mean}| \le 1.1\times 10^{-7}$
+at $N = 2^{20}$ and $\le 1.9\times 10^{-7}$ including $N = 2^{18}$; blind pair energy
+excess $|\text{mean}| \le 7.5\times 10^{-7}$) and a known-$q$ local pair correlator (\texttt{Route~C})
+averaging $z_i \bar{z}_j$
+under Gaussian kernel $\exp(-\tfrac12(\Delta u/\Delta_c)^2)$ also yield no
+significant signal at $\alpha \approx 2$ ($N=2^{18}, r=512$), establishing
+quantitatively that the remaining gap below $\alpha \approx 2.5$ is governed by
+intrinsic coordinate phase scrambling across finite-$N$ triangulation.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=119mm]{Fig1.pdf}
 \caption{Finite-$N$ structural mechanisms between local rigidity and the
 $\alpha \to 2^+$ phase-decoherence barrier. \textbf{a} Log--log scaling exponent
-of the lowest conformal-projected cone constraint singular value with $N$
-($N \in [128, 1024]$) for $1{+}1\text{D}$ ($2$ conformal modes) versus
+of the lowest conformal-projected cone constraint Hessian eigenvalue $\lambda_{\min}^\perp = \sigma_{\min}^2$
+with $N$ ($N \in [128, 1024]$) for $1{+}1\text{D}$ ($2$ conformal modes) versus
 $3{+}1\text{D}$ ($7$ conformal modes preserving tips $p_\pm$) across three
-cone-smoothing schedules $\eta$. \textbf{b} Independent two-replica phase
-coherence $|\langle e^{i\Delta \hat{u}/\lambda}\rangle|$ at $N=2^{20}, q=4$
-from $r=64$ ($\alpha=3.33$) down to $r=1024$ ($\alpha=2.00$); numbers above
-markers show RMS longitudinal triangulation jitter $\sigma(\hat{u})/\lambda$.}
+cone-smoothing schedules $\eta$. \textbf{b} Truth-referenced phase coherence
+$|\langle e^{i(\hat{u}-u)/\lambda}\rangle|$ at $N=2^{20}, q=4$ (known-$q$ single-start
+averages over $8$ runs per $r$) from $r=64$ ($\alpha=3.33$) down to $r=1024$
+($\alpha=2.00$); numbers near markers show aggregate RMS longitudinal triangulation
+jitter $\sigma(\hat{u})/\lambda$ (with $r=512$ elevated to $21.8$ by $3/8$ pre-escalation
+calibration traps before settling to $4.3$ at $0/8$ traps for $r=1024$).}
 \label{fig:structure}
 \end{figure}
 
@@ -286,11 +306,11 @@ w.r.t.\ both anchor coordinates and $q$.
 Single-stage optimization from a flat Gram initialization occasionally falls
 into a distorted local minimum when outer near-boundary anchors warp the flat
 eigenvectors. Whenever the blind calibration residual satisfies
-$\text{rms}\cdot \sqrt{N_{\text{ref}}} \ge 0.35$ or $\text{rms} > 2\times 10^{-4}$,
+$\text{rms}\cdot \sqrt{N_{\text{ref}}} \ge 0.35$ (falling back to $\text{rms} > 2\times 10^{-4}$ when $N_{\text{ref}}$ is unspecified),
 an automatic progressive escalation first widens optimization to four
 deterministic starts (up to $300$ evaluations) and, if still above threshold,
-re-solves hierarchical core subsets ($K_{\text{core}} \in \{5,4\}$, $\text{dof}=+5$
-when $q$ is free), places each outer anchor via a $1\text{D}$
+re-solves hierarchical core subsets ($K_{\text{core}} \in \{5,4\}$, giving $\text{dof}=+5$
+and $0$ respectively when $q$ is free), places each outer anchor via a $1\text{D}$
 $u$-grid plus $4\text{D}$ damped Gauss--Newton solve against the calibrated core,
 and polishes all $10{+}10$ anchors and $q$ jointly using inverse binomial-SD
 weights.
@@ -306,8 +326,8 @@ exact parity against naive CPU queries. Active probes satisfying
 $\min \hat{\mu}_n > 10^{-5}$ are triangulated globally via a lifted linear solve
 over a 33-point $u$-grid followed by damped Gauss--Newton refinement, yielding
 inferred probe coordinates $\hat{X}_n$, count residuals
-$r_n = \hat{\mu}_n - \mu(\hat{X}_n; \hat{\theta})$, and probe Jacobians
-$J_n = \partial \mu_n / \partial X_n$.
+$r_n = \hat{\mu}_n - \mu(\hat{X}_n; \hat{\theta})$ against the fitted anchor-and-$q$
+vector $\hat{\theta}$, and probe Jacobians $J_n = \partial \mu_n / \partial X_n$.
 
 To prevent low-frequency anchor calibration errors and $q$ errors from leaking
 into the spectral band, we project both the residuals and the shear template into
@@ -333,39 +353,234 @@ conjugating $s_{n,a}$; scanning both chiralities simultaneously via
 yields an envelope $A(\omega)$ strictly invariant under the $O(2)$ gauge
 ambiguity without inverting any near-zero per-probe denominator.
 
-Finally, because residual $O(1/\omega)$ longitudinal triangulation drift creates a
-$1/\omega^2$ spectral tail above the high-frequency shot proxy
+Finally, because smooth compact-window triangulation drift creates a steep
+low-frequency tail above the high-frequency shot proxy
 $\hat{\sigma}_{\text{shot}}^2 = \sum_n |z_n|^2$ (with $z_n = W_n\langle s_n^\perp, r_n^\perp\rangle / \sum_m W_m|s_m^\perp|^2$),
-estimating the drift amplitude $c_1 \ge 0$ by a naive median across bins can
-collapse identically to $0$ when over half of high-frequency exponential bins
-fluctuate below $\hat{\sigma}_{\text{shot}}^2$. We resolve this by fitting
-a scale-invariant 1-parameter Huberized Gamma Whittle likelihood to the
-chirality-averaged power $P(\omega) = \tfrac12(|S(+\omega)|^2 + |S(-\omega)|^2)$
-under $\mu_{\text{bg}}(\omega) = \hat{\sigma}_{\text{shot}}^2 + c_1/\max(\omega^2,1)$:
+estimating drift solely by medians or a single $1/\omega^2$ term leaves low-frequency
+background power biased high. In our initial frozen protocol (\texttt{S1}), a
+naive median could collapse to zero when over half of exponential bins dipped below
+$\hat{\sigma}_{\text{shot}}^2$, so \texttt{S1} introduced a scale-invariant 1-parameter
+Huberized Gamma--Whittle fit $\hat{\sigma}_{\text{shot}}^2 + c_1/\max(\omega^2,1)$;
+however, diagnostic inspection of \texttt{S1} showed smooth-window residuals decay as
+$\sim \omega^{-4}$ across $\omega \in [24, 64]$, leaving excess power in the lowest bins
+($\omega \le 32$). Our upgraded confirmatory protocol (\texttt{S2}) therefore fits
+the two-component non-negative background law
+$\mu_{\text{bg}}(\omega; c_1, c_2) = \hat{\sigma}_{\text{shot}}^2 + c_1/\max(\omega^2, 1) + c_2/\max(\omega^4, 1)$
+with $c_1, c_2 \ge 0$ to the chirality-averaged power
+$P(\omega) = \tfrac12(|S(+\omega)|^2 + |S(-\omega)|^2)$ over the $59$-bin grid
+$\Omega = \{24, 28, \dots, 256\}$ via boundary checks and $4$-start analytic-gradient
+\texttt{L-BFGS-B}:
 \begin{equation}
- \mathcal{L}(c_1) = \sum_\omega \left[
-   \ln\!\left(1 + \frac{c_1}{\hat{\sigma}_{\text{shot}}^2 \omega^2}\right)
-   + \psi_H\!\left(\frac{P(\omega)}{\hat{\sigma}_{\text{shot}}^2 + c_1/\omega^2}\right)
+ \mathcal{L}(c_1, c_2) = \sum_{\omega \in \Omega} \left[
+   \ln\!\left(\frac{\mu_{\text{bg}}(\omega; c_1, c_2)}{\hat{\sigma}_{\text{shot}}^2}\right)
+   + \psi_H\!\left(\frac{P(\omega)}{\mu_{\text{bg}}(\omega; c_1, c_2)}\right)
  \right],
  \label{eq:whittle}
 \end{equation}
 where $\psi_H(\rho) = \rho$ for $\rho \le 4.5$ and
-$4.5 + 2\sqrt{\rho - 4.5} - 2\times 10^{-6}$ above threshold so true narrowband
-spectral peaks do not inflate the background fit. Our primary detection test
-statistic is the peak whitened standardized amplitude
+$4.5 + 2\sqrt{\rho - 4.5 + 10^{-12}} - 2\times 10^{-6}$ above threshold so true
+narrowband spectral peaks do not inflate the background fit. Our primary detection
+test statistic is the peak whitened standardized amplitude
 \begin{equation}
- Z_{\max} = \max_{\omega \in \Omega} \frac{A(\omega)}{\sqrt{\hat{\sigma}_{\text{shot}}^2 + \hat{c}_1/\max(\omega^2, 1)}}.
+ Z_{\max} = \max_{\omega \in \Omega}
+ \frac{A(\omega)}{\sqrt{\hat{\sigma}_{\text{shot}}^2 + \hat{c}_1/\max(\omega^2, 1) + \hat{c}_2/\max(\omega^4, 1)}}.
  \label{eq:zmax}
 \end{equation}
+Up to $M_{\max} = 65{,}536$ core-comparable probes passing $\min\hat{\mu}_n > 10^{-5}$
+are scored per realization, with wavenumber lock defined by $|\hat{\omega}_{\text{peak}} - r| \le 8$
+($5$ of $59$ bins, $8.47\%$ chance rate).
 
 \section{Crossover with local Weyl jets and confirmatory results}\label{sec:results}
 \subsection{Continuum and finite-\texorpdfstring{$N$}{N} wavelength crossover against fifth-degree Weyl jets}
-% [STEP 3 CONTINUUM + FINITE CROSSOVER TABLE & TEXT TO BE FINALIZED AFTER STEP 3 FINITE RUN]
-\subsection{Exploratory sensitivity and preregistered confirmatory campaign (\texorpdfstring{$N \le 2^{23}$}{N <= 2^23})}
-% [STEP 4 CONFIRMATORY CAMPAIGN RESULTS, CI95 TABLES, NULL CALIBRATION & q RECOVERY TO BE FILLED STRICTLY FROM VERIFIED JSON]
+To map the operational boundary between local curvature expansion and global
+sub-discreteness spectroscopy, we evaluate fifth-degree polynomial Weyl jets
+\cite{weylnote} on the same circular vacuum plane-wave metric \eqref{eq:circular}.
+In the noise-free continuum limit ($64$ landmarks and $1010$--$1044$ interval clocks
+across $r \in [0.1, 64]$, Fig.~\ref{fig:crossover}a), the electric Weyl recovery ratio
+$R_{\text{Weyl}} = \sqrt{\widehat{E}^2}/(\sqrt{2}\,C_{\text{peak}})$ stays near unity
+for long waves ($0.998$ at $r=0.1$, $0.980$ at $r=1.0$, and $0.933$ at $r=2.0$ for
+fixed energy $q=0.01$), passes through $0.772$ at $r=4.0$ and $0.344$ at $r=8.0$, and
+collapses through oscillatory cancellation across the Alexandrov diamond to $0.0225$ at
+$r=16$, $0.0018$ at $r=32$, and $0.0011$ at $r=64$ (with essentially identical rolloff
+at $q=0.25$: $0.945 \to 0.685 \to 0.301 \to 0.0366 \to 0.0129$; and at fixed Weyl
+crest $C_0 = 0.5$: $0.939$ at $r=0.5$, $0.768$ at $r=4$, and $0.0216$ at $r=16$).
+
+At finite density $N = 2^{21}$ ($q = 0.25$, single-start order-$5$ clock fit, Fig.~\ref{fig:crossover}b),
+exploratory Weyl jets track the continuum curve cleanly---falling from $R_{\text{Weyl}} = 0.955$
+($r=1$) and $0.806$ ($r=4$) down to $0.289$ ($r=8$), $0.046$ ($r=16$), and $0.011$
+($r=32$, indistinguishable from the background baseline $\sqrt{\widehat{E}^2} = 0.192$).
+Held-out \texttt{S2} confirmatory arms ($n = 8$ each) reproduce this collapse with tight
+two-sided $95\%$ Student-$t$ intervals (gates \texttt{G7a}--\texttt{G7b}):
+$R_{\text{Weyl}}(r=4) = 0.749$ ($95\%$ CI $[0.720, 0.778]$) drops sixtyfold to
+$R_{\text{Weyl}}(r=32) = 0.0119$ ($95\%$ CI $[0.0083, 0.0154]$). Conversely, the blind
+spectral detector is quiet on quasi-homogeneous $r \in \{4, 8\}$ waves (whose strain
+shifts the $10{+}10$ ring anchors cleanly with $\text{rms} \approx 3.2\text{--}4.6\times 10^{-4}$
+rather than oscillating in the Fourier band) and turns on across the $r \in [16, 48]$
+crossover zone: in \texttt{S2} held-out testing (\texttt{G7c}--\texttt{G7d}, $n = 24$ each),
+$X_{\text{sub}}(q=4, r=32, N=2^{22})$ achieves $24/24$ detections ($100\%$, $95\%$ Wilson CI
+$[0.862, 1.000]$), $23/24$ wavenumber locks ($Z_{\max} = 3.110\,[2.989, 3.230]$, Welch
+difference $+1.155\,[+1.010, +1.299]$ over \texttt{N22}), and $X_{\text{sub}}(q=1, r=48, N=2^{23})$
+achieves $24/24$ detections and $24/24$ locks ($Z_{\max} = 3.039\,[2.859, 3.219]$, Welch
+difference $+1.005\,[+0.771, +1.239]$ over $X_{\text{null}}(q=1)$). The local Weyl jet
+and the order-only spectral detector thus cover complementary wavelength regimes intersecting
+smoothly near $r \in [16, 48]$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=119mm]{Fig2.pdf}
+\caption{Wavelength crossover between fifth-degree local Weyl jets and the blind
+spectral detector. \textbf{a} Continuum fifth-degree Weyl electric ratio
+$R_{\text{Weyl}} = \sqrt{\widehat{E}^2}/(\sqrt{2}\,C_{\text{peak}})$ vs.\ wavenumber
+$r = T/\lambda$ for fixed background $q \in \{0.01, 0.25\}$ and fixed crest amplitude
+$C_0 = 0.5$ (shaded crossover band $r \in [16, 48]$). \textbf{b} Finite-$N$ Weyl jet
+decay (left axis, exploratory $q=0.25, N=2^{21}$ dashed curve and \texttt{S2} $n=8$
+mean $\pm 95\%$ CIs at $r=4, 32$) paired against blind spectral peak $Z_{\max}$ (right
+axis, exploratory $q=1, N=2^{22}$ scout and \texttt{S2} $n \ge 24$ means $\pm 95\%$ CIs
+for $q=4$ at $r \in \{32,64,96,128\}$ and $q=1$ at $r=48$ above $Z_{\text{th}}=2.50$).}
+\label{fig:crossover}
+\end{figure}
+
+\subsection{Initial failure diagnosis (\texttt{S1}) and confirmed sub-discreteness campaign (\texttt{S2})}\label{subsec:results}
+To enforce strict separation between exploratory design and confirmation, all frozen
+parameters, disjoint seed blocks, and two-sided $95\%$ CI gates (sized pre-data for
+$\ge 90\%$ power following repository accuracy-gate policy) were committed under clean
+worktrees before executing GPU runs. We report both sequential confirmatory campaigns
+(\texttt{S1} and \texttt{S2}) transparently without retroactive alteration.
+
+\paragraph{Initial campaign \texttt{S1} ($16/18$ gates; low-frequency null diagnosis).}
+Using the 1-parameter $1+c_1/\omega^2$ whitening model at preregistered threshold
+$Z_{\text{th}} = 3.30$ across $216$ runs (seed decade \texttt{51M+}, commit \texttt{36e551a}), $16$ of
+$18$ gates passed: blind $q$ recovery held across primary arms ($|\hat{q}-q| \le 0.016$ mean in
+\texttt{N22} and \texttt{N23}, $0.0305$ in $X_{\text{sub}}(q=1, r=32)$),
+wavenumber locking hit $100\%$ on \texttt{W1} ($36/36$), Poisson/random-phase \texttt{W1p} ($36/36$),
+\texttt{W2} ($32/32$), and \texttt{W3} ($20/20$), and single-run detections reached $35/36$ (\texttt{W1}),
+$33/36$ (\texttt{W1p}), and $27/32$ (\texttt{W2}). However, two preregistered gates missed: pooled
+null false positives (\texttt{N22+N23}) reached $4/48$ ($8.3\%$, Wilson $95\%$ CI
+$[0.033, 0.196]$, upper bound $> 0.18$, gate \texttt{G1}), and the \texttt{W3} vs.\ \texttt{N23}
+Welch separation CI lower bound reached $+0.319 < +0.40$ (gate \texttt{G6a}). Audit
+diagnostics identified a single physical cause: $36/60$ ($60.0\%$) of \texttt{S1} nulls
+($28/48$ in \texttt{N22+N23}) peaked in the lowest two bins $\omega \le 32$, including all $4/24$
+\texttt{N23} false positives (mean $Z_{\max} = 2.686$), inflating the low-$\omega$ null baseline because
+the 1-parameter $1/\omega^2$ curve under-whitened the $\sim \omega^{-4}$ tapered window
+rolloff. \texttt{S1} remains preserved verbatim at \texttt{36e551a}.
+
+\paragraph{Confirmed campaign \texttt{S2} ($20/20$ gates passed).}
+After verifying on $44$ fresh exploratory nulls (\nolinkurl{outputs/exploratory_step2b_w4_pilot.json})
+that adding $c_2/\omega^4$ eliminated low-frequency peak pile-up ($0/44$ peaks $\le 32$;
+mean $2.008$, SD $0.202$, $q_{95} = 2.277$, $1/44 \ge 2.50$), we froze protocol
+\texttt{S2} at $Z_{\text{th}} = 2.50$ across $268$ completely disjoint realizations in
+seeds \texttt{52\_000\_000..52\_645\_007} (pre-registration commit \texttt{a133e50}, frozen campaign commit
+\texttt{4192369}, audit receipt \texttt{022166c}). Table~\ref{tab:confirmatory} and Fig.~\ref{fig:confirmatory}
+summarize every arm. Null low-frequency pile-up dropped from $28/48$ (\texttt{S1}) to
+$3/56$ ($5.4\%$, $95\%$ CI $[0.018, 0.146]$, gate \texttt{G1b}; $3/72 = 4.2\%$ across all
+nulls), pooled \texttt{N22+N23} false positives fell to $1/56$ ($1.8\%$, $95\%$ CI $[0.003, 0.094]$,
+gate \texttt{G1}), and $56/56$ nulls achieved valid positive $c_{\text{ref}}$ fits with mean
+calibration residual $4.22\times 10^{-5}$ ($95\%$ CI $[3.94, 4.50]\times 10^{-5}$, \texttt{G2a}).
+
+Across the sub-discreteness frontier ($\alpha < 4$), blind detection succeeded on $34/36$
+runs at \texttt{W1} ($N=2^{22}, r=64, \alpha=3.67$), $36/36$ Poisson/random-phase runs at \texttt{W1p},
+$32/32$ runs at \texttt{W2} ($N=2^{23}, r=96, \alpha=3.49$), and $28/28$ deep-frontier runs at
+\texttt{W3} ($N=2^{23}, r=128, \alpha=3.29$), totaling $130/132$ ($98.5\%$) primary detections
+($178/180 = 98.9\%$ including crossover wave arms) and $132/132$ ($100\%$) exact wavenumber
+locks ($179/180$ overall). Crucially, blind background focusing $q$ stayed unbiased within
+$0.0078$--$0.0268$ mean absolute error across every null and wave arm ($0.0078$--$0.0141$ across
+primary sub-discreteness arms \texttt{W1}--\texttt{W3}) without using any injected
+coordinate, phase, or curvature label. Every gate \texttt{G1}--\texttt{G7d} ($20/20$)
+passed on its two-sided $95\%$ CI, and independent clean-room verification recorded zero AST
+blindness leaks, $0/2124$ numerical quadrature mismatches (max error $6.66\times 10^{-16}$),
+and exact $(\text{d}z=0.0, \text{d}q=0.0)$ GPU spot-replay parity across all $9/9$ subspacing arms.
+
+\begin{table}[t]
+\centering
+\caption{Audited \texttt{S2} confirmatory arms ($268$ held-out runs, commits \texttt{4192369} $\to$ \texttt{022166c}, $Z_{\text{th}} = 2.50$, two-sided $95\%$ CIs). Pooled primary gates \texttt{G1}--\texttt{G7d} pass $20/20$.}
+\label{tab:confirmatory}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Arm ($q, r, N$) & $\alpha$ & $n$ & Det. & Lock & $Z_{\max}$ or $R_{\text{Weyl}}$ [$95\%$ CI] & $|\hat{q}-q|$ [$95\%$ CI] \\
+\midrule
+\texttt{N22} (bg $4, -, 2^{22}$) & -- & 28 & 1/28 & 3/28 & 1.955 [1.869, 2.040] & 0.0124 [0.0090, 0.0159] \\
+\texttt{N23} (bg $4, -, 2^{23}$) & -- & 28 & 0/28 & 2/28 & 2.082 [2.001, 2.163] & 0.0094 [0.0074, 0.0115] \\
+\texttt{X\_null\_q1} (bg $1, -, 2^{22}$) & -- & 16 & 1/16 & 1/16 & 2.034 [1.872, 2.195] & 0.0268 [0.0188, 0.0348] \\
+\midrule
+\texttt{W1} ($4, 64, 2^{22}$) & 3.67 & 36 & 34/36 & 36/36 & 3.239 [3.015, 3.463] & 0.0141 [0.0109, 0.0173] \\
+\texttt{W1p} ($4, 64, \text{Pois}(2^{22}), \phi$) & 3.67 & 36 & 36/36 & 36/36 & 3.157 [3.007, 3.306] & 0.0110 [0.0074, 0.0146] \\
+\texttt{W2} ($4, 96, 2^{23}$) & 3.49 & 32 & 32/32 & 32/32 & 4.307 [3.950, 4.663] & 0.0083 [0.0059, 0.0108] \\
+\texttt{W3} ($4, 128, 2^{23}$) & 3.29 & 28 & 28/28 & 28/28 & 3.875 [3.575, 4.175] & 0.0078 [0.0059, 0.0097] \\
+\midrule
+\texttt{X\_sub\_q4\_r32} ($4, 32, 2^{22}$) & 4.40 & 24 & 24/24 & 23/24 & 3.110 [2.989, 3.230] & 0.0151 [0.0099, 0.0202] \\
+\texttt{X\_sub\_q1\_r48} ($1, 48, 2^{23}$) & 4.12 & 24 & 24/24 & 24/24 & 3.039 [2.859, 3.219] & 0.0215 [0.0140, 0.0290] \\
+\texttt{X\_weyl\_r4} ($0.25, 4, 2^{21}$) & 10.50 & 8 & -- & -- & 0.749 [0.720, 0.778] & -- \\
+\texttt{X\_weyl\_r32} ($0.25, 32, 2^{21}$) & 4.20 & 8 & -- & -- & 0.0119 [0.0083, 0.0154] & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=119mm]{Fig3.pdf}
+\caption{Resolution of \texttt{S1} low-frequency whitening bias and \texttt{S2}
+confirmatory accuracy. \textbf{a} Arm-wise peak statistic $Z_{\max}$ (mean $\pm 95\%$ CI)
+for \texttt{S1} ($1+c_1/\omega^2$, threshold $3.30$) vs.\ \texttt{S2} ($1+c_1/\omega^2+c_2/\omega^4$,
+threshold $2.50$); upgrading the rolloff model reduces pooled \texttt{N22+N23} low-frequency peaks
+($\hat{\omega} \le 32$) from $28/48$ to $3/56$ and null FPR to $1/56$. \textbf{b} \texttt{S2}
+blind focusing errors $|\hat{q}-q|$ (mean $\pm 95\%$ CI) against preregistered \texttt{N23} ($0.025$)
+and \texttt{N22} ($0.035$) thresholds, with detection (\texttt{FP} or $k/n$) and wavenumber lock (\texttt{L}) counts.}
+\label{fig:confirmatory}
+\end{figure}
 
 \section{Limitations and outlook}\label{sec:limits}
-% [FINALIZE HONEST LIMITS AFTER CONFIRMATORY RESULTS]
+First, our anchor calibration and triangulation template explicitly assume the one-parameter
+circular Rosen focusing class \eqref{eq:mfunc} with strictly positive $O(1)$ coarse-grained
+focusing $q \in (0, \pi^2)$, and test stationary monochromatic plane waves rather than localized
+wavepackets, broadband stochastic backgrounds, or general vacuum metrics. Extending the
+blind order-ring initializer to multi-parameter backgrounds (for example Petrov-D black-hole
+neighborhoods) remains open.
+
+Second, unlike local fifth-degree Weyl jets \cite{weylnote}, the spectral statistic $Z_{\max}$
+establishes narrowband spin-2 oscillatory presence, chirality-invariant wavenumber locking,
+and background focusing $q$ rather than reconstructing all ten pointwise Weyl tensor components.
+Operational coverage therefore spans long waves via polynomial Weyl jets ($r \lesssim 4$)
+and high-frequency monochromatic waves via order spectroscopy ($r \gtrsim 32$).
+
+Third, within our computational budget up to $N = 2^{23}$ events, confirmed sub-discreteness
+detection reaches down to $\alpha = 3.29$ (\texttt{W3}), leaving the interval $4/3 < \alpha \lesssim 3$
+quantitatively open at larger event counts. As demonstrated by the longitudinal triangulation phase-coherence
+collapse around $\alpha \approx 2.5 \to 2.0$ (Sect.~\ref{sec:diagnostics}), lowering the
+finite-$N$ boundary closer to $\alpha = 2$ cannot rely on single-event triangulation coordinates
+alone because low-order metric-reconstruction jitter $\sigma(\hat{u})$ grows past $\lambda$;
+new local differential or relational phase observables will be required to probe the
+$\alpha \approx 2$ phase-scrambling wall.
+
+Fourth, our confirmatory evidence relies on sequential preregistration: \texttt{S1} failed two
+preregistered gates (\texttt{G1}, \texttt{G6a}) due to $1/\omega^2$ under-whitening below $\omega = 32$, and
+we preserved \texttt{S1} unchanged while executing a second independent confirmatory protocol
+\texttt{S2} on disjoint seeds (\texttt{52M}). Future work should test adaptive multi-scale windowing
+against broader background priors without relying on global plane-wave symmetries.
+
+\section*{Statements and Declarations}
+\paragraph{Ethics and competing interests.}
+This study consists exclusively of mathematical analysis and synthetic discrete-spacetime
+numerical simulations; no human participants, animals, or clinical data were involved.
+The author declares no competing interests and received no external funding.
+
+\paragraph{AI Use Disclosure.}
+Large-language-model coding agents participated substantively in refactoring GPU CUDA
+kernels, drafting simulation and test code, compiling numerical tables, and revising prose.
+All mathematical derivations, preregistered hypotheses, statistical gates, clean-room
+audits (\nolinkurl{check_subspacing_confirmatory.py} and
+\nolinkurl{check_subspacing_s2_confirmatory.py}), and final scientific claims were verified
+and approved by the author, who assumes full responsibility for the work.
+
+\paragraph{Data and Code Availability.}
+All source code, unit tests, preregistration documents, frozen manifests, and machine-verified
+audit receipts are available at \url{https://github.com/lpaiu-cs/causal-spacetime} on branch
+\texttt{codex/subspacing-order-detector}. Confirmatory provenance spans commits \texttt{4c0fc16}
+(\texttt{P1}) $\to$ \texttt{f88d637} (\texttt{F1}) $\to$ \texttt{36e551a} (\texttt{R1}, \texttt{S1}) and
+\texttt{a133e50} (\texttt{P2}) $\to$ \texttt{4192369} (\texttt{F2}) $\to$ \texttt{022166c} (\texttt{R2}, \texttt{S2}).
+Large transient outputs are excluded via \texttt{.gitignore}, while complete run summaries and audit
+receipts (\texttt{results.json}, \texttt{audit\_receipt.json}) are committed under \nolinkurl{docs/prereg/frozen/}.
 
 \begin{thebibliography}{99}\small
 \bibitem{zeeman} Zeeman, E.C.: Causality implies the Lorentz group. J. Math. Phys. \textbf{5}, 490--493 (1964). \doi{10.1063/1.1704140}
